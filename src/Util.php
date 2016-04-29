@@ -42,7 +42,7 @@ final class Util
     final public static function arrayDig(array $array, $key, $valueDefault = null)
     {
         // direct access
-        if (isset($array[$key])) {
+        if (array_key_exists($key, $array)) {
             $value =& $array[$key];
         } else {
             // trace element path
