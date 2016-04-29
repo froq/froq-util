@@ -39,15 +39,31 @@ function is_local(): bool
 }
 
 /**
- * Check input(s) is in array.
- * @param  array          $array
- * @param  string|array $inputs
+ * Check value(s) is in array.
+ * @param  array        $array
+ * @param  string|array $values
  * @return bool
  */
-function is_in(array $array, $inputs): bool
+function is_in(array $array, $values): bool
 {
-    foreach ((array) $inputs as $input) {
-        if (in_array($input, $array)) {
+    foreach ((array) $values as $value) {
+        if (in_array($value, $array)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+/**
+ * Check keys(s) is in array.
+ * @param  array        $array
+ * @param  string|array $keys
+ * @return bool
+ */
+function is_in_key(array $array, $keys): bool
+{
+    foreach ((array) $keys as $key) {
+        if (array_key_exists($key, $array)) {
             return true;
         }
     }
