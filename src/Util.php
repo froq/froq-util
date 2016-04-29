@@ -116,7 +116,7 @@ final class Util
     }
 
     // @wait
-    function setEnv(string $key, $value) {}
+    final public static function setEnv(string $key, $value) {}
 
     /**
      * Get real env.
@@ -125,7 +125,7 @@ final class Util
      * @param  any    $valueDefault
      * @return any
      */
-    function getEnv(string $key, $valueDefault = null) {
+    final public static function getEnv(string $key, $valueDefault = null) {
         if (isset($_SERVER[$key])) {
             $valueDefault = $_SERVER[$key];
         } elseif (isset($_ENV[$key])) {
@@ -142,7 +142,7 @@ final class Util
      *
      * @return string
      */
-    function getClientIp(): string
+    final public static function getClientIp(): string
     {
         $ip = '';
         if (null != ($ip = self::getEnv('HTTP_X_FORWARDED_FOR'))) {
