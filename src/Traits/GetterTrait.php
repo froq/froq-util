@@ -42,13 +42,13 @@ trait GetterTrait
      */
     public function __get($name)
     {
-        if (property_exists($this, $name)) {
-            return $this->{$name};
+        if (!property_exists($this, $name)) {
+            throw new \Exception(sprintf(
+                "'%s' property does not exists on '%s' object!",
+                    $name, get_class($this)
+            ));
         }
 
-        throw new \Exception(sprintf(
-            "'%s' property does not exists on '%s' object!",
-                $name, get_class($this)
-        ));
+        return $this->{$name};
     }
 }
