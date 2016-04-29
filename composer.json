@@ -11,6 +11,7 @@
         "php": "^7.0"
     },
     "autoload": {
-        "classmap": ["src/"]
+        "classmap": ["src/"],
+           "files": ["src/Functions/all.php"]
     }
 }
