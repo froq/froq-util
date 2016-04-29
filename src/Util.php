@@ -114,4 +114,48 @@ final class Util
 
         return $return;
     }
+
+    // @wait
+    function setEnv(string $key, $value) {}
+
+    /**
+     * Get real env.
+     *
+     * @param  string $key
+     * @param  any    $valueDefault
+     * @return any
+     */
+    function getEnv(string $key, $valueDefault = null) {
+        if (isset($_SERVER[$key])) {
+            $valueDefault = $_SERVER[$key];
+        } elseif (isset($_ENV[$key])) {
+            $valueDefault = $_ENV[$key];
+        } elseif (false !== ($value = getenv($key))) {
+            $valueDefault = $value;
+        }
+
+        return $valueDefault;
+    }
+
+    /**
+     * Get client IP.
+     *
+     * @return string
+     */
+    function getClientIp(): string
+    {
+        $ip = '';
+        if (null != ($ip = self::getEnv('HTTP_X_FORWARDED_FOR'))) {
+            if (false !== strpos($ip, ',')) {
+                $ip = trim((string) end(explode(',', $ip)));
+            }
+        }
+        // all ok
+        elseif (null != ($ip = self::getEnv('HTTP_CLIENT_IP'))) {}
+        elseif (null != ($ip = self::getEnv('HTTP_X_REAL_IP'))) {}
+        elseif (null != ($ip = self::getEnv('REMOTE_ADDR_REAL'))) {}
+        elseif (null != ($ip = self::getEnv('REMOTE_ADDR'))) {}
+
+        return $ip;
+    }
 }
