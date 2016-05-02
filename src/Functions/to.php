@@ -118,7 +118,7 @@ function to_query_string(array $query, string $keyIgnored = ''): string
         $query = preg_replace('~%3C(%2F|)[\w]+%3E~simU', '', $query);
     }
 
-    // clear arrays
+    // normalize arrays
     if (strpos($query, '%5D') !== false) {
         $query = preg_replace('~%5B([\d]+)%5D~simU', '[]', $query);
         $query = preg_replace('~%5B([\w]+)%5D~simU', '[\\1]', $query);
