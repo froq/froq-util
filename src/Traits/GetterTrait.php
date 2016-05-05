@@ -35,7 +35,6 @@ trait GetterTrait
 {
     /**
      * Property getter.
-     *
      * @param  string $name
      * @return any
      * @throws \Exception

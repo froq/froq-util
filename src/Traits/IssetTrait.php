@@ -35,7 +35,6 @@ trait IssetTrait
 {
     /**
      * Property checker.
-     *
      * @param  string $name
      * @return bool
      */

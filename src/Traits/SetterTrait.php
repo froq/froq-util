@@ -35,7 +35,6 @@ trait SetterTrait
 {
     /**
      * Property setter (mutator).
-     *
      * @param  string $name
      * @param  any    $value
      * @return void

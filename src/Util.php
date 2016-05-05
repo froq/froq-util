@@ -33,7 +33,6 @@ final class Util
 {
     /**
      * Array getter with dot notation support for sub-array paths.
-     *
      * @param  array      $array
      * @param  int|string $key (aka path)
      * @param  any        $valueDefault
@@ -57,7 +56,6 @@ final class Util
 
     /**
      * Array pick.
-     *
      * @param  array      $array
      * @param  int|string $key
      * @param  any        $value
@@ -75,7 +73,6 @@ final class Util
 
     /**
      * Array filter with key.
-     *
      * @param  array         $array
      * @param  callable|null $filter
      * @return array
@@ -98,7 +95,6 @@ final class Util
 
     /**
      * Array exclude.
-     *
      * @param  array  $array
      * @param  array  $keysExclude
      * @return array
@@ -120,7 +116,6 @@ final class Util
 
     /**
      * Get real env.
-     *
      * @param  string $key
      * @param  any    $valueDefault
      * @return any
@@ -139,7 +134,6 @@ final class Util
 
     /**
      * Get client IP.
-     *
      * @return string
      */
     final public static function getClientIp(): string
