@@ -39,7 +39,7 @@ trait IssetTrait
      * @param  string $name
      * @return bool
      */
-    public function __isset($name): bool
+    public function __isset(string $name): bool
     {
         return property_exists($this, $name);
     }

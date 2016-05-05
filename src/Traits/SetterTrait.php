@@ -41,7 +41,7 @@ trait SetterTrait
      * @return void
      * @throws \Exception
      */
-    public function __set($name, $value)
+    public function __set(string $name, $value)
     {
         if (!property_exists($this, $name)) {
             throw new \Exception(sprintf(

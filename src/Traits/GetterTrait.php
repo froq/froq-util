@@ -40,7 +40,7 @@ trait GetterTrait
      * @return any
      * @throws \Exception
      */
-    public function __get($name)
+    public function __get(string $name)
     {
         if (!property_exists($this, $name)) {
             throw new \Exception(sprintf(
