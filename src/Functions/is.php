@@ -38,7 +38,7 @@ function is_local(): bool
         }
     }
 
-    return (bool) $local;
+    return ((bool) $local);
 }
 
 /**
@@ -118,15 +118,15 @@ function is_empty(...$inputs): bool
 
 /**
  * Check callee allowed.
- * @param  string       $filePath
+ * @param  string      $filePath
  * @param  array|null  &$callee
  * @param  string|null &$error
  * @return bool
  */
 function is_callee_allowed(string $filePath, array &$callee = null, string &$error = null): bool
 {
-    $callee = get_callee(4);
-    if (strpos($callee['file'], $filePath)) {
+    $callee = debug_backtrace()[4] ?? null;
+    if ($callee && strpos($callee['file'], $filePath)) {
         $error = sprintf('Call from bad scope! class: %s::%s() file: %s:%d',
             $callee['class'], $callee['function'], $callee['file'], $callee['line']);
         return false;
