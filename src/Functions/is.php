@@ -29,12 +29,15 @@ declare(strict_types=1);
  */
 function is_local(): bool
 {
-    static $local; if ($local === null) {
+    static $local;
+    if ($local === null) {
         if (defined('local')) {
             $local = (local === true);
+        } elseif (isset($_SERVER['SERVER_NAME'])) {
+            $local = strstr($_SERVER['SERVER_NAME'], '.local');
         }
-        $local = strstr(dig($_SERVER, 'SERVER_NAME'), '.local');
     }
+
     return (bool) $local;
 }
 
@@ -51,6 +54,7 @@ function is_in(array $array, $values): bool
             return true;
         }
     }
+
     return false;
 }
 
@@ -67,6 +71,7 @@ function is_in_key(array $array, $keys): bool
             return true;
         }
     }
+
     return false;
 }
 
