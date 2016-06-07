@@ -114,14 +114,14 @@ function to_query_string(array $query, string $keyIgnored = ''): string
     $query = http_build_query($query);
 
     // strip tags
-    if (strpos($query, '%3C') !== false) {
-        $query = preg_replace('~%3C(%2F|)[\w]+%3E~simU', '', $query);
+    if (false !== strpos($query, '%3C')) {
+        $query = preg_replace('~%3C[\w]+(%2F)?%3E~simU', '', $query);
     }
 
     // normalize arrays
-    if (strpos($query, '%5D') !== false) {
+    if (false !== strpos($query, '%5D')) {
         $query = preg_replace('~%5B([\d]+)%5D~simU', '[]', $query);
-        $query = preg_replace('~%5B([\w]+)%5D~simU', '[\\1]', $query);
+        $query = preg_replace('~%5B([\w\.-]+)%5D~simU', '[\\1]', $query);
     }
 
     return trim($query);
