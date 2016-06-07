@@ -34,7 +34,7 @@ function is_local(): bool
         if (defined('local')) {
             $local = (local === true);
         } elseif (isset($_SERVER['SERVER_NAME'])) {
-            $local = strstr($_SERVER['SERVER_NAME'], '.local');
+            $local = preg_match('~\.local$~i', $_SERVER['SERVER_NAME']);
         }
     }
 
