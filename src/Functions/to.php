@@ -105,7 +105,7 @@ function to_query_string(array $query, string $keyIgnored = ''): string
 {
     $keyIgnored = explode(',', $keyIgnored);
 
-    foreach ($query as $key => $value) {
+    foreach ($query as $key => $_) {
         if (in_array($key, $keyIgnored)) {
             unset($query[$key]);
         }
