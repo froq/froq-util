@@ -72,4 +72,33 @@ final class Util
 
         return $ip;
     }
+
+    /**
+     * Get current URL.
+     * @param  bool $withQuery
+     * @return string
+     */
+    final public static function getCurrentUrl(bool $withQuery = true): string
+    {
+        // filter function
+        static $filter;
+        if ($filter == null) {
+            $filter = function($input) {
+                $input = substr($input, 0, strcspn($input, "\n\r"));
+                $input = str_ireplace(['%00', '%0a', '%1a'], '', $input);
+                return htmlspecialchars($input, ENT_QUOTES);
+            };
+        }
+
+        $url = 'http'. (($_SERVER['SERVER_PORT'] == '443') ? 's' : '')
+            .'://'. $_SERVER['SERVER_NAME'];
+        // add path
+        $url .= $filter(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
+        // add query
+        if ($withQuery && $_SERVER['QUERY_STRING'] != '') {
+            $url .= '?'. $filter($_SERVER['QUERY_STRING']);
+        }
+
+        return $url;
+    }
 }
