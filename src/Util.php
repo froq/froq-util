@@ -86,12 +86,13 @@ final class Util
             $filter = function($input) {
                 $input = substr($input, 0, strcspn($input, "\n\r"));
                 $input = str_ireplace(['%00', '%0a', '%1a'], '', $input);
-                return htmlspecialchars($input, ENT_QUOTES);
+                return html_encode($input);
             };
         }
 
         $url = 'http'. (($_SERVER['SERVER_PORT'] == '443') ? 's' : '')
             .'://'. $_SERVER['SERVER_NAME'];
+
         // add path
         $url .= $filter(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
         // add query
