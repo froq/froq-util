@@ -26,7 +26,7 @@ declare(strict_types=1);
 /**
  * Encode.
  * @param  string|array $input
- * @return string
+ * @return string|array
  */
 function html_encode($input)
 {
@@ -49,7 +49,7 @@ function html_encode($input)
 /**
  * Decode.
  * @param  string|array $input
- * @return string
+ * @return string|array
  */
 function html_decode($input)
 {
@@ -73,7 +73,7 @@ function html_decode($input)
  * Strip.
  * @param  string|array $input
  * @param  bool         $decode
- * @return string
+ * @return string|array
  */
 function html_strip($input, bool $decode = false)
 {
@@ -92,7 +92,7 @@ function html_strip($input, bool $decode = false)
  * Remove.
  * @param  string|array $input
  * @param  bool         $decode
- * @return string
+ * @return string|array
  */
 function html_remove($input = null, bool $decode = false)
 {
@@ -203,9 +203,9 @@ function html_options($input, $current = null, $extra = null, array $pairs = nul
 
 /**
  * Checked.
- * @param  any   $a
- * @param  any   $b
- * @param  bool  $strict
+ * @param  any  $a
+ * @param  any  $b
+ * @param  bool $strict
  * @return string
  */
 function html_checked($a, $b, bool $strict = false): string
@@ -221,9 +221,9 @@ function html_checked($a, $b, bool $strict = false): string
 
 /**
  * Disabled.
- * @param  any   $a
- * @param  any   $b
- * @param  bool  $strict
+ * @param  any  $a
+ * @param  any  $b
+ * @param  bool $strict
  * @return string
  */
 function html_disabled($a, $b, bool $strict = false): string
@@ -239,9 +239,9 @@ function html_disabled($a, $b, bool $strict = false): string
 
 /**
  * Selected.
- * @param  any   $a
- * @param  any   $b
- * @param  bool  $strict
+ * @param  any  $a
+ * @param  any  $b
+ * @param  bool $strict
  * @return string
  */
 function html_selected($a, $b, bool $strict = false): string
