@@ -34,7 +34,7 @@ namespace Froq\Util\Traits;
 trait GetterTrait
 {
     /**
-     * Property getter.
+     * Get magic.
      * @param  string $name
      * @return any
      * @throws \Exception
