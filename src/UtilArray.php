@@ -32,7 +32,7 @@ namespace Froq\Util;
 final class UtilArray
 {
     /**
-     * Dig with dot notation support for sub-array paths.
+     * Dig (with dot notation support for sub-array paths).
      * @param  array      $array
      * @param  int|string $key (aka path)
      * @param  any        $valueDefault
@@ -65,6 +65,7 @@ final class UtilArray
     {
         if (array_key_exists($key, $array)) {
             $value = $array[$key];
+            // remove element
             unset($array[$key]);
         }
 
@@ -90,7 +91,7 @@ final class UtilArray
     }
 
     /**
-     * Get first element.
+     * First.
      * @param  array $array
      * @return any
      */
@@ -101,7 +102,7 @@ final class UtilArray
     }
 
     /**
-     * Get last element.
+     * Last.
      * @param  array $array
      * @return any
      */
