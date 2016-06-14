@@ -34,7 +34,7 @@ namespace Froq\Util\Traits;
 trait IssetTrait
 {
     /**
-     * Property checker.
+     * Isset magic.
      * @param  string $name
      * @return bool
      */
