@@ -34,7 +34,7 @@ namespace Froq\Util\Traits;
 trait SetterTrait
 {
     /**
-     * Property setter (mutator).
+     * Set magic.
      * @param  string $name
      * @param  any    $value
      * @return void
