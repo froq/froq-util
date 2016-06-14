@@ -29,7 +29,7 @@ namespace Froq\Util\Traits;
  * @object     Froq\Util\Traits\GetterTrait
  * @author     Kerem Güneş <k-gun@mail.com>
  *
- * Notice: Do not define '__get' in user objects.
+ * Notice: Do not define '__get' in sub-objects.
  */
 trait GetterTrait
 {

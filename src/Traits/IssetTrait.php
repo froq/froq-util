@@ -29,7 +29,7 @@ namespace Froq\Util\Traits;
  * @object     Froq\Util\Traits\IssetTrait
  * @author     Kerem Güneş <k-gun@mail.com>
  *
- * Notice: Do not define '__set' in user objects.
+ * Notice: Do not define '__set' in sub-objects.
  */
 trait IssetTrait
 {
