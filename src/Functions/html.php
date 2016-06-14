@@ -37,8 +37,8 @@ function html_encode($input)
     $input = trim((string) $input);
     if ($input) {
         $input = str_replace(
-            ["'"    , '"'    , '\\'   , '<'   , '>'],
-            ['&#39;', '&#34;', '&#92;', '&lt;', '&gt;'],
+            ["'"    , '"'    , '<'   , '>'],
+            ['&#39;', '&#34;', '&lt;', '&gt;'],
             $input
         );
     }
@@ -60,8 +60,8 @@ function html_decode($input)
     $input = trim((string) $input);
     if ($input) {
         $input = str_ireplace(
-            ['&#39;', '&#34;', '&#92;', '&lt;', '&gt;'],
-            ["'"    , '"'    , '\\'   , '<'   , '>'],
+            ['&#39;', '&#34;', '&lt;', '&gt;'],
+            ["'"    , '"'    , '<'   , '>'],
             $input
         );
     }
