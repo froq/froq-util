@@ -76,16 +76,6 @@ function is_in_key(array $array, $keys): bool
 }
 
 /**
- * ID.
- * @param  any $input
- * @return bool
- */
-function is_id($input): bool
-{
-    return (($input = intval($input)) && $input > 0);
-}
-
-/**
  * Iter.
  * @param  any $input
  * @return bool
@@ -114,23 +104,4 @@ function is_empty(...$inputs): bool
     }
 
     return false;
-}
-
-/**
- * Callee allowed.
- * @param  string      $filePath
- * @param  array|null  &$callee
- * @param  string|null &$error
- * @return bool
- */
-function is_callee_allowed(string $filePath, array &$callee = null, string &$error = null): bool
-{
-    $callee = debug_backtrace()[4] ?? null;
-    if ($callee && strpos($callee['file'], $filePath)) {
-        $error = sprintf('Call from bad scope! class: %s::%s() file: %s:%d',
-            $callee['class'], $callee['function'], $callee['file'], $callee['line']);
-        return false;
-    }
-
-    return true;
 }
