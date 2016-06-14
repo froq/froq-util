@@ -105,3 +105,13 @@ function is_empty(...$inputs): bool
 
     return false;
 }
+
+/**
+ * UInt.
+ * @param  any $input
+ * @return bool
+ */
+function is_uint($input): bool
+{
+    return (((int) $input) > 0);
+}
