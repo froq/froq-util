@@ -24,7 +24,7 @@ declare(strict_types=1);
 /*** "IS" function module. ***/
 
 /**
- * Check env is local.
+ * Local.
  * @return bool
  */
 function is_local(): bool
@@ -42,7 +42,7 @@ function is_local(): bool
 }
 
 /**
- * Check value(s) is in array.
+ * In.
  * @param  array        $array
  * @param  string|array $values
  * @return bool
@@ -59,7 +59,7 @@ function is_in(array $array, $values): bool
 }
 
 /**
- * Check keys(s) is in array.
+ * In key.
  * @param  array        $array
  * @param  string|array $keys
  * @return bool
@@ -76,7 +76,7 @@ function is_in_key(array $array, $keys): bool
 }
 
 /**
- * Check input is valid uint ID.
+ * ID.
  * @param  any $input
  * @return bool
  */
@@ -86,7 +86,7 @@ function is_id($input): bool
 }
 
 /**
- * Check var is iterable.
+ * Iter.
  * @param  any $input
  * @return bool
  */
@@ -98,7 +98,7 @@ function is_iter($input): bool
 }
 
 /**
- * Check empty vars.
+ * Empty.
  * @param  array ...$inputs
  * @return bool
  */
@@ -117,7 +117,7 @@ function is_empty(...$inputs): bool
 }
 
 /**
- * Check callee allowed.
+ * Callee allowed.
  * @param  string      $filePath
  * @param  array|null  &$callee
  * @param  string|null &$error
