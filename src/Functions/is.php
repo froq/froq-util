@@ -104,6 +104,26 @@ function is_empty(...$args): bool
 }
 
 /**
+ * Nil.
+ * @param  any $arg
+ * @return bool
+ */
+function is_nil($arg): bool
+{
+    return ($arg === nil);
+}
+
+/**
+ * None.
+ * @param  any $arg
+ * @return bool
+ */
+function is_none($arg): bool
+{
+    return ($arg === none);
+}
+
+/**
  * UInt.
  * @param  any $arg
  * @return bool
