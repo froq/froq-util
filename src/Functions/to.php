@@ -25,74 +25,74 @@ declare(strict_types=1);
 
 /**
  * Array.
- * @param  iter $input
+ * @param  iter $arg
  * @param  bool $deep
  * @return array
  */
-function to_array($input, bool $deep = true): array
+function to_array($arg, bool $deep = true): array
 {
-    $input = (array) $input;
+    $arg = (array) $arg;
     if ($deep) {
-        foreach ($input as $key => $value) {
-            $input[$key] = is_iter($value)
+        foreach ($arg as $key => $value) {
+            $arg[$key] = is_iter($value)
                 ? to_array($value, $deep) : $value;
         }
     }
 
-    return $input;
+    return $arg;
 }
 
 /**
  * Object.
- * @param  iter $input
+ * @param  iter $arg
  * @param  bool $deep
  * @return \stdClass
  */
-function to_object($input, bool $deep = true): \stdClass
+function to_object($arg, bool $deep = true): \stdClass
 {
-    $input = (object) $input;
+    $arg = (object) $arg;
     if ($deep) {
-        foreach ($input as $key => $value) {
-            $input->{$key} = is_iter($value)
+        foreach ($arg as $key => $value) {
+            $arg->{$key} = is_iter($value)
                 ? to_object($value, $deep) : $value;
         }
     }
 
-    return $input;
+    return $arg;
 }
 
 /**
  * Snake from dash (Foo-Bar -> Foo_Bar | foo_bar).
- * @param  string $input
+ * @param  string $arg
  * @param  bool   $lower
  * @return string
  */
-function to_snake_from_dash(string $input = null, bool $lower = true): string
+function to_snake_from_dash(string $arg = null, bool $lower = true): string
 {
-    $input = str_replace('-', '_', (string) $input);
+    $arg = str_replace('-', '_', (string) $arg);
     if ($lower) {
-        $input = strtolower($input);
+        $arg = strtolower($arg);
     }
 
-    return $input;
+    return $arg;
 }
 
 /**
  * Dash from upper (FooBar -> Foo-Bar | foo-bar).
- * @param  string $input
+ * @param  string $arg
  * @param  bool   $lower
  * @return string
  */
-function to_dash_from_upper(string $input = null, bool $lower = true): string
+function to_dash_from_upper(string $arg = null, bool $lower = true): string
 {
-    $input = trim((string) preg_replace_callback('~([A-Z])~', function($m){
+    $arg = trim((string) preg_replace_callback('~([A-Z])~', function($m){
         return '-'. $m[0];
-    }, $input), '-');
+    }, $arg), '-');
     if ($lower) {
-        $input = strtolower($input);
+        $arg = strtolower($arg);
     }
 
-    return $input;
+    return $arg;
 }
 
 /**
