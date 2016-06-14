@@ -24,7 +24,7 @@ declare(strict_types=1);
 /*** "TO" function module. ***/
 
 /**
- * Convert an iterable to array.
+ * Array.
  * @param  iter $input
  * @param  bool $deep
  * @return array
@@ -43,7 +43,7 @@ function to_array($input, bool $deep = true): array
 }
 
 /**
- * Convert an iterable to object.
+ * Object.
  * @param  iter $input
  * @param  bool $deep
  * @return \stdClass
@@ -62,9 +62,9 @@ function to_object($input, bool $deep = true): \stdClass
 }
 
 /**
- * Convert: Foo-Bar -> foo_bar
+ * Snake from dash (Foo-Bar -> Foo_Bar | foo_bar).
  * @param  string $input
- * @param  bool    $lower
+ * @param  bool   $lower
  * @return string
  */
 function to_snake_from_dash(string $input = null, bool $lower = true): string
@@ -78,9 +78,9 @@ function to_snake_from_dash(string $input = null, bool $lower = true): string
 }
 
 /**
- * Convert: FooBar -> foo-bar
+ * Dash from upper (FooBar -> Foo-Bar | foo-bar).
  * @param  string $input
- * @param  bool    $lower
+ * @param  bool   $lower
  * @return string
  */
 function to_dash_from_upper(string $input = null, bool $lower = true): string
@@ -96,7 +96,7 @@ function to_dash_from_upper(string $input = null, bool $lower = true): string
 }
 
 /**
- * Make query string with ignored key(s) support.
+ * Query string.
  * @param  array  $query
  * @param  string $keyIgnored
  * @return string
