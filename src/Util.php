@@ -54,11 +54,11 @@ final class Util
 
     /**
      * Get client IP.
-     * @return string
+     * @return string|null
      */
-    final public static function getClientIp(): string
+    final public static function getClientIp()
     {
-        $ip = '';
+        $ip = null;
         if (null != ($ip = self::getEnv('HTTP_X_FORWARDED_FOR'))) {
             if (false !== strpos($ip, ',')) {
                 $ip = trim((string) end(explode(',', $ip)));
