@@ -77,28 +77,28 @@ function is_in_key(array $array, $keys): bool
 
 /**
  * Iter.
- * @param  any $input
+ * @param  any $arg
  * @return bool
  */
-function is_iter($input): bool
+function is_iter($arg): bool
 {
-    return is_array($input)
-        || ($input instanceof \stdClass)
-        || ($input instanceof \Traversable);
+    return is_array($arg)
+        || ($arg instanceof \stdClass)
+        || ($arg instanceof \Traversable);
 }
 
 /**
  * Empty.
- * @param  array ...$inputs
+ * @param  ... $args
  * @return bool
  */
-function is_empty(...$inputs): bool
+function is_empty(...$args): bool
 {
-    foreach ($inputs as $input) {
-        if (empty($input)) {
+    foreach ($args as $arg) {
+        if (empty($arg)) {
             return true;
         }
-        if (is_object($input) && empty((array) $input)) {
+        if (is_object($arg) && empty((array) $arg)) {
             return true;
         }
     }
@@ -108,10 +108,10 @@ function is_empty(...$inputs): bool
 
 /**
  * UInt.
- * @param  any $input
+ * @param  any $arg
  * @return bool
  */
-function is_uint($input): bool
+function is_uint($arg): bool
 {
-    return (((int) $input) > 0);
+    return (((int) $arg) > 0);
 }
