@@ -35,7 +35,7 @@ final class Util
     final public static function setEnv(string $key, $value) {}
 
     /**
-     * Get real env.
+     * Get env.
      * @param  string $key
      * @param  any    $valueDefault
      * @return any
