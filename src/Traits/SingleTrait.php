@@ -35,13 +35,13 @@ namespace Froq\Util\Traits;
 trait SingleTrait
 {
     /**
-     * Instance holder.
+     * Instances.
      * @var array
      */
     private static $__instances = [];
 
     /**
-     * Forbid idle initializations.
+     * Forbids.
      */
     private function __clone() {}
     private function __construct() {}
