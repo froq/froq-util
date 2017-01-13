@@ -138,7 +138,7 @@ function is_uint($in, &$out = null): bool
  * @param  float|null &$out
  * @return bool
  */
-function is_ufloat($in, float &$out = null): bool
+function is_ufloat($in, &$out = null): bool
 {
     if (!is_numeric($in) || is_int($in) || (strval($in)[0] == '-')) {
         return false;
