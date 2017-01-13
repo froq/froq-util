@@ -124,5 +124,11 @@ function is_none($arg): bool
  */
 function is_uint($arg): bool
 {
-    return ctype_digit($arg);
+    switch (gettype($arg)) {
+        case 'NULL':
+        case 'double':
+            return false;
+        default:
+            return (false === strpbrk((string) $arg, '-.'));
+    }
 }
