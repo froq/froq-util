@@ -23,6 +23,31 @@ declare(strict_types=1);
 
 /*** All function module. ***/
 
+/**
+ * Just for fun.
+ * @const null
+ */
+if (!defined('nil')) {
+    define('nil', null, true);
+}
+
+/**
+ * More readable empty strings.
+ * @const string
+ */
+if (!defined('none')) {
+    define('none', '', true);
+}
+
+/**
+ * Used to detect local env.
+ * @const bool
+ */
+if (!defined('local')) {
+    define('local', (isset($_SERVER['SERVER_NAME'])
+        && !!preg_match('~\.local$~i', $_SERVER['SERVER_NAME'])), true);
+}
+
 // include all files
 $files = glob(__dir__ .'/*.php');
 foreach ($files as $file) {
