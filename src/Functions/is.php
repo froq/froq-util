@@ -86,7 +86,10 @@ function is_iter($arg): bool
 function is_empty(...$args): bool
 {
     foreach ($args as $arg) {
-        if (empty($arg) || (is_object($arg) && empty((array) $arg))) {
+        if (empty($arg)) {
+            return true;
+        }
+        if ($arg instanceof \stdClass && empty((array) $arg)) {
             return true;
         }
     }
