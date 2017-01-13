@@ -124,5 +124,5 @@ function is_none($arg): bool
  */
 function is_uint($arg): bool
 {
-    return is_numeric($arg) && !is_float($arg) && (false === strpbrk((string) $arg, '-.'));
+    return is_numeric($arg) && !is_float($arg) && !strpbrk((string) $arg, '-.');
 }
