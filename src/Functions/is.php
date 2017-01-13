@@ -119,29 +119,45 @@ function is_none($arg): bool
 
 /**
  * UInt.
- * @param  any $arg
+ * @param  any       $in
+ * @param  int|null &$out
  * @return bool
  */
-function is_uint($arg): bool
+function is_uint($in, &$out = null): bool
 {
-    return is_numeric($arg) && !is_float($arg) && !strpbrk(strval($arg), '-.');
+    if (!is_numeric($in) || is_float($in) || !!strpbrk(strval($in), '-.')) {
+        return false;
+    }
+    $out = intval($in);
+    return $out >= 0;
 }
 
 /**
  * UFloat.
- * @param  any $arg
+ * @param  any         $in
+ * @param  float|null &$out
  * @return bool
  */
-function is_ufloat($arg): bool
+function is_ufloat($in, float &$out = null): bool
 {
-    return is_numeric($arg) && ((is_float($arg) && $arg >= 0.0) || strval($arg)[0] != '-');
+    if (!is_numeric($in) || is_int($in) || (strval($in)[0] == '-')) {
+        return false;
+    }
+    $out = floatval($in);
+    return $out >= 0.0;
 }
 
 /**
  * Unsigned.
+ * @param  any             $in
+ * @param  int|float|null &$out
  * @return bool
  */
-function is_unsigned($arg): bool
+function is_unsigned($in, &$out = null): bool
 {
-    return is_numeric($arg) && strval($arg)[0] != '-';
+    if (!is_numeric($in) || (strval($in)[0] == '-')) {
+        return false;
+    }
+    $out = abs($in);
+    return true;
 }
