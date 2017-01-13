@@ -124,5 +124,5 @@ function is_none($arg): bool
  */
 function is_uint($arg): bool
 {
-    return (((int) $arg) > 0);
+    return ctype_digit($arg);
 }
