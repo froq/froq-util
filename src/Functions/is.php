@@ -124,5 +124,24 @@ function is_none($arg): bool
  */
 function is_uint($arg): bool
 {
-    return is_numeric($arg) && !is_float($arg) && !strpbrk((string) $arg, '-.');
+    return is_numeric($arg) && !is_float($arg) && !strpbrk(strval($arg), '-.');
+}
+
+/**
+ * UFloat.
+ * @param  any $arg
+ * @return bool
+ */
+function is_ufloat($arg): bool
+{
+    return is_numeric($arg) && ((is_float($arg) && $arg >= 0.0) || strval($arg)[0] != '-');
+}
+
+/**
+ * Unsigned.
+ * @return bool
+ */
+function is_unsigned($arg): bool
+{
+    return is_numeric($arg) && strval($arg)[0] != '-';
 }
