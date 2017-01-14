@@ -85,12 +85,27 @@ function to_snake_from_dash(string $arg = null, bool $lower = true): string
  */
 function to_dash_from_upper(string $arg = null, bool $lower = true): string
 {
-    $arg = trim((string) preg_replace_callback('~([A-Z])~', function($m){
-        return '-'. $m[0];
-    }, $arg), '-');
+    $arg = (string) preg_replace_callback('~([A-Z])~', function($match){
+        return '-'. $match[0];
+    }, $arg);
+    $arg = trim($arg, '-');
     if ($lower) {
         $arg = strtolower($arg);
     }
+
+    return $arg;
+}
+
+/**
+ * Upper from dash (foo-bar | Foo-Bar -> FooBar)
+ * @param  string $arg
+ * @return string
+ */
+function to_upper_from_dash(string $arg = null): string
+{
+    $arg = (string) preg_replace_callback('~-([a-z])~i', function($match) {
+        return ucfirst($match[1]);
+    }, ucfirst((string) $arg));
 
     return $arg;
 }
