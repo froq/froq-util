@@ -47,11 +47,11 @@ trait SingleTrait
     private function __construct() {}
 
     /**
-     * Constructor.
-     * @param  array $args
+     * Init.
+     * @param  ... $args
      * @return object
      */
-    final public static function init(array ...$args)
+    final public static function init(...$args)
     {
         $className = get_called_class();
         if (!isset(self::$__instances[$className])) {
