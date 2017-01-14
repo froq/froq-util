@@ -26,10 +26,10 @@ namespace Froq\Util;
 /**
  * @package    Froq
  * @subpackage Froq\Util
- * @object     Froq\Util\UtilArray
+ * @object     Froq\Util\Collection
  * @author     Kerem Güneş <k-gun@mail.com>
  */
-final class UtilArray
+final class Collection
 {
     /**
      * Dig (with dot notation support for sub-array paths).
