@@ -68,6 +68,9 @@ final class Type
         return null;
     }
 
+    // @wait
+    // isClass, isAbstractClass, isTrait(), isInterface()
+
     // @links
     // https://golang.org/src/builtin/builtin.go
     // https://msdn.microsoft.com/en-us/library/exx3b86w.aspx
