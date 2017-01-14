@@ -97,7 +97,6 @@ final class UtilArray
      */
     final public static function first(array $array)
     {
-        reset($array);
         return current($array);
     }
 
@@ -108,7 +107,6 @@ final class UtilArray
      */
     final public static function last(array $array)
     {
-        reset($array);
         return end($array);
     }
 }
