@@ -27,7 +27,7 @@ use Froq\Util\Iter;
 
 /**
  * Iter.
- * @param  iterable $arg
+ * @param  iter $arg
  * @return Froq\Util\Iter
  */
 function to_iter($arg): Iter
@@ -37,30 +37,36 @@ function to_iter($arg): Iter
 
 /**
  * Iter array.
- * @return iterable $arg
- * @return array
+ * @return iter $arg
+ * @return ?array
  */
-function to_iter_array($arg): array
+function to_iter_array($arg)
 {
+    $return = null;
     if (is_array($arg) || $arg instanceof \stdClass) {
-        return to_array($arg, false);
+        $return = (array) $arg;
+    } elseif ($arg instanceof \Traversable) {
+        $return = iterator_to_array($arg);
+    } elseif (is_object($arg) && method_exists($arg, 'toArray')) {
+        $return = $arg->toArray();
     }
-    if ($arg instanceof \Traversable) {
-        return iterator_to_array($arg);
-    }
-    if (is_object($arg) && method_exists($arg, 'toArray')) {
-        return $arg->toArray();
-    }
+
+    return $return;
 }
 
 /**
  * Iter object.
- * @param  iterable $arg
- * @return \stdClass
+ * @param  iter $arg
+ * @return ?\stdClass
  */
-function to_iter_object($arg): \stdClass
+function to_iter_object($arg)
 {
-    return (object) to_iter_array($arg);
+    $return = to_iter_array($arg);
+    if ($return) {
+        $return = (object) $return;
+    }
+
+    return $return;
 }
 
 /**
