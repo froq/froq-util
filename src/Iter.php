@@ -77,6 +77,24 @@ final class Iter implements Interfaces\Arrayable
     }
 
     /**
+     * Keys.
+     * @return array
+     */
+    final public function keys(): array
+    {
+        return array_keys($this->data);
+    }
+
+    /**
+     * Values.
+     * @return array
+     */
+    final public function values(): array
+    {
+        return array_values($this->data);
+    }
+
+    /**
      * Count.
      * @return int
      */
