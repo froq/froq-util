@@ -33,15 +33,15 @@ function is_local(): bool
 }
 
 /**
- * In.
+ * Array key.
  * @param  array        $array
- * @param  string|array $values
+ * @param  string|array $keys
  * @return bool
  */
-function is_in(array $array, $values): bool
+function is_array_key(array $array, $keys): bool
 {
-    foreach ((array) $values as $value) {
-        if (!in_array($value, $array)) {
+    foreach ((array) $keys as $key) {
+        if (!array_key_exists($key, $array)) {
             return false;
         }
     }
@@ -50,15 +50,16 @@ function is_in(array $array, $values): bool
 }
 
 /**
- * In key.
+ * Array value.
  * @param  array        $array
- * @param  string|array $keys
+ * @param  string|array $values
+ * @param  bool $strict
  * @return bool
  */
-function is_in_key(array $array, $keys): bool
+function is_array_value(array $array, $values, bool $strict = false): bool
 {
-    foreach ((array) $keys as $key) {
-        if (!array_key_exists($key, $array)) {
+    foreach ((array) $values as $value) {
+        if (!in_array($value, $array, $strict)) {
             return false;
         }
     }
