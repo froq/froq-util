@@ -23,7 +23,7 @@ declare(strict_types=1);
 
 namespace Froq\Util;
 
-use Froq\Util\Exceptions\InvalidKeyException;
+use Froq\Util\Exceptions\InvalidKeyTypeException;
 
 /**
  * @package    Froq
@@ -39,13 +39,13 @@ final class Collection
      * @param  int|string $key (aka path)
      * @param  any        $valueDefault
      * @return any
-     * @throws Froq\Util\Exceptions\InvalidKeyException
+     * @throws Froq\Util\Exceptions\InvalidKeyTypeException
      */
     final public static function dig(array $array, $key, $valueDefault = null)
     {
         $keyType = gettype($key);
         if ($keyType != 'integer' && $keyType != 'string') {
-            throw new InvalidKeyException("Key type must be int or string, {$keyType} given!");
+            throw new InvalidKeyTypeException("Key type must be int or string, {$keyType} given!");
         }
 
         // direct access
@@ -68,12 +68,13 @@ final class Collection
      * @param  int|string $key
      * @param  any        $value
      * @return any
+     * @throws Froq\Util\Exceptions\InvalidKeyTypeException
      */
     final public static function pick(array &$array, $key, $value = null)
     {
         $keyType = gettype($key);
         if ($keyType != 'integer' && $keyType != 'string') {
-            throw new InvalidKeyException("Key type must be int or string, {$keyType} given!");
+            throw new InvalidKeyTypeException("Key type must be int or string, {$keyType} given!");
         }
 
         if (array_key_exists($key, $array)) {
