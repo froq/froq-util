@@ -47,8 +47,9 @@ function to_iter_array($arg)
         $return = (array) $arg;
     } elseif ($arg instanceof \Traversable) {
         $return = iterator_to_array($arg);
-    } elseif (is_object($arg) && method_exists($arg, 'toArray')) {
-        $return = $arg->toArray();
+    } elseif (is_object($arg)) {
+        $return = method_exists($arg, 'toArray')
+            ? $arg->toArray() : get_object_vars($arg);
     }
 
     return $return;
