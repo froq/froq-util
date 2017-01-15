@@ -29,5 +29,5 @@ namespace Froq\Util\Exceptions;
  * @object     Froq\Util\Exceptions\InvalidTypeException
  * @author     Kerem Güneş <k-gun@mail.com>
  */
-final class InvalidTypeException extends \TypeError
+class InvalidTypeException extends \TypeError
 {}
