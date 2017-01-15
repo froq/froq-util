@@ -29,7 +29,7 @@ namespace Froq\Util;
  * @object     Froq\Util\Iter
  * @author     Kerem Güneş <k-gun@mail.com>
  */
-final class Iter implements \Countable, \IteratorAggregate
+final class Iter implements Interfaces\Arrayable
 {
     /**
      * Data.
