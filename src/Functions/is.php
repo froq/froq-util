@@ -148,8 +148,7 @@ function is_uint($in, &$out = null): bool
     if (!is_numeric($in) || is_float($in) || !!strpbrk(strval($in), '-.')) {
         return false;
     }
-    $out = intval($in);
-    return $out >= 0;
+    return ($out = intval($in)) >= 0;
 }
 
 /**
@@ -163,8 +162,7 @@ function is_ufloat($in, &$out = null): bool
     if (!is_numeric($in) || is_int($in) || (strval($in)[0] == '-')) {
         return false;
     }
-    $out = floatval($in);
-    return $out >= 0.0;
+    return ($out = floatval($in)) >= 0.0;
 }
 
 /**
@@ -178,6 +176,5 @@ function is_unsigned($in, &$out = null): bool
     if (!is_numeric($in) || (strval($in)[0] == '-')) {
         return false;
     }
-    $out = abs($in);
-    return true;
+    return ($out = abs($in)) >= 0;
 }
