@@ -21,7 +21,7 @@
  */
 declare(strict_types=1);
 
-namespace Froq\Util;
+namespace Froq\Util\Exceptions;
 
 /**
  * @package    Froq
