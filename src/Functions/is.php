@@ -41,12 +41,12 @@ function is_local(): bool
 function is_in(array $array, $values): bool
 {
     foreach ((array) $values as $value) {
-        if (in_array($value, $array)) {
-            return true;
+        if (!in_array($value, $array)) {
+            return false;
         }
     }
 
-    return false;
+    return true;
 }
 
 /**
@@ -58,12 +58,12 @@ function is_in(array $array, $values): bool
 function is_in_key(array $array, $keys): bool
 {
     foreach ((array) $keys as $key) {
-        if (array_key_exists($key, $array)) {
-            return true;
+        if (!array_key_exists($key, $array)) {
+            return false;
         }
     }
 
-    return false;
+    return true;
 }
 
 /**
