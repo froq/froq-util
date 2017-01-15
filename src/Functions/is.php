@@ -73,9 +73,28 @@ function is_in_key(array $array, $keys): bool
  */
 function is_iter($arg): bool
 {
-    return is_array($arg)
-        || ($arg instanceof \stdClass)
-        || ($arg instanceof \Traversable);
+    return is_array($arg) || ($arg instanceof \stdClass) || ($arg instanceof \Traversable);
+}
+
+/**
+ * Set.
+ * @param  any        $arg
+ * @param  array|null $keys
+ * @return bool
+ */
+function is_set($arg, array $keys = null): bool
+{
+    $return = isset($arg);
+    if ($return && $keys && is_iter($arg)) {
+        $arg = to_iter_array($arg);
+        foreach ($keys as $key) {
+            if (!isset($arg[$key])) {
+                return false;
+            }
+        }
+    }
+
+    return $return;
 }
 
 /**
@@ -89,8 +108,9 @@ function is_empty(...$args): bool
         if (empty($arg)) {
             return true;
         }
-        if ($arg instanceof \stdClass && empty((array) $arg)) {
-            return true;
+        if (is_iter($arg)) {
+            $arg = to_iter_array($arg);
+            return empty($arg);
         }
     }
 
