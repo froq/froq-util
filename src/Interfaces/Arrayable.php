@@ -38,6 +38,18 @@ interface Arrayable extends \Countable, \IteratorAggregate
     public function empty(): bool;
 
     /**
+     * Keys.
+     * @return array
+     */
+    public function keys(): array;
+
+    /**
+     * Values.
+     * @return array
+     */
+    public function values(): array;
+
+    /**
      * To array.
      * @return array
      */
