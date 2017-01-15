@@ -1,10 +1,10 @@
 <?php
 /**
  * Copyright (c) 2016 Kerem Güneş
- *     <k-gun@mail.com>
+ *    <k-gun@mail.com>
  *
  * GNU General Public License v3.0
- *     <http://www.gnu.org/licenses/gpl-3.0.txt>
+ *    <http://www.gnu.org/licenses/gpl-3.0.txt>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,4 +30,6 @@ namespace Froq\Util;
  * @author     Kerem Güneş <k-gun@mail.com>
  */
 final class Object extends \stdClass
-{}
+{
+    // only for type-hint
+}
