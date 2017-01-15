@@ -77,8 +77,8 @@ function to_iter_object($arg)
  */
 function to_array($arg, bool $deep = true): array
 {
-    $arg = (array) $arg;
-    if ($deep) {
+    $arg = to_iter_array($arg);
+    if ($arg  && $deep) {
         foreach ($arg as $key => $value) {
             $arg[$key] = is_iter($value)
                 ? to_array($value, $deep) : $value;
@@ -96,8 +96,8 @@ function to_array($arg, bool $deep = true): array
  */
 function to_object($arg, bool $deep = true): \stdClass
 {
-    $arg = (object) $arg;
-    if ($deep) {
+    $arg = to_iter_object($arg);
+    if ($arg  && $deep) {
         foreach ($arg as $key => $value) {
             $arg->{$key} = is_iter($value)
                 ? to_object($value, $deep) : $value;
