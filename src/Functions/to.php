@@ -21,7 +21,47 @@
  */
 declare(strict_types=1);
 
+use Froq\Util\Iter;
+
 /*** "TO" function module. ***/
+
+/**
+ * Iter.
+ * @param  iterable $arg
+ * @return Froq\Util\Iter
+ */
+function to_iter($arg): Iter
+{
+    return new Iter(to_iter_array($arg));
+}
+
+/**
+ * Iter array.
+ * @return iterable $arg
+ * @return array
+ */
+function to_iter_array($arg): array
+{
+    if (is_array($arg) || $arg instanceof \stdClass) {
+        return to_array($arg, false);
+    }
+    if ($arg instanceof \Traversable) {
+        return iterator_to_array($arg);
+    }
+    if (is_object($arg) && method_exists($arg, 'toArray')) {
+        return $arg->toArray();
+    }
+}
+
+/**
+ * Iter object.
+ * @param  iterable $arg
+ * @return \stdClass
+ */
+function to_iter_object($arg): \stdClass
+{
+    return (object) to_iter_array($arg);
+}
 
 /**
  * Array.
