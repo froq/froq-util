@@ -25,7 +25,7 @@ namespace Froq\Util\Exceptions;
 
 /**
  * @package    Froq
- * @subpackage Froq\Util
+ * @subpackage Froq\Util\Exceptions
  * @object     Froq\Util\Exceptions\InvalidValueException
  * @author     Kerem Güneş <k-gun@mail.com>
  */

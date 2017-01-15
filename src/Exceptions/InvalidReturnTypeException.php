@@ -26,8 +26,8 @@ namespace Froq\Util\Exceptions;
 /**
  * @package    Froq
  * @subpackage Froq\Util\Exceptions
- * @object     Froq\Util\Exceptions\InvalidKeyException
+ * @object     Froq\Util\Exceptions\InvalidReturnTypeException
  * @author     Kerem Güneş <k-gun@mail.com>
  */
-final class InvalidKeyException extends \InvalidArgumentException
+final class InvalidReturnTypeException extends InvalidTypeException
 {}
