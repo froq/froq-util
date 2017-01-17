@@ -142,15 +142,15 @@ final class Collection
     /**
      * Search.
      * @param  array      $array
-     * @param  int|string $search
+     * @param  int|string $value
      * @return ?int
      */
-    final public static function search(array $array, $search)
+    final public static function search(array $array, $value)
     {
         $i = 0;
-        $search = strval($search);
-        foreach ($array as $value) {
-            if ($search === strval($value)) {
+        $value = strval($value);
+        foreach ($array as $_value) {
+            if ($value === strval($_value)) {
                 return $i;
             }
             $i++;
@@ -161,17 +161,17 @@ final class Collection
     /**
      * Search.
      * @param  array      $array
-     * @param  int|string $searchKey
+     * @param  int|string $key
      * @return ?int
      */
-    final public static function searchKey(array $array, $searchKey)
+    final public static function searchKey(array $array, $key)
     {
-        self::checkKeyType($searchKey);
+        self::checkKeyType($key);
 
         $i = 0;
-        $searchKey = strval($searchKey);
-        foreach (array_map('strval', array_keys($array)) as $key) {
-            if ($searchKey === strval($key)) {
+        $key = strval($key);
+        foreach (array_map('strval', array_keys($array)) as $_key) {
+            if ($key === strval($_key)) {
                 return $i;
             }
             $i++;
