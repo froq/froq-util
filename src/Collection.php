@@ -221,7 +221,9 @@ final class Collection
      */
     final public static function first(array $array)
     {
-        return current($array);
+        if (!empty($array)) {
+            return current($array);
+        }
     }
 
     /**
@@ -231,7 +233,9 @@ final class Collection
      */
     final public static function last(array $array)
     {
-        return end($array);
+        if (!empty($array)) {
+            return end($array);
+        }
     }
 
     /**
