@@ -77,6 +77,56 @@ final class Type
     // http://dev.mysql.com/doc/refman/5.7/en/integer-types.html
     // http://stackoverflow.com/questions/3724242/what-is-the-difference-between-int-and-uint-long-and-ulong
 
+    /**
+     * Is UInt.
+     * @param  any       $in
+     * @param  int|null &$out
+     * @param  bool      $strict
+     * @return bool
+     */
+    final public static function isUint($in, &$out = null, bool $strict = false): bool
+    {
+        if ($strict && is_float($in)) {
+            return false;
+        }
+        if (!is_numeric($in) || !!strpbrk(strval($in), '-.')) {
+            return false;
+        }
+        return ($out = intval($in)) >= 0;
+    }
+
+    /**
+     * Is UFloat.
+     * @param  any         $in
+     * @param  float|null &$out
+     * @param  bool        $strict
+     * @return bool
+     */
+    final public static function isUfloat($in, &$out = null, bool $strict = false): bool
+    {
+        if ($strict && is_int($in)) {
+            return false;
+        }
+        if (!is_numeric($in) || (strval($in)[0] == '-')) {
+            return false;
+        }
+        return ($out = floatval($in)) >= 0.0;
+    }
+
+    /**
+     * Is Unsigned.
+     * @param  any             $in
+     * @param  int|float|null &$out
+     * @return bool
+     */
+    final public static function isUnsigned($in, &$out = null): bool
+    {
+        if (!is_numeric($in) || (strval($in)[0] == '-')) {
+            return false;
+        }
+        return ($out = abs($in)) >= 0;
+    }
+
     // @wait
 
     // final public static function isSigned($in): bool {}
