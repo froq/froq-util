@@ -140,44 +140,22 @@ final class Collection
     }
 
     /**
-     * Search.
-     * @param  array      $array
-     * @param  int|string $value
-     * @return int|null
+     * Index.
+     * @param  array $array
+     * @param  any   $value
+     * @return int
      */
-    final public static function search(array $array, $value)
+    final public static function index(array $array, $value): int
     {
-        $i = 0;
+        $i = -1;
         $value = strval($value);
         foreach ($array as $_value) {
-            if ($value === strval($_value)) {
+            $i++;
+            if (strval($_value) === $value) {
                 return $i;
             }
-            $i++;
         }
-        return null;
-    }
-
-    /**
-     * Search.
-     * @param  array      $array
-     * @param  int|string $key
-     * @return int|null
-     */
-    final public static function searchKey(array $array, $key)
-    {
-        self::checkKeyType($key);
-
-        $i = 0;
-        $key = strval($key);
-        $keys = array_map('strval', array_keys($array));
-        foreach ($keys as $_key) {
-            if ($key === strval($_key)) {
-                return $i;
-            }
-            $i++;
-        }
-        return null;
+        return -1;
     }
 
     /**
