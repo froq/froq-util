@@ -143,7 +143,7 @@ final class Collection
      * Search.
      * @param  array      $array
      * @param  int|string $value
-     * @return ?int
+     * @return int|null
      */
     final public static function search(array $array, $value)
     {
@@ -162,7 +162,7 @@ final class Collection
      * Search.
      * @param  array      $array
      * @param  int|string $key
-     * @return ?int
+     * @return int|null
      */
     final public static function searchKey(array $array, $key)
     {
@@ -170,7 +170,8 @@ final class Collection
 
         $i = 0;
         $key = strval($key);
-        foreach (array_map('strval', array_keys($array)) as $_key) {
+        $keys = array_map('strval', array_keys($array));
+        foreach ($keys as $_key) {
             if ($key === strval($_key)) {
                 return $i;
             }
