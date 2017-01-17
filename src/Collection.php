@@ -43,10 +43,7 @@ final class Collection
      */
     final public static function dig(array $array, $key, $valueDefault = null)
     {
-        $keyType = gettype($key);
-        if ($keyType != 'integer' && $keyType != 'string') {
-            throw new InvalidArgumentTypeException("Key type must be int or string, {$keyType} given!");
-        }
+        self::checkKeyType($key);
 
         // direct access
         if (array_key_exists($key, $array)) {
@@ -72,10 +69,7 @@ final class Collection
      */
     final public static function pick(array &$array, $key, $value = null)
     {
-        $keyType = gettype($key);
-        if ($keyType != 'integer' && $keyType != 'string') {
-            throw new InvalidArgumentTypeException("Key type must be int or string, {$keyType} given!");
-        }
+        self::checkKeyType($key);
 
         if (array_key_exists($key, $array)) {
             $value = $array[$key];
@@ -146,6 +140,46 @@ final class Collection
     }
 
     /**
+     * Search.
+     * @param  array      $array
+     * @param  int|string $search
+     * @return ?int
+     */
+    final public static function search(array $array, $search)
+    {
+        $i = 0;
+        $search = strval($search);
+        foreach ($array as $value) {
+            if ($search === strval($value)) {
+                return $i;
+            }
+            $i++;
+        }
+        return null;
+    }
+
+    /**
+     * Search.
+     * @param  array      $array
+     * @param  int|string $searchKey
+     * @return ?int
+     */
+    final public static function searchKey(array $array, $searchKey)
+    {
+        self::checkKeyType($searchKey);
+
+        $i = 0;
+        $searchKey = strval($searchKey);
+        foreach (array_map('strval', array_keys($array)) as $key) {
+            if ($searchKey === strval($key)) {
+                return $i;
+            }
+            $i++;
+        }
+        return null;
+    }
+
+    /**
      * Include.
      * @param  array $array
      * @param  array $keysInclude
@@ -198,5 +232,19 @@ final class Collection
     final public static function last(array $array)
     {
         return end($array);
+    }
+
+    /**
+     * Check key type.
+     * @param  int|string $key
+     * @return void
+     * @throws Froq\Util\Exceptions\InvalidArgumentTypeException
+     */
+    final private static function checkKeyType($key)
+    {
+        $keyType = gettype($key);
+        if ($keyType != 'integer' && $keyType != 'string') {
+            throw new InvalidArgumentTypeException("Key type must be int or string, {$keyType} given!");
+        }
     }
 }
