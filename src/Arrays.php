@@ -88,7 +88,16 @@ final class Arrays
      */
     final static function map(array $array, callable $callback): array
     {
-        return filter_var($array, \FILTER_CALLBACK, ['options' => $callback]);
+        // strlen etc.
+        if (is_string($callback)) {
+            return array_map($callback, $array);
+        }
+
+        foreach ($array as $key => $value) {
+            $array[$key] = $callback($key, $value);
+        }
+
+        return $array;
     }
 
     /**
