@@ -142,20 +142,29 @@ final class Collection
     /**
      * Index.
      * @param  array $array
-     * @param  any   $value
-     * @return int
+     * @param  any   $search
+     * @return int|string|null
      */
-    final public static function index(array $array, $value): int
+    final public static function index(array $array, $search)
     {
-        $i = -1;
-        $value = strval($value);
-        foreach ($array as $_value) {
-            $i++;
-            if (strval($_value) === $value) {
-                return $i;
+        $search = strval($search);
+        foreach ($array as $key => $value) {
+            if (strval($value) === $search) {
+                return $key;
             }
         }
-        return -1;
+        return null;
+    }
+
+    /**
+     * Index.
+     * @param  array $array
+     * @param  any   $search
+     * @return int|string|null
+     */
+    final public static function indexLast(array $array, $search)
+    {
+        return self::index(array_reverse($array), $search);
     }
 
     /**
