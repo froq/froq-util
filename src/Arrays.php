@@ -28,10 +28,10 @@ use Froq\Util\Exceptions\InvalidArgumentTypeException;
 /**
  * @package    Froq
  * @subpackage Froq\Util
- * @object     Froq\Util\Collection
+ * @object     Froq\Util\Arrays
  * @author     Kerem Güneş <k-gun@mail.com>
  */
-final class Collection
+final class Arrays
 {
     /**
      * Dig (with dot notation support for sub-array paths).
