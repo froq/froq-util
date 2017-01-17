@@ -27,32 +27,32 @@ declare(strict_types=1);
  * Just for fun.
  * @const null
  */
-if (!defined('nil')) {
-    define('nil', null, true);
+if (!defined('NIL')) {
+    define('NIL', null, true);
 }
 
 /**
  * More readable empty strings.
  * @const string
  */
-if (!defined('none')) {
-    define('none', '', true);
+if (!defined('NONE')) {
+    define('NONE', '', true);
 }
 
 /**
  * Used to detect local env.
  * @const bool
  */
-if (!defined('local')) {
-    define('local', (isset($_SERVER['SERVER_NAME'])
+if (!defined('LOCAL')) {
+    define('LOCAL', (isset($_SERVER['SERVER_NAME'])
         && !!preg_match('~\.local$~i', $_SERVER['SERVER_NAME'])), true);
 }
 
 // include all files
 $files = glob(__dir__ .'/*.php');
 foreach ($files as $file) {
-    if ($file <> __file__) {
-        include($file);
+    if ($file != __file__) {
+        include_once $file;
     }
 }
 unset($files, $file);
