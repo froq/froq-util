@@ -87,20 +87,96 @@ final class Collection
     }
 
     /**
-     * Exclude.
-     * @param  array $array
-     * @param  array $keysExclude
+     * Map.
+     * @param  array    $array
+     * @param  callable $callback
      * @return array
      */
-    final public static function exclude(array $array, array $keysExclude): array
+    final static function map(array $array, callable $callback): array
     {
-        $return = [];
+        return filter_var($array, \FILTER_CALLBACK, ['options' => $callback]);
+    }
+
+    /**
+     * Map key.
+     * @param  array    $array
+     * @param  callable $callback
+     * @return array
+     */
+    final static function mapKey(array $array, callable $callback): array
+    {
+        return array_combine(self::map(array_keys($array), $callback), array_values($array));
+    }
+
+    /**
+     * Filter.
+     * @param  array     $array
+     * @param  ?callable $callback
+     * @return array
+     */
+    final public static function filter(array $array, callable $callback = null)
+    {
+        if (!$callback) return array_filter($array);
+
+        // strlen etc.
+        if (is_string($callback)) {
+            return array_filter($array, $callback);
+        }
+
         foreach ($array as $key => $value) {
-            if (!in_array($key, $keysExclude)) {
-                $return[$key] = $value;
+            if (!$callback($key, $value)) {
+                unset($array[$key]);
             }
         }
 
+        return $array;
+    }
+
+    /**
+     * Filter key.
+     * @param  array    $array
+     * @param  ?callable $callback
+     * @return array
+     */
+    final public static function filterKey(array $array, callable $callback = null): array
+    {
+        return self::filter($array, function($key) use($callback) {
+            return $callback($key, null);
+        });
+    }
+
+    /**
+     * Include.
+     * @param  array $array
+     * @param  array $keysInclude
+     * @return array
+     */
+    final public static function include(array $array, array $keys): array
+    {
+        $return = [];
+        foreach ($keys as $key) {
+            if (array_key_exists($key, $array)) {
+                $return[$key] = $array[$key];
+            }
+        }
+        return $return;
+    }
+
+    /**
+     * Exclude.
+     * @param  array $array
+     * @param  array $keys
+     * @return array
+     */
+    final public static function exclude(array $array, array $keys): array
+    {
+        $keys = array_map('strval', $keys);
+        $return = [];
+        foreach ($array as $key => $value) {
+            if (!in_array(strval($key), $keys)) {
+                $return[$key] = $value;
+            }
+        }
         return $return;
     }
 
