@@ -34,8 +34,8 @@ function is_local(): bool
 
 /**
  * Array key.
- * @param  array        $array
- * @param  string|array $keys
+ * @param  array $array
+ * @param  any   $keys
  * @return bool
  */
 function is_array_key(array $array, $keys): bool
@@ -45,15 +45,14 @@ function is_array_key(array $array, $keys): bool
             return false;
         }
     }
-
     return true;
 }
 
 /**
  * Array value.
- * @param  array        $array
- * @param  string|array $values
- * @param  bool $strict
+ * @param  array $array
+ * @param  any   $values
+ * @param  bool  $strict
  * @return bool
  */
 function is_array_value(array $array, $values, bool $strict = false): bool
@@ -63,7 +62,6 @@ function is_array_value(array $array, $values, bool $strict = false): bool
             return false;
         }
     }
-
     return true;
 }
 
