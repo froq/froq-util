@@ -45,13 +45,15 @@ final class Arrays
     {
         self::checkKeyType($key);
 
-        // direct access
         if (array_key_exists($key, $array)) {
-            $value =& $array[$key];
+            $value =& $array[$key]; // direct access
         } else {
-            // path access
-            $value =& $array;
+            $value =& $array;       // path access
             foreach (explode('.', trim((string) $key)) as $key) {
+                if (!is_array($value)) {
+                    $value = null;
+                    break;
+                }
                 $value =& $value[$key];
             }
         }
@@ -60,24 +62,58 @@ final class Arrays
     }
 
     /**
+     * Dig all (shortcut like: list() = Arrays::digAll()).
+     * @param  array  $array
+     * @param  array  $keys (aka paths)
+     * @param  any    $valueDefault
+     * @return array
+     * @throws Froq\Util\Exceptions\InvalidArgumentTypeException
+     */
+    final public static function digAll(array $array, array $keys, $valueDefault = null): array
+    {
+        $return = [];
+        foreach ($keys as $key) {
+            $return[] = self::dig($array, $keys, $valueDefault);
+        }
+        return $return;
+    }
+
+    /**
      * Pick.
      * @param  array      $array
      * @param  int|string $key
-     * @param  any        $value
+     * @param  any        $valueDefault
      * @return any
      * @throws Froq\Util\Exceptions\InvalidArgumentTypeException
      */
-    final public static function pick(array &$array, $key, $value = null)
+    final public static function pick(array &$array, $key, $valueDefault = null)
     {
         self::checkKeyType($key);
 
+        $value = $valueDefault;
         if (array_key_exists($key, $array)) {
             $value = $array[$key];
-            // remove element
-            unset($array[$key]);
+            unset($array[$key]); // remove element
         }
 
         return $value;
+    }
+
+    /**
+     * Pick all.
+     * @param  array  &$array
+     * @param  array  $keys
+     * @param  any    $valueDefault
+     * @return array
+     * @throws Froq\Util\Exceptions\InvalidArgumentTypeException
+     */
+    final public static function pickAll(array &$array, array $keys, $valueDefault = null): array
+    {
+        $return = [];
+        foreach ($keys as $key) {
+            $return[] = self::pick($array, $keys, $valueDefault);
+        }
+        return $return;
     }
 
     /**
