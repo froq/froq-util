@@ -32,12 +32,6 @@ namespace Froq\Util\Interfaces;
 interface Arrayable extends \Countable, \IteratorAggregate
 {
     /**
-     * Empty.
-     * @return bool
-     */
-    public function empty(): bool;
-
-    /**
      * Keys.
      * @return array
      */
@@ -48,6 +42,12 @@ interface Arrayable extends \Countable, \IteratorAggregate
      * @return array
      */
     public function values(): array;
+
+    /**
+     * Is empty.
+     * @return bool
+     */
+    public function isEmpty(): bool;
 
     /**
      * To array.
