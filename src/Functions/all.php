@@ -35,8 +35,8 @@ if (!defined('NIL')) {
  * More readable empty strings.
  * @const string
  */
-if (!defined('NONE')) {
-    define('NONE', '', true);
+if (!defined('NILS')) {
+    define('NILS', '', true);
 }
 
 /**

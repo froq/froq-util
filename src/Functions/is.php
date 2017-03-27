@@ -127,11 +127,11 @@ function is_nil($arg): bool
 }
 
 /**
- * None.
+ * Nils.
  * @param  any $arg
  * @return bool
  */
-function is_none($arg): bool
+function is_nils($arg): bool
 {
-    return ($arg === none);
+    return ($arg === nils);
 }
