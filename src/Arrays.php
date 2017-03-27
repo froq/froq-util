@@ -73,7 +73,7 @@ final class Arrays
     {
         $return = [];
         foreach ($keys as $key) {
-            $return[] = self::dig($array, $keys, $valueDefault);
+            $return[] = self::dig($array, $key, $valueDefault);
         }
         return $return;
     }
