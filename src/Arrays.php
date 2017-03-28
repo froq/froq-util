@@ -73,6 +73,9 @@ final class Arrays
     {
         $return = [];
         foreach ($keys as $key) {
+            if (is_array($key)) { // default value given as array
+                list($key, $valueDefault) = $key;
+            }
             $return[] = self::dig($array, $key, $valueDefault);
         }
         return $return;
