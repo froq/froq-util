@@ -117,6 +117,7 @@ function to_object($arg, bool $deep = true): \stdClass
 function to_snake_from_dash(string $arg = null, bool $lower = true): string
 {
     $arg = str_replace('-', '_', (string) $arg);
+
     if ($lower) {
         $arg = strtolower($arg);
     }
@@ -132,10 +133,29 @@ function to_snake_from_dash(string $arg = null, bool $lower = true): string
  */
 function to_dash_from_upper(string $arg = null, bool $lower = true): string
 {
-    $arg = (string) preg_replace_callback('~([A-Z])~', function($match){
+    $arg = (string) preg_replace_callback('~(?!^)([A-Z])~', function($match) {
         return '-'. $match[0];
     }, $arg);
-    $arg = trim($arg, '-');
+
+    if ($lower) {
+        $arg = strtolower($arg);
+    }
+
+    return $arg;
+}
+
+/**
+ * Snake from upper (fooBar | FooBar -> foo_bar)
+ * @param  string $arg
+ * @param  bool   $lower
+ * @return string
+ */
+function to_snake_from_upper(string $arg = null, bool $lower = true): string
+{
+    $arg = (string) preg_replace_callback('~(?!^)([A-Z])~', function($match) {
+        return '_'. $match[1];
+    }, $arg);
+
     if ($lower) {
         $arg = strtolower($arg);
     }
