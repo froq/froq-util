@@ -69,9 +69,18 @@ final class Iter implements Interfaces\Arrayable
 
     /**
      * Empty.
+     * @return void
+     */
+    final public function empty()
+    {
+        $this->data = [];
+    }
+
+    /**
+     * Is empty.
      * @return bool
      */
-    final public function empty(): bool
+    final public function isEmpty(): bool
     {
         return empty($this->data);
     }
