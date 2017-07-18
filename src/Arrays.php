@@ -46,7 +46,7 @@ final class Arrays
         self::checkKeyType($key);
 
         if (array_key_exists($key, $array)) {
-            $value =& $array[$key]; // direct access
+            $value = $array[$key]; // direct access
         } else {
             $value =& $array;       // path access
             foreach (explode('.', trim((string) $key)) as $key) {
