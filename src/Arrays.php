@@ -117,7 +117,7 @@ final class Arrays
             if (is_array($key)) { // default value given as array
                 list($key, $valueDefault) = $key;
             }
-            $return[] = self::pick($array, $keys, $valueDefault);
+            $return[] = self::pick($array, $key, $valueDefault);
         }
         return $return;
     }
