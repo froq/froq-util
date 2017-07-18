@@ -260,6 +260,7 @@ final class Arrays
      */
     final public static function first(array $array)
     {
+        reset($array);
         if (!empty($array)) {
             return current($array);
         }
@@ -272,6 +273,7 @@ final class Arrays
      */
     final public static function last(array $array)
     {
+        reset($array);
         if (!empty($array)) {
             return end($array);
         }
