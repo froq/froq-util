@@ -194,28 +194,35 @@ final class Arrays
      * Index.
      * @param  array $array
      * @param  any   $valueSearch
+     * @param  bool  $strict
      * @return int|string|null
      */
-    final public static function index(array $array, $valueSearch)
+    final public static function index(array $array, $valueSearch, bool $strict = false)
     {
-        $valueSearch = strval($valueSearch);
-        foreach ($array as $key => $value) {
-            if (strval($value) === $valueSearch) {
-                return $key;
-            }
-        }
-        return null;
+        return ($index = array_search($valueSearch, $array, $strict)) !== false ? $index : null;
     }
 
     /**
      * Index.
      * @param  array $array
      * @param  any   $valueSearch
+     * @param  bool  $strict
      * @return int|string|null
      */
-    final public static function indexLast(array $array, $valueSearch)
+    final public static function indexLast(array $array, $valueSearch, bool $strict = false)
     {
-        return self::index(array_reverse($array), $valueSearch);
+        foreach ($array as $key => $value) {
+            if (is_string($key)) {
+                if (!$strict ? $value == $valueSearch : $value === $valueSearch) {
+                    return $key;
+                }
+            } else {
+                if (!$strict ? $value == $valueSearch : $value === $valueSearch) {
+                    $index = $key;
+                }
+            }
+        }
+        return $index ?? null;
     }
 
     /**
