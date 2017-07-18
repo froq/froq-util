@@ -193,14 +193,14 @@ final class Arrays
     /**
      * Index.
      * @param  array $array
-     * @param  any   $search
+     * @param  any   $valueSearch
      * @return int|string|null
      */
-    final public static function index(array $array, $search)
+    final public static function index(array $array, $valueSearch)
     {
-        $search = strval($search);
+        $valueSearch = strval($valueSearch);
         foreach ($array as $key => $value) {
-            if (strval($value) === $search) {
+            if (strval($value) === $valueSearch) {
                 return $key;
             }
         }
@@ -210,12 +210,12 @@ final class Arrays
     /**
      * Index.
      * @param  array $array
-     * @param  any   $search
+     * @param  any   $valueSearch
      * @return int|string|null
      */
-    final public static function indexLast(array $array, $search)
+    final public static function indexLast(array $array, $valueSearch)
     {
-        return self::index(array_reverse($array), $search);
+        return self::index(array_reverse($array), $valueSearch);
     }
 
     /**
