@@ -23,8 +23,6 @@ declare(strict_types=1);
 
 namespace Froq\Util;
 
-use Froq\Util\Exceptions\InvalidArgumentTypeException;
-
 /**
  * @package    Froq
  * @subpackage Froq\Util
@@ -39,7 +37,7 @@ final class Arrays
      * @param  int|string $key (aka path)
      * @param  any        $valueDefault
      * @return any
-     * @throws Froq\Util\Exceptions\InvalidArgumentTypeException
+     * @throws \InvalidArgumentException
      */
     public static function dig(array $array, $key, $valueDefault = null)
     {
@@ -67,18 +65,19 @@ final class Arrays
      * @param  array  $keys (aka paths)
      * @param  any    $valueDefault
      * @return array
-     * @throws Froq\Util\Exceptions\InvalidArgumentTypeException
+     * @throws \InvalidArgumentException
      */
     public static function digAll(array $array, array $keys, $valueDefault = null): array
     {
-        $return = [];
+        $values = [];
         foreach ($keys as $key) {
             if (is_array($key)) { // default value given as array
                 list($key, $valueDefault) = $key;
             }
-            $return[] = self::dig($array, $key, $valueDefault);
+            $values[] = self::dig($array, $key, $valueDefault);
         }
-        return $return;
+
+        return $values;
     }
 
     /**
@@ -87,7 +86,7 @@ final class Arrays
      * @param  int|string $key
      * @param  any        $valueDefault
      * @return any
-     * @throws Froq\Util\Exceptions\InvalidArgumentTypeException
+     * @throws \InvalidArgumentException
      */
     public static function pick(array &$array, $key, $valueDefault = null)
     {
@@ -96,7 +95,7 @@ final class Arrays
         $value = $valueDefault;
         if (array_key_exists($key, $array)) {
             $value = $array[$key];
-            unset($array[$key]); // remove element
+            unset($array[$key]); // remove picked element
         }
 
         return $value;
@@ -108,18 +107,19 @@ final class Arrays
      * @param  array  $keys
      * @param  any    $valueDefault
      * @return array
-     * @throws Froq\Util\Exceptions\InvalidArgumentTypeException
+     * @throws \InvalidArgumentException
      */
     public static function pickAll(array &$array, array $keys, $valueDefault = null): array
     {
-        $return = [];
+        $values = [];
         foreach ($keys as $key) {
             if (is_array($key)) { // default value given as array
                 list($key, $valueDefault) = $key;
             }
-            $return[] = self::pick($array, $key, $valueDefault);
+            $values[] = self::pick($array, $key, $valueDefault);
         }
-        return $return;
+
+        return $values;
     }
 
     /**
@@ -199,7 +199,7 @@ final class Arrays
      */
     public static function index(array $array, $valueSearch, bool $strict = false)
     {
-        return ($index = array_search($valueSearch, $array, $strict)) !== false ? $index : null;
+        return false !== ($index = array_search($valueSearch, $array, $strict)) ? $index : null;
     }
 
     /**
@@ -222,6 +222,7 @@ final class Arrays
                 }
             }
         }
+
         return $index ?? null;
     }
 
@@ -239,6 +240,7 @@ final class Arrays
                 $return[$key] = $array[$key];
             }
         }
+
         return $return;
     }
 
@@ -257,6 +259,7 @@ final class Arrays
                 $return[$key] = $value;
             }
         }
+
         return $return;
     }
 
@@ -290,13 +293,13 @@ final class Arrays
      * Check key type.
      * @param  int|string $key
      * @return void
-     * @throws Froq\Util\Exceptions\InvalidArgumentTypeException
+     * @throws \InvalidArgumentException
      */
     private static function checkKeyType($key)
     {
         $keyType = gettype($key);
         if ($keyType != 'integer' && $keyType != 'string') {
-            throw new InvalidArgumentTypeException("Key type must be int or string, {$keyType} given!");
+            throw new \InvalidArgumentException("Key type must be int or string, {$keyType} given!");
         }
     }
 }
