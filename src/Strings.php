@@ -23,8 +23,6 @@ declare(strict_types=1);
 
 namespace Froq\Util;
 
-use Froq\Util\Exceptions\InvalidArgumentTypeException;
-
 /**
  * @package    Froq
  * @subpackage Froq\Util
