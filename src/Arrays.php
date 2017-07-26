@@ -41,7 +41,7 @@ final class Arrays
      * @return any
      * @throws Froq\Util\Exceptions\InvalidArgumentTypeException
      */
-    final public static function dig(array $array, $key, $valueDefault = null)
+    public static function dig(array $array, $key, $valueDefault = null)
     {
         self::checkKeyType($key);
 
@@ -69,7 +69,7 @@ final class Arrays
      * @return array
      * @throws Froq\Util\Exceptions\InvalidArgumentTypeException
      */
-    final public static function digAll(array $array, array $keys, $valueDefault = null): array
+    public static function digAll(array $array, array $keys, $valueDefault = null): array
     {
         $return = [];
         foreach ($keys as $key) {
@@ -89,7 +89,7 @@ final class Arrays
      * @return any
      * @throws Froq\Util\Exceptions\InvalidArgumentTypeException
      */
-    final public static function pick(array &$array, $key, $valueDefault = null)
+    public static function pick(array &$array, $key, $valueDefault = null)
     {
         self::checkKeyType($key);
 
@@ -110,7 +110,7 @@ final class Arrays
      * @return array
      * @throws Froq\Util\Exceptions\InvalidArgumentTypeException
      */
-    final public static function pickAll(array &$array, array $keys, $valueDefault = null): array
+    public static function pickAll(array &$array, array $keys, $valueDefault = null): array
     {
         $return = [];
         foreach ($keys as $key) {
@@ -128,7 +128,7 @@ final class Arrays
      * @param  callable $callback
      * @return array
      */
-    final static function map(array $array, callable $callback): array
+    public static function map(array $array, callable $callback): array
     {
         // strlen etc.
         if (is_string($callback)) {
@@ -148,7 +148,7 @@ final class Arrays
      * @param  callable $callback
      * @return array
      */
-    final static function mapKey(array $array, callable $callback): array
+    public static function mapKey(array $array, callable $callback): array
     {
         return array_combine(self::map(array_keys($array), $callback), array_values($array));
     }
@@ -159,7 +159,7 @@ final class Arrays
      * @param  ?callable $callback
      * @return array
      */
-    final public static function filter(array $array, callable $callback = null)
+    public static function filter(array $array, callable $callback = null)
     {
         if (!$callback) return array_filter($array);
 
@@ -183,7 +183,7 @@ final class Arrays
      * @param  ?callable $callback
      * @return array
      */
-    final public static function filterKey(array $array, callable $callback = null): array
+    public static function filterKey(array $array, callable $callback = null): array
     {
         return self::filter($array, function($key) use($callback) {
             return $callback($key, null);
@@ -197,7 +197,7 @@ final class Arrays
      * @param  bool  $strict
      * @return int|string|null
      */
-    final public static function index(array $array, $valueSearch, bool $strict = false)
+    public static function index(array $array, $valueSearch, bool $strict = false)
     {
         return ($index = array_search($valueSearch, $array, $strict)) !== false ? $index : null;
     }
@@ -209,7 +209,7 @@ final class Arrays
      * @param  bool  $strict
      * @return int|string|null
      */
-    final public static function indexLast(array $array, $valueSearch, bool $strict = false)
+    public static function indexLast(array $array, $valueSearch, bool $strict = false)
     {
         foreach ($array as $key => $value) {
             if (is_string($key)) {
@@ -231,7 +231,7 @@ final class Arrays
      * @param  array $keysInclude
      * @return array
      */
-    final public static function include(array $array, array $keys): array
+    public static function include(array $array, array $keys): array
     {
         $return = [];
         foreach ($keys as $key) {
@@ -248,7 +248,7 @@ final class Arrays
      * @param  array $keys
      * @return array
      */
-    final public static function exclude(array $array, array $keys): array
+    public static function exclude(array $array, array $keys): array
     {
         $keys = array_map('strval', $keys);
         $return = [];
@@ -265,7 +265,7 @@ final class Arrays
      * @param  array $array
      * @return any
      */
-    final public static function first(array $array)
+    public static function first(array $array)
     {
         if (!empty($array)) {
             reset($array);
@@ -278,7 +278,7 @@ final class Arrays
      * @param  array $array
      * @return any
      */
-    final public static function last(array $array)
+    public static function last(array $array)
     {
         if (!empty($array)) {
             reset($array);
@@ -292,7 +292,7 @@ final class Arrays
      * @return void
      * @throws Froq\Util\Exceptions\InvalidArgumentTypeException
      */
-    final private static function checkKeyType($key)
+    private static function checkKeyType($key)
     {
         $keyType = gettype($key);
         if ($keyType != 'integer' && $keyType != 'string') {

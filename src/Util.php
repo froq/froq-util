@@ -32,7 +32,7 @@ namespace Froq\Util;
 final class Util
 {
     // @wait
-    final public static function setEnv(string $key, $value) {}
+    // public static function setEnv(string $key, $value) {}
 
     /**
      * Get env.
@@ -40,23 +40,27 @@ final class Util
      * @param  any    $valueDefault
      * @return any
      */
-    final public static function getEnv(string $key, $valueDefault = null) {
+    public static function getEnv(string $key, $valueDefault = null)
+    {
+        $value = $valueDefault;
         if (isset($_SERVER[$key])) {
-            $valueDefault = $_SERVER[$key];
+            $value = $_SERVER[$key];
         } elseif (isset($_ENV[$key])) {
-            $valueDefault = $_ENV[$key];
-        } elseif (false !== ($value = getenv($key))) {
-            $valueDefault = $value;
+            $value = $_ENV[$key];
+        } elseif (false === ($value = getenv($key))) {
+            $value = $valueDefault;
+        } elseif (function_exists('apache_getenv') && false === ($value = apache_getenv($key))) {
+            $value = $valueDefault;
         }
 
-        return $valueDefault;
+        return $value;
     }
 
     /**
-     * Get client IP.
-     * @return string|null
+     * Get client ip.
+     * @return ?string
      */
-    final public static function getClientIp()
+    public static function getClientIp(): ?string
     {
         $ip = null;
         if (null != ($ip = self::getEnv('HTTP_X_FORWARDED_FOR'))) {
@@ -74,13 +78,12 @@ final class Util
     }
 
     /**
-     * Get current URL.
+     * Get current url.
      * @param  bool $withQuery
      * @return string
      */
-    final public static function getCurrentUrl(bool $withQuery = true): string
+    public static function getCurrentUrl(bool $withQuery = true): string
     {
-        // filter function
         static $filter;
         if ($filter == null) {
             $filter = function($input) {
@@ -90,12 +93,9 @@ final class Util
             };
         }
 
-        $url = 'http'. (($_SERVER['SERVER_PORT'] == '443') ? 's' : '')
-            .'://'. $_SERVER['SERVER_NAME'];
-
-        // add path
+        $url = $_SERVER['REQUEST_SCHEME'] .'://'. $_SERVER['SERVER_NAME'];
         $url .= $filter(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
-        // add query
+
         if ($withQuery && $_SERVER['QUERY_STRING'] != '') {
             $url .= '?'. $filter($_SERVER['QUERY_STRING']);
         }

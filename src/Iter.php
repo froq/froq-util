@@ -42,9 +42,9 @@ final class Iter implements Interfaces\Arrayable
      * @param iter $data
      * @param bool $convert
      */
-    final public function __construct($data = null, bool $convert = true)
+    public function __construct($data = null, bool $convert = true)
     {
-        if (!is_empty($data)) {
+        if ($data != null) {
             $this->data = to_iter_array($data);
         }
     }
@@ -53,7 +53,7 @@ final class Iter implements Interfaces\Arrayable
      * To array.
      * @return array
      */
-    final public function toArray(): array
+    public function toArray(): array
     {
         return $this->data;
     }
@@ -62,7 +62,7 @@ final class Iter implements Interfaces\Arrayable
      * To object.
      * @return \stdClass
      */
-    final public function toObject(): \stdClass
+    public function toObject(): \stdClass
     {
         return (object) $this->data;
     }
@@ -71,7 +71,7 @@ final class Iter implements Interfaces\Arrayable
      * Empty.
      * @return void
      */
-    final public function empty()
+    public function empty(): void
     {
         $this->data = [];
     }
@@ -80,7 +80,7 @@ final class Iter implements Interfaces\Arrayable
      * Is empty.
      * @return bool
      */
-    final public function isEmpty(): bool
+    public function isEmpty(): bool
     {
         return empty($this->data);
     }
@@ -89,7 +89,7 @@ final class Iter implements Interfaces\Arrayable
      * Keys.
      * @return array
      */
-    final public function keys(): array
+    public function keys(): array
     {
         return array_keys($this->data);
     }
@@ -98,7 +98,7 @@ final class Iter implements Interfaces\Arrayable
      * Values.
      * @return array
      */
-    final public function values(): array
+    public function values(): array
     {
         return array_values($this->data);
     }
@@ -107,7 +107,7 @@ final class Iter implements Interfaces\Arrayable
      * Count.
      * @return int
      */
-    final public function count(): int
+    public function count(): int
     {
         return count($this->data);
     }
@@ -116,7 +116,7 @@ final class Iter implements Interfaces\Arrayable
      * Get iterator.
      * @return \ArrayIterator
      */
-    final public function getIterator(): \ArrayIterator
+    public function getIterator(): \ArrayIterator
     {
         return new \ArrayIterator($this->data);
     }

@@ -30,6 +30,4 @@ namespace Froq\Util;
  * @author     Kerem Güneş <k-gun@mail.com>
  */
 final class Object extends \stdClass
-{
-    // only for type-hint
-}
+{}

@@ -35,14 +35,15 @@ final class Number
      * Compare.
      * @param  number $a
      * @param  number $b
-     * @return int|false
+     * @return ?int
      */
-    final public static function compare($a, $b, int $precision = 0)
+    public static function compare($a, $b, int $precision = 0): ?int
     {
         if (function_exists('bccomp') && is_numeric($a) && is_numeric($b)) {
             return bccomp((string) $a, (string) $b, $precision);
         }
-        return false;
+
+        return null;
     }
 
     /**
@@ -52,7 +53,7 @@ final class Number
      * @param  int    $precision
      * @return bool
      */
-    final public static function isEqual($a, $b, int $precision = 2): bool
+    public static function isEqual($a, $b, int $precision = 2): bool
     {
         return (0 === self::compare($a, $b, $precision));
     }
