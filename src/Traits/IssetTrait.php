@@ -28,17 +28,17 @@ namespace Froq\Util\Traits;
  * @subpackage Froq\Util\Traits
  * @object     Froq\Util\Traits\IssetTrait
  * @author     Kerem Güneş <k-gun@mail.com>
- *
- * Notice: Do not define '__set' in sub-objects.
  */
 trait IssetTrait
 {
+    // Notice: Do not define '__isset' in use'r object.
+
     /**
      * Isset magic.
      * @param  string $name
      * @return bool
      */
-    public function __isset(string $name): bool
+    public final function __isset(string $name): bool
     {
         return property_exists($this, $name);
     }

@@ -28,12 +28,12 @@ namespace Froq\Util\Traits;
  * @subpackage Froq\Util\Traits
  * @object     Froq\Util\Traits\SingleTrait
  * @author     Kerem Güneş <k-gun@mail.com>
- *
- * Notice: Do not define `__construct` or `__clone`
- * methods as public if you want a single user object.
  */
 trait SingleTrait
 {
+    // Notice: Do not define '__construct' or '__clone'
+    // methods as public if you want a single use'r object.
+
     /**
      * Instances.
      * @var array
@@ -43,26 +43,25 @@ trait SingleTrait
     /**
      * Forbids.
      */
-    private function __clone() {}
-    private function __construct() {}
+    private final function __clone() {}
+    private final function __construct() {}
 
     /**
      * Init.
-     * @param  ... $args
+     * @param  ... $arguments
      * @return object
      */
-    final public static function init(...$args)
+    public static final function init(...$arguments)
     {
         $className = get_called_class();
         if (!isset(self::$__instances[$className])) {
             // init without constructor
-            $classObject = (new \ReflectionClass($className))
-                ->newInstanceWithoutConstructor();
+            $classInstance = (new \ReflectionClass($className))->newInstanceWithoutConstructor();
 
-            // call constructor with initial args
-            call_user_func_array([$classObject, '__construct'], $args);
+            // call constructor with initial arguments
+            call_user_func_array([$classInstance, '__construct'], $arguments);
 
-            self::$__instances[$className] = $classObject;
+            self::$__instances[$className] = $classInstance;
         }
 
         return self::$__instances[$className];

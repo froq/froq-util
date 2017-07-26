@@ -28,11 +28,11 @@ namespace Froq\Util\Traits;
  * @subpackage Froq\Util\Traits
  * @object     Froq\Util\Traits\SetterTrait
  * @author     Kerem Güneş <k-gun@mail.com>
- *
- * Notice: Do not define '__set' in sub-objects.
  */
 trait SetterTrait
 {
+    // Notice: Do not define '__set' in use'r object.
+
     /**
      * Set magic.
      * @param  string $name
@@ -40,13 +40,11 @@ trait SetterTrait
      * @return void
      * @throws \Exception
      */
-    public function __set(string $name, $value)
+    public final function __set(string $name, $value)
     {
         if (!property_exists($this, $name)) {
-            throw new \Exception(sprintf(
-                "'%s' property does not exists on '%s' object!",
-                    $name, get_class($this)
-            ));
+            throw new \Exception(sprintf("'%s' property does not exists on '%s' object!",
+                $name, get_class($this)));
         }
 
         $this->{$name} = $value;
