@@ -43,8 +43,8 @@ trait SingleTrait
     /**
      * Forbids.
      */
-    private final function __clone() {}
-    private final function __construct() {}
+    private function __clone() {}
+    private function __construct() {}
 
     /**
      * Init.
