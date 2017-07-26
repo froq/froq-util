@@ -23,6 +23,8 @@ declare(strict_types=1);
 
 namespace Froq\Util;
 
+use \stdClass as object;
+
 /**
  * @package    Froq
  * @subpackage Froq\Util
@@ -44,45 +46,20 @@ final class Iter implements Interfaces\Arrayable
      */
     public function __construct($data = null, bool $convert = true)
     {
-        if ($data != null) {
-            $this->data = to_iter_array($data);
+        if (!is_iter($data)) {
+            throw new UtilException('Given data is not iterable!');
         }
-    }
 
-    /**
-     * To array.
-     * @return array
-     */
-    public function toArray(): array
-    {
-        return $this->data;
-    }
+        if (is_array($arg) || $arg instanceof object) {
+            $data = (array) $arg;
+        } elseif ($arg instanceof \Traversable) {
+            $data = iterator_to_array($arg);
+        } elseif (is_object($arg)) {
+            $data = method_exists($arg, 'toArray')
+                ? $arg->toArray() : get_object_vars($arg);
+        }
 
-    /**
-     * To object.
-     * @return \stdClass
-     */
-    public function toObject(): \stdClass
-    {
-        return (object) $this->data;
-    }
-
-    /**
-     * Empty.
-     * @return void
-     */
-    public function empty(): void
-    {
-        $this->data = [];
-    }
-
-    /**
-     * Is empty.
-     * @return bool
-     */
-    public function isEmpty(): bool
-    {
-        return empty($this->data);
+        $this->data = $data;
     }
 
     /**
@@ -104,6 +81,15 @@ final class Iter implements Interfaces\Arrayable
     }
 
     /**
+     * Empty.
+     * @return void
+     */
+    public function empty(): void
+    {
+        $this->data = [];
+    }
+
+    /**
      * Count.
      * @return int
      */
@@ -113,11 +99,38 @@ final class Iter implements Interfaces\Arrayable
     }
 
     /**
+     * To array.
+     * @return array
+     */
+    public function toArray(): array
+    {
+        return $this->data;
+    }
+
+    /**
+     * To object.
+     * @return object
+     */
+    public function toObject(): object
+    {
+        return (object) $this->data;
+    }
+
+    /**
      * Get iterator.
      * @return \ArrayIterator
      */
     public function getIterator(): \ArrayIterator
     {
         return new \ArrayIterator($this->data);
+    }
+
+    /**
+     * Is empty.
+     * @return bool
+     */
+    public function isEmpty(): bool
+    {
+        return empty($this->data);
     }
 }

@@ -22,6 +22,7 @@
 declare(strict_types=1);
 
 use Froq\Util\Iter;
+use \stdClass as object;
 
 /**
  * Iter.
@@ -30,54 +31,19 @@ use Froq\Util\Iter;
  */
 function to_iter($arg): Iter
 {
-    return new Iter(to_iter_array($arg));
-}
-
-/**
- * Iter array.
- * @return iter $arg
- * @return ?array
- */
-function to_iter_array($arg)
-{
-    $return = null;
-    if (is_array($arg) || $arg instanceof \stdClass) {
-        $return = (array) $arg;
-    } elseif ($arg instanceof \Traversable) {
-        $return = iterator_to_array($arg);
-    } elseif (is_object($arg)) {
-        $return = method_exists($arg, 'toArray')
-            ? $arg->toArray() : get_object_vars($arg);
-    }
-
-    return $return;
-}
-
-/**
- * Iter object.
- * @param  iter $arg
- * @return ?\stdClass
- */
-function to_iter_object($arg)
-{
-    $return = to_iter_array($arg);
-    if ($return) {
-        $return = (object) $return;
-    }
-
-    return $return;
+    return new Iter($arg);
 }
 
 /**
  * Array.
- * @param  iter $arg
- * @param  bool $deep
+ * @param  array|object $arg
+ * @param  bool         $deep
  * @return array
  */
 function to_array($arg, bool $deep = true): array
 {
-    $arg = to_iter_array($arg);
-    if ($arg  && $deep) {
+    $arg = (array) $arg;
+    if ($arg && $deep) {
         foreach ($arg as $key => $value) {
             $arg[$key] = is_iter($value)
                 ? to_array($value, $deep) : $value;
@@ -89,13 +55,13 @@ function to_array($arg, bool $deep = true): array
 
 /**
  * Object.
- * @param  iter $arg
- * @param  bool $deep
- * @return \stdClass
+ * @param  array|object $arg
+ * @param  bool         $deep
+ * @return object
  */
-function to_object($arg, bool $deep = true): \stdClass
+function to_object($arg, bool $deep = true): object
 {
-    $arg = to_iter_object($arg);
+    $arg = (object) $arg;
     if ($arg  && $deep) {
         foreach ($arg as $key => $value) {
             $arg->{$key} = is_iter($value)

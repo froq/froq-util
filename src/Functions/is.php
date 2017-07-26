@@ -21,6 +21,8 @@
  */
 declare(strict_types=1);
 
+use \stdClass as object;
+
 /**
  * Local.
  * @return bool
@@ -43,6 +45,7 @@ function is_array_key(array $array, $keys): bool
             return false;
         }
     }
+
     return true;
 }
 
@@ -60,6 +63,7 @@ function is_array_value(array $array, $values, bool $strict = false): bool
             return false;
         }
     }
+
     return true;
 }
 
@@ -70,7 +74,7 @@ function is_array_value(array $array, $values, bool $strict = false): bool
  */
 function is_iter($arg): bool
 {
-    return is_iterable($arg) || $arg instanceof \stdClass;
+    return is_iterable($arg) || $arg instanceof object;
 }
 
 /**
@@ -82,11 +86,14 @@ function is_iter($arg): bool
 function is_set($arg, array $keys = null): bool
 {
     $return = isset($arg);
-    if ($return && $keys && is_iter($arg)) {
-        $arg = to_iter_array($arg);
-        foreach ($keys as $key) {
-            if (!isset($arg[$key])) {
-                return false;
+    if ($return && !empty($keys)) {
+        if (is_array($arg)) {
+            foreach ($keys as $key) {
+                if (!isset($arg[$key])) return false;
+            }
+        } elseif ($arg instanceof object) {
+            foreach ($keys as $key) {
+                if (!isset($arg->{$key})) return false;
             }
         }
     }
@@ -106,8 +113,8 @@ function is_empty(...$args): bool
             return true;
         }
         if (is_iter($arg)) {
-            $arg = to_iter_array($arg);
-            return empty($arg);
+            $arg = (array) $arg;
+            if (empty($arg)) return true;
         }
     }
 
