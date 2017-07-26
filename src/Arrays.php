@@ -161,7 +161,9 @@ final class Arrays
      */
     public static function filter(array $array, callable $callback = null)
     {
-        if (!$callback) return array_filter($array);
+        if ($callback == null) {
+            return array_filter($array);
+        }
 
         // strlen etc.
         if (is_string($callback)) {
