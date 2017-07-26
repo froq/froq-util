@@ -25,7 +25,7 @@ namespace Froq\Util\Traits;
 
 /**
  * @package    Froq
- * @subpackage Froq\Util\Traits
+ * @subpackage Froq\Util
  * @object     Froq\Util\Traits\SingleTrait
  * @author     Kerem Güneş <k-gun@mail.com>
  */

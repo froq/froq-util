@@ -25,7 +25,7 @@ namespace Froq\Util\Interfaces;
 
 /**
  * @package    Froq
- * @subpackage Froq\Util\Interfaces
+ * @subpackage Froq\Util
  * @object     Froq\Util\Interfaces\Arrayable
  * @author     Kerem Güneş <k-gun@mail.com>
  */
