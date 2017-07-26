@@ -60,7 +60,7 @@ final class Arrays
     }
 
     /**
-     * Dig all (shortcut like: list() = Arrays::digAll()).
+     * Dig all (shortcut like: list(..) = Arrays::digAll(..)).
      * @param  array  $array
      * @param  array  $keys (aka paths)
      * @param  any    $valueDefault
@@ -72,7 +72,7 @@ final class Arrays
         $values = [];
         foreach ($keys as $key) {
             if (is_array($key)) { // default value given as array
-                list($key, $valueDefault) = $key;
+                [$key, $valueDefault] = $key;
             }
             $values[] = self::dig($array, $key, $valueDefault);
         }
@@ -114,7 +114,7 @@ final class Arrays
         $values = [];
         foreach ($keys as $key) {
             if (is_array($key)) { // default value given as array
-                list($key, $valueDefault) = $key;
+                [$key, $valueDefault] = $key;
             }
             $values[] = self::pick($array, $key, $valueDefault);
         }

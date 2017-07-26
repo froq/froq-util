@@ -134,13 +134,14 @@ function html_options($input, $current = null, $extra = null, array $pairs = nul
                 break;
             case 'year':
             case 'years':
+                $y = (int) date('Y');
                 if (is_array($extra)) {
-                    @list($start, $stop) = $extra;
-                    if (!$stop)    $stop  = date('Y') + 1;
+                    @ [$start, $stop] = $extra;
+                    if (!$stop) $stop = $y + 1;
                     $extra = '';
                 } else {
-                    $start = date('Y');
-                    $stop  = date('Y') + 1;
+                    $start = $y;
+                    $stop = $y + 1;
                 }
                 $input = [];
                 for ($i = $start; $i <= $stop; $i++) {
@@ -170,7 +171,7 @@ function html_options($input, $current = null, $extra = null, array $pairs = nul
         }
     } elseif (is_array($input) && !empty($pairs)) {
         // only two dimentions like "id => 1, name => foo"
-        list($key, $value) = $pairs;
+        [$key, $value] = $pairs;
         $tmp = [];
         foreach ($input as $input) {
             $input = (array) $input;
