@@ -70,7 +70,7 @@ function is_array_value(array $array, $values, bool $strict = false): bool
  */
 function is_iter($arg): bool
 {
-    return is_array($arg) || ($arg instanceof \stdClass) || ($arg instanceof \Traversable);
+    return is_iterable($arg) || $arg instanceof \stdClass;
 }
 
 /**
