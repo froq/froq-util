@@ -107,94 +107,17 @@ function html_remove($input = null, bool $decode = false)
 
 /**
  * Options.
- * @param  any    $input
- * @param  any    $current
- * @param  any    $extra
- * @param  array  $pairs
+ * @param  iterable $input
+ * @param  any      $keySearch
+ * @param  string   $extra
  * @return string
  */
-function html_options($input, $current = null, $extra = null, array $pairs = null): string
+function html_options(iterable $input, $keySearch = null, string $extra = ''): string
 {
-    // shorcuts for date-time stuff
-    if (is_string($input)) {
-        switch ($input) {
-            case 'day':
-            case 'days':
-                $input = [];
-                for ($i = 1; $i <= 31; $i++) {
-                    $input[$i] = $i;
-                }
-                break;
-            case 'month':
-            case 'months':
-                $input = [];
-                for ($i = 1; $i <= 12; $i++) {
-                    $input[$i] = strftime('%B', strtotime('December +'. $i .' months'));
-                }
-                break;
-            case 'year':
-            case 'years':
-                $y = (int) date('Y');
-                if (is_array($extra)) {
-                    @ [$start, $stop] = $extra;
-                    if (!$stop) $stop = $y + 1;
-                    $extra = '';
-                } else {
-                    $start = $y;
-                    $stop = $y + 1;
-                }
-                $input = [];
-                for ($i = $start; $i <= $stop; $i++) {
-                    $input[$i] = $i;
-                }
-                break;
-            case 'hour':
-            case 'hours':
-                $input = [];
-                for ($i = 0; $i < 24; $i++) {
-                    if ($extra === true) {
-                        $value = sprintf('%02d:00', $i);
-                    } else {
-                        $value = sprintf('%02d', $i);
-                    }
-                    $input[$value] = $value;
-                }
-                break;
-            case 'minute':
-            case 'minutes':
-                $input = [];
-                for ($i = 0; $i < 60; $i++) {
-                    $value = sprintf('%02d', $i);
-                    $input[$value] = $value;
-                }
-                break;
-        }
-    } elseif (is_array($input) && !empty($pairs)) {
-        // only two dimentions like "id => 1, name => foo"
-        [$key, $value] = $pairs;
-        $tmp = [];
-        foreach ($input as $input) {
-            $input = (array) $input;
-            $tmp[$input[$key]] = $input[$value];
-        }
-        $input = $tmp;
-    }
-
-    // check input
-    if (!is_array($input)) {
-        trigger_error('Cannot iterate input.');
-    }
-
-    if (is_string($extra) && $extra != '') {
-        $extra = ' '. trim($extra);
-    } else {
-        $extra = '';
-    }
-
     $return = '';
     foreach ($input as $key => $value) {
-        $return .= sprintf('<option value="%s"%s%s>%s</option>',
-            $key, html_selected($key, $current), $extra, $value);
+        $return .= sprintf('<option value="%s"%s%s>%s</option>', $key,
+            html_selected($key, $keySearch), $extra, $value);
     }
 
     return $return;
@@ -210,9 +133,7 @@ function html_options($input, $current = null, $extra = null, array $pairs = nul
 function html_checked($a, $b, bool $strict = false): string
 {
     if ($a !== null) {
-        return !$strict
-            ? ($a == $b ? ' checked' : '')
-            : ($a === $b ? ' checked' : '');
+        return !$strict ? ($a == $b ? ' checked' : '') : ($a === $b ? ' checked' : '');
     }
 
     return '';
@@ -228,9 +149,7 @@ function html_checked($a, $b, bool $strict = false): string
 function html_disabled($a, $b, bool $strict = false): string
 {
     if ($a !== null) {
-        return !$strict
-            ? ($a == $b ? ' disabled' : '')
-            : ($a === $b ? ' disabled' : '');
+        return !$strict ? ($a == $b ? ' disabled' : '') : ($a === $b ? ' disabled' : '');
     }
 
     return '';
@@ -246,9 +165,7 @@ function html_disabled($a, $b, bool $strict = false): string
 function html_selected($a, $b, bool $strict = false): string
 {
     if ($a !== null) {
-        return !$strict
-            ? ($a == $b ? ' selected' : '')
-            : ($a === $b ? ' selected' : '');
+        return !$strict ? ($a == $b ? ' selected' : '') : ($a === $b ? ' selected' : '');
     }
 
     return '';
@@ -259,10 +176,10 @@ function html_selected($a, $b, bool $strict = false): string
  * @param  string $input
  * @return string
  */
-function html_compress(string $input = null): string
+function html_compress(?string $input): string
 {
-    if ($input === null) {
-        return '';
+    if (empty($input)) {
+        return $input;
     }
 
     // scripts
