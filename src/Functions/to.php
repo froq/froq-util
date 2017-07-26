@@ -23,8 +23,6 @@ declare(strict_types=1);
 
 use Froq\Util\Iter;
 
-/*** "TO" function module. ***/
-
 /**
  * Iter.
  * @param  iter $arg

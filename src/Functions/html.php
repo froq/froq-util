@@ -21,8 +21,6 @@
  */
 declare(strict_types=1);
 
-/*** HTML function module. ***/
-
 /**
  * Encode.
  * @param  string|array $input

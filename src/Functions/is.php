@@ -21,8 +21,6 @@
  */
 declare(strict_types=1);
 
-/*** "IS" function module. ***/
-
 /**
  * Local.
  * @return bool

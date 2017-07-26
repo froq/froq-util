@@ -21,8 +21,6 @@
  */
 declare(strict_types=1);
 
-/*** All function module. ***/
-
 /**
  * Just for fun.
  * @const null
