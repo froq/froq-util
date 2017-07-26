@@ -56,7 +56,7 @@ final class Arrays
             }
         }
 
-        return ($value !== null) ? $value : $valueDefault;
+        return $value ?? $valueDefault;
     }
 
     /**
