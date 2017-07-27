@@ -23,6 +23,8 @@ declare(strict_types=1);
 
 namespace Froq\Util\Interfaces;
 
+use stdClass as object;
+
 /**
  * @package    Froq
  * @subpackage Froq\Util
@@ -44,14 +46,20 @@ interface Arrayable extends \Countable, \IteratorAggregate
     public function values(): array;
 
     /**
-     * Is empty.
-     * @return bool
-     */
-    public function isEmpty(): bool;
-
-    /**
      * To array.
      * @return array
      */
     public function toArray(): array;
+
+    /**
+     * To object.
+     * @return array
+     */
+    public function toObject(): object;
+
+    /**
+     * Is empty.
+     * @return bool
+     */
+    public function isEmpty(): bool;
 }
