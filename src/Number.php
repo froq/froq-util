@@ -37,10 +37,18 @@ final /* static */ class Number
      * @param  number $b
      * @return ?int
      */
-    public static function compare($a, $b, int $precision = 0): ?int
+    public static function compare($a, $b, int $precision = 2): ?int
     {
-        if (function_exists('bccomp') && is_numeric($a) && is_numeric($b)) {
-            return bccomp((string) $a, (string) $b, $precision);
+        if (is_numeric($a) && is_numeric($b)) {
+            if (function_exists('bccomp')) {
+                return bccomp(strval($a), strval($b), $precision);
+            } elseif (function_exists('gmp_cmp')) {
+                return gmp_cmp(round($a, $precision), round($b, $precision));
+            } else {
+                $a = round($a, $precision);
+                $b = round($b, $precision);
+                return $a === $b ? 0 : ($a > $b ? 1 : -1);
+            }
         }
 
         return null;
