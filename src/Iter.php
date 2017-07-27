@@ -41,22 +41,20 @@ final class Iter implements Interfaces\Arrayable
 
     /**
      * Constructor.
-     * @param iter $data
-     * @param bool $convert
+     * @param iter|null $data
      */
-    public function __construct($data = null, bool $convert = true)
+    public function __construct($data = null)
     {
         if (!is_iter($data)) {
             throw new UtilException('Given data is not iterable!');
         }
 
-        if (is_array($arg) || $arg instanceof object) {
-            $data = (array) $arg;
-        } elseif ($arg instanceof \Traversable) {
-            $data = iterator_to_array($arg);
-        } elseif (is_object($arg)) {
-            $data = method_exists($arg, 'toArray')
-                ? $arg->toArray() : get_object_vars($arg);
+        if (is_array($data) || $data instanceof object) {
+            $data = (array) $data;
+        } elseif ($data instanceof \Traversable) {
+            $data = iterator_to_array($data);
+        } elseif (is_object($data)) {
+            $data = method_exists($data, 'toArray') ? $data->toArray() : get_object_vars($data);
         }
 
         $this->data = $data;
@@ -81,12 +79,21 @@ final class Iter implements Interfaces\Arrayable
     }
 
     /**
-     * Empty.
-     * @return void
+     * To array.
+     * @return array
      */
-    public function empty(): void
+    public function toArray(): array
     {
-        $this->data = [];
+        return $this->data;
+    }
+
+    /**
+     * Is empty.
+     * @return bool
+     */
+    public function isEmpty(): bool
+    {
+        return empty($this->data);
     }
 
     /**
@@ -99,24 +106,6 @@ final class Iter implements Interfaces\Arrayable
     }
 
     /**
-     * To array.
-     * @return array
-     */
-    public function toArray(): array
-    {
-        return $this->data;
-    }
-
-    /**
-     * To object.
-     * @return object
-     */
-    public function toObject(): object
-    {
-        return (object) $this->data;
-    }
-
-    /**
      * Get iterator.
      * @return \ArrayIterator
      */
@@ -126,11 +115,11 @@ final class Iter implements Interfaces\Arrayable
     }
 
     /**
-     * Is empty.
-     * @return bool
+     * Empty.
+     * @return void
      */
-    public function isEmpty(): bool
+    public function empty(): void
     {
-        return empty($this->data);
+        $this->data = [];
     }
 }
