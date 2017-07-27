@@ -35,6 +35,7 @@ final /* static */ class Number
      * Compare.
      * @param  number $a
      * @param  number $b
+     * @param  int    $precision
      * @return ?int
      */
     public static function compare($a, $b, int $precision = 2): ?int
