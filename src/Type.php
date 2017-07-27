@@ -34,9 +34,9 @@ final class Type
     /**
      * To int.
      * @param  number $a
-     * @return int|null
+     * @return ?int
      */
-    public static function toInt($a)
+    public static function toInt($a): ?int
     {
         return is_numeric($a) ? intval($a) : null;
     }
@@ -44,9 +44,9 @@ final class Type
     /**
      * To float.
      * @param  number $a
-     * @return float|null
+     * @return ?float
      */
-    public static function toFloat($a)
+    public static function toFloat($a): ?float
     {
         return is_numeric($a) ? floatval($a) : null;
     }
@@ -54,9 +54,9 @@ final class Type
     /**
      * To bool.
      * @param  any $a
-     * @return bool|null
+     * @return ?bool
      */
-    public static function toBool($a)
+    public static function toBool($a): ?bool
     {
         $a = strval($a);
         if ($a === '1' || $a === '0') {
