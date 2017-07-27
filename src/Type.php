@@ -29,7 +29,7 @@ namespace Froq\Util;
  * @object     Froq\Util\Type
  * @author     Kerem Güneş <k-gun@mail.com>
  */
-final class Type
+final /* static */ class Type
 {
     /**
      * To int.

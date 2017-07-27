@@ -29,7 +29,7 @@ namespace Froq\Util;
  * @object     Froq\Util\Math
  * @author     Kerem Güneş <k-gun@mail.com>
  */
-final class Math
+final /* static */ class Math
 {
     // @wait
 }

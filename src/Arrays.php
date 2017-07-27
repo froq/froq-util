@@ -29,7 +29,7 @@ namespace Froq\Util;
  * @object     Froq\Util\Arrays
  * @author     Kerem Güneş <k-gun@mail.com>
  */
-final class Arrays
+final /* static */ class Arrays
 {
     /**
      * Dig (with dot notation support for sub-array paths).

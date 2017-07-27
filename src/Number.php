@@ -29,7 +29,7 @@ namespace Froq\Util;
  * @object     Froq\Util\Number
  * @author     Kerem Güneş <k-gun@mail.com>
  */
-final class Number
+final /* static */ class Number
 {
     /**
      * Compare.

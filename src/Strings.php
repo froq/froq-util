@@ -29,7 +29,7 @@ namespace Froq\Util;
  * @object     Froq\Util\Strings
  * @author     Kerem Güneş <k-gun@mail.com>
  */
-final class Strings
+final /* static */ class Strings
 {
     // @wait
 }
