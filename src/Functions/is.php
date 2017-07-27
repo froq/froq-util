@@ -33,6 +33,24 @@ function is_local(): bool
 }
 
 /**
+ * Is cli.
+ * @return bool
+ */
+function is_cli(): bool
+{
+    return PHP_SAPI === 'cli';
+}
+
+/**
+ * Is cli server
+ * @return bool
+ */
+function is_cli_server(): bool
+{
+    return PHP_SAPI === 'cli-server';
+}
+
+/**
  * Array key.
  * @param  array $array
  * @param  any   $keys
