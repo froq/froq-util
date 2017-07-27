@@ -52,12 +52,6 @@ interface Arrayable extends \Countable, \IteratorAggregate
     public function toArray(): array;
 
     /**
-     * To object.
-     * @return array
-     */
-    public function toObject(): object;
-
-    /**
      * Is empty.
      * @return bool
      */
