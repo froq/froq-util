@@ -297,7 +297,7 @@ final class Arrays
      * @return void
      * @throws \InvalidArgumentException
      */
-    private static function checkKeyType($key)
+    private static function checkKeyType($key): void
     {
         $keyType = gettype($key);
         if ($keyType != 'integer' && $keyType != 'string') {
