@@ -29,7 +29,7 @@ namespace Froq\Util;
  * @object     Froq\Util\Util
  * @author     Kerem Güneş <k-gun@mail.com>
  */
-final class Util
+abstract /* static */ class Util
 {
     // @wait
     // public static function setEnv(string $key, $value) {}
