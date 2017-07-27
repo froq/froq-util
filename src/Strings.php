@@ -31,5 +31,25 @@ namespace Froq\Util;
  */
 final /* static */ class Strings
 {
-    // @wait
+    /**
+     * Starts with.
+     * @param  string $source
+     * @param  string $search
+     * @return bool
+     */
+    public static function startsWith(string $source, string $search): bool
+    {
+        return ($search === substr($source, 0, strlen($search)));
+    }
+
+    /**
+     * Ends with.
+     * @param  string $source
+     * @param  string $search
+     * @return bool
+     */
+    public static function endsWith(string $source, string $search): bool
+    {
+        return ($search === substr($source, -strlen($search)));
+    }
 }
