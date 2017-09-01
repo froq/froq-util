@@ -130,7 +130,7 @@ function is_empty(...$args): bool
         if (empty($arg)) {
             return true;
         }
-        if (is_iter($arg)) {
+        if (is_array($arg) || $arg instanceof object) {
             $arg = (array) $arg;
             if (empty($arg)) return true;
         }
