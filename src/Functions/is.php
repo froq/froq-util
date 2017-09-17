@@ -24,7 +24,7 @@ declare(strict_types=1);
 use \stdClass as object;
 
 /**
- * Local.
+ * Is local.
  * @return bool
  */
 function is_local(): bool
@@ -38,20 +38,20 @@ function is_local(): bool
  */
 function is_cli(): bool
 {
-    return PHP_SAPI === 'cli';
+    return (PHP_SAPI === 'cli');
 }
 
 /**
- * Is cli server
+ * Is cli server.
  * @return bool
  */
 function is_cli_server(): bool
 {
-    return PHP_SAPI === 'cli-server';
+    return (PHP_SAPI === 'cli-server');
 }
 
 /**
- * Array key.
+ * Is array key.
  * @param  array $array
  * @param  any   $keys
  * @return bool
@@ -68,7 +68,7 @@ function is_array_key(array $array, $keys): bool
 }
 
 /**
- * Array value.
+ * Is array value.
  * @param  array $array
  * @param  any   $values
  * @param  bool  $strict
@@ -86,32 +86,47 @@ function is_array_value(array $array, $values, bool $strict = false): bool
 }
 
 /**
- * Iter.
- * @param  any $arg
+ * Is array assoc.
+ * @param  array|any $input
  * @return bool
  */
-function is_iter($arg): bool
+function is_array_assoc($input): bool
 {
-    return is_iterable($arg) || $arg instanceof object;
+    if (is_array($input)) {
+        foreach ($input as $key => $_) {
+            if (is_string($key)) return true;
+        }
+    }
+    return false;
 }
 
 /**
- * Set.
- * @param  any        $arg
+ * Is iter.
+ * @param  any $input
+ * @return bool
+ */
+function is_iter($input): bool
+{
+    return is_iterable($input) || $input instanceof object;
+}
+
+/**
+ * Is set.
+ * @param  any        $input
  * @param  array|null $keys
  * @return bool
  */
-function is_set($arg, array $keys = null): bool
+function is_set($input, array $keys = null): bool
 {
-    $return = isset($arg);
+    $return = isset($input);
     if ($return && !empty($keys)) {
-        if (is_array($arg)) {
+        if (is_array($input)) {
             foreach ($keys as $key) {
-                if (!isset($arg[$key])) return false;
+                if (!isset($input[$key])) return false;
             }
-        } elseif ($arg instanceof object) {
+        } elseif ($input instanceof object) {
             foreach ($keys as $key) {
-                if (!isset($arg->{$key})) return false;
+                if (!isset($input->{$key})) return false;
             }
         }
     }
@@ -120,19 +135,19 @@ function is_set($arg, array $keys = null): bool
 }
 
 /**
- * Empty.
- * @param  ... $args
+ * Is empty.
+ * @param  ... $inputs
  * @return bool
  */
-function is_empty(...$args): bool
+function is_empty(...$inputs): bool
 {
-    foreach ($args as $arg) {
-        if (empty($arg)) {
+    foreach ($inputs as $input) {
+        if (empty($input)) {
             return true;
         }
-        if (is_array($arg) || $arg instanceof object) {
-            $arg = (array) $arg;
-            if (empty($arg)) return true;
+        if (is_array($input) || $input instanceof object) {
+            $input = (array) $input;
+            if (empty($input)) return true;
         }
     }
 
@@ -140,21 +155,21 @@ function is_empty(...$args): bool
 }
 
 /**
- * Nil.
- * @param  any $arg
+ * Is nil.
+ * @param  any $input
  * @return bool
  */
-function is_nil($arg): bool
+function is_nil($input): bool
 {
-    return ($arg === nil);
+    return ($input === nil);
 }
 
 /**
- * Nils.
- * @param  any $arg
+ * Is nils.
+ * @param  any $input
  * @return bool
  */
-function is_nils($arg): bool
+function is_nils($input): bool
 {
-    return ($arg === nils);
+    return ($input === nils);
 }
