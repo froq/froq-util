@@ -22,127 +22,127 @@
 declare(strict_types=1);
 
 use Froq\Util\Iter;
-use \stdClass as object;
+use stdClass as object;
 
 /**
- * Iter.
- * @param  iter $arg
+ * To iter.
+ * @param  iter $input
  * @return Froq\Util\Iter
  */
-function to_iter($arg): Iter
+function to_iter($input): Iter
 {
-    return new Iter($arg);
+    return new Iter($input);
 }
 
 /**
- * Array.
- * @param  array|object $arg
+ * To array.
+ * @param  array|object $input
  * @param  bool         $deep
  * @return array
  */
-function to_array($arg, bool $deep = true): array
+function to_array($input, bool $deep = true): array
 {
-    $arg = (array) $arg;
-    if ($arg && $deep) {
-        foreach ($arg as $key => $value) {
-            $arg[$key] = is_iter($value)
+    $input = (array) $input;
+    if ($input && $deep) {
+        foreach ($input as $key => $value) {
+            $input[$key] = is_iter($value)
                 ? to_array($value, $deep) : $value;
         }
     }
 
-    return $arg;
+    return $input;
 }
 
 /**
- * Object.
- * @param  array|object $arg
+ * To object.
+ * @param  array|object $input
  * @param  bool         $deep
  * @return object
  */
-function to_object($arg, bool $deep = true): object
+function to_object($input, bool $deep = true): object
 {
-    $arg = (object) $arg;
-    if ($arg  && $deep) {
-        foreach ($arg as $key => $value) {
-            $arg->{$key} = is_iter($value)
+    $input = (object) $input;
+    if ($input && $deep) {
+        foreach ($input as $key => $value) {
+            $input->{$key} = is_iter($value) && is_array_assoc($value)
                 ? to_object($value, $deep) : $value;
         }
     }
 
-    return $arg;
+    return $input;
 }
 
 /**
- * Snake from dash (Foo-Bar -> Foo_Bar | foo_bar).
- * @param  string $arg
+ * To snake from dash (Foo-Bar -> Foo_Bar | foo_bar).
+ * @param  string $input
  * @param  bool   $lower
  * @return string
  */
-function to_snake_from_dash(string $arg = null, bool $lower = true): string
+function to_snake_from_dash(string $input = null, bool $lower = true): string
 {
-    $arg = str_replace('-', '_', (string) $arg);
+    $input = str_replace('-', '_', (string) $input);
 
     if ($lower) {
-        $arg = strtolower($arg);
+        $input = strtolower($input);
     }
 
-    return $arg;
+    return $input;
 }
 
 /**
- * Dash from upper (FooBar -> Foo-Bar | foo-bar).
- * @param  string $arg
+ * To dash from upper (FooBar -> Foo-Bar | foo-bar).
+ * @param  string $input
  * @param  bool   $lower
  * @return string
  */
-function to_dash_from_upper(string $arg = null, bool $lower = true): string
+function to_dash_from_upper(string $input = null, bool $lower = true): string
 {
-    $arg = (string) preg_replace_callback('~(?!^)([A-Z])~', function($match) {
+    $input = (string) preg_replace_callback('~(?!^)([A-Z])~', function($match) {
         return '-'. $match[0];
-    }, $arg);
+    }, $input);
 
     if ($lower) {
-        $arg = strtolower($arg);
+        $input = strtolower($input);
     }
 
-    return $arg;
+    return $input;
 }
 
 /**
- * Snake from upper (fooBar | FooBar -> foo_bar)
- * @param  string $arg
+ * To snake from upper (fooBar | FooBar -> foo_bar)
+ * @param  string $input
  * @param  bool   $lower
  * @return string
  */
-function to_snake_from_upper(string $arg = null, bool $lower = true): string
+function to_snake_from_upper(string $input = null, bool $lower = true): string
 {
-    $arg = (string) preg_replace_callback('~(?!^)([A-Z])~', function($match) {
+    $input = (string) preg_replace_callback('~(?!^)([A-Z])~', function($match) {
         return '_'. $match[1];
-    }, $arg);
+    }, $input);
 
     if ($lower) {
-        $arg = strtolower($arg);
+        $input = strtolower($input);
     }
 
-    return $arg;
+    return $input;
 }
 
 /**
- * Upper from dash (foo-bar | Foo-Bar -> FooBar)
- * @param  string $arg
+ * To upper from dash (foo-bar | Foo-Bar -> FooBar)
+ * @param  string $input
  * @return string
  */
-function to_upper_from_dash(string $arg = null): string
+function to_upper_from_dash(string $input = null): string
 {
-    $arg = (string) preg_replace_callback('~-([a-z])~i', function($match) {
+    $input = (string) preg_replace_callback('~-([a-z])~i', function($match) {
         return ucfirst($match[1]);
-    }, ucfirst((string) $arg));
+    }, ucfirst((string) $input));
 
-    return $arg;
+    return $input;
 }
 
 /**
- * Query string.
+ * To query string.
  * @param  array  $query
  * @param  string $keyIgnored
  * @return string
@@ -152,9 +152,7 @@ function to_query_string(array $query, string $keyIgnored = ''): string
     $keyIgnored = explode(',', $keyIgnored);
 
     foreach ($query as $key => $_) {
-        if (in_array($key, $keyIgnored)) {
-            unset($query[$key]);
-        }
+        if (in_array($key, $keyIgnored)) unset($query[$key]);
     }
 
     $query = http_build_query($query);
