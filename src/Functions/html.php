@@ -22,7 +22,7 @@
 declare(strict_types=1);
 
 /**
- * Encode.
+ * Html encode.
  * @param  string|array $input
  * @return string|array
  */
@@ -45,7 +45,7 @@ function html_encode($input)
 }
 
 /**
- * Decode.
+ * Html decode.
  * @param  string|array $input
  * @return string|array
  */
@@ -68,12 +68,13 @@ function html_decode($input)
 }
 
 /**
- * Strip.
+ * Html strip.
  * @param  string|array $input
+ * @param  string       $tags
  * @param  bool         $decode
  * @return string|array
  */
-function html_strip($input, bool $decode = false)
+function html_strip($input, string $tags = null, bool $decode = false)
 {
     if (is_array($input)) {
         return array_map('html_strip', $input);
@@ -83,16 +84,23 @@ function html_strip($input, bool $decode = false)
         $input = html_decode($input);
     }
 
-    return strip_tags((string) $input);
+    if ($tags != null) {
+        $tags = array_map(function ($tag) { return '<'. trim($tag, '<>') .'>'; },
+            preg_split('~\s*,\s*~', $tags, -1, PREG_SPLIT_NO_EMPTY));
+        $tags = join('', $tags);
+    }
+
+    return strip_tags((string) $input, (string) $tags);
 }
 
 /**
- * Remove.
+ * Html remove.
  * @param  string|array $input
+ * @param  string       $tags
  * @param  bool         $decode
  * @return string|array
  */
-function html_remove($input = null, bool $decode = false)
+function html_remove($input, string $tags = null, bool $decode = false)
 {
     if (is_array($input)) {
         return array_map('html_remove', $input);
@@ -102,18 +110,42 @@ function html_remove($input = null, bool $decode = false)
         $input = html_decode($input);
     }
 
-    return preg_replace('~<([^>]+)>(.*?)</([^>]+)>|<([^>]+)/?>~', '', $input);
+    if ($tags != null) {
+        $pattern = sprintf('~<(?:%1$s)([^>]*)>(.*?)</(?:%1$s)([^>]*)>|<(?:%1$s)([^>]*)/?>~i',
+            join('|', preg_split('~\s*,\s*~', $tags, -1, PREG_SPLIT_NO_EMPTY)));
+    } else {
+        $pattern = '~<([^>]+)>(.*?)</([^>]+)>|<([^>]+)/?>~';
+    }
+
+    return preg_replace($pattern, '', $input);
 }
 
 /**
- * Options.
- * @param  iterable $input
- * @param  any      $keySearch
- * @param  string   $extra
+ * Html attributes.
+ * @param  array $input
  * @return string
  */
-function html_options(iterable $input, $keySearch = null, string $extra = ''): string
+function html_attributes(array $input): string
 {
+    $return = [];
+    foreach ($input as $key => $value) {
+        $return[] = sprintf('%s="%s"', $key, $value);
+    }
+
+    return join(' ', $return);
+}
+
+/**
+ * Html options.
+ * @param  iterable     $input
+ * @param  any          $keySearch
+ * @param  string|array $extra
+ * @return string
+ */
+function html_options(iterable $input, $keySearch = null, $extra = null): string
+{
+    $extra = is_array($extra) ? html_attributes($extra) : $extra;
+
     $return = '';
     foreach ($input as $key => $value) {
         $return .= sprintf('<option value="%s"%s%s>%s</option>', $key,
@@ -124,7 +156,7 @@ function html_options(iterable $input, $keySearch = null, string $extra = ''): s
 }
 
 /**
- * Checked.
+ * Html checked.
  * @param  any  $a
  * @param  any  $b
  * @param  bool $strict
@@ -140,7 +172,7 @@ function html_checked($a, $b, bool $strict = false): string
 }
 
 /**
- * Disabled.
+ * Html disabled.
  * @param  any  $a
  * @param  any  $b
  * @param  bool $strict
@@ -156,7 +188,7 @@ function html_disabled($a, $b, bool $strict = false): string
 }
 
 /**
- * Selected.
+ * Html selected.
  * @param  any  $a
  * @param  any  $b
  * @param  bool $strict
@@ -172,7 +204,7 @@ function html_selected($a, $b, bool $strict = false): string
 }
 
 /**
- * Compress.
+ * Html compress.
  * @param  string $input
  * @return string
  */
