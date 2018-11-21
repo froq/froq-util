@@ -74,34 +74,15 @@ function to_object($input, bool $deep = true): object
 
 /**
  * To snake from dash (Foo-Bar -> Foo_Bar | foo_bar).
- * @param  string $input
- * @param  bool   $lower
+ * @param  ?string $input
+ * @param  bool    $doLower
  * @return string
  */
-function to_snake_from_dash(string $input = null, bool $lower = true): string
+function to_snake_from_dash(?string $input, bool $doLower = true): string
 {
     $input = str_replace('-', '_', (string) $input);
 
-    if ($lower) {
-        $input = strtolower($input);
-    }
-
-    return $input;
-}
-
-/**
- * To dash from upper (FooBar -> Foo-Bar | foo-bar).
- * @param  string $input
- * @param  bool   $lower
- * @return string
- */
-function to_dash_from_upper(string $input = null, bool $lower = true): string
-{
-    $input = (string) preg_replace_callback('~(?!^)([A-Z])~', function($match) {
-        return '-'. $match[0];
-    }, $input);
-
-    if ($lower) {
+    if ($doLower) {
         $input = strtolower($input);
     }
 
@@ -110,17 +91,36 @@ function to_dash_from_upper(string $input = null, bool $lower = true): string
 
 /**
  * To snake from upper (fooBar | FooBar -> foo_bar)
- * @param  string $input
- * @param  bool   $lower
+ * @param  ?string $input
+ * @param  bool    $doLower
  * @return string
  */
-function to_snake_from_upper(string $input = null, bool $lower = true): string
+function to_snake_from_upper(?string $input, bool $doLower = true): string
 {
     $input = (string) preg_replace_callback('~(?!^)([A-Z])~', function($match) {
         return '_'. $match[1];
-    }, $input);
+    }, (string) $input);
 
-    if ($lower) {
+    if ($doLower) {
+        $input = strtolower($input);
+    }
+
+    return $input;
+}
+
+/**
+ * To dash from upper (FooBar -> Foo-Bar | foo-bar).
+ * @param  ?string $input
+ * @param  bool    $doLower
+ * @return string
+ */
+function to_dash_from_upper(?string $input, bool $doLower = true): string
+{
+    $input = (string) preg_replace_callback('~(?!^)([A-Z])~', function($match) {
+        return '-'. $match[0];
+    }, (string) $input);
+
+    if ($doLower) {
         $input = strtolower($input);
     }
 
@@ -129,10 +129,10 @@ function to_snake_from_upper(string $input = null, bool $lower = true): string
 
 /**
  * To upper from dash (foo-bar | Foo-Bar -> FooBar)
- * @param  string $input
+ * @param  ?string $input
  * @return string
  */
-function to_upper_from_dash(string $input = null): string
+function to_upper_from_dash(?string $input): string
 {
     $input = (string) preg_replace_callback('~-([a-z])~i', function($match) {
         return ucfirst($match[1]);
@@ -144,28 +144,37 @@ function to_upper_from_dash(string $input = null): string
 /**
  * To query string.
  * @param  array  $query
- * @param  string $keyIgnored
+ * @param  string $ignoredKeys
+ * @param  bool   $doStripTags
+ * @param  bool   $doNormalizeArrays
  * @return string
  */
-function to_query_string(array $query, string $keyIgnored = ''): string
+function to_query_string(array $query, string $ignoredKeys = '',
+    bool $doStripTags = true, bool $doNormalizeArrays = true): string
 {
-    $keyIgnored = explode(',', $keyIgnored);
+    if ($ignoredKeys != '') {
+        $ignoredKeys = explode(',', $ignoredKeys);
 
-    foreach ($query as $key => $_) {
-        if (in_array($key, $keyIgnored)) unset($query[$key]);
+        foreach ($query as $key => $_) {
+            if (in_array($key, $ignoredKeys)) {
+                unset($query[$key]);
+            }
+        }
     }
 
-    $query = http_build_query($query);
+    $query = http_build_query(
+        // fix skipped NULL values by http_build_query()
+        array_map(function ($value) {
+            return strval($value);
+        }, $query)
+    );
 
-    // strip tags
-    if (false !== strpos($query, '%3C')) {
+    if ($doStripTags && false !== strpos($query, '%3C')) {
         $query = preg_replace('~%3C[\w]+(%2F)?%3E~simU', '', $query);
     }
-
-    // normalize arrays
-    if (false !== strpos($query, '%5D')) {
+    if ($doNormalizeArrays && false !== strpos($query, '%5D')) {
         $query = preg_replace('~%5B([\d]+)%5D~simU', '[]', $query);
-        $query = preg_replace('~%5B([\w\.-]+)%5D~simU', '[\\1]', $query);
+        $query = preg_replace('~%5B([\w\.-]+)%5D~simU', '[\1]', $query);
     }
 
     return trim($query);
