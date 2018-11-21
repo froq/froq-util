@@ -23,101 +23,73 @@ declare(strict_types=1);
 
 /**
  * Html encode.
- * @param  string|array $input
- * @return string|array
+ * @param  ?string $input
+ * @param  bool    $doSimple
+ * @return string
  */
-function html_encode($input)
+function html_encode(?string $input, bool $doSimple = false): string
 {
-    if (is_array($input)) {
-        return array_map('html_encode', $input);
-    }
-
-    $input = trim((string) $input);
-    if ($input) {
-        $input = str_replace(
-            ["'"    , '"'    , '<'   , '>'],
-            ['&#39;', '&#34;', '&lt;', '&gt;'],
-            $input
-        );
-    }
-
-    return $input;
+    return $doSimple
+        ? str_replace(['<', '>'], ['&lt;', '&gt;'], (string) $input)
+        : str_replace(["'", '"', '<', '>'], ['&#39;', '&#34;', '&lt;', '&gt;'], (string) $input);
 }
 
 /**
  * Html decode.
- * @param  string|array $input
- * @return string|array
+ * @param  ?string $input
+ * @param  bool    $doSimple
+ * @return string
  */
-function html_decode($input)
+function html_decode(?string $input, bool $doSimple = false): string
 {
-    if (is_array($input)) {
-        return array_map('html_decode', $input);
-    }
-
-    $input = trim((string) $input);
-    if ($input) {
-        $input = str_ireplace(
-            ['&#39;', '&#34;', '&lt;', '&gt;'],
-            ["'"    , '"'    , '<'   , '>'],
-            $input
-        );
-    }
-
-    return $input;
+    return $doSimple
+        ? str_ireplace(['&lt;', '&gt;'], ['<', '>'], (string) $input)
+        : str_ireplace(['&#39;', '&#34;', '&lt;', '&gt;'], ["'", '"', '<', '>'], (string) $input);
 }
 
 /**
  * Html strip.
- * @param  string|array $input
- * @param  string       $tags
- * @param  bool         $decode
- * @return string|array
+ * @param  ?string $input
+ * @param  ?string $allowedTags
+ * @param  bool    $doDecode
+ * @return string
  */
-function html_strip($input, string $tags = null, bool $decode = false)
+function html_strip(?string $input, ?string $allowedTags = '', bool $doDecode = false): string
 {
-    if (is_array($input)) {
-        return array_map('html_strip', $input);
+    if ($doDecode) {
+        $input = html_decode($input, true);
     }
 
-    if ($decode) {
-        $input = html_decode($input);
+    if ($allowedTags != '') {
+        $allowedTags = implode('', array_map(function ($tag) {
+            return '<'. trim($tag, '<>') .'>';
+        }, explode(',', $allowedTags)));
     }
 
-    if ($tags != null) {
-        $tags = array_map(function ($tag) { return '<'. trim($tag, '<>') .'>'; },
-            preg_split('~\s*,\s*~', $tags, -1, PREG_SPLIT_NO_EMPTY));
-        $tags = join('', $tags);
-    }
-
-    return strip_tags((string) $input, (string) $tags);
+    return strip_tags((string) $input, (string) $allowedTags);
 }
 
 /**
  * Html remove.
- * @param  string|array $input
- * @param  string       $tags
- * @param  bool         $decode
- * @return string|array
+ * @param  ?string $input
+ * @param  ?string $allowedTags
+ * @param  bool    $doDecode
+ * @return string
  */
-function html_remove($input, string $tags = null, bool $decode = false)
+function html_remove(?string $input, ?string $allowedTags = '', bool $doDecode = false): string
 {
-    if (is_array($input)) {
-        return array_map('html_remove', $input);
+    if ($doDecode) {
+        $input = html_decode($input, true);
     }
 
-    if ($decode) {
-        $input = html_decode($input);
-    }
-
-    if ($tags != null) {
-        $pattern = sprintf('~<(?:%1$s)([^>]*)>(.*?)</(?:%1$s)([^>]*)>|<(?:%1$s)([^>]*)/?>~i',
-            join('|', preg_split('~\s*,\s*~', $tags, -1, PREG_SPLIT_NO_EMPTY)));
+    if ($allowedTags != '') {
+        $pattern = '~<(?!(?:'. str_replace(',', '|', $allowedTags) .')\b)(\w+)\b[^>]*/?>(?:.*?</\1>)?~is';
     } else {
-        $pattern = '~<([^>]+)>(.*?)</([^>]+)>|<([^>]+)/?>~';
+        $pattern = '~<(\w+)\b[^>]*/?>(?:.*?</\1>)?~is';
     }
+    prs($pattern);
 
-    return preg_replace($pattern, '', $input);
+    return preg_replace($pattern, '', (string) $input);
 }
 
 /**
@@ -205,11 +177,13 @@ function html_selected($a, $b, bool $strict = false): string
 
 /**
  * Html compress.
- * @param  string $input
+ * @param  ?string $input
  * @return string
  */
 function html_compress(?string $input): string
 {
+    $input = (string) $input;
+
     if (empty($input)) {
         return $input;
     }
