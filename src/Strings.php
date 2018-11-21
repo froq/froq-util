@@ -32,6 +32,21 @@ namespace Froq\Util;
 final /* static */ class Strings
 {
     /**
+     * Contains.
+     * @param  string $source
+     * @param  string $search
+     * @param  int    $offset
+     * @param  bool   $isCaseInsensitive
+     * @return bool
+     */
+    public static function contains(string $source, string $search, int $offset = 0,
+        bool $isCaseInsensitive = false): bool
+    {
+        return ($isCaseInsensitive ? stripos($source, $search, $offset)
+            : strpos($source, $search, $offset)) !== false;
+    }
+
+    /**
      * Starts with.
      * @param  string $source
      * @param  string $search
