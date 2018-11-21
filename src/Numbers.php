@@ -26,10 +26,10 @@ namespace Froq\Util;
 /**
  * @package    Froq
  * @subpackage Froq\Util
- * @object     Froq\Util\Number
+ * @object     Froq\Util\Numbers
  * @author     Kerem Güneş <k-gun@mail.com>
  */
-final /* static */ class Number
+final /* static */ class Numbers
 {
     /**
      * Compare.
@@ -43,13 +43,12 @@ final /* static */ class Number
         if (is_numeric($a) && is_numeric($b)) {
             if (function_exists('bccomp')) {
                 return bccomp(strval($a), strval($b), $precision);
-            } elseif (function_exists('gmp_cmp')) {
-                return gmp_cmp(round($a, $precision), round($b, $precision));
-            } else {
-                $a = round($a, $precision);
-                $b = round($b, $precision);
-                return $a === $b ? 0 : ($a > $b ? 1 : -1);
             }
+
+            $a = round($a, $precision);
+            $b = round($b, $precision);
+
+            return ($a === $b) ? 0 : ($a > $b) ? 1 : -1;
         }
 
         return null;
