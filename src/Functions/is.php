@@ -101,13 +101,23 @@ function is_array_assoc($input): bool
 }
 
 /**
+ * Is plain object.
+ * @param  any $input
+ * @return bool
+ */
+function is_plain_object($input): bool
+{
+    return $input instanceof \stdClass;
+}
+
+/**
  * Is iter.
  * @param  any $input
  * @return bool
  */
 function is_iter($input): bool
 {
-    return is_iterable($input) || $input instanceof object;
+    return is_iterable($input) || is_plain_object($input);
 }
 
 /**
