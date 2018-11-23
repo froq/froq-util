@@ -87,7 +87,6 @@ function html_remove(?string $input, ?string $allowedTags = '', bool $doDecode =
     } else {
         $pattern = '~<(\w+)\b[^>]*/?>(?:.*?</\1>)?~is';
     }
-    prs($pattern);
 
     return preg_replace($pattern, '', (string) $input);
 }
