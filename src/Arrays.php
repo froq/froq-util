@@ -231,7 +231,7 @@ final /* static */ class Arrays
     /**
      * Include.
      * @param  array $array
-     * @param  array $keysInclude
+     * @param  array $keys
      * @return array
      */
     public static function include(array $array, array $keys): array
