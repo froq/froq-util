@@ -26,8 +26,6 @@ declare(strict_types=1);
 
 namespace Froq\Util;
 
-use \stdClass as object;
-
 /**
  * @package    Froq
  * @subpackage Froq\Util
@@ -52,7 +50,7 @@ final class Iter implements Interfaces\Arrayable
             throw new UtilException('Given data is not iterable!');
         }
 
-        if (is_array($data) || $data instanceof object) {
+        if (is_array($data) || $data instanceof \stdClass) {
             $data = (array) $data;
         } elseif ($data instanceof \Traversable) {
             $data = iterator_to_array($data);

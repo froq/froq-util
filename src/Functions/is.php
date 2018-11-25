@@ -24,8 +24,6 @@
  */
 declare(strict_types=1);
 
-use \stdClass as object;
-
 /**
  * Is local.
  * @return bool
@@ -135,11 +133,15 @@ function is_set($input, array $keys = null): bool
     if ($return && !empty($keys)) {
         if (is_array($input)) {
             foreach ($keys as $key) {
-                if (!isset($input[$key])) return false;
+                if (!isset($input[$key])) {
+                    return false;
+                }
             }
-        } elseif ($input instanceof object) {
+        } elseif ($input instanceof \stdClass) {
             foreach ($keys as $key) {
-                if (!isset($input->{$key})) return false;
+                if (!isset($input->{$key})) {
+                    return false;
+                }
             }
         }
     }
@@ -158,9 +160,11 @@ function is_empty(...$inputs): bool
         if (empty($input)) {
             return true;
         }
-        if (is_array($input) || $input instanceof object) {
+        if (is_array($input) || $input instanceof \stdClass) {
             $input = (array) $input;
-            if (empty($input)) return true;
+            if (empty($input)) {
+                return true;
+            }
         }
     }
 

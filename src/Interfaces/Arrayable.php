@@ -26,8 +26,6 @@ declare(strict_types=1);
 
 namespace Froq\Util\Interfaces;
 
-use stdClass as object;
-
 /**
  * @package    Froq
  * @subpackage Froq\Util

@@ -25,7 +25,6 @@
 declare(strict_types=1);
 
 use Froq\Util\Iter;
-use stdClass as object;
 
 /**
  * To iter.
@@ -40,16 +39,16 @@ function to_iter($input): Iter
 /**
  * To array.
  * @param  array|object $input
- * @param  bool         $deep
+ * @param  bool         $doDeep
  * @return array
  */
-function to_array($input, bool $deep = true): array
+function to_array($input, bool $doDeep = true): array
 {
     $input = (array) $input;
-    if ($input && $deep) {
+    if ($input && $doDeep) {
         foreach ($input as $key => $value) {
             $input[$key] = is_iter($value)
-                ? to_array($value, $deep) : $value;
+                ? to_array($value, $doDeep) : $value;
         }
     }
 
@@ -59,16 +58,16 @@ function to_array($input, bool $deep = true): array
 /**
  * To object.
  * @param  array|object $input
- * @param  bool         $deep
+ * @param  bool         $doDeep
  * @return object
  */
-function to_object($input, bool $deep = true): object
+function to_object($input, bool $doDeep = true): object
 {
     $input = (object) $input;
-    if ($input && $deep) {
+    if ($input && $doDeep) {
         foreach ($input as $key => $value) {
             $input->{$key} = is_iter($value) && is_array_assoc($value)
-                ? to_object($value, $deep) : $value;
+                ? to_object($value, $doDeep) : $value;
         }
     }
 

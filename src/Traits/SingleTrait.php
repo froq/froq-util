@@ -54,7 +54,7 @@ trait SingleTrait
      * @param  ... $arguments
      * @return object
      */
-    public static final function init(...$arguments)
+    public static final function init(...$arguments): object
     {
         $className = get_called_class();
         if (!isset(self::$__instances[$className])) {
