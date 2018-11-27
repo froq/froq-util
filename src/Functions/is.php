@@ -39,7 +39,7 @@ function is_local(): bool
  */
 function is_cli(): bool
 {
-    return (PHP_SAPI === 'cli');
+    return (PHP_SAPI == 'cli');
 }
 
 /**
@@ -48,7 +48,7 @@ function is_cli(): bool
  */
 function is_cli_server(): bool
 {
-    return (PHP_SAPI === 'cli-server');
+    return (PHP_SAPI == 'cli-server');
 }
 
 /**
@@ -95,9 +95,12 @@ function is_array_assoc($input): bool
 {
     if (is_array($input)) {
         foreach ($input as $key => $_) {
-            if (is_string($key)) return true;
+            if (is_string($key)) {
+                return true;
+            }
         }
     }
+
     return false;
 }
 
@@ -131,15 +134,10 @@ function is_set($input, array $keys = null): bool
 {
     $return = isset($input);
     if ($return && !empty($keys)) {
-        if (is_array($input)) {
+        if (is_array($input) || $input instanceof \stdClass) {
+            $input = (array) $input;
             foreach ($keys as $key) {
                 if (!isset($input[$key])) {
-                    return false;
-                }
-            }
-        } elseif ($input instanceof \stdClass) {
-            foreach ($keys as $key) {
-                if (!isset($input->{$key})) {
                     return false;
                 }
             }
@@ -160,6 +158,7 @@ function is_empty(...$inputs): bool
         if (empty($input)) {
             return true;
         }
+
         if (is_array($input) || $input instanceof \stdClass) {
             $input = (array) $input;
             if (empty($input)) {
@@ -178,7 +177,7 @@ function is_empty(...$inputs): bool
  */
 function is_nil($input): bool
 {
-    return ($input === nil);
+    return ($input === nil); // null
 }
 
 /**
@@ -188,5 +187,5 @@ function is_nil($input): bool
  */
 function is_nils($input): bool
 {
-    return ($input === nils);
+    return ($input === nils); // null string ('')
 }
