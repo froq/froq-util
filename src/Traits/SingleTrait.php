@@ -58,10 +58,12 @@ trait SingleTrait
     {
         $className = get_called_class();
         if (!isset(self::$__instances[$className])) {
-            // init without constructor
+            // init without constructor and call constructor with initial arguments
+            // to prevent error: "Access to non-public constructor of class ...".
+            // newInstance() nor newInstanceArgs() cannot do that.
             $classInstance = (new \ReflectionClass($className))->newInstanceWithoutConstructor();
 
-            // call constructor with initial arguments
+            // no error, weird? (ô_ô)
             call_user_func_array([$classInstance, '__construct'], $arguments);
 
             self::$__instances[$className] = $classInstance;
@@ -70,4 +72,3 @@ trait SingleTrait
         return self::$__instances[$className];
     }
 }
-
