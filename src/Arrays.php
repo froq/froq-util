@@ -43,8 +43,6 @@ final /* static */ class Arrays
      */
     public static function dig(array $array, $key, $valueDefault = null)
     {
-        self::checkKeyType($key);
-
         if (array_key_exists($key, $array)) {
             $value = $array[$key]; // direct access
         } else {
@@ -87,12 +85,9 @@ final /* static */ class Arrays
      * @param  int|string $key
      * @param  any        $valueDefault
      * @return any
-     * @throws \InvalidArgumentException
      */
     public static function pick(array &$array, $key, $valueDefault = null)
     {
-        self::checkKeyType($key);
-
         $value = $valueDefault;
         if (array_key_exists($key, $array)) {
             $value = $array[$key];
@@ -108,7 +103,6 @@ final /* static */ class Arrays
      * @param  array  $keys
      * @param  any    $valueDefault
      * @return array
-     * @throws \InvalidArgumentException
      */
     public static function pickAll(array &$array, array $keys, $valueDefault = null): array
     {
@@ -121,112 +115,6 @@ final /* static */ class Arrays
         }
 
         return $values;
-    }
-
-    /**
-     * Map.
-     * @param  array    $array
-     * @param  callable $callback
-     * @return array
-     */
-    public static function map(array $array, callable $callback): array
-    {
-        // strlen etc.
-        if (is_string($callback)) {
-            return array_map($callback, $array);
-        }
-
-        foreach ($array as $key => $value) {
-            $array[$key] = $callback($key, $value);
-        }
-
-        return $array;
-    }
-
-    /**
-     * Map key.
-     * @param  array    $array
-     * @param  callable $callback
-     * @return array
-     */
-    public static function mapKey(array $array, callable $callback): array
-    {
-        return array_combine(self::map(array_keys($array), $callback), array_values($array));
-    }
-
-    /**
-     * Filter.
-     * @param  array         $array
-     * @param  callable|null $callback
-     * @return array
-     */
-    public static function filter(array $array, callable $callback = null)
-    {
-        if ($callback == null) {
-            return array_filter($array);
-        }
-
-        // strlen etc.
-        if (is_string($callback)) {
-            return array_filter($array, $callback);
-        }
-
-        foreach ($array as $key => $value) {
-            if (!$callback($key, $value)) {
-                unset($array[$key]);
-            }
-        }
-
-        return $array;
-    }
-
-    /**
-     * Filter key.
-     * @param  array         $array
-     * @param  callable|null $callback
-     * @return array
-     */
-    public static function filterKey(array $array, callable $callback = null): array
-    {
-        return self::filter($array, function($key) use($callback) {
-            return $callback($key, null);
-        });
-    }
-
-    /**
-     * Index.
-     * @param  array $array
-     * @param  any   $valueSearch
-     * @param  bool  $strict
-     * @return int|string|null
-     */
-    public static function index(array $array, $valueSearch, bool $strict = false)
-    {
-        return false !== ($index = array_search($valueSearch, $array, $strict)) ? $index : null;
-    }
-
-    /**
-     * Index.
-     * @param  array $array
-     * @param  any   $valueSearch
-     * @param  bool  $strict
-     * @return int|string|null
-     */
-    public static function indexLast(array $array, $valueSearch, bool $strict = false)
-    {
-        foreach ($array as $key => $value) {
-            if (is_string($key)) {
-                if (!$strict ? $value == $valueSearch : $value === $valueSearch) {
-                    return $key;
-                }
-            } else {
-                if (!$strict ? $value == $valueSearch : $value === $valueSearch) {
-                    $index = $key;
-                }
-            }
-        }
-
-        return $index ?? null;
     }
 
     /**
@@ -294,19 +182,5 @@ final /* static */ class Arrays
 
         reset($array);
         return end($array);
-    }
-
-    /**
-     * Check key type.
-     * @param  int|string $key
-     * @return void
-     * @throws \InvalidArgumentException
-     */
-    private static function checkKeyType($key): void
-    {
-        $keyType = gettype($key);
-        if ($keyType != 'integer' && $keyType != 'string') {
-            throw new \InvalidArgumentException("Key type must be int or string, {$keyType} given!");
-        }
     }
 }
