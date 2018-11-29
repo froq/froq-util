@@ -40,7 +40,6 @@ final /* static */ class Arrays
      * @param  int|string $key (aka path)
      * @param  any        $valueDefault
      * @return any
-     * @throws \InvalidArgumentException
      */
     public static function dig(array $array, $key, $valueDefault = null)
     {
@@ -68,7 +67,6 @@ final /* static */ class Arrays
      * @param  array  $keys (aka paths)
      * @param  any    $valueDefault
      * @return array
-     * @throws \InvalidArgumentException
      */
     public static function digAll(array $array, array $keys, $valueDefault = null): array
     {
@@ -158,8 +156,8 @@ final /* static */ class Arrays
 
     /**
      * Filter.
-     * @param  array     $array
-     * @param  ?callable $callback
+     * @param  array         $array
+     * @param  callable|null $callback
      * @return array
      */
     public static function filter(array $array, callable $callback = null)
@@ -184,8 +182,8 @@ final /* static */ class Arrays
 
     /**
      * Filter key.
-     * @param  array    $array
-     * @param  ?callable $callback
+     * @param  array         $array
+     * @param  callable|null $callback
      * @return array
      */
     public static function filterKey(array $array, callable $callback = null): array
@@ -271,27 +269,31 @@ final /* static */ class Arrays
     /**
      * First.
      * @param  array $array
-     * @return any
+     * @return any|null
      */
     public static function first(array $array)
     {
-        if (!empty($array)) {
-            reset($array);
-            return current($array);
+        if (empty($array)) {
+            return null;
         }
+
+        reset($array);
+        return current($array);
     }
 
     /**
      * Last.
      * @param  array $array
-     * @return any
+     * @return any|null
      */
     public static function last(array $array)
     {
-        if (!empty($array)) {
-            reset($array);
-            return end($array);
+        if (empty($array)) {
+            return null;
         }
+
+        reset($array);
+        return end($array);
     }
 
     /**
