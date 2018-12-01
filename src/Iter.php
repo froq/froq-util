@@ -42,10 +42,10 @@ final class Iter implements Interfaces\Arrayable
 
     /**
      * Constructor.
-     * @param  iter|null $data
+     * @param  iterable|object $data
      * @throws Froq\Util\UtilException
      */
-    public function __construct($data = null)
+    public function __construct($data)
     {
         if (!is_iter($data)) {
             throw new UtilException('Given data is not iterable!');
@@ -63,19 +63,12 @@ final class Iter implements Interfaces\Arrayable
     }
 
     /**
-     * @inheritDoc Froq\Interfaces\Arrayable
+     * Is empty.
+     * @return bool
      */
-    public function keys(): array
+    public function isEmpty(): bool
     {
-        return array_keys($this->data);
-    }
-
-    /**
-     * @inheritDoc Froq\Interfaces\Arrayable
-     */
-    public function values(): array
-    {
-        return array_values($this->data);
+        return empty($this->data);
     }
 
     /**
@@ -84,14 +77,6 @@ final class Iter implements Interfaces\Arrayable
     public function toArray(): array
     {
         return $this->data;
-    }
-
-    /**
-     * @inheritDoc Froq\Interfaces\Arrayable
-     */
-    public function isEmpty(): bool
-    {
-        return empty($this->data);
     }
 
     /**
@@ -108,14 +93,5 @@ final class Iter implements Interfaces\Arrayable
     public function getIterator(): \ArrayIterator
     {
         return new \ArrayIterator($this->data);
-    }
-
-    /**
-     * Empty.
-     * @return void
-     */
-    public function empty(): void
-    {
-        $this->data = [];
     }
 }
