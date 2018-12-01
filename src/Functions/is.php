@@ -121,7 +121,7 @@ function is_plain_object($input): bool
  */
 function is_iter($input): bool
 {
-    return is_iterable($input) || is_plain_object($input);
+    return is_iterable($input) || $input instanceof \stdClass;
 }
 
 /**
