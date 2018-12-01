@@ -42,7 +42,8 @@ final class Iter implements Interfaces\Arrayable
 
     /**
      * Constructor.
-     * @param iter|null $data
+     * @param  iter|null $data
+     * @throws Froq\Util\UtilException
      */
     public function __construct($data = null)
     {
@@ -62,8 +63,7 @@ final class Iter implements Interfaces\Arrayable
     }
 
     /**
-     * Keys.
-     * @return array
+     * @inheritDoc Froq\Interfaces\Arrayable
      */
     public function keys(): array
     {
@@ -71,8 +71,7 @@ final class Iter implements Interfaces\Arrayable
     }
 
     /**
-     * Values.
-     * @return array
+     * @inheritDoc Froq\Interfaces\Arrayable
      */
     public function values(): array
     {
@@ -80,8 +79,7 @@ final class Iter implements Interfaces\Arrayable
     }
 
     /**
-     * To array.
-     * @return array
+     * @inheritDoc Froq\Interfaces\Arrayable
      */
     public function toArray(): array
     {
@@ -89,8 +87,7 @@ final class Iter implements Interfaces\Arrayable
     }
 
     /**
-     * Is empty.
-     * @return bool
+     * @inheritDoc Froq\Interfaces\Arrayable
      */
     public function isEmpty(): bool
     {
@@ -98,8 +95,7 @@ final class Iter implements Interfaces\Arrayable
     }
 
     /**
-     * Count.
-     * @return int
+     * @inheritDoc \Countable
      */
     public function count(): int
     {
@@ -107,8 +103,7 @@ final class Iter implements Interfaces\Arrayable
     }
 
     /**
-     * Get iterator.
-     * @return \ArrayIterator
+     * @inheritDoc \IteratorAggregate
      */
     public function getIterator(): \ArrayIterator
     {
