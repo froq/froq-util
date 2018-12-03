@@ -27,12 +27,12 @@ declare(strict_types=1);
 /**
  * Html encode.
  * @param  ?string $input
- * @param  bool    $doSimple
+ * @param  bool    $do_simple
  * @return string
  */
-function html_encode(?string $input, bool $doSimple = false): string
+function html_encode(?string $input, bool $do_simple = false): string
 {
-    return $doSimple
+    return $do_simple
         ? str_replace(['<', '>'], ['&lt;', '&gt;'], (string) $input)
         : str_replace(["'", '"', '<', '>'], ['&#39;', '&#34;', '&lt;', '&gt;'], (string) $input);
 }
@@ -40,12 +40,12 @@ function html_encode(?string $input, bool $doSimple = false): string
 /**
  * Html decode.
  * @param  ?string $input
- * @param  bool    $doSimple
+ * @param  bool    $do_simple
  * @return string
  */
-function html_decode(?string $input, bool $doSimple = false): string
+function html_decode(?string $input, bool $do_simple = false): string
 {
-    return $doSimple
+    return $do_simple
         ? str_ireplace(['&lt;', '&gt;'], ['<', '>'], (string) $input)
         : str_ireplace(['&#39;', '&#34;', '&lt;', '&gt;'], ["'", '"', '<', '>'], (string) $input);
 }
@@ -53,40 +53,40 @@ function html_decode(?string $input, bool $doSimple = false): string
 /**
  * Html strip.
  * @param  ?string $input
- * @param  ?string $allowedTags
- * @param  bool    $doDecode
+ * @param  ?string $allowed_tags
+ * @param  bool    $do_decode
  * @return string
  */
-function html_strip(?string $input, ?string $allowedTags = '', bool $doDecode = false): string
+function html_strip(?string $input, ?string $allowed_tags = '', bool $do_decode = false): string
 {
-    if ($doDecode) {
+    if ($do_decode) {
         $input = html_decode($input, true);
     }
 
-    if ($allowedTags != '') {
-        $allowedTags = implode('', array_map(function ($tag) {
+    if ($allowed_tags != '') {
+        $allowed_tags = implode('', array_map(function ($tag) {
             return '<'. trim($tag, '<>') .'>';
-        }, explode(',', $allowedTags)));
+        }, explode(',', $allowed_tags)));
     }
 
-    return strip_tags((string) $input, (string) $allowedTags);
+    return strip_tags((string) $input, (string) $allowed_tags);
 }
 
 /**
  * Html remove.
  * @param  ?string $input
- * @param  ?string $allowedTags
- * @param  bool    $doDecode
+ * @param  ?string $allowed_tags
+ * @param  bool    $do_decode
  * @return string
  */
-function html_remove(?string $input, ?string $allowedTags = '', bool $doDecode = false): string
+function html_remove(?string $input, ?string $allowed_tags = '', bool $do_decode = false): string
 {
-    if ($doDecode) {
+    if ($do_decode) {
         $input = html_decode($input, true);
     }
 
-    if ($allowedTags != '') {
-        $pattern = '~<(?!(?:'. str_replace(',', '|', $allowedTags) .')\b)(\w+)\b[^>]*/?>(?:.*?</\1>)?~is';
+    if ($allowed_tags != '') {
+        $pattern = '~<(?!(?:'. str_replace(',', '|', $allowed_tags) .')\b)(\w+)\b[^>]*/?>(?:.*?</\1>)?~is';
     } else {
         $pattern = '~<(\w+)\b[^>]*/?>(?:.*?</\1>)?~is';
     }
@@ -112,18 +112,23 @@ function html_attributes(array $input): string
 /**
  * Html options.
  * @param  iterable     $input
- * @param  any          $keySearch
+ * @param  any          $key_b
  * @param  string|array $extra
  * @return string
  */
-function html_options(iterable $input, $keySearch = null, $extra = null): string
+function html_options(iterable $input, $key_b = null, $extra = null): string
 {
-    $extra = is_array($extra) ? html_attributes($extra) : $extra;
+    if ($extra !== null) {
+        if (is_array($extra)) {
+            $extra = html_attributes($extra);
+        }
+        $extra = ' '. trim($extra);
+    }
 
     $return = '';
-    foreach ($input as $key => $value) {
-        $return .= sprintf('<option value="%s"%s%s>%s</option>', $key,
-            html_selected($key, $keySearch), $extra, $value);
+    foreach ($input as $key_a => $text) {
+        $return .= sprintf('<option value="%s"%s%s>%s</option>', $key_a,
+            html_selected($key_a, $key_b), $extra, $text);
     }
 
     return $return;
@@ -133,48 +138,42 @@ function html_options(iterable $input, $keySearch = null, $extra = null): string
  * Html checked.
  * @param  any  $a
  * @param  any  $b
- * @param  bool $strict
+ * @param  bool $is_strict
  * @return string
  */
-function html_checked($a, $b, bool $strict = false): string
+function html_checked($a, $b, bool $is_strict = false): string
 {
-    if ($a !== null) {
-        return !$strict ? ($a == $b ? ' checked' : '') : ($a === $b ? ' checked' : '');
-    }
-
-    return '';
+    return $a === null ? '' : (
+        $is_strict ? $a === $b ? ' checked' : '' : $a == $b ? ' checked' : ''
+    );
 }
 
 /**
  * Html disabled.
  * @param  any  $a
  * @param  any  $b
- * @param  bool $strict
+ * @param  bool $is_strict
  * @return string
  */
-function html_disabled($a, $b, bool $strict = false): string
+function html_disabled($a, $b, bool $is_strict = false): string
 {
-    if ($a !== null) {
-        return !$strict ? ($a == $b ? ' disabled' : '') : ($a === $b ? ' disabled' : '');
-    }
-
-    return '';
+    return $a === null ? '' : (
+        $is_strict ? $a === $b ? ' disabled' : '' : $a == $b ? ' disabled' : ''
+    );
 }
 
 /**
  * Html selected.
  * @param  any  $a
  * @param  any  $b
- * @param  bool $strict
+ * @param  bool $is_strict
  * @return string
  */
-function html_selected($a, $b, bool $strict = false): string
+function html_selected($a, $b, bool $is_strict = false): string
 {
-    if ($a !== null) {
-        return !$strict ? ($a == $b ? ' selected' : '') : ($a === $b ? ' selected' : '');
-    }
-
-    return '';
+    return $a === null ? '' : (
+        $is_strict ? $a === $b ? ' selected' : '' : $a == $b ? ' selected' : ''
+    );
 }
 
 /**
@@ -201,8 +200,8 @@ function html_compress(?string $input): string
         }
 
         // doc comments
-        preg_match_all('~\s*/[\*]+(?:.*?)[\*]/\s*~sm', $input, $matchAll);
-        foreach ($matchAll as $key => $value) {
+        preg_match_all('~\s*/[\*]+(?:.*?)[\*]/\s*~sm', $input, $matches);
+        foreach ($matches as $key => $value) {
             $input = str_replace($value, "\n\n", $input);
         }
 
@@ -217,14 +216,14 @@ function html_compress(?string $input): string
     $input = preg_replace('~>\s+<(/?)([\w\d-]+)~sm', '><\\1\\2', $input);
 
     // textarea \n problem
-    $textareaTpl = '%{{{TEXTAREA}}}';
-    $textareaCount = preg_match_all(
-        '~(<textarea(.*?)>(.*?)</textarea>)~sm', $input, $matchAll);
+    $textarea_tpl = '%{{{TEXTAREA}}}';
+    $textarea_count = preg_match_all(
+        '~(<textarea(.*?)>(.*?)</textarea>)~sm', $input, $matches);
 
     // fix textareas
-    if ($textareaCount) {
-        foreach ($matchAll[0] as $match) {
-            $input = str_replace($match, $textareaTpl, $input);
+    if ($textarea_count) {
+        foreach ($matches[0] as $match) {
+            $input = str_replace($match, $textarea_tpl, $input);
         }
     }
 
@@ -232,9 +231,9 @@ function html_compress(?string $input): string
     $input = preg_replace('~\s+~', ' ', $input);
 
     // fix textareas
-    if ($textareaCount) {
-        foreach ($matchAll[0] as $match) {
-            $input = preg_replace("~{$textareaTpl}~", $match, $input, 1);
+    if ($textarea_count) {
+        foreach ($matches[0] as $match) {
+            $input = preg_replace("~{$textarea_tpl}~", $match, $input, 1);
         }
     }
 
