@@ -54,12 +54,12 @@ function is_cli_server(): bool
 /**
  * Is array key.
  * @param  array $array
- * @param  any   $keys
+ * @param  any   $key
  * @return bool
  */
-function is_array_key(array $array, $keys): bool
+function is_array_key(array $array, $key): bool
 {
-    foreach ((array) $keys as $key) {
+    foreach ((array) $key as $key) {
         if (!array_key_exists($key, $array)) {
             return false;
         }
@@ -71,14 +71,14 @@ function is_array_key(array $array, $keys): bool
 /**
  * Is array value.
  * @param  array $array
- * @param  any   $values
- * @param  bool  $strict
+ * @param  any   $value
+ * @param  bool  $is_strict
  * @return bool
  */
-function is_array_value(array $array, $values, bool $strict = false): bool
+function is_array_value(array $array, $value, bool $is_strict = false): bool
 {
-    foreach ((array) $values as $value) {
-        if (!in_array($value, $array, $strict)) {
+    foreach ((array) $value as $value) {
+        if (!in_array($value, $array, $is_strict)) {
             return false;
         }
     }
@@ -87,11 +87,11 @@ function is_array_value(array $array, $values, bool $strict = false): bool
 }
 
 /**
- * Is array assoc.
- * @param  array|any $input
+ * Is assoc array.
+ * @param  any $input
  * @return bool
  */
-function is_array_assoc($input): bool
+function is_assoc_array($input): bool
 {
     if (is_array($input)) {
         foreach ($input as $key => $_) {
