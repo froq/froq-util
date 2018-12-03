@@ -39,16 +39,15 @@ function to_iter($input): Iter
 /**
  * To array.
  * @param  array|object $input
- * @param  bool         $doDeep
+ * @param  bool         $do_deep
  * @return array
  */
-function to_array($input, bool $doDeep = true): array
+function to_array($input, bool $do_deep = true): array
 {
     $input = (array) $input;
-    if ($input && $doDeep) {
+    if ($do_deep) {
         foreach ($input as $key => $value) {
-            $input[$key] = is_iter($value)
-                ? to_array($value, $doDeep) : $value;
+            $input[$key] = is_iter($value) ? to_array($value, $do_deep) : $value;
         }
     }
 
@@ -58,16 +57,15 @@ function to_array($input, bool $doDeep = true): array
 /**
  * To object.
  * @param  array|object $input
- * @param  bool         $doDeep
+ * @param  bool         $do_deep
  * @return object
  */
-function to_object($input, bool $doDeep = true): object
+function to_object($input, bool $do_deep = true): object
 {
     $input = (object) $input;
-    if ($input && $doDeep) {
+    if ($do_deep) {
         foreach ($input as $key => $value) {
-            $input->{$key} = is_iter($value) && is_array_assoc($value)
-                ? to_object($value, $doDeep) : $value;
+            $input->{$key} = is_iter($value) ? to_object($value, $do_deep) : $value;
         }
     }
 
@@ -77,14 +75,14 @@ function to_object($input, bool $doDeep = true): object
 /**
  * To snake from dash (Foo-Bar -> Foo_Bar | foo_bar).
  * @param  ?string $input
- * @param  bool    $doLower
+ * @param  bool    $do_lower
  * @return string
  */
-function to_snake_from_dash(?string $input, bool $doLower = true): string
+function to_snake_from_dash(?string $input, bool $do_lower = true): string
 {
     $input = str_replace('-', '_', (string) $input);
 
-    if ($doLower) {
+    if ($do_lower) {
         $input = strtolower($input);
     }
 
@@ -94,16 +92,16 @@ function to_snake_from_dash(?string $input, bool $doLower = true): string
 /**
  * To snake from upper (fooBar | FooBar -> foo_bar)
  * @param  ?string $input
- * @param  bool    $doLower
+ * @param  bool    $do_lower
  * @return string
  */
-function to_snake_from_upper(?string $input, bool $doLower = true): string
+function to_snake_from_upper(?string $input, bool $do_lower = true): string
 {
     $input = (string) preg_replace_callback('~(?!^)([A-Z])~', function($match) {
         return '_'. $match[1];
     }, (string) $input);
 
-    if ($doLower) {
+    if ($do_lower) {
         $input = strtolower($input);
     }
 
@@ -113,16 +111,16 @@ function to_snake_from_upper(?string $input, bool $doLower = true): string
 /**
  * To dash from upper (FooBar -> Foo-Bar | foo-bar).
  * @param  ?string $input
- * @param  bool    $doLower
+ * @param  bool    $do_lower
  * @return string
  */
-function to_dash_from_upper(?string $input, bool $doLower = true): string
+function to_dash_from_upper(?string $input, bool $do_lower = true): string
 {
     $input = (string) preg_replace_callback('~(?!^)([A-Z])~', function($match) {
         return '-'. $match[0];
     }, (string) $input);
 
-    if ($doLower) {
+    if ($do_lower) {
         $input = strtolower($input);
     }
 
@@ -145,36 +143,43 @@ function to_upper_from_dash(?string $input): string
 
 /**
  * To query string.
- * @param  array  $query
- * @param  string $ignoredKeys
- * @param  bool   $doStripTags
- * @param  bool   $doNormalizeArrays
+ * @param  array  $input
+ * @param  string $ignored_keys
+ * @param  bool   $do_strip_tags
+ * @param  bool   $do_normalize_arrays
  * @return string
  */
-function to_query_string(array $query, string $ignoredKeys = '',
-    bool $doStripTags = true, bool $doNormalizeArrays = true): string
+function to_query_string(array $input, string $ignored_keys = '',
+    bool $do_strip_tags = true, bool $do_normalize_arrays = true): string
 {
-    if ($ignoredKeys != '') {
-        $ignoredKeys = explode(',', $ignoredKeys);
+    if ($ignored_keys != '') {
+        $ignored_keys = explode(',', $ignored_keys);
 
-        foreach ($query as $key => $_) {
-            if (in_array($key, $ignoredKeys)) {
-                unset($query[$key]);
+        foreach ($input as $key => $_) {
+            if (in_array($key, $ignored_keys)) {
+                unset($input[$key]);
             }
         }
     }
 
-    $query = http_build_query(
-        // fix skipped NULL values by http_build_query()
-        array_map(function ($value) {
-            return strval($value);
-        }, $query)
-    );
+    // fix skipped NULL values by http_build_query()
+    static $mapper;
+    if ($mapper == null) {
+        $mapper = function ($var) use (&$mapper) {
+            foreach ($var as $key => $value) {
+                $var[$key] = is_array($value) || $value instanceof \stdClass
+                    ? $mapper($value) : strval($value);
+            }
+            return $var;
+        };
+    }
 
-    if ($doStripTags && false !== strpos($query, '%3C')) {
+    $query = http_build_query($mapper($input));
+
+    if ($do_strip_tags && false !== strpos($query, '%3C')) {
         $query = preg_replace('~%3C[\w]+(%2F)?%3E~simU', '', $query);
     }
-    if ($doNormalizeArrays && false !== strpos($query, '%5D')) {
+    if ($do_normalize_arrays && false !== strpos($query, '%5D')) {
         $query = preg_replace('~%5B([\d]+)%5D~simU', '[]', $query);
         $query = preg_replace('~%5B([\w\.-]+)%5D~simU', '[\1]', $query);
     }
