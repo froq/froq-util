@@ -119,7 +119,8 @@ function is_plain_object($input): bool
  * @param  any $input
  * @return bool
  */
-function is_array_like($input): bool {
+function is_array_like($input): bool
+{
     return is_array($input) || is_plain_object($input);
 }
 
