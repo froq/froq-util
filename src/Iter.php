@@ -51,7 +51,7 @@ final class Iter implements Interfaces\Arrayable
             throw new UtilException('Given data is not iterable!');
         }
 
-        if (is_array($data) || $data instanceof \stdClass) {
+        if (is_array_like($data)) {
             $data = (array) $data;
         } elseif ($data instanceof \Traversable) {
             $data = iterator_to_array($data);

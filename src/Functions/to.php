@@ -167,8 +167,7 @@ function to_query_string(array $input, string $ignored_keys = '',
     if ($mapper == null) {
         $mapper = function ($var) use (&$mapper) {
             foreach ($var as $key => $value) {
-                $var[$key] = is_array($value) || $value instanceof \stdClass
-                    ? $mapper($value) : strval($value);
+                $var[$key] = is_array_like($value) ? $mapper($value) : strval($value);
             }
             return $var;
         };

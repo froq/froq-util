@@ -76,15 +76,15 @@ final /* static */ class Type
      * Is UInt.
      * @param  any       $in
      * @param  int|null &$out
-     * @param  bool      $strict
+     * @param  bool      $isStrict
      * @return bool
      */
-    public static function isUint($in, &$out = null, bool $strict = false): bool
+    public static function isUint($in, &$out = null, bool $isStrict = false): bool
     {
-        if ($strict && is_float($in)) {
+        if ($isStrict && is_float($in)) {
             return false;
         }
-        if (!is_numeric($in) || !!strpbrk(strval($in), '-.')) {
+        if (!is_numeric($in) || strpbrk(strval($in), '-.') !== false) {
             return false;
         }
 
@@ -95,15 +95,15 @@ final /* static */ class Type
      * Is UFloat.
      * @param  any         $in
      * @param  float|null &$out
-     * @param  bool        $strict
+     * @param  bool        $isStrict
      * @return bool
      */
-    public static function isUfloat($in, &$out = null, bool $strict = false): bool
+    public static function isUfloat($in, &$out = null, bool $isStrict = false): bool
     {
-        if ($strict && is_int($in)) {
+        if ($isStrict && is_int($in)) {
             return false;
         }
-        if (!is_numeric($in) || (strval($in)[0] == '-')) {
+        if (!is_numeric($in) || (strval($in)[0] ?? '') === '-') {
             return false;
         }
 
@@ -126,10 +126,10 @@ final /* static */ class Type
     }
 
     // @wait
-    // public static function isClass($input): bool {}
-    // public static function isAbstractClass($input): bool {}
-    // public static function isTrait($input): bool {}
-    // public static function isInterface($input): bool {}
+    // public static function isClass($x): bool {}
+    // public static function isAbstractClass($x): bool {}
+    // public static function isInterface($x): bool {}
+    // public static function isTrait($x): bool {}
 
     // @links
     // https://golang.org/src/builtin/builtin.go

@@ -54,7 +54,7 @@ function is_cli_server(): bool
 /**
  * Is array key.
  * @param  array $array
- * @param  any   $key
+ * @param  any   $key Multiple keys accepted.
  * @return bool
  */
 function is_array_key(array $array, $key): bool
@@ -71,7 +71,7 @@ function is_array_key(array $array, $key): bool
 /**
  * Is array value.
  * @param  array $array
- * @param  any   $value
+ * @param  any   $value Multiple values accepted.
  * @param  bool  $is_strict
  * @return bool
  */
@@ -115,13 +115,22 @@ function is_plain_object($input): bool
 }
 
 /**
+ * Is array like.
+ * @param  any $input
+ * @return bool
+ */
+function is_array_like($input): bool {
+    return is_array($input) || is_plain_object($input);
+}
+
+/**
  * Is iter.
  * @param  any $input
  * @return bool
  */
 function is_iter($input): bool
 {
-    return is_iterable($input) || $input instanceof \stdClass;
+    return is_iterable($input) || is_plain_object($input);
 }
 
 /**
@@ -133,13 +142,11 @@ function is_iter($input): bool
 function is_set($input, array $keys = null): bool
 {
     $return = isset($input);
-    if ($return && !empty($keys)) {
-        if (is_array($input) || $input instanceof \stdClass) {
-            $input = (array) $input;
-            foreach ($keys as $key) {
-                if (!isset($input[$key])) {
-                    return false;
-                }
+    if ($return && $keys != null && is_array_like($input)) {
+        $input = (array) $input;
+        foreach ($keys as $key) {
+            if (!isset($input[$key])) {
+                return false;
             }
         }
     }
@@ -159,7 +166,7 @@ function is_empty(...$inputs): bool
             return true;
         }
 
-        if (is_array($input) || $input instanceof \stdClass) {
+        if (is_array_like($input)) {
             $input = (array) $input;
             if (empty($input)) {
                 return true;
