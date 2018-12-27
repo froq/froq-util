@@ -183,4 +183,71 @@ final /* static */ class Arrays
         reset($array);
         return end($array);
     }
+
+    /**
+     * Fill.
+     * @param  array    $array
+     * @param  array    $keys
+     * @param  any|null $value
+     * @return array
+     */
+    public static function fill(array $array, array $keys, $value = null): array
+    {
+        // like array_fill_keys(), more like [] + []
+        foreach ($keys as $key) {
+            if (!isset($array[$key])) {
+                $array[$key] = $value;
+            }
+        }
+
+        return $array;
+    }
+
+    /**
+     * Get int.
+     * @param  array      $array
+     * @param  int|string $key
+     * @param  any|null   $valueDefault
+     * @return int
+     */
+    public static function getInt(array $array, $key, $valueDefault = null): int
+    {
+        return (int) self::dig($array, $key, $valueDefault);
+    }
+
+    /**
+     * Get float.
+     * @param  array      $array
+     * @param  int|string $key
+     * @param  any|null   $valueDefault
+     * @return float
+     */
+    public static function getFloat(array $array, $key, $valueDefault = null): float
+    {
+        return (float) self::dig($array, $key, $valueDefault);
+    }
+
+    /**
+     * Get bool.
+     * @param  array      $array
+     * @param  int|string $key
+     * @param  any|null   $valueDefault
+     * @return bool
+     */
+    public static function getBool(array $array, $key, $valueDefault = null): bool
+    {
+        return (bool) self::dig($array, $key, $valueDefault);
+    }
+
+    /**
+     * Get string.
+     * @param  array       $array
+     * @param  int|string  $key
+     * @param  any|null   $valueDefault
+     * @return string
+     */
+    public static function getString(array $array, $key, $valueDefault = null): string
+    {
+        return (string) self::dig($array, $key, $valueDefault);
+    }
 }
