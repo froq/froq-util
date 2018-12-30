@@ -46,7 +46,7 @@ trait SetterTrait
     public final function __set(string $name, $value)
     {
         if (!property_exists($this, $name)) {
-            throw new \Exception(sprintf("'%s' property does not exists on '%s' object!",
+            throw new \Exception(sprintf("'%s' property does not exists on '%s' object",
                 $name, get_class($this)));
         }
 

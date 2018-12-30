@@ -47,16 +47,14 @@ final class Iter implements Interfaces\Arrayable
      */
     public function __construct($data)
     {
-        if (!is_iter($data)) {
-            throw new UtilException('Given data is not iterable!');
-        }
-
         if (is_array_like($data)) {
             $data = (array) $data;
         } elseif ($data instanceof \Traversable) {
             $data = iterator_to_array($data);
         } elseif (is_object($data)) {
             $data = method_exists($data, 'toArray') ? $data->toArray() : get_object_vars($data);
+        } else {
+            throw new UtilException('Given argument is not iterable');
         }
 
         $this->data = $data;
