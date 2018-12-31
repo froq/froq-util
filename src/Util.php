@@ -99,7 +99,7 @@ final /* static */ class Util
         $url = $_SERVER['REQUEST_SCHEME'] .'://'. $_SERVER['SERVER_NAME'];
         $url .= $filter(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
 
-        if ($withQuery && ($_SERVER['QUERY_STRING'] ?? '') != '') {
+        if ($withQuery && !empty($_SERVER['QUERY_STRING'])) {
             $url .= '?'. $filter($_SERVER['QUERY_STRING']);
         }
 
