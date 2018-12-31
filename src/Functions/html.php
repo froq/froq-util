@@ -217,11 +217,10 @@ function html_compress(?string $input): string
 
     // textarea \n problem
     $textarea_tpl = '%{{{TEXTAREA}}}';
-    $textarea_count = preg_match_all(
-        '~(<textarea(.*?)>(.*?)</textarea>)~sm', $input, $matches);
+    $textarea_found = !!preg_match_all('~(<textarea(.*?)>(.*?)</textarea>)~sm', $input, $matches);
 
     // fix textareas
-    if ($textarea_count) {
+    if ($textarea_found) {
         foreach ($matches[0] as $match) {
             $input = str_replace($match, $textarea_tpl, $input);
         }
@@ -231,7 +230,7 @@ function html_compress(?string $input): string
     $input = preg_replace('~\s+~', ' ', $input);
 
     // fix textareas
-    if ($textarea_count) {
+    if ($textarea_found) {
         foreach ($matches[0] as $match) {
             $input = preg_replace("~{$textarea_tpl}~", $match, $input, 1);
         }

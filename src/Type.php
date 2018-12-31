@@ -68,7 +68,6 @@ final /* static */ class Type
         if ($a === 'true' || $a === 'false') {
             return $a === 'true';
         }
-
         return null;
     }
 
@@ -76,18 +75,18 @@ final /* static */ class Type
      * Is UInt.
      * @param  any       $in
      * @param  int|null &$out
-     * @param  bool      $isStrict
+     * @param  bool      $strict
      * @return bool
      */
-    public static function isUint($in, &$out = null, bool $isStrict = false): bool
+    public static function isUint($in, &$out = null, bool $strict = false): bool
     {
-        if ($isStrict && is_float($in)) {
+        if ($strict && is_float($in)) {
             return false;
         }
         if (!is_numeric($in) || strpbrk(strval($in), '-.') !== false) {
             return false;
         }
-
+        // convert to type
         return ($out = intval($in)) >= 0;
     }
 
@@ -95,18 +94,18 @@ final /* static */ class Type
      * Is UFloat.
      * @param  any         $in
      * @param  float|null &$out
-     * @param  bool        $isStrict
+     * @param  bool        $strict
      * @return bool
      */
-    public static function isUfloat($in, &$out = null, bool $isStrict = false): bool
+    public static function isUfloat($in, &$out = null, bool $strict = false): bool
     {
-        if ($isStrict && is_int($in)) {
+        if ($strict && is_int($in)) {
             return false;
         }
         if (!is_numeric($in) || (strval($in)[0] ?? '') === '-') {
             return false;
         }
-
+        // convert to type
         return ($out = floatval($in)) >= 0.0;
     }
 
@@ -121,7 +120,7 @@ final /* static */ class Type
         if (!is_numeric($in) || (strval($in)[0] == '-')) {
             return false;
         }
-
+        // convert to type
         return ($out = abs($in)) >= 0;
     }
 
@@ -130,6 +129,7 @@ final /* static */ class Type
     // public static function isAbstractClass($x): bool {}
     // public static function isInterface($x): bool {}
     // public static function isTrait($x): bool {}
+    // public static function isException($x, \Throwable $t = null): bool {}
 
     // @links
     // https://golang.org/src/builtin/builtin.go
