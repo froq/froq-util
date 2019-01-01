@@ -39,15 +39,15 @@ function to_iter($input): Iter
 /**
  * To array.
  * @param  array|object $input
- * @param  bool         $do_deep
+ * @param  bool         $deep
  * @return array
  */
-function to_array($input, bool $do_deep = true): array
+function to_array($input, bool $deep = true): array
 {
     $input = (array) $input;
-    if ($do_deep) {
+    if ($deep) {
         foreach ($input as $key => $value) {
-            $input[$key] = is_iter($value) ? to_array($value, $do_deep) : $value;
+            $input[$key] = is_iter($value) ? to_array($value, $deep) : $value;
         }
     }
 
@@ -57,15 +57,15 @@ function to_array($input, bool $do_deep = true): array
 /**
  * To object.
  * @param  array|object $input
- * @param  bool         $do_deep
+ * @param  bool         $deep
  * @return object
  */
-function to_object($input, bool $do_deep = true): object
+function to_object($input, bool $deep = true): object
 {
     $input = (object) $input;
-    if ($do_deep) {
+    if ($deep) {
         foreach ($input as $key => $value) {
-            $input->{$key} = is_iter($value) ? to_object($value, $do_deep) : $value;
+            $input->{$key} = is_iter($value) ? to_object($value, $deep) : $value;
         }
     }
 
@@ -75,14 +75,14 @@ function to_object($input, bool $do_deep = true): object
 /**
  * To snake from dash (Foo-Bar -> Foo_Bar | foo_bar).
  * @param  ?string $input
- * @param  bool    $do_lower
+ * @param  bool    $lower
  * @return string
  */
-function to_snake_from_dash(?string $input, bool $do_lower = true): string
+function to_snake_from_dash(?string $input, bool $lower = true): string
 {
     $input = str_replace('-', '_', (string) $input);
 
-    if ($do_lower) {
+    if ($lower) {
         $input = strtolower($input);
     }
 
@@ -92,16 +92,16 @@ function to_snake_from_dash(?string $input, bool $do_lower = true): string
 /**
  * To snake from upper (fooBar | FooBar -> foo_bar)
  * @param  ?string $input
- * @param  bool    $do_lower
+ * @param  bool    $lower
  * @return string
  */
-function to_snake_from_upper(?string $input, bool $do_lower = true): string
+function to_snake_from_upper(?string $input, bool $lower = true): string
 {
     $input = (string) preg_replace_callback('~(?!^)([A-Z])~', function($match) {
         return '_'. $match[1];
     }, (string) $input);
 
-    if ($do_lower) {
+    if ($lower) {
         $input = strtolower($input);
     }
 
@@ -111,16 +111,16 @@ function to_snake_from_upper(?string $input, bool $do_lower = true): string
 /**
  * To dash from upper (FooBar -> Foo-Bar | foo-bar).
  * @param  ?string $input
- * @param  bool    $do_lower
+ * @param  bool    $lower
  * @return string
  */
-function to_dash_from_upper(?string $input, bool $do_lower = true): string
+function to_dash_from_upper(?string $input, bool $lower = true): string
 {
     $input = (string) preg_replace_callback('~(?!^)([A-Z])~', function($match) {
         return '-'. $match[0];
     }, (string) $input);
 
-    if ($do_lower) {
+    if ($lower) {
         $input = strtolower($input);
     }
 
@@ -145,12 +145,12 @@ function to_upper_from_dash(?string $input): string
  * To query string.
  * @param  array  $input
  * @param  string $ignored_keys
- * @param  bool   $do_strip_tags
- * @param  bool   $do_normalize_arrays
+ * @param  bool   $strip_tags
+ * @param  bool   $normalize_arrays
  * @return string
  */
 function to_query_string(array $input, string $ignored_keys = '',
-    bool $do_strip_tags = true, bool $do_normalize_arrays = true): string
+    bool $strip_tags = true, bool $normalize_arrays = true): string
 {
     if ($ignored_keys != '') {
         $ignored_keys = explode(',', $ignored_keys);
@@ -175,10 +175,11 @@ function to_query_string(array $input, string $ignored_keys = '',
 
     $query = http_build_query($mapper($input));
 
-    if ($do_strip_tags && false !== strpos($query, '%3C')) {
+    if ($strip_tags && false !== strpos($query, '%3C')) {
         $query = preg_replace('~%3C[\w]+(%2F)?%3E~simU', '', $query);
     }
-    if ($do_normalize_arrays && false !== strpos($query, '%5D')) {
+
+    if ($normalize_arrays && false !== strpos($query, '%5D')) {
         $query = preg_replace('~%5B([\d]+)%5D~simU', '[]', $query);
         $query = preg_replace('~%5B([\w\.-]+)%5D~simU', '[\1]', $query);
     }
