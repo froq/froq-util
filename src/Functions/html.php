@@ -138,13 +138,13 @@ function html_options(iterable $input, $key_b = null, $extra = null): string
  * Html checked.
  * @param  any  $a
  * @param  any  $b
- * @param  bool $is_strict
+ * @param  bool $strict
  * @return string
  */
-function html_checked($a, $b, bool $is_strict = false): string
+function html_checked($a, $b, bool $strict = false): string
 {
     return $a === null ? '' : (
-        $is_strict ? $a === $b ? ' checked' : '' : $a == $b ? ' checked' : ''
+        $strict ? $a === $b ? ' checked' : '' : $a == $b ? ' checked' : ''
     );
 }
 
@@ -152,13 +152,13 @@ function html_checked($a, $b, bool $is_strict = false): string
  * Html disabled.
  * @param  any  $a
  * @param  any  $b
- * @param  bool $is_strict
+ * @param  bool $strict
  * @return string
  */
-function html_disabled($a, $b, bool $is_strict = false): string
+function html_disabled($a, $b, bool $strict = false): string
 {
     return $a === null ? '' : (
-        $is_strict ? $a === $b ? ' disabled' : '' : $a == $b ? ' disabled' : ''
+        $strict ? $a === $b ? ' disabled' : '' : $a == $b ? ' disabled' : ''
     );
 }
 
@@ -166,13 +166,13 @@ function html_disabled($a, $b, bool $is_strict = false): string
  * Html selected.
  * @param  any  $a
  * @param  any  $b
- * @param  bool $is_strict
+ * @param  bool $strict
  * @return string
  */
-function html_selected($a, $b, bool $is_strict = false): string
+function html_selected($a, $b, bool $strict = false): string
 {
     return $a === null ? '' : (
-        $is_strict ? $a === $b ? ' selected' : '' : $a == $b ? ' selected' : ''
+        $strict ? $a === $b ? ' selected' : '' : $a == $b ? ' selected' : ''
     );
 }
 

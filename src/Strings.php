@@ -39,14 +39,14 @@ final /* static */ class Strings
      * @param  string $source
      * @param  string $search
      * @param  int    $offset
-     * @param  bool   $isCaseInsensitive
+     * @param  bool   $caseInsensitive
      * @return bool
      */
     public static function contains(string $source, string $search, int $offset = 0,
-        bool $isCaseInsensitive = false): bool
+        bool $caseInsensitive = false): bool
     {
-        return ($isCaseInsensitive ? stripos($source, $search, $offset)
-            : strpos($source, $search, $offset)) !== false;
+        return false !== (!$caseInsensitive ? strpos($source, $search, $offset)
+            : stripos($source, $search, $offset));
     }
 
     /**

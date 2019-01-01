@@ -72,13 +72,13 @@ function is_array_key(array $array, $key): bool
  * Is array value.
  * @param  array $array
  * @param  any   $value Multiple values accepted.
- * @param  bool  $is_strict
+ * @param  bool  $strict
  * @return bool
  */
-function is_array_value(array $array, $value, bool $is_strict = false): bool
+function is_array_value(array $array, $value, bool $strict = false): bool
 {
     foreach ((array) $value as $value) {
-        if (!in_array($value, $array, $is_strict)) {
+        if (!in_array($value, $array, $strict)) {
             return false;
         }
     }
