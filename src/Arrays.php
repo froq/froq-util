@@ -241,8 +241,8 @@ final /* static */ class Arrays
 
     /**
      * Get string.
-     * @param  array       $array
-     * @param  int|string  $key
+     * @param  array      $array
+     * @param  int|string $key
      * @param  any|null   $valueDefault
      * @return string
      */

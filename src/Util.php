@@ -105,4 +105,48 @@ final /* static */ class Util
 
         return $url;
     }
+
+    /**
+     * Get int.
+     * @param  any      $input
+     * @param  any|null $inputDefault
+     * @return int
+     */
+    public static function getInt($input, $inputDefault = null): int
+    {
+        return (int) ($input ?? $inputDefault);
+    }
+
+    /**
+     * Get float.
+     * @param  any      $input
+     * @param  any|null $inputDefault
+     * @return float
+     */
+    public static function getFloat($input, $inputDefault = null): float
+    {
+        return (float) ($input ?? $inputDefault);
+    }
+
+    /**
+     * Get bool.
+     * @param  any      $input
+     * @param  any|null $inputDefault
+     * @return bool
+     */
+    public static function getBool($input, $inputDefault = null): bool
+    {
+        return (bool) ($input ?? $inputDefault);
+    }
+
+    /**
+     * Get string.
+     * @param  any      $input
+     * @param  any|null $inputDefault
+     * @return string
+     */
+    public static function getString($input, $inputDefault = null): string
+    {
+        return (string) ($input ?? $inputDefault);
+    }
 }
