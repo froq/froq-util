@@ -50,6 +50,20 @@ final /* static */ class Strings
     }
 
     /**
+     * Contains any.
+     * @param  string $source
+     * @param  string $search
+     * @param  bool   $caseInsensitive
+     * @return bool
+     */
+    public static function containsAny(string $source, string $searches,
+        bool $caseInsensitive = false): bool
+    {
+        return false !== (!$caseInsensitive ? strpbrk($source, $searches)
+            : strpbrk(strtolower($source), strtolower($searches)));
+    }
+
+    /**
      * Starts with.
      * @param  string $source
      * @param  string $search
