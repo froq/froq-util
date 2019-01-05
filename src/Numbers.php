@@ -41,17 +41,16 @@ final /* static */ class Numbers
      * @param  int    $precision
      * @return ?int
      */
-    public static function compare($a, $b, int $precision = 2): ?int
+    public static function compare($a, $b, int $precision = null): ?int
     {
         if (is_numeric($a) && is_numeric($b)) {
+            $precision = $precision ?? 14; // @default=14
+
             if (function_exists('bccomp')) {
-                return bccomp(strval($a), strval($b), $precision);
+                return bccomp((string) $a, (string) $b, $precision);
             }
 
-            $a = round($a, $precision);
-            $b = round($b, $precision);
-
-            return ($a === $b) ? 0 : ($a > $b) ? 1 : -1;
+            return round((float) $a, $precision) <=> round((float) $b, $precision);
         }
 
         return null;
@@ -64,8 +63,96 @@ final /* static */ class Numbers
      * @param  int    $precision
      * @return bool
      */
-    public static function isEqual($a, $b, int $precision = 2): bool
+    public static function isEqual($a, $b, int $precision = null): bool
     {
-        return (0 === self::compare($a, $b, $precision));
+        return !self::compare($a, $b, $precision);
     }
+
+    /**
+     * Is id (useful for object id checking).
+     * @param  number $input
+     * @return bool
+     */
+    public static function isId($input): bool
+    {
+        return intval($input) > 0 && self::isUInt($input);
+    }
+
+    /**
+     * Is UInt.
+     * @param  number $input
+     * @return bool
+     */
+    public static function isUInt($input): bool
+    {
+        if (!is_numeric($input) || is_float($input)) {
+            return false;
+        }
+
+        $input = (string) json_encode($input, JSON_PRESERVE_ZERO_FRACTION);
+        return strpbrk($input, '-.') === false;
+    }
+
+    /**
+     * Is UFloat.
+     * @param  number $input
+     * @return bool
+     */
+    public static function isUFloat($input): bool
+    {
+        if (!is_numeric($input) || is_int($input)) {
+            return false;
+        }
+
+        $input = (string) json_encode($input, JSON_PRESERVE_ZERO_FRACTION);
+        return $input[0] !== '-' && strpos($input, '.') !== false;
+    }
+
+    /**
+     * Is Signed.
+     * @param  number $input
+     * @return bool
+     */
+    public static function isSigned($input): bool
+    {
+        return is_numeric($input) && floatval($input) <= 0;
+    }
+
+    /**
+     * Is Unsigned.
+     * @param  number $input
+     * @return bool
+     */
+    public static function isUnsigned($input): bool
+    {
+        return is_numeric($input) && floatval($input) >= 0;
+    }
+
+    // @links
+    // https://golang.org/src/builtin/builtin.go
+    // https://msdn.microsoft.com/en-us/library/exx3b86w.aspx
+    // http://dev.mysql.com/doc/refman/5.7/en/integer-types.html
+    // http://stackoverflow.com/questions/3724242/what-is-the-difference-between-int-and-uint-long-and-ulong
+
+    // @wait
+    // public static function isInt($in, &$out = null): bool {}
+    // public static function isUInt($in, &$out = null): bool {}
+    // public static function isInt8($in, &$out = null): bool {}
+    // public static function isUInt8($in, &$out = null): bool {}
+    // public static function isInt64($in, &$out = null): bool {}
+    // public static function isUInt64($in, &$out = null): bool {}
+    // public static function isFloat($in, &$out = null): bool {}
+    // public static function isUFloat($in, &$out = null): bool {}
+    // public static function isFloat32($in, &$out = null): bool {}
+    // public static function isUFloat32($in, &$out = null): bool {}
+    // public static function isFloat64($in, &$out = null): bool {}
+    // public static function isUFloat64($in, &$out = null): bool {}
+
+    // @shortcuts (maybe for sql type checks)
+    // public static function isByte($in, &$out = null): bool {} // -128 to 127
+    // public static function isUByte($in, &$out = null): bool {} // 0 to 255
+    // public static function isShort($in, &$out = null): bool {}
+    // public static function isUShort($in, &$out = null): bool {}
+    // public static function isLong($in, &$out = null): bool {}
+    // public static function isULong($in, &$out = null): bool {}
 }
