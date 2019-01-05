@@ -61,67 +61,13 @@ final /* static */ class Type
      */
     public static function toBool($a): ?bool
     {
-        $a = strval($a);
-        if ($a === '1' || $a === '0') {
-            return boolval($a);
+        if (is_bool($a)) {
+            return $a;
         }
-        if ($a === 'true' || $a === 'false') {
-            return $a === 'true';
-        }
-        return null;
-    }
 
-    /**
-     * Is UInt.
-     * @param  any       $in
-     * @param  int|null &$out
-     * @param  bool      $strict
-     * @return bool
-     */
-    public static function isUint($in, &$out = null, bool $strict = false): bool
-    {
-        if ($strict && is_float($in)) {
-            return false;
-        }
-        if (!is_numeric($in) || strpbrk(strval($in), '-.') !== false) {
-            return false;
-        }
-        // convert to type
-        return ($out = intval($in)) >= 0;
-    }
-
-    /**
-     * Is UFloat.
-     * @param  any         $in
-     * @param  float|null &$out
-     * @param  bool        $strict
-     * @return bool
-     */
-    public static function isUfloat($in, &$out = null, bool $strict = false): bool
-    {
-        if ($strict && is_int($in)) {
-            return false;
-        }
-        if (!is_numeric($in) || (strval($in)[0] ?? '') === '-') {
-            return false;
-        }
-        // convert to type
-        return ($out = floatval($in)) >= 0.0;
-    }
-
-    /**
-     * Is Unsigned.
-     * @param  any             $in
-     * @param  int|float|null &$out
-     * @return bool
-     */
-    public static function isUnsigned($in, &$out = null): bool
-    {
-        if (!is_numeric($in) || (strval($in)[0] == '-')) {
-            return false;
-        }
-        // convert to type
-        return ($out = abs($in)) >= 0;
+        $a = ''. $a; // to string
+        return ($a === '1' || $a === '0') ? boolval($a)
+            : (($a === 'true' || $a === 'false') ? $a === 'true' : null);
     }
 
     // @wait
@@ -130,34 +76,4 @@ final /* static */ class Type
     // public static function isInterface($x): bool {}
     // public static function isTrait($x): bool {}
     // public static function isException($x, \Throwable $t = null): bool {}
-
-    // @links
-    // https://golang.org/src/builtin/builtin.go
-    // https://msdn.microsoft.com/en-us/library/exx3b86w.aspx
-    // http://dev.mysql.com/doc/refman/5.7/en/integer-types.html
-    // http://stackoverflow.com/questions/3724242/what-is-the-difference-between-int-and-uint-long-and-ulong
-
-    // @wait
-    // public static function isSigned($in, &$out = null): bool {}
-    // public static function isUnsigned($in, &$out = null): bool {}
-    // public static function isInt($in, &$out = null): bool {}
-    // public static function isUInt($in, &$out = null): bool {}
-    // public static function isInt8($in, &$out = null): bool {}
-    // public static function isUInt8($in, &$out = null): bool {}
-    // public static function isInt64($in, &$out = null): bool {}
-    // public static function isUInt64($in, &$out = null): bool {}
-    // public static function isFloat($in, &$out = null): bool {}
-    // public static function isUFloat($in, &$out = null): bool {}
-    // public static function isFloat32($in, &$out = null): bool {}
-    // public static function isUFloat32($in, &$out = null): bool {}
-    // public static function isFloat64($in, &$out = null): bool {}
-    // public static function isUFloat64($in, &$out = null): bool {}
-
-    // @shortcuts
-    // public static function isByte($in, &$out = null): bool {} // -128 to 127
-    // public static function isUByte($in, &$out = null): bool {} // 0 to 255
-    // public static function isShort($in, &$out = null): bool {}
-    // public static function isUShort($in, &$out = null): bool {}
-    // public static function isLong($in, &$out = null): bool {}
-    // public static function isULong($in, &$out = null): bool {}
 }
