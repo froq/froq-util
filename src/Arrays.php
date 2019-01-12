@@ -161,12 +161,7 @@ final /* static */ class Arrays
      */
     public static function first(array $array)
     {
-        if (empty($array)) {
-            return null;
-        }
-
-        reset($array);
-        return current($array);
+        return $array[0] ?? null;
     }
 
     /**
@@ -176,12 +171,7 @@ final /* static */ class Arrays
      */
     public static function last(array $array)
     {
-        if (empty($array)) {
-            return null;
-        }
-
-        reset($array);
-        return end($array);
+        return $array[count($array)] ?? null;
     }
 
     /**
@@ -228,18 +218,6 @@ final /* static */ class Arrays
     }
 
     /**
-     * Get bool.
-     * @param  array      $array
-     * @param  int|string $key
-     * @param  any|null   $valueDefault
-     * @return bool
-     */
-    public static function getBool(array $array, $key, $valueDefault = null): bool
-    {
-        return (bool) self::dig($array, $key, $valueDefault);
-    }
-
-    /**
      * Get string.
      * @param  array      $array
      * @param  int|string $key
@@ -249,5 +227,17 @@ final /* static */ class Arrays
     public static function getString(array $array, $key, $valueDefault = null): string
     {
         return (string) self::dig($array, $key, $valueDefault);
+    }
+
+    /**
+     * Get bool.
+     * @param  array      $array
+     * @param  int|string $key
+     * @param  any|null   $valueDefault
+     * @return bool
+     */
+    public static function getBool(array $array, $key, $valueDefault = null): bool
+    {
+        return (bool) self::dig($array, $key, $valueDefault);
     }
 }
