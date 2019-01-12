@@ -129,17 +129,6 @@ final /* static */ class Util
     }
 
     /**
-     * Get bool.
-     * @param  any      $input
-     * @param  any|null $inputDefault
-     * @return bool
-     */
-    public static function getBool($input, $inputDefault = null): bool
-    {
-        return (bool) ($input ?? $inputDefault);
-    }
-
-    /**
      * Get string.
      * @param  any      $input
      * @param  any|null $inputDefault
@@ -148,5 +137,16 @@ final /* static */ class Util
     public static function getString($input, $inputDefault = null): string
     {
         return (string) ($input ?? $inputDefault);
+    }
+
+    /**
+     * Get bool.
+     * @param  any      $input
+     * @param  any|null $inputDefault
+     * @return bool
+     */
+    public static function getBool($input, $inputDefault = null): bool
+    {
+        return (bool) ($input ?? $inputDefault);
     }
 }
