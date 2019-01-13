@@ -35,24 +35,57 @@ namespace Froq\Util;
 final /* static */ class Arrays
 {
     /**
-     * Dig (with dot notation support for sub-array paths).
-     * @param  array      $array
-     * @param  int|string $key (aka path)
+     * Set (with dot notation support for sub-array paths).
+     * @param  array      &$array
+     * @param  int|string $key
      * @param  any        $valueDefault
      * @return any
      */
-    public static function dig(array $array, $key, $valueDefault = null)
+    public static function set(array &$array, $key, $value): array
     {
-        if (array_key_exists($key, $array)) {
-            $value = $array[$key]; // direct access
+        if (array_key_exists($key, $array)) { // direct access
+            $array[$key] = $value;
         } else {
-            $value =& $array;       // path access
-            foreach (explode('.', trim((string) $key)) as $key) {
-                if (!is_array($value)) {
-                    $value = null;
-                    break;
+            $keys = explode('.', (string) $key);
+            if (count($keys) <= 1) { // direct access
+                $array[$key] = $value;
+            } else { // path access (with dot notation)
+                $current = &$array;
+                foreach($keys as $key) {
+                    $current = &$current[$key];
                 }
-                $value =& $value[$key];
+                $current = $value;
+                unset($current);
+            }
+        }
+
+        return $array;
+    }
+
+    /**
+     * Get (with dot notation support for sub-array paths).
+     * @param  array      $array
+     * @param  int|string $key
+     * @param  any        $valueDefault
+     * @return any
+     */
+    public static function get(array $array, $key, $valueDefault = null)
+    {
+        if (array_key_exists($key, $array)) { // direct access
+            $value = $array[$key];
+        } else {
+            $keys = explode('.', (string) $key);
+            if (count($keys) <= 1) { // direct access
+                $value = @$array[$key];
+            } else { // path access (with dot notation)
+                $value = &$array;
+                foreach ($keys as $key) {
+                    if (!is_array($value) || !array_key_exists($key, $value)) {
+                        $value = null;
+                        break;
+                    }
+                    $value = &$value[$key];
+                }
             }
         }
 
@@ -60,58 +93,58 @@ final /* static */ class Arrays
     }
 
     /**
-     * Dig all (shortcut like: list(..) = Arrays::digAll(..)).
+     * Get all (shortcut like: list(..) = Arrays::getAll(..)).
      * @param  array  $array
      * @param  array  $keys (aka paths)
      * @param  any    $valueDefault
      * @return array
      */
-    public static function digAll(array $array, array $keys, $valueDefault = null): array
+    public static function getAll(array $array, array $keys, $valueDefault = null): array
     {
         $values = [];
         foreach ($keys as $key) {
             if (is_array($key)) { // default value given as array
-                [$key, $valueDefault] = $key;
+                @[$key, $valueDefault] = $key;
             }
-            $values[] = self::dig($array, $key, $valueDefault);
+            $values[] = self::get($array, $key, $valueDefault);
         }
 
         return $values;
     }
 
     /**
-     * Pick.
-     * @param  array      $array
+     * Pull.
+     * @param  array      &$array
      * @param  int|string $key
      * @param  any        $valueDefault
      * @return any
      */
-    public static function pick(array &$array, $key, $valueDefault = null)
+    public static function pull(array &$array, $key, $valueDefault = null)
     {
         $value = $valueDefault;
         if (array_key_exists($key, $array)) {
             $value = $array[$key];
-            unset($array[$key]); // remove picked element
+            unset($array[$key]); // remove pulled item
         }
 
         return $value;
     }
 
     /**
-     * Pick all.
+     * Pull all.
      * @param  array  &$array
      * @param  array  $keys
      * @param  any    $valueDefault
      * @return array
      */
-    public static function pickAll(array &$array, array $keys, $valueDefault = null): array
+    public static function pullAll(array &$array, array $keys, $valueDefault = null): array
     {
         $values = [];
         foreach ($keys as $key) {
             if (is_array($key)) { // default value given as array
                 [$key, $valueDefault] = $key;
             }
-            $values[] = self::pick($array, $key, $valueDefault);
+            $values[] = self::pull($array, $key, $valueDefault);
         }
 
         return $values;
@@ -202,7 +235,7 @@ final /* static */ class Arrays
      */
     public static function getInt(array $array, $key, $valueDefault = null): int
     {
-        return (int) self::dig($array, $key, $valueDefault);
+        return (int) self::get($array, $key, $valueDefault);
     }
 
     /**
@@ -214,7 +247,7 @@ final /* static */ class Arrays
      */
     public static function getFloat(array $array, $key, $valueDefault = null): float
     {
-        return (float) self::dig($array, $key, $valueDefault);
+        return (float) self::get($array, $key, $valueDefault);
     }
 
     /**
@@ -226,7 +259,7 @@ final /* static */ class Arrays
      */
     public static function getString(array $array, $key, $valueDefault = null): string
     {
-        return (string) self::dig($array, $key, $valueDefault);
+        return (string) self::get($array, $key, $valueDefault);
     }
 
     /**
@@ -238,6 +271,6 @@ final /* static */ class Arrays
      */
     public static function getBool(array $array, $key, $valueDefault = null): bool
     {
-        return (bool) self::dig($array, $key, $valueDefault);
+        return (bool) self::get($array, $key, $valueDefault);
     }
 }
