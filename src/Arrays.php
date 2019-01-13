@@ -151,6 +151,48 @@ final /* static */ class Arrays
     }
 
     /**
+     * Test (like JavaScript Array.some()).
+     * @param  array    $array
+     * @param  callable $fn
+     * @return bool
+     */
+    public static function test(array $array, callable $fn): bool
+    {
+        $i = 0;
+        foreach ($array as $key => $value) {
+            try {
+                // try user function
+                if ($fn($value, $key, $i++)) return true;
+            } catch (\ArgumentCountError $e) {
+                // try an internal single-argument function like is_*
+                if ($fn($value)) return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Test all (like JavaScript Array.every()).
+     * @param  array    $array
+     * @param  callable $fn
+     * @return bool
+     */
+    public static function testAll(array $array, callable $fn): bool
+    {
+        $i = 0;
+        foreach ($array as $key => $value) {
+            try {
+                // try user function
+                if (!$fn($value, $key, $i++)) return false;
+            } catch (\ArgumentCountError $e) {
+                // try an internal single-argument function like is_*
+                if (!$fn($value)) return false;
+            }
+        }
+        return true;
+    }
+
+    /**
      * Include.
      * @param  array $array
      * @param  array $keys
