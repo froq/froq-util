@@ -89,10 +89,15 @@ final /* static */ class Util
     {
         static $filter;
         if ($filter == null) {
-            $filter = function($input) {
-                $input = substr($input, 0, strcspn($input, "\n\r"));
-                $input = str_ireplace(['%00', '%0a', '%1a'], '', $input);
-                return html_encode($input);
+            $filter = function ($input) {
+                // encode quotes and html tags
+                return html_encode(
+                    // remove NUL-byte, ctrl-z, vertical tab
+                    preg_replace('~[\x00\x1a\x0b]|%(?:00|1a|0b)~i', '', trim(
+                        // slice at \n or \r
+                        substr($input, 0, strcspn($input, "\n\r"))
+                    ))
+                );
             };
         }
 
