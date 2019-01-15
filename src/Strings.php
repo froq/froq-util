@@ -52,26 +52,22 @@ final /* static */ class Strings
             return false;
         }
 
-        return ($caseSensitive ? strpos($source, $search, $offset)
-            : stripos($source, $search, $offset)) !== false;
+        return false !== ($caseSensitive ? strpos($source, $search, $offset)
+            : stripos($source, $search, $offset));
     }
 
     /**
      * Contains any.
-     * @param  string       $source
-     * @param  string|array $search
-     * @param  int|null     $offset
-     * @param  bool         $caseSensitive
+     * @param  string   $source
+     * @param  array    $search
+     * @param  int|null $offset
+     * @param  bool     $caseSensitive
      * @return bool
      * @since  3.0
      */
-    public static function containsAny(string $source, $searches, int $offset = null,
+    public static function containsAny(string $source, array $searches, int $offset = null,
         bool $caseSensitive = true): bool
     {
-        if (!is_array($searches)) {
-            $searches = preg_split('~~u', $searches, -1, PREG_SPLIT_NO_EMPTY);
-        }
-
         foreach ($searches as $search) {
             if (self::contains($source, $search, $offset, $caseSensitive)) {
                 return true;
@@ -82,20 +78,16 @@ final /* static */ class Strings
 
     /**
      * Contains all.
-     * @param  string       $source
-     * @param  string|array $search
-     * @param  int|null     $offset
-     * @param  bool         $caseSensitive
+     * @param  string   $source
+     * @param  array    $search
+     * @param  int|null $offset
+     * @param  bool     $caseSensitive
      * @return bool
      * @since  3.0
      */
-    public static function containsAll(string $source, $searches, int $offset = null,
+    public static function containsAll(string $source, array $searches, int $offset = null,
         bool $caseSensitive = true): bool
     {
-        if (!is_array($searches)) {
-            $searches = preg_split('~~u', $searches, -1, PREG_SPLIT_NO_EMPTY);
-        }
-
         foreach ($searches as $search) {
             if (!self::contains($source, $search, $offset, $caseSensitive)) {
                 return false;
