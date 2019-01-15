@@ -36,31 +36,72 @@ final /* static */ class Strings
 {
     /**
      * Contains.
-     * @param  string $source
-     * @param  string $search
-     * @param  int    $offset
-     * @param  bool   $caseInsensitive
+     * @param  string   $source
+     * @param  string   $search
+     * @param  int|null offset
+     * @param  bool     $caseSensitive
      * @return bool
      */
-    public static function contains(string $source, string $search, int $offset = 0,
-        bool $caseInsensitive = false): bool
+    public static function contains(string $source, string $search, int $offset = null,
+        bool $caseSensitive = true): bool
     {
-        return false !== (!$caseInsensitive ? strpos($source, $search, $offset)
-            : stripos($source, $search, $offset));
+        $offset = $offset ?? 0;
+
+        // fix: 'offset not contained' error
+        if ($offset && abs($offset) > strlen($source)) {
+            return false;
+        }
+
+        return ($caseSensitive ? strpos($source, $search, $offset)
+            : stripos($source, $search, $offset)) !== false;
     }
 
     /**
      * Contains any.
-     * @param  string $source
-     * @param  string $search
-     * @param  bool   $caseInsensitive
+     * @param  string       $source
+     * @param  string|array $search
+     * @param  int|null     $offset
+     * @param  bool         $caseSensitive
      * @return bool
+     * @since  3.0
      */
-    public static function containsAny(string $source, string $searches,
-        bool $caseInsensitive = false): bool
+    public static function containsAny(string $source, $searches, int $offset = null,
+        bool $caseSensitive = true): bool
     {
-        return false !== (!$caseInsensitive ? strpbrk($source, $searches)
-            : strpbrk(strtolower($source), strtolower($searches)));
+        if (!is_array($searches)) {
+            $searches = preg_split('~~u', $searches, -1, PREG_SPLIT_NO_EMPTY);
+        }
+
+        foreach ($searches as $search) {
+            if (self::contains($source, $search, $offset, $caseSensitive)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Contains all.
+     * @param  string       $source
+     * @param  string|array $search
+     * @param  int|null     $offset
+     * @param  bool         $caseSensitive
+     * @return bool
+     * @since  3.0
+     */
+    public static function containsAll(string $source, $searches, int $offset = null,
+        bool $caseSensitive = true): bool
+    {
+        if (!is_array($searches)) {
+            $searches = preg_split('~~u', $searches, -1, PREG_SPLIT_NO_EMPTY);
+        }
+
+        foreach ($searches as $search) {
+            if (!self::contains($source, $search, $offset, $caseSensitive)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
