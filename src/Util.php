@@ -119,7 +119,7 @@ final /* static */ class Util
      */
     public static function getInt($input, $inputDefault = null): int
     {
-        return (int) ($input ?? $inputDefault);
+        return int($input ?? $inputDefault);
     }
 
     /**
@@ -130,7 +130,7 @@ final /* static */ class Util
      */
     public static function getFloat($input, $inputDefault = null): float
     {
-        return (float) ($input ?? $inputDefault);
+        return float($input ?? $inputDefault);
     }
 
     /**
@@ -141,7 +141,7 @@ final /* static */ class Util
      */
     public static function getString($input, $inputDefault = null): string
     {
-        return (string) ($input ?? $inputDefault);
+        return string($input ?? $inputDefault);
     }
 
     /**
@@ -152,6 +152,6 @@ final /* static */ class Util
      */
     public static function getBool($input, $inputDefault = null): bool
     {
-        return (bool) ($input ?? $inputDefault);
+        return bool($input ?? $inputDefault);
     }
 }

@@ -24,56 +24,47 @@
  */
 declare(strict_types=1);
 
-namespace Froq\Util;
+/**
+ * Int.
+ * @param  any $input
+ * @return int
+ * @since  3.0
+ */
+function int($input): int
+{
+    return is_numeric($input) ? intval($input) : 0;
+}
 
 /**
- * @package    Froq
- * @subpackage Froq\Util
- * @object     Froq\Util\Type
- * @author     Kerem Güneş <k-gun@mail.com>
+ * Float.
+ * @param  any $input
+ * @return float
+ * @since  3.0
  */
-final /* static */ class Type
+function float($input): float
 {
-    /**
-     * To int.
-     * @param  number $a
-     * @return ?int
-     */
-    public static function toInt($a): ?int
-    {
-        return is_numeric($a) ? intval($a) : null;
-    }
+    return is_numeric($input) ? floatval($input) : 0.0;
+}
 
-    /**
-     * To float.
-     * @param  number $a
-     * @return ?float
-     */
-    public static function toFloat($a): ?float
-    {
-        return is_numeric($a) ? floatval($a) : null;
-    }
+/**
+ * String.
+ * @param  any $input
+ * @return string
+ * @since  3.0
+ */
+function string($input): string
+{
+    return strval($input);
+}
 
-    /**
-     * To bool.
-     * @param  any $a
-     * @return ?bool
-     */
-    public static function toBool($a): ?bool
-    {
-        if (is_bool($a)) {
-            return $a;
-        }
-
-        $a = ''. $a; // to string
-        return ($a === '1' || $a === '0') ? boolval($a)
-            : (($a === 'true' || $a === 'false') ? $a === 'true' : null);
-    }
-
-    // @wait
-    // public static function isClass($x): bool {}
-    // public static function isAbstractClass($x): bool {}
-    // public static function isInterface($x): bool {}
-    // public static function isTrait($x): bool {}
-    // public static function isException($x, \Throwable $t = null): bool {}
+/**
+ * Bool.
+ * @param  any $input
+ * @return bool
+ * @since  3.0
+ */
+function bool($input): bool
+{
+    $input .= ''; // to string
+    return ($input === '1' || $input === '0') ? boolval($input) : false;
 }

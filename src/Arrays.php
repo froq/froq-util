@@ -277,7 +277,7 @@ final /* static */ class Arrays
      */
     public static function getInt(array $array, $key, $valueDefault = null): int
     {
-        return (int) self::get($array, $key, $valueDefault);
+        return int(self::get($array, $key, $valueDefault));
     }
 
     /**
@@ -289,7 +289,7 @@ final /* static */ class Arrays
      */
     public static function getFloat(array $array, $key, $valueDefault = null): float
     {
-        return (float) self::get($array, $key, $valueDefault);
+        return float(self::get($array, $key, $valueDefault));
     }
 
     /**
@@ -301,7 +301,7 @@ final /* static */ class Arrays
      */
     public static function getString(array $array, $key, $valueDefault = null): string
     {
-        return (string) self::get($array, $key, $valueDefault);
+        return string(self::get($array, $key, $valueDefault));
     }
 
     /**
@@ -313,6 +313,6 @@ final /* static */ class Arrays
      */
     public static function getBool(array $array, $key, $valueDefault = null): bool
     {
-        return (bool) self::get($array, $key, $valueDefault);
+        return bool(self::get($array, $key, $valueDefault));
     }
 }
