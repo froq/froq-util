@@ -89,7 +89,7 @@ final /* static */ class Util
     {
         static $filter;
         if ($filter == null) {
-            $filter = function ($input) {
+            $filter = function($input) {
                 // encode quotes and html tags
                 return html_encode(
                     // remove NUL-byte, ctrl-z, vertical tab
@@ -101,8 +101,8 @@ final /* static */ class Util
             };
         }
 
-        $url = $_SERVER['REQUEST_SCHEME'] .'://'. $_SERVER['SERVER_NAME'];
-        $url .= $filter(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
+        $url = sprintf('%s://%s%s', $_SERVER['REQUEST_SCHEME'], $_SERVER['SERVER_NAME'],
+            $filter(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH)));
 
         if ($withQuery && !empty($_SERVER['QUERY_STRING'])) {
             $url .= '?'. $filter($_SERVER['QUERY_STRING']);
