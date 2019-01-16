@@ -76,7 +76,7 @@ final /* static */ class Arrays
         } else {
             $keys = explode('.', (string) $key);
             if (count($keys) <= 1) { // direct access
-                $value = @$array[$key];
+                $value = $array[$key] ?? null;
             } else { // path access (with dot notation)
                 $value = &$array;
                 foreach ($keys as $key) {
@@ -104,7 +104,7 @@ final /* static */ class Arrays
         $values = [];
         foreach ($keys as $key) {
             if (is_array($key)) { // default value given as array
-                @[$key, $valueDefault] = $key;
+                @ [$key, $valueDefault] = $key;
             }
             $values[] = self::get($array, $key, $valueDefault);
         }
@@ -121,13 +121,12 @@ final /* static */ class Arrays
      */
     public static function pull(array &$array, $key, $valueDefault = null)
     {
-        $value = $valueDefault;
         if (array_key_exists($key, $array)) {
             $value = $array[$key];
             unset($array[$key]); // remove pulled item
         }
 
-        return $value;
+        return $value ?? $valueDefault;
     }
 
     /**
@@ -142,7 +141,7 @@ final /* static */ class Arrays
         $values = [];
         foreach ($keys as $key) {
             if (is_array($key)) { // default value given as array
-                [$key, $valueDefault] = $key;
+                @ [$key, $valueDefault] = $key;
             }
             $values[] = self::pull($array, $key, $valueDefault);
         }
@@ -200,14 +199,9 @@ final /* static */ class Arrays
      */
     public static function include(array $array, array $keys): array
     {
-        $return = [];
-        foreach ($keys as $key) {
-            if (array_key_exists($key, $array)) {
-                $return[$key] = $array[$key];
-            }
-        }
-
-        return $return;
+        return array_filter($array, function($_, $key) use($keys) {
+            return in_array($key, $keys);
+        }, 1);
     }
 
     /**
@@ -218,54 +212,31 @@ final /* static */ class Arrays
      */
     public static function exclude(array $array, array $keys): array
     {
-        $keys = array_map('strval', $keys);
-        $return = [];
-        foreach ($array as $key => $value) {
-            if (!in_array(strval($key), $keys)) {
-                $return[$key] = $value;
-            }
-        }
-
-        return $return;
+        return array_filter($array, function($_, $key) use($keys) {
+            return !in_array($key, $keys);
+        }, 1);
     }
 
     /**
      * First.
      * @param  array $array
+     * @param  any   $valueDefault
      * @return any|null
      */
-    public static function first(array $array)
+    public static function first(array $array, $valueDefault = null)
     {
-        return $array[0] ?? null;
+        return $array[0] ?? $valueDefault;
     }
 
     /**
      * Last.
      * @param  array $array
+     * @param  any   $valueDefault
      * @return any|null
      */
-    public static function last(array $array)
+    public static function last(array $array, $valueDefault = null)
     {
-        return $array[count($array)] ?? null;
-    }
-
-    /**
-     * Fill.
-     * @param  array    $array
-     * @param  array    $keys
-     * @param  any|null $value
-     * @return array
-     */
-    public static function fill(array $array, array $keys, $value = null): array
-    {
-        // like array_fill_keys(), more like [] + []
-        foreach ($keys as $key) {
-            if (!isset($array[$key])) {
-                $array[$key] = $value;
-            }
-        }
-
-        return $array;
+        return $array[count($array)] ?? $valueDefault;
     }
 
     /**
