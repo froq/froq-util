@@ -40,6 +40,7 @@ final /* static */ class Arrays
      * @param  int|string $key
      * @param  any        $valueDefault
      * @return any
+     * @since  3.0
      */
     public static function set(array &$array, $key, $value): array
     {
@@ -118,6 +119,7 @@ final /* static */ class Arrays
      * @param  int|string $key
      * @param  any        $valueDefault
      * @return any
+     * @since  3.0
      */
     public static function pull(array &$array, $key, $valueDefault = null)
     {
@@ -135,6 +137,7 @@ final /* static */ class Arrays
      * @param  array  $keys
      * @param  any    $valueDefault
      * @return array
+     * @since  3.0
      */
     public static function pullAll(array &$array, array $keys, $valueDefault = null): array
     {
@@ -154,6 +157,7 @@ final /* static */ class Arrays
      * @param  array    $array
      * @param  callable $fn
      * @return bool
+     * @since  3.0
      */
     public static function test(array $array, callable $fn): bool
     {
@@ -175,6 +179,7 @@ final /* static */ class Arrays
      * @param  array    $array
      * @param  callable $fn
      * @return bool
+     * @since  3.0
      */
     public static function testAll(array $array, callable $fn): bool
     {
@@ -245,6 +250,7 @@ final /* static */ class Arrays
      * @param  int|string $key
      * @param  any|null   $valueDefault
      * @return int
+     * @since  3.0
      */
     public static function getInt(array $array, $key, $valueDefault = null): int
     {
@@ -257,6 +263,7 @@ final /* static */ class Arrays
      * @param  int|string $key
      * @param  any|null   $valueDefault
      * @return float
+     * @since  3.0
      */
     public static function getFloat(array $array, $key, $valueDefault = null): float
     {
@@ -269,6 +276,7 @@ final /* static */ class Arrays
      * @param  int|string $key
      * @param  any|null   $valueDefault
      * @return string
+     * @since  3.0
      */
     public static function getString(array $array, $key, $valueDefault = null): string
     {
@@ -281,6 +289,7 @@ final /* static */ class Arrays
      * @param  int|string $key
      * @param  any|null   $valueDefault
      * @return bool
+     * @since  3.0
      */
     public static function getBool(array $array, $key, $valueDefault = null): bool
     {
