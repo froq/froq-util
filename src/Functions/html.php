@@ -64,7 +64,7 @@ function html_strip(?string $input, ?string $allowed_tags = '', bool $do_decode 
     }
 
     if ($allowed_tags != '') {
-        $allowed_tags = implode('', array_map(function ($tag) {
+        $allowed_tags = implode('', array_map(function($tag) {
             return '<'. trim($tag, '<>') .'>';
         }, explode(',', $allowed_tags)));
     }

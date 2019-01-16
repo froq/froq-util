@@ -165,7 +165,7 @@ function to_query_string(array $input, string $ignored_keys = '',
     // fix skipped NULL values by http_build_query()
     static $mapper;
     if ($mapper == null) {
-        $mapper = function ($var) use (&$mapper) {
+        $mapper = function($var) use(&$mapper) {
             foreach ($var as $key => $value) {
                 $var[$key] = is_array_like($value) ? $mapper($value) : strval($value);
             }
