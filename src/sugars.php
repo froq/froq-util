@@ -49,7 +49,7 @@ if (!defined('LOCAL')) {
 }
 
 // include all function files
-$files = glob(__dir__ .'/Functions.php');
+$files = glob(__dir__ .'/Functions/*.php');
 foreach ($files as $file) {
     include_once $file;
 }
