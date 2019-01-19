@@ -163,17 +163,17 @@ function to_query_string(array $input, string $ignored_keys = '',
     }
 
     // fix skipped NULL values by http_build_query()
-    static $mapper;
-    if ($mapper == null) {
-        $mapper = function($var) use(&$mapper) {
+    static $filter;
+    if ($filter == null) {
+        $filter = function($var) use(&$filter) {
             foreach ($var as $key => $value) {
-                $var[$key] = is_array_like($value) ? $mapper($value) : strval($value);
+                $var[$key] = is_array_like($value) ? $filter($value) : strval($value);
             }
             return $var;
         };
     }
 
-    $query = http_build_query($mapper($input));
+    $query = http_build_query($filter($input));
 
     if ($strip_tags && false !== strpos($query, '%3C')) {
         $query = preg_replace('~%3C[\w]+(%2F)?%3E~simU', '', $query);
