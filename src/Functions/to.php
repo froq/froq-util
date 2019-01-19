@@ -143,13 +143,13 @@ function to_upper_from_dash(?string $input): string
 
 /**
  * To query string.
- * @param  array  $input
- * @param  string $ignored_keys
- * @param  bool   $strip_tags
- * @param  bool   $normalize_arrays
+ * @param  array       $input
+ * @param  string|null $ignored_keys
+ * @param  bool        $strip_tags
+ * @param  bool        $normalize_arrays
  * @return string
  */
-function to_query_string(array $input, string $ignored_keys = '',
+function to_query_string(array $input, string $ignored_keys = null,
     bool $strip_tags = true, bool $normalize_arrays = true): string
 {
     if ($ignored_keys != '') {
