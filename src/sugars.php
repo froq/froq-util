@@ -48,11 +48,9 @@ if (!defined('LOCAL')) {
     define('LOCAL', (substr($_SERVER['SERVER_NAME'] ?? '', -6) === '.local'), true);
 }
 
-// include all files
-$files = glob(__dir__ .'/*.php');
+// include all function files
+$files = glob(__dir__ .'/Functions.php');
 foreach ($files as $file) {
-    if ($file != __file__) {
-        include_once $file;
-    }
+    include_once $file;
 }
 unset($files, $file);
