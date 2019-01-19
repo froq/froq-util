@@ -184,6 +184,7 @@ function is_empty(...$inputs): bool
  * @param  number $smallValue
  * @param  number $bigValue
  * @return bool
+ * @since  3.0
  */
 function is_between($input, $smallValue, $bigValue): bool
 {
