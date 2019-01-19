@@ -179,6 +179,18 @@ function is_empty(...$inputs): bool
 }
 
 /**
+ * Is between.
+ * @param  number $input
+ * @param  number $smallValue
+ * @param  number $bigValue
+ * @return bool
+ */
+function is_between($input, $smallValue, $bigValue): bool
+{
+    return is_numeric($input) && ($input >= $smallValue && $input <= $bigValue);
+}
+
+/**
  * Is nil.
  * @param  any $input
  * @return bool
