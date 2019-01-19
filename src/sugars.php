@@ -54,3 +54,61 @@ foreach ($files as $file) {
     include_once $file;
 }
 unset($files, $file);
+
+/**
+ * Int.
+ * @param  any $input
+ * @return int
+ * @since  3.0
+ */
+function int($input): int
+{
+    return is_numeric($input) ? intval($input) : 0;
+}
+
+/**
+ * Float.
+ * @param  any $input
+ * @return float
+ * @since  3.0
+ */
+function float($input): float
+{
+    return is_numeric($input) ? floatval($input) : 0.0;
+}
+
+/**
+ * String.
+ * @param  any $input
+ * @return string
+ * @since  3.0
+ */
+function string($input): string
+{
+    return strval($input);
+}
+
+/**
+ * Bool.
+ * @param  any $input
+ * @return bool
+ * @since  3.0
+ */
+function bool($input): bool
+{
+    $input .= ''; // to string
+    return ($input === '1' || $input === '0') ? boolval($input) : false;
+}
+
+/**
+ * Void.
+ * @param  any &...$inputs
+ * @return void
+ * @since  3.0
+ */
+function void(&...$inputs): void
+{
+    foreach ($inputs as &$input) {
+        $input = null;
+    }
+}
