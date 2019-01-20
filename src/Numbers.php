@@ -53,7 +53,7 @@ final /* static */ class Numbers
             return round((float) $a, $precision) <=> round((float) $b, $precision);
         }
 
-        return null; // error
+        return null; // error, not number(s)
     }
 
     /**
@@ -65,7 +65,7 @@ final /* static */ class Numbers
      */
     public static function equals($a, $b, int $precision = null): ?bool
     {
-        return ($return = self::compare($a, $b, $precision)) === null ? null // error
+        return ($return = self::compare($a, $b, $precision)) === null ? null // error, not number(s)
             : !$return;
     }
 
