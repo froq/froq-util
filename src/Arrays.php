@@ -94,7 +94,7 @@ final /* static */ class Arrays
     }
 
     /**
-     * Get all (shortcut like: list(..) = Arrays::getAll(..)).
+     * Get all (shortcuts like: list(..) = Arrays::getAll(..)).
      * @param  array  $array
      * @param  array  $keys (aka paths)
      * @param  any    $valueDefault
