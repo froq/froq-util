@@ -35,6 +35,16 @@ namespace Froq\Util;
 final /* static */ class Numbers
 {
     /**
+     * Ok (check input is a number).
+     * @param  any $input
+     * @return bool
+     */
+    public static function ok($input): bool
+    {
+        return is_int($input) || is_float($input);
+    }
+
+    /**
      * Compare.
      * @param  number   $a
      * @param  number   $b
@@ -43,7 +53,7 @@ final /* static */ class Numbers
      */
     public static function compare($a, $b, int $precision = null): ?int
     {
-        if (is_numeric($a) && is_numeric($b)) {
+        if (self::ok($a) && self::ok($b)) {
             $precision = $precision ?? 14; // @default=14
 
             if (function_exists('bccomp')) {
@@ -76,7 +86,7 @@ final /* static */ class Numbers
      */
     public static function isId($input): bool
     {
-        return is_numeric($input) && intval($input) > 0;
+        return self::ok($input) && intval($input) > 0;
     }
 
     /**
@@ -86,12 +96,7 @@ final /* static */ class Numbers
      */
     public static function isUInt($input): bool
     {
-        if (!is_numeric($input) || is_float($input)) {
-            return false;
-        }
-
-        $input = (string) json_encode($input, JSON_PRESERVE_ZERO_FRACTION);
-        return strpbrk($input, '-.') === false;
+        return !is_float($input) && is_int($input) && intval($input) >= 0;
     }
 
     /**
@@ -101,12 +106,7 @@ final /* static */ class Numbers
      */
     public static function isUFloat($input): bool
     {
-        if (!is_numeric($input) || is_int($input)) {
-            return false;
-        }
-
-        $input = (string) json_encode($input, JSON_PRESERVE_ZERO_FRACTION);
-        return $input[0] !== '-' && strpos($input, '.') !== false;
+        return !is_int($input) && is_float($input) && floatval($input) >= 0;
     }
 
     /**
@@ -116,7 +116,7 @@ final /* static */ class Numbers
      */
     public static function isSigned($input): bool
     {
-        return is_numeric($input) && floatval($input) <= 0;
+        return self::ok($input) && floatval($input) <= 0;
     }
 
     /**
@@ -126,6 +126,6 @@ final /* static */ class Numbers
      */
     public static function isUnsigned($input): bool
     {
-        return is_numeric($input) && floatval($input) >= 0;
+        return self::ok($input) && floatval($input) >= 0;
     }
 }
