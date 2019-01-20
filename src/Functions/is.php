@@ -124,20 +124,22 @@ function is_set($input, array $keys = null): bool
  */
 function is_empty(...$inputs): bool
 {
-    foreach ($inputs as $input) {
-        if (empty($input)) {
-            return true;
-        }
-
-        if (is_array_like($input)) {
-            $input = (array) $input;
+    $return = empty($inputs);
+    if ($return) {
+        foreach ($inputs as $input) {
             if (empty($input)) {
                 return true;
+            }
+            if (is_array_like($input)) {
+                $input = (array) $input;
+                if (empty($input)) {
+                    return true;
+                }
             }
         }
     }
 
-    return false;
+    return $return;
 }
 
 /**
