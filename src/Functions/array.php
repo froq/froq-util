@@ -162,3 +162,53 @@ function array_last(array $array, $valueDefault = null)
 {
     return Arrays::last($array, $valueDefault);
 }
+
+/**
+ * Is array key.
+ * @param  array $array
+ * @param  any   $key Multiple keys accepted.
+ * @return bool
+ */
+function is_array_key(array $array, $key): bool
+{
+    foreach ((array) $key as $key) {
+        if (!array_key_exists($key, $array)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+/**
+ * Is array value.
+ * @param  array $array
+ * @param  any   $value Multiple values accepted.
+ * @param  bool  $strict
+ * @return bool
+ */
+function is_array_value(array $array, $value, bool $strict = false): bool
+{
+    foreach ((array) $value as $value) {
+        if (!in_array($value, $array, $strict)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+/**
+ * Is assoc array.
+ * @param  any $input
+ * @return bool
+ */
+function is_assoc_array($input): bool
+{
+    if (is_array($input)) {
+        foreach ($input as $key => $_) {
+            if (is_string($key)) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
