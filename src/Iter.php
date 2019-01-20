@@ -54,7 +54,7 @@ final class Iter implements Interfaces\Arrayable
         } elseif (is_object($data)) {
             $data = method_exists($data, 'toArray') ? $data->toArray() : get_object_vars($data);
         } else {
-            throw new UtilException('Given argument is not iterable');
+            throw new UtilException('Given data is not iterable');
         }
 
         $this->data = $data;
