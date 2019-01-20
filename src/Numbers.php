@@ -80,7 +80,7 @@ final /* static */ class Numbers
     }
 
     /**
-     * Is UInt.
+     * Is uint.
      * @param  number $input
      * @return bool
      */
@@ -95,7 +95,7 @@ final /* static */ class Numbers
     }
 
     /**
-     * Is UFloat.
+     * Is ufloat.
      * @param  number $input
      * @return bool
      */
@@ -110,7 +110,7 @@ final /* static */ class Numbers
     }
 
     /**
-     * Is Signed.
+     * Is signed.
      * @param  number $input
      * @return bool
      */
@@ -120,7 +120,7 @@ final /* static */ class Numbers
     }
 
     /**
-     * Is Unsigned.
+     * Is unsigned.
      * @param  number $input
      * @return bool
      */
