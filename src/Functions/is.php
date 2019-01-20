@@ -135,6 +135,17 @@ function is_iter($input): bool
 }
 
 /**
+ * Is instance.
+ * @param  any      $input
+ * @param  any|null $inputName
+ * @return bool
+ */
+function is_instance($input, $inputName = null): bool
+{
+    return ($inputName != null) ? $input instanceof $inputName : is_object($input);
+}
+
+/**
  * Is set.
  * @param  any        $input
  * @param  array|null $keys
@@ -209,4 +220,14 @@ function is_nil($input): bool
 function is_nils($input): bool
 {
     return ($input === nils); // null string ('')
+}
+
+/**
+ * Is none.
+ * @param  any $input
+ * @return bool
+ */
+function is_none($input): bool
+{
+    return ($input === null || $input === '');
 }
