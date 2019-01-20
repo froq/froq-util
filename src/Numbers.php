@@ -76,7 +76,7 @@ final /* static */ class Numbers
      */
     public static function isId($input): bool
     {
-        return intval($input) > 0 && self::isUInt($input);
+        return is_numeric($input) && intval($input) > 0;
     }
 
     /**
