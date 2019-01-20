@@ -137,12 +137,16 @@ function is_iter($input): bool
 /**
  * Is instance.
  * @param  any      $input
- * @param  any|null $inputName
- * @return bool
+ * @param  any|null $inputTarget
+ * @return ?bool
  */
-function is_instance($input, $inputName = null): bool
+function is_instance($input, $inputTarget): ?bool
 {
-    return ($inputName != null) ? $input instanceof $inputName : is_object($input);
+    try {
+        return $input instanceof $inputTarget;
+    } catch (\Error $e) {
+        return null; // error
+    }
 }
 
 /**
