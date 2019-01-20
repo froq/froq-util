@@ -36,9 +36,9 @@ final /* static */ class Numbers
 {
     /**
      * Compare.
-     * @param  number $a
-     * @param  number $b
-     * @param  int    $precision
+     * @param  number   $a
+     * @param  number   $b
+     * @param  int|null $precision
      * @return ?int
      */
     public static function compare($a, $b, int $precision = null): ?int
@@ -53,23 +53,24 @@ final /* static */ class Numbers
             return round((float) $a, $precision) <=> round((float) $b, $precision);
         }
 
-        return null;
+        return null; // error
     }
 
     /**
-     * Is equal.
-     * @param  number $a
-     * @param  number $b
-     * @param  int    $precision
-     * @return bool
+     * Equals.
+     * @param  number   $a
+     * @param  number   $b
+     * @param  int|null $precision
+     * @return ?bool
      */
-    public static function isEqual($a, $b, int $precision = null): bool
+    public static function equals($a, $b, int $precision = null): ?bool
     {
-        return !self::compare($a, $b, $precision);
+        return ($return = self::compare($a, $b, $precision)) === null ? null // error
+            : !$return;
     }
 
     /**
-     * Is id (useful for object id checking).
+     * Is id (useful for any (db) object id checking).
      * @param  number $input
      * @return bool
      */
@@ -127,32 +128,4 @@ final /* static */ class Numbers
     {
         return is_numeric($input) && floatval($input) >= 0;
     }
-
-    // @links
-    // https://golang.org/src/builtin/builtin.go
-    // https://msdn.microsoft.com/en-us/library/exx3b86w.aspx
-    // http://dev.mysql.com/doc/refman/5.7/en/integer-types.html
-    // http://stackoverflow.com/questions/3724242/what-is-the-difference-between-int-and-uint-long-and-ulong
-
-    // @wait
-    // public static function isInt($in, &$out = null): bool {}
-    // public static function isUInt($in, &$out = null): bool {}
-    // public static function isInt8($in, &$out = null): bool {}
-    // public static function isUInt8($in, &$out = null): bool {}
-    // public static function isInt64($in, &$out = null): bool {}
-    // public static function isUInt64($in, &$out = null): bool {}
-    // public static function isFloat($in, &$out = null): bool {}
-    // public static function isUFloat($in, &$out = null): bool {}
-    // public static function isFloat32($in, &$out = null): bool {}
-    // public static function isUFloat32($in, &$out = null): bool {}
-    // public static function isFloat64($in, &$out = null): bool {}
-    // public static function isUFloat64($in, &$out = null): bool {}
-
-    // @shortcuts (maybe for sql type checks)
-    // public static function isByte($in, &$out = null): bool {} // -128 to 127
-    // public static function isUByte($in, &$out = null): bool {} // 0 to 255
-    // public static function isShort($in, &$out = null): bool {}
-    // public static function isUShort($in, &$out = null): bool {}
-    // public static function isLong($in, &$out = null): bool {}
-    // public static function isULong($in, &$out = null): bool {}
 }
