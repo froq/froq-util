@@ -36,40 +36,30 @@ final /* static */ class Strings
 {
     /**
      * Contains.
-     * @param  string   $source
-     * @param  string   $search
-     * @param  int|null offset
-     * @param  bool     $caseSensitive
+     * @param  string $source
+     * @param  string $search
+     * @param  bool   $caseSensitive
      * @return bool
      */
-    public static function contains(string $source, string $search, int $offset = null,
+    public static function contains(string $source, string $search,
         bool $caseSensitive = true): bool
     {
-        $offset = $offset ?? 0;
-
-        // fix: 'offset not contained' error
-        if ($offset && abs($offset) > strlen($source)) {
-            return false;
-        }
-
-        return false !== ($caseSensitive ? strpos($source, $search, $offset)
-            : stripos($source, $search, $offset));
+        return (false !== ($caseSensitive ? strpos($source, $search) : stripos($source, $search)));
     }
 
     /**
      * Contains any.
-     * @param  string   $source
-     * @param  array    $search
-     * @param  int|null $offset
-     * @param  bool     $caseSensitive
+     * @param  string $source
+     * @param  array  $search
+     * @param  bool   $caseSensitive
      * @return bool
      * @since  3.0
      */
-    public static function containsAny(string $source, array $searches, int $offset = null,
+    public static function containsAny(string $source, array $searches,
         bool $caseSensitive = true): bool
     {
         foreach ($searches as $search) {
-            if (self::contains($source, $search, $offset, $caseSensitive)) {
+            if (self::contains($source, $search, $caseSensitive)) {
                 return true;
             }
         }
@@ -78,18 +68,17 @@ final /* static */ class Strings
 
     /**
      * Contains all.
-     * @param  string   $source
-     * @param  array    $search
-     * @param  int|null $offset
-     * @param  bool     $caseSensitive
+     * @param  string $source
+     * @param  array  $search
+     * @param  bool   $caseSensitive
      * @return bool
      * @since  3.0
      */
-    public static function containsAll(string $source, array $searches, int $offset = null,
+    public static function containsAll(string $source, array $searches,
         bool $caseSensitive = true): bool
     {
         foreach ($searches as $search) {
-            if (!self::contains($source, $search, $offset, $caseSensitive)) {
+            if (!self::contains($source, $search, $caseSensitive)) {
                 return false;
             }
         }
