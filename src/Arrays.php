@@ -241,7 +241,7 @@ final /* static */ class Arrays
      */
     public static function last(array $array, $valueDefault = null)
     {
-        return $array[count($array)] ?? $valueDefault;
+        return $array[count($array) - 1] ?? $valueDefault;
     }
 
     /**
