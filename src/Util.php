@@ -104,14 +104,14 @@ final /* static */ class Util
 
         [$scheme, $host, $port, $path, $query] = [
             $_SERVER['REQUEST_SCHEME'], $_SERVER['SERVER_NAME'], $_SERVER['SERVER_PORT'],
-            parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), $_SERVER['QUERY_STRING'] ?? null
+            parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), $_SERVER['QUERY_STRING'] ?? ''
         ];
 
         $port = ($scheme != 'https' && $port != '80') ? ':'. $port : '';
         $path = $filter($path);
 
         $url = sprintf('%s://%s%s%s', $scheme, $host, $port, $path);
-        if ($withQuery && $query !== null) {
+        if ($withQuery && $query !== '') {
             $url .= '?'. $filter($query);
         }
 
