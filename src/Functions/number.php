@@ -32,6 +32,7 @@ use Froq\Util\Numbers;
  * @param  number   $b
  * @param  int|null $precision
  * @return ?int
+ * @since  3.0
  */
 function number_compare($a, $b, int $precision = null): ?int
 {
@@ -44,6 +45,7 @@ function number_compare($a, $b, int $precision = null): ?int
  * @param  number   $b
  * @param  int|null $precision
  * @return ?bool
+ * @since  3.0
  */
 function number_equals($a, $b, int $precision = null): ?bool
 {
@@ -54,6 +56,7 @@ function number_equals($a, $b, int $precision = null): ?bool
  * Is number.
  * @param  any $input
  * @return bool
+ * @since  3.0
  */
 function is_number($input): bool
 {
@@ -64,6 +67,7 @@ function is_number($input): bool
  * Is id (useful for any (db) object id checking).
  * @param  number $input
  * @return bool
+ * @since  3.0
  */
 function is_id($input): bool
 {
@@ -74,6 +78,7 @@ function is_id($input): bool
  * Is uint.
  * @param  number $input
  * @return bool
+ * @since  3.0
  */
 function is_uint($input): bool
 {
@@ -84,6 +89,7 @@ function is_uint($input): bool
  * Is ufloat.
  * @param  number $input
  * @return bool
+ * @since  3.0
  */
 function is_ufloat($input): bool
 {
@@ -94,6 +100,7 @@ function is_ufloat($input): bool
  * Is signed.
  * @param  number $input
  * @return bool
+ * @since  3.0
  */
 function is_signed($input): bool
 {
@@ -104,6 +111,7 @@ function is_signed($input): bool
  * Is unsigned.
  * @param  number $input
  * @return bool
+ * @since  3.0
  */
 function is_unsigned($input): bool
 {

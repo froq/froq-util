@@ -33,6 +33,7 @@ use Froq\Util\Strings;
  * @param  int|null offset
  * @param  bool     $caseSensitive
  * @return bool
+ * @since  3.0
  */
 function string_contains(string $source, string $search, int $offset = null,
     bool $caseSensitive = true): bool
@@ -75,6 +76,7 @@ function string_contains_all(string $source, array $searches, int $offset = null
  * @param  string $source
  * @param  string $search
  * @return bool
+ * @since  3.0
  */
 function string_starts_with(string $source, string $search): bool
 {
@@ -86,6 +88,7 @@ function string_starts_with(string $source, string $search): bool
  * @param  string $source
  * @param  string $search
  * @return bool
+ * @since  3.0
  */
 function string_ends_with(string $source, string $search): bool
 {

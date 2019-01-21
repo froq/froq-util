@@ -31,6 +31,7 @@ namespace Froq\Util\Interfaces;
  * @subpackage Froq\Util
  * @object     Froq\Util\Interfaces\Jsonable
  * @author     Kerem Güneş <k-gun@mail.com>
+ * @since      1.0
  */
 interface Jsonable extends \JsonSerializable
 {

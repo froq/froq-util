@@ -31,6 +31,7 @@ namespace Froq\Util;
  * @subpackage Froq\Util
  * @object     Froq\Util\UtilException
  * @author     Kerem Güneş <k-gun@mail.com>
+ * @since      1.0
  */
 final class UtilException extends \Exception
 {}

@@ -31,6 +31,7 @@ namespace Froq\Util;
  * @subpackage Froq\Util
  * @object     Froq\Util\Numbers
  * @author     Kerem Güneş <k-gun@mail.com>
+ * @since      1.0
  */
 final /* static */ class Numbers
 {
@@ -38,6 +39,7 @@ final /* static */ class Numbers
      * Ok (check input is a number).
      * @param  any $input
      * @return bool
+     * @since  3.0
      */
     public static function ok($input): bool
     {
@@ -72,6 +74,7 @@ final /* static */ class Numbers
      * @param  number   $b
      * @param  int|null $precision
      * @return ?bool
+     * @since  3.0
      */
     public static function equals($a, $b, int $precision = null): ?bool
     {

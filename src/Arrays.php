@@ -31,6 +31,7 @@ namespace Froq\Util;
  * @subpackage Froq\Util
  * @object     Froq\Util\Arrays
  * @author     Kerem Güneş <k-gun@mail.com>
+ * @since      1.0
  */
 final /* static */ class Arrays
 {

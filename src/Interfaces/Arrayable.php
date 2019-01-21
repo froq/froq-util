@@ -31,6 +31,7 @@ namespace Froq\Util\Interfaces;
  * @subpackage Froq\Util
  * @object     Froq\Util\Interfaces\Arrayable
  * @author     Kerem Güneş <k-gun@mail.com>
+ * @since      1.0
  */
 interface Arrayable extends \Countable, \IteratorAggregate
 {

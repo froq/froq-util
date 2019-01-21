@@ -86,6 +86,7 @@ function is_iter($input): bool
  * @param  any      $input
  * @param  any|null $inputTarget
  * @return ?bool
+ * @since  3.0
  */
 function is_instance($input, $inputTarget): ?bool
 {
@@ -179,6 +180,7 @@ function is_nils($input): bool
  * Is none.
  * @param  any $input
  * @return bool
+ * @since  3.0
  */
 function is_none($input): bool
 {

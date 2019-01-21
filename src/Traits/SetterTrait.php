@@ -31,6 +31,7 @@ namespace Froq\Util\Traits;
  * @subpackage Froq\Util
  * @object     Froq\Util\Traits\SetterTrait
  * @author     Kerem Güneş <k-gun@mail.com>
+ * @since      1.0
  */
 trait SetterTrait
 {
