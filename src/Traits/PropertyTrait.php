@@ -39,7 +39,7 @@ trait PropertyTrait
      * Strict.
      * @var bool
      */
-    public static $___strict;
+    private static $___strict;
 
     /**
      * Properties.
@@ -68,40 +68,52 @@ trait PropertyTrait
     }
 
     /**
-     * Get property type.
-     * @param  string $docComment
-     * @return ?string
+     * Check property entry.
+     * @param  string $name
+     * @return void
+     * @throws Froq\Util\Traits\PropertyTraitException
      */
-    private function ___getPropertyType(string $docComment): ?string
+    private function ___checkPropertyEntry(string $name): void
     {
-        if (strpos($docComment, '@var')) {
-            $type = preg_replace('~.+@(?:var)\s+(\w+).+~is', '\1', $docComment);
-            if (isset(self::$___propertiesType[$type])) {
-                $type = self::$___propertiesType[$type];
+        if (!isset(self::$___properties[$name])) {
+            try {
+                // get type from docs, and strict status from self $___strict or class file
+                $ref = new \ReflectionProperty($this, $name);
+                $refDoc = $ref->getDocComment();
+                $refFile = $ref->getDeclaringClass()->getFileName();
+
+                $type = null;
+                $strict = self::$___strict !== null ? self::$___strict : null;
+                $nullable = $this->{$name} === null;
+
+                if (strpos($refDoc, '@var')) {
+                    $type = preg_replace('~.+@(?:var)\s+(\w+).+~is', '\1', $refDoc);
+                    if (isset(self::$___propertiesType[$type])) {
+                        $type = self::$___propertiesType[$type];
+                    }
+                }
+
+                if ($strict === null) {
+                    foreach (new \SplFileObject($refFile) as $line) {
+                        $line = trim($line);
+                        // skip comments
+                        if (strpbrk($line, '/*#') !== false) {
+                            continue;
+                        }
+                        // expects right declare() notation, sorry..
+                        if (strpos($line, 'declare(strict_types=1)') !== false) {
+                            $strict = true;
+                            break;
+                        }
+                    }
+                }
+
+                // add entry
+                self::$___properties[$name] = ['type' => $type, 'strict' => (bool) $strict,
+                    'nullable' => $nullable];
+            } catch (\ReflectionException $e) {
+                throw new PropertyTraitException($e->getMessage(), $e->getCode());
             }
         }
-        return $type ?? null;
-    }
-
-    /**
-     * Get property strict status.
-     * @param  string $fileName
-     * @return bool
-     */
-    private function ___getPropertyStrictStatus(string $fileName): bool
-    {
-        foreach (new \SplFileObject($fileName) as $line) {
-            $line = trim($line);
-            // skip comments
-            if (strpbrk($line, '/*#') !== false) {
-                continue;
-            }
-
-            // expects right declare() notation, sorry..
-            if (strpos($line, 'declare(strict_types=1)') !== false) {
-                return true;
-            }
-        }
-        return false;
     }
 }
