@@ -48,7 +48,7 @@ trait PropertyTrait
     private static $___properties = [];
 
     /**
-     * Properties Type.
+     * Properties type.
      * @var array
      */
     private static $___propertiesType = [
