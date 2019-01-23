@@ -44,6 +44,11 @@ trait IssetTrait
      */
     public final function __isset(string $name)
     {
-        return property_exists($this, $name);
+        if (!property_exists($this, $name)) {
+            throw new \InvalidArgumentException(sprintf("'%s' property does not exists on '%s' object",
+                $name, get_class($this)));
+        }
+
+        return !is_null($this->{$name});
     }
 }

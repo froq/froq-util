@@ -46,7 +46,7 @@ trait GetterTrait
     public final function __get(string $name)
     {
         if (!property_exists($this, $name)) {
-            throw new \Exception(sprintf("'%s' property does not exists on '%s' object",
+            throw new \InvalidArgumentException(sprintf("'%s' property does not exists on '%s' object",
                 $name, get_class($this)));
         }
 
