@@ -29,11 +29,11 @@ namespace Froq\Util\Traits;
 /**
  * @package    Froq
  * @subpackage Froq\Util
- * @object     Froq\Util\Traits\SingleTrait
+ * @object     Froq\Util\Traits\SingletonTrait
  * @author     Kerem Güneş <k-gun@mail.com>
  * @since      1.0
  */
-trait SingleTrait
+trait SingletonTrait
 {
     // Notice: Do not define '__construct' or '__clone'
     // methods as public if you want a single use'r object.
@@ -42,7 +42,7 @@ trait SingleTrait
      * Instances.
      * @var array
      */
-    private static $__instances = [];
+    private static $___instances = [];
 
     /**
      * Forbids.
@@ -58,7 +58,7 @@ trait SingleTrait
     public static final function init(...$arguments): object
     {
         $className = get_called_class();
-        if (!isset(self::$__instances[$className])) {
+        if (!isset(self::$___instances[$className])) {
             // init without constructor and call constructor with initial arguments
             // to prevent error: "Access to non-public constructor of class ...".
             // newInstance() nor newInstanceArgs() cannot do that.
@@ -67,9 +67,9 @@ trait SingleTrait
             // no error, weird? (ô_ô)
             call_user_func_array([$classInstance, '__construct'], $arguments);
 
-            self::$__instances[$className] = $classInstance;
+            self::$___instances[$className] = $classInstance;
         }
 
-        return self::$__instances[$className];
+        return self::$___instances[$className];
     }
 }
