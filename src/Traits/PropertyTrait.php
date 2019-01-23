@@ -86,6 +86,7 @@ trait PropertyTrait
                 $strict = self::$___strict !== null ? self::$___strict : null;
                 $nullable = $this->{$name} === null;
 
+                // get type
                 if (strpos($refDoc, '@var')) {
                     $type = preg_replace('~.+@(?:var)\s+(\w+).+~is', '\1', $refDoc);
                     if (isset(self::$___propertiesType[$type])) {
@@ -93,6 +94,7 @@ trait PropertyTrait
                     }
                 }
 
+                // get strict
                 if ($strict === null) {
                     foreach (new \SplFileObject($refFile) as $line) {
                         $line = trim($line);

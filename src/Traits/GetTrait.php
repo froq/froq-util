@@ -29,27 +29,34 @@ namespace Froq\Util\Traits;
 /**
  * @package    Froq
  * @subpackage Froq\Util
- * @object     Froq\Util\Traits\GetterTrait
+ * @object     Froq\Util\Traits\GetTrait
  * @author     Kerem Güneş <k-gun@mail.com>
  * @since      1.0
  */
-trait GetterTrait
+trait GetTrait
 {
-    // Notice: Do not define '__get' in use'r object.
+    /*** Notice: Do not define '__get' in use'r object. ***/
 
     /**
      * Get magic.
      * @param  string $name
      * @return any
-     * @throws \Exception
+     * @throws Froq\Util\Traits\PropertyTraitException
      */
     public final function __get(string $name)
     {
-        if (!property_exists($this, $name)) {
-            throw new \InvalidArgumentException(sprintf("'%s' property does not exists on '%s' object",
-                $name, get_class($this)));
+        // check property entry
+        $this->___checkPropertyEntry($name);
+
+        $value = $this->{$name};
+        if ($value !== null) {
+            $type = self::$___properties[$name]['type'];
+            if ($type != null) {
+                // simple type cast
+                settype($value, $type);
+            }
         }
 
-        return $this->{$name};
+        return $value;
     }
 }

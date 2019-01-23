@@ -35,20 +35,21 @@ namespace Froq\Util\Traits;
  */
 trait IssetTrait
 {
-    // Notice: Do not define '__isset' in use'r object.
+    /*** Notice: Do not define '__isset' in use'r object. ***/
 
     /**
      * Isset magic.
      * @param  string $name
      * @return bool
+     * @throws Froq\Util\Traits\PropertyTraitException
      */
     public final function __isset(string $name)
     {
         if (!property_exists($this, $name)) {
-            throw new \InvalidArgumentException(sprintf("'%s' property does not exists on '%s' object",
-                $name, get_class($this)));
+            throw new PropertyTraitException(sprintf('Property %s::$%s does not exist',
+                static::class, $name));
         }
 
-        return !is_null($this->{$name});
+        return $this->{$name} !== null;
     }
 }
