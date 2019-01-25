@@ -45,7 +45,7 @@ trait OneRunTrait
      * Check run.
      * @param  \Exception $exception
      * @return void
-     * @throws \Exception $exception
+     * @throws \Exception
      */
     public final function ___checkRun(\Exception $exception): void
     {
