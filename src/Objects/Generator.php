@@ -24,16 +24,19 @@
  */
 declare(strict_types=1);
 
-namespace Froq\Util;
+namespace Froq\Util\Objects;
+
+use Froq\Util\Interfaces\Arrayable;
+use Froq\Util\UtilException;
 
 /**
  * @package    Froq
  * @subpackage Froq\Util
- * @object     Froq\Util\Iter
+ * @object     Froq\Util\Objects\Generator
  * @author     Kerem Güneş <k-gun@mail.com>
- * @since      1.0
+ * @since      3.0
  */
-final class Iter implements Interfaces\Arrayable
+final class Generator implements Arrayable
 {
     /**
      * Data.
@@ -42,16 +45,22 @@ final class Iter implements Interfaces\Arrayable
     private $data = [];
 
     /**
+     * Data count.
+     * @var int
+     */
+    private $dataCount = 0;
+
+    /**
      * Constructor.
-     * @param  iterable|object $data
+     * @param  iterable|array|object $data
      * @throws Froq\Util\UtilException
      */
     public function __construct($data)
     {
-        if (is_array_like($data)) {
-            $data = (array) $data;
-        } elseif ($data instanceof \Traversable) {
+        if ($data instanceof \Traversable) {
             $data = iterator_to_array($data);
+        } elseif (is_array($data)) {
+            $data = (array) $data;
         } elseif (is_object($data)) {
             $data = method_exists($data, 'toArray') ? $data->toArray() : get_object_vars($data);
         } else {
@@ -59,6 +68,7 @@ final class Iter implements Interfaces\Arrayable
         }
 
         $this->data = $data;
+        $this->dataCount = count($data);
     }
 
     /**
@@ -71,7 +81,7 @@ final class Iter implements Interfaces\Arrayable
     }
 
     /**
-     * @inheritDoc Froq\Interfaces\Arrayable
+     * @inheritDoc Froq\Util\Interfaces\Arrayable
      */
     public function toArray(): array
     {
@@ -83,14 +93,16 @@ final class Iter implements Interfaces\Arrayable
      */
     public function count(): int
     {
-        return count($this->data);
+        return $this->dataCount;
     }
 
     /**
      * @inheritDoc \IteratorAggregate
      */
-    public function getIterator(): \ArrayIterator
+    public function getIterator(): \Generator
     {
-        return new \ArrayIterator($this->data);
+        foreach ($this->data as $key => $value) {
+            yield [$key, $value];
+        }
     }
 }
