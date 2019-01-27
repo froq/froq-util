@@ -29,34 +29,44 @@ namespace Froq\Util\Traits;
 /**
  * @package    Froq
  * @subpackage Froq\Util
- * @object     Froq\Util\Traits\GetTrait
+ * @object     Froq\Util\Traits\PropertySetterTrait
  * @author     Kerem Güneş <k-gun@mail.com>
  * @since      1.0
  */
-trait GetTrait
+trait PropertySetterTrait
 {
-    /*** Notice: Do not define '__get' in use'r object. ***/
+    /*** Notice: Do not define '__set' in use'r object. ***/
 
     /**
-     * Get magic.
+     * Set magic.
      * @param  string $name
-     * @return any
+     * @param  any    $value
+     * @return void
      * @throws Froq\Util\Traits\PropertyTraitException
      */
-    public final function __get(string $name)
+    public function __set(string $name, $value)
     {
         // check property entry
         $this->___checkPropertyEntry($name);
 
-        $value = $this->{$name};
-        if ($value !== null) {
+        $nullable = self::$___properties[$name]['nullable'];
+        if (!$nullable) {
             $type = self::$___properties[$name]['type'];
             if ($type != null) {
-                // simple type cast
-                settype($value, $type);
+                $valueType = gettype($value);
+                if ($type != $valueType) {
+                    // check strict status
+                    $strict = self::$___properties[$name]['strict'];
+                    if ($strict) {
+                        throw new PropertyTraitException(sprintf('%s type has not valid type for '.
+                            '%s::$%s, %s expected', $valueType, static::class, $name, $type));
+                    }
+                    // or simple type cast
+                    settype($value, $type);
+                }
             }
         }
 
-        return $value;
+        $this->{$name} = $value;
     }
 }

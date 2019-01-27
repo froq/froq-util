@@ -79,7 +79,7 @@ trait PropertyTrait
             try {
                 // get type from docs, and strict status from self $___strict or class file
                 $ref = new \ReflectionProperty($this, $name);
-                $refDoc = $ref->getDocComment();
+                $refDoc = $ref->getDocComment() ?: '';
                 $refFile = $ref->getDeclaringClass()->getFileName();
 
                 $type = null;
@@ -119,3 +119,13 @@ trait PropertyTrait
         }
     }
 }
+
+/**
+ * @package    Froq
+ * @subpackage Froq\Util
+ * @object     Froq\Util\Traits\PropertyTraitException
+ * @author     Kerem Güneş <k-gun@mail.com>
+ * @since      3.0
+ */
+final class PropertyTraitException extends \Exception
+{}

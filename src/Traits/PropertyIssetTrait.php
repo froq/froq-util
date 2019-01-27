@@ -29,50 +29,27 @@ namespace Froq\Util\Traits;
 /**
  * @package    Froq
  * @subpackage Froq\Util
- * @object     Froq\Util\Traits\SetTrait
+ * @object     Froq\Util\Traits\PropertyIssetTrait
  * @author     Kerem Güneş <k-gun@mail.com>
  * @since      1.0
  */
-trait SetTrait
+trait PropertyIssetTrait
 {
-    /*** Notice: Do not define '__set' in use'r object. ***/
+    /*** Notice: Do not define '__isset' in use'r object. ***/
 
     /**
-     * Property trait.
-     * @object Froq\Util\Traits\PropertyTrait
-     */
-    use PropertyTrait;
-
-    /**
-     * Set magic.
+     * Isset magic.
      * @param  string $name
-     * @param  any    $value
-     * @return void
+     * @return bool
      * @throws Froq\Util\Traits\PropertyTraitException
      */
-    public function __set(string $name, $value)
+    public final function __isset(string $name)
     {
-        // check property entry
-        $this->___checkPropertyEntry($name);
-
-        $nullable = self::$___properties[$name]['nullable'];
-        if (!$nullable) {
-            $type = self::$___properties[$name]['type'];
-            if ($type != null) {
-                $valueType = gettype($value);
-                if ($type != $valueType) {
-                    // check strict status
-                    $strict = self::$___properties[$name]['strict'];
-                    if ($strict) {
-                        throw new PropertyTraitException(sprintf('%s type has not valid type for '.
-                            '%s::$%s, %s expected', $valueType, static::class, $name, $type));
-                    }
-                    // or simple type cast
-                    settype($value, $type);
-                }
-            }
+        if (!property_exists($this, $name)) {
+            throw new PropertyTraitException(sprintf('Property %s::$%s does not exist',
+                static::class, $name));
         }
 
-        $this->{$name} = $value;
+        return ($this->{$name} !== null);
     }
 }

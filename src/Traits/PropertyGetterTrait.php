@@ -29,27 +29,34 @@ namespace Froq\Util\Traits;
 /**
  * @package    Froq
  * @subpackage Froq\Util
- * @object     Froq\Util\Traits\IssetTrait
+ * @object     Froq\Util\Traits\PropertyGetterTrait
  * @author     Kerem Güneş <k-gun@mail.com>
  * @since      1.0
  */
-trait IssetTrait
+trait PropertyGetterTrait
 {
-    /*** Notice: Do not define '__isset' in use'r object. ***/
+    /*** Notice: Do not define '__get' in use'r object. ***/
 
     /**
-     * Isset magic.
+     * Get magic.
      * @param  string $name
-     * @return bool
+     * @return any
      * @throws Froq\Util\Traits\PropertyTraitException
      */
-    public final function __isset(string $name)
+    public final function __get(string $name)
     {
-        if (!property_exists($this, $name)) {
-            throw new PropertyTraitException(sprintf('Property %s::$%s does not exist',
-                static::class, $name));
+        // check property entry
+        $this->___checkPropertyEntry($name);
+
+        $value = $this->{$name};
+        if ($value !== null) {
+            $type = self::$___properties[$name]['type'];
+            if ($type != null) {
+                // simple type cast
+                settype($value, $type);
+            }
         }
 
-        return $this->{$name} !== null;
+        return $value;
     }
 }
