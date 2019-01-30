@@ -94,25 +94,25 @@ function array_pull_all(array &$array, array $keys, $valueDefault = null): array
 /**
  * Array test (like JavaScript Array.every()).
  * @param  array    $array
- * @param  callable $fn
+ * @param  callable $func
  * @return bool
  * @since  3.0
  */
-function array_test(array $array, callable $fn): bool
+function array_test(array $array, callable $func): bool
 {
-    return Arrays::test($array, $fn);
+    return Arrays::test($array, $func);
 }
 
 /**
  * Array test all (like JavaScript Array.every()).
  * @param  array    $array
- * @param  callable $fn
+ * @param  callable $func
  * @return bool
  * @since  3.0
  */
-function array_test_all(array $array, callable $fn): bool
+function array_test_all(array $array, callable $func): bool
 {
-    return Arrays::testAll($array, $fn);
+    return Arrays::testAll($array, $func);
 }
 
 /**

@@ -156,17 +156,17 @@ final /* static */ class Arrays
     /**
      * Test (like JavaScript Array.some()).
      * @param  array    $array
-     * @param  callable $fn
+     * @param  callable $func
      * @return bool
      * @since  3.0
      */
-    public static function test(array $array, callable $fn): bool
+    public static function test(array $array, callable $func): bool
     {
         foreach ($array as $key => $value) {
             try {
-                if ($fn($value, $key)) return true; // try user function
+                if ($func($value, $key)) return true; // try user function
             } catch (\ArgumentCountError $e) {
-                if ($fn($value)) return true; // try an internal single-argument function like is_*
+                if ($func($value)) return true; // try an internal single-argument function like is_*
             }
         }
         return false;
@@ -175,17 +175,17 @@ final /* static */ class Arrays
     /**
      * Test all (like JavaScript Array.every()).
      * @param  array    $array
-     * @param  callable $fn
+     * @param  callable $func
      * @return bool
      * @since  3.0
      */
-    public static function testAll(array $array, callable $fn): bool
+    public static function testAll(array $array, callable $func): bool
     {
         foreach ($array as $key => $value) {
             try {
-                if (!$fn($value, $key)) return false; // try user function
+                if (!$func($value, $key)) return false; // try user function
             } catch (\ArgumentCountError $e) {
-                if (!$fn($value)) return false; // try an internal single-argument function like is_*
+                if (!$func($value)) return false; // try an internal single-argument function like is_*
             }
         }
         return true;
