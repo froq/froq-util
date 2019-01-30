@@ -68,7 +68,7 @@ function is_plain_object($input): bool
  */
 function is_array_like($input): bool
 {
-    return is_array($input) || is_plain_object($input);
+    return is_array($input) || $input instanceof \stdClass;
 }
 
 /**
@@ -78,7 +78,17 @@ function is_array_like($input): bool
  */
 function is_iter($input): bool
 {
-    return is_iterable($input) || is_plain_object($input);
+    return is_iterable($input) || $input instanceof \stdClass;
+}
+
+/**
+ * Is closure.
+ * @param  any $input
+ * @return bool
+ */
+function is_closure($input): bool
+{
+    return $input instanceof \Closure;
 }
 
 /**
