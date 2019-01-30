@@ -24,16 +24,26 @@
  */
 declare(strict_types=1);
 
-use Froq\Util\Iter;
+use Froq\Util\Objects\{Iterator, Generator};
 
 /**
- * To iter.
- * @param  iter $input
- * @return Froq\Util\Iter
+ * To iterator.
+ * @param  iterable $input
+ * @return Froq\Util\Objects\Iterator
  */
-function to_iter($input): Iter
+function to_iterator($input): Iterator
 {
-    return new Iter($input);
+    return new Iterator($input);
+}
+
+/**
+ * To generator.
+ * @param  iterable $input
+ * @return Froq\Util\Objects\Generator
+ */
+function to_generator($input): Generator
+{
+    return new Generator($input);
 }
 
 /**
