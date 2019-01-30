@@ -33,7 +33,7 @@ namespace Froq\Util\Interfaces;
  * @author     Kerem Güneş <k-gun@mail.com>
  * @since      1.0
  */
-interface Arrayable extends \Countable, \IteratorAggregate
+interface Arrayable
 {
     /**
      * To array.
