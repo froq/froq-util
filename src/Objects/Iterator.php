@@ -26,8 +26,8 @@ declare(strict_types=1);
 
 namespace Froq\Util\Objects;
 
-use Froq\Util\Interfaces\Arrayable;
 use Froq\Util\UtilException;
+use Froq\Util\Interfaces\Arrayable;
 
 /**
  * @package    Froq
@@ -36,7 +36,7 @@ use Froq\Util\UtilException;
  * @author     Kerem Güneş <k-gun@mail.com>
  * @since      3.0
  */
-final class Iterator implements Arrayable
+final class Iterator implements Arrayable, \Countable, \IteratorAggregate
 {
     /**
      * Data.
