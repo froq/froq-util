@@ -231,7 +231,7 @@ final /* static */ class Arrays
      */
     public static function first(array $array, $valueDefault = null)
     {
-        return $array[0] ?? $valueDefault;
+        return array_values($array)[0] ?? $valueDefault;
     }
 
     /**
@@ -242,7 +242,7 @@ final /* static */ class Arrays
      */
     public static function last(array $array, $valueDefault = null)
     {
-        return $array[count($array) - 1] ?? $valueDefault;
+        return array_values($array)[count($array) - 1] ?? $valueDefault;
     }
 
     /**
