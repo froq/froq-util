@@ -162,14 +162,11 @@ final /* static */ class Arrays
      */
     public static function test(array $array, callable $fn): bool
     {
-        $i = 0;
         foreach ($array as $key => $value) {
             try {
-                // try user function
-                if ($fn($value, $key, $i++)) return true;
+                if ($fn($value, $key)) return true; // try user function
             } catch (\ArgumentCountError $e) {
-                // try an internal single-argument function like is_*
-                if ($fn($value)) return true;
+                if ($fn($value)) return true; // try an internal single-argument function like is_*
             }
         }
         return false;
@@ -184,14 +181,11 @@ final /* static */ class Arrays
      */
     public static function testAll(array $array, callable $fn): bool
     {
-        $i = 0;
         foreach ($array as $key => $value) {
             try {
-                // try user function
-                if (!$fn($value, $key, $i++)) return false;
+                if (!$fn($value, $key)) return false; // try user function
             } catch (\ArgumentCountError $e) {
-                // try an internal single-argument function like is_*
-                if (!$fn($value)) return false;
+                if (!$fn($value)) return false; // try an internal single-argument function like is_*
             }
         }
         return true;
