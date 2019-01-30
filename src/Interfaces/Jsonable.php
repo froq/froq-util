@@ -36,14 +36,8 @@ namespace Froq\Util\Interfaces;
 interface Jsonable extends \JsonSerializable
 {
     /**
-     * Encode.
+     * To json.
      * @return ?string
      */
-    public function encode();
-
-    /**
-     * Decode.
-     * @return ?iterable
-     */
-    public function decode();
+    public function toJson(): ?string;
 }
