@@ -73,6 +73,22 @@ function to_object($input, bool $deep = true): object
 }
 
 /**
+ * To closure.
+ * @param  string   $func
+ * @param  int|null $argumentsCount
+ * @return \Closure
+ */
+function to_closure(string $func, int $argumentsCount = null): \Closure
+{
+    return function (...$arguments) use ($func, $argumentsCount) {
+        if ($argumentsCount != null) {
+            $arguments = array_slice($arguments, 0, $argumentsCount);
+        }
+        return $func(...$arguments);
+    };
+}
+
+/**
  * To snake from dash (Foo-Bar -> Foo_Bar | foo_bar).
  * @param  ?string $input
  * @param  bool    $lower
