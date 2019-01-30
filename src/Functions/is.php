@@ -108,62 +108,16 @@ function is_instance($input, $inputTarget): ?bool
 }
 
 /**
- * Is set.
- * @param  any        $input
- * @param  array|null $keys
- * @return bool
- */
-function is_set($input, array $keys = null): bool
-{
-    $return = isset($input);
-    if ($return && $keys != null && is_array_like($input)) {
-        $input = (array) $input;
-        foreach ($keys as $key) {
-            if (!isset($input[$key])) {
-                return false;
-            }
-        }
-    }
-
-    return $return;
-}
-
-/**
- * Is empty.
- * @param  ... $inputs
- * @return bool
- */
-function is_empty(...$inputs): bool
-{
-    $return = empty($inputs);
-    if ($return) {
-        foreach ($inputs as $input) {
-            if (empty($input)) {
-                return true;
-            }
-            if (is_array_like($input)) {
-                $input = (array) $input;
-                if (empty($input)) {
-                    return true;
-                }
-            }
-        }
-    }
-
-    return $return;
-}
-
-/**
  * Is between.
- * @param  number $input
- * @param  number $smallValue
- * @param  number $bigValue
+ * @param  any $input
+ * @param  any $minValue
+ * @param  any $maxValue
  * @return bool
  * @since  3.0
  */
-function is_between($input, $smallValue, $bigValue): bool
+function is_between($input, $minValue, $maxValue): bool
 {
-    return is_numeric($input) && ($input >= $smallValue && $input <= $bigValue);
+    return ($input >= $minValue && $input <= $maxValue);
 }
 
 /**
