@@ -192,6 +192,38 @@ final /* static */ class Arrays
     }
 
     /**
+     * Sort.
+     * @param  array        &$array
+     * @param  callable|null $func
+     * @param  callable|null $ufunc
+     * @param  int           $flags
+     * @return self
+     */
+    public static function sort(array &$array, callable $func = null, callable $ufunc = null, int $flags = 0): array
+    {
+        if ($func == null) {
+            sort($array, $flags);
+        } elseif ($func instanceof \Closure) {
+            usort($array, $func);
+        } elseif (is_string($func)) {
+            if ($func[0] == 'u' && $ufunc == null) {
+                throw new UtilException("Second argument must be callable when usort,uasort,".
+                    "uksort given");
+            }
+            $arguments = [&$array, $flags];
+            if ($ufunc != null) {
+                if (in_array($func, ['sort', 'asort', 'ksort'])) {
+                    $func = 'u'. $func; // update to user function
+                }
+                $arguments[1] = $ufunc; // replace flags with ufunc
+            }
+            call_user_func_array($func, $arguments);
+        }
+
+        return $array;
+    }
+
+    /**
      * Include.
      * @param  array $array
      * @param  array $keys
