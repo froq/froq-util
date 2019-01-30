@@ -33,11 +33,11 @@ namespace Froq\Util\Interfaces;
  * @author     Kerem Güneş <k-gun@mail.com>
  * @since      1.0
  */
-interface Jsonable extends \JsonSerializable
+interface Jsonable
 {
     /**
      * To json.
-     * @return ?string
+     * @return string
      */
-    public function toJson(): ?string;
+    public function toJson(): string;
 }
