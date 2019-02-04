@@ -104,6 +104,32 @@ function is_closure($input): bool
 }
 
 /**
+ * Is class.
+ * @param  any $input
+ * @return bool
+ * @since  3.0
+ */
+function is_class($input): bool
+{
+    return class_exists((string) $input, false);
+}
+
+/**
+ * Is class method.
+ * @param  any $input
+ * @return bool
+ * @since  3.0
+ */
+function is_class_method($input): bool
+{
+    $input = (string) $input;
+    if (!strpos($input, '::')) {
+        return false;
+    }
+    return is_callable($input);
+}
+
+/**
  * Is instance.
  * @param  any $input
  * @param  any $inputTarget
