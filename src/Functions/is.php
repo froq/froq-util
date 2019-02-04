@@ -52,17 +52,6 @@ function is_cli_server(): bool
 }
 
 /**
- * Is primitive.
- * @param  any $input
- * @return bool
- * @since  3.0
- */
-function is_primitive($input): bool
-{
-    return is_scalar($input);
-}
-
-/**
  * Is plain object.
  * @param  any $input
  * @return bool
@@ -90,6 +79,17 @@ function is_array_like($input): bool
 function is_iter($input): bool
 {
     return is_iterable($input) || $input instanceof \stdClass;
+}
+
+/**
+ * Is primitive.
+ * @param  any $input
+ * @return bool
+ * @since  3.0
+ */
+function is_primitive($input): bool
+{
+    return is_scalar($input);
 }
 
 /**
