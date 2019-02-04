@@ -55,6 +55,7 @@ function is_cli_server(): bool
  * Is primitive.
  * @param  any $input
  * @return bool
+ * @since  3.0
  */
 function is_primitive($input): bool
 {
@@ -95,6 +96,7 @@ function is_iter($input): bool
  * Is closure.
  * @param  any $input
  * @return bool
+ * @since  3.0
  */
 function is_closure($input): bool
 {
@@ -103,18 +105,17 @@ function is_closure($input): bool
 
 /**
  * Is instance.
- * @param  any      $input
- * @param  any|null $inputTarget
- * @return ?bool
+ * @param  any $input
+ * @param  any $inputTarget
+ * @return bool
  * @since  3.0
  */
-function is_instance($input, $inputTarget): ?bool
+function is_instance($input, $inputTarget): bool
 {
-    try {
-        return $input instanceof $inputTarget;
-    } catch (\Error $e) {
-        return null; // error
-    }
+    return $input && (
+        (is_string($inputTarget) && is_a($input, $inputTarget, true))
+        || (is_object($inputTarget) && $input instanceof $inputTarget)
+    );
 }
 
 /**
