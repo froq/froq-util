@@ -164,7 +164,7 @@ function is_between($input, $minValue, $maxValue): bool
  */
 function is_nil($input): bool
 {
-    return ($input === nil); // null
+    return ($input === null);
 }
 
 /**
@@ -174,7 +174,7 @@ function is_nil($input): bool
  */
 function is_nils($input): bool
 {
-    return ($input === nils); // null string ('')
+    return ($input === '');
 }
 
 /**
