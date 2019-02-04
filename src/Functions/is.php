@@ -52,6 +52,16 @@ function is_cli_server(): bool
 }
 
 /**
+ * Is primitive.
+ * @param  any $input
+ * @return bool
+ */
+function is_primitive($input): bool
+{
+    return is_scalar($input);
+}
+
+/**
  * Is plain object.
  * @param  any $input
  * @return bool
