@@ -130,21 +130,21 @@ function is_unsigned($input): bool
 }
 
 /**
- * Int rand.
+ * Rand int.
  * @param  bool $signed
  * @return int
  */
-function int_rand(bool $signed = false): int
+function rand_int(bool $signed = false): int
 {
     return ($ret = random_int(0, PHP_INT_MAX)) && $signed ? -$ret : $ret;
 }
 
 /**
- * Float rand.
+ * Rand float.
  * @param  bool $signed
  * @return float
  */
-function float_rand(bool $signed = false): float
+function rand_float(bool $signed = false): float
 {
     return ($ret = lcg_value()) && $signed ? -$ret : $ret;
 }
