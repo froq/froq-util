@@ -60,7 +60,18 @@ function number_equals($a, $b, int $precision = null): ?bool
  */
 function is_number($input): bool
 {
-    return Numbers::ok($input);
+    return Numbers::isNumber($input);
+}
+
+/**
+ * Is digit.
+ * @param  any $input
+ * @return bool
+ * @since  3.0
+ */
+function is_digit($input): bool
+{
+    return Numbers::isDigit($input);
 }
 
 /**
