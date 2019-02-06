@@ -36,17 +36,6 @@ namespace Froq\Util;
 final /* static */ class Numbers
 {
     /**
-     * Ok (check input is a number).
-     * @param  any $input
-     * @return bool
-     * @since  3.0
-     */
-    public static function ok($input): bool
-    {
-        return is_int($input) || is_float($input);
-    }
-
-    /**
      * Compare.
      * @param  number   $a
      * @param  number   $b
@@ -55,7 +44,7 @@ final /* static */ class Numbers
      */
     public static function compare($a, $b, int $precision = null): ?int
     {
-        if (self::ok($a) && self::ok($b)) {
+        if (self::isNumber($a) && self::isNumber($b)) {
             $precision = $precision ?? 14; // @default=14
 
             if (function_exists('bccomp')) {
@@ -78,57 +67,81 @@ final /* static */ class Numbers
      */
     public static function equals($a, $b, int $precision = null): ?bool
     {
-        return ($return = self::compare($a, $b, $precision)) === null ? null // error, not number(s)
-            : !$return;
+        return ($ret = self::compare($a, $b, $precision)) !== null ? !$ret
+            : null; // error, not number(s)
+    }
+
+    /**
+     * Is digit.
+     * @param  any $input
+     * @return bool
+     * @since  3.0
+     */
+    public final function isNumber($input): bool
+    {
+         return is_int($input) || is_float($input);
+    }
+
+    /**
+     * Is digit.
+     * @param  any $input
+     * @return bool
+     * @since  3.0
+     */
+    public final function isDigit($input): bool
+    {
+        return is_int($input) ? true : (
+            is_string($input) ? ctype_digit($input) : false
+        );
     }
 
     /**
      * Is id (useful for any (db) object id checking).
-     * @param  number $input
+     * @param  any $input
      * @return bool
      */
     public static function isId($input): bool
     {
-        return self::ok($input) && intval($input) > 0;
+        return self::isNumber($input) && ($input > 0);
     }
 
     /**
      * Is uint.
-     * @param  number $input
+     * @param  any $input
      * @return bool
      */
     public static function isUInt($input): bool
     {
-        return !is_float($input) && is_int($input) && intval($input) >= 0;
+        return !is_float($input) && is_int($input) && ($input >= 0);
     }
 
     /**
      * Is ufloat.
-     * @param  number $input
+     * @param  any $input
      * @return bool
      */
     public static function isUFloat($input): bool
     {
-        return !is_int($input) && is_float($input) && floatval($input) >= 0;
+        return !is_int($input) && is_float($input) && ($input >= 0);
     }
 
     /**
      * Is signed.
-     * @param  number $input
+     * @param  any $input
      * @return bool
      */
     public static function isSigned($input): bool
     {
-        return self::ok($input) && floatval($input) <= 0;
+        return self::isNumber($input) && ($input <= 0);
     }
 
     /**
      * Is unsigned.
-     * @param  number $input
+     * @param  any $input
      * @return bool
      */
     public static function isUnsigned($input): bool
     {
-        return self::ok($input) && floatval($input) >= 0;
+        return self::isNumber($input) && ($input >= 0);
     }
 }
