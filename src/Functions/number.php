@@ -65,13 +65,14 @@ function is_number($input): bool
 
 /**
  * Is digit.
- * @param  any $input
+ * @param  any  $input
+ * @param  bool $complex
  * @return bool
  * @since  3.0
  */
-function is_digit($input): bool
+function is_digit($input, bool $complex = true): bool
 {
-    return Numbers::isDigit($input);
+    return Numbers::isDigit($input, $complex);
 }
 
 /**

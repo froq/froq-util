@@ -85,14 +85,23 @@ final /* static */ class Numbers
     /**
      * Is digit.
      * @param  any $input
+     * @param  bool $complex
      * @return bool
      * @since  3.0
      */
-    public final function isDigit($input): bool
+    public final function isDigit($input, bool $complex = true): bool
     {
-        return is_int($input) ? true : (
-            is_string($input) ? ctype_digit($input) : false
-        );
+        if (is_int($input)) {
+            return true;
+        } elseif (is_string($input) && ctype_digit($input)) {
+            return true;
+        } elseif ($complex && is_numeric($input)) {
+            $input = (string) $input;
+            if (strpos($input, '.') === false && ($input < 0)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
