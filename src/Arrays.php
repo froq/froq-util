@@ -156,18 +156,13 @@ final /* static */ class Arrays
     /**
      * Test (like JavaScript Array.some()).
      * @param  array    $array
-     * @param  callable $func
+     * @param  \Closure $func
      * @return bool
-     * @since  3.0
      */
-    public static function test(array $array, callable $func): bool
+    public static function test(array $array, \Closure $func): bool
     {
         foreach ($array as $key => $value) {
-            try {
-                if ($func($value, $key)) return true; // try user function
-            } catch (\ArgumentCountError $e) {
-                if ($func($value)) return true; // try an internal single-argument function like is_*
-            }
+            if ($func($value, $key)) { return true; }
         }
         return false;
     }
@@ -175,18 +170,13 @@ final /* static */ class Arrays
     /**
      * Test all (like JavaScript Array.every()).
      * @param  array    $array
-     * @param  callable $func
+     * @param  \Closure $func
      * @return bool
-     * @since  3.0
      */
-    public static function testAll(array $array, callable $func): bool
+    public static function testAll(array $array, \Closure $func): bool
     {
         foreach ($array as $key => $value) {
-            try {
-                if (!$func($value, $key)) return false; // try user function
-            } catch (\ArgumentCountError $e) {
-                if (!$func($value)) return false; // try an internal single-argument function like is_*
-            }
+            if (!$func($value, $key)) { return false; }
         }
         return true;
     }
@@ -197,7 +187,8 @@ final /* static */ class Arrays
      * @param  callable|null $func
      * @param  callable|null $ufunc
      * @param  int           $flags
-     * @return self
+     * @return array
+     * @throws Froq\Util\UtilException
      */
     public static function sort(array &$array, callable $func = null, callable $ufunc = null, int $flags = 0): array
     {
@@ -281,7 +272,7 @@ final /* static */ class Arrays
      */
     public static function getInt(array $array, $key, $valueDefault = null): int
     {
-        return int(self::get($array, $key, $valueDefault));
+        return (int) self::get($array, $key, $valueDefault);
     }
 
     /**
@@ -294,7 +285,7 @@ final /* static */ class Arrays
      */
     public static function getFloat(array $array, $key, $valueDefault = null): float
     {
-        return float(self::get($array, $key, $valueDefault));
+        return (float) self::get($array, $key, $valueDefault);
     }
 
     /**
@@ -307,7 +298,7 @@ final /* static */ class Arrays
      */
     public static function getString(array $array, $key, $valueDefault = null): string
     {
-        return string(self::get($array, $key, $valueDefault));
+        return (string) self::get($array, $key, $valueDefault);
     }
 
     /**
@@ -320,6 +311,6 @@ final /* static */ class Arrays
      */
     public static function getBool(array $array, $key, $valueDefault = null): bool
     {
-        return bool(self::get($array, $key, $valueDefault));
+        return (bool) self::get($array, $key, $valueDefault);
     }
 }
