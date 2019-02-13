@@ -26,6 +26,8 @@ declare(strict_types=1);
 
 namespace Froq\Util;
 
+use xo\util\StringUtil;
+
 /**
  * @package    Froq
  * @subpackage Froq\Util
@@ -33,78 +35,5 @@ namespace Froq\Util;
  * @author     Kerem Güneş <k-gun@mail.com>
  * @since      1.0
  */
-final /* static */ class Strings
-{
-    /**
-     * Contains.
-     * @param  string $source
-     * @param  string $search
-     * @param  bool   $caseSensitive
-     * @return bool
-     */
-    public static function contains(string $source, string $search,
-        bool $caseSensitive = true): bool
-    {
-        return (false !== ($caseSensitive ? strpos($source, $search) : stripos($source, $search)));
-    }
-
-    /**
-     * Contains any.
-     * @param  string $source
-     * @param  array  $search
-     * @param  bool   $caseSensitive
-     * @return bool
-     * @since  3.0
-     */
-    public static function containsAny(string $source, array $searches,
-        bool $caseSensitive = true): bool
-    {
-        foreach ($searches as $search) {
-            if (self::contains($source, $search, $caseSensitive)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Contains all.
-     * @param  string $source
-     * @param  array  $search
-     * @param  bool   $caseSensitive
-     * @return bool
-     * @since  3.0
-     */
-    public static function containsAll(string $source, array $searches,
-        bool $caseSensitive = true): bool
-    {
-        foreach ($searches as $search) {
-            if (!self::contains($source, $search, $caseSensitive)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /**
-     * Starts with.
-     * @param  string $source
-     * @param  string $search
-     * @return bool
-     */
-    public static function startsWith(string $source, string $search): bool
-    {
-        return ($search === substr($source, 0, strlen($search)));
-    }
-
-    /**
-     * Ends with.
-     * @param  string $source
-     * @param  string $search
-     * @return bool
-     */
-    public static function endsWith(string $source, string $search): bool
-    {
-        return ($search === substr($source, -strlen($search)));
-    }
-}
+final /* static */ class Strings extends StringUtil
+{}
