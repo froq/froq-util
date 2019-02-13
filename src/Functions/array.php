@@ -197,18 +197,21 @@ function is_array_value(array $array, $value, bool $strict = false): bool
 }
 
 /**
+ * Is seq array.
+ * @param  any $input
+ * @return bool
+ */
+function is_seq_array($input): bool
+{
+    return is_array($input) && Arrays::isSequentialArray($input);
+}
+
+/**
  * Is assoc array.
  * @param  any $input
  * @return bool
  */
 function is_assoc_array($input): bool
 {
-    if (is_array($input)) {
-        foreach ($input as $key => $_) {
-            if (is_string($key)) {
-                return true;
-            }
-        }
-    }
-    return false;
+    return is_array($input) && Arrays::isAssociativeArray($input);
 }
