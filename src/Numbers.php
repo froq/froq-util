@@ -24,16 +24,16 @@
  */
 declare(strict_types=1);
 
-namespace Froq\Util;
+namespace froq\util;
 
 use xo\util\NumberUtil;
 
 /**
- * @package    Froq
- * @subpackage Froq\Util
- * @object     Froq\Util\Numbers
- * @author     Kerem Güneş <k-gun@mail.com>
- * @since      1.0
+ * Numbers.
+ * @package froq\util
+ * @object  froq\util\Numbers
+ * @author  Kerem Güneş <k-gun@mail.com>
+ * @since   1.0
  */
 final /* static */ class Numbers extends NumberUtil
 {}

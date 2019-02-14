@@ -24,14 +24,20 @@
  */
 declare(strict_types=1);
 
-namespace froq\util;
+namespace froq\util\interfaces;
 
 /**
- * Util exception.
- * @package froq\util
- * @object  froq\util\UtilException
+ * Jsonable.
+ * @package froq\util\interfaces
+ * @object  froq\util\interfaces\Jsonable
  * @author  Kerem Güneş <k-gun@mail.com>
  * @since   1.0
  */
-final class UtilException extends \Exception
-{}
+interface Jsonable
+{
+    /**
+     * To json.
+     * @return string
+     */
+    public function toJson(): string;
+}

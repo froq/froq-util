@@ -24,20 +24,14 @@
  */
 declare(strict_types=1);
 
-namespace Froq\Util\Interfaces;
+namespace froq\util\traits;
 
 /**
- * @package    Froq
- * @subpackage Froq\Util
- * @object     Froq\Util\Interfaces\Sizable
- * @author     Kerem Güneş <k-gun@mail.com>
- * @since      3.0
+ * Property trait exception.
+ * @package froq\util\traits
+ * @object  froq\util\traits\PropertyTraitException
+ * @author  Kerem Güneş <k-gun@mail.com>
+ * @since   3.0
  */
-interface Sizable
-{
-    /**
-     * Size.
-     * @return int
-     */
-    public function size(): int;
-}
+final class PropertyTraitException extends \Exception
+{}

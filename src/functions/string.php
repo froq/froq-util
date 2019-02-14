@@ -24,7 +24,7 @@
 */
 declare(strict_types=1);
 
-use Froq\Util\Strings;
+use froq\util\Strings;
 
 /**
  * String contains.

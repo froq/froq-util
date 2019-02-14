@@ -24,32 +24,20 @@
  */
 declare(strict_types=1);
 
-namespace Froq\Util\Traits;
+namespace froq\util\interfaces;
 
 /**
- * @package    Froq
- * @subpackage Froq\Util
- * @object     Froq\Util\Traits\PropertyIssetTrait
- * @author     Kerem Güneş <k-gun@mail.com>
- * @since      1.0
+ * Objectable.
+ * @package froq\util\interfaces
+ * @object  froq\util\interfaces\Objectable
+ * @author  Kerem Güneş <k-gun@mail.com>
+ * @since   1.0
  */
-trait PropertyIssetTrait
+interface Objectable
 {
-    /*** Notice: Do not define '__isset' in use'r object. ***/
-
     /**
-     * Isset magic.
-     * @param  string $name
-     * @return bool
-     * @throws Froq\Util\Traits\PropertyTraitException
+     * To object.
+     * @return object
      */
-    public final function __isset(string $name)
-    {
-        if (!property_exists($this, $name)) {
-            throw new PropertyTraitException(sprintf('Property %s::$%s does not exist',
-                static::class, $name));
-        }
-
-        return ($this->{$name} !== null);
-    }
+    public function toObject(): object;
 }

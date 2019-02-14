@@ -24,20 +24,32 @@
  */
 declare(strict_types=1);
 
-namespace Froq\Util\Interfaces;
+namespace froq\util\traits;
 
 /**
- * @package    Froq
- * @subpackage Froq\Util
- * @object     Froq\Util\Interfaces\Arrayable
- * @author     Kerem Güneş <k-gun@mail.com>
- * @since      1.0
+ * Property isset trait.
+ * @package froq\util\traits
+ * @object  froq\util\traits\PropertyIssetTrait
+ * @author  Kerem Güneş <k-gun@mail.com>
+ * @since   1.0
  */
-interface Arrayable
+trait PropertyIssetTrait
 {
+    /*** Notice: Do not define '__isset' in use'r object. ***/
+
     /**
-     * To array.
-     * @return array
+     * Isset magic.
+     * @param  string $name
+     * @return bool
+     * @throws froq\util\traits\PropertyTraitException
      */
-    public function toArray(): array;
+    public final function __isset(string $name)
+    {
+        if (!property_exists($this, $name)) {
+            throw new PropertyTraitException(sprintf('Property %s::$%s does not exist',
+                static::class, $name));
+        }
+
+        return ($this->{$name} !== null);
+    }
 }

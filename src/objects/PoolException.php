@@ -24,14 +24,14 @@
  */
 declare(strict_types=1);
 
-namespace froq\util;
+namespace froq\util\objects;
 
 /**
- * Util exception.
- * @package froq\util
- * @object  froq\util\UtilException
+ * Pool exception.
+ * @package froq\util\objects
+ * @object  froq\util\objects\PoolException
  * @author  Kerem Güneş <k-gun@mail.com>
- * @since   1.0
+ * @since   3.0
  */
-final class UtilException extends \Exception
+final class PoolException extends \Exception
 {}

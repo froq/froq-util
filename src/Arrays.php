@@ -24,16 +24,16 @@
  */
 declare(strict_types=1);
 
-namespace Froq\Util;
+namespace froq\util;
 
 use xo\util\ArrayUtil;
 
 /**
- * @package    Froq
- * @subpackage Froq\Util
- * @object     Froq\Util\Arrays
- * @author     Kerem Güneş <k-gun@mail.com>
- * @since      1.0
+ * Arrays.
+ * @package froq\util
+ * @object  froq\util\Arrays
+ * @author  Kerem Güneş <k-gun@mail.com>
+ * @since   1.0
  */
 final /* static */ class Arrays extends ArrayUtil
 {}

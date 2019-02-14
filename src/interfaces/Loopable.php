@@ -24,20 +24,14 @@
  */
 declare(strict_types=1);
 
-namespace Froq\Util\Interfaces;
+namespace froq\util\interfaces;
 
 /**
- * @package    Froq
- * @subpackage Froq\Util
- * @object     Froq\Util\Interfaces\Jsonable
- * @author     Kerem Güneş <k-gun@mail.com>
- * @since      1.0
+ * Loopable.
+ * @package froq\util\interfaces
+ * @object  froq\util\interfaces\Loopable
+ * @author  Kerem Güneş <k-gun@mail.com>
+ * @since   1.0
  */
-interface Jsonable
-{
-    /**
-     * To json.
-     * @return string
-     */
-    public function toJson(): string;
-}
+interface Loopable extends Sizable, Arrayable, \IteratorAggregate
+{}

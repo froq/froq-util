@@ -24,14 +24,14 @@
  */
 declare(strict_types=1);
 
-namespace Froq\Util\Traits;
+namespace froq\util\traits;
 
 /**
- * @package    Froq
- * @subpackage Froq\Util
- * @object     Froq\Util\Traits\PropertyTrait
- * @author     Kerem Güneş <k-gun@mail.com>
- * @since      3.0
+ * Property trait.
+ * @package froq\util\traits
+ * @object  froq\util\traits\PropertyTrait
+ * @author  Kerem Güneş <k-gun@mail.com>
+ * @since   3.0
  */
 trait PropertyTrait
 {
@@ -71,7 +71,7 @@ trait PropertyTrait
      * Check property entry.
      * @param  string $name
      * @return void
-     * @throws Froq\Util\Traits\PropertyTraitException
+     * @throws froq\util\traits\PropertyTraitException
      */
     private function ___checkPropertyEntry(string $name): void
     {
@@ -119,13 +119,3 @@ trait PropertyTrait
         }
     }
 }
-
-/**
- * @package    Froq
- * @subpackage Froq\Util
- * @object     Froq\Util\Traits\PropertyTraitException
- * @author     Kerem Güneş <k-gun@mail.com>
- * @since      3.0
- */
-final class PropertyTraitException extends \Exception
-{}

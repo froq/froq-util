@@ -24,7 +24,7 @@
  */
 declare(strict_types=1);
 
-use Froq\Util\Arrays;
+use froq\util\Arrays;
 
 /**
  * Array set (with dot notation support for sub-array paths).

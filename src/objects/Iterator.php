@@ -24,17 +24,17 @@
  */
 declare(strict_types=1);
 
-namespace Froq\Util\Objects;
+namespace froq\util\objects;
 
-use Froq\Util\UtilException;
-use Froq\Util\Interfaces\Arrayable;
+use froq\util\UtilException;
+use froq\util\interfaces\Arrayable;
 
 /**
- * @package    Froq
- * @subpackage Froq\Util
- * @object     Froq\Util\Objects\Iterator
- * @author     Kerem Güneş <k-gun@mail.com>
- * @since      3.0
+ * Iterator.
+ * @package froq\util\objects
+ * @object  froq\util\objects\Iterator
+ * @author  Kerem Güneş <k-gun@mail.com>
+ * @since   3.0
  */
 final class Iterator implements Arrayable, \Countable, \IteratorAggregate
 {
@@ -53,7 +53,7 @@ final class Iterator implements Arrayable, \Countable, \IteratorAggregate
     /**
      * Constructor.
      * @param  iterable|array|object $data
-     * @throws Froq\Util\UtilException
+     * @throws froq\util\UtilException
      */
     public function __construct($data)
     {
@@ -81,7 +81,7 @@ final class Iterator implements Arrayable, \Countable, \IteratorAggregate
     }
 
     /**
-     * @inheritDoc Froq\Util\Interfaces\Arrayable
+     * @inheritDoc froq\util\interfaces\Arrayable
      */
     public function toArray(): array
     {

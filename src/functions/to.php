@@ -24,12 +24,12 @@
  */
 declare(strict_types=1);
 
-use Froq\Util\Objects\{Iterator, Generator};
+use froq\util\objects\{Iterator, Generator};
 
 /**
  * To iterator.
- * @param  iterable $input
- * @return Froq\Util\Objects\Iterator
+ * @param  iterable|array|object $input
+ * @return froq\util\objects\Iterator
  */
 function to_iterator($input): Iterator
 {
@@ -38,8 +38,8 @@ function to_iterator($input): Iterator
 
 /**
  * To generator.
- * @param  iterable $input
- * @return Froq\Util\Objects\Generator
+ * @param  iterable|array|object $input
+ * @return froq\util\objects\Generator
  */
 function to_generator($input): Generator
 {

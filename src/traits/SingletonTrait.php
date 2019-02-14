@@ -24,19 +24,19 @@
  */
 declare(strict_types=1);
 
-namespace Froq\Util\Traits;
+namespace froq\util\traits;
 
 /**
- * @package    Froq
- * @subpackage Froq\Util
- * @object     Froq\Util\Traits\SingletonTrait
- * @author     Kerem Güneş <k-gun@mail.com>
- * @since      1.0
+ * Singleton trait.
+ * @package froq\util\traits
+ * @object  froq\util\traits\SingletonTrait
+ * @author  Kerem Güneş <k-gun@mail.com>
+ * @since   1.0
  */
 trait SingletonTrait
 {
     // Notice: Do not define '__construct' or '__clone'
-    // methods as public if you want a single use'r object.
+    // methods as 'public' if you want a single use'r object.
 
     /**
      * Instances.

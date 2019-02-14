@@ -24,16 +24,16 @@
  */
 declare(strict_types=1);
 
-namespace Froq\Util;
+namespace froq\util;
 
 use xo\util\StringUtil;
 
 /**
- * @package    Froq
- * @subpackage Froq\Util
- * @object     Froq\Util\Strings
- * @author     Kerem Güneş <k-gun@mail.com>
- * @since      1.0
+ * Strings.
+ * @package froq\util
+ * @object  froq\util\Strings
+ * @author  Kerem Güneş <k-gun@mail.com>
+ * @since   1.0
  */
 final /* static */ class Strings extends StringUtil
 {}

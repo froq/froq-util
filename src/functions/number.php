@@ -24,7 +24,7 @@
  */
 declare(strict_types=1);
 
-use Froq\Util\Numbers;
+use froq\util\Numbers;
 
 /**
  * Number compare.

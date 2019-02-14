@@ -24,14 +24,34 @@
  */
 declare(strict_types=1);
 
-namespace Froq\Util\Interfaces;
+namespace froq\util\traits;
 
 /**
- * @package    Froq
- * @subpackage Froq\Util
- * @object     Froq\Util\Interfaces\Loopable
- * @author     Kerem Güneş <k-gun@mail.com>
- * @since      3.0
+ * One run trait.
+ * @package froq\util\traits
+ * @object  froq\util\traits\OneRunTrait
+ * @author  Kerem Güneş <k-gun@mail.com>
+ * @since   3.0
  */
-interface Loopable extends Sizable, Arrayable, \IteratorAggregate
-{}
+trait OneRunTrait
+{
+    /**
+     * Run.
+     * @var bool
+     */
+    private static $___run = false;
+
+    /**
+     * Check run.
+     * @param  \Exception $exception
+     * @return void
+     * @throws \Exception
+     */
+    public final function ___checkRun(\Exception $exception): void
+    {
+        if (self::$___run) {
+            throw $exception;
+        }
+        self::$___run = true;
+    }
+}

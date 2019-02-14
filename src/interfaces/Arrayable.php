@@ -24,39 +24,20 @@
  */
 declare(strict_types=1);
 
-namespace Froq\Util\Traits;
+namespace froq\util\interfaces;
 
 /**
- * @package    Froq
- * @subpackage Froq\Util
- * @object     Froq\Util\Traits\PropertyGetterTrait
- * @author     Kerem Güneş <k-gun@mail.com>
- * @since      1.0
+ * Arrayable.
+ * @package froq\util\interfaces
+ * @object  froq\util\interfaces\Arrayable
+ * @author  Kerem Güneş <k-gun@mail.com>
+ * @since   1.0
  */
-trait PropertyGetterTrait
+interface Arrayable
 {
-    /*** Notice: Do not define '__get' in use'r object. ***/
-
     /**
-     * Get magic.
-     * @param  string $name
-     * @return any
-     * @throws Froq\Util\Traits\PropertyTraitException
+     * To array.
+     * @return array
      */
-    public final function __get(string $name)
-    {
-        // check property entry
-        $this->___checkPropertyEntry($name);
-
-        $value = $this->{$name};
-        if ($value !== null) {
-            $type = self::$___properties[$name]['type'];
-            if ($type != null) {
-                // simple type cast
-                settype($value, $type);
-            }
-        }
-
-        return $value;
-    }
+    public function toArray(): array;
 }

@@ -24,14 +24,14 @@
  */
 declare(strict_types=1);
 
-namespace Froq\Util;
+namespace froq\util;
 
 /**
- * @package    Froq
- * @subpackage Froq\Util
- * @object     Froq\Util\Util
- * @author     Kerem Güneş <k-gun@mail.com>
- * @since      1.0
+ * Util.
+ * @package froq\util
+ * @object  froq\util\Util
+ * @author  Kerem Güneş <k-gun@mail.com>
+ * @since   1.0
  */
 final /* static */ class Util
 {

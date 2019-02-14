@@ -24,14 +24,14 @@
  */
 declare(strict_types=1);
 
-namespace Froq\Util\ObjectsPattern;
+namespace froq\util\objects;
 
 /**
- * @package    Froq
- * @subpackage Froq\Util
- * @object     Froq\Util\ObjectsPattern\Pool
- * @author     Kerem Güneş <k-gun@mail.com>
- * @since      3.0
+ * Pool.
+ * @package froq\util\objects
+ * @object  froq\util\objects\Pool
+ * @author  Kerem Güneş <k-gun@mail.com>
+ * @since   3.0
  */
 abstract class Pool
 {
@@ -98,7 +98,10 @@ abstract class Pool
         if (is_object($id)) {
             $id = spl_object_hash($id);
             foreach ($this->objects as $i => $object) {
-                if ($object[0] == $id) { unset($this->objects[$i]); break; }
+                if ($object[0] == $id) {
+                    unset($this->objects[$i]);
+                    break;
+                }
             }
         } else {
             unset($this->objects[$id]);
@@ -110,7 +113,7 @@ abstract class Pool
      * @param  int|string $id
      * @param  object     $object
      * @return void
-     * @throws Froq\Util\ObjectsPattern\PoolException
+     * @throws froq\util\objects\PoolException
      */
     public final function add($id, object $object): void
     {
@@ -137,13 +140,3 @@ abstract class Pool
      */
     abstract public function createObject($id);
 }
-
-/**
- * @package    Froq
- * @subpackage Froq\Util
- * @object     Froq\Util\ObjectsPattern\PoolException
- * @author     Kerem Güneş <k-gun@mail.com>
- * @since      3.0
- */
-final class PoolException extends \Exception
-{}

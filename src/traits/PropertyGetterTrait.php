@@ -24,20 +24,39 @@
  */
 declare(strict_types=1);
 
-namespace Froq\Util\Interfaces;
+namespace froq\util\traits;
 
 /**
- * @package    Froq
- * @subpackage Froq\Util
- * @object     Froq\Util\Interfaces\Objectable
- * @author     Kerem Güneş <k-gun@mail.com>
- * @since      3.0
+ * Property getter trait.
+ * @package froq\util\traits
+ * @object  froq\util\traits\PropertyGetterTrait
+ * @author  Kerem Güneş <k-gun@mail.com>
+ * @since   1.0
  */
-interface Objectable
+trait PropertyGetterTrait
 {
+    /*** Notice: Do not define '__get' in use'r object. ***/
+
     /**
-     * To object.
-     * @return object
+     * Get magic.
+     * @param  string $name
+     * @return any
+     * @throws froq\util\traits\PropertyTraitException
      */
-    public function toObject(): object;
+    public final function __get(string $name)
+    {
+        // check property entry
+        $this->___checkPropertyEntry($name);
+
+        $value = $this->{$name};
+        if ($value !== null) {
+            $type = self::$___properties[$name]['type'];
+            if ($type != null) {
+                // simple type cast
+                settype($value, $type);
+            }
+        }
+
+        return $value;
+    }
 }

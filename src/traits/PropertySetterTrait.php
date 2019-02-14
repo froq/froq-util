@@ -24,14 +24,14 @@
  */
 declare(strict_types=1);
 
-namespace Froq\Util\Traits;
+namespace froq\util\traits;
 
 /**
- * @package    Froq
- * @subpackage Froq\Util
- * @object     Froq\Util\Traits\PropertySetterTrait
- * @author     Kerem Güneş <k-gun@mail.com>
- * @since      1.0
+ * Property setter trait.
+ * @package froq\util\traits
+ * @object  froq\util\traits\PropertySetterTrait
+ * @author  Kerem Güneş <k-gun@mail.com>
+ * @since   1.0
  */
 trait PropertySetterTrait
 {
@@ -42,7 +42,7 @@ trait PropertySetterTrait
      * @param  string $name
      * @param  any    $value
      * @return void
-     * @throws Froq\Util\Traits\PropertyTraitException
+     * @throws froq\util\traits\PropertyTraitException
      */
     public function __set(string $name, $value)
     {
