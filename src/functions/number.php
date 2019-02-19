@@ -27,6 +27,22 @@ declare(strict_types=1);
 use froq\util\Numbers;
 
 /**
+ * Number.
+ * @param  numeric $input
+ * @return number|null
+ * @since  3.0
+ */
+function number($input)
+{
+    if (is_numeric($input)) {
+        return is_string($input) && strpos($input, '.') !== false
+            ? (float) $input : (int) $input;
+    }
+
+    return null; // not numeric input
+}
+
+/**
  * Number compare.
  * @param  number   $a
  * @param  number   $b
