@@ -90,7 +90,8 @@ unset($files, $file);
  */
 function int($input): int
 {
-    return is_numeric($input) ? intval($input) : 0;
+    return (int) $input;
+    // return is_numeric($input) ? intval($input) : 0;
 }
 
 /**
@@ -101,7 +102,8 @@ function int($input): int
  */
 function float($input): float
 {
-    return is_numeric($input) ? floatval($input) : 0.0;
+    return (float) $input;
+    // return is_numeric($input) ? floatval($input) : 0.0;
 }
 
 /**
@@ -112,7 +114,11 @@ function float($input): float
  */
 function string($input): string
 {
-    return strval($input);
+    return (string) $input;
+    // return is_scalar($input) ? strval($input) : (
+    //     is_object($input) && method_exists($input, '__toString')
+    //         ? $input->__toString() : ''
+    // );
 }
 
 /**
@@ -123,9 +129,22 @@ function string($input): string
  */
 function bool($input): bool
 {
-    $input .= ''; // to string
-    return ($input === '1' || $input === '0') ? boolval($input) : false;
+    return (bool) $input;
+    // return is_scalar($input) ? boolval($input) : false;
 }
+
+/**
+ * Object.
+ * @param  any $input
+ * @return object
+ * @since  3.0
+ */
+function object($input): object
+{
+    return (object) $input;
+}
+
+// function array(): array {} // :(
 
 /**
  * Void.
