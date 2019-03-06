@@ -52,7 +52,7 @@ if (!defined('LOCAL')) {
 }
 
 /**
- * Error function (normally comes from froq/froq).
+ * Error function.
  */
 if (!function_exists('error')) {
     /**
@@ -75,8 +75,8 @@ if (!function_exists('error')) {
     }
 }
 
-// include all function files
-$files = glob(__dir__ .'/functions/*.php');
+// include all sugar files
+$files = glob(__dir__ .'/sugars/*.php');
 foreach ($files as $file) {
     include_once $file;
 }
