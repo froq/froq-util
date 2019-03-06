@@ -54,7 +54,10 @@ function to_generator($input): Generator
  */
 function to_array($input, bool $deep = true): array
 {
-    $input = (array) $input;
+    $input = is_object($input) ? (
+        (array) (method_exists($input, 'toArray') ? $input->toArray() : get_object_vars($input))
+    ) : (array) $input;
+
     if ($deep) {
         foreach ($input as $key => $value) {
             $input[$key] = is_iter($value) ? to_array($value, $deep) : $value;
@@ -72,7 +75,10 @@ function to_array($input, bool $deep = true): array
  */
 function to_object($input, bool $deep = true): object
 {
-    $input = (object) $input;
+    $input = is_object($input) ? (
+        (object) (method_exists($input, 'toArray') ? $input->toArray() : get_object_vars($input))
+    ) : (object) $input;
+
     if ($deep) {
         foreach ($input as $key => $value) {
             $input->{$key} = is_iter($value) ? to_object($value, $deep) : $value;
