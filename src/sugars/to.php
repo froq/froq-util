@@ -177,11 +177,12 @@ function to_upper_from_dash(?string $input): string
  * To query string.
  * @param  array       $input
  * @param  string|null $ignored_keys
+ * @param  bool        $raw
  * @param  bool        $strip_tags
  * @param  bool        $normalize_arrays
  * @return string
  */
-function to_query_string(array $input, string $ignored_keys = null,
+function to_query_string(array $input, string $ignored_keys = null, bool $raw = true,
     bool $strip_tags = true, bool $normalize_arrays = true): string
 {
     if ($ignored_keys != '') {
@@ -206,14 +207,14 @@ function to_query_string(array $input, string $ignored_keys = null,
     }
 
     $query = http_build_query($filter($input));
-
-    if ($strip_tags && false !== strpos($query, '%3C')) {
+    if ($raw) {
+        $query = rawurldecode($query);
+    }
+    if ($strip_tags && strpos($query, '%3C')) {
         $query = preg_replace('~%3C[\w]+(%2F)?%3E~simU', '', $query);
     }
-
-    if ($normalize_arrays && false !== strpos($query, '%5D')) {
-        $query = preg_replace('~%5B([\d]+)%5D~simU', '[]', $query);
-        $query = preg_replace('~%5B([\w\.-]+)%5D~simU', '[\1]', $query);
+    if ($normalize_arrays && strpos($query, '%5D')) {
+        $query = preg_replace('~%5B([\w\.\-]+)%5D~simU', '[\1]', $query);
     }
 
     return trim($query);
