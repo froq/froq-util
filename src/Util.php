@@ -91,6 +91,9 @@ final /* static */ class Util
         static $filter;
         if ($filter == null) {
             $filter = function($input) {
+                // decode first @important
+                $input = rawurldecode($input);
+
                 // encode quotes and html tags
                 return html_encode(
                     // remove NUL-byte, ctrl-z, vertical tab
