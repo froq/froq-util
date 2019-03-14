@@ -88,7 +88,7 @@ final /* static */ class Util
      */
     public static function getCurrentUrl(bool $withQuery = true): string
     {
-        static $filter;
+        static $filter, $scheme, $host, $port;
         if ($filter == null) {
             $filter = function($input) {
                 // decode first @important
@@ -103,18 +103,27 @@ final /* static */ class Util
                     ))
                 );
             };
+
+            [$scheme, $host, $port] = [
+                $_SERVER['REQUEST_SCHEME'], $_SERVER['SERVER_NAME'], $_SERVER['SERVER_PORT']
+            ];
         }
 
-        [$scheme, $host, $port, $path, $query] = [
-            $_SERVER['REQUEST_SCHEME'], $_SERVER['SERVER_NAME'], $_SERVER['SERVER_PORT'],
-            parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), $_SERVER['QUERY_STRING'] ?? ''
-        ];
+
+        $path = $_SERVER['REQUEST_URI'];
+        $query = '';
+        if (strpos($path, '?')) {
+            [$path, $query] = explode('?', $path, 2);
+        }
 
         $port = ($scheme != 'https' && $port != '80') ? ':'. $port : '';
         $path = $filter($path);
+        if (strpos($path, '//') !== false) {
+            $path = preg_replace('~/+~', '/', $path);
+        }
 
         $url = sprintf('%s://%s%s%s', $scheme, $host, $port, $path);
-        if ($withQuery && $query !== '') {
+        if ($withQuery && $query != '') {
             $url .= '?'. $filter($query);
         }
 
