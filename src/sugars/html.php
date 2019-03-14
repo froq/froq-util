@@ -101,22 +101,23 @@ function html_remove(?string $input, ?string $allowed_tags = '', bool $do_decode
  */
 function html_attributes(array $input): string
 {
-    $return = [];
+    $ret = [];
     foreach ($input as $key => $value) {
-        $return[] = sprintf('%s="%s"', $key, $value);
+        $ret[] = sprintf('%s="%s"', $key, $value);
     }
 
-    return join(' ', $return);
+    return join(' ', $ret);
 }
 
 /**
  * Html options.
  * @param  iterable     $input
- * @param  any          $key_b
+ * @param  any          $value_current
+ * @param  bool         $strict
  * @param  string|array $extra
  * @return string
  */
-function html_options(iterable $input, $key_b = null, $extra = null): string
+function html_options(iterable $input, $value_current = null, bool $strict = false, $extra = null): string
 {
     if ($extra !== null) {
         if (is_array($extra)) {
@@ -125,13 +126,13 @@ function html_options(iterable $input, $key_b = null, $extra = null): string
         $extra = ' '. trim($extra);
     }
 
-    $return = '';
-    foreach ($input as $key_a => $text) {
-        $return .= sprintf('<option value="%s"%s%s>%s</option>', $key_a,
-            html_selected($key_a, $key_b), $extra, $text);
+    $ret = '';
+    foreach ($input as $value => $text) {
+        $ret .= sprintf('<option value="%s"%s%s>%s</option>', $value,
+            html_selected($value, $value_current, $strict), $extra, $text);
     }
 
-    return $return;
+    return $ret;
 }
 
 /**
