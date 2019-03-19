@@ -111,13 +111,15 @@ function float($input): float
 
 /**
  * String.
- * @param  any $input
+ * @param  any  $input
+ * @param  bool $trim
  * @return string
  * @since  3.0
  */
-function string($input): string
+function string($input, bool $trim = false): string
 {
-    return (string) $input;
+    $input = (string) $input;
+    return $trim ? trim($input) : $input;
     // return is_scalar($input) ? strval($input) : (
     //     is_object($input) && method_exists($input, '__toString')
     //         ? $input->__toString() : ''
