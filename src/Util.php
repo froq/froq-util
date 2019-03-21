@@ -129,4 +129,104 @@ final /* static */ class Util
 
         return $url;
     }
+
+    /**
+     * Parse query string (without changing dotted param keys).
+     * @param  string $input
+     * @return array
+     * @link   https://github.com/php/php-src/blob/master/main/php_variables.c#L99
+     */
+    public static function parseQueryString(string $input, string $ignoredKeys = null): array
+    {
+        $ret = [];
+
+        if ($input == '') {
+            return $ret;
+        }
+
+        // normalize arrays
+        if (strpos($input, '%5D')) {
+            $input = str_replace(['%5B', '%5D'], ['[', ']'], $input);
+        }
+
+        // hex keys
+        $hexed = false;
+        if (strpos($input, '.')) {
+            $hexed = !false;
+            $input = preg_replace_callback('~(^|(?<=&))[^=&\[]+~', function($match) {
+                return bin2hex(rawurldecode($match[0]));
+            }, $input);
+        }
+
+        // @cancel
+        // preserve pluses, so parse_str() will replace all with spaces
+        // $input = str_replace('+', '%2B', $input);
+
+        parse_str($input, $input);
+
+        // unhex keys
+        if ($hexed) {
+            foreach ($input as $key => $value) {
+                $ret[hex2bin((string) $key)] = $value;
+            }
+        } else {
+            $ret = $input;
+        }
+
+        if ($ignoredKeys != '') {
+            $ignoredKeys = explode(',', $ignoredKeys);
+            foreach ($ret as $key => $_) {
+                if (in_array($key, $ignoredKeys)) {
+                    unset($ret[$key]);
+                }
+            }
+        }
+
+        return $ret;
+    }
+
+    /**
+     * Unparse query string.
+     * @param  array       $input
+     * @param  string|null $ignoredKeys
+     * @param  bool        $raw
+     * @param  bool        $stripTags
+     * @param  bool        $normalizeArrays
+     * @return string
+     */
+    public static function unparseQueryString(array $input, string $ignoredKeys = null,
+        bool $raw = false, bool $stripTags = true, bool $normalizeArrays = true): string
+    {
+        if ($ignoredKeys != '') {
+            $ignoredKeys = explode(',', $ignoredKeys);
+            foreach ($input as $key => $_) {
+                if (in_array($key, $ignoredKeys)) {
+                    unset($input[$key]);
+                }
+            }
+        }
+
+        // fix skipped NULL values by http_build_query()
+        static $filter; if ($filter == null) {
+            $filter = function($var) use(&$filter) {
+                foreach ($var as $key => $value) {
+                    $var[$key] = is_array($value) ? $filter($value) : strval($value);
+                }
+                return $var;
+            };
+        }
+
+        $query = http_build_query($filter($input));
+        if ($raw) {
+            $query = rawurldecode($query);
+        }
+        if ($stripTags && strpos($query, '%3C')) {
+            $query = preg_replace('~%3C[\w]+(%2F)?%3E~ismU', '', $query);
+        }
+        if ($normalizeArrays && strpos($query, '%5D')) {
+            $query = preg_replace('~([\w\.\-]+)%5B([\w\.\-]+)%5D(=)?~iU', '\1[\2]\3', $query);
+        }
+
+        return trim($query);
+    }
 }
