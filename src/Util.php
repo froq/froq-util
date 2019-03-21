@@ -208,7 +208,7 @@ final /* static */ class Util
 
         // fix skipped NULL values by http_build_query()
         static $filter; if ($filter == null) {
-            $filter = function($var) use(&$filter) {
+            $filter = function ($var) use (&$filter) {
                 foreach ($var as $key => $value) {
                     $var[$key] = is_array($value) ? $filter($value) : strval($value);
                 }
