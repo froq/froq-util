@@ -35,23 +35,28 @@ namespace froq\util;
  */
 final /* static */ class Util
 {
-    // @wait
-    // public static function setEnv(string $key, $value) {}
+    /**
+     * Set env.
+     * @param string $key
+     * @param any    $value
+     */
+    public static function setEnv(string $key, $value): void
+    {
+        $_ENV[$key] = $value;
+    }
 
     /**
      * Get env.
-     * @param  string $key
-     * @param  any    $valueDefault
+     * @param  string   $key
+     * @param  any|null $valueDefault
      * @return any
      */
     public static function getEnv(string $key, $valueDefault = null)
     {
-        $value = $valueDefault;
-        if (isset($_SERVER[$key])) {
-            $value = $_SERVER[$key];
-        } elseif (isset($_ENV[$key])) {
-            $value = $_ENV[$key];
-        } elseif (false === ($value = getenv($key))) {
+        if (isset($_ENV[$key])) return $_ENV[$key];
+        if (isset($_SERVER[$key])) return $_SERVER[$key];
+
+        if (false === ($value = getenv($key))) {
             $value = $valueDefault;
         } elseif (function_exists('apache_getenv') && false === ($value = apache_getenv($key))) {
             $value = $valueDefault;
@@ -132,11 +137,14 @@ final /* static */ class Util
 
     /**
      * Parse query string (without changing dotted param keys).
-     * @param  string $input
+     * @param  string      $input
+     * @param  bool        $encode
+     * @param  string|null $ignoredKeys
      * @return array
      * @link   https://github.com/php/php-src/blob/master/main/php_variables.c#L99
      */
-    public static function parseQueryString(string $input, string $ignoredKeys = null): array
+    public static function parseQueryString(string $input, bool $encode = false,
+        string $ignoredKeys = null): array
     {
         $ret = [];
 
@@ -144,23 +152,25 @@ final /* static */ class Util
             return $ret;
         }
 
-        // normalize arrays
-        if (strpos($input, '%5D')) {
-            $input = str_replace(['%5B', '%5D'], ['[', ']'], $input);
-        }
-
         // hex keys
         $hexed = false;
         if (strpos($input, '.')) {
-            $hexed = !false;
+            $hexed = true;
+
+            // normalize arrays
+            if (strpos($input, '%5D')) {
+                $input = str_replace(['%5B', '%5D'], ['[', ']'], $input);
+            }
+
             $input = preg_replace_callback('~(^|(?<=&))[^=&\[]+~', function($match) {
-                return bin2hex(rawurldecode($match[0]));
+                return bin2hex($match[0]);
             }, $input);
         }
 
-        // @cancel
         // preserve pluses, so parse_str() will replace all with spaces
-        // $input = str_replace('+', '%2B', $input);
+        if ($encode) {
+            $input = str_replace('+', '%2B', $input);
+        }
 
         parse_str($input, $input);
 
@@ -188,14 +198,14 @@ final /* static */ class Util
     /**
      * Unparse query string.
      * @param  array       $input
+     * @param  bool        $decode
      * @param  string|null $ignoredKeys
-     * @param  bool        $raw
      * @param  bool        $stripTags
      * @param  bool        $normalizeArrays
      * @return string
      */
-    public static function unparseQueryString(array $input, string $ignoredKeys = null,
-        bool $raw = false, bool $stripTags = true, bool $normalizeArrays = true): string
+    public static function unparseQueryString(array $input, bool $decode = false,
+        string $ignoredKeys = null, bool $stripTags = true, bool $normalizeArrays = true): string
     {
         if ($ignoredKeys != '') {
             $ignoredKeys = explode(',', $ignoredKeys);
@@ -217,8 +227,8 @@ final /* static */ class Util
         }
 
         $query = http_build_query($filter($input));
-        if ($raw) {
-            $query = rawurldecode($query);
+        if ($decode) {
+            $query = urldecode($query);
         }
         if ($stripTags && strpos($query, '%3C')) {
             $query = preg_replace('~%3C[\w]+(%2F)?%3E~ismU', '', $query);
