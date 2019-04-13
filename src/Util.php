@@ -53,13 +53,16 @@ final /* static */ class Util
      */
     public static function getEnv(string $key, $valueDefault = null)
     {
-        if (isset($_ENV[$key])) return $_ENV[$key];
-        if (isset($_SERVER[$key])) return $_SERVER[$key];
+        // uppers for nginx
+        $value = $_ENV[$key] ?? $_ENV[strtoupper($key)] ??
+                 $_SERVER[$key] ?? $_SERVER[strtoupper($key)] ?? $valueDefault;
 
-        if (false === ($value = getenv($key))) {
-            $value = $valueDefault;
-        } elseif (function_exists('apache_getenv') && false === ($value = apache_getenv($key))) {
-            $value = $valueDefault;
+        if ($value === null) {
+            if (false === ($value = getenv($key))) {
+                $value = $valueDefault;
+            } elseif (function_exists('apache_getenv') && false === ($value = apache_getenv($key))) {
+                $value = $valueDefault;
+            }
         }
 
         return $value;
