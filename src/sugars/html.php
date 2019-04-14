@@ -27,12 +27,12 @@ declare(strict_types=1);
 /**
  * Html encode.
  * @param  ?string $input
- * @param  bool    $do_simple
+ * @param  bool    $simple
  * @return string
  */
-function html_encode(?string $input, bool $do_simple = false): string
+function html_encode(?string $input, bool $simple = false): string
 {
-    return $do_simple
+    return $simple
         ? str_replace(['<', '>'], ['&lt;', '&gt;'], (string) $input)
         : str_replace(["'", '"', '<', '>'], ['&#39;', '&#34;', '&lt;', '&gt;'], (string) $input);
 }
@@ -40,12 +40,12 @@ function html_encode(?string $input, bool $do_simple = false): string
 /**
  * Html decode.
  * @param  ?string $input
- * @param  bool    $do_simple
+ * @param  bool    $simple
  * @return string
  */
-function html_decode(?string $input, bool $do_simple = false): string
+function html_decode(?string $input, bool $simple = false): string
 {
-    return $do_simple
+    return $simple
         ? str_ireplace(['&lt;', '&gt;'], ['<', '>'], (string) $input)
         : str_ireplace(['&#39;', '&#34;', '&lt;', '&gt;'], ["'", '"', '<', '>'], (string) $input);
 }
@@ -54,12 +54,12 @@ function html_decode(?string $input, bool $do_simple = false): string
  * Html strip.
  * @param  ?string $input
  * @param  ?string $allowed_tags
- * @param  bool    $do_decode
+ * @param  bool    $decode
  * @return string
  */
-function html_strip(?string $input, ?string $allowed_tags = '', bool $do_decode = false): string
+function html_strip(?string $input, ?string $allowed_tags = '', bool $decode = false): string
 {
-    if ($do_decode) {
+    if ($decode) {
         $input = html_decode($input, true);
     }
 
@@ -76,12 +76,12 @@ function html_strip(?string $input, ?string $allowed_tags = '', bool $do_decode 
  * Html remove.
  * @param  ?string $input
  * @param  ?string $allowed_tags
- * @param  bool    $do_decode
+ * @param  bool    $decode
  * @return string
  */
-function html_remove(?string $input, ?string $allowed_tags = '', bool $do_decode = false): string
+function html_remove(?string $input, ?string $allowed_tags = '', bool $decode = false): string
 {
-    if ($do_decode) {
+    if ($decode) {
         $input = html_decode($input, true);
     }
 
@@ -185,8 +185,7 @@ function html_selected($a, $b, bool $strict = false): string
 function html_compress(?string $input): string
 {
     $input = (string) $input;
-
-    if (empty($input)) {
+    if ($input == '') {
         return $input;
     }
 
@@ -210,15 +209,17 @@ function html_compress(?string $input): string
     }, $input);
 
     // remove comments
-    $input = preg_replace('~<!--[^-]\s*(.*?)\s*[^-]-->~sm', '', $input);
+    $input = preg_replace('~<!--(.*?)?-->~sm', '', $input);
     // remove tabs
     $input = preg_replace('~^[\t ]+~sm', '', $input);
     // remove tag spaces
     $input = preg_replace('~>\s+<(/?)([\w\d-]+)~sm', '><\\1\\2', $input);
+    $input = preg_replace('~\s+</(\w+)>~', '</\1>', $input);
+    $input = preg_replace('~</(\w+)>\s+~', '</\1> ', $input);
 
     // textarea \n problem
     $textarea_tpl = '%{{{TEXTAREA}}}';
-    $textarea_found = !!preg_match_all('~(<textarea(.*?)>(.*?)</textarea>)~sm', $input, $matches);
+    $textarea_found = preg_match_all('~(<textarea(.*?)>(.*?)</textarea>)~sm', $input, $matches);
 
     // fix textareas
     if ($textarea_found) {
