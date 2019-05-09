@@ -30,45 +30,54 @@ use froq\util\Strings;
  * String contains.
  * @param  string   $source
  * @param  string   $search
- * @param  int|null offset
+ * @param  int      $offset
  * @param  bool     $caseSensitive
  * @return bool
  * @since  3.0
  */
-function string_contains(string $source, string $search, int $offset = null,
+function string_contains(string $source, string $search, int $offset = 0,
     bool $caseSensitive = true): bool
 {
-    return Strings::contains($source, $search, $offset, $caseSensitive);
+    if ($offset) {
+        $source = substr($source, $offset);
+    }
+    return Strings::contains($source, $search, $caseSensitive);
 }
 
 /**
  * String contains any.
  * @param  string   $source
  * @param  array    $search
- * @param  int|null $offset
+ * @param  int      $offset
  * @param  bool     $caseSensitive
  * @return bool
  * @since  3.0
  */
-function string_contains_any(string $source, array $searches, int $offset = null,
+function string_contains_any(string $source, array $searches, int $offset = 0,
     bool $caseSensitive = true): bool
 {
-    return Strings::containsAny($source, $searches, $offset, $caseSensitive);
+    if ($offset) {
+        $source = substr($source, $offset);
+    }
+    return Strings::containsAny($source, $searches, $caseSensitive);
 }
 
 /**
  * String contains all.
  * @param  string   $source
  * @param  array    $search
- * @param  int|null $offset
+ * @param  int      $offset
  * @param  bool     $caseSensitive
  * @return bool
  * @since  3.0
  */
-function string_contains_all(string $source, array $searches, int $offset = null,
+function string_contains_all(string $source, array $searches, int $offset = 0,
     bool $caseSensitive = true): bool
 {
-    return Strings::containsAll($source, $searches, $offset, $caseSensitive);
+    if ($offset) {
+        $source = substr($source, $offset);
+    }
+    return Strings::containsAll($source, $searches, $caseSensitive);
 }
 
 /**
