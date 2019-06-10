@@ -82,13 +82,13 @@ function is_number($input): bool
 /**
  * Is digit.
  * @param  any  $input
- * @param  bool $complex
+ * @param  bool $negatives
  * @return bool
  * @since  3.0
  */
-function is_digit($input, bool $complex = true): bool
+function is_digit($input, bool $negatives = false): bool
 {
-    return Numbers::isDigit($input, $complex);
+    return Numbers::isDigit($input, $negatives);
 }
 
 /**
@@ -148,20 +148,18 @@ function is_unsigned($input): bool
 
 /**
  * Rand int.
- * @param  bool $signed
  * @return int
  */
-function rand_int(bool $signed = false): int
+function rand_int(): int
 {
-    return ($ret = random_int(0, PHP_INT_MAX)) && $signed ? -$ret : $ret;
+    return random_int(0, PHP_INT_MAX);
 }
 
 /**
  * Rand float.
- * @param  bool $signed
  * @return float
  */
-function rand_float(bool $signed = false): float
+function rand_float(): float
 {
-    return ($ret = lcg_value()) && $signed ? -$ret : $ret;
+    return lcg_value();
 }
