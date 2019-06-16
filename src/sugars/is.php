@@ -205,7 +205,7 @@ function is_true($input): bool
  * @return bool
  * @since  3.5
  */
-function is_false(): bool
+function is_false($input): bool
 {
     return ($input === false);
 }
