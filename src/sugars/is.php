@@ -187,3 +187,25 @@ function is_none($input): bool
 {
     return ($input === nil || $input === nils);
 }
+
+/**
+ * Is true.
+ * @param  any $input
+ * @return bool
+ * @since  3.5
+ */
+function is_true($input): bool
+{
+    return ($input === true);
+}
+
+/**
+ * Is false.
+ * @param  any $input
+ * @return bool
+ * @since  3.5
+ */
+function is_false(): bool
+{
+    return ($input === false);
+}
