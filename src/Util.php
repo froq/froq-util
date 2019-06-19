@@ -33,7 +33,7 @@ namespace froq\util;
  * @author  Kerem Güneş <k-gun@mail.com>
  * @since   1.0
  */
-final /* static */ class Util
+final /* fuckic static */ class Util
 {
     /**
      * Set env.
@@ -74,19 +74,50 @@ final /* static */ class Util
      */
     public static function getClientIp(): ?string
     {
-        $ip = null;
         if (null != ($ip = self::getEnv('HTTP_X_FORWARDED_FOR'))) {
-            if (false !== strpos($ip, ',')) {
-                $ip = trim((string) end(explode(',', $ip)));
+            if (false !== ($i = strrpos($ip, ','))) {
+                $ip = substr($ip, ($i + 1));
+            }
+            return $ip;
+        }
+
+        // header names
+        static $names = [
+            'HTTP_CLIENT_IP',   'HTTP_X_REAL_IP',
+            'REMOTE_ADDR_REAL', 'REMOTE_ADDR'
+        ];
+
+        foreach ($names as $name) {
+            if (null != ($value = self::getEnv($name))) {
+                return $value;
             }
         }
-        // all ok
-        elseif (null != ($ip = self::getEnv('HTTP_CLIENT_IP'))) {}
-        elseif (null != ($ip = self::getEnv('HTTP_X_REAL_IP'))) {}
-        elseif (null != ($ip = self::getEnv('REMOTE_ADDR_REAL'))) {}
-        elseif (null != ($ip = self::getEnv('REMOTE_ADDR'))) {}
+        return null;
+    }
 
-        return $ip;
+    /**
+     * Get client user agent.
+     * @return ?string
+     * @since  3.6
+     */
+    public static function getClientUserAgent(): ?string
+    {
+        // header names
+        static $names = [
+            'HTTP_USER_AGENT',
+            // opera
+            'HTTP_X_OPERAMINI_PHONE_UA',
+            // vodafone
+            'HTTP_X_DEVICE_USER_AGENT',  'HTTP_X_ORIGINAL_USER_AGENT', 'HTTP_X_SKYFIRE_PHONE',
+            'HTTP_X_BOLT_PHONE_UA',      'HTTP_DEVICE_STOCK_UA',       'HTTP_X_UCBROWSER_DEVICE_UA'
+        ];
+
+        foreach ($names as $name) {
+            if (null != ($value = self::getEnv($name))) {
+                return $value;
+            }
+        }
+        return null;
     }
 
     /**
