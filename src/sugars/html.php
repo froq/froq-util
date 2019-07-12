@@ -102,8 +102,8 @@ function html_remove(?string $input, ?string $allowed_tags = '', bool $decode = 
 function html_attributes(array $input): string
 {
     $ret = [];
-    foreach ($input as $key => $value) {
-        $ret[] = sprintf('%s="%s"', $key, $value);
+    foreach ($input as $name => $value) {
+        $ret[] = sprintf('%s="%s"', $name, $value);
     }
 
     return join(' ', $ret);
@@ -193,16 +193,12 @@ function html_compress(?string $input): string
     $input = preg_replace_callback('~(<script>(.*?)</script>)~sm', function($match) {
         $input = trim($match[2]);
         // line comments (protect http:// etc)
-        if (is_local()) {
-            $input = preg_replace('~(^|[^:])//([^\r\n]+)$~sm', '', $input);
-        } else {
-            $input = preg_replace('~(^|[^:])//.*?[\r\n]$~sm', '', $input);
-        }
+        $input = preg_replace('~(^|[^\'":])//([^\r\n]+)$~sm', '', $input);
 
         // doc comments
-        preg_match_all('~\s*/[\*]+(?:.*?)[\*]/\s*~sm', $input, $matches);
-        foreach ($matches as $key => $value) {
-            $input = str_replace($value, "\n\n", $input);
+        preg_match_all('~[^\'"]/\*+(?:.*)\*/\s*~smU', $input, $matches);
+        foreach ($matches as $match) {
+            $input = str_replace($match, "\n\n", $input);
         }
 
         return sprintf('<script>%s</script>', trim($input));
@@ -217,7 +213,7 @@ function html_compress(?string $input): string
     $input = preg_replace('~\s+</(\w+)>~', '</\1>', $input);
     $input = preg_replace('~</(\w+)>\s+~', '</\1> ', $input);
 
-    // textarea \n problem
+    // textarea "\n" problem
     $textarea_tpl = '%{{{TEXTAREA}}}';
     $textarea_found = preg_match_all('~(<textarea(.*?)>(.*?)</textarea>)~sm', $input, $matches);
 
