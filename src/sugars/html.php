@@ -189,9 +189,22 @@ function html_compress(?string $input): string
         return $input;
     }
 
+    $input = preg_replace_callback('~(<style>(.*?)</style>)~sm', function($match) {
+        $input = trim($match[2]);
+
+        // comments
+        preg_match_all('~[^\'"]/\*+(?:.*)\*/\s*~smU', $input, $matches);
+        foreach ($matches as $match) {
+            $input = str_replace($match, "\n\n", $input);
+        }
+
+        return sprintf('<style>%s</style>', trim($input));
+    }, $input);
+
     // scripts
     $input = preg_replace_callback('~(<script>(.*?)</script>)~sm', function($match) {
         $input = trim($match[2]);
+
         // line comments (protect http:// etc)
         $input = preg_replace('~(^|[^\'":])//([^\r\n]+)$~sm', '', $input);
 
