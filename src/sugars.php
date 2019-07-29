@@ -94,19 +94,23 @@ unset($files, $file);
 function int($input): int
 {
     return (int) $input;
-    // return is_numeric($input) ? intval($input) : 0;
 }
 
 /**
  * Float.
- * @param  any $input
+ * @param  any      $input
+ * @param  int|null $decimals
  * @return float
  * @since  3.0
  */
-function float($input): float
+function float($input, int $decimals = null): float
 {
+    if ($decimals !== null) {
+        try { // silence for bcdiv (if not exists)
+            $input = (float) bcdiv((string) $input, '1', $decimals);
+        } catch (\Error $e) { }
+    }
     return (float) $input;
-    // return is_numeric($input) ? floatval($input) : 0.0;
 }
 
 /**
@@ -120,10 +124,6 @@ function string($input, bool $trim = false): string
 {
     $input = (string) $input;
     return $trim ? trim($input) : $input;
-    // return is_scalar($input) ? strval($input) : (
-    //     is_object($input) && method_exists($input, '__toString')
-    //         ? $input->__toString() : ''
-    // );
 }
 
 /**
@@ -135,7 +135,6 @@ function string($input, bool $trim = false): string
 function bool($input): bool
 {
     return (bool) $input;
-    // return is_scalar($input) ? boolval($input) : false;
 }
 
 /**
