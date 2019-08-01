@@ -41,9 +41,9 @@ function array_set(array &$array, $key, $value): array
 
 /**
  * Array get (with dot notation support for sub-array paths).
- * @param  array      $array
- * @param  int|string $key
- * @param  any        $valueDefault
+ * @param  array            $array
+ * @param  int|string|array $key
+ * @param  any              $valueDefault
  * @return any
  * @since  3.0
  */
