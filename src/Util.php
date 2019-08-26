@@ -137,7 +137,7 @@ final /* fuckic static */ class Util
                     foreach ($input as $key => $value) {
                         $input[$filter($key)] = $filter($value);
                     }
-                    return self::unparseQueryString($input, true);
+                    return self::unparseQueryString($input);
                 }
 
                 // encode quotes and html tags
