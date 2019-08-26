@@ -127,11 +127,18 @@ final /* fuckic static */ class Util
      */
     public static function getCurrentUrl(bool $withQuery = true): string
     {
-        static $filter, $scheme, $host, $port;
-        if ($filter == null) {
-            $filter = function($input) {
+        static $filter; if ($filter == null) {
+            $filter = function($input, $isQuery = false) use (&$filter) {
                 // decode first @important
                 $input = rawurldecode($input);
+
+                if ($isQuery) {
+                    $input = self::parseQueryString($input);
+                    foreach ($input as $key => $value) {
+                        $input[$filter($key)] = $filter($value);
+                    }
+                    return self::unparseQueryString($input, true);
+                }
 
                 // encode quotes and html tags
                 return html_encode(
@@ -148,7 +155,6 @@ final /* fuckic static */ class Util
             ];
         }
 
-
         $path = $_SERVER['REQUEST_URI'];
         $query = '';
         if (strpos($path, '?')) {
@@ -163,7 +169,7 @@ final /* fuckic static */ class Util
 
         $url = sprintf('%s://%s%s%s', $scheme, $host, $port, $path);
         if ($withQuery && $query != '') {
-            $url .= '?'. $filter($query);
+            $url .= '?'. $filter($query, true);
         }
 
         return $url;
@@ -252,15 +258,17 @@ final /* fuckic static */ class Util
 
         // fix skipped NULL values by http_build_query()
         static $filter; if ($filter == null) {
-            $filter = function ($var) use (&$filter) {
-                foreach ($var as $key => $value) {
-                    $var[$key] = is_array($value) ? $filter($value) : strval($value);
+            $filter = function ($input) use (&$filter) {
+                foreach ($input as $key => $value) {
+                    $input[$key] = is_array($value)
+                        ? $filter($value) : strval($value);
                 }
-                return $var;
+                return $input;
             };
         }
 
         $query = http_build_query($filter($input));
+
         if ($decode) {
             $query = urldecode($query);
         }
