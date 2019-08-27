@@ -128,11 +128,8 @@ final /* fuckic static */ class Util
     public static function getCurrentUrl(bool $withQuery = true): string
     {
         static $filter; if ($filter == null) {
-            $filter = function($input, $isQuery = false) use (&$filter) {
-                // decode first @important
-                $input = rawurldecode($input);
-
-                if ($isQuery) {
+            $filter = function($input) use (&$filter) {
+                if (is_array($input)) {
                     $input = self::parseQueryString($input);
                     foreach ($input as $key => $value) {
                         $input[$filter($key)] = $filter($value);
@@ -140,7 +137,9 @@ final /* fuckic static */ class Util
                     return self::unparseQueryString($input);
                 }
 
-                // encode quotes and html tags
+                // @important
+                $input = rawurldecode($input);
+
                 return html_encode(
                     // remove NUL-byte, ctrl-z, vertical tab
                     preg_replace('~[\x00\x1a\x0b]|%(?:00|1a|0b)~i', '', trim(
@@ -157,7 +156,7 @@ final /* fuckic static */ class Util
 
         $path = $_SERVER['REQUEST_URI'];
         $query = '';
-        if (strpos($path, '?')) {
+        if (strpos($path, '?') !== false) {
             [$path, $query] = explode('?', $path, 2);
         }
 
@@ -169,7 +168,7 @@ final /* fuckic static */ class Util
 
         $url = sprintf('%s://%s%s%s', $scheme, $host, $port, $path);
         if ($withQuery && $query != '') {
-            $url .= '?'. $filter($query, true);
+            $url .= '?'. $filter($query);
         }
 
         return $url;
