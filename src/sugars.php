@@ -98,7 +98,7 @@ function int($input): int
 
 /**
  * Float.
- * @param  any      $input
+ * @param  numeric      $input
  * @param  int|null $decimals
  * @return float
  * @since  3.0
@@ -107,8 +107,8 @@ function float($input, int $decimals = null): float
 {
     if ($decimals !== null) {
         try { // silence for bcdiv (if not exists)
-            $input = (float) bcdiv((string) $input, '1', $decimals);
-        } catch (\Error $e) { }
+            $input = bcdiv((string) $input, '1', $decimals);
+        } catch (\Error $e) {}
     }
     return (float) $input;
 }
@@ -137,18 +137,18 @@ function bool($input): bool
     return (bool) $input;
 }
 
+// function array(): array {} // :(
+
 /**
  * Object.
- * @param  any $input
+ * @param  any|null $input
  * @return object
  * @since  3.0
  */
-function object($input): object
+function object($input = null): object
 {
     return (object) $input;
 }
-
-// function array(): array {} // :(
 
 /**
  * Void.
