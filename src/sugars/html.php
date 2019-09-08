@@ -144,8 +144,8 @@ function html_options(iterable $input, $value_current = null, bool $strict = fal
  */
 function html_checked($a, $b, bool $strict = false): string
 {
-    return $a === null ? '' : (
-        $strict ? $a === $b ? ' checked' : '' : $a == $b ? ' checked' : ''
+    return ($a === null) ? '' : (
+        $strict ? ($a === $b ? ' checked' : '') : ($a == $b ? ' checked' : '')
     );
 }
 
@@ -158,8 +158,8 @@ function html_checked($a, $b, bool $strict = false): string
  */
 function html_disabled($a, $b, bool $strict = false): string
 {
-    return $a === null ? '' : (
-        $strict ? $a === $b ? ' disabled' : '' : $a == $b ? ' disabled' : ''
+    return ($a === null) ? '' : (
+        $strict ? ($a === $b ? ' disabled' : '') : ($a == $b ? ' disabled' : '')
     );
 }
 
@@ -172,8 +172,8 @@ function html_disabled($a, $b, bool $strict = false): string
  */
 function html_selected($a, $b, bool $strict = false): string
 {
-    return $a === null ? '' : (
-        $strict ? $a === $b ? ' selected' : '' : $a == $b ? ' selected' : ''
+    return ($a === null) ? '' : (
+        $strict ? ($a === $b ? ' selected' : '') : ($a == $b ? ' selected' : '')
     );
 }
 
@@ -189,6 +189,7 @@ function html_compress(?string $input): string
         return $input;
     }
 
+    // styles
     $input = preg_replace_callback('~(<style>(.*?)</style>)~sm', function($match) {
         $input = trim($match[2]);
 
@@ -205,7 +206,7 @@ function html_compress(?string $input): string
     $input = preg_replace_callback('~(<script>(.*?)</script>)~sm', function($match) {
         $input = trim($match[2]);
 
-        // line comments (protect http:// etc)
+        // line comments (protect "http://" etc)
         $input = preg_replace('~(^|[^\'":])//([^\r\n]+)$~sm', '', $input);
 
         // doc comments
