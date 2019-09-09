@@ -106,9 +106,7 @@ function int($input): int
 function float($input, int $decimals = null): float
 {
     if ($decimals !== null) {
-        try { // silence for bcdiv (if not exists)
-            $input = bcdiv((string) $input, '1', $decimals);
-        } catch (\Error $e) {}
+        $input = number_format((float) $input, $decimals);
     }
     return (float) $input;
 }

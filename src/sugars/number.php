@@ -28,13 +28,17 @@ use froq\util\Numbers;
 
 /**
  * Number.
- * @param  numeric $input
- * @return number|null
+ * @param  numeric  $input
+ * @param  int|null $decimals
+ * @return int|float|null
  * @since  3.0
  */
-function number($input)
+function number($input, int $decimals = null)
 {
     if (is_numeric($input)) {
+        if ($decimals !== null) {
+            $input = number_format((float) $input, $decimals);
+        }
         return is_string($input) && strpos($input, '.') !== false
             ? (float) $input : (int) $input;
     }
