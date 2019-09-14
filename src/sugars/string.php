@@ -82,24 +82,36 @@ function string_contains_all(string $source, array $searches, int $offset = 0,
 
 /**
  * String starts with.
- * @param  string $source
- * @param  string $search
+ * @param  string       $source
+ * @param  string|array $search
  * @return bool
  * @since  3.0
  */
-function string_starts_with(string $source, string $search): bool
+function string_starts_with(string $source, $search): bool
 {
-    return Strings::startsWith($source, $search);
+    $searches = (array) $search;
+    foreach ($searches as $search) {
+        if (Strings::startsWith($source, $search)) {
+            return true;
+        }
+    }
+    return false;
 }
 
 /**
  * String ends with.
- * @param  string $source
- * @param  string $search
+ * @param  string       $source
+ * @param  string|array $search
  * @return bool
  * @since  3.0
  */
-function string_ends_with(string $source, string $search): bool
+function string_ends_with(string $source, $search): bool
 {
-    return Strings::endsWith($source, $search);
+    $searches = (array) $search;
+    foreach ($searches as $search) {
+        if (Strings::endsWith($source, $search)) {
+            return true;
+        }
+    }
+    return false;
 }
