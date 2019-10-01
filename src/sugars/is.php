@@ -39,7 +39,7 @@ function is_local(): bool
  */
 function is_cli(): bool
 {
-    return (PHP_SAPI == 'cli');
+    return (PHP_SAPI === 'cli');
 }
 
 /**
@@ -48,7 +48,7 @@ function is_cli(): bool
  */
 function is_cli_server(): bool
 {
-    return (PHP_SAPI == 'cli-server');
+    return (PHP_SAPI === 'cli-server');
 }
 
 /**
@@ -58,7 +58,7 @@ function is_cli_server(): bool
  */
 function is_plain_object($input): bool
 {
-    return $input instanceof \stdClass;
+    return ($input instanceof \stdClass);
 }
 
 /**
@@ -68,7 +68,7 @@ function is_plain_object($input): bool
  */
 function is_array_like($input): bool
 {
-    return is_array($input) || $input instanceof \stdClass;
+    return is_array($input) || ($input instanceof \stdClass);
 }
 
 /**
@@ -78,7 +78,7 @@ function is_array_like($input): bool
  */
 function is_iter($input): bool
 {
-    return is_iterable($input) || $input instanceof \stdClass;
+    return is_iterable($input) || ($input instanceof \stdClass);
 }
 
 /**
@@ -100,7 +100,7 @@ function is_primitive($input): bool
  */
 function is_closure($input): bool
 {
-    return $input instanceof \Closure;
+    return ($input instanceof \Closure);
 }
 
 /**
@@ -111,7 +111,7 @@ function is_closure($input): bool
  */
 function is_class($input): bool
 {
-    return class_exists((string) $input, false);
+    return is_string($input) && class_exists($input, false);
 }
 
 /**
@@ -122,11 +122,8 @@ function is_class($input): bool
  */
 function is_class_method($input): bool
 {
-    $input = (string) $input;
-    if (!strpos($input, '::')) {
-        return false;
-    }
-    return is_callable($input);
+    // Eg: Foo::bar (for publics only, seems not fixed @see https://bugs.php.net/bug.php?id=29210)
+    return is_string($input) && strpos($input, '::') && is_callable($input);
 }
 
 /**
@@ -139,8 +136,8 @@ function is_class_method($input): bool
 function is_instance($input, $inputTarget): bool
 {
     return $input && (
-        (is_string($inputTarget) && is_a($input, $inputTarget, true))
-        || (is_object($inputTarget) && $input instanceof $inputTarget)
+           (is_string($inputTarget) && is_a($input, $inputTarget, true))
+        || (is_object($inputTarget) && ($input instanceof $inputTarget))
     );
 }
 
