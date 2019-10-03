@@ -98,7 +98,7 @@ function int($input): int
 
 /**
  * Float.
- * @param  numeric      $input
+ * @param  numeric  $input
  * @param  int|null $decimals
  * @return float
  * @since  3.0
@@ -106,7 +106,7 @@ function int($input): int
 function float($input, int $decimals = null): float
 {
     if ($decimals !== null) {
-        $input = number_format((float) $input, $decimals);
+        $input = round($input, $decimals);
     }
     return (float) $input;
 }

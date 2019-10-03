@@ -149,9 +149,8 @@ final /* fuckic static */ class Util
                 );
             };
 
-            [$scheme, $host, $port] = [
-                $_SERVER['REQUEST_SCHEME'], $_SERVER['SERVER_NAME'], $_SERVER['SERVER_PORT']
-            ];
+            // all static
+            ['REQUEST_SCHEME' => $scheme, 'SERVER_NAME' => $host, 'SERVER_PORT' => $port] = $_SERVER;
         }
 
         $path = $_SERVER['REQUEST_URI'];

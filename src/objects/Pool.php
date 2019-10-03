@@ -33,13 +33,26 @@ namespace froq\util\objects;
  * @author  Kerem Güneş <k-gun@mail.com>
  * @since   3.0
  */
-abstract class Pool
+class Pool
 {
     /**
      * Objects.
      * @var array
      */
     private $objects = [];
+
+    /**
+     * Constructor.
+     * @param array|null $objects
+     */
+    public function __construct(array $objects = null)
+    {
+        if ($objects != null) {
+            foreach ($objects as [$id, $object]) {
+                $this->add($id, $object);
+            }
+        }
+    }
 
     /**
      * Has.
@@ -49,9 +62,11 @@ abstract class Pool
     public final function has($id): bool
     {
         if (is_object($id)) {
-            $id = spl_object_hash($id);
+            $id = spl_object_id($id);
             foreach ($this->objects as $object) {
-                if ($object[0] == $id) { return true; }
+                if ($object[0] === $id) {
+                    return true;
+                }
             }
             return false;
         }
@@ -67,7 +82,7 @@ abstract class Pool
      */
     public final function set($id, object $object): void
     {
-        $this->objects[$id] = [spl_object_hash($object), $object];
+        $this->objects[$id] = [spl_object_id($object), $object];
     }
 
     /**
@@ -78,9 +93,11 @@ abstract class Pool
     public final function get($id): ?object
     {
         if (is_object($id)) {
-            $id = spl_object_hash($id);
+            $id = spl_object_id($id);
             foreach ($this->objects as $object) {
-                if ($object[0] == $id) { return $object[1]; }
+                if ($object[0] === $id) {
+                    return $object[1];
+                }
             }
             return null;
         }
@@ -96,7 +113,7 @@ abstract class Pool
     public final function remove($id): void
     {
         if (is_object($id)) {
-            $id = spl_object_hash($id);
+            $id = spl_object_id($id);
             foreach ($this->objects as $i => $object) {
                 if ($object[0] == $id) {
                     unset($this->objects[$i]);
@@ -113,15 +130,15 @@ abstract class Pool
      * @param  int|string $id
      * @param  object     $object
      * @return void
-     * @throws froq\util\objects\PoolException
      */
-    public final function add($id, object $object): void
+    public final function add($id, object $object): bool
     {
-        if ($this->has($id)) {
-            throw new PoolException("Object already in pool with id '{$id}'");
+        if (!$this->has($id)) {
+            $this->set($id, $object);
+            return true;
         }
 
-        $this->set($id, $object);
+        return false;
     }
 
     /**
@@ -132,11 +149,4 @@ abstract class Pool
     {
         return count($this->objects);
     }
-
-    /**
-     * Create object.
-     * @param  int|string $id
-     * @return any
-     */
-    abstract public function createObject($id);
 }
