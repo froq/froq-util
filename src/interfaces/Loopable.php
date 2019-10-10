@@ -33,5 +33,5 @@ namespace froq\util\interfaces;
  * @author  Kerem Güneş <k-gun@mail.com>
  * @since   1.0
  */
-interface Loopable extends Sizable, Arrayable, \IteratorAggregate
+interface Loopable extends \Countable, \IteratorAggregate
 {}
