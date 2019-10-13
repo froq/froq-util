@@ -27,7 +27,7 @@ declare(strict_types=1);
 namespace froq\util\objects;
 
 use froq\util\UtilException;
-use froq\util\interfaces\Arrayable;
+use froq\util\interfaces\{Arrayable, Loopable};
 
 /**
  * Generator.
@@ -36,7 +36,7 @@ use froq\util\interfaces\Arrayable;
  * @author  Kerem Güneş <k-gun@mail.com>
  * @since   3.0
  */
-final class Generator implements Arrayable, \Countable, \IteratorAggregate
+final class Generator implements Arrayable, Loopable
 {
     /**
      * Data.
@@ -89,17 +89,17 @@ final class Generator implements Arrayable, \Countable, \IteratorAggregate
     }
 
     /**
-     * @inheritDoc \Countable
+     * @inheritDoc froq\util\interfaces\Loopable > Countable
      */
-    public function count(): int
+    public function count()
     {
         return $this->dataCount;
     }
 
     /**
-     * @inheritDoc \IteratorAggregate
+     * @inheritDoc froq\util\interfaces\Loopable > IteratorAggregate
      */
-    public function getIterator(): \Generator
+    public function getIterator()
     {
         foreach ($this->data as $key => $value) {
             yield [$key, $value];
