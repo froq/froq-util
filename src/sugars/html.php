@@ -190,37 +190,41 @@ function html_compress(?string $input): string
     }
 
     // styles
-    $input = preg_replace_callback('~(<style>(.*?)</style>)~sm', function($match) {
-        $input = trim($match[2]);
+    if (strpos($input, '<style>')) {
+        $input = preg_replace_callback('~(<style>(.*?)</style>)~sm', function($match) {
+            $input = trim($match[2]);
 
-        // comments
-        preg_match_all('~[^\'"]/\*+(?:.*)\*/\s*~smU', $input, $matches);
-        foreach ($matches as $match) {
-            $input = str_replace($match, "\n\n", $input);
-        }
+            // comments
+            preg_match_all('~[^\'"]/\*+(?:.*)\*/\s*~smU', $input, $matches);
+            foreach ($matches as $match) {
+                $input = str_replace($match, '', $input);
+            }
 
-        return sprintf('<style>%s</style>', trim($input));
-    }, $input);
+            return sprintf('<style>%s</style>', trim($input));
+        }, $input);
+    }
 
     // scripts
-    $input = preg_replace_callback('~(<script>(.*?)</script>)~sm', function($match) {
-        $input = trim($match[2]);
+    if (strpos($input, '<script>')) {
+        $input = preg_replace_callback('~(<script>(.*?)</script>)~sm', function($match) {
+            $input = trim($match[2]);
 
-        // line comments (protect "http://" etc)
-        $input = preg_replace('~(^|[^\'":])//([^\r\n]+)$~sm', '', $input);
+            // line comments (protect "http://" etc)
+            $input = preg_replace('~(^|[^\'":])//([^\r\n]+)$~sm', '', $input);
 
-        // doc comments
-        preg_match_all('~[^\'"]/\*+(?:.*)\*/\s*~smU', $input, $matches);
-        foreach ($matches as $match) {
-            $input = str_replace($match, "\n\n", $input);
-        }
+            // doc comments
+            preg_match_all('~[^\'"]/\*+(?:.*)\*/\s*~smU', $input, $matches);
+            foreach ($matches as $match) {
+                $input = str_replace($match, '', $input);
+            }
 
-        return sprintf('<script>%s</script>', trim($input));
-    }, $input);
+            return sprintf('<script>%s</script>', trim($input));
+        }, $input);
+    }
 
     // remove comments
     $input = preg_replace('~<!--(.*?)?-->~sm', '', $input);
-    // remove tabs
+    // remove tabs & spaces
     $input = preg_replace('~^[\t ]+~sm', '', $input);
     // remove tag spaces
     $input = preg_replace('~>\s+<(/?)([\w\d-]+)~sm', '><\\1\\2', $input);
