@@ -24,12 +24,12 @@
  */
 declare(strict_types=1);
 
-use froq\util\objects\{Iterator, Generator};
+use froq\objects\{Iterator, Generator};
 
 /**
  * To iterator.
- * @param  iterable|array|object $input
- * @return froq\util\objects\Iterator
+ * @param  array|object|iterable $input
+ * @return froq\objects\Iterator
  */
 function to_iterator($input): Iterator
 {
@@ -38,8 +38,8 @@ function to_iterator($input): Iterator
 
 /**
  * To generator.
- * @param  iterable|array|object $input
- * @return froq\util\objects\Generator
+ * @param  array|object|iterable $input
+ * @return froq\objects\Generator
  */
 function to_generator($input): Generator
 {
@@ -92,9 +92,9 @@ function to_object($input, bool $deep = true): object
  * To closure.
  * @param  string   $func
  * @param  int|null $argumentsCount
- * @return \Closure
+ * @return Closure
  */
-function to_closure(string $func, int $argumentsCount = null): \Closure
+function to_closure(string $func, int $argumentsCount = null): Closure
 {
     return function (...$arguments) use ($func, $argumentsCount) {
         if ($argumentsCount != null) {

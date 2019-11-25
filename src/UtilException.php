@@ -26,12 +26,14 @@ declare(strict_types=1);
 
 namespace froq\util;
 
+use froq\Exception;
+
 /**
- * Util exception.
+ * Util Exception.
  * @package froq\util
  * @object  froq\util\UtilException
  * @author  Kerem Güneş <k-gun@mail.com>
  * @since   1.0
  */
-final class UtilException extends \Exception
+final class UtilException extends Exception
 {}

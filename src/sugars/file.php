@@ -27,16 +27,17 @@ declare(strict_types=1);
 /**
  * File read.
  * @param  string       $file
+ * @param  int|null     $size
  * @param  string|null &$error
  * @return ?string
  * @since  3.0
  */
-function file_read(string $file, string &$error = null): ?string
+function file_read(string $file, int $size = null, string &$error = null): ?string
 {
-    $ret =@ file_get_contents($file);
+    $ret =@ !$size ? file_get_contents($file) : file_get_contents($file, false, null, 0, $size);
 
     if ($ret === false) {
-        $error = sprintf('Cannot read file [error: %s, file: %s]', error(), $file);
+        $error = sprintf('Cannot read file [error: %s, file: %s]', error(true), $file);
         return null;
     }
 
@@ -47,21 +48,17 @@ function file_read(string $file, string &$error = null): ?string
  * File write.
  * @param  string       $file
  * @param  string       $contents
- * @param  int|null     $mode
+ * @param  int|null     $flags
  * @param  string|null &$error
  * @return bool
  * @since  3.0
  */
-function file_write(string $file, string $contents, int $mode = null, string &$error = null): bool
+function file_write(string $file, string $contents, int $flags = null, string &$error = null): bool
 {
-    $ret =@ file_put_contents($file, $contents);
+    $ret =@ file_put_contents($file, $contents, $flags ?? 0);
 
     if ($ret === false) {
-        $error = sprintf('Cannot write file [error: %s, file: %s]', error(), $file);
-        return false;
-    }
-
-    if ($mode && !file_mode($file, $mode, $error)) {
+        $error = sprintf('Cannot write file [error: %s, file: %s]', error(true), $file);
         return false;
     }
 
@@ -90,7 +87,7 @@ function file_mode(string $file, int $mode = null, string &$error = null): ?stri
         else {
             $ret =@ chmod($file, $mode);
             if ($ret === false) {
-                $error = sprintf('Cannot set file mode [error: %s, file: %s]', error(), $file);
+                $error = sprintf('Cannot set file mode [error: %s, file: %s]', error(true), $file);
             }
             $ret = $mode;
         }

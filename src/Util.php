@@ -26,46 +26,82 @@ declare(strict_types=1);
 
 namespace froq\util;
 
+use froq\StaticClass;
+use froq\util\UtilException;
+
 /**
  * Util.
  * @package froq\util
  * @object  froq\util\Util
  * @author  Kerem Güneş <k-gun@mail.com>
  * @since   1.0
+ * @static
  */
-final /* fuckic static */ class Util
+final /* fuckic static */ class Util extends StaticClass
 {
     /**
-     * Set env.
-     * @param string $key
-     * @param any    $value
+     * Load sugar.
+     * @param  string $name
+     * @return void
      */
-    public static function setEnv(string $key, $value): void
+    public static function loadSugar(string $name): void
     {
-        $_ENV[$key] = $value;
+        $file = sprintf('%s/sugars/%s.php', __dir__, $name);
+
+        if (!file_exists($file)) {
+            $names = array_map(function($path) {
+                return preg_replace('~.+/(\w+)\.php$~', '\1', $path); }, glob(__dir__ .'/*.php'));
+
+            throw new UtilException(sprintf('Absent sugar name %s, available names: %s',
+                $name, join(', ', $names)));
+        }
+
+        include_once $file;
     }
 
     /**
-     * Get env.
-     * @param  string   $key
-     * @param  any|null $valueDefault
-     * @return any
+     * Load sugars.
+     * @param  array<string> $names
+     * @return void
      */
-    public static function getEnv(string $key, $valueDefault = null)
+    public static function loadSugars(array $names): void
     {
-        // uppers for nginx
-        $value = $_ENV[$key] ?? $_ENV[strtoupper($key)] ??
-                 $_SERVER[$key] ?? $_SERVER[strtoupper($key)] ?? $valueDefault;
+        foreach ($names as $name) {
+            self::loadSugar($name);
+        }
+    }
 
-        if ($value === null) {
-            if (false === ($value = getenv($key))) {
-                $value = $valueDefault;
-            } elseif (function_exists('apache_getenv') && false === ($value = apache_getenv($key))) {
-                $value = $valueDefault;
-            }
+    /**
+     * Get type.
+     * @param  any $input
+     * @param  bool $classes
+     * @param  bool $scalars
+     * @return string
+     * @since  4.0
+     */
+    public static function getType($input, bool $classes = false, bool $scalars = false): string
+    {
+        $type = gettype($input);
+
+        if ($classes && $type == 'object') {
+            $class = get_class($input);
+            // Return 'object' for silly stdClass stuff.
+            return ($class != 'stdClass') ? $class : 'object';
         }
 
-        return $value;
+        static $scalarsArray = ['int', 'float', 'string', 'bool'];
+        static $translateArray = [
+            'NULL'   => 'null',  'integer' => 'int',
+            'double' => 'float', 'boolean' => 'bool'
+        ];
+
+        $ret = strtr($type, $translateArray);
+
+        if ($scalars && in_array($ret, $scalarsArray)) {
+            return 'scalar';
+        }
+
+        return $ret;
     }
 
     /**
@@ -74,22 +110,20 @@ final /* fuckic static */ class Util
      */
     public static function getClientIp(): ?string
     {
-        if (null != ($ip = self::getEnv('HTTP_X_FORWARDED_FOR'))) {
-            if (false !== ($i = strrpos($ip, ','))) {
-                $ip = substr($ip, ($i + 1));
-            }
-            return $ip;
+        if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+            $ips = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
+            return end($ips);
         }
 
-        // header names
+        // Possible header names.
         static $names = [
             'HTTP_CLIENT_IP',   'HTTP_X_REAL_IP',
             'REMOTE_ADDR_REAL', 'REMOTE_ADDR'
         ];
 
         foreach ($names as $name) {
-            if (null != ($value = self::getEnv($name))) {
-                return $value;
+            if (isset($_SERVER[$name])) {
+                return $_SERVER[$name];
             }
         }
         return null;
@@ -102,19 +136,19 @@ final /* fuckic static */ class Util
      */
     public static function getClientUserAgent(): ?string
     {
-        // header names
+        // Possible header names.
         static $names = [
             'HTTP_USER_AGENT',
-            // opera
+            // Opera.
             'HTTP_X_OPERAMINI_PHONE_UA',
-            // vodafone
+            // Vodafone.
             'HTTP_X_DEVICE_USER_AGENT',  'HTTP_X_ORIGINAL_USER_AGENT', 'HTTP_X_SKYFIRE_PHONE',
             'HTTP_X_BOLT_PHONE_UA',      'HTTP_DEVICE_STOCK_UA',       'HTTP_X_UCBROWSER_DEVICE_UA'
         ];
 
         foreach ($names as $name) {
-            if (null != ($value = self::getEnv($name))) {
-                return $value;
+            if (isset($_SERVER[$name])) {
+                return $_SERVER[$name];
             }
         }
         return null;
@@ -127,7 +161,8 @@ final /* fuckic static */ class Util
      */
     public static function getCurrentUrl(bool $withQuery = true): string
     {
-        static $filter; if ($filter == null) {
+        static $filter, $scheme, $host, $port;
+        if ($filter == null) {
             $filter = function($input) use (&$filter) {
                 if (is_array($input)) {
                     $input = self::parseQueryString($input);
@@ -141,31 +176,33 @@ final /* fuckic static */ class Util
                 $input = rawurldecode($input);
 
                 return html_encode(
-                    // remove NUL-byte, ctrl-z, vertical tab
+                    // Remove NUL-byte, ctrl-z, vertical tab.
                     preg_replace('~[\x00\x1a\x0b]|%(?:00|1a|0b)~i', '', trim(
-                        // slice at \n or \r
+                        // Slice at \n or \r.
                         substr($input, 0, strcspn($input, "\n\r"))
                     ))
                 );
             };
 
-            // all static
+            // All static.
             ['REQUEST_SCHEME' => $scheme, 'SERVER_NAME' => $host, 'SERVER_PORT' => $port] = $_SERVER;
         }
 
+        $port = ($scheme != 'https' && $port != '80' && $port != '443') ? ':'. $port : '';
+
         $path = $_SERVER['REQUEST_URI'];
         $query = '';
+        // Extract query.
         if (strpos($path, '?') !== false) {
             [$path, $query] = explode('?', $path, 2);
         }
 
-        $port = ($scheme != 'https' && $port != '80') ? ':'. $port : '';
         $path = $filter($path);
-        if (strpos($path, '//') !== false) {
-            $path = preg_replace('~/+~', '/', $path);
-        }
+        // Reduce slashes.
+        $path = preg_replace('~/+~', '/', $path);
 
         $url = sprintf('%s://%s%s%s', $scheme, $host, $port, $path);
+        // Append query.
         if ($withQuery && $query != '') {
             $url .= '?'. $filter($query);
         }

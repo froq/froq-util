@@ -1,0 +1,225 @@
+<?php
+/**
+ * MIT License <https://opensource.org/licenses/mit>
+ *
+ * Copyright (c) 2015 Kerem Güneş
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is furnished
+ * to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+declare(strict_types=1);
+
+use froq\util\UtilException;
+use froq\http\request\Uri;
+use froq\http\response\Status;
+use froq\http\{Request, Response};
+
+// Check dependencies.
+if (!class_exists('froq\app\App', false)) {
+    throw new UtilException('Http sugars dependent to froq\app module that not found');
+}
+if (!class_exists('froq\http\request\Uri', false)) {
+    throw new UtilException('Http sugars dependent to froq\app module that not found');
+}
+
+/**
+ * Request.
+ * @return froq\http\Request
+ */
+function request(): Request {
+    return app()->request();
+}
+
+/**
+ * Response.
+ * @return froq\http\Response
+ */
+function response(...$arguments): Response
+{
+    $response = app()->response();
+    if ($arguments) {
+        @ [$code, $content, $content_attributes, $headers, $cookies] = $arguments;
+        if ($code) $response->setStatus($code);
+        if (!is_null($content)) {
+            $response->setBody($content, (array) $content_attributes);
+        }
+        if ($headers) $response->setHeaders($headers);
+        if ($cookies) $response->setCookies($cookies);
+    }
+    return $response;
+}
+
+/**
+ * Uri.
+ * @return froq\http\request\Uri
+ */
+function uri(): Uri
+{
+    return app()->request()->uri();
+}
+
+/**
+ * Status.
+ * @param  int|null $code
+ * @return froq\http\Response|froq\http\response\Status
+ */
+function status(int $code = null)
+{
+    return app()->response()->status(...($code ? [$code] : []));
+}
+
+/**
+ * Is get.
+ * @return bool
+ */
+function is_get(): bool
+{
+    return app()->request()->method()->isGet();
+}
+
+/**
+ * Is post.
+ * @return bool
+ */
+function is_post(): bool
+{
+    return app()->request()->method()->isPost();
+}
+
+/**
+ * Is put.
+ * @return bool
+ */
+function is_put(): bool
+{
+    return app()->request()->method()->isPut();
+}
+
+/**
+ * Is delete.
+ * @return bool
+ */
+function is_delete(): bool
+{
+    return app()->request()->method()->isDelete();
+}
+
+/**
+ * Is ajax.
+ * @return bool
+ */
+function is_ajax(): bool
+{
+    return app()->request()->method()->isAjax();
+}
+
+/**
+ * Get.
+ * @param  string|array|null $name
+ * @param  any|null          $value_default
+ * @return any|null
+ */
+function get($name = null, $value_default = null)
+{
+    return app()->request()->get($name, $value_default);
+}
+
+/**
+ * Get has.
+ * @param  string|array $name
+ * @return bool
+ */
+function get_has($name): bool
+{
+    return app()->request()->hasGet($name);
+}
+
+/**
+ * Post.
+ * @param  string|array|null $name
+ * @param  any|null          $value_default
+ * @return any|null
+ */
+function post($name = null, $value_default = null)
+{
+    return app()->request()->post($name, $value_default);
+}
+
+/**
+ * Post has.
+ * @param  string|array $name
+ * @return bool
+ */
+function post_has($name): bool
+{
+    return app()->request()->hasPost($name);
+}
+
+/**
+ * Cookie.
+ * @param  string|array|null $name
+ * @param  any|null          $value_default
+ * @return any|null
+ */
+function cookie($name = null, $value_default = null)
+{
+    return app()->request()->cookie($name, $value_default);
+}
+
+/**
+ * Cookie has.
+ * @param  string|array $name
+ * @return bool
+ */
+function cookie_has($name): bool
+{
+    return app()->request()->hasCookie($name);
+}
+
+/**
+ * Segment.
+ * @param  int      $i
+ * @param  any|null $value_default
+ * @return any|null
+ */
+function segment(int $i, $value_default = null)
+{
+    return app()->request()->uri()->segment($i, $value_default);
+}
+
+/**
+ * Segments.
+ * @return array
+ */
+function segments(): array
+{
+    return app()->request()->uri()->segments();
+}
+
+/**
+ * Redirect.
+ * @param  string     $to
+ * @param  int        $code
+ * @param  array|null $headers
+ * @param  array|null $cookies
+ * @return void
+ */
+function redirect(string $to, int $code = Status::FOUND, array $headers = null, array $cookies = null): void
+{
+    app()->response()->redirect($to, $code, $headers, $cookies);
+}

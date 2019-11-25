@@ -1,15 +1,15 @@
 {
     "name": "froq/froq-util",
     "homepage": "https://github.com/froq/froq-util",
-    "description": "Util module for Froq!",
+    "description": "Froq! Util.",
     "keywords": ["froq", "util"],
     "license": "MIT",
     "authors": [
         {"name": "Kerem Güneş", "email": "k-gun@mail.com"}
     ],
     "require": {
-        "php": "^7.2",
-        "k-gun/xo": "^1.0"
+        "php": "^7.4",
+        "froq/froq": "^4.0"
     },
     "autoload": {
         "classmap": ["src/"],

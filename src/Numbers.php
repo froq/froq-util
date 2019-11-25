@@ -26,7 +26,7 @@ declare(strict_types=1);
 
 namespace froq\util;
 
-use xo\util\NumberUtil;
+use froq\StaticClass;
 
 /**
  * Numbers.
@@ -34,6 +34,119 @@ use xo\util\NumberUtil;
  * @object  froq\util\Numbers
  * @author  Kerem Güneş <k-gun@mail.com>
  * @since   1.0
+ * @static
  */
-final /* static */ class Numbers extends NumberUtil
-{}
+final class Numbers extends StaticClass
+{
+    /**
+     * Compare.
+     * @param  string|number $a
+     * @param  string|number $b
+     * @param  int|null      $precision
+     * @return ?int
+     */
+    public static function compare($a, $b, int $precision = null): ?int
+    {
+        if (is_numeric($a) && is_numeric($b)) {
+            $precision = $precision ?? 14; // @default=14
+
+            if (function_exists('bccomp')) {
+                return bccomp((string) $a, (string) $b, $precision);
+            }
+
+            return round((float) $a, $precision) <=> round((float) $b, $precision);
+        }
+
+        return null; // error, not number(s)
+    }
+
+    /**
+     * Equals.
+     * @param  string|number $a
+     * @param  string|number $b
+     * @param  int|null      $precision
+     * @return ?bool
+     */
+    public static function equals($a, $b, int $precision = null): ?bool
+    {
+        return ($ret = self::compare($a, $b, $precision)) === null ? null // error, not number(s)
+         : $ret == 0;
+    }
+
+    /**
+     * Is digit.
+     * @param  any $input
+     * @return bool
+     */
+    public static function isNumber($input): bool
+    {
+         return is_int($input) || is_float($input);
+    }
+
+    /**
+     * Is digit.
+     * @param  any  $input
+     * @param  bool $negatives
+     * @return bool
+     */
+    public static function isDigit($input, bool $negatives = false): bool
+    {
+        if (!ctype_digit($input) || is_float($input)) {
+            return false;
+        }
+        if (!$negatives && $input < 0) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Is id (useful for any (db) incremental id check).
+     * @param  any $input
+     * @return bool
+     */
+    public static function isId($input): bool
+    {
+        return $input && (is_int($input) || ctype_digit($input)) && ($input > 0);
+    }
+
+    /**
+     * Is uint.
+     * @param  any $input
+     * @return bool
+     */
+    public static function isUInt($input): bool
+    {
+        return is_int($input) && ($input >= 0);
+    }
+
+    /**
+     * Is ufloat.
+     * @param  any $input
+     * @return bool
+     */
+    public static function isUFloat($input): bool
+    {
+        return is_float($input) && ($input >= 0);
+    }
+
+    /**
+     * Is signed.
+     * @param  any $input
+     * @return bool
+     */
+    public static function isSigned($input): bool
+    {
+        return self::isNumber($input) && ($input <= 0);
+    }
+
+    /**
+     * Is unsigned.
+     * @param  any $input
+     * @return bool
+     */
+    public static function isUnsigned($input): bool
+    {
+        return self::isNumber($input) && ($input >= 0);
+    }
+}

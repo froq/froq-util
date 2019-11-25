@@ -28,70 +28,70 @@ use froq\util\Strings;
 
 /**
  * String contains.
- * @param  string   $source
- * @param  string   $search
- * @param  int      $offset
- * @param  bool     $caseSensitive
+ * @param  string $input
+ * @param  string $search
+ * @param  int    $offset
+ * @param  bool   $case_sensitive
  * @return bool
  * @since  3.0
  */
-function string_contains(string $source, string $search, int $offset = 0,
-    bool $caseSensitive = true): bool
+function string_contains(string $input, string $search, int $offset = 0,
+    bool $case_sensitive = true): bool
 {
     if ($offset) {
-        $source = substr($source, $offset);
+        $input = substr($input, $offset);
     }
-    return Strings::contains($source, $search, $caseSensitive);
+    return Strings::contains($input, $search, $case_sensitive);
 }
 
 /**
  * String contains any.
- * @param  string   $source
- * @param  array    $search
- * @param  int      $offset
- * @param  bool     $caseSensitive
+ * @param  string $input
+ * @param  array  $search
+ * @param  int    $offset
+ * @param  bool   $case_sensitive
  * @return bool
  * @since  3.0
  */
-function string_contains_any(string $source, array $searches, int $offset = 0,
-    bool $caseSensitive = true): bool
+function string_contains_any(string $input, array $searches, int $offset = 0,
+    bool $case_sensitive = true): bool
 {
     if ($offset) {
-        $source = substr($source, $offset);
+        $input = substr($input, $offset);
     }
-    return Strings::containsAny($source, $searches, $caseSensitive);
+    return Strings::containsAny($input, $searches, $case_sensitive);
 }
 
 /**
  * String contains all.
- * @param  string   $source
- * @param  array    $search
- * @param  int      $offset
- * @param  bool     $caseSensitive
+ * @param  string $input
+ * @param  array  $search
+ * @param  int    $offset
+ * @param  bool   $case_sensitive
  * @return bool
  * @since  3.0
  */
-function string_contains_all(string $source, array $searches, int $offset = 0,
-    bool $caseSensitive = true): bool
+function string_contains_all(string $input, array $searches, int $offset = 0,
+    bool $case_sensitive = true): bool
 {
     if ($offset) {
-        $source = substr($source, $offset);
+        $input = substr($input, $offset);
     }
-    return Strings::containsAll($source, $searches, $caseSensitive);
+    return Strings::containsAll($input, $searches, $case_sensitive);
 }
 
 /**
  * String starts with.
- * @param  string       $source
+ * @param  string       $input
  * @param  string|array $search
  * @return bool
  * @since  3.0
  */
-function string_starts_with(string $source, $search): bool
+function string_starts_with(string $input, $search): bool
 {
     $searches = (array) $search;
     foreach ($searches as $search) {
-        if (Strings::startsWith($source, $search)) {
+        if (Strings::startsWith($input, $search)) {
             return true;
         }
     }
@@ -100,18 +100,19 @@ function string_starts_with(string $source, $search): bool
 
 /**
  * String ends with.
- * @param  string       $source
+ * @param  string       $input
  * @param  string|array $search
  * @return bool
  * @since  3.0
  */
-function string_ends_with(string $source, $search): bool
+function string_ends_with(string $input, $search): bool
 {
     $searches = (array) $search;
     foreach ($searches as $search) {
-        if (Strings::endsWith($source, $search)) {
+        if (Strings::endsWith($input, $search)) {
             return true;
         }
     }
     return false;
 }
+

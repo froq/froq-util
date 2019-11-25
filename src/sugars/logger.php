@@ -24,14 +24,72 @@
  */
 declare(strict_types=1);
 
-namespace froq\util\interfaces;
+use froq\util\UtilException;
+use froq\logger\Logger;
+
+// Check dependencies.
+if (!class_exists('froq\app\App', false)) {
+    throw new UtilException('Http sugars dependent to froq\app module that not found');
+}
+if (!class_exists('froq\logger\Logger', false)) {
+    throw new UtilException('Logger sugars dependent to froq\logger module that not found');
+}
 
 /**
- * Loopable.
- * @package froq\util\interfaces
- * @object  froq\util\interfaces\Loopable
- * @author  Kerem Güneş <k-gun@mail.com>
- * @since   1.0
+ * Logger.
+ * @return froq\logger\Logger.
  */
-interface Loopable extends \Countable, \IteratorAggregate
-{}
+function logger(): Logger
+{
+    return app()->logger();
+}
+
+/**
+ * Log any.
+ * @param  any $message
+ * @return bool
+ */
+function log_any($message): bool
+{
+    return app()->logger()->logAny($message);
+}
+
+/**
+ * Log fail.
+ * @param  any $message
+ * @return bool
+ */
+function log_fail($message): bool
+{
+    return app()->logger()->logFail($message);
+}
+
+/**
+ * Log warn.
+ * @param  any $message
+ * @return bool
+ */
+function log_warn($message): bool
+{
+    return app()->logger()->logWarn($message);
+}
+
+/**
+ * Log info.
+ * @param  any $message
+ * @return bool
+ */
+function log_info($message): bool
+{
+    return app()->logger()->logInfo($message);
+}
+
+/**
+ * Log debug.
+ * @param  any $message
+ * @return bool
+ */
+function log_debug($message): bool
+{
+    return app()->logger()->logDebug($message);
+}

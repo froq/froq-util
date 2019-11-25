@@ -24,6 +24,7 @@
  */
 declare(strict_types=1);
 
+
 /**
  * Is local.
  * @return bool
@@ -58,7 +59,7 @@ function is_cli_server(): bool
  */
 function is_plain_object($input): bool
 {
-    return ($input instanceof \stdClass);
+    return ($input instanceof stdClass);
 }
 
 /**
@@ -68,7 +69,7 @@ function is_plain_object($input): bool
  */
 function is_array_like($input): bool
 {
-    return is_array($input) || ($input instanceof \stdClass);
+    return is_array($input) || ($input instanceof stdClass);
 }
 
 /**
@@ -78,7 +79,7 @@ function is_array_like($input): bool
  */
 function is_iter($input): bool
 {
-    return is_iterable($input) || ($input instanceof \stdClass);
+    return is_iterable($input) || ($input instanceof stdClass);
 }
 
 /**
@@ -100,7 +101,7 @@ function is_primitive($input): bool
  */
 function is_closure($input): bool
 {
-    return ($input instanceof \Closure);
+    return ($input instanceof Closure);
 }
 
 /**
@@ -127,21 +128,6 @@ function is_class_method($input): bool
 }
 
 /**
- * Is instance.
- * @param  any $input
- * @param  any $inputTarget
- * @return bool
- * @since  3.0
- */
-function is_instance($input, $inputTarget): bool
-{
-    return $input && (
-           (is_string($inputTarget) && is_a($input, $inputTarget, true))
-        || (is_object($inputTarget) && ($input instanceof $inputTarget))
-    );
-}
-
-/**
  * Is between.
  * @param  any $input
  * @param  any $minValue
@@ -152,37 +138,6 @@ function is_instance($input, $inputTarget): bool
 function is_between($input, $minValue, $maxValue): bool
 {
     return ($input >= $minValue && $input <= $maxValue);
-}
-
-/**
- * Is nil.
- * @param  any $input
- * @return bool
- */
-function is_nil($input): bool
-{
-    return ($input === nil);
-}
-
-/**
- * Is nils.
- * @param  any $input
- * @return bool
- */
-function is_nils($input): bool
-{
-    return ($input === nils);
-}
-
-/**
- * Is none.
- * @param  any $input
- * @return bool
- * @since  3.0
- */
-function is_none($input): bool
-{
-    return ($input === nil || $input === nils);
 }
 
 /**

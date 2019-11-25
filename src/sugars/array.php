@@ -29,14 +29,26 @@ use froq\util\Arrays;
 /**
  * Array set (with dot notation support for sub-array paths).
  * @param  array      &$array
- * @param  int|string $key
- * @param  any        $valueDefault
+ * @param  int|string  $key
+ * @param  any         $valueDefault
  * @return any
  * @since  3.0
  */
 function array_set(array &$array, $key, $value): array
 {
     return Arrays::set($array, $key, $value);
+}
+
+/**
+ * Set all (with dot notation support for sub-array paths).
+ * @param  array &$array
+ * @param  array  $data
+ * @return array
+ * @since  4.0
+ */
+function array_set_all(array &$array, array $data): array
+{
+    return Arrays::setAll($array, $data);
 }
 
 /**
@@ -68,8 +80,8 @@ function array_get_all(array $array, array $keys, $valueDefault = null): array
 /**
  * Array pull.
  * @param  array      &$array
- * @param  int|string $key
- * @param  any        $valueDefault
+ * @param  int|string  $key
+ * @param  any         $valueDefault
  * @return any
  * @since  3.0
  */
@@ -81,8 +93,8 @@ function array_pull(array &$array, $key, $valueDefault = null)
 /**
  * Array pull all.
  * @param  array  &$array
- * @param  array  $keys
- * @param  any    $valueDefault
+ * @param  array   $keys
+ * @param  any     $valueDefault
  * @return array
  * @since  3.0
  */
@@ -186,10 +198,10 @@ function is_array_key(array $array, $key): bool
  * @param  bool  $strict
  * @return bool
  */
-function is_array_value(array $array, $value, bool $strict = false): bool
+function is_array_value(array $array, $value, bool $strict = true): bool
 {
-    foreach ((array) $value as $value) {
-        if (!in_array($value, $array, $strict)) {
+    foreach ((array) $value as $search) {
+        if (!in_array($search, $array, $strict)) {
             return false;
         }
     }

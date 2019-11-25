@@ -28,8 +28,8 @@ use froq\util\Numbers;
 
 /**
  * Number.
- * @param  numeric  $input
- * @param  int|null $decimals
+ * @param  string|number $input
+ * @param  int|null      $decimals
  * @return int|float|null
  * @since  3.0
  */
@@ -48,9 +48,9 @@ function number($input, int $decimals = null)
 
 /**
  * Number compare.
- * @param  number   $a
- * @param  number   $b
- * @param  int|null $precision
+ * @param  string|number $a
+ * @param  string|number $b
+ * @param  int|null      $precision
  * @return ?int
  * @since  3.0
  */
@@ -61,9 +61,9 @@ function number_compare($a, $b, int $precision = null): ?int
 
 /**
  * Number equals.
- * @param  number   $a
- * @param  number   $b
- * @param  int|null $precision
+ * @param  string|number $a
+ * @param  string|number $b
+ * @param  int|null      $precision
  * @return ?bool
  * @since  3.0
  */
@@ -96,8 +96,8 @@ function is_digit($input, bool $negatives = false): bool
 }
 
 /**
- * Is id (useful for any (db) object id checking).
- * @param  number $input
+ * Is id (useful for any (db) incremental id checking).
+ * anyparam  number $input
  * @return bool
  * @since  3.0
  */
@@ -108,7 +108,7 @@ function is_id($input): bool
 
 /**
  * Is uint.
- * @param  number $input
+ * @param  any $input
  * @return bool
  * @since  3.0
  */
@@ -119,7 +119,7 @@ function is_uint($input): bool
 
 /**
  * Is ufloat.
- * @param  number $input
+ * @param  any $input
  * @return bool
  * @since  3.0
  */
@@ -130,7 +130,7 @@ function is_ufloat($input): bool
 
 /**
  * Is signed.
- * @param  number $input
+ * @param  any $input
  * @return bool
  * @since  3.0
  */
@@ -141,29 +141,11 @@ function is_signed($input): bool
 
 /**
  * Is unsigned.
- * @param  number $input
+ * @param  any $input
  * @return bool
  * @since  3.0
  */
 function is_unsigned($input): bool
 {
     return Numbers::isUnsigned($input);
-}
-
-/**
- * Rand int.
- * @return int
- */
-function rand_int(): int
-{
-    return random_int(0, PHP_INT_MAX);
-}
-
-/**
- * Rand float.
- * @return float
- */
-function rand_float(): float
-{
-    return lcg_value();
 }
