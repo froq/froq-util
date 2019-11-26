@@ -91,15 +91,15 @@ function to_object($input, bool $deep = true): object
 /**
  * To closure.
  * @param  string   $func
- * @param  int|null $argumentsCount
+ * @param  int|null $argc
  * @return Closure
  */
-function to_closure(string $func, int $argumentsCount = null): Closure
+function to_closure(string $func, int $argc = null): Closure
 {
-    return function (...$arguments) use ($func, $argumentsCount) {
-        if ($argumentsCount != null) {
-            $arguments = array_slice($arguments, 0, $argumentsCount);
+    return function (...$args) use ($func, $argc) {
+        if ($argc != null) {
+            $args = array_slice($args, 0, $argc);
         }
-        return $func(...$arguments);
+        return $func(...$args);
     };
 }

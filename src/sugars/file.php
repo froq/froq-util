@@ -76,14 +76,14 @@ function file_write(string $file, string $contents, int $flags = null, string &$
 function file_mode(string $file, int $mode = null, string &$error = null): ?string
 {
     if ($mode !== null) {
-        // get mode
+        // Get mode.
         if ($mode === -1) {
             $ret =@ fileperms($file);
             if ($ret === false) {
                 $error = sprintf('Cannot get file stat for %s', $file);
             }
         }
-        // set mode
+        // Set mode.
         else {
             $ret =@ chmod($file, $mode);
             if ($ret === false) {
@@ -92,42 +92,42 @@ function file_mode(string $file, int $mode = null, string &$error = null): ?stri
             $ret = $mode;
         }
 
-        // compare;
+        // Compare.
         // $mode = file_mode($file, -1)
         // $mode === '644' or octdec($mode) === 0644
         return $ret ?  decoct($ret & 0777) : null;
     }
 
-    // get full permissions
+    // Get full permissions.
     $perms =@ fileperms($file);
     if ($perms === false) {
         $error = sprintf('Cannot get file stat for %s', $file);
         return null;
     }
 
-    // @source http://php.net/fileperms
+    // Source http://php.net/fileperms.
     switch ($perms & 0xf000) {
-        case 0xc000: $ret = 's'; break; // socket
-        case 0xa000: $ret = 'l'; break; // symbolic link
-        case 0x8000: $ret = 'r'; break; // regular
-        case 0x6000: $ret = 'b'; break; // block special
-        case 0x4000: $ret = 'd'; break; // directory
-        case 0x2000: $ret = 'c'; break; // character special
-        case 0x1000: $ret = 'p'; break; // FIFO pipe
-            default: $ret = 'u'; // unknown
+        case 0xc000: $ret = 's'; break; // Socket.
+        case 0xa000: $ret = 'l'; break; // Symbolic link.
+        case 0x8000: $ret = 'r'; break; // Regular.
+        case 0x6000: $ret = 'b'; break; // Block special.
+        case 0x4000: $ret = 'd'; break; // Directory.
+        case 0x2000: $ret = 'c'; break; // Character special.
+        case 0x1000: $ret = 'p'; break; // FIFO pipe.
+            default: $ret = 'u';        // Unknown.
     }
 
-    // owner
+    // Owner.
     $ret .= (($perms & 0x0100) ? 'r' : '-');
     $ret .= (($perms & 0x0080) ? 'w' : '-');
     $ret .= (($perms & 0x0040) ? (($perms & 0x0800) ? 's' : 'x' ) : (($perms & 0x0800) ? 'S' : '-'));
 
-    // group
+    // Group.
     $ret .= (($perms & 0x0020) ? 'r' : '-');
     $ret .= (($perms & 0x0010) ? 'w' : '-');
     $ret .= (($perms & 0x0008) ? (($perms & 0x0400) ? 's' : 'x' ) : (($perms & 0x0400) ? 'S' : '-'));
 
-    // world
+    // World.
     $ret .= (($perms & 0x0004) ? 'r' : '-');
     $ret .= (($perms & 0x0002) ? 'w' : '-');
     $ret .= (($perms & 0x0001) ? (($perms & 0x0200) ? 't' : 'x' ) : (($perms & 0x0200) ? 'T' : '-'));

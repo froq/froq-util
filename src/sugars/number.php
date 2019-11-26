@@ -28,8 +28,8 @@ use froq\util\Numbers;
 
 /**
  * Number.
- * @param  string|number $input
- * @param  int|null      $decimals
+ * @param  numeric  $input
+ * @param  int|null $decimals
  * @return int|float|null
  * @since  3.0
  */
@@ -39,11 +39,12 @@ function number($input, int $decimals = null)
         if ($decimals !== null) {
             $input = number_format((float) $input, $decimals);
         }
-        return is_string($input) && strpos($input, '.') !== false
+
+        return is_string($input) && strpos($input, '.') > -1
             ? (float) $input : (int) $input;
     }
 
-    return null; // not numeric input
+    return null; // Not a numeric input.
 }
 
 /**

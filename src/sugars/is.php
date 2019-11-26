@@ -123,7 +123,7 @@ function is_class($input): bool
  */
 function is_class_method($input): bool
 {
-    // Eg: Foo::bar (for publics only, seems not fixed @see https://bugs.php.net/bug.php?id=29210)
+    // Eg: Foo::bar (for publics only, seems not fixed @see https://bugs.php.net/bug.php?id=29210).
     return is_string($input) && strpos($input, '::') && is_callable($input);
 }
 
