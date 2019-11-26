@@ -26,20 +26,30 @@ declare(strict_types=1);
 
 /**
  * Rand int.
+ * @param  int|null $min
+ * @param  int|null $max
  * @return int
  */
-function rand_int(): int
+function rand_int(int $min = null, int $max = null): int
 {
-    return random_int(0, PHP_INT_MAX);
+    $min = $min ?? 0;
+    $max = $max ?? PHP_INT_MAX;
+
+    return random_int($min, $max);
 }
 
 /**
  * Rand float.
+ * @param  float|null $min
+ * @param  float|null $max
  * @return float
  */
-function rand_float(): float
+function rand_float(float $min = null, float $max = null): float
 {
-    return lcg_value();
+    $min = $min ?? 0;
+    $max = $max ?? 1 + $min;
+
+    return lcg_value() * ($max - $min) + $min;
 }
 
 /**
@@ -84,7 +94,7 @@ function rand_id(): string
 /**
  * Rand oid.
  * @param  bool $count
- * @return string
+ * @return string A 24-length hex like Mongo.ObjectId.
  * @since  4.0
  */
 function rand_oid(bool $count = true): string
@@ -94,7 +104,7 @@ function rand_oid(bool $count = true): string
     $bin = pack('N', time()) . substr(md5(gethostname()), 0, 3)
          . pack('n', getmypid()) . substr(pack('N', $count ? $counter++ : mt_rand()), 1, 3);
 
-    // convert to hex
+    // Convert to hex.
     $ret = '';
     for ($i = 0; $i < 12; $i++) {
         $ret .= sprintf('%02x', ord($bin[$i]));
@@ -123,8 +133,10 @@ function rand_guid(): string
 function rand_uuid(): string
 {
     $ret = random_bytes(16);
-    $ret[6] = chr(ord($ret[6]) & 0x0F | 0x40);
-    $ret[8] = chr(ord($ret[8]) & 0x3F | 0x80);
+
+    // Make UUID/v4.
+    $ret[6] = chr(ord($ret[6]) & 0x0f | 0x40);
+    $ret[8] = chr(ord($ret[8]) & 0x3f | 0x80);
 
     return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($ret), 4));
 }
