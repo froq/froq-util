@@ -50,11 +50,14 @@ function session($key = null, $value = null)
         }
     }
 
-    // set/get
-    if ($session != null && $key !== null) {
-        return ($value === null)
-            ? $session->get($key)
-            : $session->set($key, $value);
+    // Set/get.
+    if ($session != null) {
+        $argc = func_num_args();
+        if ($argc == 1) {
+            return $session->get($key);
+        } elseif ($argc == 2) {
+            return $session->set($key, $value);
+        }
     }
 
     return $session;
