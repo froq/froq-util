@@ -24,7 +24,7 @@
  */
 declare(strict_types=1);
 
-namespace froq;
+namespace froq\util;
 
 use froq\StaticClass;
 use froq\throwables\{InvalidKeyException, InvalidArgumentException};
