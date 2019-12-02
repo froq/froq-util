@@ -27,7 +27,7 @@ declare(strict_types=1);
 namespace froq\util;
 
 use froq\StaticClass;
-use froq\throwables\{InvalidKeyException, InvalidArgumentException};
+use froq\exceptions\{InvalidKeyException, InvalidArgumentException};
 use Closure;
 
 /**
@@ -122,7 +122,7 @@ final class Arrays extends StaticClass
      * @param  array            $array
      * @param  int|string|array $key
      * @param  any|null         $valueDefault
-     * @return ?any
+     * @return any|null
      */
     public static function get(array $array, $key, $valueDefault = null)
     {
@@ -183,7 +183,7 @@ final class Arrays extends StaticClass
      * @param  array      &$array
      * @param  int|string  $key
      * @param  any|null    $valueDefault
-     * @return ?any
+     * @return any|null
      */
     public static function pull(array &$array, $key, $valueDefault = null)
     {
@@ -220,13 +220,13 @@ final class Arrays extends StaticClass
     /**
      * Test (like JavaScript Array.some()).
      * @param  array    $array
-     * @param  Closure $func
+     * @param  callable $func
      * @return bool
      */
-    public static function test(array $array, Closure $func): bool
+    public static function test(array $array, callable $func): bool
     {
         foreach ($array as $key => $value) {
-            if ($func($value, $key)) { return true; }
+            if ($func($value, $key)) return true;
         }
         return false;
     }
@@ -234,13 +234,13 @@ final class Arrays extends StaticClass
     /**
      * Test all (like JavaScript Array.every()).
      * @param  array    $array
-     * @param  Closure $func
+     * @param  callable $func
      * @return bool
      */
-    public static function testAll(array $array, Closure $func): bool
+    public static function testAll(array $array, callable $func): bool
     {
         foreach ($array as $key => $value) {
-            if (!$func($value, $key)) { return false; }
+            if (!$func($value, $key)) return false;
         }
         return true;
     }
@@ -250,8 +250,8 @@ final class Arrays extends StaticClass
      * @param  array  $items
      * @param  int    $size
      * @param  bool   $useKeys
-     * @return ?any
-     * @throws froq\throwables\InvalidArgumentException
+     * @return any|null
+     * @throws froq\exceptions\InvalidArgumentException
      */
     public static function rand(array $items, int $size = 1, bool $useKeys = false)
     {
@@ -320,7 +320,7 @@ final class Arrays extends StaticClass
      * @param  callable|null  $ufunc
      * @param  int            $flags
      * @return array
-     * @throws froq\throwables\InvalidArgumentException
+     * @throws froq\exceptions\InvalidArgumentException
      */
     public static function sort(array &$array, callable $func = null, callable $ufunc = null,
         int $flags = 0): array
@@ -379,7 +379,7 @@ final class Arrays extends StaticClass
      * First.
      * @param  array    $array
      * @param  any|null $valueDefault
-     * @return ?any
+     * @return any|null
      */
     public static function first(array $array, $valueDefault = null)
     {
@@ -390,7 +390,7 @@ final class Arrays extends StaticClass
      * Last.
      * @param  array    $array
      * @param  any|null $valueDefault
-     * @return ?any
+     * @return any|null
      */
     public static function last(array $array, $valueDefault = null)
     {
@@ -449,7 +449,7 @@ final class Arrays extends StaticClass
      * Key check.
      * @param  int|string $key
      * @return void
-     * @throws froq\throwables\InvalidKeyException
+     * @throws froq\exceptions\InvalidKeyException
      */
     private static function keyCheck($key): void
     {
