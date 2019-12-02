@@ -24,28 +24,6 @@
  */
 declare(strict_types=1);
 
-use froq\objects\{Iterator, Generator};
-
-/**
- * To iterator.
- * @param  array|object|iterable $input
- * @return froq\objects\Iterator
- */
-function to_iterator($input): Iterator
-{
-    return new Iterator($input);
-}
-
-/**
- * To generator.
- * @param  array|object|iterable $input
- * @return froq\objects\Generator
- */
-function to_generator($input): Generator
-{
-    return new Generator($input);
-}
-
 /**
  * To array.
  * @param  array|object $input
