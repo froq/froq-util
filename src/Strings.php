@@ -161,28 +161,6 @@ final class Strings extends StaticClass
     }
 
     /**
-     * Trim search.
-     * @param  string $input
-     * @param  string $search
-     * @param  bool   $caseSensitive
-     * @param  int    $side
-     * @return string
-     */
-    public static function trimSearch(string $input, string $search, bool $caseSensitive = true,
-        int $side = 0): string
-    {
-        $search = preg_quote($search);
-        $pattern = sprintf('~%s~%s', (
-            $side == 0 ? "^{$search}|{$search}$" : (
-                $side == 1 ? "^{$search}" : "{$search}$"
-            )),
-            $caseSensitive ? '' : 'i'
-        );
-
-        return (string) preg_replace($pattern, '', $input);
-    }
-
-    /**
      * Is utf.
      * @param  ?string $input
      * @param  int     $bits

@@ -94,18 +94,3 @@ function string_ends_with(string $input, $search): bool
 {
     return Strings::endsWith($input, $search);
 }
-
-/**
- * Trim search.
- * @param  string $input
- * @param  string $search
- * @param  bool   $case_sensitive
- * @param  int    $side
- * @return string
- */
-function trim_search(string $input, string $search, bool $case_sensitive = true,
-    int $side = 0): string
-{
-    return Strings::trimSearch($input, $search, $case_sensitive, $side);
-}
-
