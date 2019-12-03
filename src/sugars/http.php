@@ -24,16 +24,16 @@
  */
 declare(strict_types=1);
 
-use froq\util\UtilException;
+use froq\http\{Request, Response};
 use froq\http\request\Uri;
 use froq\http\response\Status;
-use froq\http\{Request, Response};
+use froq\util\UtilException;
 
 // Check dependencies.
 if (!class_exists('froq\app\App', false)) {
     throw new UtilException('Http sugars dependent to froq\app module that not found');
 }
-if (!class_exists('froq\http\request\Uri', false)) {
+if (!class_exists('froq\http\response\Status', false)) {
     throw new UtilException('Http sugars dependent to froq\app module that not found');
 }
 
@@ -41,7 +41,8 @@ if (!class_exists('froq\http\request\Uri', false)) {
  * Request.
  * @return froq\http\Request
  */
-function request(): Request {
+function request(): Request
+{
     return app()->request();
 }
 

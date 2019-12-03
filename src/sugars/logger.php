@@ -24,8 +24,8 @@
  */
 declare(strict_types=1);
 
-use froq\util\UtilException;
 use froq\logger\Logger;
+use froq\util\UtilException;
 
 // Check dependencies.
 if (!class_exists('froq\app\App', false)) {
