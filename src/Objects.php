@@ -228,10 +228,9 @@ final class Objects extends StaticClass
             // Try, cos "Typed property $foo must not be accessed before initialization".
             try {
                 // For getValue() and others below.
-                if (!$visibility != 'public') {
+                if ($visibility != 'public') {
                     $property->setAccessible(true);
                 }
-
                 $value = $property->getValue($class);
             } catch (Error $e) {}
 
