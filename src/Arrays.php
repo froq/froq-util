@@ -131,6 +131,11 @@ final class Arrays extends StaticClass
      */
     public static function get(array &$array, $key, $valueDefault = null, bool $drop = false)
     {
+        // Usage:
+        // $array = ['a' => ['b' => ['c' => ['d' => 1, 'd.e' => '...']]]]
+        // dump Arrays::get($array, 'a.b.c.d') => 1
+        // dump Arrays::get($array, 'a.b.c.d.e') => '...'
+
         self::keyCheck($key);
 
         if (empty($array)) {
@@ -138,8 +143,7 @@ final class Arrays extends StaticClass
         }
 
         if (array_key_exists($key, $array)) {
-            $value = $array[$key] ?? $valueDefault;
-
+            $value = $array[$key];
             // Drop gotten item.
             if ($drop) {
                 unset($array[$key]);
@@ -149,15 +153,17 @@ final class Arrays extends StaticClass
             $key = array_shift($keys);
 
             if (empty($keys)) {
-                $value = $array[$key] ?? $valueDefault;
-
-                // Drop gotten item.
-                if ($drop) {
-                    unset($array[$key]);
+                if (array_key_exists($key, $array)) {
+                    $value = $array[$key];
+                    // Drop gotten item.
+                    if ($drop) {
+                        unset($array[$key]);
+                    }
                 }
-            } elseif (isset($array[$key])) {
+            } elseif (is_array($array[$key])) {
                 // Dig more..
-                $value = self::get($array[$key], implode('.', $keys), $valueDefault, $drop);
+                $keys = implode('.', $keys);
+                $value = self::get($array[$key], $keys, $valueDefault, $drop);
             }
         }
 
@@ -385,72 +391,98 @@ final class Arrays extends StaticClass
 
     /**
      * First.
-     * @param  array    $array
-     * @param  any|null $valueDefault
+     * @param  array    &$array
+     * @param  any|null  $valueDefault
+     * @param  bool      $drop
      * @return any|null
      */
-    public static function first(array $array, $valueDefault = null)
+    public static function first(array &$array, $valueDefault = null, bool $drop = false)
     {
-        return (($key = array_key_first($array)) !== null) ?  $array[$key] : $valueDefault;
+        $key = array_key_first($array);
+        $value = $valueDefault;
+
+        if ($key !== null) {
+            $value = $array[$key];
+            if ($drop) {
+                unset($array[$key]);
+            }
+        }
+
+        return $value;
     }
 
     /**
      * Last.
-     * @param  array    $array
-     * @param  any|null $valueDefault
+     * @param  array    &$array
+     * @param  any|null  $valueDefault
+     * @param  bool      $drop
      * @return any|null
      */
-    public static function last(array $array, $valueDefault = null)
+    public static function last(array &$array, $valueDefault = null, bool $drop = false)
     {
-        return (($key = array_key_last($array)) !== null) ?  $array[$key] : $valueDefault;
+        $key = array_key_last($array);
+        $value = $valueDefault;
+
+        if ($key !== null) {
+            $value = $array[$key];
+            if ($drop) {
+                unset($array[$key]);
+            }
+        }
+
+        return $value;
     }
 
     /**
      * Get int.
-     * @param  array      $array
-     * @param  int|string $key
-     * @param  int|null   $valueDefault
+     * @param  array      &$array
+     * @param  int|string  $key
+     * @param  int|null    $valueDefault
+     * @param  bool        $drop
      * @return int
      */
-    public static function getInt(array $array, $key, int $valueDefault = null): int
+    public static function getInt(array &$array, $key, int $valueDefault = null, bool $drop = false): int
     {
-        return (int) self::get($array, $key, $valueDefault);
+        return (int) self::get($array, $key, $valueDefault, $drop);
     }
 
     /**
      * Get float.
-     * @param  array      $array
-     * @param  int|string $key
-     * @param  float|null $valueDefault
+     * @param  array      &$array
+     * @param  int|string  $key
+     * @param  float|null  $valueDefault
+     * @param  bool        $drop
      * @return float
      */
-    public static function getFloat(array $array, $key, float $valueDefault = null): float
+    public static function getFloat(array &$array, $key, float $valueDefault = null, bool $drop = false): float
     {
-        return (float) self::get($array, $key, $valueDefault);
+        return (float) self::get($array, $key, $valueDefault, $drop);
     }
 
     /**
      * Get string.
-     * @param  array       $array
-     * @param  int|string  $key
-     * @param  string|null $valueDefault
+     * @param  array       &$array
+     * @param  int|string   $key
+     * @param  string|null  $valueDefault
+     * @param  bool         $drop
      * @return string
      */
-    public static function getString(array $array, $key, string $valueDefault = null): string
+    public static function getString(array &$array, $key, string $valueDefault = null, bool $drop = false): string
     {
-        return (string) self::get($array, $key, $valueDefault);
+        return (string) self::get($array, $key, $valueDefault, $drop);
     }
 
     /**
      * Get bool.
-     * @param  array      $array
-     * @param  int|string $key
-     * @param  bool|null  $valueDefault
+     * @param  array      &$array
+     * @param  int|string  $key
+     * @param  bool|null   $valueDefault
+     * @param  bool        $drop
      * @return bool
      */
-    public static function getBool(array $array, $key, bool $valueDefault = null): bool
+    public static function getBool(array &$array, $key, bool $valueDefault = null, bool $drop = false): bool
     {
-        return (bool) self::get($array, $key, $valueDefault);
+        return (bool) self::get($array, $key, $valueDefault, $drop);
     }
 
     /**
