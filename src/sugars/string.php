@@ -38,10 +38,7 @@ use froq\util\Strings;
 function string_contains(string $input, string $search, int $offset = 0,
     bool $case_sensitive = true): bool
 {
-    if ($offset) {
-        $input = substr($input, $offset);
-    }
-    return Strings::contains($input, $search, $case_sensitive);
+    return Strings::contains($input, $search, $offset, $case_sensitive);
 }
 
 /**
@@ -56,10 +53,7 @@ function string_contains(string $input, string $search, int $offset = 0,
 function string_contains_any(string $input, array $searches, int $offset = 0,
     bool $case_sensitive = true): bool
 {
-    if ($offset) {
-        $input = substr($input, $offset);
-    }
-    return Strings::containsAny($input, $searches, $case_sensitive);
+    return Strings::containsAny($input, $searches, $offset, $case_sensitive);
 }
 
 /**
@@ -74,45 +68,44 @@ function string_contains_any(string $input, array $searches, int $offset = 0,
 function string_contains_all(string $input, array $searches, int $offset = 0,
     bool $case_sensitive = true): bool
 {
-    if ($offset) {
-        $input = substr($input, $offset);
-    }
-    return Strings::containsAll($input, $searches, $case_sensitive);
+    return Strings::containsAll($input, $searches, $offset, $case_sensitive);
 }
 
 /**
  * String starts with.
- * @param  string       $input
- * @param  string|array $search
+ * @param  string               $input
+ * @param  string|array<string> $search
  * @return bool
  * @since  3.0
  */
 function string_starts_with(string $input, $search): bool
 {
-    $searches = (array) $search;
-    foreach ($searches as $search) {
-        if (Strings::startsWith($input, $search)) {
-            return true;
-        }
-    }
-    return false;
+    return Strings::startsWith($input, $search);
 }
 
 /**
  * String ends with.
- * @param  string       $input
- * @param  string|array $search
+ * @param  string               $input
+ * @param  string|array<string> $search
  * @return bool
  * @since  3.0
  */
 function string_ends_with(string $input, $search): bool
 {
-    $searches = (array) $search;
-    foreach ($searches as $search) {
-        if (Strings::endsWith($input, $search)) {
-            return true;
-        }
-    }
-    return false;
+    return Strings::endsWith($input, $search);
+}
+
+/**
+ * Trim search.
+ * @param  string $input
+ * @param  string $search
+ * @param  bool   $case_sensitive
+ * @param  int    $side
+ * @return string
+ */
+function trim_search(string $input, string $search, bool $case_sensitive = true,
+    int $side = 0): string
+{
+    return Strings::trimSearch($input, $search, $case_sensitive, $side);
 }
 
