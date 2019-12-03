@@ -62,7 +62,7 @@ final class Strings extends StaticClass
 
         setlocale(LC_COLLATE, $locale);
         $result = strcoll($input1, $input2);
-        setlocale(LC_COLLATE, $localeDefault); // reset locale
+        setlocale(LC_COLLATE, $localeDefault); // Reset locale.
 
         return $result;
     }
@@ -149,8 +149,12 @@ final class Strings extends StaticClass
         int $side = 0): string
     {
         $search = preg_quote($search);
-        $pattern = sprintf('~%s~%s', $side == 0 ? "^{$search}|{$search}$" : (
-            $side == 1 ? "^{$search}" : "{$search}$"), $caseSensitive ? '' : 'i');
+        $pattern = sprintf('~%s~%s',
+            $side == 0 ? "^{$search}|{$search}$" : (
+                $side == 1 ? "^{$search}" : "{$search}$"
+            )
+            , $caseSensitive ? '' : 'i'
+        );
 
         return (string) preg_replace($pattern, '', $input);
     }
