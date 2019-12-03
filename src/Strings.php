@@ -51,18 +51,20 @@ final class Strings extends StaticClass
 
     /**
      * Compare locale.
-     * @param  string $locale
      * @param  string $input1
      * @param  string $input2
+     * @param  string $locale
      * @return int
      */
-    public static function compareLocale(string $locale, string $input1, string $input2): int
+    public static function compareLocale(string $input1, string $input2, string $locale): int
     {
-        $localeDefault = setlocale(LC_COLLATE, 0);
+        static $localeDefault; if ($localeDefault === null) {
+            $localeDefault = setlocale(LC_COLLATE, 0);
+        }
 
         setlocale(LC_COLLATE, $locale);
         $result = strcoll($input1, $input2);
-        setlocale(LC_COLLATE, $localeDefault); // Reset locale.
+        setlocale(LC_COLLATE, $localeDefault); // Restore locale.
 
         return $result;
     }
@@ -71,26 +73,30 @@ final class Strings extends StaticClass
      * Contains.
      * @param  string $input
      * @param  string $search
+     * @param  int    $offset
      * @param  bool   $caseSensitive
      * @return bool
      */
-    public static function contains(string $input, string $search, bool $caseSensitive = true): bool
+    public static function contains(string $input, string $search, int $offset = 0,
+        bool $caseSensitive = true): bool
     {
-        return (false !== ($caseSensitive ? strpos($input, $search) : stripos($input, $search)));
+        return (false !== ($caseSensitive ? strpos($input, $search, $offset)
+                                          : stripos($input, $search, $offset)));
     }
 
     /**
      * Contains any.
-     * @param  string $input
-     * @param  array  $search
-     * @param  bool   $caseSensitive
+     * @param  string        $input
+     * @param  array<string> $search
+     * @param  int           $offset
+     * @param  bool          $caseSensitive
      * @return bool
      */
-    public static function containsAny(string $input, array $searches,
+    public static function containsAny(string $input, array $searches, int $offset = 0,
         bool $caseSensitive = true): bool
     {
         foreach ($searches as $search) {
-            if (self::contains($input, $search, $caseSensitive)) {
+            if (self::contains($input, $search, $offset, $caseSensitive)) {
                 return true;
             }
         }
@@ -99,16 +105,17 @@ final class Strings extends StaticClass
 
     /**
      * Contains all.
-     * @param  string $input
-     * @param  array  $search
-     * @param  bool   $caseSensitive
+     * @param  string        $input
+     * @param  array<string> $search
+     * @param  int           $offset
+     * @param  bool          $caseSensitive
      * @return bool
      */
-    public static function containsAll(string $input, array $searches,
+    public static function containsAll(string $input, array $searches, int $offset = 0,
         bool $caseSensitive = true): bool
     {
         foreach ($searches as $search) {
-            if (!self::contains($input, $search, $caseSensitive)) {
+            if (!self::contains($input, $search, $offset, $caseSensitive)) {
                 return false;
             }
         }
@@ -117,24 +124,40 @@ final class Strings extends StaticClass
 
     /**
      * Starts with.
-     * @param  string $input
-     * @param  string $search
+     * @param  string               $input
+     * @param  string|array<string> $search
      * @return bool
      */
-    public static function startsWith(string $input, string $search): bool
+    public static function startsWith(string $input, $search): bool
     {
-        return ($search === substr($input, 0, strlen($search)));
+        if ($input !== '') {
+            $searches = (array) $search;
+            foreach ($searches as $search) {
+                if ($search === substr($input, 0, strlen($search))) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**
      * Ends with.
-     * @param  string $input
-     * @param  string $search
+     * @param  string               $input
+     * @param  string|array<string> $search
      * @return bool
      */
-    public static function endsWith(string $input, string $search): bool
+    public static function endsWith(string $input, $search): bool
     {
-        return ($search === substr($input, -strlen($search)));
+        if ($input !== '') {
+            $searches = (array) $search;
+            foreach ($searches as $search) {
+                if ($search === substr($input, -strlen($search))) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**
@@ -149,11 +172,11 @@ final class Strings extends StaticClass
         int $side = 0): string
     {
         $search = preg_quote($search);
-        $pattern = sprintf('~%s~%s',
+        $pattern = sprintf('~%s~%s', (
             $side == 0 ? "^{$search}|{$search}$" : (
                 $side == 1 ? "^{$search}" : "{$search}$"
-            )
-            , $caseSensitive ? '' : 'i'
+            )),
+            $caseSensitive ? '' : 'i'
         );
 
         return (string) preg_replace($pattern, '', $input);
