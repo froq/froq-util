@@ -47,9 +47,12 @@ final class Arrays extends StaticClass
      */
     public static function isSequentialArray(array $array): bool
     {
-        $keys = array_keys($array);
-
-        return !$array || $keys === range(min($keys), max($keys));
+        foreach (array_keys($array) as $key) {
+            if (is_string($key)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
@@ -59,40 +62,41 @@ final class Arrays extends StaticClass
      */
     public static function isAssociativeArray(array $array): bool
     {
-        if (count($array) !== count(array_filter(array_keys($array), 'is_string'))) {
-            return false;
+        foreach (array_keys($array) as $key) {
+            if (is_int($key)) {
+                return false;
+            }
         }
-
-        // @link https://stackoverflow.com/a/6968499/362780
-        return !$array || ($array !== array_values($array)); // speed-wise
-        // $array = array_keys($array); return ($array !== array_keys($array)); // memory-wise:
+        return true;
     }
 
     /**
      * Set (with dot notation support for sub-array paths).
-     * @param  array       &$array
-     * @param  int|string   $key
-     * @param  any          $valueDefault
-     * @return any
+     * @param  array<int|string, any> &$array
+     * @param  int|string              $key
+     * @param  any                     $value
+     * @return array<int|string, any>
      */
     public static function set(array &$array, $key, $value): array
     {
         self::keyCheck($key);
 
-        if (array_key_exists($key, $array)) { // direct access
+        if (array_key_exists($key, $array)) { // Direct access.
             $array[$key] = $value;
         } else {
             $keys = explode('.', (string) $key);
-            if (count($keys) <= 1) { // direct access
+            if (count($keys) <= 1) { // Direct access.
                 $array[$key] = $value;
-            } else { // path access (with dot notation)
-                $current = &$array;
+            } else { // Path access (with dot notation).
+                $current =& $array;
+
                 foreach($keys as $key) {
                     if (isset($current[$key])) {
                         $current[$key] = (array) $current[$key];
                     }
-                    $current = &$current[$key];
+                    $current =& $current[$key];
                 }
+
                 $current = $value;
                 unset($current);
             }
@@ -104,13 +108,13 @@ final class Arrays extends StaticClass
     /**
      * Set all (with dot notation support for sub-array paths).
      * @param  array &$array
-     * @param  array  $data
+     * @param  array  $items
      * @return array
      * @since  4.0
      */
-    public static function setAll(array &$array, array $data): array
+    public static function setAll(array &$array, array $items): array
     {
-        foreach ($data as $key => $value) {
+        foreach ($items as $key => $value) {
             self::set($array, $key, $value);
         }
 
@@ -119,12 +123,13 @@ final class Arrays extends StaticClass
 
     /**
      * Get (with dot notation support for sub-array paths).
-     * @param  array            $array
-     * @param  int|string|array $key
-     * @param  any|null         $valueDefault
+     * @param  array<int|string, any> &$array
+     * @param  int|string              $key AKA path.
+     * @param  any|null                $valueDefault
+     * @param  bool                    $drop @internal
      * @return any|null
      */
-    public static function get(array $array, $key, $valueDefault = null)
+    public static function get(array &$array, $key, $valueDefault = null, bool $drop = false)
     {
         self::keyCheck($key);
 
@@ -132,26 +137,27 @@ final class Arrays extends StaticClass
             return $valueDefault;
         }
 
-        if (is_array($key)) {
-            $value = [];
-            foreach ($key as $ke) { // one dim ok, no deep throat..
-                $value[$ke] = $array[$ke] ?? $valueDefault;
+        if (array_key_exists($key, $array)) {
+            $value = $array[$key] ?? $valueDefault;
+
+            // Drop gotten item.
+            if ($drop) {
+                unset($array[$key]);
             }
-        } elseif (array_key_exists($key, $array)) { // direct access
-            $value = $array[$key];
         } else {
             $keys = explode('.', (string) $key);
-            if (count($keys) <= 1) { // direct access
+            $key = array_shift($keys);
+
+            if (empty($keys)) {
                 $value = $array[$key] ?? $valueDefault;
-            } else { // path access (with dot notation)
-                $value = &$array;
-                foreach ($keys as $key) {
-                    if (!is_array($value) || !array_key_exists($key, $value)) {
-                        $value = null;
-                        break;
-                    }
-                    $value = &$value[$key];
+
+                // Drop gotten item.
+                if ($drop) {
+                    unset($array[$key]);
                 }
+            } elseif (isset($array[$key])) {
+                // Dig more..
+                $value = self::get($array[$key], implode('.', $keys), $valueDefault, $drop);
             }
         }
 
@@ -159,20 +165,24 @@ final class Arrays extends StaticClass
     }
 
     /**
-     * Get all (shortcuts like: list(..) = Util::getAll(..)).
-     * @param  array    $array
-     * @param  array    $keys (aka paths)
-     * @param  any|null $valueDefault
+     * Get all (shortcuts like: list(..) = Arrays::getAll(..)).
+     * @param  array<int|string, any> &$array
+     * @param  array<int|string>       $keys AKA paths.
+     * @param  any|null                $valueDefault
+     * @param  bool                    $drop @internal
      * @return array
      */
-    public static function getAll(array $array, array $keys, $valueDefault = null): array
+    public static function getAll(array &$array, array $keys, $valueDefault = null, bool $drop = false): array
     {
         $values = [];
+
         foreach ($keys as $key) {
-            if (is_array($key)) { // default value given as array
-                @ [$key, $valueDefault] = $key;
+            if (is_array($key)) { // Default value given as array (eg: $keys=[['x',1], 'y']).
+                @ [$_key, $_valueDefault] = $key;
+                $values[] = self::get($array, $_key, $_valueDefault, $drop);
+            } else {
+                $values[] = self::get($array, $key, $valueDefault, $drop);
             }
-            $values[] = self::get($array, $key, $valueDefault);
         }
 
         return $values;
@@ -180,41 +190,26 @@ final class Arrays extends StaticClass
 
     /**
      * Pull.
-     * @param  array      &$array
-     * @param  int|string  $key
-     * @param  any|null    $valueDefault
+     * @param  array<int|string, any> &$array
+     * @param  int|string              $key
+     * @param  any|null                $valueDefault
      * @return any|null
      */
     public static function pull(array &$array, $key, $valueDefault = null)
     {
-        self::keyCheck($key);
-
-        if (array_key_exists($key, $array)) {
-            $value = $array[$key];
-            unset($array[$key]); // remove pulled item
-        }
-
-        return $value ?? $valueDefault;
+        return self::get($array, $key, $valueDefault, true);
     }
 
     /**
-     * Pull all.
-     * @param  array    &$array
-     * @param  array     $keys
-     * @param  any|null  $valueDefault
+     * Pull all (shortcuts like: list(..) = Arrays::pullAll(..)).
+     * @param  array<int|string, any> &$array
+     * @param  array<int|string>       $keys
+     * @param  any|null                $valueDefault
      * @return array
      */
     public static function pullAll(array &$array, array $keys, $valueDefault = null): array
     {
-        $values = [];
-        foreach ($keys as $key) {
-            if (is_array($key)) { // default value given as array
-                @ [$key, $valueDefault] = $key;
-            }
-            $values[] = self::pull($array, $key, $valueDefault);
-        }
-
-        return $values;
+        return self::getAll($array, $keys, $valueDefault, true);
     }
 
     /**
@@ -226,7 +221,9 @@ final class Arrays extends StaticClass
     public static function test(array $array, callable $func): bool
     {
         foreach ($array as $key => $value) {
-            if ($func($value, $key)) return true;
+            if ($func($value, $key)) {
+                return true;
+            }
         }
         return false;
     }
@@ -240,77 +237,88 @@ final class Arrays extends StaticClass
     public static function testAll(array $array, callable $func): bool
     {
         foreach ($array as $key => $value) {
-            if (!$func($value, $key)) return false;
+            if (!$func($value, $key)) {
+                return false;
+            }
         }
         return true;
     }
 
     /**
      * Rand.
-     * @param  array  $items
+     * @param  array &$array
      * @param  int    $size
-     * @param  bool   $useKeys
+     * @param  bool   $pack Return as [key, value].
+     * @param  bool   $drop Drop used items from array.
      * @return any|null
      * @throws froq\exceptions\InvalidArgumentException
      */
-    public static function rand(array $items, int $size = 1, bool $useKeys = false)
+    public static function rand(array &$array, int $size = 1, bool $pack = false, bool $drop = false)
     {
-        $count = count($items);
+        $count = count($array);
         if ($count == 0) {
             return null;
         }
 
         if ($size < 1) {
-            throw new InvalidArgumentException(sprintf('Minimum size could be 1, %s given', $size));
+            throw new InvalidArgumentException(sprintf('Minimum size must be 1, %s given', $size));
         } elseif ($size > $count) {
-            throw new InvalidArgumentException(sprintf('Maximum size cannot be greater than %s, '.
+            throw new InvalidArgumentException(sprintf('Maximum size must not be greater than %s, '.
                 'given size %s is exceeding the size of items', $count, $size));
         }
 
-        $keys = array_keys($items);
+        $keys = array_keys($array);
         shuffle($keys);
+
+        $ret = [];
         while ($size--) {
             $key = $keys[$size];
-            if (!$useKeys) {
-                $ret[] = $items[$key];
+            if (!$pack) {
+                $ret[] = $array[$key];
             } else {
-                $ret[$key] = $items[$key];
+                $ret[$key] = $array[$key];
+            }
+
+            // Drop used item.
+            if ($drop) {
+                unset($array[$key]);
             }
         }
 
-        if (count($ret) == 1) { // value       // key => value
-            $ret = !$useKeys ? current($ret) : [key($ret), current($ret)];
+        if (count($ret) == 1) {
+            $ret = !$pack ? current($ret) : [key($ret), current($ret)];
         }
 
-        return $ret ?? null;
+        return $ret;
     }
 
     /**
      * Shuffle.
-     * @param  array &$items
-     * @param  bool   $preserveKeys
+     * @param  array &$array
+     * @param  bool   $keepKeys
      * @return array
      */
-    public static function shuffle(array &$items, bool $preserveKeys = false): array
+    public static function shuffle(array &$array, bool $keepKeys = false): array
     {
-        if (!$preserveKeys) {
-            shuffle($items);
+        if (!$keepKeys) {
+            shuffle($array);
         } else {
-            $keys = array_keys($items);
+            $keys = array_keys($array);
             shuffle($keys);
-            $shuffledItems = [];
-            foreach ($keys as $key) {
-                $shuffledItems[$key] = $items[$key];
-            }
-            $items = $shuffledItems;
 
-            // nope.. (cos' killing speed and also randomness)
-            // uasort($items, function () {
+            $shuffledarray = [];
+            foreach ($keys as $key) {
+                $shuffledarray[$key] = $array[$key];
+            }
+            $array = $shuffledarray;
+
+            // Nope.. (cos killing speed and also randomness).
+            // uasort($array, function () {
             //     return rand(-1, 1);
             // });
         }
 
-        return $items;
+        return $array;
     }
 
     /**
@@ -383,7 +391,7 @@ final class Arrays extends StaticClass
      */
     public static function first(array $array, $valueDefault = null)
     {
-        return (null !== ($key = array_key_first($array))) ?  $array[$key] : $valueDefault;
+        return (($key = array_key_first($array)) !== null) ?  $array[$key] : $valueDefault;
     }
 
     /**
@@ -394,7 +402,7 @@ final class Arrays extends StaticClass
      */
     public static function last(array $array, $valueDefault = null)
     {
-        return (null !== ($key = array_key_last($array))) ?  $array[$key] : $valueDefault;
+        return (($key = array_key_last($array)) !== null) ?  $array[$key] : $valueDefault;
     }
 
     /**
@@ -450,6 +458,7 @@ final class Arrays extends StaticClass
      * @param  int|string $key
      * @return void
      * @throws froq\exceptions\InvalidKeyException
+     * @internal
      */
     private static function keyCheck($key): void
     {
