@@ -129,7 +129,8 @@ final class Arrays extends StaticClass
      * @param  bool                    $drop @internal
      * @return any|null
      */
-    public static function get(array &$array, $key, $valueDefault = null, bool $drop = false)
+    public static function get(array &$array, $key, $valueDefault = null,
+        bool $drop = false)
     {
         // Usage:
         // $array = ['a' => ['b' => ['c' => ['d' => 1, 'd.e' => '...']]]]
@@ -178,7 +179,8 @@ final class Arrays extends StaticClass
      * @param  bool                    $drop @internal
      * @return array
      */
-    public static function getAll(array &$array, array $keys, $valueDefault = null, bool $drop = false): array
+    public static function getAll(array &$array, array $keys, $valueDefault = null,
+        bool $drop = false): array
     {
         $values = [];
 
@@ -259,7 +261,8 @@ final class Arrays extends StaticClass
      * @return any|null
      * @throws froq\exceptions\InvalidArgumentException
      */
-    public static function rand(array &$array, int $size = 1, bool $pack = false, bool $drop = false)
+    public static function rand(array &$array, int $size = 1, bool $pack = false,
+        bool $drop = false)
     {
         $count = count($array);
         if ($count == 0) {
@@ -434,6 +437,39 @@ final class Arrays extends StaticClass
     }
 
     /**
+     * Keys exists.
+     * @param  array $array
+     * @param  array $keys
+     * @return bool
+     */
+    public static function keysExists(array $array, array $keys): bool
+    {
+        foreach ($keys as $key) {
+            if (!array_key_exists($key, $array)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Values exists.
+     * @param  array $array
+     * @param  array $values
+     * @param  bool  $strict
+     * @return bool
+     */
+    public static function valuesExists(array $array, array $values, bool $strict = true): bool
+    {
+        foreach ($values as $value) {
+            if (!in_array($value, $array, $strict)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
      * Get int.
      * @param  array      &$array
      * @param  int|string  $key
@@ -441,7 +477,8 @@ final class Arrays extends StaticClass
      * @param  bool        $drop
      * @return int
      */
-    public static function getInt(array &$array, $key, int $valueDefault = null, bool $drop = false): int
+    public static function getInt(array &$array, $key, int $valueDefault = null,
+        bool $drop = false): int
     {
         return (int) self::get($array, $key, $valueDefault, $drop);
     }
@@ -454,7 +491,8 @@ final class Arrays extends StaticClass
      * @param  bool        $drop
      * @return float
      */
-    public static function getFloat(array &$array, $key, float $valueDefault = null, bool $drop = false): float
+    public static function getFloat(array &$array, $key, float $valueDefault = null,
+        bool $drop = false): float
     {
         return (float) self::get($array, $key, $valueDefault, $drop);
     }
@@ -467,7 +505,8 @@ final class Arrays extends StaticClass
      * @param  bool         $drop
      * @return string
      */
-    public static function getString(array &$array, $key, string $valueDefault = null, bool $drop = false): string
+    public static function getString(array &$array, $key, string $valueDefault = null,
+        bool $drop = false): string
     {
         return (string) self::get($array, $key, $valueDefault, $drop);
     }
@@ -480,7 +519,8 @@ final class Arrays extends StaticClass
      * @param  bool        $drop
      * @return bool
      */
-    public static function getBool(array &$array, $key, bool $valueDefault = null, bool $drop = false): bool
+    public static function getBool(array &$array, $key, bool $valueDefault = null,
+        bool $drop = false): bool
     {
         return (bool) self::get($array, $key, $valueDefault, $drop);
     }
