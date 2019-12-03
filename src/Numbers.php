@@ -57,7 +57,7 @@ final class Numbers extends StaticClass
             return round((float) $a, $precision) <=> round((float) $b, $precision);
         }
 
-        return null; // error, not number(s)
+        return null; // Error, not number(s).
     }
 
     /**
@@ -69,7 +69,7 @@ final class Numbers extends StaticClass
      */
     public static function equals($a, $b, int $precision = null): ?bool
     {
-        return ($ret = self::compare($a, $b, $precision)) === null ? null // error, not number(s)
+        return ($ret = self::compare($a, $b, $precision)) === null ? null // Error, not number(s).
          : $ret == 0;
     }
 
@@ -91,13 +91,15 @@ final class Numbers extends StaticClass
      */
     public static function isDigit($input, bool $negatives = false): bool
     {
-        if (!ctype_digit($input) || is_float($input)) {
-            return false;
+        if (is_numeric($input)) {
+            if (is_int($input) || ctype_digit($input)) {
+                if (!$negatives && ($input < 0)) {
+                    return false;
+                }
+                return true;
+            }
         }
-        if (!$negatives && $input < 0) {
-            return false;
-        }
-        return true;
+        return false;
     }
 
     /**
@@ -107,7 +109,7 @@ final class Numbers extends StaticClass
      */
     public static function isId($input): bool
     {
-        return $input && (is_int($input) || ctype_digit($input)) && ($input > 0);
+        return is_numeric($input) && ctype_digit((string) $input) && ($input > 0);
     }
 
     /**
