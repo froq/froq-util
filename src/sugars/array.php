@@ -153,59 +153,51 @@ function array_exclude(array $array, array $keys): array
 
 /**
  * Array first.
- * @param  array $array
- * @param  any   $value_default
+ * @param  array &$array
+ * @param  any    $value_default
+ * @param  bool   $drop
  * @return any|null
  * @since  3.0
  */
-function array_first(array $array, $value_default = null)
+function array_first(array $array, $value_default = null, bool $drop = false)
 {
-    return Arrays::first($array, $value_default);
+    return Arrays::first($array, $value_default, $drop);
 }
 
 /**
  * Array last.
- * @param  array $array
- * @param  any   $value_default
+ * @param  array &$array
+ * @param  any    $value_default
+ * @param  bool   $$drop
  * @return any|null
  * @since  3.0
  */
-function array_last(array $array, $value_default = null)
+function array_last(array $array, $value_default = null, bool $drop = false)
 {
-    return Arrays::last($array, $value_default);
+    return Arrays::last($array, $value_default, $drop);
 }
 
 /**
- * Is array key.
+ * Array keys exists.
  * @param  array $array
- * @param  any   $key Multiple keys accepted.
+ * @param  array $keys
  * @return bool
  */
-function is_array_key(array $array, $key): bool
+function array_keys_exists(array $array, array $keys): bool
 {
-    foreach ((array) $key as $search) {
-        if (!array_key_exists($search, $array)) {
-            return false;
-        }
-    }
-    return true;
+    return Arrays::keysExists($array, $keys);
 }
 
 /**
- * Is array value.
+ * Array values exists.
  * @param  array $array
- * @param  any   $value Multiple values accepted.
+ * @param  any   $values Multiple values accepted.
  * @param  bool  $strict
  * @return bool
  */
-function is_array_value(array $array, $value, bool $strict = true): bool
+function array_values_exists(array $array, array $values, bool $strict = true): bool
 {
-    foreach ((array) $value as $search) {
-        if (!in_array($search, $array, $strict)) {
-            return false;
-        }
-    }
-    return true;
+    return Arrays::valuesExists($array, $values, $strict);
 }
 
 /**
