@@ -26,7 +26,7 @@ declare(strict_types=1);
 
 namespace froq\util;
 
-use froq\StaticClass;
+use froq\common\StaticClass;
 use froq\exceptions\{InvalidKeyException, InvalidArgumentException};
 use Closure;
 
