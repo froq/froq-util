@@ -45,16 +45,6 @@ function logger(): Logger
 }
 
 /**
- * Log any.
- * @param  any $message
- * @return bool
- */
-function log_any($message): bool
-{
-    return app()->logger()->logAny($message);
-}
-
-/**
  * Log fail.
  * @param  any $message
  * @return bool
