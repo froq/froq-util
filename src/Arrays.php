@@ -151,7 +151,7 @@ final class Arrays extends StaticClass
             }
         } else {
             $keys = explode('.', (string) $key);
-            $key = array_shift($keys);
+            $key  = array_shift($keys);
 
             if (empty($keys)) {
                 if (array_key_exists($key, $array)) {
@@ -186,8 +186,8 @@ final class Arrays extends StaticClass
 
         foreach ($keys as $key) {
             if (is_array($key)) { // Default value given as array (eg: $keys=[['x',1], 'y']).
-                @ [$_key, $_valueDefault] = $key;
-                $values[] = self::get($array, $_key, $_valueDefault, $drop);
+                @ [$key, $valueDefault] = $key;
+                $values[] = self::get($array, $key, $valueDefault, $drop);
             } else {
                 $values[] = self::get($array, $key, $valueDefault, $drop);
             }
