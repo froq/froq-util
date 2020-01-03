@@ -41,11 +41,11 @@ use Closure;
 final class Arrays extends StaticClass
 {
     /**
-     * Is sequential array.
+     * Is sequential.
      * @param  array $array
      * @return bool
      */
-    public static function isSequentialArray(array $array): bool
+    public static function isSequential(array $array): bool
     {
         foreach (array_keys($array) as $key) {
             if (is_string($key)) {
@@ -56,11 +56,11 @@ final class Arrays extends StaticClass
     }
 
     /**
-     * Is associative array.
+     * Is associative.
      * @param  array $array
      * @return bool
      */
-    public static function isAssociativeArray(array $array): bool
+    public static function isAssociative(array $array): bool
     {
         foreach (array_keys($array) as $key) {
             if (is_int($key)) {
@@ -151,7 +151,7 @@ final class Arrays extends StaticClass
             }
         } else {
             $keys = explode('.', (string) $key);
-            $key  = array_shift($keys);
+            $key = array_shift($keys);
 
             if (empty($keys)) {
                 if (array_key_exists($key, $array)) {
@@ -186,8 +186,8 @@ final class Arrays extends StaticClass
 
         foreach ($keys as $key) {
             if (is_array($key)) { // Default value given as array (eg: $keys=[['x',1], 'y']).
-                @ [$key, $valueDefault] = $key;
-                $values[] = self::get($array, $key, $valueDefault, $drop);
+                @ [$_key, $_valueDefault] = $key;
+                $values[] = self::get($array, $_key, $_valueDefault, $drop);
             } else {
                 $values[] = self::get($array, $key, $valueDefault, $drop);
             }
@@ -315,11 +315,11 @@ final class Arrays extends StaticClass
             $keys = array_keys($array);
             shuffle($keys);
 
-            $shuffledarray = [];
+            $shuffledArray = [];
             foreach ($keys as $key) {
-                $shuffledarray[$key] = $array[$key];
+                $shuffledArray[$key] = $array[$key];
             }
-            $array = $shuffledarray;
+            $array = $shuffledArray;
 
             // Nope.. (cos killing speed and also randomness).
             // uasort($array, function () {
