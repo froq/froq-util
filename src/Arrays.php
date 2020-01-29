@@ -27,7 +27,7 @@ declare(strict_types=1);
 namespace froq\util;
 
 use froq\common\StaticClass;
-use froq\exceptions\{InvalidKeyException, InvalidArgumentException};
+use froq\common\exceptions\{InvalidKeyException, InvalidArgumentException};
 use Closure;
 
 /**
@@ -259,7 +259,7 @@ final class Arrays extends StaticClass
      * @param  bool   $pack Return as [key, value].
      * @param  bool   $drop Drop used items from array.
      * @return any|null
-     * @throws froq\exceptions\InvalidArgumentException
+     * @throws froq\common\exceptions\InvalidArgumentException
      */
     public static function rand(array &$array, int $size = 1, bool $pack = false,
         bool $drop = false)
@@ -337,7 +337,7 @@ final class Arrays extends StaticClass
      * @param  callable|null  $ufunc
      * @param  int            $flags
      * @return array
-     * @throws froq\exceptions\InvalidArgumentException
+     * @throws froq\common\exceptions\InvalidArgumentException
      */
     public static function sort(array &$array, callable $func = null, callable $ufunc = null,
         int $flags = 0): array
@@ -529,7 +529,7 @@ final class Arrays extends StaticClass
      * Key check.
      * @param  int|string $key
      * @return void
-     * @throws froq\exceptions\InvalidKeyException
+     * @throws froq\common\exceptions\InvalidKeyException
      * @internal
      */
     private static function keyCheck($key): void

@@ -27,7 +27,7 @@ declare(strict_types=1);
 namespace froq\util;
 
 use froq\common\StaticClass;
-use froq\exceptions\InvalidArgumentException;
+use froq\common\exceptions\InvalidArgumentException;
 use ReflectionClass;
 
 /**
@@ -44,7 +44,7 @@ final class Objects extends StaticClass
      * Get name.
      * @param  string|object $class
      * @return string
-     * @throws froq\exceptions\InvalidArgumentException
+     * @throws froq\common\exceptions\InvalidArgumentException
      */
     public static function getName($class): string
     {
