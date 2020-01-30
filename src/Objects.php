@@ -26,7 +26,7 @@ declare(strict_types=1);
 
 namespace froq\util;
 
-use froq\common\StaticClass;
+use froq\common\objects\StaticClass;
 use froq\common\exceptions\InvalidArgumentException;
 use ReflectionClass;
 
