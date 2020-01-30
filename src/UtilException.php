@@ -26,7 +26,7 @@ declare(strict_types=1);
 
 namespace froq\util;
 
-use froq\Exception;
+use froq\common\Exception;
 
 /**
  * Util Exception.
