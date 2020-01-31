@@ -24,16 +24,12 @@
  */
 declare(strict_types=1);
 
-use froq\http\{Request, Response};
-use froq\http\request\Uri;
-use froq\http\response\Status;
+use froq\app\App;
+use froq\http\{Request, Response, request\Uri, response\Status};
 use froq\util\UtilException;
 
-// Check dependencies.
-if (!class_exists('froq\app\App', false)) {
-    throw new UtilException('Http sugars dependent to froq\app module that not found');
-}
-if (!class_exists('froq\http\response\Status', false)) {
+// Check dependencies (all others already come with froq\App).
+if (!class_exists(App::class, false)) {
     throw new UtilException('Http sugars dependent to froq\app module that not found');
 }
 
@@ -55,12 +51,12 @@ function response(...$arguments): Response
     $response = app()->response();
     if ($arguments) {
         @ [$code, $content, $content_attributes, $headers, $cookies] = $arguments;
-        if ($code) $response->setStatus($code);
+        $code && $response->setStatus($code);
         if (!is_null($content)) {
             $response->setBody($content, (array) $content_attributes);
         }
-        if ($headers) $response->setHeaders($headers);
-        if ($cookies) $response->setCookies($cookies);
+        $headers && $response->setHeaders($headers);
+        $cookies && $response->setCookies($cookies);
     }
     return $response;
 }

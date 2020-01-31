@@ -24,15 +24,13 @@
  */
 declare(strict_types=1);
 
+use froq\app\App;
 use froq\logger\Logger;
 use froq\util\UtilException;
 
-// Check dependencies.
-if (!class_exists('froq\app\App', false)) {
-    throw new UtilException('Http sugars dependent to froq\app module that not found');
-}
-if (!class_exists('froq\logger\Logger', false)) {
-    throw new UtilException('Logger sugars dependent to froq\logger module that not found');
+// Check dependencies (all others already come with froq\App).
+if (!class_exists(App::class, false)) {
+    throw new UtilException('Logger sugars dependent to froq\app module that not found');
 }
 
 /**

@@ -24,26 +24,24 @@
  */
 declare(strict_types=1);
 
+use froq\app\App;
 use froq\session\Session;
 use froq\util\UtilException;
 
-// Check dependencies.
-if (!class_exists('froq\app\App', false)) {
-    throw new UtilException('Http sugars dependent to froq\app module that not found');
-}
-if (!class_exists('froq\session\Session', false)) {
-    throw new UtilException('Http sugars dependent to froq\session module that not found');
+// Check dependencies (all others already come with froq\App).
+if (!class_exists(App::class, false)) {
+    throw new UtilException('Session sugars dependent to froq\app module that not found');
 }
 
 /**
  * Session.
- * @param string|array|null $key
- * @param any               $value
+ * @param  string|array|null $key
+ * @param  any               $value
  * @return froq\session\Session|any
  */
 function session($key = null, $value = null)
 {
-    static $session; if ($session == null) {
+    static $session; if (!$session) {
         $session = app()->session();
         if ($session) {
             $session->start();
@@ -51,12 +49,10 @@ function session($key = null, $value = null)
     }
 
     // Set/get.
-    if ($session != null) {
-        $argc = func_num_args();
-        if ($argc == 1) {
-            return $session->get($key);
-        } elseif ($argc == 2) {
-            return $session->set($key, $value);
+    if ($session) {
+        switch (func_num_args()) {
+            case 1: return $session->get($key);
+            case 2: return $session->set($key, $value);
         }
     }
 
@@ -66,15 +62,11 @@ function session($key = null, $value = null)
 /**
  * Session flash.
  * @param  any|null $message
- * @return any
+ * @return ?any
  */
 function session_flash($message = null)
 {
-    $session = app()->session();
-    if ($session != null) {
-        return $session->flash($message);
-    }
-    return null;
+    return ($session = session()) ? $session->flash($message) : null;
 }
 
 /**
@@ -83,11 +75,7 @@ function session_flash($message = null)
  */
 function session_array(): ?array
 {
-    $session = app()->session();
-    if ($session != null) {
-        return $session->toArray();
-    }
-    return null;
+    return ($session = session()) ? $session->toArray() : null;
 }
 
 /**
@@ -97,11 +85,7 @@ function session_array(): ?array
  */
 function session_has(string $key): ?bool
 {
-    $session = app()->session();
-    if ($session != null) {
-        return $session->has($key);
-    }
-    return null;
+    return ($session = session()) ? $session->has($key) : null;
 }
 
 /**
@@ -112,12 +96,7 @@ function session_has(string $key): ?bool
  */
 function session_set($key, $value = null): ?bool
 {
-    $session = app()->session();
-    if ($session != null) {
-        $session->set($key, $value);
-        return true;
-    }
-    return null;
+    return ($session = session()) ? $session->set($key, $value) != null : null;
 }
 
 /**
@@ -129,24 +108,17 @@ function session_set($key, $value = null): ?bool
  */
 function session_get($key, $value_default = null, bool $remove = false)
 {
-    $session = app()->session();
-    if ($session != null) {
-        return $session->get($key, $value_default, $remove);
-    }
-    return null;
+    return ($session = session()) ? $session->get($key, $value_default, $remove) : null;
 }
 
 /**
  * Session remove.
  * @param  string|array $key
- * @return void
+ * @return ?bool
  */
-function session_remove($key): void
+function session_remove($key): ?bool
 {
-    $session = app()->session();
-    if ($session != null) {
-        $session->remove($key);
-    }
+    return ($session = session()) ? $session->remove($key) == null : null;
 }
 
 /**
@@ -155,7 +127,7 @@ function session_remove($key): void
  */
 function start_session(): ?bool
 {
-    return ($session = app()->session()) ? $session->start() : null;
+    return ($session = session()) ? $session->start() : null;
 }
 
 /**
@@ -164,14 +136,5 @@ function start_session(): ?bool
  */
 function end_session(): ?bool
 {
-    return ($session = app()->session()) ? $session->end() : null;
-}
-
-/**
- * Reset session.
- * @return ?bool
- */
-function reset_session(): ?bool
-{
-    return ($session = app()->session()) ? $session->reset() : null;
+    return ($session = session()) ? $session->end() : null;
 }

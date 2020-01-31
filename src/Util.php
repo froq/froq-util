@@ -49,10 +49,10 @@ final /* fuckic static */ class Util extends StaticClass
         $file = sprintf('%s/sugars/%s.php', __dir__, $name);
 
         if (!file_exists($file)) {
-            $names = array_map(function($path) {
-                return preg_replace('~.+/(\w+)\.php$~', '\1', $path); }, glob(__dir__ .'/*.php'));
+            $files = glob(__dir__ .'/sugars/*.php');
+            $names = array_map(fn($path) => pathinfo($path, PATHINFO_FILENAME), $files);
 
-            throw new UtilException(sprintf('Absent sugar name %s, available names: %s',
+            throw new UtilException(sprintf('Invalid sugar name "%s" given, valids are: "%s"',
                 $name, join(', ', $names)));
         }
 
