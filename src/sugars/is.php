@@ -31,7 +31,7 @@ declare(strict_types=1);
  */
 function is_local(): bool
 {
-    return (local === true);
+    return defined('local') && (local === true);
 }
 
 /**
