@@ -175,34 +175,40 @@ final /* fuckic static */ class Util extends StaticClass
                 // @important
                 $input = rawurldecode($input);
 
-                return html_encode(
-                    // Remove NUL-byte, ctrl-z, vertical tab.
-                    preg_replace('~[\x00\x1a\x0b]|%(?:00|1a|0b)~i', '', trim(
-                        // Slice at \n or \r.
-                        substr($input, 0, strcspn($input, "\n\r"))
-                    ))
-                );
+                $input =
+                    // Encode quotes & html tags.
+                    str_replace(
+                        ["'", '"', '<', '>'], ['&#39;', '&#34;', '&lt;', '&gt;'],
+                        // Remove NUL-byte, ctrl-z, vertical tab.
+                        preg_replace('~[\x00\x1a\x0b]|%(?:00|1a|0b)~i', '', trim(
+                            // Slice at \n or \r.
+                            substr($input, 0, strcspn($input, "\n\r"))
+                        ))
+                    );
+
+                return $input;
             };
 
             // All static.
-            ['REQUEST_SCHEME' => $scheme, 'SERVER_NAME' => $host, 'SERVER_PORT' => $port] = $_SERVER;
+            ['REQUEST_SCHEME' => $scheme,
+             'SERVER_NAME'    => $host,
+             'SERVER_PORT'    => $port] = $_SERVER;
         }
 
-        $port = ($scheme != 'https' && $port != '80' && $port != '443') ? ':'. $port : '';
-
-        $path = $_SERVER['REQUEST_URI'];
+        $port  = ($scheme != 'https' && $port != '80' && $port != '443') ? ':'. $port : '';
+        $path  = $_SERVER['REQUEST_URI'];
         $query = '';
         // Extract query.
         if (strpos($path, '?') !== false) {
             [$path, $query] = explode('?', $path, 2);
         }
 
-        $path = $filter($path);
-        // Reduce slashes.
-        $path = preg_replace('~/+~', '/', $path);
+        // Filter & reduce slashes.
+        $path = preg_replace('~/+~', '/', $filter($path));
 
         $url = sprintf('%s://%s%s%s', $scheme, $host, $port, $path);
-        // Append query.
+
+        // Filter & append query.
         if ($withQuery && $query != '') {
             $url .= '?'. $filter($query);
         }
