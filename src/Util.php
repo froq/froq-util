@@ -301,8 +301,7 @@ final /* fuckic static */ class Util extends StaticClass
         static $filter; if ($filter == null) {
             $filter = function ($input) use (&$filter) {
                 foreach ($input as $key => $value) {
-                    $input[$key] = is_array($value)
-                        ? $filter($value) : strval($value);
+                    $input[$key] = is_array($value) ? $filter($value) : strval($value);
                 }
                 return $input;
             };
