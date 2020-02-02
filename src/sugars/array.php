@@ -168,7 +168,7 @@ function array_first(array $array, $value_default = null, bool $drop = false)
  * Array last.
  * @param  array &$array
  * @param  any    $value_default
- * @param  bool   $$drop
+ * @param  bool   $drop
  * @return any|null
  * @since  3.0
  */
