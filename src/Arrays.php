@@ -161,7 +161,7 @@ final class Arrays extends StaticClass
                         unset($array[$key]);
                     }
                 }
-            } elseif (is_array($array[$key])) {
+            } elseif (isset($array[$key]) && is_array($array[$key])) {
                 // Dig more..
                 $keys = implode('.', $keys);
                 $value = self::get($array[$key], $keys, $valueDefault, $drop);
