@@ -24,13 +24,13 @@
  */
 declare(strict_types=1);
 
-use froq\app\App;
+use froq\App;
 use froq\session\Session;
 use froq\util\UtilException;
 
 // Check dependencies (all others already come with froq\App).
 if (!class_exists(App::class, false)) {
-    throw new UtilException('Session sugars dependent to froq\app module that not found');
+    throw new UtilException('Session sugars dependent to "froq" module that not found');
 }
 
 /**
