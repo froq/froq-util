@@ -126,11 +126,10 @@ final class Arrays extends StaticClass
      * @param  array<int|string, any> &$array
      * @param  int|string              $key AKA path.
      * @param  any|null                $valueDefault
-     * @param  bool                    $drop @internal
+     * @param  bool                    $drop
      * @return any|null
      */
-    public static function get(array &$array, $key, $valueDefault = null,
-        bool $drop = false)
+    public static function get(array &$array, $key, $valueDefault = null, bool $drop = false)
     {
         // Usage:
         // $array = ['a' => ['b' => ['c' => ['d' => 1, 'd.e' => '...']]]]
@@ -176,11 +175,10 @@ final class Arrays extends StaticClass
      * @param  array<int|string, any> &$array
      * @param  array<int|string>       $keys AKA paths.
      * @param  any|null                $valueDefault
-     * @param  bool                    $drop @internal
+     * @param  bool                    $drop
      * @return array
      */
-    public static function getAll(array &$array, array $keys, $valueDefault = null,
-        bool $drop = false): array
+    public static function getAll(array &$array, array $keys, $valueDefault = null, bool $drop = false): array
     {
         $values = [];
 
@@ -256,13 +254,12 @@ final class Arrays extends StaticClass
      * Rand.
      * @param  array &$array
      * @param  int    $size
-     * @param  bool   $pack Return as [key, value].
-     * @param  bool   $drop Drop used items from array.
+     * @param  bool   $pack Return as [key, value] pair.
+     * @param  bool   $drop
      * @return any|null
      * @throws froq\common\exceptions\InvalidArgumentException
      */
-    public static function rand(array &$array, int $size = 1, bool $pack = false,
-        bool $drop = false)
+    public static function rand(array &$array, int $size = 1, bool $pack = false, bool $drop = false)
     {
         $count = count($array);
         if ($count == 0) {
