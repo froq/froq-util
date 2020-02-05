@@ -24,6 +24,8 @@
  */
 declare(strict_types=1);
 
+use froq\util\Numbers;
+
 /**
  * Rand int.
  * @param  int|null $min
@@ -32,10 +34,7 @@ declare(strict_types=1);
  */
 function rand_int(int $min = null, int $max = null): int
 {
-    $min = $min ?? 0;
-    $max = $max ?? PHP_INT_MAX;
-
-    return random_int($min, $max);
+    return Numbers::randomInt($min, $max);
 }
 
 /**
@@ -46,10 +45,7 @@ function rand_int(int $min = null, int $max = null): int
  */
 function rand_float(float $min = null, float $max = null): float
 {
-    $min = $min ?? 0;
-    $max = $max ?? 1 + $min;
-
-    return lcg_value() * ($max - $min) + $min;
+    return Numbers::randomFloat($min, $max);
 }
 
 /**

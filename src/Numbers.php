@@ -40,37 +40,30 @@ final class Numbers extends StaticClass
 {
     /**
      * Compare.
-     * @param  string|number $a
-     * @param  string|number $b
-     * @param  int|null      $precision
+     * @param  numeric $a
+     * @param  numeric $b
+     * @param  int     $precision
      * @return ?int
      */
-    public static function compare($a, $b, int $precision = null): ?int
+    public static function compare($a, $b, int $precision = 14): ?int
     {
         if (is_numeric($a) && is_numeric($b)) {
-            $precision = $precision ?? 14; // @default=14
-
-            if (function_exists('bccomp')) {
-                return bccomp((string) $a, (string) $b, $precision);
-            }
-
-            return round((float) $a, $precision) <=> round((float) $b, $precision);
+            return round($a, $precision) <=> round($b, $precision);
         }
-
         return null; // Error, not number(s).
     }
 
     /**
      * Equals.
-     * @param  string|number $a
-     * @param  string|number $b
-     * @param  int|null      $precision
+     * @param  numeric $a
+     * @param  numeric $b
+     * @param  int     $precision
      * @return ?bool
      */
-    public static function equals($a, $b, int $precision = null): ?bool
+    public static function equals($a, $b, int $precision = 14): ?bool
     {
         return ($ret = self::compare($a, $b, $precision)) === null ? null // Error, not number(s).
-         : $ret == 0;
+             : ($ret === 0);
     }
 
     /**
@@ -151,4 +144,35 @@ final class Numbers extends StaticClass
     {
         return self::isNumber($input) && ($input >= 0);
     }
+
+    /**
+     * Random int.
+     * @param  int|null $min
+     * @param  int|null $max
+     * @return int
+     * @since  4.0
+     */
+    public static function randomInt(int $min = null, int $max = null): int
+    {
+        $min = $min ?? 0;
+        $max = $max ?? PHP_INT_MAX;
+
+        return random_int($min, $max);
+    }
+
+    /**
+     * Random float.
+     * @param  float|null $min
+     * @param  float|null $max
+     * @return float
+     * @since  4.0
+     */
+    public static function randomFloat(float $min = null, float $max = null): float
+    {
+        $min = $min ?? 0;
+        $max = $max ?? 1 + $min;
+
+        return lcg_value() * ($max - $min) + $min;
+    }
+
 }
