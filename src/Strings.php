@@ -162,44 +162,48 @@ final class Strings extends StaticClass
 
     /**
      * Is utf.
-     * @param  ?string $input
+     * @param  string $input
      * @param  int     $bits
      * @return bool
+     * @since  4.0
      */
-    public static function isUtf(?string $input, int $bits = 8): bool
+    public static function isUtf(string $input, int $bits = 8): bool
     {
         // 0x00 - 0x10FFFF @link https://en.wikipedia.org/wiki/Code_point
-        return !!($input && mb_check_encoding($input, 'UTF-'. $bits));
+        return ($input && mb_check_encoding($input, 'UTF-'. $bits));
     }
 
     /**
      * Is ascii.
-     * @param  ?string $input
+     * @param  string $input
      * @return bool
+     * @since  4.0
      */
-    public static function isAscii(?string $input): bool
+    public static function isAscii(string $input): bool
     {
         // 0x00 - 0x7F (or extended 0xFF) @link https://en.wikipedia.org/wiki/Code_point
-        return !!($input && mb_check_encoding($input, 'ASCII'));
+        return ($input && mb_check_encoding($input, 'ASCII'));
     }
 
     /**
      * Is binary.
-     * @param  ?string $input
+     * @param  string $input
      * @return bool
+     * @since  4.0
      */
-    public static function isBinary(?string $input): bool
+    public static function isBinary(string $input): bool
     {
-        return !!($input && !ctype_print($input));
+        return ($input && !ctype_print($input));
     }
 
     /**
      * Is base64.
-     * @param  ?string $input
+     * @param  string $input
      * @return bool
+     * @since  4.0
      */
-    public static function isBase64(?string $input): bool
+    public static function isBase64(string $input): bool
     {
-        return !!($input && base64_encode(''. base64_decode($input, true)) == $input);
+        return ($input && base64_encode(''. base64_decode($input, true)) == $input);
     }
 }
