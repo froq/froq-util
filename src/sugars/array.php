@@ -128,6 +128,17 @@ function array_test_all(array $array, callable $func): bool
 }
 
 /**
+ * Array flatten.
+ * @param  array $array
+ * @return array
+ * @since  4.0
+ */
+function array_flatten(array $array): array
+{
+    return Arrays::flatten($array);
+}
+
+/**
  * Array include.
  * @param  array $array
  * @param  array $keys
