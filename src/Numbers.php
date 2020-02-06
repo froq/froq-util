@@ -78,21 +78,12 @@ final class Numbers extends StaticClass
 
     /**
      * Is digit.
-     * @param  any  $input
-     * @param  bool $negatives
+     * @param  any $input
      * @return bool
      */
-    public static function isDigit($input, bool $negatives = false): bool
+    public static function isDigit($input): bool
     {
-        if (is_numeric($input)) {
-            if (is_int($input) || ctype_digit($input)) {
-                if (!$negatives && ($input < 0)) {
-                    return false;
-                }
-                return true;
-            }
-        }
-        return false;
+        return is_numeric($input) && (is_int($input) || ctype_digit($input));
     }
 
     /**
@@ -102,7 +93,7 @@ final class Numbers extends StaticClass
      */
     public static function isId($input): bool
     {
-        return is_numeric($input) && ctype_digit((string) $input) && ($input > 0);
+        return is_numeric($input) && (is_int($input) || ctype_digit($input)) && ($input >= 1);
     }
 
     /**
@@ -132,7 +123,7 @@ final class Numbers extends StaticClass
      */
     public static function isSigned($input): bool
     {
-        return self::isNumber($input) && ($input <= 0);
+        return (is_int($input) || is_float($input)) && ($input <= 0);
     }
 
     /**
@@ -142,7 +133,7 @@ final class Numbers extends StaticClass
      */
     public static function isUnsigned($input): bool
     {
-        return self::isNumber($input) && ($input >= 0);
+        return (is_int($input) || is_float($input)) && ($input >= 0);
     }
 
     /**

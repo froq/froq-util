@@ -86,14 +86,13 @@ function is_number($input): bool
 
 /**
  * Is digit.
- * @param  any  $input
- * @param  bool $negatives
+ * @param  any $input
  * @return bool
  * @since  3.0
  */
-function is_digit($input, bool $negatives = false): bool
+function is_digit($input): bool
 {
-    return Numbers::isDigit($input, $negatives);
+    return Numbers::isDigit($input);
 }
 
 /**
