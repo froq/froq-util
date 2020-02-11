@@ -25,7 +25,7 @@
 declare(strict_types=1);
 
 use froq\App;
-use froq\http\{Request, Response, request\Uri, response\Status};
+use froq\http\{Request, Response, response\Status};
 use froq\util\UtilException;
 
 // Check dependencies (all others already come with froq\App).
@@ -59,15 +59,6 @@ function response(...$arguments): Response
         $cookies && $response->setCookies($cookies);
     }
     return $response;
-}
-
-/**
- * Uri.
- * @return froq\http\request\Uri
- */
-function uri(): Uri
-{
-    return app()->request()->uri();
 }
 
 /**
