@@ -198,15 +198,13 @@ final /* fuckic static */ class Util extends StaticClass
         $port  = ($scheme != 'https' && $port != '80' && $port != '443') ? ':'. $port : '';
         $path  = $_SERVER['REQUEST_URI'];
         $query = '';
+
         // Extract query.
         if (strpos($path, '?') !== false) {
             [$path, $query] = explode('?', $path, 2);
         }
 
-        // Filter & reduce slashes.
-        $path = preg_replace('~/+~', '/', $filter($path));
-
-        $url = sprintf('%s://%s%s%s', $scheme, $host, $port, $path);
+        $url = sprintf('%s://%s%s%s', $scheme, $host, $port, $filter($path));
 
         // Filter & append query.
         if ($withQuery && $query != '') {
