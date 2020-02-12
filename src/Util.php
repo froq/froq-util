@@ -190,24 +190,25 @@ final /* fuckic static */ class Util extends StaticClass
             };
 
             // All static.
-            ['REQUEST_SCHEME' => $scheme,
-             'SERVER_NAME'    => $host,
-             'SERVER_PORT'    => $port] = $_SERVER;
+            ['REQUEST_SCHEME' => $scheme, 'SERVER_NAME' => $host, 'SERVER_PORT' => $port] = $_SERVER;
         }
 
-        $port  = ($scheme != 'https' && $port != '80' && $port != '443') ? ':'. $port : '';
-        $path  = $_SERVER['REQUEST_URI'];
-        $query = '';
+        $tmp = parse_url($_SERVER['REQUEST_URI']);
 
-        // Extract query.
-        if (strpos($path, '?') !== false) {
-            [$path, $query] = explode('?', $path, 2);
+        // Build up.
+        $url = $scheme .'://';
+        if ($port != '' && !(($port == '80' && $scheme == 'http') ||
+                             ($port == '443' && $scheme == 'https'))) {
+            $url .= $host .':'. $port;
+        } else {
+            $url .= $host;
         }
 
-        $url = sprintf('%s://%s%s%s', $scheme, $host, $port, $filter($path));
+        // Filter & append path.
+        $url .= $filter($tmp['path']);
 
         // Filter & append query.
-        if ($withQuery && $query != '') {
+        if ($withQuery && ($query = $tmp['query'] ?? '') != '') {
             $url .= '?'. $filter($query);
         }
 
