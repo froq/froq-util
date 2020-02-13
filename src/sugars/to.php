@@ -38,7 +38,7 @@ function to_array($input, bool $deep = true): array
 
     if ($deep) {
         foreach ($input as $key => $value) {
-            $input[$key] = is_iter($value) ? to_array($value, $deep) : $value;
+            $input[$key] = is_iterable_like($value) ? to_array($value, $deep) : $value;
         }
     }
 
@@ -59,7 +59,7 @@ function to_object($input, bool $deep = true): object
 
     if ($deep) {
         foreach ($input as $key => $value) {
-            $input->{$key} = is_iter($value) ? to_object($value, $deep) : $value;
+            $input->{$key} = is_iterable_like($value) ? to_object($value, $deep) : $value;
         }
     }
 

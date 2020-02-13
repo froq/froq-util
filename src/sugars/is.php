@@ -69,17 +69,17 @@ function is_plain_object($input): bool
  */
 function is_array_like($input): bool
 {
-    return is_array($input) || ($input instanceof stdClass);
+    return is_array($input) || is_plain_object($input);
 }
 
 /**
- * Is iter.
+ * Is iterable like.
  * @param  any $input
  * @return bool
  */
-function is_iter($input): bool
+function is_iterable_like($input): bool
 {
-    return is_iterable($input) || ($input instanceof stdClass);
+    return is_iterable($input) || is_plain_object($input);
 }
 
 /**
