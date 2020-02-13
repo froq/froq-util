@@ -161,41 +161,8 @@ final /* fuckic static */ class Util extends StaticClass
      */
     public static function getCurrentUrl(bool $withQuery = true): string
     {
-        static $filter, $scheme, $host, $port;
-        if ($filter == null) {
-            $filter = function($input) use (&$filter) {
-                if (is_array($input)) {
-                    $input = self::parseQueryString($input);
-                    foreach ($input as $key => $value) {
-                        $input[$filter($key)] = $filter($value);
-                    }
-                    return self::unparseQueryString($input);
-                }
+        ['REQUEST_SCHEME' => $scheme, 'SERVER_NAME' => $host, 'SERVER_PORT' => $port] = $_SERVER;
 
-                // @important
-                $input = rawurldecode($input);
-
-                $input =
-                    // Encode quotes & html tags.
-                    str_replace(
-                        ["'", '"', '<', '>'], ['&#39;', '&#34;', '&lt;', '&gt;'],
-                        // Remove NUL-byte, ctrl-z, vertical tab.
-                        preg_replace('~[\x00\x1a\x0b]|%(?:00|1a|0b)~i', '', trim(
-                            // Slice at \n or \r.
-                            substr($input, 0, strcspn($input, "\n\r"))
-                        ))
-                    );
-
-                return $input;
-            };
-
-            // All static.
-            ['REQUEST_SCHEME' => $scheme, 'SERVER_NAME' => $host, 'SERVER_PORT' => $port] = $_SERVER;
-        }
-
-        $tmp = parse_url($_SERVER['REQUEST_URI']);
-
-        // Build up.
         $url = $scheme .'://';
         if ($port != '' && !(($port == '80' && $scheme == 'http') ||
                              ($port == '443' && $scheme == 'https'))) {
@@ -204,12 +171,11 @@ final /* fuckic static */ class Util extends StaticClass
             $url .= $host;
         }
 
-        // Filter & append path.
-        $url .= $filter($tmp['path']);
+        $tmp = parse_url($_SERVER['REQUEST_URI']);
 
-        // Filter & append query.
+        $url .= $tmp['path'] ?? '/';
         if ($withQuery && ($query = $tmp['query'] ?? '') != '') {
-            $url .= '?'. $filter($query);
+            $url .= '?'. $query;
         }
 
         return $url;
