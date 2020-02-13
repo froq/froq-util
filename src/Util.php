@@ -48,7 +48,7 @@ final /* fuckic static */ class Util extends StaticClass
     {
         $file = sprintf('%s/sugars/%s.php', __dir__, $name);
 
-        if (!file_exists($file)) {
+        if (!is_file($file)) {
             $files = glob(__dir__ .'/sugars/*.php');
             $names = array_map(fn($path) => pathinfo($path, PATHINFO_FILENAME), $files);
 
@@ -182,12 +182,11 @@ final /* fuckic static */ class Util extends StaticClass
     }
 
     /**
-     * Parse query string (without changing dotted param keys).
+     * Parse query string (without changing dotted param keys [https://github.com/php/php-src/blob/master/main/php_variables.c#L103]).
      * @param  string      $input
      * @param  bool        $encode
      * @param  string|null $ignoredKeys
      * @return array
-     * @link   https://github.com/php/php-src/blob/master/main/php_variables.c#L99
      */
     public static function parseQueryString(string $input, bool $encode = false,
         string $ignoredKeys = null): array
@@ -198,35 +197,35 @@ final /* fuckic static */ class Util extends StaticClass
             return $ret;
         }
 
-        // hex keys
         $hexed = false;
         if (strpos($input, '.')) {
             $hexed = true;
 
-            // normalize arrays
+            // Normalize arrays.
             if (strpos($input, '%5D')) {
                 $input = str_replace(['%5B', '%5D'], ['[', ']'], $input);
             }
 
+            // Hex keys.
             $input = preg_replace_callback('~(^|(?<=&))[^=&\[]+~', function($match) {
                 return bin2hex($match[0]);
             }, $input);
         }
 
-        // preserve pluses, so parse_str() will replace all with spaces
+        // Preserve pluses (otherwise parse_str() will replace all with spaces).
         if ($encode) {
             $input = str_replace('+', '%2B', $input);
         }
 
-        parse_str($input, $input);
+        parse_str($input, $parsedInput);
 
-        // unhex keys
         if ($hexed) {
-            foreach ($input as $key => $value) {
+            // Unhex keys.
+            foreach ($parsedInput as $key => $value) {
                 $ret[hex2bin((string) $key)] = $value;
             }
         } else {
-            $ret = $input;
+            $ret = $parsedInput;
         }
 
         if ($ignoredKeys != '') {
@@ -262,7 +261,7 @@ final /* fuckic static */ class Util extends StaticClass
             }
         }
 
-        // fix skipped NULL values by http_build_query()
+        // Fix skipped NULL values by http_build_query().
         static $filter; if ($filter == null) {
             $filter = function ($input) use (&$filter) {
                 foreach ($input as $key => $value) {
@@ -272,18 +271,18 @@ final /* fuckic static */ class Util extends StaticClass
             };
         }
 
-        $query = http_build_query($filter($input));
+        $ret = http_build_query($filter($input));
 
         if ($decode) {
-            $query = urldecode($query);
+            $ret = urldecode($ret);
         }
-        if ($stripTags && strpos($query, '%3C')) {
-            $query = preg_replace('~%3C[\w]+(%2F)?%3E~ismU', '', $query);
+        if ($stripTags && strpos($ret, '%3C')) {
+            $ret = preg_replace('~%3C[\w]+(%2F)?%3E~ismU', '', $ret);
         }
-        if ($normalizeArrays && strpos($query, '%5D')) {
-            $query = preg_replace('~([\w\.\-]+)%5B([\w\.\-]+)%5D(=)?~iU', '\1[\2]\3', $query);
+        if ($normalizeArrays && strpos($ret, '%5D')) {
+            $ret = preg_replace('~([\w\.\-]+)%5B([\w\.\-]+)%5D(=)?~iU', '\1[\2]\3', $ret);
         }
 
-        return trim($query);
+        return trim($ret);
     }
 }
