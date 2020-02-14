@@ -64,11 +64,16 @@ function response(...$arguments): Response
 /**
  * Status.
  * @param  int|null $code
- * @return froq\http\Response|froq\http\response\Status
+ * @return int|void
  */
 function status(int $code = null)
 {
-    return app()->response()->status(...($code ? [$code] : []));
+    $response = app()->response();
+    if ($code) {
+        $response->status($code);
+        return;
+    }
+    return $response->status()->getCode();
 }
 
 /**
