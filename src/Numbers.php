@@ -83,7 +83,7 @@ final class Numbers extends StaticClass
      */
     public static function isDigit($input): bool
     {
-        return is_numeric($input) && (is_int($input) || ctype_digit($input));
+        return is_numeric($input) && (is_int($input) || ctype_digit($input)) && ($input >= 0);
     }
 
     /**
