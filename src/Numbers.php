@@ -73,7 +73,7 @@ final class Numbers extends StaticClass
      */
     public static function isNumber($input): bool
     {
-         return is_int($input) || is_float($input);
+        return is_int($input) || is_float($input);
     }
 
     /**
