@@ -35,16 +35,7 @@ use froq\util\Numbers;
  */
 function number($input, int $decimals = null)
 {
-    if (is_numeric($input)) {
-        if ($decimals !== null) {
-            $input = number_format((float) $input, $decimals);
-        }
-
-        return is_string($input) && strpos($input, '.') > -1
-            ? (float) $input : (int) $input;
-    }
-
-    return null; // Not a numeric input.
+    return Numbers::convert($input, $decimals);
 }
 
 /**

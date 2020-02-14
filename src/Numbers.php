@@ -39,6 +39,31 @@ use froq\common\objects\StaticClass;
 final class Numbers extends StaticClass
 {
     /**
+     * Convert.
+     * @param  numeric  $input
+     * @param  int|null $decimals
+     * @return int|float|null
+     * @since  4.0
+     */
+    public static function convert($input, int $decimals = null)
+    {
+        if (is_numeric($input)) {
+            if (is_int($input) || is_float($input)) {
+                return $input;
+            }
+
+            if ($decimals !== null) {
+                $input = number_format((float) $input, $decimals);
+            }
+
+            return is_string($input) && strpos($input, '.') > -1
+                ? (float) $input : (int) $input;
+        }
+
+        return null; // Error, not a number.
+    }
+
+    /**
      * Compare.
      * @param  numeric $a
      * @param  numeric $b
@@ -50,7 +75,7 @@ final class Numbers extends StaticClass
         if (is_numeric($a) && is_numeric($b)) {
             return round($a, $precision) <=> round($b, $precision);
         }
-        return null; // Error, not number(s).
+        return null; // Error, non-number(s).
     }
 
     /**
@@ -62,7 +87,7 @@ final class Numbers extends StaticClass
      */
     public static function equals($a, $b, int $precision = 14): ?bool
     {
-        return ($ret = self::compare($a, $b, $precision)) === null ? null // Error, not number(s).
+        return ($ret = self::compare($a, $b, $precision)) === null ? null // Error, non-number(s).
              : ($ret === 0);
     }
 
