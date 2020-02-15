@@ -254,7 +254,7 @@ final class Arrays extends StaticClass
      * Rand.
      * @param  array &$array
      * @param  int    $size
-     * @param  bool   $pack Return as [key, value] pair.
+     * @param  bool   $pack Return as [key,value] pairs.
      * @param  bool   $drop
      * @return any|null
      * @throws froq\common\exceptions\InvalidArgumentException
@@ -267,10 +267,10 @@ final class Arrays extends StaticClass
         }
 
         if ($size < 1) {
-            throw new InvalidArgumentException(sprintf('Minimum size must be 1, %s given', $size));
+            throw new InvalidArgumentException('Minimum size must be 1, %s given', [$size]);
         } elseif ($size > $count) {
-            throw new InvalidArgumentException(sprintf('Maximum size must not be greater than %s, '.
-                'given size %s is exceeding the size of items', $count, $size));
+            throw new InvalidArgumentException('Maximum size must not be greater than %s, '.
+                'given size %s is exceeding the size of items', [$count, $size]);
         }
 
         $keys = array_keys($array);
@@ -545,8 +545,8 @@ final class Arrays extends StaticClass
     private static function keyCheck($key): void
     {
         if (!is_int($key) && !is_string($key)) {
-            throw new InvalidKeyException(sprintf('Arrays accept int and string keys only, '.
-                '%s given', gettype($key)));
+            throw new InvalidKeyException('Arrays accept int and string keys only, "%s" given',
+                [gettype($key)]);
         }
     }
 }

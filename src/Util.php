@@ -52,8 +52,8 @@ final /* fuckic static */ class Util extends StaticClass
             $files = glob(__dir__ .'/sugars/*.php');
             $names = array_map(fn($path) => pathinfo($path, PATHINFO_FILENAME), $files);
 
-            throw new UtilException(sprintf('Invalid sugar name "%s" given, valids are: "%s"',
-                $name, join(', ', $names)));
+            throw new UtilException('Invalid sugar name "%s" given, valids are: %s',
+                [$name, join(', ', $names)]);
         }
 
         include_once $file;
