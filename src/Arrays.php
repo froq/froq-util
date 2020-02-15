@@ -339,11 +339,16 @@ final class Arrays extends StaticClass
     public static function sort(array &$array, callable $func = null, callable $ufunc = null,
         int $flags = 0): array
     {
+        // Regular sort.
         if ($func == null) {
             sort($array, $flags);
-        } elseif ($func instanceof Closure) {
+        }
+        // Regular user sort, eg: sort($array, function ($a, $b) { ... }).
+        elseif ($func instanceof Closure) {
             usort($array, $func);
-        } elseif (is_string($func)) {
+        }
+        // User sort with name, eg: sort($array, 'usort', function ($a, $b) { ... } or null).
+        elseif (is_string($func)) {
             if ($func[0] == 'u' && $ufunc == null) {
                 throw new InvalidArgumentException('Second argument must be callable when usort, '.
                     'uasort or uksort given');
@@ -352,9 +357,9 @@ final class Arrays extends StaticClass
             $arguments = [&$array, $flags];
             if ($ufunc != null) {
                 if (in_array($func, ['sort', 'asort', 'ksort'])) {
-                    $func = 'u'. $func; // update to user function
+                    $func = 'u'. $func; // Update to user function.
                 }
-                $arguments[1] = $ufunc; // replace flags with ufunc
+                $arguments[1] = $ufunc; // Replace flags with ufunc.
             }
 
             call_user_func_array($func, $arguments);
