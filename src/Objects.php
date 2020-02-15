@@ -52,7 +52,7 @@ final class Objects extends StaticClass
         if (is_object($class)) return get_class($class);
 
         throw new InvalidArgumentException('Invalid $class argument, string and object arguments '.
-            'accepted only');
+            'accepted only, "%s" given', [gettype($class)]);
     }
 
     /**
