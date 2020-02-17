@@ -28,7 +28,7 @@ namespace froq\util;
 
 use froq\common\objects\StaticClass;
 use froq\common\exceptions\InvalidArgumentException;
-use ReflectionClass;
+use Error, ReflectionClass, ReflectionException;
 
 /**
  * Objects.
@@ -339,5 +339,63 @@ final class Objects extends StaticClass
         }
 
         return $ret ?? null;
+    }
+
+    /**
+     * Get parents.
+     * @param  string|object $class
+     * @return ?array
+     */
+    public static function getParents($class): ?array
+    {
+        $ret =@ class_parents($class);
+        if ($ret != null) {
+            $ret = array_keys($ret);
+        }
+        return $ret ?: null;
+    }
+
+    /**
+     * Get interfaces.
+     * @param  string|object $class
+     * @return ?array
+     */
+    public static function getInterfaces($class): ?array
+    {
+        $ret =@ class_implements($class);
+        if ($ret != null) {
+            $ret = array_keys($ret);
+            $ret = array_reverse($ret); // Fix weird reverse order..
+        }
+        return $ret ?: null;
+    }
+
+    /**
+     * Get traits.
+     * @param  string|object $class
+     * @param  bool          $all
+     * @return ?array
+     */
+    public static function getTraits($class, bool $all = true): ?array
+    {
+        $ret =@ class_uses($class);
+        if ($ret != null) {
+            $ret = array_keys($ret);
+            if ($all) {
+                $parents = self::getParents($class) ?? [];
+                foreach ($parents as $parent) {
+                    $ret = array_merge($ret, self::getTraits($parent) ?? []);
+                }
+
+                // Really all..
+                if ($ret != null) {
+                    foreach ($ret as $re) {
+                        $ret = array_merge($ret, self::getTraits($re) ?? []);
+                    }
+                    $ret = array_unique($ret);
+                }
+            }
+        }
+        return $ret ?: null;
     }
 }
