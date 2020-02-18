@@ -79,8 +79,6 @@ final class Arrays extends StaticClass
      */
     public static function set(array &$array, $key, $value): array
     {
-        self::keyCheck($key);
-
         if (array_key_exists($key, $array)) { // Direct access.
             $array[$key] = $value;
         } else {
@@ -135,8 +133,6 @@ final class Arrays extends StaticClass
         // $array = ['a' => ['b' => ['c' => ['d' => 1, 'd.e' => '...']]]]
         // dump Arrays::get($array, 'a.b.c.d') => 1
         // dump Arrays::get($array, 'a.b.c.d.e') => '...'
-
-        self::keyCheck($key);
 
         if (empty($array)) {
             return $valueDefault;
@@ -495,20 +491,5 @@ final class Arrays extends StaticClass
         bool $drop = false): bool
     {
         return (bool) self::get($array, $key, $valueDefault, $drop);
-    }
-
-    /**
-     * Key check.
-     * @param  int|string $key
-     * @return void
-     * @throws froq\common\exceptions\InvalidKeyException
-     * @internal
-     */
-    private static function keyCheck($key): void
-    {
-        if (!is_int($key) && !is_string($key)) {
-            throw new InvalidKeyException('Arrays accept int and string keys only, "%s" given',
-                [gettype($key)]);
-        }
     }
 }
