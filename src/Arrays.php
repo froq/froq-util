@@ -251,7 +251,7 @@ final class Arrays extends StaticClass
     }
 
     /**
-     * Rand.
+     * Random.
      * @param  array &$array
      * @param  int    $size
      * @param  bool   $pack Return as [key,value] pairs.
@@ -259,7 +259,7 @@ final class Arrays extends StaticClass
      * @return any|null
      * @throws froq\common\exceptions\InvalidArgumentException
      */
-    public static function rand(array &$array, int $size = 1, bool $pack = false, bool $drop = false)
+    public static function random(array &$array, int $size = 1, bool $pack = false, bool $drop = false)
     {
         $count = count($array);
         if ($count == 0) {
