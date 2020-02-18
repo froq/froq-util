@@ -28,7 +28,7 @@ namespace froq\util;
 
 use froq\common\objects\StaticClass;
 use froq\common\exceptions\InvalidArgumentException;
-use Error, ReflectionClass, ReflectionException;
+use Error, Reflection, ReflectionClass, ReflectionException;
 
 /**
  * Objects.
@@ -85,11 +85,15 @@ final class Objects extends StaticClass
     /**
      * Get reflection.
      * @param  string|object $class
-     * @return ReflectionClass
+     * @return ?ReflectionClass
      */
-    public static function getReflection($class): ReflectionClass
+    public static function getReflection($class): ?ReflectionClass
     {
-        return new ReflectionClass($class);
+        try {
+            return new ReflectionClass($class);
+        } catch (ReflectionException $e) {
+            return null;
+        }
     }
 
     /**
@@ -124,30 +128,53 @@ final class Objects extends StaticClass
     public static function getConstants($class, bool $all = true, string $name = null): ?array
     {
         $ref = self::getReflection($class);
+        if (!$ref) {
+            return null;
+        }
 
         foreach ($ref->getReflectionConstants() as $constant) {
             if ($name && $name !== $constant->name) {
                 continue;
             }
-
             if (!$all && !$constant->isPublic()) {
                 continue;
             }
 
+            $interface = null;
+            $class     = $constant->getDeclaringClass()->getName();
+
+            // Simply interface check for real definer.
+            if (interface_exists($class, false)) {
+                $interface = $class;
+                $class     = $constant->class;
+            }
+
+            // Nope..
+            // if ($interfaces = self::getInterfaces($constant->class)) {
+            //     foreach ($interfaces as $interfaceName) {
+            //         // Far enough, cos interfaces don't allow constant invisibility.
+            //         if (defined($interfaceName .'::'. $constant->name)) {
+            //             // Break, cos interfaces don't allow constant overriding.
+            //             $interface = $interfaceName;
+            //             break;
+            //         }
+            //     }
+            // }
+
             // Sorry, but no method such getType()..
-            preg_match('~\[ (?<visibility>\w+) (?<type>\w+) .+ \]~', $constant->__toString(),
-                $match);
+            preg_match('~\[ (?<visibility>\w+) (?<type>\w+) .+ \]~', $constant->__toString(), $match);
 
             // Using name as key, since all names will be overridden internally in children.
             $ret[$constant->name] = [
                 'value'      => $constant->getValue(),
                 'type'       => $match['type'],
                 'visibility' => $match['visibility'],
-                'class'      => $constant->getDeclaringClass()->name
+                'class'      => $class,
+                'interface'  => $interface
             ];
         }
 
-        return $ret ?? null;
+        return $ret ?? [];
     }
 
     /**
@@ -159,6 +186,9 @@ final class Objects extends StaticClass
     public static function getConstantNames($class, bool $all = true): ?array
     {
         $ref = self::getReflection($class);
+        if (!$ref) {
+            return null;
+        }
 
         if ($all) {
             // Seems doesn't matter constant visibility for getConstants().
@@ -171,7 +201,7 @@ final class Objects extends StaticClass
             }
         }
 
-        return $ret ?? null;
+        return $ret ?? [];
     }
 
     /**
@@ -206,47 +236,65 @@ final class Objects extends StaticClass
     public static function getProperties($class, bool $all = true, string $name = null): array
     {
         $ref = self::getReflection($class);
+        if (!$ref) {
+            return null;
+        }
 
         // Shorter: -1 is all, 1 public & public static only.
         $filter = $all ? -1 : 1;
 
         foreach ($ref->getProperties($filter) as $property) {
-            if ($name && $name !== $property->name) {
+            if ($name && $name != $property->name) {
                 continue;
-            }
-
-            $value = $type = $nullable = null;
-            if ($property->hasType()) {
-                $type = $property->getType()->getName();
-                $nullable = $property->getType()->allowsNull();
             }
 
             $visibility = $property->isPublic() ? 'public' : (
                 $property->isPrivate() ? 'private' : 'protected'
             );
 
-            // Try, cos "Typed property $foo must not be accessed before initialization".
-            try {
-                // For getValue() and others below.
-                if ($visibility != 'public') {
-                    $property->setAccessible(true);
+            $modifiers = ($mods = $property->getModifiers())
+                ? join(' ', Reflection::getModifierNames($mods)) : null;
+
+            $type = $nullable = $trait = $value = null;
+
+            if ($propertyType = $property->getType()) {
+                $type = $propertyType->getName();
+                $nullable = $propertyType->allowsNull();
+            }
+
+            if ($traits = self::getTraits($property->class)) {
+                foreach ($traits as $traitName) {
+                    if (property_exists($traitName, $property->name)) {
+                        // No break, cos searching the real 'define'r but not 'use'r trait.
+                        $trait = $traitName;
+                    }
                 }
-                $value = $property->getValue($class);
-            } catch (Error $e) {}
+            }
+
+            if (is_object($class)) {
+                // Try, cos "Typed property $foo must not be accessed before initialization".
+                try {
+                    // For getValue() and others below.
+                    if ($visibility != 'public') {
+                        $property->setAccessible(true);
+                    }
+                    $value = $property->getValue($class);
+                } catch (Error $e) {}
+
+                $initialized = $property->isInitialized($class);
+            }
 
             // Using name as key, since all names will be overridden internally in children.
             $ret[$property->name] = [
-                'value'       => $value,
-                'type'        => $type,
-                'nullable'    => $nullable ?? ($value === null),
-                'visibility'  => $visibility,
-                'static'      => $property->isStatic(),
-                'initialized' => $property->isInitialized($class),
-                'class'       => $property->getDeclaringClass()->name
+                'value'       => $value,                         'type'        => $type,
+                'nullable'    => $nullable ?? ($value === null), 'visibility'  => $visibility,
+                'static'      => $property->isStatic(),          'initialized' => $initialized ?? false,
+                'class'       => $property->class,               'trait'       => $trait,
+                'modifiers'   => $modifiers
             ];
         }
 
-        return $ret ?? null;
+        return $ret ?? [];
     }
 
     /**
@@ -258,6 +306,9 @@ final class Objects extends StaticClass
     public static function getPropertyNames($class, bool $all = true): ?array
     {
         $ref = self::getReflection($class);
+        if (!$ref) {
+            return null;
+        }
 
         // Shorter: -1 is all, 1 public & public static only.
         $filter = $all ? -1 : 1;
@@ -266,7 +317,7 @@ final class Objects extends StaticClass
             $ret[] = $property->name;
         }
 
-        return $ret ?? null;
+        return $ret ?? [];
     }
 
     /**
@@ -290,35 +341,84 @@ final class Objects extends StaticClass
     public static function getMethods($class, bool $all = true, string $name = null): ?array
     {
         $ref = self::getReflection($class);
+        if (!$ref) {
+            return null;
+        }
 
         // Shorter: -1 is all, 1 public & public static only.
         $filter = $all ? -1 : 1;
 
         foreach ($ref->getMethods($filter) as $method) {
-            if ($name && $name !== $method->name) {
+            if ($name && $name != $method->name) {
                 continue;
-            }
-
-            $return = null;
-            if ($method->hasReturnType()) {
-                $return = $method->getReturnType()->getName();
             }
 
             $visibility = $method->isPublic() ? 'public' : (
                 $method->isPrivate() ? 'private' : 'protected'
             );
 
-            // Using name as key, since all names will be overridden internally in children.
+            $modifiers = ($mods = $property->getModifiers())
+                ? join(' ', Reflection::getModifierNames($mods)) : null;
+
+            $return = $trait = $parameters = null;
+
+            if ($method->hasReturnType()) {
+                $return = $method->getReturnType()->getName();
+            } elseif ($doc = $method->getDocComment()) {
+                preg_match('~(?=@(returns?|alias(?:Of|For)?) *([^\s]+))~', $doc, $match);
+                if ($match) {
+                    $return = strpos($match[1], 'alias') > -1  // Alias stuff.
+                        ? '@see '. $match[2] : $match[2];
+                }
+            }
+
+            if ($traits = self::getTraits($method->class)) {
+                foreach ($traits as $traitName) {
+                    if (method_exists($traitName, $method->name)) {
+                        // No break, cos searching the real 'define'r but not 'use'r trait.
+                        $trait = $traitName;
+                    }
+                }
+            }
+
+            if ($params = $method->getParameters()) {
+                foreach ($params as $param) {
+                    $parameter = [
+                        'name' => $param->name, 'value'    => 'void',
+                        'type' => 'void',       'nullable' => $param->allowsNull()
+                    ];
+
+                    if ($paramType = $param->getType()) {
+                        $parameter['type'] = ($parameter['nullable'])
+                            ? '?'. $paramType->getName() : $paramType->getName();
+                    }
+                    if ($param->isVariadic()) {
+                        $parameter['type'] = ($parameter['type'] != 'void')
+                            ? $parameter['type'] .' ...' : '...';
+                    }
+
+                    try {
+                        if ($param->isDefaultValueAvailable()) {
+                            $parameter['value'] = $param->getDefaultValue();
+                        } elseif ($param->isDefaultValueConstant()) {
+                            $parameter['value'] = $param->getDefaultValueConstantName();
+                        }
+                    } catch (ReflectionException $e) {}
+
+                    $parameters[] = $parameter;
+                }
+            }
+
+            // Using method name as key, since all names will be overridden internally in children.
             $ret[$method->name] = [
-                'visibility' => $visibility,
-                'static'     => $method->isStatic(),
-                'final'      => $method->isFinal(),
-                'return'     => $return,
-                'class'      => $method->getDeclaringClass()->name
+                'visibility' => $visibility,         'return'     => $return,
+                'final'      => $method->isFinal(),  'static'     => $method->isStatic(),
+                'class'      => $method->class,      'trait'      => $trait,
+                'modifiers'  => $modifiers,          'parameters' => $parameters,
             ];
         }
 
-        return $ret ?? null;
+        return $ret ?? [];
     }
 
     /**
@@ -330,6 +430,9 @@ final class Objects extends StaticClass
     public static function getMethodNames($class, bool $all = true): ?array
     {
         $ref = self::getReflection($class);
+        if (!$ref) {
+            return null;
+        }
 
         // Shorter: -1 is all, 1 public & public static only.
         $filter = $all ? -1 : 1;
@@ -338,7 +441,7 @@ final class Objects extends StaticClass
             $ret[] = $method->name;
         }
 
-        return $ret ?? null;
+        return $ret ?? [];
     }
 
     /**
