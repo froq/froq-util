@@ -88,7 +88,7 @@ final class Arrays extends StaticClass
             } else { // Path access (with dot notation).
                 $current =& $array;
 
-                foreach($keys as $key) {
+                foreach ($keys as $key) {
                     if (isset($current[$key])) {
                         $current[$key] = (array) $current[$key];
                     }
