@@ -452,10 +452,11 @@ final class Objects extends StaticClass
     public static function getParents($class): ?array
     {
         $ret =@ class_parents($class);
-        if ($ret) {
+        if ($ret !== false) {
             $ret = array_keys($ret);
+            return $ret;
         }
-        return ($ret !== false) ? $ret : null;
+        return null;
     }
 
     /**
@@ -466,11 +467,12 @@ final class Objects extends StaticClass
     public static function getInterfaces($class): ?array
     {
         $ret =@ class_implements($class);
-        if ($ret) {
+        if ($ret !== false) {
             $ret = array_keys($ret);
             $ret = array_reverse($ret); // Fix weird reverse order..
+            return $ret;
         }
-        return ($ret !== false) ? $ret : null;
+        return null;
     }
 
     /**
@@ -482,7 +484,7 @@ final class Objects extends StaticClass
     public static function getTraits($class, bool $all = true): ?array
     {
         $ret =@ class_uses($class);
-        if ($ret) {
+        if ($ret !== false) {
             $ret = array_keys($ret);
             if ($all) {
                 $parents = self::getParents($class) ?? [];
@@ -498,7 +500,8 @@ final class Objects extends StaticClass
                     $ret = array_unique($ret);
                 }
             }
+            return $ret;
         }
-        return ($ret !== false) ? $ret : null;
+        return null;
     }
 }
