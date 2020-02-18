@@ -202,7 +202,7 @@ function array_keys_exists(array $array, array $keys): bool
 /**
  * Array values exists.
  * @param  array $array
- * @param  any   $values Multiple values accepted.
+ * @param  any   $values
  * @param  bool  $strict
  * @return bool
  */
@@ -212,21 +212,21 @@ function array_values_exists(array $array, array $values, bool $strict = true): 
 }
 
 /**
- * Is sequential array.
+ * Is set array.
  * @param  any $input
  * @return bool
  */
-function is_sequential_array($input): bool
+function is_set_array($input): bool
 {
-    return is_array($input) && Arrays::isSequentialArray($input);
+    return is_array($input) && Arrays::isSet($input);
 }
 
 /**
- * Is associative array.
+ * Is map array.
  * @param  any $input
  * @return bool
  */
-function is_associative_array($input): bool
+function is_map_array($input): bool
 {
-    return is_array($input) && Arrays::isAssociativeArray($input);
+    return is_array($input) && Arrays::isMap($input);
 }

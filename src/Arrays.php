@@ -41,14 +41,14 @@ use Closure;
 final class Arrays extends StaticClass
 {
     /**
-     * Is sequential.
+     * Is set.
      * @param  array $array
      * @return bool
      */
-    public static function isSequential(array $array): bool
+    public static function isSet(array $array): bool
     {
         foreach (array_keys($array) as $key) {
-            if (is_string($key)) {
+            if (!is_int($key)) {
                 return false;
             }
         }
@@ -56,14 +56,14 @@ final class Arrays extends StaticClass
     }
 
     /**
-     * Is associative.
+     * Is map.
      * @param  array $array
      * @return bool
      */
-    public static function isAssociative(array $array): bool
+    public static function isMap(array $array): bool
     {
         foreach (array_keys($array) as $key) {
-            if (is_int($key)) {
+            if (!is_string($key)) {
                 return false;
             }
         }
@@ -279,11 +279,9 @@ final class Arrays extends StaticClass
         $ret = [];
         while ($size--) {
             $key = $keys[$size];
-            if (!$pack) {
-                $ret[] = $array[$key];
-            } else {
-                $ret[$key] = $array[$key];
-            }
+            $value = $array[$key];
+
+            !$pack ? $ret[] = $value : $ret[$key] = $value;
 
             // Drop used item.
             if ($drop) {
