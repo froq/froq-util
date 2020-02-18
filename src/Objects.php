@@ -455,7 +455,7 @@ final class Objects extends StaticClass
         if ($ret) {
             $ret = array_keys($ret);
         }
-        return $ret ?: null;
+        return ($ret !== false) ? $ret : null;
     }
 
     /**
@@ -470,7 +470,7 @@ final class Objects extends StaticClass
             $ret = array_keys($ret);
             $ret = array_reverse($ret); // Fix weird reverse order..
         }
-        return $ret ?: null;
+        return ($ret !== false) ? $ret : null;
     }
 
     /**
@@ -499,6 +499,6 @@ final class Objects extends StaticClass
                 }
             }
         }
-        return $ret ?: null;
+        return ($ret !== false) ? $ret : null;
     }
 }
