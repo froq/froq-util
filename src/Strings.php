@@ -58,13 +58,17 @@ final class Strings extends StaticClass
      */
     public static function compareLocale(string $input1, string $input2, string $locale): int
     {
-        static $localeDefault; if ($localeDefault === null) {
+        static $localeDefault;
+        if ($localeDefault === null) {
             $localeDefault = setlocale(LC_COLLATE, 0);
         }
 
         setlocale(LC_COLLATE, $locale);
         $result = strcoll($input1, $input2);
-        setlocale(LC_COLLATE, $localeDefault); // Restore locale.
+
+        if ($localeDefault !== null) {
+            setlocale(LC_COLLATE, $localeDefault); // Restore locale.
+        }
 
         return $result;
     }
