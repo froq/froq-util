@@ -326,47 +326,6 @@ final class Arrays extends StaticClass
     }
 
     /**
-     * Sort.
-     * @param  array         &$array
-     * @param  callable|null  $func
-     * @param  callable|null  $ufunc
-     * @param  int            $flags
-     * @return array
-     * @throws froq\common\exceptions\InvalidArgumentException
-     */
-    public static function sort(array &$array, callable $func = null, callable $ufunc = null,
-        int $flags = 0): array
-    {
-        // Regular sort.
-        if ($func == null) {
-            sort($array, $flags);
-        }
-        // Regular user sort, eg: sort($array, function ($a, $b) { ... }).
-        elseif ($func instanceof Closure) {
-            usort($array, $func);
-        }
-        // User sort with name, eg: sort($array, 'usort', function ($a, $b) { ... } or null).
-        elseif (is_string($func)) {
-            if ($func[0] == 'u' && $ufunc == null) {
-                throw new InvalidArgumentException('Second argument must be callable when usort, '.
-                    'uasort or uksort given');
-            }
-
-            $arguments = [&$array, $flags];
-            if ($ufunc != null) {
-                if (in_array($func, ['sort', 'asort', 'ksort'])) {
-                    $func = 'u'. $func; // Update to user function.
-                }
-                $arguments[1] = $ufunc; // Replace flags with ufunc.
-            }
-
-            call_user_func_array($func, $arguments);
-        }
-
-        return $array;
-    }
-
-    /**
      * Flatten.
      * @param  array $array
      * @return array
