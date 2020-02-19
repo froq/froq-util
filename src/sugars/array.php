@@ -139,18 +139,6 @@ function array_flatten(array $array): array
 }
 
 /**
- * Array select.
- * @param  array $array
- * @param  callable $func
- * @return array
- * @since  4.0
- */
-function array_select(array $array, callable $func): array
-{
-    return Arrays::select($array, $func);
-}
-
-/**
  * Array include.
  * @param  array $array
  * @param  array $keys

@@ -330,26 +330,11 @@ final class Arrays extends StaticClass
     public static function flatten(array $array): array
     {
         $ret = [];
+
         array_walk_recursive($array, function ($value) use (&$ret) {
             $ret[] = $value;
         });
-        return $ret;
-    }
 
-    /**
-     * Select.
-     * @param  array    $array
-     * @param  callable $func
-     * @return array
-     */
-    public static function select(array $array, callable $func): array
-    {
-        $ret = [];
-        foreach ($array as $key => $value) {
-            if ($func($value, $key)) {
-                $ret[$key] = $value;
-            }
-        }
         return $ret;
     }
 
@@ -361,7 +346,7 @@ final class Arrays extends StaticClass
      */
     public static function include(array $array, array $keys): array
     {
-        return array_filter($array, fn($_, $key) => in_array($key, $keys, true), 1);
+        return array_filter($array, fn($key) => in_array($key, $keys, true), 2);
     }
 
     /**
@@ -372,7 +357,7 @@ final class Arrays extends StaticClass
      */
     public static function exclude(array $array, array $keys): array
     {
-        return array_filter($array, fn($_, $key) => !in_array($key, $keys, true), 1);
+        return array_filter($array, fn($key) => !in_array($key, $keys, true), 2);
     }
 
     /**
