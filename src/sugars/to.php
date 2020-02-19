@@ -33,7 +33,8 @@ declare(strict_types=1);
 function to_array($input, bool $deep = true): array
 {
     $input = is_object($input) ? (
-        (array) (method_exists($input, 'toArray') ? $input->toArray() : get_object_vars($input))
+        (array) (method_exists($input, 'toArray')
+            ? $input->toArray() : get_object_vars($input))
     ) : (array) $input;
 
     if ($deep) {
@@ -54,7 +55,8 @@ function to_array($input, bool $deep = true): array
 function to_object($input, bool $deep = true): object
 {
     $input = is_object($input) ? (
-        (object) (method_exists($input, 'toArray') ? $input->toArray() : get_object_vars($input))
+        (object) (method_exists($input, 'toArray')
+            ? $input->toArray() : get_object_vars($input))
     ) : (object) $input;
 
     if ($deep) {
