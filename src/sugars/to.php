@@ -26,44 +26,44 @@ declare(strict_types=1);
 
 /**
  * To array.
- * @param  array|object $input
+ * @param  array|object $in
  * @param  bool         $deep
  * @return array
  */
-function to_array($input, bool $deep = true): array
+function to_array($in, bool $deep = true): array
 {
-    $input = is_object($input) ? (
-        (array) (method_exists($input, 'toArray') ? $input->toArray() : get_object_vars($input))
-    ) : (array) $input;
+    $out = is_object($in) ? (
+        (array) (method_exists($in, 'toArray') ? $in->toArray() : get_object_vars($in))
+    ) : (array) $in;
 
     if ($deep) {
-        foreach ($input as $key => $value) {
-            $input[$key] = is_iterable_like($value) ? to_array($value, $deep) : $value;
+        foreach ($in as $key => $value) {
+            $out[$key] = is_iterable_like($value) ? to_array($value, $deep) : $value;
         }
     }
 
-    return $input;
+    return $out;
 }
 
 /**
  * To object.
- * @param  array|object $input
+ * @param  array|object $in
  * @param  bool         $deep
  * @return object
  */
-function to_object($input, bool $deep = true): object
+function to_object($in, bool $deep = true): object
 {
-    $input = is_object($input) ? (
-        (object) (method_exists($input, 'toArray') ? $input->toArray() : get_object_vars($input))
-    ) : (object) $input;
+    $out = is_object($in) ? (
+        (object) (method_exists($in, 'toArray') ? $in->toArray() : get_object_vars($in))
+    ) : (object) $in;
 
     if ($deep) {
-        foreach ($input as $key => $value) {
-            $input->{$key} = is_iterable_like($value) ? to_object($value, $deep) : $value;
+        foreach ($in as $key => $value) {
+            $out->{$key} = is_iterable_like($value) ? to_object($value, $deep) : $value;
         }
     }
 
-    return $input;
+    return $out;
 }
 
 /**
