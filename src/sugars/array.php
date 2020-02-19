@@ -137,6 +137,7 @@ function array_flatten(array $array): array
 {
     return Arrays::flatten($array);
 }
+
 /**
  * Array select.
  * @param  array $array
