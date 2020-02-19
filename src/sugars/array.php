@@ -28,10 +28,10 @@ use froq\util\Arrays;
 
 /**
  * Array set (with dot notation support for sub-array paths).
- * @param  array<int|string, any> &$array
- * @param  int|string              $key
- * @param  any                     $value
- * @return array<int|string, any>
+ * @param  array      &$array
+ * @param  int|string  $key
+ * @param  any         $value
+ * @return array
  * @since  3.0
  */
 function array_set(array &$array, $key, $value): array
@@ -53,9 +53,9 @@ function array_set_all(array &$array, array $items): array
 
 /**
  * Array get (with dot notation support for sub-array paths).
- * @param  array<int|string, any> &$array
- * @param  int|string              $key AKA path.
- * @param  any|null                $value_default
+ * @param  array      &$array
+ * @param  int|string  $key AKA path.
+ * @param  any|null    $value_default
  * @return any|null
  * @since  3.0
  */
@@ -66,9 +66,9 @@ function array_get(array $array, $key, $value_default = null)
 
 /**
  * Array get all (shortcuts like: list(..) = Arrays::getAll(..)).
- * @param  array<int|string, any> &$array
- * @param  array<int|string>       $keys AKA paths.
- * @param  any|null                $value_default
+ * @param  array    &$array
+ * @param  array     $keys AKA paths.
+ * @param  any|null  $value_default
  * @return array
  * @since  3.0
  */
@@ -79,9 +79,9 @@ function array_get_all(array $array, array $keys, $value_default = null): array
 
 /**
  * Array pull.
- * @param  array<int|string, any> &$array
- * @param  int|string              $key
- * @param  any|null                $value_default
+ * @param  array      &$array
+ * @param  int|string  $key
+ * @param  any|null    $value_default
  * @return any|null
  * @since  3.0
  */
@@ -92,15 +92,39 @@ function array_pull(array &$array, $key, $value_default = null)
 
 /**
  * Array pull all (shortcuts like: list(..) = Arrays::pullAll(..)).
- * @param  array<int|string, any> &$array
- * @param  array<int|string>       $keys
- * @param  any|null                $value_default
+ * @param  array   &$array
+ * @param  array    $keys
+ * @param  any|null $value_default
  * @return array
  * @since  3.0
  */
 function array_pull_all(array &$array, array $keys, $value_default = null): array
 {
     return Arrays::pullAll($array, $keys, $value_default);
+}
+
+/**
+ * Remove.
+ * @param  array      &$array
+ * @param  int|string  $key
+ * @return array
+ * @since  4.0
+ */
+function array_remove(array &$array, $key): array
+{
+    return Arrays::remove($array, $key);
+}
+
+/**
+ * Remove all.
+ * @param  array &$array
+ * @param  array  $keys
+ * @return array
+ * @since  4.0
+ */
+function array_remove_all(array &$array, array $keys): array
+{
+    return Arrays::removeAll($array, $keys);
 }
 
 /**

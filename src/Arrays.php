@@ -72,10 +72,10 @@ final class Arrays extends StaticClass
 
     /**
      * Set (with dot notation support for sub-array paths).
-     * @param  array<int|string, any> &$array
-     * @param  int|string              $key
-     * @param  any                     $value
-     * @return array<int|string, any>
+     * @param  array      &$array
+     * @param  int|string  $key
+     * @param  any         $value
+     * @return array
      */
     public static function set(array &$array, $key, $value): array
     {
@@ -121,10 +121,10 @@ final class Arrays extends StaticClass
 
     /**
      * Get (with dot notation support for sub-array paths).
-     * @param  array<int|string, any> &$array
-     * @param  int|string              $key AKA path.
-     * @param  any|null                $valueDefault
-     * @param  bool                    $drop
+     * @param  array      &$array
+     * @param  int|string  $key AKA path.
+     * @param  any|null    $valueDefault
+     * @param  bool        $drop
      * @return any|null
      */
     public static function get(array &$array, $key, $valueDefault = null, bool $drop = false)
@@ -168,10 +168,10 @@ final class Arrays extends StaticClass
 
     /**
      * Get all (shortcuts like: list(..) = Arrays::getAll(..)).
-     * @param  array<int|string, any> &$array
-     * @param  array<int|string>       $keys AKA paths.
-     * @param  any|null                $valueDefault
-     * @param  bool                    $drop
+     * @param  array   &$array
+     * @param  array    $keys AKA paths.
+     * @param  any|null $valueDefault
+     * @param  bool     $drop
      * @return array
      */
     public static function getAll(array &$array, array $keys, $valueDefault = null, bool $drop = false): array
@@ -192,9 +192,9 @@ final class Arrays extends StaticClass
 
     /**
      * Pull.
-     * @param  array<int|string, any> &$array
-     * @param  int|string              $key
-     * @param  any|null                $valueDefault
+     * @param  array      &$array
+     * @param  int|string  $key
+     * @param  any|null    $valueDefault
      * @return any|null
      */
     public static function pull(array &$array, $key, $valueDefault = null)
@@ -204,14 +204,42 @@ final class Arrays extends StaticClass
 
     /**
      * Pull all (shortcuts like: list(..) = Arrays::pullAll(..)).
-     * @param  array<int|string, any> &$array
-     * @param  array<int|string>       $keys
-     * @param  any|null                $valueDefault
+     * @param  array    &$array
+     * @param  array     $keys
+     * @param  any|null  $valueDefault
      * @return array
      */
     public static function pullAll(array &$array, array $keys, $valueDefault = null): array
     {
         return self::getAll($array, $keys, $valueDefault, true);
+    }
+
+    /**
+     * Remove.
+     * @param  array      &$array
+     * @param  int|string  $key
+     * @return array
+     * @since  4.0
+     */
+    public static function remove(array &$array, $key): array
+    {
+        self::pull($array, $key);
+
+        return $array;
+    }
+
+    /**
+     * Remove all.
+     * @param  array &$array
+     * @param  array  $keys
+     * @return array
+     * @since  4.0
+     */
+    public static function removeAll(array &$array, array $keys): array
+    {
+        self::pullAll($array, $key);
+
+        return $array;
     }
 
     /**
