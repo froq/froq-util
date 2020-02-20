@@ -31,7 +31,7 @@ declare(strict_types=1);
  */
 function is_local(): bool
 {
-    return defined('local') && (local === true);
+    return defined('local') && (local == true);
 }
 
 /**
@@ -40,7 +40,7 @@ function is_local(): bool
  */
 function is_cli(): bool
 {
-    return (PHP_SAPI === 'cli');
+    return (PHP_SAPI == 'cli');
 }
 
 /**
@@ -49,7 +49,7 @@ function is_cli(): bool
  */
 function is_cli_server(): bool
 {
-    return (PHP_SAPI === 'cli-server');
+    return (PHP_SAPI == 'cli-server');
 }
 
 /**
