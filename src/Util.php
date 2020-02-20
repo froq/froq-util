@@ -161,7 +161,8 @@ final /* fuckic static */ class Util extends StaticClass
      */
     public static function getCurrentUrl(bool $withQuery = true): string
     {
-        ['REQUEST_SCHEME' => $scheme, 'SERVER_NAME' => $host, 'SERVER_PORT' => $port] = $_SERVER;
+        ['SERVER_NAME'    => $host,   'SERVER_PORT' => $port,
+         'REQUEST_SCHEME' => $scheme, 'REQUEST_URI' => $uri]  = $_SERVER;
 
         $url = $scheme .'://';
         if ($port != '' && !(($port == '80' && $scheme == 'http') ||
@@ -171,7 +172,13 @@ final /* fuckic static */ class Util extends StaticClass
             $url .= $host;
         }
 
-        $tmp = parse_url($_SERVER['REQUEST_URI']);
+        // PHP thinks it's a host, not path (also gives false if URI kinda "//").
+        if (strpos($uri, '//') === 0) {
+            $tmp = parse_url(substr($uri, 1));
+            $tmp['path'] = '/'. $tmp['path']; // Yes, give it back..
+        } else {
+            $tmp = parse_url($uri);
+        }
 
         $url .= $tmp['path'] ?? '/';
         if ($withQuery && ($query = $tmp['query'] ?? '') != '') {
