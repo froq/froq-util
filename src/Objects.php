@@ -91,7 +91,7 @@ final class Objects extends StaticClass
     public static function getNamespace($class, bool $baseOnly = false): string
     {
         $name = self::getName($class);
-        $nameIndex = $baseOnly ? strpos($name, '\\') : strrpos($name, '\\');
+        $nameIndex = !$baseOnly ? strrpos($name, '\\') : strpos($name, '\\');
 
         return substr($name, 0, ($nameIndex !== false) ? $nameIndex : 0);
     }
