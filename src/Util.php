@@ -269,14 +269,14 @@ final /* fuckic static */ class Util extends StaticClass
             }
         }
 
-        // Fix skipped NULL values by http_build_query().
-        static $filter; if ($filter == null) {
-            $filter = function ($input) use (&$filter) {
-                foreach ($input as $key => $value) {
-                    $input[$key] = is_array($value) ? $filter($value) : strval($value);
-                }
-                return $input;
-            };
+        // Memoize: fix skipped NULL values by http_build_query().
+        static $filter; if (!$filter) {
+               $filter = function ($input) use (&$filter) {
+                    foreach ($input as $key => $value) {
+                        $input[$key] = is_array($value) ? $filter($value) : strval($value);
+                    }
+                    return $input;
+               };
         }
 
         $ret = http_build_query($filter($input));
