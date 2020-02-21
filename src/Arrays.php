@@ -243,6 +243,34 @@ final class Arrays extends StaticClass
     }
 
     /**
+     * Sweep.
+     * @param  array      &$array
+     * @param  array|null  $ignoredKeys
+     * @return array
+     */
+    public static function sweep(array &$array, array $ignoredKeys = null): array
+    {
+        // Memoize tester.
+        static $tester; if (!$tester) {
+               $tester = function ($value) {
+                    return ($value !== '' && $value !== null && $value !== []);
+               };
+        }
+
+        if ($ignoredKeys == null) {
+            $array = array_filter($array, $tester);
+        } else {
+            foreach ($array as $key => $value) {
+                if (!in_array($key, $ignoredKeys, true) && !$tester($value)) {
+                    unset($array[$key]);
+                }
+            }
+        }
+
+        return $array;
+    }
+
+    /**
      * Test (like JavaScript Array.some()).
      * @param  array    $array
      * @param  callable $func
