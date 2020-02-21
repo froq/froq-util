@@ -55,6 +55,45 @@ final class Objects extends StaticClass
     }
 
     /**
+     * Get id.
+     * @param  object $object
+     * @param  bool   $withName
+     * @return string
+     */
+    public static function getId(object $object, bool $withName = true): string
+    {
+        return $withName ? get_class($object) .'#'. spl_object_id($object)
+                         : spl_object_id($object) .'';
+    }
+
+    /**
+     * Get hash.
+     * @param  object $object
+     * @param  bool   $withName
+     * @param  bool   $withRehash
+     * @return string
+     */
+    public static function getHash(object $object, bool $withName = true, bool $withRehash = true): string
+    {
+        $hash = spl_object_hash($object);
+        if ($withRehash) {
+            $hash = hash('crc32', $hash); // Pack "000..." stuff.
+        }
+        return $withName ? get_class($object) .'#'. $hash : $hash;
+    }
+
+    /**
+     * Get serialized hash.
+     * @param  object $object
+     * @param  string $algo
+     * @return string
+     */
+    public static function getSerializedHash(object $object, string $algo = null): string
+    {
+        return hash($algo ?: 'crc32', spl_object_id($object) . spl_object_hash($object) . serialize($object));
+    }
+
+    /**
      * Get name.
      * @param  string|object $class
      * @return string
