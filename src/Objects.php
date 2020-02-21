@@ -84,13 +84,15 @@ final class Objects extends StaticClass
 
     /**
      * Get serialized hash.
-     * @param  object $object
-     * @param  string $algo
+     * @param  object      $object
+     * @param  string|null $algo
      * @return string
      */
     public static function getSerializedHash(object $object, string $algo = null): string
     {
-        return hash($algo ?: 'crc32', spl_object_id($object) . spl_object_hash($object) . serialize($object));
+        return hash($algo ?: 'crc32',
+            // For a unique hash, use id & hash.
+            spl_object_id($object) . spl_object_hash($object) . serialize($object));
     }
 
     /**
