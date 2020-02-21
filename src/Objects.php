@@ -41,6 +41,20 @@ use Error, Reflection, ReflectionClass, ReflectionException;
 final class Objects extends StaticClass
 {
     /**
+     * Get reflection.
+     * @param  string|object $class
+     * @return ?ReflectionClass
+     */
+    public static function getReflection($class): ?ReflectionClass
+    {
+        try {
+            return new ReflectionClass($class);
+        } catch (ReflectionException $e) {
+            return null;
+        }
+    }
+
+    /**
      * Get name.
      * @param  string|object $class
      * @return string
@@ -80,20 +94,6 @@ final class Objects extends StaticClass
         $nameIndex = $baseOnly ? strpos($name, '\\') : strrpos($name, '\\');
 
         return substr($name, 0, ($nameIndex !== false) ? $nameIndex : 0);
-    }
-
-    /**
-     * Get reflection.
-     * @param  string|object $class
-     * @return ?ReflectionClass
-     */
-    public static function getReflection($class): ?ReflectionClass
-    {
-        try {
-            return new ReflectionClass($class);
-        } catch (ReflectionException $e) {
-            return null;
-        }
     }
 
     /**
