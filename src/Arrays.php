@@ -443,7 +443,7 @@ final class Arrays extends StaticClass
      */
     public static function first(array &$array, $valueDefault = null, bool $drop = false)
     {
-        $key = array_key_first($array);
+        $key   = array_key_first($array);
         $value = $valueDefault;
 
         if ($key !== null) {
@@ -465,7 +465,7 @@ final class Arrays extends StaticClass
      */
     public static function last(array &$array, $valueDefault = null, bool $drop = false)
     {
-        $key = array_key_last($array);
+        $key   = array_key_last($array);
         $value = $valueDefault;
 
         if ($key !== null) {
@@ -519,8 +519,7 @@ final class Arrays extends StaticClass
      * @param  bool        $drop
      * @return int
      */
-    public static function getInt(array &$array, $key, int $valueDefault = null,
-        bool $drop = false): int
+    public static function getInt(array &$array, $key, int $valueDefault = null, bool $drop = false): int
     {
         return (int) self::get($array, $key, $valueDefault, $drop);
     }
@@ -533,8 +532,7 @@ final class Arrays extends StaticClass
      * @param  bool        $drop
      * @return float
      */
-    public static function getFloat(array &$array, $key, float $valueDefault = null,
-        bool $drop = false): float
+    public static function getFloat(array &$array, $key, float $valueDefault = null, bool $drop = false): float
     {
         return (float) self::get($array, $key, $valueDefault, $drop);
     }
@@ -547,8 +545,7 @@ final class Arrays extends StaticClass
      * @param  bool         $drop
      * @return string
      */
-    public static function getString(array &$array, $key, string $valueDefault = null,
-        bool $drop = false): string
+    public static function getString(array &$array, $key, string $valueDefault = null, bool $drop = false): string
     {
         return (string) self::get($array, $key, $valueDefault, $drop);
     }
@@ -561,8 +558,7 @@ final class Arrays extends StaticClass
      * @param  bool        $drop
      * @return bool
      */
-    public static function getBool(array &$array, $key, bool $valueDefault = null,
-        bool $drop = false): bool
+    public static function getBool(array &$array, $key, bool $valueDefault = null, bool $drop = false): bool
     {
         return (bool) self::get($array, $key, $valueDefault, $drop);
     }
