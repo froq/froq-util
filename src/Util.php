@@ -173,10 +173,14 @@ final /* fuckic static */ class Util extends StaticClass
         }
 
         // PHP thinks it's a host, not path (also gives false if URI kinda "//").
-        if (strpos($uri, '//') === 0) {
-            $uri = substr($uri, 1);
+        if (($i = strpos($uri, '//')) === 0) {
+            while (($uri[++$i] ?? '') === '/');
+
+            $uri = '/'. substr($uri, $i);
             $tmp = parse_url($uri) ?: [];
-            $tmp['path'] = '/'. ($tmp['path'] ?? ''); // Yes, give it back..
+
+            // Yes, I'am maniac, give them back..
+            $tmp['path'] = str_repeat('/', $i - 1) . ($tmp['path'] ?? '');
         } else {
             $tmp = parse_url($uri) ?: [];
         }
