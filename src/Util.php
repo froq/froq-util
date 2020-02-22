@@ -249,7 +249,7 @@ final /* fuckic static */ class Util extends StaticClass
     }
 
     /**
-     * Unparse query string.
+     * Build query string.
      * @param  array       $input
      * @param  bool        $decode
      * @param  string|null $ignoredKeys
@@ -257,7 +257,7 @@ final /* fuckic static */ class Util extends StaticClass
      * @param  bool        $normalizeArrays
      * @return string
      */
-    public static function unparseQueryString(array $input, bool $decode = false,
+    public static function buildQueryString(array $input, bool $decode = false,
         string $ignoredKeys = null, bool $stripTags = true, bool $normalizeArrays = true): string
     {
         if ($ignoredKeys != '') {
