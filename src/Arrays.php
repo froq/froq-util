@@ -404,6 +404,7 @@ final class Arrays extends StaticClass
     {
         $ret = [];
 
+        // Seems short functions (=>) not work here.
         array_walk_recursive($array, function ($value) use (&$ret) {
             $ret[] = $value;
         });
