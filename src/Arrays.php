@@ -79,24 +79,34 @@ final class Arrays extends StaticClass
      */
     public static function set(array &$array, $key, $value): array
     {
+        // Usage:
+        // Arrays::set($array, 'a.b.c', 1) => ['a' => ['b' => ['c' => 1]]]
+
         if (array_key_exists($key, $array)) { // Direct access.
             $array[$key] = $value;
         } else {
-            $keys = explode('.', (string) $key);
-            if (count($keys) <= 1) { // Direct access.
+            $key = strval($key);
+
+            if (strpos($key, '.') === false) {
                 $array[$key] = $value;
-            } else { // Path access (with dot notation).
-                $current =& $array;
+            } else {
+                $keys = explode('.', $key);
 
-                foreach ($keys as $key) {
-                    if (isset($current[$key])) {
-                        $current[$key] = (array) $current[$key];
+                if (count($keys) <= 1) { // Direct access.
+                    $array[$keys[0]] = $value;
+                } else { // Path access (with dot notation).
+                    $current =& $array;
+
+                    foreach ($keys as $key) {
+                        if (isset($current[$key])) {
+                            $current[$key] = (array) $current[$key];
+                        }
+                        $current =& $current[$key];
                     }
-                    $current =& $current[$key];
-                }
 
-                $current = $value;
-                unset($current);
+                    $current = $value;
+                    unset($current);
+                }
             }
         }
 
@@ -131,39 +141,46 @@ final class Arrays extends StaticClass
     {
         // Usage:
         // $array = ['a' => ['b' => ['c' => ['d' => 1, 'd.e' => '...']]]]
-        // dump Arrays::get($array, 'a.b.c.d') => 1
-        // dump Arrays::get($array, 'a.b.c.d.e') => '...'
+        // Arrays::get($array, 'a.b.c.d') => 1
+        // Arrays::get($array, 'a.b.c.d.e') => '...'
 
+        $value = $valueDefault;
         if (empty($array)) {
-            return $valueDefault;
+            return $value;
         }
 
         if (array_key_exists($key, $array)) {
             $value = $array[$key];
-            // Drop gotten item.
-            if ($drop) {
+            if ($drop) { // Drop gotten item.
                 unset($array[$key]);
             }
         } else {
-            $keys = explode('.', (string) $key);
-            $key = array_shift($keys);
+            $key = strval($key);
 
-            if (empty($keys)) {
-                if (array_key_exists($key, $array)) {
-                    $value = $array[$key];
-                    // Drop gotten item.
-                    if ($drop) {
-                        unset($array[$key]);
-                    }
+            if (strpos($key, '.') === false) {
+                $value = $array[$key] ?? $value;
+                if ($drop) { // Drop gotten item.
+                    unset($array[$key]);
                 }
-            } elseif (isset($array[$key]) && is_array($array[$key])) {
-                // Dig more..
-                $keys = implode('.', $keys);
-                $value = self::get($array[$key], $keys, $valueDefault, $drop);
+            } else {
+                $keys = explode('.', $key);
+                $key  = array_shift($keys);
+
+                if (empty($keys)) {
+                    if (array_key_exists($key, $array)) {
+                        $value = $array[$key];
+                        if ($drop) { // Drop gotten item.
+                            unset($array[$key]);
+                        }
+                    }
+                } elseif (isset($array[$key]) && is_array($array[$key])) { // Dig more..
+                    $keys  = implode('.', $keys);
+                    $value = self::get($array[$key], $keys, $value, $drop);
+                }
             }
         }
 
-        return $value ?? $valueDefault;
+        return $value;
     }
 
     /**
