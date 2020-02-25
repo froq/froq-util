@@ -41,6 +41,36 @@ use Error, Reflection, ReflectionClass, ReflectionException;
 final class Objects extends StaticClass
 {
     /**
+     * Has constant.
+     * @param  string|object $class
+     * @param  string        $constant
+     * @return ?bool
+     */
+    public static function hasConstant($class, string $constant): ?bool
+    {
+        try {
+            return (new ReflectionClass($class))->hasConstant($constant);
+        } catch (ReflectionException $e) {
+            return null;
+        }
+    }
+
+    /**
+     * Has property.
+     * @param  string|object $class
+     * @param  string        $constant
+     * @return ?bool
+     */
+    public static function hasProperty($class, string $property): ?bool
+    {
+        try {
+            return (new ReflectionClass($class))->hasProperty($property);
+        } catch (ReflectionException $e) {
+            return null;
+        }
+    }
+
+    /**
      * Get reflection.
      * @param  string|object $class
      * @return ?ReflectionClass
