@@ -246,6 +246,36 @@ final class Objects extends StaticClass
     }
 
     /**
+     * Get constant values.
+     * @param  string|object $class
+     * @param  bool          $all
+     * @param  bool          $associative
+     * @return ?array
+     */
+    public static function getConstantValues($class, bool $all = true, bool $associative = false): ?array
+    {
+        $ref = self::getReflection($class);
+        if (!$ref) {
+            return null;
+        }
+
+        if ($all) {
+            // Seems doesn't matter constant visibility for getConstants().
+            $ret = !$associative ? array_values($ref->getConstants())
+                                 : $ref->getConstants();
+        } else {
+            foreach ($ref->getReflectionConstants() as $i => $constant) {
+                if ($constant->isPublic()) {
+                    !$associative ? $ret[$i] = $constant->getValue()
+                                  : $ret[$constant->name] = $constant->getValue();
+                }
+            }
+        }
+
+        return $ret ?? [];
+    }
+
+    /**
      * Get property.
      * @param  string|object $class
      * @param  string        $name
@@ -356,6 +386,41 @@ final class Objects extends StaticClass
 
         foreach ($ref->getProperties($filter) as $property) {
             $ret[] = $property->name;
+        }
+
+        return $ret ?? [];
+    }
+
+    /**
+     * Get property values.
+     * @param  string|object $class
+     * @param  bool          $all
+     * @param  bool          $associative
+     * @return ?array
+     */
+    public static function getPropertyValues($class, bool $all = true, bool $associative = false): ?array
+    {
+        $ref = self::getReflection($class);
+        if (!$ref) {
+            return null;
+        }
+
+        // Shorter: -1 is all, 1 public & public static only.
+        $filter = $all ? -1 : 1;
+
+        foreach ($ref->getProperties($filter) as $i => $property) {
+            $value = null;
+            if ($property->isPublic()) {
+                $value = $property->getValue($class);
+            } else {
+                try {
+                    $property->setAccessible(true);
+                    $value = $property->getValue($class);
+                } catch (Error $e) {}
+            }
+
+            !$associative ? $ret[$i] = $value
+                          : $ret[$property->name] = $value;
         }
 
         return $ret ?? [];
