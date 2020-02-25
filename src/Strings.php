@@ -91,7 +91,7 @@ final class Strings extends StaticClass
     /**
      * Contains any.
      * @param  string        $input
-     * @param  array<string> $search
+     * @param  array<string> $searches
      * @param  int           $offset
      * @param  bool          $caseSensitive
      * @return bool
@@ -110,7 +110,7 @@ final class Strings extends StaticClass
     /**
      * Contains all.
      * @param  string        $input
-     * @param  array<string> $search
+     * @param  array<string> $searches
      * @param  int           $offset
      * @param  bool          $caseSensitive
      * @return bool
@@ -128,18 +128,38 @@ final class Strings extends StaticClass
 
     /**
      * Starts with.
-     * @param  string               $input
-     * @param  string|array<string> $search
+     * @param  string $input
+     * @param  string $search
+     * @param  bool   $caseInsensitive
      * @return bool
      */
-    public static function startsWith(string $input, $search): bool
+    public static function startsWith(string $input, string $search, bool $caseInsensitive = false,
+        bool $multiByte = false): bool
     {
         if ($input !== '') {
-            $searches = (array) $search;
-            foreach ($searches as $search) {
-                if ($search === substr($input, 0, strlen($search))) {
-                    return true;
-                }
+            if ($caseInsensitive && $multiByte) {
+                // Double, cos for eg: Turkish characters issues (ı => I, İ => i).
+                $input  = mb_convert_case(mb_convert_case($input, MB_CASE_UPPER_SIMPLE), MB_CASE_LOWER_SIMPLE);
+                $search = mb_convert_case(mb_convert_case($search, MB_CASE_UPPER_SIMPLE), MB_CASE_LOWER_SIMPLE);
+            }
+            return substr_compare($input, $search, 0, strlen($search), $caseInsensitive) === 0;
+        }
+        return false;
+    }
+
+    /**
+     * Starts with any.
+     * @param  string        $input
+     * @param  array<string> $searches
+     * @param  bool          $caseInsensitive
+     * @return bool
+     */
+    public static function startsWithAny(string $input, array $searches, bool $caseInsensitive = false,
+        bool $multiByte = false): bool
+    {
+        foreach ($searches as $search) {
+            if (self::startsWith($input, $search, $caseInsensitive, $multiByte)) {
+                return true;
             }
         }
         return false;
@@ -147,18 +167,37 @@ final class Strings extends StaticClass
 
     /**
      * Ends with.
-     * @param  string               $input
-     * @param  string|array<string> $search
+     * @param  string $input
+     * @param  string $search
      * @return bool
      */
-    public static function endsWith(string $input, $search): bool
+    public static function endsWith(string $input, string $search, bool $caseInsensitive = false,
+        bool $multiByte = false): bool
     {
         if ($input !== '') {
-            $searches = (array) $search;
-            foreach ($searches as $search) {
-                if ($search === substr($input, -strlen($search))) {
-                    return true;
-                }
+            if ($caseInsensitive && $multiByte) {
+                // Double, cos for eg: Turkish characters issues (ı => I, İ => i).
+                $input  = mb_convert_case(mb_convert_case($input, MB_CASE_UPPER_SIMPLE), MB_CASE_LOWER_SIMPLE);
+                $search = mb_convert_case(mb_convert_case($search, MB_CASE_UPPER_SIMPLE), MB_CASE_LOWER_SIMPLE);
+            }
+            return substr_compare($input, $search, -strlen($search), null, $caseInsensitive) === 0;
+        }
+        return false;
+    }
+
+    /**
+     * Ends with any.
+     * @param  string        $input
+     * @param  array<string> $searches
+     * @param  bool          $caseInsensitive
+     * @return bool
+     */
+    public static function endsWithAny(string $input, array $searches, bool $caseInsensitive = false,
+        bool $multiByte = false): bool
+    {
+        foreach ($searches as $search) {
+            if (self::endsWith($input, $search, $caseInsensitive, $multiByte)) {
+                return true;
             }
         }
         return false;
