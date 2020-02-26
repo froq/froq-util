@@ -92,3 +92,48 @@ function string_ends_with(string $input, $search, bool $case_insensitive = false
     return is_array($search) ? Strings::endsWithAny($input, $search, $case_insensitive, $multi_byte)
                              : Strings::endsWith($input, $search, $case_insensitive, $multi_byte);
 }
+
+/**
+ * Is utf.
+ * @param  string $input
+ * @param  int     $bits
+ * @return bool
+ * @since  4.0
+ */
+function is_utf_string(string $input, int $bits = 8): bool
+{
+    return Strings::isUtf($input, $bits);
+}
+
+/**
+ * Is ascii.
+ * @param  string $input
+ * @return bool
+ * @since  4.0
+ */
+function is_ascii_string(string $input): bool
+{
+    return Strings::isAscii($input);
+}
+
+/**
+ * Is binary.
+ * @param  string $input
+ * @return bool
+ * @since  4.0
+ */
+function is_binary_string(string $input): bool
+{
+    return Strings::isBinary($input);
+}
+
+/**
+ * Is base64.
+ * @param  string $input
+ * @return bool
+ * @since  4.0
+ */
+function is_base64_string(string $input): bool
+{
+    return Strings::isBase64($input);
+}

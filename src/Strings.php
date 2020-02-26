@@ -232,7 +232,7 @@ final class Strings extends StaticClass
      */
     public static function isBinary(string $input): bool
     {
-        return ($input && $input = str_replace(["\t", "\n", "\r"], '', $input) && !ctype_print($input));
+        return ($input && ($input = str_replace(["\t", "\n", "\r"], '', $input)) && !ctype_print($input));
     }
 
     /**
@@ -243,6 +243,6 @@ final class Strings extends StaticClass
      */
     public static function isBase64(string $input): bool
     {
-        return ($input && base64_encode(''. base64_decode($input, true)) == $input);
+        return ($input && !strcmp($input, ''. base64_encode(''. base64_decode($input, true))));
     }
 }
