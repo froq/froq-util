@@ -78,14 +78,14 @@ final class Strings extends StaticClass
      * @param  string $input
      * @param  string $search
      * @param  int    $offset
-     * @param  bool   $caseSensitive
+     * @param  bool   $caseInsensitive
      * @return bool
      */
     public static function contains(string $input, string $search, int $offset = 0,
-        bool $caseSensitive = true): bool
+        bool $caseInsensitive = false): bool
     {
-        return (false !== ($caseSensitive ? strpos($input, $search, $offset)
-                                          : stripos($input, $search, $offset)));
+        return (false !== (!$caseInsensitive ? strpos($input, $search, $offset)
+                                             : stripos($input, $search, $offset)));
     }
 
     /**
@@ -93,14 +93,14 @@ final class Strings extends StaticClass
      * @param  string        $input
      * @param  array<string> $searches
      * @param  int           $offset
-     * @param  bool          $caseSensitive
+     * @param  bool          $caseInsensitive
      * @return bool
      */
     public static function containsAny(string $input, array $searches, int $offset = 0,
-        bool $caseSensitive = true): bool
+        bool $caseInsensitive = false): bool
     {
         foreach ($searches as $search) {
-            if (self::contains($input, $search, $offset, $caseSensitive)) {
+            if (self::contains($input, $search, $offset, $caseInsensitive)) {
                 return true;
             }
         }
@@ -112,14 +112,14 @@ final class Strings extends StaticClass
      * @param  string        $input
      * @param  array<string> $searches
      * @param  int           $offset
-     * @param  bool          $caseSensitive
+     * @param  bool          $caseInsensitive
      * @return bool
      */
     public static function containsAll(string $input, array $searches, int $offset = 0,
-        bool $caseSensitive = true): bool
+        bool $caseInsensitive = false): bool
     {
         foreach ($searches as $search) {
-            if (!self::contains($input, $search, $offset, $caseSensitive)) {
+            if (!self::contains($input, $search, $offset, $caseInsensitive)) {
                 return false;
             }
         }
@@ -153,6 +153,7 @@ final class Strings extends StaticClass
      * @param  array<string> $searches
      * @param  bool          $caseInsensitive
      * @return bool
+     * @since  4.0
      */
     public static function startsWithAny(string $input, array $searches, bool $caseInsensitive = false,
         bool $multiByte = false): bool
@@ -191,6 +192,7 @@ final class Strings extends StaticClass
      * @param  array<string> $searches
      * @param  bool          $caseInsensitive
      * @return bool
+     * @since  4.0
      */
     public static function endsWithAny(string $input, array $searches, bool $caseInsensitive = false,
         bool $multiByte = false): bool

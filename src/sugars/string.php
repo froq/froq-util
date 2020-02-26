@@ -31,14 +31,14 @@ use froq\util\Strings;
  * @param  string $input
  * @param  string $search
  * @param  int    $offset
- * @param  bool   $case_sensitive
+ * @param  bool   $case_insensitive
  * @return bool
  * @since  3.0
  */
 function string_contains(string $input, string $search, int $offset = 0,
-    bool $case_sensitive = true): bool
+    bool $case_insensitive = false): bool
 {
-    return Strings::contains($input, $search, $offset, $case_sensitive);
+    return Strings::contains($input, $search, $offset, $case_insensitive);
 }
 
 /**
@@ -46,14 +46,14 @@ function string_contains(string $input, string $search, int $offset = 0,
  * @param  string $input
  * @param  array  $search
  * @param  int    $offset
- * @param  bool   $case_sensitive
+ * @param  bool   $case_insensitive
  * @return bool
  * @since  3.0
  */
 function string_contains_any(string $input, array $searches, int $offset = 0,
-    bool $case_sensitive = true): bool
+    bool $case_insensitive = false): bool
 {
-    return Strings::containsAny($input, $searches, $offset, $case_sensitive);
+    return Strings::containsAny($input, $searches, $offset, $case_insensitive);
 }
 
 /**
@@ -61,14 +61,14 @@ function string_contains_any(string $input, array $searches, int $offset = 0,
  * @param  string $input
  * @param  array  $search
  * @param  int    $offset
- * @param  bool   $case_sensitive
+ * @param  bool   $case_insensitive
  * @return bool
  * @since  3.0
  */
 function string_contains_all(string $input, array $searches, int $offset = 0,
-    bool $case_sensitive = true): bool
+    bool $case_insensitive = false): bool
 {
-    return Strings::containsAll($input, $searches, $offset, $case_sensitive);
+    return Strings::containsAll($input, $searches, $offset, $case_insensitive);
 }
 
 /**
