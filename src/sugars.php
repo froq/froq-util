@@ -59,8 +59,16 @@ function strisrc(string $str, string $src, int $offset = 0): bool
  * @return ?bool
  * @since  4.0
  */
-function constant_exists($class, string $name): ?bool
+function constant_exists($class, string $name, bool $scope_check = true): ?bool
 {
+    if ($scope_check) {
+        $callerClass =@ debug_backtrace(2, 2)[1]['class'];
+        if ($callerClass) {
+            return ($callerClass == (is_object($class) ? get_class($class) : $class))
+                && Objects::hasConstant($class, $name);
+        }
+        return defined((is_object($class) ? get_class($class) : $class) .'::'. $name);
+    }
     return Objects::hasConstant($class, $name);
 }
 
@@ -68,17 +76,17 @@ function constant_exists($class, string $name): ?bool
  * Get class constants.
  * @param  string|object $class
  * @param  bool          $with_names
- * @param  bool          $with_scope_check
+ * @param  bool          $scope_check
  * @return ?array
  * @since  4.0
  */
-function get_class_constants($class, bool $with_names = true, bool $with_scope_check = true): ?array
+function get_class_constants($class, bool $with_names = true, bool $scope_check = true): ?array
 {
     $all = false;
-    if ($with_scope_check) {
+    if ($scope_check) {
         $callerClass =@ debug_backtrace(2, 2)[1]['class'];
         if ($callerClass) {
-            $all = ($callerClass === (is_object($class) ? get_class($class) : $class));
+            $all = ($callerClass == (is_object($class) ? get_class($class) : $class));
         }
     }
     return Objects::getConstantValues($class, $all, $with_names);
@@ -88,17 +96,17 @@ function get_class_constants($class, bool $with_names = true, bool $with_scope_c
  * Get class properties.
  * @param  string|object $class
  * @param  bool          $with_names
- * @param  bool          $with_scope_check
+ * @param  bool          $scope_check
  * @return ?array
  * @since  4.0
  */
-function get_class_properties($class, bool $with_names = true, bool $with_scope_check = true): ?array
+function get_class_properties($class, bool $with_names = true, bool $scope_check = true): ?array
 {
     $all = false;
-    if ($with_scope_check) {
+    if ($scope_check) {
         $callerClass =@ debug_backtrace(2, 2)[1]['class'];
         if ($callerClass) {
-            $all = ($callerClass === (is_object($class) ? get_class($class) : $class));
+            $all = ($callerClass == (is_object($class) ? get_class($class) : $class));
         }
     }
     return Objects::getPropertyValues($class, $all, $with_names);
