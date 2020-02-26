@@ -447,14 +447,29 @@ final class Objects extends StaticClass
             return null;
         }
 
+        // Collect & merge with values (ReflectionProperty gives null for non-initialized classes).
+        $properties = array_merge(
+            array_reduce($ref->getProperties(),
+                fn($ps, $p) => array_merge($ps, [$p->name => null])
+            , [])
+        , $ref->getDefaultProperties());
+
         // Used "getDefaultProperties" and "ReflectionProperty", since can not get default value
         // for string $class arguments, and also for all other stuffs like: "Typed property $foo
         // must not be accessed before initialization"..
-        foreach ($ref->getDefaultProperties() as $name => $value) {
+        foreach ($properties as $name => $value) {
             $property = new ReflectionProperty($class, $name);
             if (!$all && !$property->isPublic()) {
                 continue;
             }
+
+            if (is_null($value) && is_object($class)) {
+                try {
+                    $property->setAccessible(true);
+                    $value = $property->getValue($class);
+                } catch (Error $e) {}
+            }
+
             !$withNames ? $ret[] = $value : $ret[$name] = $value;
         }
 
