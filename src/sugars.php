@@ -42,15 +42,41 @@ function strisrc(string $str, string $src, int $offset = 0): bool
     return stripos($str, $src, $offset) !== false;
 }
 
-// @TODO use blue colors for these functions.
-//
-// RFC: https://wiki.php.net/rfc/str_contains
-// str_contains
+/**
+ * Str contains (RFC: http://wiki.php.net/rfc/str_contains).
+ * @param  string $str
+ * @param  string $src
+ * @return bool
+ */
+function str_contains(string $str, string $src, bool $case_insensitive = false): bool
+{
+    return !$case_insensitive ? strpos($str, $src) !== false
+                              : stripos($str, $src) !== false;
+}
 
-// RFC: https://wiki.php.net/rfc/add_str_begin_and_end_functions
-// str_starts_with, stri_starts_with, str_ends_with, stri_ends_with
-// str_startswith, stri_startswith, str_endswith, stri_endswith
-// strsw, strisw, strew, striew
+/**
+ * Str starts with (RFC: http://wiki.php.net/rfc/add_str_begin_and_end_functions).
+ * @param  string $str
+ * @param  string $src
+ * @param  bool   $case_insensitive
+ * @return bool
+ */
+function str_starts_with(string $str, string $src, bool $case_insensitive = false): bool
+{
+    return substr_compare($input, $search, 0, strlen($search), $case_insensitive) === 0;
+}
+
+/**
+ * Str ends with (RFC: http://wiki.php.net/rfc/add_str_begin_and_end_functions).
+ * @param  string $str
+ * @param  string $src
+ * @param  bool   $case_insensitive
+ * @return bool
+ */
+function str_ends_with(string $str, string $src, bool $case_insensitive = false): bool
+{
+    return substr_compare($input, $search, -strlen($search), null, $case_insensitive) === 0;
+}
 
 /**
  * Constant exists.
