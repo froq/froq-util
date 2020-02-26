@@ -43,13 +43,13 @@ final class Objects extends StaticClass
     /**
      * Has constant.
      * @param  string|object $class
-     * @param  string        $constant
+     * @param  string        $name
      * @return ?bool
      */
-    public static function hasConstant($class, string $constant): ?bool
+    public static function hasConstant($class, string $name): ?bool
     {
         try {
-            return (new ReflectionClass($class))->hasConstant($constant);
+            return (new ReflectionClass($class))->hasConstant($name);
         } catch (ReflectionException $e) {
             return null;
         }
@@ -58,13 +58,13 @@ final class Objects extends StaticClass
     /**
      * Has property.
      * @param  string|object $class
-     * @param  string        $constant
+     * @param  string        $name
      * @return ?bool
      */
-    public static function hasProperty($class, string $property): ?bool
+    public static function hasProperty($class, string $name): ?bool
     {
         try {
-            return (new ReflectionClass($class))->hasProperty($property);
+            return (new ReflectionClass($class))->hasProperty($name);
         } catch (ReflectionException $e) {
             return null;
         }
@@ -279,10 +279,10 @@ final class Objects extends StaticClass
      * Get constant values.
      * @param  string|object $class
      * @param  bool          $all
-     * @param  bool          $associative
+     * @param  bool          $withNames
      * @return ?array
      */
-    public static function getConstantValues($class, bool $all = true, bool $associative = false): ?array
+    public static function getConstantValues($class, bool $all = true, bool $withNames = false): ?array
     {
         $ref = self::getReflection($class);
         if (!$ref) {
@@ -291,13 +291,13 @@ final class Objects extends StaticClass
 
         if ($all) {
             // Seems doesn't matter constant visibility for getConstants().
-            $ret = !$associative ? array_values($ref->getConstants())
-                                 : $ref->getConstants();
+            $ret = !$withNames ? array_values($ref->getConstants())
+                               : $ref->getConstants();
         } else {
             foreach ($ref->getReflectionConstants() as $i => $constant) {
                 if ($constant->isPublic()) {
-                    !$associative ? $ret[$i] = $constant->getValue()
-                                  : $ret[$constant->name] = $constant->getValue();
+                    !$withNames ? $ret[$i] = $constant->getValue()
+                                : $ret[$constant->name] = $constant->getValue();
                 }
             }
         }
@@ -425,10 +425,10 @@ final class Objects extends StaticClass
      * Get property values.
      * @param  string|object $class
      * @param  bool          $all
-     * @param  bool          $associative
+     * @param  bool          $withNames
      * @return ?array
      */
-    public static function getPropertyValues($class, bool $all = true, bool $associative = false): ?array
+    public static function getPropertyValues($class, bool $all = true, bool $withNames = false): ?array
     {
         $ref = self::getReflection($class);
         if (!$ref) {
@@ -449,8 +449,8 @@ final class Objects extends StaticClass
                 } catch (Error $e) {}
             }
 
-            !$associative ? $ret[$i] = $value
-                          : $ret[$property->name] = $value;
+            !$withNames ? $ret[$i] = $value
+                        : $ret[$property->name] = $value;
         }
 
         return $ret ?? [];
