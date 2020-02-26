@@ -47,6 +47,7 @@ function strisrc(string $str, string $src, int $offset = 0): bool
  * @param  string $str
  * @param  string $src
  * @return bool
+ * @since 4.0
  */
 function str_contains(string $str, string $src, bool $case_insensitive = false): bool
 {
@@ -60,6 +61,7 @@ function str_contains(string $str, string $src, bool $case_insensitive = false):
  * @param  string $src
  * @param  bool   $case_insensitive
  * @return bool
+ * @since 4.0
  */
 function str_starts_with(string $str, string $src, bool $case_insensitive = false): bool
 {
@@ -72,6 +74,7 @@ function str_starts_with(string $str, string $src, bool $case_insensitive = fals
  * @param  string $src
  * @param  bool   $case_insensitive
  * @return bool
+ * @since 4.0
  */
 function str_ends_with(string $str, string $src, bool $case_insensitive = false): bool
 {
