@@ -254,7 +254,7 @@ final class Arrays extends StaticClass
      */
     public static function removeAll(array &$array, array $keys): array
     {
-        self::pullAll($array, $key);
+        self::pullAll($array, $keys);
 
         return $array;
     }
