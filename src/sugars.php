@@ -68,22 +68,38 @@ function constant_exists($class, string $name): ?bool
  * Get class constants.
  * @param  string|object $class
  * @param  bool          $with_names
+ * @param  bool          $with_scope_check
  * @return ?array
  * @since  4.0
  */
-function get_class_constants($class, bool $with_names = true): ?array
+function get_class_constants($class, bool $with_names = true, bool $with_scope_check = true): ?array
 {
-    return Objects::getConstantValues($class, true, $with_names);
+    $all = false;
+    if ($with_scope_check) {
+        $callerClass =@ debug_backtrace(2, 2)[1]['class'];
+        if ($callerClass) {
+            $all = ($callerClass === (is_object($class) ? get_class($class) : $class));
+        }
+    }
+    return Objects::getConstantValues($class, $all, $with_names);
 }
 
 /**
  * Get class properties.
  * @param  string|object $class
  * @param  bool          $with_names
+ * @param  bool          $with_scope_check
  * @return ?array
  * @since  4.0
  */
-function get_class_properties($class, bool $with_names = true): ?array
+function get_class_properties($class, bool $with_names = true, bool $with_scope_check = true): ?array
 {
-    return Objects::getPropertyValues($class, true, $with_names);
+    $all = false;
+    if ($with_scope_check) {
+        $callerClass =@ debug_backtrace(2, 2)[1]['class'];
+        if ($callerClass) {
+            $all = ($callerClass === (is_object($class) ? get_class($class) : $class));
+        }
+    }
+    return Objects::getPropertyValues($class, $all, $with_names);
 }
