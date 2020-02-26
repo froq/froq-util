@@ -90,10 +90,10 @@ function constant_exists($class, string $name, bool $scope_check = true): ?bool
     if ($scope_check) {
         $callerClass =@ debug_backtrace(2, 2)[1]['class'];
         if ($callerClass) {
-            return ($callerClass == (is_object($class) ? get_class($class) : $class))
+            return ($callerClass == Objects::getName($class))
                 && Objects::hasConstant($class, $name);
         }
-        return defined((is_object($class) ? get_class($class) : $class) .'::'. $name);
+        return defined(Objects::getName($class) .'::'. $name);
     }
     return Objects::hasConstant($class, $name);
 }
@@ -112,7 +112,7 @@ function get_class_constants($class, bool $with_names = true, bool $scope_check 
     if ($scope_check) {
         $callerClass =@ debug_backtrace(2, 2)[1]['class'];
         if ($callerClass) {
-            $all = ($callerClass == (is_object($class) ? get_class($class) : $class));
+            $all = ($callerClass == Objects::getName($class));
         }
     }
     return Objects::getConstantValues($class, $all, $with_names);
@@ -132,7 +132,7 @@ function get_class_properties($class, bool $with_names = true, bool $scope_check
     if ($scope_check) {
         $callerClass =@ debug_backtrace(2, 2)[1]['class'];
         if ($callerClass) {
-            $all = ($callerClass == (is_object($class) ? get_class($class) : $class));
+            $all = ($callerClass == Objects::getName($class));
         }
     }
     return Objects::getPropertyValues($class, $all, $with_names);
