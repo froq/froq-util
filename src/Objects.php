@@ -28,7 +28,7 @@ namespace froq\util;
 
 use froq\common\objects\StaticClass;
 use froq\common\exceptions\InvalidArgumentException;
-use Error, Reflection, ReflectionClass, ReflectionException;
+use Error, Reflection, ReflectionException, ReflectionClass, ReflectionProperty;
 
 /**
  * Objects.
@@ -193,10 +193,10 @@ final class Objects extends StaticClass
      * Get constants registry.
      * @param  string|object $class
      * @param  bool          $all
-     * @param  string        $name @internal
+     * @param  string        $_name @internal
      * @return ?array
      */
-    public static function getConstants($class, bool $all = true, string $name = null): ?array
+    public static function getConstants($class, bool $all = true, string $_name = null): ?array
     {
         $ref = self::getReflection($class);
         if (!$ref) {
@@ -204,7 +204,7 @@ final class Objects extends StaticClass
         }
 
         foreach ($ref->getReflectionConstants() as $constant) {
-            if ($name && $name !== $constant->name) {
+            if ($_name && $_name != $constant->name) {
                 continue;
             }
             if (!$all && !$constant->isPublic()) {
@@ -331,21 +331,30 @@ final class Objects extends StaticClass
      * Get properties registry.
      * @param  string|object $class
      * @param  bool          $all
-     * @param  string        $name @internal
+     * @param  string        $_name @internal
      * @return array
      */
-    public static function getProperties($class, bool $all = true, string $name = null): array
+    public static function getProperties($class, bool $all = true, string $_name = null): array
     {
         $ref = self::getReflection($class);
         if (!$ref) {
             return null;
         }
 
-        // Shorter: -1 is all, 1 public & public static only.
-        $filter = $all ? -1 : 1;
+        // Collect & merge with values (ReflectionProperty gives null for non-initialized classes).
+        $properties = array_replace(
+            array_reduce($ref->getProperties(),
+                fn($ps, $p) => array_merge($ps, [$p->name => null])
+            , [])
+        , $ref->getDefaultProperties());
 
-        foreach ($ref->getProperties($filter) as $property) {
-            if ($name && $name != $property->name) {
+        foreach ($properties as $name => $value) {
+            if ($_name && $_name != $name) {
+                continue;
+            }
+
+            $property = new ReflectionProperty($class, $name);
+            if (!$all && !$property->isPublic()) {
                 continue;
             }
 
@@ -356,7 +365,7 @@ final class Objects extends StaticClass
             $modifiers = ($mods = $property->getModifiers())
                 ? join(' ', Reflection::getModifierNames($mods)) : null;
 
-            $type = $nullable = $trait = $value = null;
+            $type = $nullable = $trait = null;
 
             if ($propertyType = $property->getType()) {
                 $type = $propertyType->getName();
@@ -385,12 +394,15 @@ final class Objects extends StaticClass
                 $initialized = $property->isInitialized($class);
             }
 
+            $nullable    = $nullable ?? ($value === null);
+            $initialized = $initialized ?? ($value !== null);
+
             // Using name as key, since all names will be overridden internally in children.
             $ret[$property->name] = [
-                'value'       => $value,                         'type'        => $type,
-                'nullable'    => $nullable ?? ($value === null), 'visibility'  => $visibility,
-                'static'      => $property->isStatic(),          'initialized' => $initialized ?? false,
-                'class'       => $property->class,               'trait'       => $trait,
+                'value'       => $value,                'type'        => $type,
+                'nullable'    => $nullable ,            'visibility'  => $visibility,
+                'static'      => $property->isStatic(), 'initialized' => $initialized,
+                'class'       => $property->class,      'trait'       => $trait,
                 'modifiers'   => $modifiers
             ];
         }
@@ -435,22 +447,15 @@ final class Objects extends StaticClass
             return null;
         }
 
-        // Shorter: -1 is all, 1 public & public static only.
-        $filter = $all ? -1 : 1;
-
-        foreach ($ref->getProperties($filter) as $i => $property) {
-            $value = null;
-            if ($property->isPublic()) {
-                $value = $property->getValue($class);
-            } else {
-                try {
-                    $property->setAccessible(true);
-                    $value = $property->getValue($class);
-                } catch (Error $e) {}
+        // Used "getDefaultProperties" and "ReflectionProperty", since can not get default value
+        // for string $class arguments, and also for all other stuffs like: "Typed property $foo
+        // must not be accessed before initialization"..
+        foreach ($ref->getDefaultProperties() as $name => $value) {
+            $property = new ReflectionProperty($class, $name);
+            if (!$all && !$property->isPublic()) {
+                continue;
             }
-
-            !$withNames ? $ret[$i] = $value
-                        : $ret[$property->name] = $value;
+            !$withNames ? $ret[] = $value : $ret[$name] = $value;
         }
 
         return $ret ?? [];
@@ -471,10 +476,10 @@ final class Objects extends StaticClass
      * Get methods.
      * @param  string|object $class
      * @param  bool          $all
-     * @param  string        $name @internal
+     * @param  string        $_name @internal
      * @return ?array
      */
-    public static function getMethods($class, bool $all = true, string $name = null): ?array
+    public static function getMethods($class, bool $all = true, string $_name = null): ?array
     {
         $ref = self::getReflection($class);
         if (!$ref) {
@@ -485,7 +490,7 @@ final class Objects extends StaticClass
         $filter = $all ? -1 : 1;
 
         foreach ($ref->getMethods($filter) as $method) {
-            if ($name && $name != $method->name) {
+            if ($_name && $_name != $method->name) {
                 continue;
             }
 
