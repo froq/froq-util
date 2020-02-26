@@ -24,7 +24,7 @@
  */
 declare(strict_types=1);
 
-use froq\util\Objects;
+use froq\util\{Strings, Objects};
 
 /**
  * Strsrc & strisrc (the ever most most most wanted functions..).
@@ -41,6 +41,16 @@ function strisrc(string $str, string $src, int $offset = 0): bool
 {
     return stripos($str, $src, $offset) !== false;
 }
+
+// @TODO use blue colors for these functions.
+//
+// RFC: https://wiki.php.net/rfc/str_contains
+// str_contains
+
+// RFC: https://wiki.php.net/rfc/add_str_begin_and_end_functions
+// str_starts_with, stri_starts_with, str_ends_with, stri_ends_with
+// str_startswith, stri_startswith, str_endswith, stri_endswith
+// strsw, strisw, strew, striew
 
 /**
  * Constant exists.

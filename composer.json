@@ -12,6 +12,7 @@
         "froq/froq-common": "^4.0"
     },
     "autoload": {
-        "classmap": ["src/"]
+        "classmap": ["src/"],
+           "files": ["src/sugars.php"]
     }
 }
