@@ -78,9 +78,11 @@ function string_contains_all(string $input, array $searches, int $offset = 0,
  * @return bool
  * @since  3.0
  */
-function string_starts_with(string $input, $search): bool
+function string_starts_with(string $input, $search, bool $case_insensitive = false,
+    bool $multi_byte = false): bool
 {
-    return Strings::startsWith($input, $search);
+    return is_array($search) ? Strings::startsWithAny($input, $search, $case_insensitive, $multi_byte)
+                             : Strings::startsWith($input, $search, $case_insensitive, $multi_byte);
 }
 
 /**
@@ -90,7 +92,9 @@ function string_starts_with(string $input, $search): bool
  * @return bool
  * @since  3.0
  */
-function string_ends_with(string $input, $search): bool
+function string_ends_with(string $input, string $search, bool $case_insensitive = false,
+    bool $multi_byte = false): bool
 {
-    return Strings::endsWith($input, $search);
+    return is_array($search) ? Strings::endsWithAny($input, $search, $case_insensitive, $multi_byte)
+                             : Strings::endsWith($input, $search, $case_insensitive, $multi_byte);
 }
