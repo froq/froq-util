@@ -30,45 +30,39 @@ use froq\util\Strings;
  * String contains.
  * @param  string $input
  * @param  string $search
- * @param  int    $offset
  * @param  bool   $case_insensitive
  * @return bool
  * @since  3.0
  */
-function string_contains(string $input, string $search, int $offset = 0,
-    bool $case_insensitive = false): bool
+function string_contains(string $input, string $search, bool $case_insensitive = false): bool
 {
-    return Strings::contains($input, $search, $offset, $case_insensitive);
+    return Strings::contains($input, $search, $case_insensitive);
 }
 
 /**
  * String contains any.
  * @param  string $input
  * @param  array  $search
- * @param  int    $offset
  * @param  bool   $case_insensitive
  * @return bool
  * @since  3.0
  */
-function string_contains_any(string $input, array $searches, int $offset = 0,
-    bool $case_insensitive = false): bool
+function string_contains_any(string $input, array $searches, bool $case_insensitive = false): bool
 {
-    return Strings::containsAny($input, $searches, $offset, $case_insensitive);
+    return Strings::containsAny($input, $searches, $case_insensitive);
 }
 
 /**
  * String contains all.
  * @param  string $input
  * @param  array  $search
- * @param  int    $offset
  * @param  bool   $case_insensitive
  * @return bool
  * @since  3.0
  */
-function string_contains_all(string $input, array $searches, int $offset = 0,
-    bool $case_insensitive = false): bool
+function string_contains_all(string $input, array $searches, bool $case_insensitive = false): bool
 {
-    return Strings::containsAll($input, $searches, $offset, $case_insensitive);
+    return Strings::containsAll($input, $searches, $case_insensitive);
 }
 
 /**
@@ -92,7 +86,7 @@ function string_starts_with(string $input, $search, bool $case_insensitive = fal
  * @return bool
  * @since  3.0
  */
-function string_ends_with(string $input, string $search, bool $case_insensitive = false,
+function string_ends_with(string $input, $search, bool $case_insensitive = false,
     bool $multi_byte = false): bool
 {
     return is_array($search) ? Strings::endsWithAny($input, $search, $case_insensitive, $multi_byte)

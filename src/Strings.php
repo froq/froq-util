@@ -77,30 +77,26 @@ final class Strings extends StaticClass
      * Contains.
      * @param  string $input
      * @param  string $search
-     * @param  int    $offset
      * @param  bool   $caseInsensitive
      * @return bool
      */
-    public static function contains(string $input, string $search, int $offset = 0,
-        bool $caseInsensitive = false): bool
+    public static function contains(string $input, string $search, bool $caseInsensitive = false): bool
     {
-        return (false !== (!$caseInsensitive ? strpos($input, $search, $offset)
-                                             : stripos($input, $search, $offset)));
+        return (false !== (!$caseInsensitive ? strpos($input, $search)
+                                             : stripos($input, $search)));
     }
 
     /**
      * Contains any.
      * @param  string        $input
      * @param  array<string> $searches
-     * @param  int           $offset
      * @param  bool          $caseInsensitive
      * @return bool
      */
-    public static function containsAny(string $input, array $searches, int $offset = 0,
-        bool $caseInsensitive = false): bool
+    public static function containsAny(string $input, array $searches, bool $caseInsensitive = false): bool
     {
         foreach ($searches as $search) {
-            if (self::contains($input, $search, $offset, $caseInsensitive)) {
+            if (self::contains($input, $search, $caseInsensitive)) {
                 return true;
             }
         }
@@ -111,15 +107,13 @@ final class Strings extends StaticClass
      * Contains all.
      * @param  string        $input
      * @param  array<string> $searches
-     * @param  int           $offset
      * @param  bool          $caseInsensitive
      * @return bool
      */
-    public static function containsAll(string $input, array $searches, int $offset = 0,
-        bool $caseInsensitive = false): bool
+    public static function containsAll(string $input, array $searches, bool $caseInsensitive = false): bool
     {
         foreach ($searches as $search) {
-            if (!self::contains($input, $search, $offset, $caseInsensitive)) {
+            if (!self::contains($input, $search, $caseInsensitive)) {
                 return false;
             }
         }
