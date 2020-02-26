@@ -232,7 +232,7 @@ final class Strings extends StaticClass
      */
     public static function isBinary(string $input): bool
     {
-        return ($input && !ctype_print($input));
+        return ($input && $input = str_replace(["\t", "\n", "\r"], '', $input) && !ctype_print($input));
     }
 
     /**
