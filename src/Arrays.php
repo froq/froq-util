@@ -447,7 +447,7 @@ final class Arrays extends StaticClass
         $default = array_fill_keys($keys, $default);
 
         foreach ($array as $key => $value) {
-            $defaul[$key] = $value;
+            $default[$key] = $value;
         }
 
         return $useKeys ? $default : array_values($default);
