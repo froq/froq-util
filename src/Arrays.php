@@ -260,34 +260,6 @@ final class Arrays extends StaticClass
     }
 
     /**
-     * Sweep.
-     * @param  array      &$array
-     * @param  array|null  $ignoredKeys
-     * @return array
-     */
-    public static function sweep(array &$array, array $ignoredKeys = null): array
-    {
-        // Memoize tester.
-        static $tester; if (!$tester) {
-               $tester = function ($value) {
-                    return ($value !== '' && $value !== null && $value !== []);
-               };
-        }
-
-        if ($ignoredKeys == null) {
-            $array = array_filter($array, $tester);
-        } else {
-            foreach ($array as $key => $value) {
-                if (!in_array($key, $ignoredKeys, true) && !$tester($value)) {
-                    unset($array[$key]);
-                }
-            }
-        }
-
-        return $array;
-    }
-
-    /**
      * Test (like JavaScript Array.some()).
      * @param  array    $array
      * @param  callable $func
@@ -395,24 +367,6 @@ final class Arrays extends StaticClass
     }
 
     /**
-     * Flatten.
-     * @param  array $array
-     * @return array
-     * @since  4.0
-     */
-    public static function flatten(array $array): array
-    {
-        $ret = [];
-
-        // Seems short functions (=>) not work here.
-        array_walk_recursive($array, function ($value) use (&$ret) {
-            $ret[] = $value;
-        });
-
-        return $ret;
-    }
-
-    /**
      * Include.
      * @param  array $array
      * @param  array $keys
@@ -432,6 +386,51 @@ final class Arrays extends StaticClass
     public static function exclude(array $array, array $keys): array
     {
         return array_filter($array, fn($key) => !in_array($key, $keys, true), 2);
+    }
+
+    /**
+     * Flatten.
+     * @param  array $array
+     * @return array
+     * @since  4.0
+     */
+    public static function flatten(array $array): array
+    {
+        $ret = [];
+
+        // Seems short functions (=>) not work here [ref (&) issue].
+        array_walk_recursive($array, function ($value) use (&$ret) {
+            $ret[] = $value;
+        });
+
+        return $ret;
+    }
+
+    /**
+     * Sweep.
+     * @param  array      &$array
+     * @param  array|null  $ignoredKeys
+     * @return array
+     * @since  4.0
+     */
+    public static function sweep(array &$array, array $ignoredKeys = null): array
+    {
+        // Memoize test function.
+        static $test; $test or $test = (
+            fn($v) => ($v !== '' && $v !== null && $v !== [])
+        );
+
+        if ($ignoredKeys == null) {
+            $array = array_filter($array, $test);
+        } else {
+            foreach ($array as $key => $value) {
+                if (!in_array($key, $ignoredKeys, true) && !$test($value)) {
+                    unset($array[$key]);
+                }
+            }
+        }
+
+        return $array;
     }
 
     /**
