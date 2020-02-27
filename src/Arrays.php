@@ -435,6 +435,26 @@ final class Arrays extends StaticClass
     }
 
     /**
+     * Default.
+     * @param  array    $array
+     * @param  array    $keys
+     * @param  bool     $useKeys
+     * @param  any|null $default
+     * @return array
+     * @since  4.0
+     */
+    public static function default(array $array, array $keys, bool $useKeys = true, $default = null): array
+    {
+        $default = array_fill_keys($keys, $default);
+
+        foreach ($array as $key => $value) {
+            $defaul[$key] = $value;
+        }
+
+        return $useKeys ? $default : array_values($default);
+    }
+
+    /**
      * First.
      * @param  array    &$array
      * @param  any|null  $valueDefault
