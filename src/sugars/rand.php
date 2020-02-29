@@ -127,18 +127,6 @@ function rand_oid(bool $count = true): string
 }
 
 /**
- * Rand guid.
- * @return string
- * @since  4.0
- */
-function rand_guid(): string
-{
-    $ret = random_bytes(16);
-
-    return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($ret), 4));
-}
-
-/**
  * Rand uuid.
  * @return string
  * @since  4.0
@@ -150,6 +138,18 @@ function rand_uuid(): string
     // Make UUID/v4.
     $ret[6] = chr(ord($ret[6]) & 0x0f | 0x40);
     $ret[8] = chr(ord($ret[8]) & 0x3f | 0x80);
+
+    return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($ret), 4));
+}
+
+/**
+ * Rand guid.
+ * @return string
+ * @since  4.0
+ */
+function rand_guid(): string
+{
+    $ret = random_bytes(16);
 
     return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($ret), 4));
 }
