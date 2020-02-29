@@ -191,3 +191,70 @@ function get_class_properties($class, bool $with_names = true, bool $scope_check
     }
     return Objects::getPropertyValues($class, $all, $with_names);
 }
+
+/**
+ * Mkfile.
+ * @param  string   $file
+ * @param  int|null $mode
+ * @param  bool     $tmp
+ * @return bool
+ * @since  4.0
+ */
+function mkfile(string $file, int $mode = null, bool $tmp = false): bool
+{
+    $file = !$tmp ? $file : (
+        sys_get_temp_dir() .'/'. ltrim($file, '/')
+    );
+
+    if (!is_file($file)) {
+        $dir = dirname($file);
+        if (!is_dir($dir)) {
+            $ret = mkdir($dir, ($mode ?? 0777), true);
+            return !$mode ? $ret && touch($file)
+                          : $ret && touch($file) && chmod($file, $mode);
+        } else {
+            return !$mode ? touch($file)
+                          : touch($file) && chmod($file, $mode);
+        }
+    }
+    return true;
+}
+
+/**
+ * Rmfile.
+ * @param  string $file
+ * @param  bool   $tmp
+ * @return bool
+ * @since  4.0
+ */
+function rmfile(string $file, bool $tmp = false): bool
+{
+    $file = !$tmp ? $file : (
+        sys_get_temp_dir() .'/'. ltrim($file, '/')
+    );
+
+    return is_file($file) && unlink($file);
+}
+
+/**
+ * Mktmpfile.
+ * @param  string   $file
+ * @param  int|null $mode
+ * @return bool
+ * @since  4.0
+ */
+function mktmpfile(string $file, int $mode = null): bool
+{
+    return mkfile($file, $mode, true);
+}
+
+/**
+ * Rmtmpfile.
+ * @param  string $file
+ * @return bool
+ * @since  4.0
+ */
+function rmtmpfile(string $file): bool
+{
+    return rmfile($file, true);
+}
