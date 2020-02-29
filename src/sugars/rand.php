@@ -88,6 +88,23 @@ function rand_id(): string
 }
 
 /**
+ * Rand uid.
+ * @param  bool $simple
+ * @return string A 14|20-length hex.
+ * @since  4.0
+ */
+function rand_uid(bool $simple = true): string
+{
+    $ret = uniqid('', true);
+
+    if ($simple) {
+        return strstr($ret, '.', true);
+    }
+
+    return substr(vsprintf('%14s%\'06x', explode('.', $ret)), 0, 20);
+}
+
+/**
  * Rand oid.
  * @param  bool $count
  * @return string A 24-length hex like Mongo.ObjectId.
