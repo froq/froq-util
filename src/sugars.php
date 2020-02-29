@@ -68,7 +68,7 @@ function stracut(string $str, string $src, int $length = null, bool $case_insens
 {
     $pos = !$case_insensitive ? strpos($str, $src) : stripos($str, $src);
     if ($pos !== false) {
-        $cut = substr($str, $pos + 1); // A-fter.
+        $cut = substr($str, $pos + 1); // After (a).
         return !$length ? $cut : strcut($cut, $length);
     }
     return null; // Not found.
@@ -87,7 +87,7 @@ function strbcut(string $str, string $src, int $length = null, bool $case_insens
 {
     $pos = !$case_insensitive ? strpos($str, $src) : stripos($str, $src);
     if ($pos !== false) {
-        $cut = substr($str, 0, $pos); // B-efore.
+        $cut = substr($str, 0, $pos); // Before (b).
         return !$length ? $cut : strcut($cut, $length);
     }
     return null; // Not found.
@@ -136,6 +136,7 @@ function str_ends_with(string $str, string $src, bool $case_insensitive = false)
  * Constant exists.
  * @param  object|string $class
  * @param  string        $name
+ * @param  bool          $scope_check
  * @return ?bool
  * @since  4.0
  */
@@ -162,14 +163,13 @@ function constant_exists($class, string $name, bool $scope_check = true): ?bool
  */
 function get_class_constants($class, bool $with_names = true, bool $scope_check = true): ?array
 {
-    $all = false;
     if ($scope_check) {
         $callerClass =@ debug_backtrace(2, 2)[1]['class'];
         if ($callerClass) {
             $all = ($callerClass == Objects::getName($class));
         }
     }
-    return Objects::getConstantValues($class, $all, $with_names);
+    return Objects::getConstantValues($class, $all ?? false, $with_names);
 }
 
 /**
@@ -182,14 +182,13 @@ function get_class_constants($class, bool $with_names = true, bool $scope_check 
  */
 function get_class_properties($class, bool $with_names = true, bool $scope_check = true): ?array
 {
-    $all = false;
     if ($scope_check) {
         $callerClass =@ debug_backtrace(2, 2)[1]['class'];
         if ($callerClass) {
             $all = ($callerClass == Objects::getName($class));
         }
     }
-    return Objects::getPropertyValues($class, $all, $with_names);
+    return Objects::getPropertyValues($class, $all ?? false, $with_names);
 }
 
 /**
@@ -202,22 +201,16 @@ function get_class_properties($class, bool $with_names = true, bool $scope_check
  */
 function mkfile(string $file, int $mode = null, bool $tmp = false): bool
 {
-    $file = !$tmp ? $file : (
-        sys_get_temp_dir() .'/'. ltrim($file, '/')
-    );
+    $file = !$tmp ? $file : sys_get_temp_dir() .'/'. ltrim($file, '/');
 
-    if (!is_file($file)) {
-        $dir = dirname($file);
-        if (!is_dir($dir)) {
-            $ret = mkdir($dir, ($mode ?? 0777), true);
-            return !$mode ? $ret && touch($file)
-                          : $ret && touch($file) && chmod($file, $mode);
-        } else {
-            return !$mode ? touch($file)
-                          : touch($file) && chmod($file, $mode);
-        }
+    if (is_file($file)) {
+        return true;
     }
-    return true;
+
+    $dir = is_dir(dirname($file)) || mkdir(dirname($file), $mode ?? 0777, true);
+
+    return !$mode ? ($dir && touch($file))
+                  : ($dir && touch($file) && chmod($file, $mode));
 }
 
 /**
@@ -229,9 +222,7 @@ function mkfile(string $file, int $mode = null, bool $tmp = false): bool
  */
 function rmfile(string $file, bool $tmp = false): bool
 {
-    $file = !$tmp ? $file : (
-        sys_get_temp_dir() .'/'. ltrim($file, '/')
-    );
+    $file = !$tmp ? $file : sys_get_temp_dir() .'/'. ltrim($file, '/');
 
     return is_file($file) && unlink($file);
 }
