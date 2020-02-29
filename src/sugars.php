@@ -30,6 +30,7 @@ use froq\util\Objects;
  * Strsrc & strisrc (the ever most most most wanted functions..).
  * @param  string $str
  * @param  string $src
+ * @param  int    $offset
  * @return bool
  * @since  4.0
  */
