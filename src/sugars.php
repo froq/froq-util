@@ -43,6 +43,57 @@ function strisrc(string $str, string $src, int $offset = 0): bool
 }
 
 /**
+ * Strcut.
+ * @param  string $str
+ * @param  int    $length
+ * @return string
+ * @since  4.0
+ */
+function strcut(string $str, int $length): string
+{
+    return ($length > 0) ? substr($str, 0, $length) : substr($str, $length);
+}
+
+/**
+ * Stracut.
+ * @param  string   $str
+ * @param  string   $src
+ * @param  int|null $length
+ * @param  bool     $case_insensitive
+ * @return ?string
+ * @since  4.0
+ */
+function stracut(string $str, string $src, int $length = null, bool $case_insensitive = false): ?string
+{
+    $pos = !$case_insensitive ? strpos($str, $src) : stripos($str, $src);
+    if ($pos !== false) {
+        $cut = substr($str, $pos + 1); // A-fter.
+        return !$length ? $cut : strcut($cut, $length);
+    }
+    return null; // Not found.
+}
+
+/**
+ * Strbcut.
+ * @param  string   $str
+ * @param  string   $src
+ * @param  int|null $length
+ * @param  bool     $case_insensitive
+ * @return ?string
+ * @since  4.0
+ */
+function strbcut(string $str, string $src, int $length = null, bool $case_insensitive = false): ?string
+{
+    $pos = !$case_insensitive ? strpos($str, $src) : stripos($str, $src);
+    if ($pos !== false) {
+        $cut = substr($str, 0, $pos); // B-efore.
+        return !$length ? $cut : strcut($cut, $length);
+    }
+    return null; // Not found.
+}
+
+
+/**
  * Str contains (RFC: http://wiki.php.net/rfc/str_contains).
  * @param  string $str
  * @param  string $src
