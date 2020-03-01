@@ -128,18 +128,58 @@ function rand_oid(bool $count = true): string
 
 /**
  * Rand uuid.
+ * @param  int  $type
+ * @param  bool $option
  * @return string
  * @since  4.0
  */
-function rand_uuid(): string
+function rand_uuid(int $type = 1, bool $option = false): string
 {
-    $ret = random_bytes(16);
+    // Random (UUID/v4 or GUID).
+    if ($type == 1) {
+        $ret = random_bytes(16);
 
-    // Make UUID/v4.
-    $ret[6] = chr(ord($ret[6]) & 0x0f | 0x40);
-    $ret[8] = chr(ord($ret[8]) & 0x3f | 0x80);
+        // GUID doesn't use 4 (version) or 8, 9, A, or B.
+        if (!$option) { // Guid?
+            $ret[6] = chr(ord($ret[6]) & 0x0f | 0x40);
+            $ret[8] = chr(ord($ret[8]) & 0x3f | 0x80);
+        }
 
-    return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($ret), 4));
+        return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($ret), 4));
+    }
+    // Simple serial.
+    elseif ($type == 2) {
+        $date = getdate();
+        $uniq = sscanf(uniqid('', true), '%8s%6s.%s');
+
+        return sprintf('%.08s-%04x-%04x-%04x-%.6s%.6s',
+            $uniq[0], $date['year'],
+            ($date['mon'] . $date['mday']),
+            ($date['minutes'] . $date['seconds']),
+            $uniq[1], $uniq[2]
+        );
+    }
+    // All digit.
+    elseif ($type == 3) {
+        if ($option) { // Rand?
+            $digits = '';
+            do {
+                $digits .= mt_rand();
+            } while (strlen($digits) < 32);
+        } else {
+            [$msec, $sec] = explode(' ', microtime());
+            $digits = $sec . hrtime(true) . substr($msec, 2);
+        }
+
+        return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split($digits, 4));
+    }
+
+    trigger_error(sprintf(
+        '%s(): invalid type %s; 1, 2 and 3 are accepted only',
+        __function__, $type
+    ));
+
+    return '';
 }
 
 /**
@@ -149,7 +189,5 @@ function rand_uuid(): string
  */
 function rand_guid(): string
 {
-    $ret = random_bytes(16);
-
-    return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($ret), 4));
+    return rand_uuid(1, true);
 }
