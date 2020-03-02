@@ -249,3 +249,25 @@ function rmtmpfile(string $file): bool
 {
     return rmfile($file, true);
 }
+
+/**
+ * Stream set contents.
+ * @param  resource &$handle
+ * @param  string    $contents
+ * @return bool
+ * @since  4.0
+ */
+function stream_set_contents(&$handle, string $contents): bool
+{
+    if (!is_resource($handle) || get_resource_type($handle) != 'stream') {
+        trigger_error(sprintf(
+            'Handle must be a stream resource, %s given',
+            gettype($handle)
+        ));
+        return false;
+    }
+
+    return ftruncate($handle, 0)      // Empty.
+        && fwrite($handle, $contents) // Write.
+        && rewind($handle);           // Rewind.
+}
