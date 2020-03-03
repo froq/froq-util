@@ -361,16 +361,30 @@ function rmfile(string $file, bool $tmp = false): bool
  * Stream set contents.
  * @param  resource &$handle
  * @param  string    $contents
+ * @param  bool      $swap
  * @return bool
  * @since  4.0
  */
-function stream_set_contents(&$handle, string $contents): bool
+function stream_set_contents(&$handle, string $contents, bool $swap = true): bool
 {
     if (!is_resource($handle) || get_resource_type($handle) != 'stream') {
         trigger_error(sprintf(
             '%s(): Handle must be a stream resource, %s given', __function__, gettype($handle)
         ));
         return false;
+    }
+
+    // Since handle stat.size also pointer position is not changing even after ftruncate() for
+    // files (not "php://temp" etc), we swap the handles closing old one.
+    if ($swap) {
+        $meta = stream_get_meta_data($handle);
+        fclose($handle);
+
+        $fp     = fopen($meta['uri'], 'w+b');
+        $ok     = fwrite($fp, $contents) && rewind($fp);
+        $handle = $fp; // Assign new.
+
+        return $ok;
     }
 
     return ftruncate($handle, 0)      // Empty.
