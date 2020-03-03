@@ -133,6 +133,50 @@ function str_ends_with(string $str, string $src, bool $case_insensitive = false)
 }
 
 /**
+ * Str base convert (converts given digits to chars from a chars, orginal source:
+ * http://stackoverflow.com/a/4668620/362780).
+ * @param  string $digits
+ * @param  string $from_chars
+ * @param  string $to_chars
+ * @return string
+ * @since  4.0
+ */
+function str_base_convert(string $digits, string $from_chars, string $to_chars): string
+{
+    [$digits_length, $from_base, $to_base] = [
+        strlen($digits), strlen($from_chars), strlen($to_chars)];
+
+    $numbers = [];
+    for ($i = 0; $i < $digits_length; $i++) {
+        $numbers[$i] = strpos($from_chars, $digits[$i]);
+    }
+
+    $ret = '';
+
+    $old_len = $digits_length;
+    do {
+        $new_len = $div = 0;
+
+        for ($i = 0; $i < $old_len; $i++) {
+            $div = ($div * $from_base) + $numbers[$i];
+            if ($div >= $to_base) {
+                $numbers[$new_len++] = ($div / $to_base) | 0;
+                $div = $div % $to_base;
+            } elseif ($new_len > 0) {
+                $numbers[$new_len++] = 0;
+            }
+        }
+
+        $old_len = $new_len;
+
+        // Prepend chars(n).
+        $ret = $to_chars[$div] . $ret;
+    } while ($new_len != 0);
+
+    return $ret;
+}
+
+/**
  * Constant exists.
  * @param  object|string $class
  * @param  string        $name
@@ -189,6 +233,55 @@ function get_class_properties($class, bool $with_names = true, bool $scope_check
         }
     }
     return Objects::getPropertyValues($class, $all ?? false, $with_names);
+}
+
+/**
+ * Get uniqid.
+ * @param  bool $more_entropy
+ * @return string
+ * @since  4.0
+ */
+function get_uniqid(bool $more_entropy = false): string
+{
+    if (!$more_entropy) {
+        return uniqid();
+    }
+
+    static $chars = '0123456789abcdef';
+
+    $exp = explode('.', uniqid('', true));
+
+    return str_pad($exp[0] . dechex($exp[1]), 22, str_shuffle($chars)[0]);
+}
+
+/**
+ * Get random uniqid.
+ * @param  int    $length
+ * @param  bool   $more_chars
+ * @return string
+ * @since  4.0
+ */
+function get_random_uniqid(int $length = 10, bool $more_chars = false): string
+{
+    $bytes = random_bytes($length);
+    if (!$more_chars) {
+        return bin2hex($bytes);
+    }
+
+    static $chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+
+    if (function_exists('gmp_strval')) {
+        $ret = gmp_strval(gmp_init(bin2hex($bytes), 16), 62);
+    } else {
+        $digits = '';
+        foreach (str_split($bytes) as $byte) {
+            $digits .= ord($byte);
+        }
+
+        $ret = str_base_convert($digits, '0123456789', $chars);
+    }
+
+    return str_pad($ret, $length * 2, str_shuffle($chars));
 }
 
 /**
