@@ -294,11 +294,11 @@ function get_real_path(string $target, bool $strict = false): ?string
  * Mkfile.
  * @param  string   $file
  * @param  int|null $mode
- * @param  bool     $tmp
+ * @param  bool     $temp
  * @return bool
  * @since  4.0
  */
-function mkfile(string $file, int $mode = null, bool $tmp = false): bool
+function mkfile(string $file, int $mode = null, bool $temp = false): bool
 {
     $file = trim($file);
     if (!$file) {
@@ -306,7 +306,7 @@ function mkfile(string $file, int $mode = null, bool $tmp = false): bool
         return false;
     }
 
-    $file = get_real_path(!$tmp ? $file : (
+    $file = get_real_path(!$temp ? $file : (
         get_temporary_directory() . DIRECTORY_SEPARATOR . $file
     ));
 
@@ -331,11 +331,11 @@ function mkfile(string $file, int $mode = null, bool $tmp = false): bool
 /**
  * Rmfile.
  * @param  string $file
- * @param  bool   $tmp
+ * @param  bool   $temp
  * @return bool
  * @since  4.0
  */
-function rmfile(string $file, bool $tmp = false): bool
+function rmfile(string $file, bool $temp = false): bool
 {
     $file = trim($file);
     if (!$file) {
@@ -343,7 +343,7 @@ function rmfile(string $file, bool $tmp = false): bool
         return false;
     }
 
-    $file = get_real_path(!$tmp ? $file : (
+    $file = get_real_path(!$temp ? $file : (
         get_temporary_directory() . DIRECTORY_SEPARATOR . $file
     ));
 
@@ -358,7 +358,88 @@ function rmfile(string $file, bool $tmp = false): bool
 }
 
 /**
- * Stream set contents.
+ * Mkfiletemp (creates a new temporary file in temporary directory).
+ * @param  bool $add_extension
+ * @return string
+ */
+function mkfiletemp(bool $add_extension = false): string
+{
+    if (!$add_extension) {
+        $file = tempnam(get_temporary_directory(), 'froq-tmp-');
+    } else {
+        $file = get_temporary_directory() . DIRECTORY_SEPARATOR . uniqid('froq-') .'.tmp';
+        if (!touch($file)) {
+            $file = ''; // Error
+        }
+    }
+
+    return $file;
+}
+
+/**
+ * Rmfiletemp (alias of rmfile() for temporary files).
+ * @param  string $file
+ * @return bool
+ */
+function rmfiletemp(string $file): bool
+{
+    return rmfile($file);
+}
+
+/**
+ * Ftopen (opens a temporary file).
+ * @return resource
+ */
+function ftopen()
+{
+    return tmpfile();
+}
+
+/**
+ * Frewind (rewinds the file pointer).
+ * @param  resource &$fp
+ * @return bool
+ */
+function frewind(&$fp): bool
+{
+    return rewind($fp);
+}
+
+/**
+ * Freset (resets the file pointer contents & position).
+ * @param  resource &$fp
+ * @param  string    $contents
+ * @return bool
+ */
+function freset(&$fp, string $contents): bool
+{
+    rewind($fp);
+
+    return ftruncate($fp, 0) && fwrite($fp, $contents) && !fseek($fp, 0);
+}
+
+/**
+ * Fmeta (gets the file pointer metadata).
+ * @param  resource $fp
+ * @return array
+ */
+function fmeta($fp): array
+{
+    return stream_get_meta_data($fp);
+}
+
+/**
+ * Finfo (gets the file pointer statistics & metadata).
+ * @param  resource $fp
+ * @return array
+ */
+function finfo($fp): array
+{
+    return fstat($fp) + ['meta' => stream_get_meta_data($fp)];
+}
+
+/**
+ * Stream set contents (resets the handle contents & position).
  * @param  resource &$handle
  * @param  string    $contents
  * @return bool
