@@ -368,10 +368,9 @@ function rmfile(string $file, bool $tmp = false): bool
 function stream_set_contents(&$handle, string $contents, bool $swap = true): bool
 {
     if (!is_resource($handle) || get_resource_type($handle) != 'stream') {
-        trigger_error(sprintf(
-            '%s(): Handle must be a stream resource, %s given', __function__, gettype($handle)
+        throw new TypeError(sprintf(
+            '%s() expects parameter 1 to be resource, %s given', __function__, gettype($handle)
         ));
-        return false;
     }
 
     // Since handle stat.size also pointer position is not changing even after ftruncate() for
