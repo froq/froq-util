@@ -175,7 +175,7 @@ function rand_uuid(int $type = 1, bool $option = false): string
     }
 
     trigger_error(sprintf(
-        '%s(): invalid type %s; 1, 2 and 3 are accepted only',
+        '%s(): Invalid type %s; 1, 2 and 3 are accepted only',
         __function__, $type
     ));
 
