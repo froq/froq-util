@@ -192,6 +192,101 @@ function get_class_properties($class, bool $with_names = true, bool $scope_check
 }
 
 /**
+ * Get cache directory.
+ * @return string
+ */
+function get_cache_directory(): string
+{
+    $dir = get_temporary_directory() . DIRECTORY_SEPARATOR .'froq-cache';
+    if (!is_dir($dir)) {
+        mkdir($dir);
+    }
+
+    return $dir;
+}
+
+/**
+ * Get temporary directory.
+ * @return string
+ */
+function get_temporary_directory(): string
+{
+    $dir = sys_get_temp_dir();
+    if (!$dir || !is_dir($dir)) {
+        $dir = DIRECTORY_SEPARATOR .'tmp';
+        mkdir($dir);
+    }
+
+    return DIRECTORY_SEPARATOR . trim($dir, DIRECTORY_SEPARATOR);
+}
+
+/**
+ * Get real user.
+ * @return ?string
+ */
+function get_real_user(): ?string
+{
+    if (function_exists('posix_geteuid')) {
+        return posix_getpwuid(posix_geteuid())['name'] ?? null;
+    } elseif (function_exists('exec')) {
+        return exec('whoami');
+    } else {
+        return getenv('USER') ?: getenv('USERNAME') ?: null;
+    }
+}
+
+
+/**
+ * Get real path.
+ * @param string $target
+ * @param bool   $strict
+ * @return ?string
+ */
+function get_real_path(string $target, bool $strict = false): ?string
+{
+    $target = trim($target);
+    if (!$target) {
+        return null;
+    }
+    if ($path = realpath($target)) {
+        return $path;
+    }
+
+    $ret = '';
+    $exp = explode(DIRECTORY_SEPARATOR, $target);
+
+    foreach ($exp as $i => $cur) {
+        $cur = trim($cur);
+        if ($i == 0) {
+            if ($cur == '~') { // Home path (eg: ~/Desktop).
+                $ret = getenv('HOME');
+                continue;
+            } elseif ($cur == '.' || $cur == '..') {
+                if (!$ret) {
+                    $ret = ($cur == '.') ? getcwd() : dirname(getcwd());
+                } // Else pass.
+                continue;
+            }
+        }
+
+        if ($cur == '.' || !$cur) {
+            continue;
+        } elseif ($cur == '..') {
+            $ret = dirname($ret); // Jump upper.
+            continue;
+        }
+
+        $ret .= DIRECTORY_SEPARATOR . $cur;
+    }
+
+    if ($strict && !realpath($ret)) {
+        $ret = null;
+    }
+
+    return $ret;
+}
+
+/**
  * Mkfile.
  * @param  string   $file
  * @param  int|null $mode
@@ -201,13 +296,29 @@ function get_class_properties($class, bool $with_names = true, bool $scope_check
  */
 function mkfile(string $file, int $mode = null, bool $tmp = false): bool
 {
-    $file = !$tmp ? $file : sys_get_temp_dir() .'/'. ltrim($file, '/');
-
-    if (is_file($file)) {
-        return true;
+    $file = trim($file);
+    if (!$file) {
+        trigger_error(sprintf('%s(): No file given', __function__));
+        return false;
     }
 
-    $dir = is_dir(dirname($file)) || mkdir(dirname($file), $mode ?? 0777, true);
+    $file = get_real_path(!$tmp ? $file : (
+        get_temporary_directory() . DIRECTORY_SEPARATOR . $file
+    ));
+
+    if (is_dir($file)) {
+        trigger_error(sprintf(
+            '%s(): Cannot create %s, it is a directory', __function__, $file
+        ));
+        return false;
+    } elseif (is_file($file)) {
+        trigger_error(sprintf(
+            '%s(): Cannot create %s, it is already exists', __function__, $file
+        ));
+        return false;
+    }
+
+    $dir = is_dir(dirname($file)) || mkdir(dirname($file), 0777, true);
 
     return !$mode ? ($dir && touch($file))
                   : ($dir && touch($file) && chmod($file, $mode));
@@ -222,32 +333,24 @@ function mkfile(string $file, int $mode = null, bool $tmp = false): bool
  */
 function rmfile(string $file, bool $tmp = false): bool
 {
-    $file = !$tmp ? $file : sys_get_temp_dir() .'/'. ltrim($file, '/');
+    $file = trim($file);
+    if (!$file) {
+        trigger_error(sprintf('%s(): No file given', __function__));
+        return false;
+    }
+
+    $file = get_real_path(!$tmp ? $file : (
+        get_temporary_directory() . DIRECTORY_SEPARATOR . $file
+    ));
+
+    if (is_dir($file)) {
+        trigger_error(sprintf(
+            '%s(): Cannot remove %s, it is a directory', __function__, $file
+        ));
+        return false;
+    }
 
     return is_file($file) && unlink($file);
-}
-
-/**
- * Mktmpfile.
- * @param  string   $file
- * @param  int|null $mode
- * @return bool
- * @since  4.0
- */
-function mktmpfile(string $file, int $mode = null): bool
-{
-    return mkfile($file, $mode, true);
-}
-
-/**
- * Rmtmpfile.
- * @param  string $file
- * @return bool
- * @since  4.0
- */
-function rmtmpfile(string $file): bool
-{
-    return rmfile($file, true);
 }
 
 /**
@@ -261,8 +364,7 @@ function stream_set_contents(&$handle, string $contents): bool
 {
     if (!is_resource($handle) || get_resource_type($handle) != 'stream') {
         trigger_error(sprintf(
-            'Handle must be a stream resource, %s given',
-            gettype($handle)
+            '%s(): Handle must be a stream resource, %s given', __function__, gettype($handle)
         ));
         return false;
     }
