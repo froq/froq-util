@@ -361,11 +361,10 @@ function rmfile(string $file, bool $tmp = false): bool
  * Stream set contents.
  * @param  resource &$handle
  * @param  string    $contents
- * @param  bool      $swap
  * @return bool
  * @since  4.0
  */
-function stream_set_contents(&$handle, string $contents, bool $swap = true): bool
+function stream_set_contents(&$handle, string $contents): bool
 {
     if (!is_resource($handle) || get_resource_type($handle) != 'stream') {
         throw new TypeError(sprintf(
@@ -373,18 +372,9 @@ function stream_set_contents(&$handle, string $contents, bool $swap = true): boo
         ));
     }
 
-    // Since handle stat.size also pointer position is not changing even after ftruncate() for
-    // files (not "php://temp" etc), we swap the handles closing old one.
-    if ($swap) {
-        $meta = stream_get_meta_data($handle);
-        fclose($handle);
-
-        $fp     = fopen($meta['uri'], 'w+b');
-        $ok     = fwrite($fp, $contents) && !fseek($fp, 0);
-        $handle = $fp; // Assign new.
-
-        return $ok;
-    }
+    // Since handle stat size also pointer position is not changing even after ftruncate() for
+    // files (not "php://temp" etc), we rewind the handle.
+    rewind($handle);
 
     return ftruncate($handle, 0) // Empty.
         && fwrite($handle, $contents) && !fseek($handle, 0); // Write & rewind.
