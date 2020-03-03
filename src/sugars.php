@@ -116,7 +116,7 @@ function str_contains(string $str, string $src, bool $case_insensitive = false):
  */
 function str_starts_with(string $str, string $src, bool $case_insensitive = false): bool
 {
-    return substr_compare($input, $search, 0, strlen($search), $case_insensitive) === 0;
+    return substr_compare($str, $search, 0, strlen($search), $case_insensitive) === 0;
 }
 
 /**
@@ -129,7 +129,7 @@ function str_starts_with(string $str, string $src, bool $case_insensitive = fals
  */
 function str_ends_with(string $str, string $src, bool $case_insensitive = false): bool
 {
-    return substr_compare($input, $search, -strlen($search), null, $case_insensitive) === 0;
+    return substr_compare($str, $search, -strlen($search), null, $case_insensitive) === 0;
 }
 
 /**
@@ -194,6 +194,7 @@ function get_class_properties($class, bool $with_names = true, bool $scope_check
 /**
  * Get cache directory.
  * @return string
+ * @since  4.0
  */
 function get_cache_directory(): string
 {
@@ -208,6 +209,7 @@ function get_cache_directory(): string
 /**
  * Get temporary directory.
  * @return string
+ * @since  4.0
  */
 function get_temporary_directory(): string
 {
@@ -223,6 +225,7 @@ function get_temporary_directory(): string
 /**
  * Get real user.
  * @return ?string
+ * @since  4.0
  */
 function get_real_user(): ?string
 {
@@ -241,6 +244,7 @@ function get_real_user(): ?string
  * @param string $target
  * @param bool   $strict
  * @return ?string
+ * @since  4.0
  */
 function get_real_path(string $target, bool $strict = false): ?string
 {
