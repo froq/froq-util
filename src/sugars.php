@@ -380,13 +380,12 @@ function stream_set_contents(&$handle, string $contents, bool $swap = true): boo
         fclose($handle);
 
         $fp     = fopen($meta['uri'], 'w+b');
-        $ok     = fwrite($fp, $contents) && rewind($fp);
+        $ok     = fwrite($fp, $contents) && !fseek($fp, 0);
         $handle = $fp; // Assign new.
 
         return $ok;
     }
 
-    return ftruncate($handle, 0)      // Empty.
-        && fwrite($handle, $contents) // Write.
-        && rewind($handle);           // Rewind.
+    return ftruncate($handle, 0) // Empty.
+        && fwrite($handle, $contents) && !fseek($handle, 0); // Write & rewind.
 }
