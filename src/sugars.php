@@ -476,6 +476,7 @@ function rmfile(string $file, bool $temp = false): bool
  * Mkfiletemp (creates a new temporary file in temporary directory).
  * @param  bool $add_extension
  * @return string
+ * @since  4.0
  */
 function mkfiletemp(bool $add_extension = false): string
 {
@@ -495,6 +496,7 @@ function mkfiletemp(bool $add_extension = false): string
  * Rmfiletemp (alias of rmfile() for temporary files).
  * @param  string $file
  * @return bool
+ * @since  4.0
  */
 function rmfiletemp(string $file): bool
 {
@@ -504,6 +506,7 @@ function rmfiletemp(string $file): bool
 /**
  * Ftopen (opens a temporary file).
  * @return resource
+ * @since  4.0
  */
 function ftopen()
 {
@@ -514,6 +517,7 @@ function ftopen()
  * Frewind (rewinds the file pointer).
  * @param  resource &$fp
  * @return bool
+ * @since  4.0
  */
 function frewind(&$fp): bool
 {
@@ -525,6 +529,7 @@ function frewind(&$fp): bool
  * @param  resource &$fp
  * @param  string    $contents
  * @return bool
+ * @since  4.0
  */
 function freset(&$fp, string $contents): bool
 {
@@ -537,6 +542,7 @@ function freset(&$fp, string $contents): bool
  * Fmeta (gets the file pointer metadata).
  * @param  resource $fp
  * @return array
+ * @since  4.0
  */
 function fmeta($fp): array
 {
@@ -547,6 +553,7 @@ function fmeta($fp): array
  * Finfo (gets the file pointer statistics & metadata).
  * @param  resource $fp
  * @return array
+ * @since  4.0
  */
 function finfo($fp): array
 {
