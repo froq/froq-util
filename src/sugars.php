@@ -289,7 +289,7 @@ function get_nano_uniqid(bool $convert = false): string
  */
 function get_random_uniqid(int $length = 10, bool $convert = false): string
 {
-    $bytes = random_bytes($length /= 2);
+    $bytes = random_bytes($length / 2);
 
     if (!$convert) {
         $ret = bin2hex($bytes);
@@ -298,7 +298,7 @@ function get_random_uniqid(int $length = 10, bool $convert = false): string
         static $chars = '0123456789abcdefghijklmnopqrstuvwxyz';
 
         $ret = base_convert(bin2hex($bytes), 16, 36);
-        while (strlen($ret) < $length * 2) {
+        while (strlen($ret) < $length) {
             $ret .= str_shuffle($chars)[0];
         }
     }
