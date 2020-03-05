@@ -247,41 +247,63 @@ function get_uniqid(bool $more_entropy = false): string
         return uniqid();
     }
 
-    static $chars = '0123456789abcdef';
+    $parts = explode('.', uniqid('', true));
 
-    $exp = explode('.', uniqid('', true));
+    return str_pad($parts[0] . dechex($parts[1]), 21, '0');
+}
 
-    return str_pad($exp[0] . dechex($exp[1]), 22, str_shuffle($chars)[0]);
+/**
+ * Get nano uniqid.
+ * @param  int    $length
+ * @param  bool   $convert
+ * @return string
+ * @since  4.0
+ */
+function get_nano_uniqid(bool $convert = false): string
+{
+    // Use parts apart to prevent big number -> float issue.
+    $parts = hrtime();
+
+    if (!$convert) {
+        $ret = dechex($parts[0]) . dechex($parts[1]);
+        $ret = str_pad($ret, 13, '0');
+    } else {
+        // Base36 characters.
+        static $chars = '0123456789abcdefghijklmnopqrstuvwxyz';
+
+        $ret = base_convert(join($parts), 10, 36);
+        while (strlen($ret) < 13) {
+            $ret .= str_shuffle($chars)[0];
+        }
+    }
+
+    return $ret;
 }
 
 /**
  * Get random uniqid.
  * @param  int    $length
- * @param  bool   $more_chars
+ * @param  bool   $convert
  * @return string
  * @since  4.0
  */
-function get_random_uniqid(int $length = 10, bool $more_chars = false): string
+function get_random_uniqid(int $length = 10, bool $convert = false): string
 {
     $bytes = random_bytes($length);
-    if (!$more_chars) {
-        return bin2hex($bytes);
-    }
 
-    static $chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-
-    if (function_exists('gmp_strval')) {
-        $ret = gmp_strval(gmp_init(bin2hex($bytes), 16), 62);
+    if (!$convert) {
+        $ret = bin2hex($bytes);
     } else {
-        $digits = '';
-        foreach (str_split($bytes) as $byte) {
-            $digits .= ord($byte);
-        }
+        // Base36 characters.
+        static $chars = '0123456789abcdefghijklmnopqrstuvwxyz';
 
-        $ret = str_base_convert($digits, '0123456789', $chars);
+        $ret = base_convert(bin2hex($ret), 16, 36);
+        while (strlen($ret) < $length * 2) {
+            $ret .= str_shuffle($chars)[0];
+        }
     }
 
-    return str_pad($ret, $length * 2, str_shuffle($chars));
+    return $ret;
 }
 
 /**
