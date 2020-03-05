@@ -172,6 +172,32 @@ function array_test_all(array $array, callable $func): bool
 }
 
 /**
+ * Array random.
+ * @param  array &$array
+ * @param  int    $limit
+ * @param  bool   $pack Return as [key,value] pairs.
+ * @param  bool   $drop
+ * @return any|null
+ * @since  4.0
+ */
+function array_random(array &$array, int $limit = 1, bool $pack = false, bool $drop = false)
+{
+    return Arrays::random($array, $limit, $pack, $drop);
+}
+
+/**
+ * Array shuffle.
+ * @param  array &$array
+ * @param  bool   $keep_keys
+ * @return array
+ * @since  4.0
+ */
+function array_shuffle(array &$array, bool $keep_keys = true): array
+{
+    return Arrays::shuffle($array, $keep_keys);
+}
+
+/**
  * Array include.
  * @param  array $array
  * @param  array $keys

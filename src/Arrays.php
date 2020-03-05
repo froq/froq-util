@@ -27,7 +27,7 @@ declare(strict_types=1);
 namespace froq\util;
 
 use froq\common\objects\StaticClass;
-use froq\common\exceptions\{InvalidKeyException, InvalidArgumentException};
+use froq\common\exceptions\InvalidArgumentException;
 use Closure;
 
 /**
@@ -294,32 +294,32 @@ final class Arrays extends StaticClass
     /**
      * Random.
      * @param  array &$array
-     * @param  int    $size
+     * @param  int    $limit
      * @param  bool   $pack Return as [key,value] pairs.
      * @param  bool   $drop
      * @return any|null
      * @throws froq\common\exceptions\InvalidArgumentException
      */
-    public static function random(array &$array, int $size = 1, bool $pack = false, bool $drop = false)
+    public static function random(array &$array, int $limit = 1, bool $pack = false, bool $drop = false)
     {
         $count = count($array);
         if ($count == 0) {
             return null;
         }
 
-        if ($size < 1) {
-            throw new InvalidArgumentException('Minimum size must be 1, %s given', [$size]);
-        } elseif ($size > $count) {
-            throw new InvalidArgumentException('Maximum size must not be greater than %s, '.
-                'given size %s is exceeding the size of items', [$count, $size]);
+        if ($limit < 1) {
+            throw new InvalidArgumentException('Minimum limit must be 1, %s given', [$limit]);
+        } elseif ($limit > $count) {
+            throw new InvalidArgumentException('Maximum limit must not be greater than %s, '.
+                'given limit %s is exceeding the count of items', [$count, $limit]);
         }
 
         $keys = array_keys($array);
         shuffle($keys);
 
         $ret = [];
-        while ($size--) {
-            $key = $keys[$size];
+        while ($limit--) {
+            $key = $keys[$limit];
             $value = $array[$key];
 
             !$pack ? $ret[] = $value : $ret[$key] = $value;
@@ -343,7 +343,7 @@ final class Arrays extends StaticClass
      * @param  bool   $keepKeys
      * @return array
      */
-    public static function shuffle(array &$array, bool $keepKeys = false): array
+    public static function shuffle(array &$array, bool $keepKeys = true): array
     {
         if (!$keepKeys) {
             shuffle($array);
