@@ -27,6 +27,26 @@ declare(strict_types=1);
 use froq\util\Arrays;
 
 /**
+ * Is set array.
+ * @param  any $input
+ * @return bool
+ */
+function is_set_array($input): bool
+{
+    return is_array($input) && Arrays::isSet($input);
+}
+
+/**
+ * Is map array.
+ * @param  any $input
+ * @return bool
+ */
+function is_map_array($input): bool
+{
+    return is_array($input) && Arrays::isMap($input);
+}
+
+/**
  * Array set (with dot notation support for sub-array paths).
  * @param  array      &$array
  * @param  int|string  $key
@@ -152,17 +172,6 @@ function array_test_all(array $array, callable $func): bool
 }
 
 /**
- * Array flatten.
- * @param  array $array
- * @return array
- * @since  4.0
- */
-function array_flatten(array $array): array
-{
-    return Arrays::flatten($array);
-}
-
-/**
  * Array include.
  * @param  array $array
  * @param  array $keys
@@ -184,6 +193,43 @@ function array_include(array $array, array $keys): array
 function array_exclude(array $array, array $keys): array
 {
     return Arrays::exclude($array, $keys);
+}
+
+/**
+ * Array flatten.
+ * @param  array $array
+ * @return array
+ * @since  4.0
+ */
+function array_flatten(array $array): array
+{
+    return Arrays::flatten($array);
+}
+
+/**
+ * Array sweep.
+ * @param  array      &$array
+ * @param  array|null  $ignored_keys
+ * @return array
+ * @since  4.0
+ */
+function array_sweep(array &$array, array $ignored_keys = null): array
+{
+    return Arrays::sweep($array, $ignored_keys);
+}
+
+/**
+ * Array default.
+ * @param  array    $array
+ * @param  array    $keys
+ * @param  bool     $use_keys
+ * @param  any|null $default
+ * @return array
+ * @since  4.0
+ */
+function array_default(array $array, array $keys, bool $use_keys = true, $default = null): array
+{
+    return Arrays::default($array, $ignored_keys);
 }
 
 /**
@@ -233,24 +279,4 @@ function array_keys_exists(array $array, array $keys): bool
 function array_values_exists(array $array, array $values, bool $strict = true): bool
 {
     return Arrays::valuesExists($array, $values, $strict);
-}
-
-/**
- * Is set array.
- * @param  any $input
- * @return bool
- */
-function is_set_array($input): bool
-{
-    return is_array($input) && Arrays::isSet($input);
-}
-
-/**
- * Is map array.
- * @param  any $input
- * @return bool
- */
-function is_map_array($input): bool
-{
-    return is_array($input) && Arrays::isMap($input);
 }
