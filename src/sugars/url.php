@@ -160,27 +160,3 @@ function get_url_segments(string $url = null): ?array
 
     return $ret;
 }
-
-/**
- * Url base64 encode (URL-safe base64 encoding).
- *
- * @param  string $url
- * @return string
- * @since  4.0
- */
-function url_base64_encode(string $url): string
-{
-    return strtr(base64_encode($url), '/+', '_-');
-}
-
-/**
- * Url base64 decode (URL-safe base64 decoding).
- *
- * @param  string $url
- * @return string
- * @since  4.0
- */
-function url_base64_decode(string $url): string
-{
-    return base64_decode(strtr($url, '_-', '/+'));
-}
