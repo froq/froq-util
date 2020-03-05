@@ -157,21 +157,26 @@ final /* fuckic static */ class Util extends StaticClass
     /**
      * Get current url.
      * @param  bool $withQuery
-     * @return string
+     * @return ?string
      */
-    public static function getCurrentUrl(bool $withQuery = true): string
+    public static function getCurrentUrl(bool $withQuery = true): ?string
     {
-        ['SERVER_NAME'    => $host,   'SERVER_PORT' => $port,
-         'REQUEST_SCHEME' => $scheme, 'REQUEST_URI' => $uri]  = $_SERVER;
+        @ ['REQUEST_SCHEME' => $scheme, 'SERVER_NAME' => $host,
+           'REQUEST_URI'    => $uri,    'SERVER_PORT' => $port]  = $_SERVER;
+
+        if (!$scheme || !$host) {
+            return null;
+        }
 
         $url = $scheme .'://';
-        if ($port != '' && !(($port == '80' && $scheme == 'http') ||
-                             ($port == '443' && $scheme == 'https'))) {
+        if ($port && !(($port == '80' && $scheme == 'http') ||
+                       ($port == '443' && $scheme == 'https'))) {
             $url .= $host .':'. $port;
         } else {
             $url .= $host;
         }
 
+        $uri .= '';
         // PHP thinks it's a host, not path (also gives false if URI kinda "//").
         if (($i = strpos($uri, '//')) === 0) {
             while (($uri[++$i] ?? '') === '/');
@@ -186,7 +191,7 @@ final /* fuckic static */ class Util extends StaticClass
         }
 
         $url .= $tmp['path'] ?? '/';
-        if ($withQuery && ($query = $tmp['query'] ?? '') != '') {
+        if ($withQuery && ($query = $tmp['query'] ?? '') !== '') {
             $url .= '?'. $query;
         }
 
