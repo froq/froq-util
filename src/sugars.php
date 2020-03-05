@@ -592,7 +592,7 @@ function mtime(): array
 {
     sscanf(microtime(), '%f %i', $msec, $sec);
 
-    return [$sec, $msec, $sec + $msec];
+    return [$sec, $msec, ($sec + $msec)];
 }
 
 /**
