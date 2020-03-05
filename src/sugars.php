@@ -237,13 +237,13 @@ function get_class_properties($class, bool $with_names = true, bool $scope_check
 
 /**
  * Get uniqid.
- * @param  bool $more_entropy
+ * @param  bool $convert
  * @return string
  * @since  4.0
  */
-function get_uniqid(bool $more_entropy = false): string
+function get_uniqid(bool $convert = false): string
 {
-    if (!$more_entropy) {
+    if (!$convert) {
         return uniqid();
     }
 
