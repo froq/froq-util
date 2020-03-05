@@ -582,3 +582,25 @@ function stream_set_contents(&$handle, string $contents): bool
     return ftruncate($handle, 0) // Empty.
         && fwrite($handle, $contents) && !fseek($handle, 0); // Write & rewind.
 }
+
+/**
+ * Mtime (gets time, microtime, time + microtime).
+ * @return array
+ * @since 4.0
+ */
+function mtime(): array
+{
+    sscanf(microtime(), '%f %i', $msec, $sec);
+
+    return [$sec, $msec, $sec + $msec];
+}
+
+/**
+ * Gmtime (gets Greenwich Mean time).
+ * @return int
+ * @since 4.0
+ */
+function gmtime(): int
+{
+    return (time() - date('Z'));
+}
