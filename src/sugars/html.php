@@ -64,12 +64,10 @@ function html_strip(?string $input, ?string $allowed_tags = '', bool $decode = f
     }
 
     if ($allowed_tags != '') {
-        $allowed_tags = implode('', array_map(function($tag) {
-            return '<'. trim($tag, '<>') .'>';
-        }, explode(',', $allowed_tags)));
+        $allowed_tags = explode(',', $allowed_tags);
     }
 
-    return strip_tags((string) $input, (string) $allowed_tags);
+    return strip_tags((string) $input, $allowed_tags);
 }
 
 /**
