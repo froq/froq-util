@@ -133,7 +133,8 @@ function get_url_fragment(string $url = null): ?string
  */
 function get_url_segment(int $i, string $url = null): ?string
 {
-    return get_url_segments($url)[$i] ?? null;
+    return (func_num_args() > 1) ? get_url_segments($url)[$i] ?? null
+                                 : get_url_segments()[$i] ?? null;
 }
 
 /**
