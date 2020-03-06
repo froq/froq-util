@@ -604,3 +604,16 @@ function gmtime(): int
 {
     return (time() - date('Z'));
 }
+
+/**
+ * Array pad keys (esures keys padding the given keys on array).
+ * @param  array  $array
+ * @param  array  $keys
+ * @param  any    $value
+ * @return array
+ * @since  4.0
+ */
+function array_pad_keys(array $array, array $keys, $value): array
+{
+    return array_replace(array_fill_keys($keys, $value), $array);
+}
