@@ -116,7 +116,7 @@ function str_contains(string $str, string $src, bool $case_insensitive = false):
  */
 function str_starts_with(string $str, string $src, bool $case_insensitive = false): bool
 {
-    return substr_compare($str, $search, 0, strlen($search), $case_insensitive) === 0;
+    return substr_compare($str, $src, 0, strlen($src), $case_insensitive) === 0;
 }
 
 /**
@@ -129,7 +129,7 @@ function str_starts_with(string $str, string $src, bool $case_insensitive = fals
  */
 function str_ends_with(string $str, string $src, bool $case_insensitive = false): bool
 {
-    return substr_compare($str, $search, -strlen($search), null, $case_insensitive) === 0;
+    return substr_compare($str, $src, -strlen($src), null, $case_insensitive) === 0;
 }
 
 /**
