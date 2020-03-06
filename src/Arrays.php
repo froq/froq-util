@@ -444,11 +444,7 @@ final class Arrays extends StaticClass
      */
     public static function default(array $array, array $keys, bool $useKeys = true, $default = null): array
     {
-        $default = array_fill_keys($keys, $default);
-
-        foreach ($array as $key => $value) {
-            $default[$key] = $value;
-        }
+        $default = array_replace(array_fill_keys($keys, $default), $array);
 
         return $useKeys ? $default : array_values($default);
     }
