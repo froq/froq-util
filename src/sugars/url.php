@@ -145,7 +145,7 @@ function get_url_segment(int $i, string $url = null): ?string
  */
 function get_url_segments(string $url = null): ?array
 {
-    $path = get_url_path($url);
+    $path = (func_num_args() ? get_url_path($url) : get_url_path());
     if (!$path) {
         return null;
     }
