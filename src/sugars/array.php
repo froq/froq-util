@@ -255,7 +255,7 @@ function array_sweep(array &$array, array $ignored_keys = null): array
  */
 function array_default(array $array, array $keys, bool $use_keys = true, $default = null): array
 {
-    return Arrays::default($array, $ignored_keys);
+    return Arrays::default($array, $keys, $use_keys, $default);
 }
 
 /**
