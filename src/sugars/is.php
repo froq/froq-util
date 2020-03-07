@@ -31,7 +31,9 @@ declare(strict_types=1);
  */
 function is_local(): bool
 {
-    return (defined('__local__') && (__local__ === true));
+    static $ret; return $ret ?? $ret = (
+        defined('__local__') && (__local__ == true)
+    );
 }
 
 /**
