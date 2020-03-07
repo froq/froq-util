@@ -25,12 +25,33 @@
 declare(strict_types=1);
 
 use froq\App;
-use froq\http\{Request, Response, response\Status};
+use froq\http\{Http, Request, Response, response\Status};
 use froq\util\UtilException;
 
 // Check dependencies (all others already come with froq\App).
 if (!class_exists(App::class, false)) {
     throw new UtilException('Http sugars dependent to "froq" module that not found');
+}
+
+/**
+ * HTTP version.
+ * @return string
+ * @since  4.0
+ */
+function http_version(): string
+{
+    return Http::version();
+}
+
+/**
+ * HTTP date.
+ * @param  int|null $time
+ * @return string
+ * @since  4.0
+ */
+function http_date(int $time = null): string
+{
+    return Http::date($time);
 }
 
 /**
