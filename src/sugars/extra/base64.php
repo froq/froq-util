@@ -24,7 +24,6 @@
  */
 declare(strict_types=1);
 
-
 /**
  * URL-safe base64 encoding.
  *
