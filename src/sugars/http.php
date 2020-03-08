@@ -55,6 +55,17 @@ function http_date(int $time = null): string
 }
 
 /**
+ * HTTP date verify.
+ * @param  string $date
+ * @return bool
+ * @since  4.0
+ */
+function http_date_verify(string $date): bool
+{
+    return Http::dateVerify($date);
+}
+
+/**
  * Request.
  * @return froq\http\Request
  */
