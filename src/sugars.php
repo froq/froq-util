@@ -316,8 +316,8 @@ function get_request_id(): string
     sscanf(microtime(), '%d.%s %s', $_, $msec, $sec);
 
     return sprintf('%s-%s-%s', $sec, $msec,
-        // Use an ephemeral port range if no port exists (http://www.ncftp.com/ncftpd/doc/misc/ephemeral_ports.html)
-        $_SERVER['REMOTE_PORT'] ?? rand(49152, 65535));
+        // Use an ephemeral port if no port exists (~$ cat /proc/sys/net/ipv4/ip_local_port_range)
+        $_SERVER['REMOTE_PORT'] ?? rand(32768, 60999));
 }
 
 /**
