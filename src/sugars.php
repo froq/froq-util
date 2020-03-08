@@ -307,6 +307,20 @@ function get_random_uniqid(int $length = 10, bool $convert = false): string
 }
 
 /**
+ * Get request id.
+ * @return string
+ * @since  4.0
+ */
+function get_request_id(): string
+{
+    sscanf(microtime(), '%d.%s %s', $_, $msec, $sec);
+
+    return sprintf('%s-%s-%s', $sec, $msec, $_SERVER['REMOTE_PORT']
+        // Use an ephemeral port range (http://www.ncftp.com/ncftpd/doc/misc/ephemeral_ports.html)
+        ?? rand(49151, 65535));
+}
+
+/**
  * Get cache directory.
  * @return string
  * @since  4.0
