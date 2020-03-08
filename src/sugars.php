@@ -606,7 +606,7 @@ function gmtime(): int
 }
 
 /**
- * Array pad keys (esures keys padding the given keys on array).
+ * Array pad keys (ensures keys padding the given keys on array).
  * @param  array  $array
  * @param  array  $keys
  * @param  any    $value
@@ -616,4 +616,17 @@ function gmtime(): int
 function array_pad_keys(array $array, array $keys, $value): array
 {
     return array_replace(array_fill_keys($keys, $value), $array);
+}
+
+/**
+ * Array value exists (checks a value if exists with strict comparison).
+ *
+ * @param  any   $value
+ * @param  array $array
+ * @return bool
+ * @since  4.0
+ */
+function array_value_exists($value, array $array): bool
+{
+    return in_array($value, $array, true);
 }
