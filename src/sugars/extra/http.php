@@ -27,18 +27,6 @@ declare(strict_types=1);
 use froq\util\Util;
 
 /**
- * Parse query string.
- *
- * @param  string $query
- * @return array
- * @since  4.0
- */
-function parse_query_string(string $query): array
-{
-    return Util::parseQueryString($query, false);
-}
-
-/**
  * Build query string.
  *
  * @param  array  $query
@@ -52,39 +40,15 @@ function build_query_string(array $query, bool $normalize_arrays = true): string
 }
 
 /**
- * Parse cookie.
+ * Parse query string.
  *
- * @param  string $cookie
+ * @param  string $query
  * @return array
  * @since  4.0
  */
-function parse_cookie(string $cookie): array
+function parse_query_string(string $query): array
 {
-    $ret = [];
-
-    foreach (explode(';', $cookie) as $i => $component) {
-        $component = trim($component);
-        if ($component) {
-            @ [$name, $value] = explode('=', $component, 2);
-            if ($i == 0) {
-                $ret['name']  = ($name !== null) ? rawurldecode($name) : $name;
-                $ret['value'] = ($value !== null) ? rawurldecode($value) : $value;
-                continue;
-            }
-
-            $name = strtolower($name ?? '');
-            if ($name) {
-                switch ($name) {
-                    case 'secure': $value = true; break;
-                    case 'httponly': $name = 'httpOnly'; $value = true; break;
-                    case 'samesite': $name  = 'sameSite'; $value = true; break;
-                }
-                $ret[$name] = $value;
-            }
-        }
-    }
-
-    return $ret;
+    return Util::parseQueryString($query, false, null);
 }
 
 /**
@@ -131,6 +95,42 @@ function build_cookie(array $cookie): string
     isset($cookie['secure'])   && $ret .= '; Secure';
     isset($cookie['httpOnly']) && $ret .= '; HttpOnly';
     isset($cookie['sameSite']) && $ret .= '; SameSite='. $cookie['sameSite'];
+
+    return $ret;
+}
+
+/**
+ * Parse cookie.
+ *
+ * @param  string $cookie
+ * @return array
+ * @since  4.0
+ */
+function parse_cookie(string $cookie): array
+{
+    $ret = [];
+
+    foreach (explode(';', $cookie) as $i => $component) {
+        $component = trim($component);
+        if ($component) {
+            @ [$name, $value] = explode('=', $component, 2);
+            if ($i == 0) {
+                $ret['name']  = ($name !== null) ? rawurldecode($name) : $name;
+                $ret['value'] = ($value !== null) ? rawurldecode($value) : $value;
+                continue;
+            }
+
+            $name = strtolower($name ?? '');
+            if ($name) {
+                switch ($name) {
+                    case 'secure': $value = true; break;
+                    case 'httponly': $name = 'httpOnly'; $value = true; break;
+                    case 'samesite': $name  = 'sameSite'; $value = true; break;
+                }
+                $ret[$name] = $value;
+            }
+        }
+    }
 
     return $ret;
 }
