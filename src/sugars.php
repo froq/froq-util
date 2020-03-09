@@ -27,9 +27,7 @@ declare(strict_types=1);
 use froq\util\Objects;
 
 // Ensure constants.
-defined('nil') or (
-    require 'sugars-constant.php'
-);
+defined('nil') || require 'sugars-constant.php';
 
 /**
  * Strsrc & strisrc (the ever most most most wanted functions..).
