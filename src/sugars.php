@@ -339,21 +339,6 @@ function get_request_id(): string
 }
 
 /**
- * Get cache directory.
- * @return string
- * @since  4.0
- */
-function get_cache_directory(): string
-{
-    $dir = get_temporary_directory() . __dirsep .'froq-cache';
-    if (!is_dir($dir)) {
-        mkdir($dir);
-    }
-
-    return $dir;
-}
-
-/**
  * Get temporary directory.
  * @return string
  * @since  4.0
@@ -367,6 +352,21 @@ function get_temporary_directory(): string
     }
 
     return __dirsep . trim($dir, __dirsep);
+}
+
+/**
+ * Get cache directory.
+ * @return string
+ * @since  4.0
+ */
+function get_cache_directory(): string
+{
+    $dir = get_temporary_directory() . __dirsep .'froq-cache';
+    if (!is_dir($dir)) {
+        mkdir($dir);
+    }
+
+    return $dir;
 }
 
 /**
