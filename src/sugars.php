@@ -28,11 +28,7 @@ use froq\util\Objects;
 
 /**
  * Strsrc & strisrc (the ever most most most wanted functions..).
- * @param  string $str
- * @param  string $src
- * @param  int    $offset
- * @return bool
- * @since  4.0
+ * @since 4.0
  */
 function strsrc(string $str, string $src, int $offset = 0): bool
 {
@@ -41,6 +37,19 @@ function strsrc(string $str, string $src, int $offset = 0): bool
 function strisrc(string $str, string $src, int $offset = 0): bool
 {
     return stripos($str, $src, $offset) !== false;
+}
+
+/**
+ * Strsws & strews (alias of str_starts_with(), str_ends_with()).
+ * @since 4.0
+ */
+function strsws(string $str, string $src, bool $case_insensitive = false): bool
+{
+    return str_starts_with($str, $src, $case_insensitive);
+}
+function strews(string $str, string $src, bool $case_insensitive = false): bool
+{
+    return str_ends_with($str, $src, $case_insensitive);
 }
 
 /**
