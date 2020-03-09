@@ -438,6 +438,16 @@ function get_real_path(string $target, bool $strict = false): ?string
 }
 
 /**
+ * Gettmp (alias of get_temporary_directory()).
+ * @return string
+ * @since  4.0
+ */
+function gettmp(): string
+{
+    return get_temporary_directory();
+}
+
+/**
  * Mkfile.
  * @param  string   $file
  * @param  int|null $mode
