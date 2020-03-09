@@ -246,19 +246,32 @@ function get_class_properties($class, bool $with_names = true, bool $scope_check
 
 /**
  * Get uniqid.
+ * @param  bool $long
  * @param  bool $convert
  * @return string
  * @since  4.0
  */
-function get_uniqid(bool $convert = false): string
+function get_uniqid(bool $long = false, bool $convert = false): string
 {
-    if (!$convert) {
-        return uniqid();
-    }
-
     $parts = explode('.', uniqid('', true));
 
-    return str_pad($parts[0] . dechex($parts[1]), 21, '0');
+    if (!$long) {
+        $ret = substr($parts[0], 0, 13);
+    } else {
+        if (!$convert) {
+            $ret = str_pad($parts[0] . dechex($parts[1]), 21, '0');
+        } else {
+            // Base36 characters.
+            static $chars = '0123456789abcdefghijklmnopqrstuvwxyz';
+
+            $ret = base_convert(join($parts), 16, 36);
+            while (strlen($ret) < 21) {
+                $ret .= str_shuffle($chars)[0];
+            }
+        }
+    }
+
+    return $ret;
 }
 
 /**
