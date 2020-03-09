@@ -26,6 +26,11 @@ declare(strict_types=1);
 
 use froq\util\Objects;
 
+// Ensure constants.
+defined('nil') or (
+    require 'sugars-constant.php'
+);
+
 /**
  * Strsrc & strisrc (the ever most most most wanted functions..).
  * @since 4.0
@@ -261,12 +266,9 @@ function get_uniqid(bool $long = false, bool $convert = false): string
         if (!$convert) {
             $ret = str_pad($parts[0] . dechex($parts[1]), 21, '0');
         } else {
-            // Base36 characters.
-            static $chars = '0123456789abcdefghijklmnopqrstuvwxyz';
-
             $ret = base_convert(join($parts), 16, 36);
             while (strlen($ret) < 21) {
-                $ret .= str_shuffle($chars)[0];
+                $ret .= str_shuffle(BASE36_CHARACTERS)[0];
             }
         }
     }
@@ -290,12 +292,9 @@ function get_nano_uniqid(bool $convert = false): string
         $ret = dechex($parts[0]) . dechex($parts[1]);
         $ret = str_pad($ret, 13, '0');
     } else {
-        // Base36 characters.
-        static $chars = '0123456789abcdefghijklmnopqrstuvwxyz';
-
         $ret = base_convert(join($parts), 10, 36);
         while (strlen($ret) < 13) {
-            $ret .= str_shuffle($chars)[0];
+            $ret .= str_shuffle(BASE36_CHARACTERS)[0];
         }
     }
 
@@ -316,12 +315,9 @@ function get_random_uniqid(int $length = 10, bool $convert = false): string
     if (!$convert) {
         $ret = bin2hex($bytes);
     } else {
-        // Base36 characters.
-        static $chars = '0123456789abcdefghijklmnopqrstuvwxyz';
-
         $ret = base_convert(bin2hex($bytes), 16, 36);
         while (strlen($ret) < $length) {
-            $ret .= str_shuffle($chars)[0];
+            $ret .= str_shuffle(BASE36_CHARACTERS)[0];
         }
     }
 
@@ -349,7 +345,7 @@ function get_request_id(): string
  */
 function get_cache_directory(): string
 {
-    $dir = get_temporary_directory() . DIRECTORY_SEPARATOR .'froq-cache';
+    $dir = get_temporary_directory() . __dirsep .'froq-cache';
     if (!is_dir($dir)) {
         mkdir($dir);
     }
@@ -366,11 +362,11 @@ function get_temporary_directory(): string
 {
     $dir = sys_get_temp_dir();
     if (!$dir || !is_dir($dir)) {
-        $dir = DIRECTORY_SEPARATOR .'tmp';
+        $dir = __dirsep .'tmp';
         mkdir($dir);
     }
 
-    return DIRECTORY_SEPARATOR . trim($dir, DIRECTORY_SEPARATOR);
+    return __dirsep . trim($dir, __dirsep);
 }
 
 /**
@@ -408,7 +404,7 @@ function get_real_path(string $target, bool $strict = false): ?string
     }
 
     $ret = '';
-    $tmp = explode(DIRECTORY_SEPARATOR, $target);
+    $tmp = explode(__dirsep, $target);
 
     foreach ($tmp as $i => $cur) {
         $cur = trim($cur);
@@ -431,7 +427,7 @@ function get_real_path(string $target, bool $strict = false): ?string
             continue;
         }
 
-        $ret .= DIRECTORY_SEPARATOR . $cur;
+        $ret .= __dirsep . $cur;
     }
 
     if ($strict && !realpath($ret)) {
@@ -458,7 +454,7 @@ function mkfile(string $file, int $mode = null, bool $temp = false): bool
     }
 
     $file = get_real_path(!$temp ? $file : (
-        get_temporary_directory() . DIRECTORY_SEPARATOR . $file
+        get_temporary_directory() . __dirsep . $file
     ));
 
     if (is_dir($file)) {
@@ -495,7 +491,7 @@ function rmfile(string $file, bool $temp = false): bool
     }
 
     $file = get_real_path(!$temp ? $file : (
-        get_temporary_directory() . DIRECTORY_SEPARATOR . $file
+        get_temporary_directory() . __dirsep . $file
     ));
 
     if (is_dir($file)) {
@@ -519,7 +515,7 @@ function mkfiletemp(bool $add_extension = false): string
     if (!$add_extension) {
         $file = tempnam(get_temporary_directory(), 'froq-tmp-');
     } else {
-        $file = get_temporary_directory() . DIRECTORY_SEPARATOR . uniqid('froq-') .'.tmp';
+        $file = get_temporary_directory() . __dirsep . uniqid('froq-') .'.tmp';
         if (!touch($file)) {
             $file = ''; // Error
         }
