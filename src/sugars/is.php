@@ -163,3 +163,25 @@ function is_false($input): bool
 {
     return ($input === false);
 }
+
+/**
+ * Is nil.
+ * @param  any $input
+ * @return bool
+ * @since  4.0 Added back.
+ */
+function is_nil($input): bool
+{
+    return ($input === null);
+}
+
+/**
+ * Is nils.
+ * @param  any $input
+ * @return bool
+ * @since  4.0 Added back.
+ */
+function is_nils($input): bool
+{
+    return ($input === '');
+}
