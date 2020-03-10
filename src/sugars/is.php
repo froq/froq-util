@@ -186,4 +186,25 @@ function is_nils($input): bool
     return ($input === '');
 }
 
-function is_empty() {}
+/**
+ * Is empty.
+ * @param  any $input
+ * @param  ... $inputs
+ * @return bool
+ * @since  4.0 Added back.
+ */
+function is_empty($input, ...$inputs): bool
+{
+    if (empty($input)) {
+        return true;
+    }
+
+    foreach ($inputs as $input) {
+        $input = is_object($input) ? get_object_vars($input) : $input;
+        if (empty($input)) {
+            return true;
+        }
+    }
+
+    return false;
+}
