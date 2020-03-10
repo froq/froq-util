@@ -450,6 +450,21 @@ final class Arrays extends StaticClass
     }
 
     /**
+     * Index.
+     * @param  array $array
+     * @param  any   $value
+     * @param  bool  $strict
+     * @return int|string|null
+     * @since  4.0
+     */
+    public static function index(array $array, $value, bool $strict = true)
+    {
+        $key = array_search($value, $array, $strict);
+
+        return ($key !== false) ? $key : null;
+    }
+
+    /**
      * First.
      * @param  array    &$array
      * @param  any|null  $valueDefault
