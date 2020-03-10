@@ -56,19 +56,19 @@ function strews(string $str, string $src, bool $case_insensitive = false): bool
 }
 
 /**
- * Strcut.
+ * Strsub.
  * @param  string $str
  * @param  int    $length
  * @return string
  * @since  4.0
  */
-function strcut(string $str, int $length): string
+function strsub(string $str, int $length): string
 {
     return ($length > 0) ? substr($str, 0, $length) : substr($str, $length);
 }
 
 /**
- * Stracut.
+ * Strasub.
  * @param  string   $str
  * @param  string   $src
  * @param  int|null $length
@@ -76,18 +76,18 @@ function strcut(string $str, int $length): string
  * @return ?string
  * @since  4.0
  */
-function stracut(string $str, string $src, int $length = null, bool $case_insensitive = false): ?string
+function strasub(string $str, string $src, int $length = null, bool $case_insensitive = false): ?string
 {
     $pos = !$case_insensitive ? strpos($str, $src) : stripos($str, $src);
     if ($pos !== false) {
-        $cut = substr($str, $pos + 1); // After (a).
-        return !$length ? $cut : strcut($cut, $length);
+        $sub = substr($str, $pos + strlen($src)); // After (a).
+        return !$length ? $sub : strsub($sub, $length);
     }
     return null; // Not found.
 }
 
 /**
- * Strbcut.
+ * Strbsub.
  * @param  string   $str
  * @param  string   $src
  * @param  int|null $length
@@ -95,12 +95,12 @@ function stracut(string $str, string $src, int $length = null, bool $case_insens
  * @return ?string
  * @since  4.0
  */
-function strbcut(string $str, string $src, int $length = null, bool $case_insensitive = false): ?string
+function strbsub(string $str, string $src, int $length = null, bool $case_insensitive = false): ?string
 {
     $pos = !$case_insensitive ? strpos($str, $src) : stripos($str, $src);
     if ($pos !== false) {
-        $cut = substr($str, 0, $pos); // Before (b).
-        return !$length ? $cut : strcut($cut, $length);
+        $sub = substr($str, 0, $pos); // Before (b).
+        return !$length ? $sub : strsub($sub, $length);
     }
     return null; // Not found.
 }
