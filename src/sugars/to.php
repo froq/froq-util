@@ -46,7 +46,7 @@ function to_array($in, bool $deep = true): array
 
     if ($deep) {
         foreach ($out as $key => $value) {
-            $out[$key] = is_iterable($value) || is_object($input)
+            $out[$key] = is_iterable($value) || is_object($in)
                 ? to_array($value, true) : $value;
         }
     }
@@ -76,7 +76,7 @@ function to_object($in, bool $deep = true): object
 
     if ($deep) {
         foreach ($out as $key => $value) {
-            $out->{$key} = is_iterable($value) || is_object($input)
+            $out->{$key} = is_iterable($value) || is_object($in)
                 ? to_object($value, true) : $value;
         }
     }
