@@ -700,7 +700,6 @@ function array_pad_keys(array $array, array $keys, $value): array
 
 /**
  * Array value exists (checks a value if exists with strict comparison).
- *
  * @param  any   $value
  * @param  array $array
  * @return bool
@@ -709,4 +708,23 @@ function array_pad_keys(array $array, array $keys, $value): array
 function array_value_exists($value, array $array): bool
 {
     return in_array($value, $array, true);
+}
+
+/**
+ * Preg remove (perform a regular expression search and remove).
+ * @param  string|array  $pattern
+ * @param  string|array  $subject
+ * @param  int|null      $limit
+ * @param  int|null     &$count
+ * @return string|array|null
+ */
+function preg_remove($pattern, $subject, int $limit = null, int &$count = null)
+{
+    if (is_string($pattern)) {
+        $replacement = '';
+    } elseif (is_array($pattern)) {
+        $replacement = array_fill(0, count($pattern), '');
+    }
+
+    return preg_replace($pattern, $replacement, $subject, $limit ?? -1, $count);
 }
