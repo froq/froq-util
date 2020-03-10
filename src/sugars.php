@@ -648,6 +648,44 @@ function gmtime(): int
 }
 
 /**
+ * Array append.
+ * @param  array &$array
+ * @param  ...    $values
+ * @return array
+ * @since  4.0
+ */
+function array_append(array &$array, ...$values): array
+{
+    array_push($array, ...$values);
+    return $array;
+}
+
+/**
+ * Array prepend.
+ * @param  array &$array
+ * @param  ...    $values
+ * @return array
+ * @since  4.0
+ */
+function array_prepend(array &$array, ...$values): array
+{
+    array_unshift($array, ...$values);
+    return $array;
+}
+
+/**
+ * Array unpop (for the sake of array_unshift()).
+ * @param  array &$array
+ * @param  ...    $values
+ * @return int
+ * @since  4.0
+ */
+function array_unpop(array &$array, ...$values): int
+{
+    return array_push($array, ...$values);
+}
+
+/**
  * Array pad keys (ensures keys padding the given keys on array).
  * @param  array  $array
  * @param  array  $keys
