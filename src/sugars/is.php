@@ -185,3 +185,5 @@ function is_nils($input): bool
 {
     return ($input === '');
 }
+
+function is_empty() {}

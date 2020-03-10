@@ -53,6 +53,7 @@ function strbsrc(string $str, string $src, bool $case_insensitive = false): bool
  * @param  int      $start
  * @param  int|null $length
  * @return string
+ * @since  4.0
  */
 function strsub(string $str, int $start, int $length = null): string
 {
@@ -347,10 +348,9 @@ function get_request_id(): string
  */
 function get_temporary_directory(): string
 {
-    $dir = sys_get_temp_dir();
-    if (!$dir || !is_dir($dir)) {
-        $dir = __dirsep .'tmp';
-        mkdir($dir);
+    $dir = sys_get_temp_dir() . __dirsep .'froq-temporary';
+    if (!is_dir($dir)) {
+        mkdir($dir, 0777, true);
     }
 
     return __dirsep . trim($dir, __dirsep);
@@ -365,7 +365,7 @@ function get_cache_directory(): string
 {
     $dir = get_temporary_directory() . __dirsep .'froq-cache';
     if (!is_dir($dir)) {
-        mkdir($dir);
+        mkdir($dir, 0777, true);
     }
 
     return $dir;
@@ -412,7 +412,7 @@ function get_real_path(string $target, bool $strict = false): ?string
         $cur = trim($cur);
         if ($i == 0) {
             if ($cur == '~') { // Home path (eg: ~/Desktop).
-                $ret = getenv('HOME');
+                $ret = getenv('HOME') ?: '';
                 continue;
             } elseif ($cur == '.' || $cur == '..') {
                 if (!$ret) {
@@ -429,7 +429,7 @@ function get_real_path(string $target, bool $strict = false): ?string
             continue;
         }
 
-        $ret .= __dirsep . $cur;
+        $ret .= __dirsep . $cur; // Append current.
     }
 
     if ($strict && !realpath($ret)) {
@@ -440,17 +440,17 @@ function get_real_path(string $target, bool $strict = false): ?string
 }
 
 /**
- * Gettmp (alias of get_temporary_directory()).
+ * Gettmp (gets system temporary dirname).
  * @return string
  * @since  4.0
  */
 function gettmp(): string
 {
-    return get_temporary_directory();
+    return dirname(get_temporary_directory());
 }
 
 /**
- * Mkfile.
+ * Mkfile (creates a file).
  * @param  string   $file
  * @param  int|null $mode
  * @param  bool     $temp
@@ -518,43 +518,41 @@ function rmfile(string $file, bool $temp = false): bool
 
 /**
  * Mkfiletemp (creates a new temporary file in temporary directory).
- * @param  bool $add_extension
- * @return string
+ * @param  string|null $extension
+ * @return ?string
  * @since  4.0
  */
-function mkfiletemp(bool $add_extension = false): string
+function mkfiletemp(string $extension = null): ?string
 {
-    if (!$add_extension) {
-        $file = tempnam(get_temporary_directory(), 'froq-tmp-');
-    } else {
-        $file = get_temporary_directory() . __dirsep . uniqid('froq-') .'.tmp';
-        if (!touch($file)) {
-            $file = ''; // Error
-        }
+    $file = get_temporary_directory() . __dirsep . get_uniqid(true)
+          . ($extension ? '.'. trim($extension, '.') : '');
+
+    if (!mkfile(basename($file), 0644, true)) {
+        $file = null; // Error!
     }
 
     return $file;
 }
 
 /**
- * Rmfiletemp (alias of rmfile() for temporary files).
+ * Rmfiletemp (remove a temporary file from temporary directory).
  * @param  string $file
  * @return bool
  * @since  4.0
  */
 function rmfiletemp(string $file): bool
 {
-    return rmfile($file);
+    return rmfile(basename($file), true);
 }
 
 /**
- * Ftopen (opens a temporary file).
- * @return resource
+ * Fopentemp (opens a temporary file).
+ * @return ?resource
  * @since  4.0
  */
-function ftopen()
+function fopentemp()
 {
-    return tmpfile();
+    return tmpfile() ?: null;
 }
 
 /**
