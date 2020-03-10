@@ -31,28 +31,20 @@ defined('nil') || require 'sugars-constant.php';
 
 /**
  * Strsrc & strisrc (the ever most most most wanted functions..).
+ * @alias of str_contains(),str_ends_with(),str_starts_with()
  * @since 4.0
  */
-function strsrc(string $str, string $src, int $offset = 0): bool
+function strsrc(string $str, string $src, bool $case_insensitive = false): bool
 {
-    return strpos($str, $src, $offset) !== false;
+    return str_contains($str, $src, $case_insensitive);
 }
-function strisrc(string $str, string $src, int $offset = 0): bool
-{
-    return stripos($str, $src, $offset) !== false;
-}
-
-/**
- * Strsws & strews (alias of str_starts_with(), str_ends_with()).
- * @since 4.0
- */
-function strsws(string $str, string $src, bool $case_insensitive = false): bool
-{
-    return str_starts_with($str, $src, $case_insensitive);
-}
-function strews(string $str, string $src, bool $case_insensitive = false): bool
+function strasrc(string $str, string $src, bool $case_insensitive = false): bool
 {
     return str_ends_with($str, $src, $case_insensitive);
+}
+function strbsrc(string $str, string $src, bool $case_insensitive = false): bool
+{
+    return str_starts_with($str, $src, $case_insensitive);
 }
 
 /**
