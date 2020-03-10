@@ -49,18 +49,30 @@ function strbsrc(string $str, string $src, bool $case_insensitive = false): bool
 
 /**
  * Strsub.
+ * @param  string   $str
+ * @param  int      $start
+ * @param  int|null $length
+ * @return string
+ */
+function strsub(string $str, int $start, int $length = null): string
+{
+    return !$length ? substr($str, $start) : substr($str, $start, $length);
+}
+
+/**
+ * Strcut.
  * @param  string $str
  * @param  int    $length
  * @return string
  * @since  4.0
  */
-function strsub(string $str, int $length): string
+function strcut(string $str, int $length): string
 {
     return ($length > 0) ? substr($str, 0, $length) : substr($str, $length);
 }
 
 /**
- * Strasub.
+ * Stracut.
  * @param  string   $str
  * @param  string   $src
  * @param  int|null $length
@@ -68,18 +80,18 @@ function strsub(string $str, int $length): string
  * @return ?string
  * @since  4.0
  */
-function strasub(string $str, string $src, int $length = null, bool $case_insensitive = false): ?string
+function stracut(string $str, string $src, int $length = null, bool $case_insensitive = false): ?string
 {
     $pos = !$case_insensitive ? strpos($str, $src) : stripos($str, $src);
     if ($pos !== false) {
-        $sub = substr($str, $pos + strlen($src)); // After (a).
-        return !$length ? $sub : strsub($sub, $length);
+        $cut = substr($str, $pos + strlen($src)); // After (a).
+        return !$length ? $cut : strcut($cut, $length);
     }
     return null; // Not found.
 }
 
 /**
- * Strbsub.
+ * Strbcut.
  * @param  string   $str
  * @param  string   $src
  * @param  int|null $length
@@ -87,12 +99,12 @@ function strasub(string $str, string $src, int $length = null, bool $case_insens
  * @return ?string
  * @since  4.0
  */
-function strbsub(string $str, string $src, int $length = null, bool $case_insensitive = false): ?string
+function strbcut(string $str, string $src, int $length = null, bool $case_insensitive = false): ?string
 {
     $pos = !$case_insensitive ? strpos($str, $src) : stripos($str, $src);
     if ($pos !== false) {
-        $sub = substr($str, 0, $pos); // Before (b).
-        return !$length ? $sub : strsub($sub, $length);
+        $cut = substr($str, 0, $pos); // Before (b).
+        return !$length ? $cut : strcut($cut, $length);
     }
     return null; // Not found.
 }
