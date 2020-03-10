@@ -81,15 +81,20 @@ function request(): Request
 function response(...$arguments): Response
 {
     $response = app()->response();
+
     if ($arguments) {
         @ [$code, $content, $content_attributes, $headers, $cookies] = $arguments;
+
         $code && $response->setStatus($code);
+
         if (!is_null($content)) {
             $response->setBody($content, (array) $content_attributes);
         }
+
         $headers && $response->setHeaders($headers);
         $cookies && $response->setCookies($cookies);
     }
+
     return $response;
 }
 
@@ -101,10 +106,12 @@ function response(...$arguments): Response
 function status(int $code = null)
 {
     $response = app()->response();
+
     if ($code) {
         $response->status($code);
         return;
     }
+
     return $response->status()->getCode();
 }
 
@@ -244,7 +251,8 @@ function segments(): array
  * @param  array|null $cookies
  * @return void
  */
-function redirect(string $to, int $code = Status::FOUND, array $headers = null, array $cookies = null): void
+function redirect(string $to, int $code = Status::FOUND,
+                  array $headers = null, array $cookies = null): void
 {
     app()->response()->redirect($to, $code, $headers, $cookies);
 }

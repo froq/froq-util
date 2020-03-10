@@ -50,29 +50,29 @@ function rand_float(float $min = null, float $max = null): float
 
 /**
  * Rand string.
- * @param  int $len
+ * @param  int $length
  * @return string
  * @since  4.0
  */
-function rand_string(int $len = 16): string
+function rand_string(int $length = 16): string
 {
-    $ret = base64_encode(random_bytes($len));
+    $ret = base64_encode(random_bytes($length));
     $ret = str_replace(['/', '+'], '0', rtrim($ret, '='));
 
-    return substr($ret, 0, $len);
+    return substr($ret, 0, $length);
 }
 
 /**
  * Rand hash.
- * @param  int $len
+ * @param  int $length
  * @return string
  * @since  4.0
  */
-function rand_hash(int $len = 16): string
+function rand_hash(int $length = 16): string
 {
-    $ret = bin2hex(random_bytes($len));
+    $ret = bin2hex(random_bytes($length));
 
-    return substr($ret, 0, $len);
+    return substr($ret, 0, $length);
 }
 
 /**

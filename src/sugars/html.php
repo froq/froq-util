@@ -26,61 +26,61 @@ declare(strict_types=1);
 
 /**
  * Html encode.
- * @param  ?string $input
+ * @param  ?string $in
  * @param  bool    $simple
  * @return string
  */
-function html_encode(?string $input, bool $simple = false): string
+function html_encode(?string $in, bool $simple = false): string
 {
     return $simple
-        ? str_replace(['<', '>'], ['&lt;', '&gt;'], (string) $input)
-        : str_replace(["'", '"', '<', '>'], ['&#39;', '&#34;', '&lt;', '&gt;'], (string) $input);
+        ? str_replace(['<', '>'], ['&lt;', '&gt;'], (string) $in)
+        : str_replace(["'", '"', '<', '>'], ['&#39;', '&#34;', '&lt;', '&gt;'], (string) $in);
 }
 
 /**
  * Html decode.
- * @param  ?string $input
+ * @param  ?string $in
  * @param  bool    $simple
  * @return string
  */
-function html_decode(?string $input, bool $simple = false): string
+function html_decode(?string $in, bool $simple = false): string
 {
     return $simple
-        ? str_ireplace(['&lt;', '&gt;'], ['<', '>'], (string) $input)
-        : str_ireplace(['&#39;', '&#34;', '&lt;', '&gt;'], ["'", '"', '<', '>'], (string) $input);
+        ? str_ireplace(['&lt;', '&gt;'], ['<', '>'], (string) $in)
+        : str_ireplace(['&#39;', '&#34;', '&lt;', '&gt;'], ["'", '"', '<', '>'], (string) $in);
 }
 
 /**
  * Html strip.
- * @param  ?string $input
+ * @param  ?string $in
  * @param  ?string $allowed_tags
  * @param  bool    $decode
  * @return string
  */
-function html_strip(?string $input, ?string $allowed_tags = '', bool $decode = false): string
+function html_strip(?string $in, ?string $allowed_tags = '', bool $decode = false): string
 {
     if ($decode) {
-        $input = html_decode($input, true);
+        $in = html_decode($in, true);
     }
 
     if ($allowed_tags != '') {
         $allowed_tags = explode(',', $allowed_tags);
     }
 
-    return strip_tags((string) $input, $allowed_tags);
+    return strip_tags((string) $in, $allowed_tags);
 }
 
 /**
  * Html remove.
- * @param  ?string $input
+ * @param  ?string $in
  * @param  ?string $allowed_tags
  * @param  bool    $decode
  * @return string
  */
-function html_remove(?string $input, ?string $allowed_tags = '', bool $decode = false): string
+function html_remove(?string $in, ?string $allowed_tags = '', bool $decode = false): string
 {
     if ($decode) {
-        $input = html_decode($input, true);
+        $in = html_decode($in, true);
     }
 
     if ($allowed_tags != '') {
@@ -89,18 +89,18 @@ function html_remove(?string $input, ?string $allowed_tags = '', bool $decode = 
         $pattern = '~<(\w+)\b[^>]*/?>(?:.*?</\1>)?~is';
     }
 
-    return preg_replace($pattern, '', (string) $input);
+    return preg_replace($pattern, '', (string) $in);
 }
 
 /**
  * Html attributes.
- * @param  array $input
+ * @param  array $in
  * @return string
  */
-function html_attributes(array $input): string
+function html_attributes(array $in): string
 {
     $ret = [];
-    foreach ($input as $name => $value) {
+    foreach ($in as $name => $value) {
         $ret[] = sprintf('%s="%s"', $name, $value);
     }
 
@@ -109,13 +109,13 @@ function html_attributes(array $input): string
 
 /**
  * Html options.
- * @param  iterable     $input
+ * @param  iterable     $in
  * @param  any          $value_current
  * @param  bool         $strict
  * @param  string|array $extra
  * @return string
  */
-function html_options(iterable $input, $value_current = null, bool $strict = false, $extra = null): string
+function html_options(iterable $in, $value_current = null, bool $strict = false, $extra = null): string
 {
     if ($extra !== null) {
         if (is_array($extra)) {
@@ -125,7 +125,7 @@ function html_options(iterable $input, $value_current = null, bool $strict = fal
     }
 
     $ret = '';
-    foreach ($input as $value => $text) {
+    foreach ($in as $value => $text) {
         $ret .= sprintf('<option value="%s"%s%s>%s</option>', $value,
             html_selected($value, $value_current, $strict), $extra, $text);
     }
@@ -177,78 +177,78 @@ function html_selected($a, $b, bool $strict = false): string
 
 /**
  * Html compress.
- * @param  ?string $input
+ * @param  ?string $in
  * @return string
  */
-function html_compress(?string $input): string
+function html_compress(?string $in): string
 {
-    $input = (string) $input;
-    if ($input == '') {
-        return $input;
+    $in = (string) $in;
+    if ($in == '') {
+        return $in;
     }
 
-    // styles
-    if (strpos($input, '<style>')) {
-        $input = preg_replace_callback('~(<style>(.*?)</style>)~sm', function($match) {
-            $input = trim($match[2]);
+    // Styles.
+    if (strpos($in, '<style>')) {
+        $in = preg_replace_callback('~(<style>(.*?)</style>)~sm', function($match) {
+            $in = trim($match[2]);
 
-            // comments
-            preg_match_all('~[^\'"]/\*+(?:.*)\*/\s*~smU', $input, $matches);
+            // Comments.
+            preg_match_all('~[^\'"]/\*+(?:.*)\*/\s*~smU', $in, $matches);
             foreach ($matches as $match) {
-                $input = str_replace($match, '', $input);
+                $in = str_replace($match, '', $in);
             }
 
-            return sprintf('<style>%s</style>', trim($input));
-        }, $input);
+            return sprintf('<style>%s</style>', trim($in));
+        }, $in);
     }
 
-    // scripts
-    if (strpos($input, '<script>')) {
-        $input = preg_replace_callback('~(<script>(.*?)</script>)~sm', function($match) {
-            $input = trim($match[2]);
+    // Scripts.
+    if (strpos($in, '<script>')) {
+        $in = preg_replace_callback('~(<script>(.*?)</script>)~sm', function($match) {
+            $in = trim($match[2]);
 
-            // line comments (protect "http://" etc)
-            $input = preg_replace('~(^|[^\'":])//([^\r\n]+)$~sm', '', $input);
+            // Line comments (protect "http://" etc).
+            $in = preg_replace('~(^|[^\'":])//([^\r\n]+)$~sm', '', $in);
 
-            // doc comments
-            preg_match_all('~[^\'"]/\*+(?:.*)\*/\s*~smU', $input, $matches);
+            // Doc comments.
+            preg_match_all('~[^\'"]/\*+(?:.*)\*/\s*~smU', $in, $matches);
             foreach ($matches as $match) {
-                $input = str_replace($match, '', $input);
+                $in = str_replace($match, '', $in);
             }
 
-            return sprintf('<script>%s</script>', trim($input));
-        }, $input);
+            return sprintf('<script>%s</script>', trim($in));
+        }, $in);
     }
 
-    // remove comments
-    $input = preg_replace('~<!--(.*?)?-->~sm', '', $input);
-    // remove tabs & spaces
-    $input = preg_replace('~^[\t ]+~sm', '', $input);
-    // remove tag spaces
-    $input = preg_replace('~>\s+<(/?)([\w\d-]+)~sm', '><\\1\\2', $input);
-    $input = preg_replace('~\s+</(\w+)>~', '</\1>', $input);
-    $input = preg_replace('~</(\w+)>\s+~', '</\1> ', $input);
+    // Remove comments.
+    $in = preg_replace('~<!--(.*?)?-->~sm', '', $in);
+    // Remove tabs & spaces.
+    $in = preg_replace('~^[\t ]+~sm', '', $in);
+    // Remove tag spaces.
+    $in = preg_replace('~>\s+<(/?)([\w\d-]+)~sm', '><\\1\\2', $in);
+    $in = preg_replace('~\s+</(\w+)>~', '</\1>', $in);
+    $in = preg_replace('~</(\w+)>\s+~', '</\1> ', $in);
 
-    // textarea "\n" problem
+    // Text area "\n" problem.
     $textarea_tpl = '%{{{TEXTAREA}}}';
-    $textarea_found = preg_match_all('~(<textarea(.*?)>(.*?)</textarea>)~sm', $input, $matches);
+    $textarea_found = preg_match_all('~(<textarea(.*?)>(.*?)</textarea>)~sm', $in, $matches);
+
+    // Fix text areas.
+    if ($textarea_found) {
+        foreach ($matches[0] as $match) {
+            $in = str_replace($match, $textarea_tpl, $in);
+        }
+    }
+
+    // Reduce white spaces.
+    $in = preg_replace('~\s+~', ' ', $in);
 
     // fix textareas
     if ($textarea_found) {
         foreach ($matches[0] as $match) {
-            $input = str_replace($match, $textarea_tpl, $input);
+            $in = preg_replace("~{$textarea_tpl}~", $match, $in, 1);
         }
     }
 
-    // reduce white spaces
-    $input = preg_replace('~\s+~', ' ', $input);
-
-    // fix textareas
-    if ($textarea_found) {
-        foreach ($matches[0] as $match) {
-            $input = preg_replace("~{$textarea_tpl}~", $match, $input, 1);
-        }
-    }
-
-    return trim($input);
+    return trim($in);
 }

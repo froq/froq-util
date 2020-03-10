@@ -40,24 +40,24 @@ final class Numbers extends StaticClass
 {
     /**
      * Convert.
-     * @param  numeric  $input
+     * @param  numeric  $in
      * @param  int|null $decimals
      * @return int|float|null
      * @since  4.0
      */
-    public static function convert($input, int $decimals = null)
+    public static function convert($in, int $decimals = null)
     {
-        if (is_numeric($input)) {
-            if (is_int($input) || is_float($input)) {
-                return $input;
+        if (is_numeric($in)) {
+            if (is_int($in) || is_float($in)) {
+                return $in;
             }
 
             if ($decimals !== null) {
-                $input = number_format((float) $input, $decimals);
+                $in = number_format((float) $in, $decimals);
             }
 
-            return is_string($input) && strpos($input, '.') > -1
-                ? (float) $input : (int) $input;
+            return is_string($in) && strpos($in, '.') > -1
+                ? (float) $in : (int) $in;
         }
 
         return null; // Error, not a number.
@@ -93,72 +93,72 @@ final class Numbers extends StaticClass
 
     /**
      * Is digit.
-     * @param  any $input
+     * @param  any $in
      * @return bool
      */
-    public static function isNumber($input): bool
+    public static function isNumber($in): bool
     {
-        return is_int($input) || is_float($input);
+        return is_int($in) || is_float($in);
     }
 
     /**
      * Is digit.
-     * @param  any $input
+     * @param  any $in
      * @return bool
      */
-    public static function isDigit($input): bool
+    public static function isDigit($in): bool
     {
-        return is_numeric($input) && (is_int($input) || ctype_digit($input)) && ($input >= 0);
+        return is_numeric($in) && (is_int($in) || ctype_digit($in)) && ($in >= 0);
     }
 
     /**
      * Is id (useful for any (db) incremental id check).
-     * @param  any $input
+     * @param  any $in
      * @return bool
      */
-    public static function isId($input): bool
+    public static function isId($in): bool
     {
-        return is_numeric($input) && (is_int($input) || ctype_digit($input)) && ($input >= 1);
+        return is_numeric($in) && (is_int($in) || ctype_digit($in)) && ($in >= 1);
     }
 
     /**
      * Is uint.
-     * @param  any $input
+     * @param  any $in
      * @return bool
      */
-    public static function isUInt($input): bool
+    public static function isUInt($in): bool
     {
-        return is_int($input) && ($input >= 0);
+        return is_int($in) && ($in >= 0);
     }
 
     /**
      * Is ufloat.
-     * @param  any $input
+     * @param  any $in
      * @return bool
      */
-    public static function isUFloat($input): bool
+    public static function isUFloat($in): bool
     {
-        return is_float($input) && ($input >= 0);
+        return is_float($in) && ($in >= 0);
     }
 
     /**
      * Is signed.
-     * @param  any $input
+     * @param  any $in
      * @return bool
      */
-    public static function isSigned($input): bool
+    public static function isSigned($in): bool
     {
-        return (is_int($input) || is_float($input)) && ($input <= 0);
+        return (is_int($in) || is_float($in)) && ($in <= 0);
     }
 
     /**
      * Is unsigned.
-     * @param  any $input
+     * @param  any $in
      * @return bool
      */
-    public static function isUnsigned($input): bool
+    public static function isUnsigned($in): bool
     {
-        return (is_int($input) || is_float($input)) && ($input >= 0);
+        return (is_int($in) || is_float($in)) && ($in >= 0);
     }
 
     /**

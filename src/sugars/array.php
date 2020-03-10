@@ -28,22 +28,22 @@ use froq\util\Arrays;
 
 /**
  * Is set array.
- * @param  any $input
+ * @param  any $in
  * @return bool
  */
-function is_set_array($input): bool
+function is_set_array($in): bool
 {
-    return is_array($input) && Arrays::isSet($input);
+    return is_array($in) && Arrays::isSet($in);
 }
 
 /**
  * Is map array.
- * @param  any $input
+ * @param  any $in
  * @return bool
  */
-function is_map_array($input): bool
+function is_map_array($in): bool
 {
-    return is_array($input) && Arrays::isMap($input);
+    return is_array($in) && Arrays::isMap($in);
 }
 
 /**

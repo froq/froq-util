@@ -28,14 +28,14 @@ use froq\util\Numbers;
 
 /**
  * Number.
- * @param  numeric  $input
+ * @param  numeric  $in
  * @param  int|null $decimals
  * @return int|float|null
  * @since  3.0
  */
-function number($input, int $decimals = null)
+function number($in, int $decimals = null)
 {
-    return Numbers::convert($input, $decimals);
+    return Numbers::convert($in, $decimals);
 }
 
 /**
@@ -66,77 +66,77 @@ function number_equals($a, $b, int $precision = null): ?bool
 
 /**
  * Is number.
- * @param  any $input
+ * @param  any $in
  * @return bool
  * @since  3.0
  */
-function is_number($input): bool
+function is_number($in): bool
 {
-    return Numbers::isNumber($input);
+    return Numbers::isNumber($in);
 }
 
 /**
  * Is digit.
- * @param  any $input
+ * @param  any $in
  * @return bool
  * @since  3.0
  */
-function is_digit($input): bool
+function is_digit($in): bool
 {
-    return Numbers::isDigit($input);
+    return Numbers::isDigit($in);
 }
 
 /**
  * Is id (useful for any (db) incremental id checking).
- * anyparam  number $input
+ * anyparam  number $in
  * @return bool
  * @since  3.0
  */
-function is_id($input): bool
+function is_id($in): bool
 {
-    return Numbers::isId($input);
+    return Numbers::isId($in);
 }
 
 /**
  * Is uint.
- * @param  any $input
+ * @param  any $in
  * @return bool
  * @since  3.0
  */
-function is_uint($input): bool
+function is_uint($in): bool
 {
-    return Numbers::isUInt($input);
+    return Numbers::isUInt($in);
 }
 
 /**
  * Is ufloat.
- * @param  any $input
+ * @param  any $in
  * @return bool
  * @since  3.0
  */
-function is_ufloat($input): bool
+function is_ufloat($in): bool
 {
-    return Numbers::isUFloat($input);
+    return Numbers::isUFloat($in);
 }
 
 /**
  * Is signed.
- * @param  any $input
+ * @param  any $in
  * @return bool
  * @since  3.0
  */
-function is_signed($input): bool
+function is_signed($in): bool
 {
-    return Numbers::isSigned($input);
+    return Numbers::isSigned($in);
 }
 
 /**
  * Is unsigned.
- * @param  any $input
+ * @param  any $in
  * @return bool
  * @since  3.0
  */
-function is_unsigned($input): bool
+function is_unsigned($in): bool
 {
-    return Numbers::isUnsigned($input);
+    return Numbers::isUnsigned($in);
 }

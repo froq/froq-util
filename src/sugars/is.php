@@ -56,152 +56,152 @@ function is_cli_server(): bool
 
 /**
  * Is plain object.
- * @param  any $input
+ * @param  any $in
  * @return bool
  */
-function is_plain_object($input): bool
+function is_plain_object($in): bool
 {
-    return ($input instanceof stdClass);
+    return ($in instanceof stdClass);
 }
 
 /**
  * Is array like.
- * @param  any $input
+ * @param  any $in
  * @return bool
  */
-function is_array_like($input): bool
+function is_array_like($in): bool
 {
-    return is_array($input) || is_plain_object($input);
+    return is_array($in) || is_plain_object($in);
 }
 
 /**
  * Is iterable like.
- * @param  any $input
+ * @param  any $in
  * @return bool
  */
-function is_iterable_like($input): bool
+function is_iterable_like($in): bool
 {
-    return is_iterable($input) || is_plain_object($input);
+    return is_iterable($in) || is_plain_object($in);
 }
 
 /**
  * Is primitive.
- * @param  any $input
+ * @param  any $in
  * @return bool
  * @since  3.0
  */
-function is_primitive($input): bool
+function is_primitive($in): bool
 {
-    return is_scalar($input);
+    return is_scalar($in);
 }
 
 /**
  * Is closure.
- * @param  any $input
+ * @param  any $in
  * @return bool
  * @since  3.0
  */
-function is_closure($input): bool
+function is_closure($in): bool
 {
-    return ($input instanceof Closure);
+    return ($in instanceof Closure);
 }
 
 /**
  * Is class.
- * @param  any $input
+ * @param  any $in
  * @return bool
  * @since  3.0
  */
-function is_class($input): bool
+function is_class($in): bool
 {
-    return is_string($input) && class_exists($input, false);
+    return is_string($in) && class_exists($in, false);
 }
 
 /**
  * Is class method.
- * @param  any $input
+ * @param  any $in
  * @return bool
  * @since  3.0
  */
-function is_class_method($input): bool
+function is_class_method($in): bool
 {
     // Eg: Foo::bar (for publics only, seems not fixed @see https://bugs.php.net/bug.php?id=29210).
-    return is_string($input) && strpos($input, '::') && is_callable($input);
+    return is_string($in) && strpos($in, '::') && is_callable($in);
 }
 
 /**
  * Is between.
- * @param  any $input
- * @param  any $minValue
- * @param  any $maxValue
+ * @param  any $in
+ * @param  any $min
+ * @param  any $max
  * @return bool
  * @since  3.0
  */
-function is_between($input, $minValue, $maxValue): bool
+function is_between($in, $min, $max): bool
 {
-    return ($input >= $minValue && $input <= $maxValue);
+    return ($in >= $min && $in <= $max);
 }
 
 /**
  * Is true.
- * @param  any $input
+ * @param  any $in
  * @return bool
  * @since  3.5
  */
-function is_true($input): bool
+function is_true($in): bool
 {
-    return ($input === true);
+    return ($in === true);
 }
 
 /**
  * Is false.
- * @param  any $input
+ * @param  any $in
  * @return bool
  * @since  3.5
  */
-function is_false($input): bool
+function is_false($in): bool
 {
-    return ($input === false);
+    return ($in === false);
 }
 
 /**
  * Is nil.
- * @param  any $input
+ * @param  any $in
  * @return bool
  * @since  4.0 Added back.
  */
-function is_nil($input): bool
+function is_nil($in): bool
 {
-    return ($input === null);
+    return ($in === null);
 }
 
 /**
  * Is nils.
- * @param  any $input
+ * @param  any $in
  * @return bool
  * @since  4.0 Added back.
  */
-function is_nils($input): bool
+function is_nils($in): bool
 {
-    return ($input === '');
+    return ($in === '');
 }
 
 /**
  * Is empty.
- * @param  any $input
- * @param  ... $inputs
+ * @param  any $in
+ * @param  ... $ins
  * @return bool
  * @since  4.0 Added back.
  */
-function is_empty($input, ...$inputs): bool
+function is_empty($in, ...$ins): bool
 {
-    if (empty($input)) {
+    if (empty($in)) {
         return true;
     }
 
-    foreach ($inputs as $input) {
-        $input = is_object($input) ? get_object_vars($input) : $input;
-        if (empty($input)) {
+    foreach ($ins as $in) {
+        $in = is_object($in) ? get_object_vars($in) : $in;
+        if (empty($in)) {
             return true;
         }
     }

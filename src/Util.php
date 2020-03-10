@@ -77,23 +77,23 @@ final /* fuckic static */ class Util extends StaticClass
 
     /**
      * Get type.
-     * @param  any $input
+     * @param  any  $in
      * @param  bool $classes
      * @param  bool $scalars
      * @return string
      * @since  4.0
      */
-    public static function getType($input, bool $classes = false, bool $scalars = false): string
+    public static function getType($in, bool $classes = false, bool $scalars = false): string
     {
-        $type = gettype($input);
+        $type = gettype($in);
 
         if ($classes && $type == 'object') {
-            $class = get_class($input);
+            $class = get_class($in);
             // Return 'object' for silly stdClass stuff.
             return ($class != 'stdClass') ? $class : 'object';
         }
 
-        static $scalarsArray = ['int', 'float', 'string', 'bool'];
+        static $scalarsArray   = ['int', 'float', 'string', 'bool'];
         static $translateArray = [
             'NULL'   => 'null',  'integer' => 'int',
             'double' => 'float', 'boolean' => 'bool'
@@ -204,49 +204,49 @@ final /* fuckic static */ class Util extends StaticClass
 
     /**
      * Parse query string (without changing dotted param keys [https://github.com/php/php-src/blob/master/main/php_variables.c#L103]).
-     * @param  string      $input
+     * @param  string      $qs
      * @param  bool        $encode
      * @param  string|null $ignoredKeys
      * @return array
      */
-    public static function parseQueryString(string $input, bool $encode = false,
+    public static function parseQueryString(string $qs, bool $encode = false,
         string $ignoredKeys = null): array
     {
         $ret = [];
 
-        if ($input == '') {
+        if ($qs == '') {
             return $ret;
         }
 
         $hexed = false;
-        if (strpos($input, '.')) {
+        if (strpos($qs, '.')) {
             $hexed = true;
 
             // Normalize arrays.
-            if (strpos($input, '%5D')) {
-                $input = str_replace(['%5B', '%5D'], ['[', ']'], $input);
+            if (strpos($qs, '%5D')) {
+                $qs = str_replace(['%5B', '%5D'], ['[', ']'], $qs);
             }
 
             // Hex keys.
-            $input = preg_replace_callback('~(^|(?<=&))[^=&\[]+~', function($match) {
+            $qs = preg_replace_callback('~(^|(?<=&))[^=&\[]+~', function($match) {
                 return bin2hex($match[0]);
-            }, $input);
+            }, $qs);
         }
 
         // Preserve pluses (otherwise parse_str() will replace all with spaces).
         if ($encode) {
-            $input = str_replace('+', '%2B', $input);
+            $qs = str_replace('+', '%2B', $qs);
         }
 
-        parse_str($input, $parsedInput);
+        parse_str($qs, $qsp);
 
         if ($hexed) {
             // Unhex keys.
-            foreach ($parsedInput as $key => $value) {
+            foreach ($qsp as $key => $value) {
                 $ret[hex2bin((string) $key)] = $value;
             }
         } else {
-            $ret = $parsedInput;
+            $ret = $qsp;
         }
 
         if ($ignoredKeys != '') {
@@ -263,36 +263,36 @@ final /* fuckic static */ class Util extends StaticClass
 
     /**
      * Build query string.
-     * @param  array       $input
+     * @param  array       $qa
      * @param  bool        $decode
      * @param  string|null $ignoredKeys
      * @param  bool        $stripTags
      * @param  bool        $normalizeArrays
      * @return string
      */
-    public static function buildQueryString(array $input, bool $decode = false,
+    public static function buildQueryString(array $qa, bool $decode = false,
         string $ignoredKeys = null, bool $stripTags = true, bool $normalizeArrays = true): string
     {
         if ($ignoredKeys != '') {
             $ignoredKeys = explode(',', $ignoredKeys);
-            foreach ($input as $key => $_) {
+            foreach (array_keys($qa) as $key) {
                 if (in_array($key, $ignoredKeys)) {
-                    unset($input[$key]);
+                    unset($qa[$key]);
                 }
             }
         }
 
         // Memoize: fix skipped NULL values by http_build_query().
         static $filter; if (!$filter) {
-               $filter = function ($input) use (&$filter) {
-                    foreach ($input as $key => $value) {
-                        $input[$key] = is_array($value) ? $filter($value) : strval($value);
+               $filter = function ($in) use (&$filter) {
+                    foreach ($in as $key => $value) {
+                        $in[$key] = is_array($value) ? $filter($value) : strval($value);
                     }
-                    return $input;
+                    return $in;
                };
         }
 
-        $ret = http_build_query($filter($input));
+        $ret = http_build_query($filter($qa));
 
         if ($decode) {
             $ret = urldecode($ret);

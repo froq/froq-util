@@ -28,112 +28,112 @@ use froq\util\Strings;
 
 /**
  * String contains.
- * @param  string $input
+ * @param  string $in
  * @param  string $search
  * @param  bool   $case_insensitive
  * @return bool
  * @since  3.0
  */
-function string_contains(string $input, string $search, bool $case_insensitive = false): bool
+function string_contains(string $in, string $search, bool $case_insensitive = false): bool
 {
-    return Strings::contains($input, $search, $case_insensitive);
+    return Strings::contains($in, $search, $case_insensitive);
 }
 
 /**
  * String contains any.
- * @param  string $input
+ * @param  string $in
  * @param  array  $search
  * @param  bool   $case_insensitive
  * @return bool
  * @since  3.0
  */
-function string_contains_any(string $input, array $searches, bool $case_insensitive = false): bool
+function string_contains_any(string $in, array $searches, bool $case_insensitive = false): bool
 {
-    return Strings::containsAny($input, $searches, $case_insensitive);
+    return Strings::containsAny($in, $searches, $case_insensitive);
 }
 
 /**
  * String contains all.
- * @param  string $input
+ * @param  string $in
  * @param  array  $search
  * @param  bool   $case_insensitive
  * @return bool
  * @since  3.0
  */
-function string_contains_all(string $input, array $searches, bool $case_insensitive = false): bool
+function string_contains_all(string $in, array $searches, bool $case_insensitive = false): bool
 {
-    return Strings::containsAll($input, $searches, $case_insensitive);
+    return Strings::containsAll($in, $searches, $case_insensitive);
 }
 
 /**
  * String starts with.
- * @param  string               $input
+ * @param  string               $in
  * @param  string|array<string> $search
  * @return bool
  * @since  3.0
  */
-function string_starts_with(string $input, $search, bool $case_insensitive = false,
+function string_starts_with(string $in, $search, bool $case_insensitive = false,
     bool $multi_byte = false): bool
 {
-    return is_array($search) ? Strings::startsWithAny($input, $search, $case_insensitive, $multi_byte)
-                             : Strings::startsWith($input, $search, $case_insensitive, $multi_byte);
+    return is_array($search) ? Strings::startsWithAny($in, $search, $case_insensitive, $multi_byte)
+                             : Strings::startsWith($in, $search, $case_insensitive, $multi_byte);
 }
 
 /**
  * String ends with.
- * @param  string               $input
+ * @param  string               $in
  * @param  string|array<string> $search
  * @return bool
  * @since  3.0
  */
-function string_ends_with(string $input, $search, bool $case_insensitive = false,
+function string_ends_with(string $in, $search, bool $case_insensitive = false,
     bool $multi_byte = false): bool
 {
-    return is_array($search) ? Strings::endsWithAny($input, $search, $case_insensitive, $multi_byte)
-                             : Strings::endsWith($input, $search, $case_insensitive, $multi_byte);
+    return is_array($search) ? Strings::endsWithAny($in, $search, $case_insensitive, $multi_byte)
+                             : Strings::endsWith($in, $search, $case_insensitive, $multi_byte);
 }
 
 /**
  * Is utf.
- * @param  string $input
+ * @param  string $in
  * @param  int     $bits
  * @return bool
  * @since  4.0
  */
-function is_utf_string(string $input, int $bits = 8): bool
+function is_utf_string(string $in, int $bits = 8): bool
 {
-    return Strings::isUtf($input, $bits);
+    return Strings::isUtf($in, $bits);
 }
 
 /**
  * Is ascii.
- * @param  string $input
+ * @param  string $in
  * @return bool
  * @since  4.0
  */
-function is_ascii_string(string $input): bool
+function is_ascii_string(string $in): bool
 {
-    return Strings::isAscii($input);
+    return Strings::isAscii($in);
 }
 
 /**
  * Is binary.
- * @param  string $input
+ * @param  string $in
  * @return bool
  * @since  4.0
  */
-function is_binary_string(string $input): bool
+function is_binary_string(string $in): bool
 {
-    return Strings::isBinary($input);
+    return Strings::isBinary($in);
 }
 
 /**
  * Is base64.
- * @param  string $input
+ * @param  string $in
  * @return bool
  * @since  4.0
  */
-function is_base64_string(string $input): bool
+function is_base64_string(string $in): bool
 {
-    return Strings::isBase64($input);
+    return Strings::isBase64($in);
 }

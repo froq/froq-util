@@ -40,23 +40,23 @@ final class Strings extends StaticClass
 {
     /**
      * Compare.
-     * @param  string $input1
-     * @param  string $input2
+     * @param  string $in1
+     * @param  string $in2
      * @return int
      */
-    public static function compare(string $input1, string $input2): int
+    public static function compare(string $in1, string $in2): int
     {
-       return ($input1 > $input2) - ($input1 < $input2);
+       return ($in1 > $in2) - ($in1 < $in2);
     }
 
     /**
      * Compare locale.
-     * @param  string $input1
-     * @param  string $input2
+     * @param  string $in1
+     * @param  string $in2
      * @param  string $locale
      * @return int
      */
-    public static function compareLocale(string $input1, string $input2, string $locale): int
+    public static function compareLocale(string $in1, string $in2, string $locale): int
     {
         static $localeDefault;
         if ($localeDefault === null) {
@@ -64,7 +64,7 @@ final class Strings extends StaticClass
         }
 
         setlocale(LC_COLLATE, $locale);
-        $result = strcoll($input1, $input2);
+        $result = strcoll($in1, $in2);
 
         if ($localeDefault !== null) {
             setlocale(LC_COLLATE, $localeDefault); // Restore locale.
@@ -75,27 +75,27 @@ final class Strings extends StaticClass
 
     /**
      * Contains.
-     * @param  string $input
+     * @param  string $in
      * @param  string $search
      * @param  bool   $caseInsensitive
      * @return bool
      */
-    public static function contains(string $input, string $search, bool $caseInsensitive = false): bool
+    public static function contains(string $in, string $search, bool $caseInsensitive = false): bool
     {
         return (!$caseInsensitive ? strpos($string, $search) : stripos($string, $search)) !== false;
     }
 
     /**
      * Contains any.
-     * @param  string        $input
+     * @param  string        $in
      * @param  array<string> $searches
      * @param  bool          $caseInsensitive
      * @return bool
      */
-    public static function containsAny(string $input, array $searches, bool $caseInsensitive = false): bool
+    public static function containsAny(string $in, array $searches, bool $caseInsensitive = false): bool
     {
         foreach ($searches as $search) {
-            if (self::contains($input, $search, $caseInsensitive)) {
+            if (self::contains($in, $search, $caseInsensitive)) {
                 return true;
             }
         }
@@ -104,15 +104,15 @@ final class Strings extends StaticClass
 
     /**
      * Contains all.
-     * @param  string        $input
+     * @param  string        $in
      * @param  array<string> $searches
      * @param  bool          $caseInsensitive
      * @return bool
      */
-    public static function containsAll(string $input, array $searches, bool $caseInsensitive = false): bool
+    public static function containsAll(string $in, array $searches, bool $caseInsensitive = false): bool
     {
         foreach ($searches as $search) {
-            if (!self::contains($input, $search, $caseInsensitive)) {
+            if (!self::contains($in, $search, $caseInsensitive)) {
                 return false;
             }
         }
@@ -121,38 +121,38 @@ final class Strings extends StaticClass
 
     /**
      * Starts with.
-     * @param  string $input
+     * @param  string $in
      * @param  string $search
      * @param  bool   $caseInsensitive
      * @return bool
      */
-    public static function startsWith(string $input, string $search, bool $caseInsensitive = false,
+    public static function startsWith(string $in, string $search, bool $caseInsensitive = false,
         bool $multiByte = false): bool
     {
-        if ($input !== '') {
+        if ($in !== '') {
             if ($caseInsensitive && $multiByte) {
                 // Double, cos for eg: Turkish characters issues (ı => I, İ => i).
-                $input  = mb_convert_case(mb_convert_case($input, MB_CASE_UPPER_SIMPLE), MB_CASE_LOWER_SIMPLE);
+                $in  = mb_convert_case(mb_convert_case($in, MB_CASE_UPPER_SIMPLE), MB_CASE_LOWER_SIMPLE);
                 $search = mb_convert_case(mb_convert_case($search, MB_CASE_UPPER_SIMPLE), MB_CASE_LOWER_SIMPLE);
             }
-            return substr_compare($input, $search, 0, strlen($search), $caseInsensitive) === 0;
+            return substr_compare($in, $search, 0, strlen($search), $caseInsensitive) === 0;
         }
         return false;
     }
 
     /**
      * Starts with any.
-     * @param  string        $input
+     * @param  string        $in
      * @param  array<string> $searches
      * @param  bool          $caseInsensitive
      * @return bool
      * @since  4.0
      */
-    public static function startsWithAny(string $input, array $searches, bool $caseInsensitive = false,
+    public static function startsWithAny(string $in, array $searches, bool $caseInsensitive = false,
         bool $multiByte = false): bool
     {
         foreach ($searches as $search) {
-            if (self::startsWith($input, $search, $caseInsensitive, $multiByte)) {
+            if (self::startsWith($in, $search, $caseInsensitive, $multiByte)) {
                 return true;
             }
         }
@@ -161,37 +161,37 @@ final class Strings extends StaticClass
 
     /**
      * Ends with.
-     * @param  string $input
+     * @param  string $in
      * @param  string $search
      * @return bool
      */
-    public static function endsWith(string $input, string $search, bool $caseInsensitive = false,
+    public static function endsWith(string $in, string $search, bool $caseInsensitive = false,
         bool $multiByte = false): bool
     {
-        if ($input !== '') {
+        if ($in !== '') {
             if ($caseInsensitive && $multiByte) {
                 // Double, cos for eg: Turkish characters issues (ı => I, İ => i).
-                $input  = mb_convert_case(mb_convert_case($input, MB_CASE_UPPER_SIMPLE), MB_CASE_LOWER_SIMPLE);
+                $in  = mb_convert_case(mb_convert_case($in, MB_CASE_UPPER_SIMPLE), MB_CASE_LOWER_SIMPLE);
                 $search = mb_convert_case(mb_convert_case($search, MB_CASE_UPPER_SIMPLE), MB_CASE_LOWER_SIMPLE);
             }
-            return substr_compare($input, $search, -strlen($search), null, $caseInsensitive) === 0;
+            return substr_compare($in, $search, -strlen($search), null, $caseInsensitive) === 0;
         }
         return false;
     }
 
     /**
      * Ends with any.
-     * @param  string        $input
+     * @param  string        $in
      * @param  array<string> $searches
      * @param  bool          $caseInsensitive
      * @return bool
      * @since  4.0
      */
-    public static function endsWithAny(string $input, array $searches, bool $caseInsensitive = false,
+    public static function endsWithAny(string $in, array $searches, bool $caseInsensitive = false,
         bool $multiByte = false): bool
     {
         foreach ($searches as $search) {
-            if (self::endsWith($input, $search, $caseInsensitive, $multiByte)) {
+            if (self::endsWith($in, $search, $caseInsensitive, $multiByte)) {
                 return true;
             }
         }
@@ -200,48 +200,48 @@ final class Strings extends StaticClass
 
     /**
      * Is utf.
-     * @param  string $input
+     * @param  string $in
      * @param  int     $bits
      * @return bool
      * @since  4.0
      */
-    public static function isUtf(string $input, int $bits = 8): bool
+    public static function isUtf(string $in, int $bits = 8): bool
     {
         // 0x00 - 0x10FFFF @link https://en.wikipedia.org/wiki/Code_point
-        return ($input && mb_check_encoding($input, 'UTF-'. $bits));
+        return ($in && mb_check_encoding($in, 'UTF-'. $bits));
     }
 
     /**
      * Is ascii.
-     * @param  string $input
+     * @param  string $in
      * @return bool
      * @since  4.0
      */
-    public static function isAscii(string $input): bool
+    public static function isAscii(string $in): bool
     {
         // 0x00 - 0x7F (or extended 0xFF) @link https://en.wikipedia.org/wiki/Code_point
-        return ($input && mb_check_encoding($input, 'ASCII'));
+        return ($in && mb_check_encoding($in, 'ASCII'));
     }
 
     /**
      * Is binary.
-     * @param  string $input
+     * @param  string $in
      * @return bool
      * @since  4.0
      */
-    public static function isBinary(string $input): bool
+    public static function isBinary(string $in): bool
     {
-        return ($input && ($input = str_replace(["\t", "\n", "\r"], '', $input)) && !ctype_print($input));
+        return ($in && ($in = str_replace(["\t", "\n", "\r"], '', $in)) && !ctype_print($in));
     }
 
     /**
      * Is base64.
-     * @param  string $input
+     * @param  string $in
      * @return bool
      * @since  4.0
      */
-    public static function isBase64(string $input): bool
+    public static function isBase64(string $in): bool
     {
-        return ($input && !strcmp($input, ''. base64_encode(''. base64_decode($input, true))));
+        return ($in && !strcmp($in, ''. base64_encode(''. base64_decode($in, true))));
     }
 }
