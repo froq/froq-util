@@ -82,8 +82,7 @@ final class Strings extends StaticClass
      */
     public static function contains(string $input, string $search, bool $caseInsensitive = false): bool
     {
-        return (false !== (!$caseInsensitive ? strpos($input, $search)
-                                             : stripos($input, $search)));
+        return (!$caseInsensitive ? strpos($string, $search) : stripos($string, $search)) !== false;
     }
 
     /**
