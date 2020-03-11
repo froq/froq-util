@@ -29,26 +29,28 @@ use froq\util\Util;
 /**
  * Build query string.
  *
- * @param  array  $query
- * @param  bool   $normalize_arrays
+ * @param  array       $query
+ * @param  string|null $ignored_keys
+ * @param  bool        $normalize_arrays
  * @return string
  * @since  4.0
  */
-function build_query_string(array $query, bool $normalize_arrays = true): string
+function build_query_string(array $query, string $ignored_keys = null, bool $normalize_arrays = true): string
 {
-    return Util::buildQueryString($query, false, null, false, $normalize_arrays);
+    return Util::buildQueryString($query, false, $ignored_keys, false, $normalize_arrays);
 }
 
 /**
  * Parse query string.
  *
- * @param  string $query
+ * @param  string      $query
+ * @param  string|null $ignored_keys
  * @return array
  * @since  4.0
  */
-function parse_query_string(string $query): array
+function parse_query_string(string $query, string $ignored_keys = null): array
 {
-    return Util::parseQueryString($query, false, null);
+    return Util::parseQueryString($query, false, $ignored_keys);
 }
 
 /**
