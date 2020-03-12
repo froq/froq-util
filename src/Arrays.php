@@ -391,17 +391,29 @@ final class Arrays extends StaticClass
     /**
      * Flatten.
      * @param  array $array
+     * @param  bool  $useKeys
+     * @param  bool  $fixKeys
+     * @param  bool  $oneDimension
      * @return array
      * @since  4.0
      */
-    public static function flatten(array $array): array
+    public static function flatten(array $array, bool $useKeys = false, bool $fixKeys = false,
+        bool $oneDimension = false): array
     {
         $ret = [];
 
-        // Seems short functions (=>) not work here [ref (&) issue].
-        array_walk_recursive($array, function ($value) use (&$ret) {
-            $ret[] = $value;
-        });
+        if (!$oneDimension) {
+            $i = 0;
+            // Seems short functions (=>) not work here [ref (&) issue].
+            array_walk_recursive($array, function ($value, $key) use (&$ret, &$i, $useKeys, $fixKeys) {
+                !$useKeys ? $ret[] = $value : (
+                    !$fixKeys ? $ret[$key] = $value // Use original keys.
+                              : $ret[is_string($key) ? $key : $i++] = $value // Re-index integer keys.
+                );
+            });
+        } else {
+            $ret = array_merge(...array_map(fn($value) => (array) $value, $array));
+        }
 
         return $ret;
     }

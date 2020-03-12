@@ -224,12 +224,16 @@ function array_exclude(array $array, array $keys): array
 /**
  * Array flatten.
  * @param  array $array
+ * @param  bool $use_keys
+ * @param  bool $fix_keys
+ * @param  bool $one_dimension
  * @return array
  * @since  4.0
  */
-function array_flatten(array $array): array
+function array_flatten(array $array, bool $use_keys = false, bool $fix_keys = false,
+        bool $one_dimension = false): array
 {
-    return Arrays::flatten($array);
+    return Arrays::flatten($array, $use_keys, $fix_keys, $one_dimension);
 }
 
 /**
