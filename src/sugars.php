@@ -715,11 +715,11 @@ function array_value_exists($value, array $array): bool
  * @param  array           $array
  * @param  array           $column_keys
  * @param  int|string|null $index_key
- * @param  bool            $use_index_key
+ * @param  bool            $use_column_keys
  * @return array
  * @since  4.0
  */
-function array_columns(array $array, array $column_keys, $index_key = null, bool $use_index_key = false): array
+function array_columns(array $array, array $column_keys, $index_key = null, bool $use_column_keys = false): array
 {
     $ret = [];
 
@@ -733,7 +733,7 @@ function array_columns(array $array, array $column_keys, $index_key = null, bool
             $columns = array_column($value, $key, $index_key);
             if ($columns) {
                 foreach ($columns as $ci => $column) {
-                    $i = !$use_index_key ? $ki : $key;
+                    $i = !$use_column_keys ? $ki : $key;
                     if ($index_key === null || $index_key === '') {
                         $ret[$i][] = $column;
                     } else {
