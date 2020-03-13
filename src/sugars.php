@@ -782,12 +782,13 @@ function file_set_contents(string $file, string $contents, int $flags = 0): ?int
 }
 
 /**
- * File get buffer contents (gets a file (rendered) buffer contents).
+ * File get buffer contents (loads & gets a file (rendered) buffer contents).
  * @param  string $file
+ * @param  array  $file_data
  * @return ?string
  * @since  4.0
  */
-function file_get_buffer_contents(string $file): ?string
+function file_get_buffer_contents(string $file, array $file_data = null): ?string
 {
     if (!is_file($file)) {
         trigger_error('No file exists such '. $file);
@@ -795,7 +796,12 @@ function file_get_buffer_contents(string $file): ?string
     }
 
     ob_start();
+
+    if ($file_data) {
+        extract($file_data);
+    }
     include $file;
+
     return ob_get_clean();
 }
 
