@@ -728,3 +728,66 @@ function preg_remove($pattern, $subject, int $limit = null, int &$count = null)
 
     return preg_replace($pattern, $replacement, $subject, $limit ?? -1, $count);
 }
+
+/**
+ * File get type (gets a file (mime) type).
+ * @param  string $file
+ * @return ?string
+ */
+function file_get_type(string $file): ?string
+{
+    $ret = null;
+
+    if (is_file($file)) {
+        try {
+            $ret =@ function_exists('mime_content_type') ? mime_content_type($file) : false;
+            if ($ret === false && function_exists('exec')) {
+                $exec = exec('file -i '. escapeshellarg($file));
+                if ($exec && preg_match('~: *([^/ ]+/[^; ]+)~', $exec, $match)) {
+                    $ret = $match[1];
+                    if ($ret == 'inode/directory') {
+                        $ret = 'directory';
+                    }
+                }
+            }
+        } catch (Error $e) {}
+    }
+
+    // Try by extension.
+    if (!$ret) {
+        $extension = (string) file_get_extension($file, false);
+        if ($extension) {
+            $extension = strtolower($extension);
+
+            static $cache; // Some speed..
+
+            if (empty($cache[$extension])) {
+                foreach (include ('statics/mime.php') as $type => $extensions) {
+                    if (in_array($extension, $extensions, true)) {
+                        $cache[$extension] = $ret = $type;
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    return $ret ?: null;
+}
+
+/**
+ * File get extension (gets a file extension).
+ * @param  string $file
+ * @param  bool   $dotted
+ * @return ?string
+ */
+function file_get_extension(string $file, bool $dotted = true): ?string
+{
+    $ret = strrchr($file, '.');
+
+    if ($ret && !$dotted) {
+        $ret = ltrim($ret, '.');
+    }
+
+    return $ret ?: null;
+}
