@@ -50,41 +50,38 @@ function rand_float(float $min = null, float $max = null): float
 
 /**
  * Rand string.
- * @param  int $length
+ * @param  int  $length
+ * @param  bool $hex
  * @return string
  * @since  4.0
  */
-function rand_string(int $length = 16): string
+function rand_string(int $length = 16, bool $hex = false): string
 {
-    $ret = base64_encode(random_bytes($length));
-    $ret = str_replace(['/', '+'], '0', rtrim($ret, '='));
+    static $chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
-    return substr($ret, 0, $length);
-}
+    $str = $chars;
+    if ($hex) {
+        $str = substr($str, 0, 16);
+    }
 
-/**
- * Rand hash.
- * @param  int $length
- * @return string
- * @since  4.0
- */
-function rand_hash(int $length = 16): string
-{
-    $ret = bin2hex(random_bytes($length));
+    $ret = '';
+    while (strlen($ret) < $length) {
+        $ret .= str_shuffle($str)[0];
+    }
 
-    return substr($ret, 0, $length);
+    return $ret;
 }
 
 /**
  * Rand id.
- * @return string
+ * @return string A 20-length digits.
  * @since  4.0
  */
 function rand_id(): string
 {
     $tmp = explode(' ', microtime());
 
-    return $tmp[1] . substr($tmp[0], 2, 6) . random_int(1000, 9999);
+    return $tmp[1] . substr($tmp[0], 2, 6) . mt_rand(1000, 9999);
 }
 
 /**
@@ -95,13 +92,9 @@ function rand_id(): string
  */
 function rand_uid(bool $simple = true): string
 {
-    $ret = uniqid('', true);
+    $tmp = explode('.', uniqid('', true));
 
-    if ($simple) {
-        return strstr($ret, '.', true);
-    }
-
-    return substr(vsprintf('%14s%\'06x', explode('.', $ret)), 0, 20);
+    return $simple ? $tmp[0] : substr(vsprintf('%14s%\'06x', $tmp), 0, 20);
 }
 
 /**
