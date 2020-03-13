@@ -711,6 +711,43 @@ function array_value_exists($value, array $array): bool
 }
 
 /**
+ * Array columns (selects columns only by given column keys).
+ * @param  array           $array
+ * @param  array           $column_keys
+ * @param  int|string|null $index_key
+ * @param  bool            $use_index_key
+ * @return array
+ * @since  4.0
+ */
+function array_columns(array $array, array $column_keys, $index_key = null, bool $use_index_key = false): array
+{
+    $ret = [];
+
+    foreach ($array as $i => $value) {
+        if (!is_array($value) && !is_object($value)) {
+            trigger_error('array_columns(): non-array/object value encountered at index '. $i);
+            continue;
+        }
+
+        foreach ($column_keys as $ki => $key) {
+            $columns = array_column($value, $key, $index_key);
+            if ($columns) {
+                foreach ($columns as $ci => $column) {
+                    $i = !$use_index_key ? $ki : $key;
+                    if ($index_key === null || $index_key === '') {
+                        $ret[$i][] = $column;
+                    } else {
+                        $ret[$i][$ci] = $column;
+                    }
+                }
+            }
+        }
+    }
+
+    return $ret;
+}
+
+/**
  * Preg remove (perform a regular expression search and remove).
  * @param  string|array  $pattern
  * @param  string|array  $subject
