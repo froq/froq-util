@@ -730,9 +730,43 @@ function preg_remove($pattern, $subject, int $limit = null, int &$count = null)
 }
 
 /**
+ * File set contents (sets a file contents).
+ * @param  string $file
+ * @param  string $contents
+ * @param  int    $flags
+ * @return ?int
+ * @since  4.0
+ */
+function file_set_contents(string $file, string $contents, int $flags = 0): ?int
+{
+    $ret = file_put_contents($file, $contents, $flags);
+
+    return ($ret !== false) ? $ret : null;
+}
+
+/**
+ * File get buffer contents (gets a file (rendered) buffer contents).
+ * @param  string $file
+ * @return ?string
+ * @since  4.0
+ */
+function file_get_buffer_contents(string $file): ?string
+{
+    if (!is_file($file)) {
+        trigger_error('No file exists such '. $file);
+        return null;
+    }
+
+    ob_start();
+    include $file;
+    return ob_get_clean();
+}
+
+/**
  * File get type (gets a file (mime) type).
  * @param  string $file
  * @return ?string
+ * @since  4.0
  */
 function file_get_type(string $file): ?string
 {
@@ -780,6 +814,7 @@ function file_get_type(string $file): ?string
  * @param  string $file
  * @param  bool   $dotted
  * @return ?string
+ * @since  4.0
  */
 function file_get_extension(string $file, bool $dotted = true): ?string
 {
