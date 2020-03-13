@@ -43,13 +43,23 @@ function logger(): Logger
 }
 
 /**
- * Log fail.
+ * Log any.
  * @param  any $message
  * @return bool
  */
-function log_fail($message): bool
+function log_any($message): bool
 {
-    return app()->logger()->logFail($message);
+    return app()->logger()->log($message);
+}
+
+/**
+ * Log error.
+ * @param  any $message
+ * @return bool
+ */
+function log_error($message): bool
+{
+    return app()->logger()->logError($message);
 }
 
 /**
