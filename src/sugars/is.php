@@ -187,6 +187,17 @@ function is_nils($in): bool
 }
 
 /**
+ * Is none.
+ * @param  any $in
+ * @return bool
+ * @since  4.0 Added back.
+ */
+function is_none($in): bool
+{
+    return ($in === null || $in === '');
+}
+
+/**
  * Is empty.
  * @param  any $in
  * @param  ... $ins
@@ -195,7 +206,7 @@ function is_nils($in): bool
  */
 function is_empty($in, ...$ins): bool
 {
-    // Require at least on argument.
+    // Require at least one argument.
     if (empty($in)) {
         return true;
     }
