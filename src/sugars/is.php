@@ -195,6 +195,7 @@ function is_nils($in): bool
  */
 function is_empty($in, ...$ins): bool
 {
+    // Require at least on argument.
     if (empty($in)) {
         return true;
     }
