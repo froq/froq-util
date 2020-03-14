@@ -278,7 +278,7 @@ function get_type($var, bool $scalars = false): string
 
         $ret = strtr($type, $translate_array);
 
-        if ($scalars && in_array($ret, $scalars_array, true)) {
+        if ($scalars && in_array($ret, $scalars_array)) {
             $ret = 'scalar';
         } elseif ($ret == 'resource (closed)') {
             $ret = 'resource-closed';
