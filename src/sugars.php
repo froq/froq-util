@@ -253,7 +253,7 @@ function get_class_properties($class, bool $with_names = true, bool $scope_check
 }
 
 /**
- * Get type.
+ * Get type (RFC: http://wiki.php.net/rfc/get_debug_type).
  * @param  any  $var
  * @param  bool $scalars
  * @return string
@@ -264,19 +264,27 @@ function get_type($var, bool $scalars = false): string
     $type = gettype($var);
 
     if ($type == 'object') {
-        return get_class($var);
-    }
+        $ret = get_class($var);
+        // Anonymous class.
+        if (($pos = strpos($ret, "\0")) > -1) {
+            $ret = strsub($ret, 0, $pos);
+        }
+    } else {
+        static $scalars_array   = ['int', 'float', 'string', 'bool'];
+        static $translate_array = [
+            'NULL'   => 'null',  'integer' => 'int',
+            'double' => 'float', 'boolean' => 'bool'
+        ];
 
-    static $scalars_array   = ['int', 'float', 'string', 'bool'];
-    static $translate_array = [
-        'NULL'   => 'null',  'integer' => 'int',
-        'double' => 'float', 'boolean' => 'bool'
-    ];
+        $ret = strtr($type, $translate_array);
 
-    $ret = strtr($type, $translate_array);
-
-    if ($scalars && in_array($ret, $scalars_array)) {
-        $ret = 'scalar';
+        if ($scalars && in_array($ret, $scalars_array, true)) {
+            $ret = 'scalar';
+        } elseif ($ret == 'resource (closed)') {
+            $ret = 'resource-closed';
+        } elseif ($ret == 'unknown type') {
+            $ret = 'unknown';
+        }
     }
 
     return $ret;
