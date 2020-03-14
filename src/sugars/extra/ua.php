@@ -107,11 +107,29 @@ function is_mobile(): bool
 }
 
 /**
+ * Detect whether user agent is a tablet browser or not.
+ *
+ * @return bool
+ */
+function is_tablet(): bool
+{
+    static $ret; if ($ret === null) {
+        $ret = ($ua = get_user_agent()) && (
+            preg_match('~tablet|ipad~i', $ua) || (
+                stripos($ua, 'silk') > -1 && stripos($ua, 'mobile') == 0 // 0=False.
+            )
+        );
+    }
+
+    return !!$ret;
+}
+
+/**
  * Detect whether user agent is a desktop browser or not.
  *
  * @return bool
  */
 function is_desktop(): bool
 {
-    return !is_mobile();
+    return !is_mobile() && !is_tablet();
 }
