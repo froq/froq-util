@@ -349,12 +349,12 @@ function get_nano_uniqid(bool $convert = false): string
  * @return string
  * @since  4.0
  */
-function get_random_uniqid(int $length = 10, bool $convert = false): string
+function get_random_uniqid(int $length = 13, bool $convert = false): string
 {
-    $bytes = random_bytes($length / 2);
+    $bytes = random_bytes(($length / 2) | 0);
 
     if (!$convert) {
-        $ret = bin2hex($bytes);
+        $ret = str_pad(bin2hex($bytes), $length, chr(rand(48, 57)));
     } else {
         $ret = base_convert(bin2hex($bytes), 16, 36);
         while (strlen($ret) < $length) {
