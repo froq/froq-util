@@ -354,7 +354,8 @@ function get_random_uniqid(int $length = 13, bool $convert = false): string
     $bytes = random_bytes(($length / 2) | 0);
 
     if (!$convert) {
-        $ret = str_pad(bin2hex($bytes), $length, chr(rand(48, 57)));
+        $pad = ''. rand(0, 9); // With a random number (only occurs if length / 2 is a float).
+        $ret = str_pad(bin2hex($bytes), $length, $pad);
     } else {
         $ret = base_convert(bin2hex($bytes), 16, 36);
         while (strlen($ret) < $length) {
