@@ -416,11 +416,9 @@ function get_cache_directory(): string
  */
 function get_real_user(): ?string
 {
-    if (function_exists('posix_geteuid')) {
+    try {
         return posix_getpwuid(posix_geteuid())['name'] ?? null;
-    } elseif (function_exists('exec')) {
-        return exec('whoami');
-    } else {
+    } catch (Error $e) {
         return getenv('USER') ?: getenv('USERNAME') ?: null;
     }
 }
