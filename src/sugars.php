@@ -685,6 +685,38 @@ function gmtime(): int
 }
 
 /**
+ * Array isset (tests all given keys are set in given array).
+ * @param  array $array
+ * @param  ...   $keys
+ * @return bool
+ * @since  4.0
+ */
+function array_isset(array $array, ...$keys): bool
+{
+    foreach ($keys as $key) {
+        if (!isset($key)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+/**
+ * Array isset (drops all given keys from given array).
+ * @param  array $array
+ * @param  ...   $keys
+ * @return bool
+ * @since  4.0
+ */
+function array_unset(array &$array, ...$keys): int
+{
+    foreach ($keys as $key) {
+        unset($array[$key]);
+    }
+    return count($array);
+}
+
+/**
  * Array append.
  * @param  array &$array
  * @param  ...    $values
