@@ -659,11 +659,11 @@ function stream_set_contents(&$handle, string $contents): bool
 }
 
 /**
- * Mtime (gets time, microtime, time + microtime).
+ * Times (gets time, microtime, time + microtime).
  * @return array
  * @since 4.0
  */
-function mtime(): array
+function times(): array
 {
     sscanf(microtime(), '%f %i', $msec, $sec);
 
@@ -677,7 +677,7 @@ function mtime(): array
  */
 function gmtime(): int
 {
-    return (time() - date('Z'));
+    return time() - date('Z');
 }
 
 /**
