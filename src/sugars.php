@@ -681,14 +681,29 @@ function gmtime(): int
 }
 
 /**
- * Array isset (tests all given keys are set in given array).
+ * Array clean (cleans given array filtering/dropping non-empty values).
  * @param  array $array
- * @param  ...   $keys
+ * @return array
+ * @since  4.0
+ */
+function array_clean(array $array): array
+{
+    return array_filter($array, fn($v) => ($v !== '' && $v !== null && $v !== []));
+}
+
+/**
+ * Array isset (tests all given keys are set in given array).
+ * @param  array     $array
+ * @param  array|... $keys
  * @return ?bool
  * @since  4.0
  */
 function array_isset(array $array, ...$keys): ?bool
 {
+    // Eg: ($array, 'a', 'b' or ['a', 'b']).
+    $keys = isset($keys[0]) && is_array($keys[0]) ? $keys[0] : $keys;
+    $keys = array_clean($keys);
+
     if (empty($keys)) {
         trigger_error(sprintf('%s(): No keys given', __function__));
         return null;
@@ -705,13 +720,17 @@ function array_isset(array $array, ...$keys): ?bool
 
 /**
  * Array isset (drops all given keys from given array).
- * @param  array &$array
- * @param  ...    $keys
+ * @param  array    &$array
+ * @param  array|... $keys
  * @return ?int
  * @since  4.0
  */
 function array_unset(array &$array, ...$keys): ?int
 {
+    // Eg: ($array, 'a', 'b' or ['a', 'b']).
+    $keys = isset($keys[0]) && is_array($keys[0]) ? $keys[0] : $keys;
+    $keys = array_clean($keys);
+
     if (empty($keys)) {
         trigger_error(sprintf('%s(): No keys given', __function__));
         return null;
