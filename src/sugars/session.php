@@ -66,7 +66,9 @@ function session($key = null, $value = null)
  */
 function session_flash($message = null)
 {
-    return ($session = session()) ? $session->flash($message) : null;
+    return ($session = session()) ? (
+        func_num_args() ? $session->flash($message) : $session->flash()
+    ) : null;
 }
 
 /**
