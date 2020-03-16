@@ -152,7 +152,7 @@ final class Strings extends StaticClass
         bool $multiByte = false): bool
     {
         foreach ($searches as $search) {
-            if (self::startsWith($in, $search, $caseInsensitive, $multiByte)) {
+            if (self::startsWith($in, (string) $search, $caseInsensitive, $multiByte)) {
                 return true;
             }
         }
@@ -191,7 +191,7 @@ final class Strings extends StaticClass
         bool $multiByte = false): bool
     {
         foreach ($searches as $search) {
-            if (self::endsWith($in, $search, $caseInsensitive, $multiByte)) {
+            if (self::endsWith($in, (string) $search, $caseInsensitive, $multiByte)) {
                 return true;
             }
         }
