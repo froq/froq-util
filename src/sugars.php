@@ -722,10 +722,10 @@ function array_isset(array $array, ...$keys): ?bool
  * Array isset (drops all given keys from given array).
  * @param  array    &$array
  * @param  array|... $keys
- * @return ?int
+ * @return ?array
  * @since  4.0
  */
-function array_unset(array &$array, ...$keys): ?int
+function array_unset(array &$array, ...$keys): ?array
 {
     // Eg: ($array, 'a', 'b' or ['a', 'b']).
     $keys = isset($keys[0]) && is_array($keys[0]) ? $keys[0] : $keys;
@@ -740,7 +740,7 @@ function array_unset(array &$array, ...$keys): ?int
         unset($array[$key]);
     }
 
-    return count($array);
+    return $array;
 }
 
 /**
