@@ -491,31 +491,29 @@ function gettmp(): string
  * @param  string   $file
  * @param  int|null $mode
  * @param  bool     $temp
- * @return bool
+ * @return ?bool
  * @since  4.0
  */
-function mkfile(string $file, int $mode = null, bool $temp = false): bool
+function mkfile(string $file, int $mode = null, bool $temp = false): ?bool
 {
     $file = trim($file);
     if (!$file) {
         trigger_error(sprintf('%s(): No file given', __function__));
-        return false;
+        return null;
     }
 
-    $file = get_real_path(!$temp ? $file : (
-        get_temporary_directory() . __dirsep . $file
-    ));
+    $file = get_real_path(!$temp ? $file : get_temporary_directory() . __dirsep . $file);
 
     if (is_dir($file)) {
         trigger_error(sprintf(
             '%s(): Cannot create %s, it is a directory', __function__, $file
         ));
-        return false;
+        return null;
     } elseif (is_file($file)) {
         trigger_error(sprintf(
             '%s(): Cannot create %s, it is already exists', __function__, $file
         ));
-        return false;
+        return null;
     }
 
     $dir = is_dir(dirname($file)) || mkdir(dirname($file), 0777, true);
@@ -528,26 +526,24 @@ function mkfile(string $file, int $mode = null, bool $temp = false): bool
  * Rmfile.
  * @param  string $file
  * @param  bool   $temp
- * @return bool
+ * @return ?bool
  * @since  4.0
  */
-function rmfile(string $file, bool $temp = false): bool
+function rmfile(string $file, bool $temp = false): ?bool
 {
     $file = trim($file);
     if (!$file) {
         trigger_error(sprintf('%s(): No file given', __function__));
-        return false;
+        return null;
     }
 
-    $file = get_real_path(!$temp ? $file : (
-        get_temporary_directory() . __dirsep . $file
-    ));
+    $file = get_real_path(!$temp ? $file : get_temporary_directory() . __dirsep . $file);
 
     if (is_dir($file)) {
         trigger_error(sprintf(
             '%s(): Cannot remove %s, it is a directory', __function__, $file
         ));
-        return false;
+        return null;
     }
 
     return is_file($file) && unlink($file);
@@ -688,31 +684,43 @@ function gmtime(): int
  * Array isset (tests all given keys are set in given array).
  * @param  array $array
  * @param  ...   $keys
- * @return bool
+ * @return ?bool
  * @since  4.0
  */
-function array_isset(array $array, ...$keys): bool
+function array_isset(array $array, ...$keys): ?bool
 {
+    if (empty($keys)) {
+        trigger_error(sprintf('%s(): No keys given', __function__));
+        return null;
+    }
+
     foreach ($keys as $key) {
         if (!isset($key)) {
             return false;
         }
     }
+
     return true;
 }
 
 /**
  * Array isset (drops all given keys from given array).
- * @param  array $array
- * @param  ...   $keys
- * @return bool
+ * @param  array &$array
+ * @param  ...    $keys
+ * @return ?int
  * @since  4.0
  */
-function array_unset(array &$array, ...$keys): int
+function array_unset(array &$array, ...$keys): ?int
 {
+    if (empty($keys)) {
+        trigger_error(sprintf('%s(): No keys given', __function__));
+        return null;
+    }
+
     foreach ($keys as $key) {
         unset($array[$key]);
     }
+
     return count($array);
 }
 
@@ -794,7 +802,9 @@ function array_columns(array $array, array $column_keys, $index_key = null, bool
 
     foreach ($array as $i => $value) {
         if (!is_array($value) && !is_object($value)) {
-            trigger_error('array_columns(): non-array/object value encountered at index '. $i);
+            trigger_error(sprintf(
+                '%s(): Non-array/object value encountered at index %i', __function__, $i
+            ));
             continue;
         }
 
@@ -860,7 +870,9 @@ function file_set_contents(string $file, string $contents, int $flags = 0): ?int
 function file_get_buffer_contents(string $file, array $file_data = null): ?string
 {
     if (!is_file($file)) {
-        trigger_error('No file exists such '. $file);
+        trigger_error(sprintf(
+            '%s(): No file exists such %s', __function__, $file
+        ));
         return null;
     }
 
@@ -886,7 +898,7 @@ function file_get_type(string $file): ?string
 
     if (is_file($file)) {
         try {
-            $ret =@ function_exists('mime_content_type') ? mime_content_type($file) : false;
+            $ret = function_exists('mime_content_type') ? mime_content_type($file) : false;
             if ($ret === false && function_exists('exec')) {
                 $exec = exec('file -i '. escapeshellarg($file));
                 if ($exec && preg_match('~: *([^/ ]+/[^; ]+)~', $exec, $match)) {
@@ -901,7 +913,7 @@ function file_get_type(string $file): ?string
 
     // Try by extension.
     if (!$ret) {
-        $extension = (string) file_get_extension($file, false);
+        $extension = file_get_extension($file, false);
         if ($extension) {
             $extension = strtolower($extension);
 
