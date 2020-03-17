@@ -789,13 +789,13 @@ function array_unpop(array &$array, ...$values): int
 
 /**
  * Array pad keys (ensures keys padding the given keys on array).
- * @param  array  $array
- * @param  array  $keys
- * @param  any    $value
+ * @param  array    $array
+ * @param  array    $keys
+ * @param  any|null $value
  * @return array
  * @since  4.0
  */
-function array_pad_keys(array $array, array $keys, $value): array
+function array_pad_keys(array $array, array $keys, $value = null): array
 {
     return array_replace(array_fill_keys($keys, $value), $array);
 }
