@@ -706,9 +706,10 @@ function array_clean(array $array): array
  */
 function array_isset(array $array, ...$keys): ?bool
 {
-    // Eg: ($array, 'a', 'b' or ['a', 'b']).
-    $keys = isset($keys[0]) && is_array($keys[0]) ? $keys[0] : $keys;
-    $keys = array_clean($keys);
+    $keys = array_clean(
+        // Eg: ($array, 'a', 'b' or ['a', 'b']).
+        isset($keys[0]) && is_array($keys[0]) ? $keys[0] : $keys
+    );
 
     if (empty($keys)) {
         trigger_error(sprintf('%s(): No keys given', __function__));
@@ -733,9 +734,10 @@ function array_isset(array $array, ...$keys): ?bool
  */
 function array_unset(array &$array, ...$keys): ?array
 {
-    // Eg: ($array, 'a', 'b' or ['a', 'b']).
-    $keys = isset($keys[0]) && is_array($keys[0]) ? $keys[0] : $keys;
-    $keys = array_clean($keys);
+    $keys = array_clean(
+        // Eg: ($array, 'a', 'b' or ['a', 'b']).
+        isset($keys[0]) && is_array($keys[0]) ? $keys[0] : $keys
+    );
 
     if (empty($keys)) {
         trigger_error(sprintf('%s(): No keys given', __function__));
