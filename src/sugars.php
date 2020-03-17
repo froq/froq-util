@@ -30,6 +30,12 @@ use froq\util\Objects;
 defined('nil') || require 'sugars-constant.php';
 
 /**
+ * Yes man..
+ */
+function equal($a, $b): bool { return ($a == $b); }
+function equals($a, $b): bool { return ($a === $b); }
+
+/**
  * Strsrc & strisrc (the ever most most most wanted functions..).
  * @alias of str_contains(),str_ends_with(),str_starts_with()
  * @since 4.0
