@@ -32,7 +32,7 @@ defined('nil') || require 'sugars-constant.php';
 /**
  * Yes man..
  */
-function equal ($a, $b, ...$c): bool { return in_array($a, [$b, ...$c]); }
+function equal($a, $b, ...$c): bool { return in_array($a, [$b, ...$c]); }
 function equals($a, $b, ...$c): bool { return in_array($a, [$b, ...$c], true); }
 
 /**
