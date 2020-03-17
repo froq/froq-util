@@ -32,8 +32,8 @@ defined('nil') || require 'sugars-constant.php';
 /**
  * Yes man..
  */
-function equal($a, $b): bool { return ($a == $b); }
-function equals($a, $b): bool { return ($a === $b); }
+function equal ($a, $b, ...$c): bool { return in_array($a, [$b, ...$c]); }
+function equals($a, $b, ...$c): bool { return in_array($a, [$b, ...$c], true); }
 
 /**
  * Strsrc & strisrc (the ever most most most wanted functions..).
