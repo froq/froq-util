@@ -767,6 +767,17 @@ function array_prepend(array &$array, ...$values): array
 }
 
 /**
+ * Array unpop (for the sake of array_pop()).
+ * @param  array &$array
+ * @return any
+ * @since  4.0
+ */
+function array_top(array &$array)
+{
+    return array_shift($array);
+}
+
+/**
  * Array unpop (for the sake of array_unshift()).
  * @param  array &$array
  * @param  ...    $values
