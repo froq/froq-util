@@ -47,20 +47,21 @@ function is_map_array($in): bool
 }
 
 /**
- * Array set (with dot notation support for sub-array paths).
- * @param  array      &$array
- * @param  int|string  $key
- * @param  any         $value
+ * Array set.
+ * @param  array                        &$array
+ * @param  int|string|array<int|string>  $key
+ * @param  any                           $value
  * @return array
  * @since  3.0
  */
 function array_set(array &$array, $key, $value): array
 {
-    return Arrays::set($array, $key, $value);
+    return is_array($key) ? Arrays::setAll($array, $key)
+                          : Arrays::set($array, $key, $value);
 }
 
 /**
-* Array set all (with dot notation support for sub-array paths).
+* Array set all.
 * @param  array &$array
 * @param  array  $items
 * @return array
@@ -72,22 +73,23 @@ function array_set_all(array &$array, array $items): array
 }
 
 /**
- * Array get (with dot notation support for sub-array paths).
- * @param  array      &$array
- * @param  int|string  $key AKA path.
- * @param  any|null    $value_default
+ * Array get.
+ * @param  array                        &$array
+ * @param  int|string|array<int|string>  $key
+ * @param  any|null                      $value_default
  * @return any|null
  * @since  3.0
  */
 function array_get(array $array, $key, $value_default = null)
 {
-    return Arrays::get($array, $key, $value_default);
+    return is_array($key) ? Arrays::getAll($array, $key, $value_default)
+                          : Arrays::get($array, $key, $value_default);
 }
 
 /**
- * Array get all (shortcuts like: list(..) = Arrays::getAll(..)).
+ * Array get all.
  * @param  array    &$array
- * @param  array     $keys AKA paths.
+ * @param  array     $keys
  * @param  any|null  $value_default
  * @return array
  * @since  3.0
@@ -99,19 +101,20 @@ function array_get_all(array $array, array $keys, $value_default = null): array
 
 /**
  * Array pull.
- * @param  array      &$array
- * @param  int|string  $key
- * @param  any|null    $value_default
+ * @param  array                        &$array
+ * @param  int|string|array<int|string>  $key
+ * @param  any|null                      $value_default
  * @return any|null
  * @since  3.0
  */
 function array_pull(array &$array, $key, $value_default = null)
 {
-    return Arrays::pull($array, $key, $value_default);
+    return is_array($key) ? Arrays::pullAll($array, $key, $value_default)
+                          : Arrays::pull($array, $key, $value_default);
 }
 
 /**
- * Array pull all (shortcuts like: list(..) = Arrays::pullAll(..)).
+ * Array pull all.
  * @param  array   &$array
  * @param  array    $keys
  * @param  any|null $value_default
@@ -125,14 +128,15 @@ function array_pull_all(array &$array, array $keys, $value_default = null): arra
 
 /**
  * Remove.
- * @param  array      &$array
- * @param  int|string  $key
+ * @param  array                        &$array
+ * @param  int|string|array<int|string>  $key
  * @return array
  * @since  4.0
  */
 function array_remove(array &$array, $key): array
 {
-    return Arrays::remove($array, $key);
+    return is_array($key) ? Arrays::removeAll($array, $key)
+                          : Arrays::remove($array, $key);
 }
 
 /**
