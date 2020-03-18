@@ -891,15 +891,15 @@ function file_remove(...$args)
  */
 function file_read(...$args)
 {
-    return file_get_contents(...$args);
+    return file_get_contents(...$args) ?: null;
 }
 
 /**
- * File write (alias of file_set_contents()).
+ * File write (alias of file_put_contents()).
  */
 function file_write(...$args)
 {
-    return file_set_contents(...$args);
+    return file_put_contents(...$args) ?: null;
 }
 
 /**
