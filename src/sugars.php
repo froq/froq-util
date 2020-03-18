@@ -767,7 +767,7 @@ function array_prepend(array &$array, ...$values): array
 }
 
 /**
- * Array unpop (for the sake of array_pop()).
+ * Array top (for the sake of array_pop()).
  * @param  array &$array
  * @return any
  * @since  4.0
