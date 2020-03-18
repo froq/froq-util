@@ -539,7 +539,7 @@ function mkfile(string $file, int $mode = 0644): ?bool
 function mkfiletemp(string $extension = null, bool $froq_temp = true): ?string
 {
     $file = get_real_path(
-        $froq_temp ? get_temporary_directory() : dirname(get_temporary_directory())
+        ($froq_temp ? get_temporary_directory() : dirname(get_temporary_directory()))
         . __dirsep . get_uniqid(true)
         . ($extension ? '.'. trim($extension, '.') : '')
     );
