@@ -394,6 +394,7 @@ function get_request_id(): string
 function get_temporary_directory(): string
 {
     $dir = sys_get_temp_dir() . __dirsep .'froq-temporary';
+
     if (!is_dir($dir)) {
         mkdir($dir, 0777, true);
     }
@@ -408,7 +409,8 @@ function get_temporary_directory(): string
  */
 function get_cache_directory(): string
 {
-    $dir = get_temporary_directory() . __dirsep .'froq-cache';
+    $dir = dirname(get_temporary_directory()) . __dirsep .'froq-cache';
+
     if (!is_dir($dir)) {
         mkdir($dir, 0777, true);
     }
@@ -493,14 +495,13 @@ function gettmp(): string
 }
 
 /**
- * Mkfile (creates a file).
- * @param  string   $file
- * @param  int|null $mode
- * @param  bool     $temp
+ * Mkfile (creates a new file).
+ * @param  string  $file
+ * @param  int     $mode
  * @return ?bool
  * @since  4.0
  */
-function mkfile(string $file, int $mode = null, bool $temp = false): ?bool
+function mkfile(string $file, int $mode = 0644): ?bool
 {
     $file = trim($file);
     if (!$file) {
@@ -508,7 +509,7 @@ function mkfile(string $file, int $mode = null, bool $temp = false): ?bool
         return null;
     }
 
-    $file = get_real_path(!$temp ? $file : get_temporary_directory() . __dirsep . $file);
+    $file = get_real_path($file);
 
     if (is_dir($file)) {
         trigger_error(sprintf(
@@ -522,20 +523,35 @@ function mkfile(string $file, int $mode = null, bool $temp = false): ?bool
         return null;
     }
 
-    $dir = is_dir(dirname($file)) || mkdir(dirname($file), 0777, true);
+    $ok = is_dir(dirname($file)) || mkdir(dirname($file), 0777, true);
 
-    return !$mode ? ($dir && touch($file))
-                  : ($dir && touch($file) && chmod($file, $mode));
+    return $mode ? ($ok && touch($file) && chmod($file, $mode))
+                 : ($ok && touch($file));
+}
+
+/**
+ * Mkfiletemp (creates a new file in temporary directory).
+ * @param  string|null $extension
+ * @param  bool        $froq_temp
+ * @return ?string
+ * @since  4.0
+ */
+function mkfiletemp(string $extension = null, bool $froq_temp = true): ?string
+{
+    $temp = $froq_temp ? get_temporary_directory() : dirname(get_temporary_directory());
+    $file = $temp . __dirsep . get_uniqid(true)
+          . ($extension ? '.'. trim($extension, '.') : '');
+
+    return mkfile($file) ? $file : null; // Error!
 }
 
 /**
  * Rmfile.
  * @param  string $file
- * @param  bool   $temp
  * @return ?bool
  * @since  4.0
  */
-function rmfile(string $file, bool $temp = false): ?bool
+function rmfile(string $file): ?bool
 {
     $file = trim($file);
     if (!$file) {
@@ -543,7 +559,7 @@ function rmfile(string $file, bool $temp = false): ?bool
         return null;
     }
 
-    $file = get_real_path(!$temp ? $file : get_temporary_directory() . __dirsep . $file);
+    $file = get_real_path($file);
 
     if (is_dir($file)) {
         trigger_error(sprintf(
@@ -553,35 +569,6 @@ function rmfile(string $file, bool $temp = false): ?bool
     }
 
     return is_file($file) && unlink($file);
-}
-
-/**
- * Mkfiletemp (creates a new temporary file in temporary directory).
- * @param  string|null $extension
- * @return ?string
- * @since  4.0
- */
-function mkfiletemp(string $extension = null): ?string
-{
-    $file = get_temporary_directory() . __dirsep . get_uniqid(true)
-          . ($extension ? '.'. trim($extension, '.') : '');
-
-    if (!mkfile(basename($file), 0644, true)) {
-        $file = null; // Error!
-    }
-
-    return $file;
-}
-
-/**
- * Rmfiletemp (remove a temporary file from temporary directory).
- * @param  string $file
- * @return bool
- * @since  4.0
- */
-function rmfiletemp(string $file): bool
-{
-    return rmfile(basename($file), true);
 }
 
 /**
@@ -870,6 +857,49 @@ function preg_remove($pattern, $subject, int $limit = null, int &$count = null)
     }
 
     return preg_replace($pattern, $replacement, $subject, $limit ?? -1, $count);
+}
+
+/**
+ * File create (create a new file).
+ * @param  string   $file
+ * @param  int|null $mode
+ * @return ?string
+ */
+function file_create(string $file, int $mode = 0644): ?string
+{
+    return mkfile($file, $mode) ? $file : null;
+}
+
+/**
+ * File create temporary (alias of mkfiletemp()).
+ */
+function file_create_temporary(...$args)
+{
+    return mkfiletemp(...$args);
+}
+
+/**
+ * File remove (alias of rmfile()).
+ */
+function file_remove(...$args)
+{
+    return rmfile(...$args);
+}
+
+/**
+ * File read (alias of file_get_contents()).
+ */
+function file_read(...$args)
+{
+    return file_get_contents(...$args);
+}
+
+/**
+ * File write (alias of file_set_contents()).
+ */
+function file_write(...$args)
+{
+    return file_set_contents(...$args);
 }
 
 /**
