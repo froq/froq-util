@@ -542,7 +542,7 @@ function mkfiletemp(string $extension = null, bool $froq_temp = true): ?string
     $file = $temp . __dirsep . get_uniqid(true)
           . ($extension ? '.'. trim($extension, '.') : '');
 
-    return mkfile($file) ? $file : null; // Error!
+    return mkfile($file) ? $file : null;
 }
 
 /**
@@ -860,13 +860,16 @@ function preg_remove($pattern, $subject, int $limit = null, int &$count = null)
 }
 
 /**
- * File create (create a new file).
- * @param  string   $file
- * @param  int|null $mode
+ * File create (create a new file or a new temporary file).
+ * @param  string|null $file
+ * @param  int|null    $mode
  * @return ?string
  */
-function file_create(string $file, int $mode = 0644): ?string
+function file_create(string $file = null, int $mode = 0644): ?string
 {
+    if ($file === null) {
+        return mkfiletemp();
+    }
     return mkfile($file, $mode) ? $file : null;
 }
 
