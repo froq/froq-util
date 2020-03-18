@@ -866,6 +866,7 @@ function preg_remove($pattern, $subject, int $limit = null, int &$count = null)
  * @param  string|null $file
  * @param  int|null    $mode
  * @return ?string
+ * @since  4.0
  */
 function file_create(string $file = null, int $mode = 0644): ?string
 {
@@ -877,6 +878,7 @@ function file_create(string $file = null, int $mode = 0644): ?string
 
 /**
  * File create temporary (alias of mkfiletemp()).
+ * @since 4.0
  */
 function file_create_temporary(...$args)
 {
@@ -885,6 +887,7 @@ function file_create_temporary(...$args)
 
 /**
  * File remove (alias of rmfile()).
+ * @since 4.0
  */
 function file_remove(...$args)
 {
@@ -893,6 +896,7 @@ function file_remove(...$args)
 
 /**
  * File read (alias of file_get_contents()).
+ * @since 4.0
  */
 function file_read(...$args)
 {
@@ -901,6 +905,7 @@ function file_read(...$args)
 
 /**
  * File write (alias of file_put_contents()).
+ * @since 4.0
  */
 function file_write(...$args)
 {
