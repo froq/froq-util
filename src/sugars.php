@@ -683,7 +683,8 @@ function gmtime(): int
  */
 function array_clean(array $array): array
 {
-    return array_filter($array, fn($v) => ($v !== '' && $v !== null && $v !== []));
+    return array_filter($array,
+        fn($v) => ($v !== '' && $v !== null && $v !== []));
 }
 
 /**
