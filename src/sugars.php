@@ -683,8 +683,32 @@ function gmtime(): int
  */
 function array_clean(array $array): array
 {
-    return array_filter($array,
-        fn($v) => ($v !== '' && $v !== null && $v !== []));
+    return array_filter($array, function ($value) {
+        return ($value !== '' && $value !== null && $value !== []);
+    });
+}
+
+/**
+ * Array apply (apply the given function to each element of the given array).
+ * @param  array    $array
+ * @param  callable $func
+ * @return array
+ * @since  4.0
+ */
+function array_apply(array $array, callable $func): array
+{
+    foreach ($array as $key => $value) {
+        // Because array_map() tricky with array_keys() only for value => key notation, and also
+        // just warns about argument count (e.g: if $func is strval()) and foolishly making all
+        // values NULL; simply use this way here with try/catch, catching ArgumentCountError only.
+        try {
+            $ret[$key] = $func($value, $key);
+        } catch (ArgumentCountError $e) {
+            $ret[$key] = $func($value);
+        }
+    }
+
+    return $ret ?? [];
 }
 
 /**
@@ -716,7 +740,7 @@ function array_isset(array $array, ...$keys): ?bool
 }
 
 /**
- * Array isset (drops all given keys from given array).
+ * Array unset (drops all given keys from given array).
  * @param  array    &$array
  * @param  array|... $keys
  * @return ?array
