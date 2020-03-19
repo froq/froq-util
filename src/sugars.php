@@ -1037,6 +1037,24 @@ function file_get_type(string $file): ?string
 }
 
 /**
+ * File get name (gets a file name).
+ * @param  string $file
+ * @param  bool   $extensioned
+ * @return ?string
+ * @since  4.0
+ */
+function file_get_name(string $file, bool $extensioned = true): ?string
+{
+    $ret = basename($file);
+
+    if ($ret && !$extensioned && ($extension = file_get_extension($file))) {
+        $ret = substr($ret, 0, -strlen($extension));
+    }
+
+    return $ret ?: null;
+}
+
+/**
  * File get extension (gets a file extension).
  * @param  string $file
  * @param  bool   $dotted
