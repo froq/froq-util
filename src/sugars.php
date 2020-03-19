@@ -990,12 +990,12 @@ function file_get_buffer_contents(string $file, array $file_data = null): ?strin
 }
 
 /**
- * File get type (gets a file (mime) type).
+ * File type (gets a file (mime) type).
  * @param  string $file
  * @return ?string
  * @since  4.0
  */
-function file_get_type(string $file): ?string
+function file_type(string $file): ?string
 {
     $ret = null;
 
@@ -1016,7 +1016,7 @@ function file_get_type(string $file): ?string
 
     // Try by extension.
     if (!$ret) {
-        $extension = file_get_extension($file, false);
+        $extension = file_extension($file, false);
         if ($extension) {
             $extension = strtolower($extension);
 
@@ -1037,17 +1037,19 @@ function file_get_type(string $file): ?string
 }
 
 /**
- * File get name (gets a file name).
+ * File name (gets a file name).
  * @param  string $file
  * @param  bool   $extensioned
  * @return ?string
  * @since  4.0
  */
-function file_get_name(string $file, bool $extensioned = true): ?string
+function file_name(string $file, bool $extensioned = true): ?string
 {
+    // Function basename() wants an explicit suffix to remove it from name, but using just a
+    // boolean here more sexy.
     $ret = basename($file);
 
-    if ($ret && !$extensioned && ($extension = file_get_extension($file))) {
+    if ($ret && !$extensioned && ($extension = file_extension($file))) {
         $ret = substr($ret, 0, -strlen($extension));
     }
 
@@ -1055,14 +1057,16 @@ function file_get_name(string $file, bool $extensioned = true): ?string
 }
 
 /**
- * File get extension (gets a file extension).
+ * File extension (gets a file extension).
  * @param  string $file
  * @param  bool   $dotted
  * @return ?string
  * @since  4.0
  */
-function file_get_extension(string $file, bool $dotted = true): ?string
+function file_extension(string $file, bool $dotted = true): ?string
 {
+    // Function pathinfo() returns ".foo" for example "/some/path/.foo" and if $dotted false
+    // then this function return ".", no baybe!
     $ret = strrchr($file, '.');
 
     if ($ret && !$dotted) {
