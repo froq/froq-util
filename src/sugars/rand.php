@@ -112,7 +112,7 @@ function rand_oid(bool $count = true): string
     static $counter = 0;
 
     $bin = pack('N', time()) . substr(md5(gethostname()), 0, 3)
-         . pack('n', getmypid()) . substr(pack('N', $count ? $counter++ : mt_rand()), 1, 3);
+         . pack('n', getmypid()) . substr(pack('N', ($count ? $counter++ : mt_rand())), 1, 3);
 
     // Convert to hex.
     $ret = '';
