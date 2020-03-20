@@ -309,14 +309,19 @@ function get_uniqid(bool $long = false, bool $convert = false): string
 
     if (!$long) {
         $ret = substr($parts[0], 0, 13);
+        if (!$convert) {
+            return $ret;
+        }
+
+        $ret = base_convert($ret, 16, 36);
+        $ret = str_pad($ret, 13, str_shuffle(BASE36_CHARACTERS));
     } else {
         if (!$convert) {
-            $ret = str_pad($parts[0] . dechex($parts[1]), 21, '0');
+            $ret = substr($parts[0] . dechex($parts[1]), 0, 20);
+            $ret = str_pad($ret, 20, '0');
         } else {
             $ret = base_convert(join($parts), 16, 36);
-            while (strlen($ret) < 21) {
-                $ret .= str_shuffle(BASE36_CHARACTERS)[0];
-            }
+            $ret = str_pad($ret, 20, str_shuffle(BASE36_CHARACTERS));
         }
     }
 
@@ -340,9 +345,7 @@ function get_nano_uniqid(bool $convert = false): string
         $ret = str_pad($ret, 13, '0');
     } else {
         $ret = base_convert(join($parts), 10, 36);
-        while (strlen($ret) < 13) {
-            $ret .= str_shuffle(BASE36_CHARACTERS)[0];
-        }
+        $ret = str_pad($ret, 13, str_shuffle(BASE36_CHARACTERS));
     }
 
     return $ret;
@@ -357,16 +360,18 @@ function get_nano_uniqid(bool $convert = false): string
  */
 function get_random_uniqid(int $length = 13, bool $convert = false): string
 {
-    $bytes = random_bytes(($length / 2) | 0);
+    static $chars = '0123456789abcdef';
+
+    $rands = '';
+    while (strlen($rands) < $length) {
+        $rands .= str_shuffle($chars)[0];
+    }
 
     if (!$convert) {
-        $pad = ''. rand(0, 9); // With a random number (only occurs if length / 2 is a float).
-        $ret = str_pad(bin2hex($bytes), $length, $pad);
+        $ret = $rands;
     } else {
-        $ret = base_convert(bin2hex($bytes), 16, 36);
-        while (strlen($ret) < $length) {
-            $ret .= str_shuffle(BASE36_CHARACTERS)[0];
-        }
+        $ret = base_convert($rands, 16, 36);
+        $ret = str_pad($ret, $length, str_shuffle(BASE36_CHARACTERS));
     }
 
     return $ret;
