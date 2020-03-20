@@ -50,18 +50,22 @@ function rand_float(float $min = null, float $max = null): float
 
 /**
  * Rand string.
- * @param  int  $length
- * @param  bool $hex
+ * @param  int      $length
+ * @param  int|null $type Base option (1-3).
  * @return string
  * @since  4.0
  */
-function rand_string(int $length = 16, bool $hex = false): string
+function rand_string(int $length = 10, int $type = null): string
 {
-    static $chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    static $chars; if (!$chars) {
+        $chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    }
 
-    $str = $chars;
-    if ($hex) {
-        $str = substr($str, 0, 16);
+    switch ($type) {
+         case 1:  $str = substr($chars, 0, 10); break; // Base 10.
+         case 2:  $str = substr($chars, 0, 16); break; // Base 16.
+         case 3:  $str = substr($chars, 0, 36); break; // Base 36.
+        default:  $str = $chars; // Base 62.
     }
 
     $ret = '';
