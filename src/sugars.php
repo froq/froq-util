@@ -298,12 +298,12 @@ function get_type($var, bool $scalars = false): string
 
 /**
  * Get uniqid.
- * @param  bool $long
  * @param  bool $convert
+ * @param  bool $long
  * @return string
  * @since  4.0
  */
-function get_uniqid(bool $long = false, bool $convert = false): string
+function get_uniqid(bool $convert = false, bool $long = false): string
 {
     $parts = explode('.', uniqid('', true));
 
@@ -313,7 +313,7 @@ function get_uniqid(bool $long = false, bool $convert = false): string
             return $ret;
         }
 
-        $ret = base_convert($ret, 16, 36);
+        $ret = base_convert($ret, 16, 36); // Normally 10-length.
         $ret = str_pad($ret, 13, str_shuffle(BASE36_CHARACTERS));
     } else {
         if (!$convert) {
@@ -353,12 +353,12 @@ function get_nano_uniqid(bool $convert = false): string
 
 /**
  * Get random uniqid.
- * @param  int    $length
  * @param  bool   $convert
+ * @param  int    $length
  * @return string
  * @since  4.0
  */
-function get_random_uniqid(int $length = 13, bool $convert = false): string
+function get_random_uniqid(bool $convert = false, int $length = 13): string
 {
     static $chars = '0123456789abcdef';
 
