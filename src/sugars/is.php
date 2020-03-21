@@ -119,12 +119,18 @@ function is_class($in): bool
 
 /**
  * Is class method.
- * @param  any $in
+ * @param  string|object $in
+ * @param  string|null   $method
  * @return bool
  * @since  3.0
  */
-function is_class_method($in): bool
+function is_class_method($in, string $method = null): bool
 {
+    // Eg: ['foo' or $foo, 'bar'].
+    if ($method) {
+        return method_exists($in, $method);
+    }
+
     // Eg: Foo::bar (for publics only, seems not fixed @see https://bugs.php.net/bug.php?id=29210).
     return is_string($in) && strpos($in, '::') && is_callable($in);
 }
