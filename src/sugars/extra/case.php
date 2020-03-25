@@ -81,7 +81,9 @@ function to_camel_case(string $in, string $sep = null, bool $lower = true): stri
 
     $sep ??= ' ';
 
-    return lcfirst(implode('', array_map(fn($s) => ucfirst(trim($s)), explode($sep, $in))));
+    return lcfirst(
+        implode('', array_map(fn($s) => ucfirst(trim($s)), explode($sep, $in)))
+    );
 }
 
 /**
