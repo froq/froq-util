@@ -659,21 +659,31 @@ function stream_set_contents(&$handle, string $contents): bool
 }
 
 /**
- * Times (gets time, microtime, time + microtime).
- * @return array
- * @since 4.0
+ * Utime (gets microtime as string or float).
+ * @param  bool $float
+ * @return string|float
  */
-function times(): array
+function utime(bool $float = false)
+{
+    return !$float ? utimes()[3] : utimes()[2];
+}
+
+/**
+ * Utimes (gets time, microtime, time + microtime & time + microtime string).
+ * @return array
+ * @since  4.0
+ */
+function utimes(): array
 {
     sscanf(microtime(), '%f %i', $msec, $sec);
 
-    return [$sec, $msec, ($sec + $msec)];
+    return [$sec, $msec, $fsec = ($sec + $msec), number_format($fsec, 6, '.', '')];
 }
 
 /**
  * Gmtime (gets Greenwich Mean time).
  * @return int
- * @since 4.0
+ * @since  4.0
  */
 function gmtime(): int
 {
