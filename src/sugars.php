@@ -681,13 +681,13 @@ function gmtime(): int
 }
 
 /**
- * Strtomtime (gets a modified time by given format, eg: "1 day" instead of "60*60*24" or "86400").
+ * Strtoitime (gets an interval time by given format, eg: "1 day" instead of "60*60*24" or "86400").
  * @param  string   $format
  * @param  int|null $time
  * @return int
  * @since  4.0
  */
-function strtomtime(string $format, int $time = null): int
+function strtoitime(string $format, int $time = null): int
 {
     $time = $time ?? time();
 
