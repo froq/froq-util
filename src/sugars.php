@@ -662,6 +662,7 @@ function stream_set_contents(&$handle, string $contents): bool
  * Utime (gets microtime as string or float).
  * @param  bool $float
  * @return string|float
+ * @since  4.0
  */
 function utime(bool $float = false)
 {
