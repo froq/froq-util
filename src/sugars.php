@@ -681,6 +681,20 @@ function gmtime(): int
 }
 
 /**
+ * Strtomtime (gets a modified time by given format, eg: "1 day" instead of "60*60*24" or "86400").
+ * @param  string   $format
+ * @param  int|null $time
+ * @return int
+ * @since  4.0
+ */
+function strtomtime(string $format, int $time = null): int
+{
+    $time = $time ?? time();
+
+    return strtotime($format, $time) - $time;
+}
+
+/**
  * Array clean (cleans given array filtering/dropping non-empty values).
  * @param  array $array
  * @return array
