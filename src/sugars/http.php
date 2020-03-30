@@ -143,6 +143,16 @@ function is_put(): bool
 }
 
 /**
+ * Is patch.
+ * @return bool
+ * @since  4.0
+ */
+function is_patch(): bool
+{
+    return app()->request()->method()->isPatch();
+}
+
+/**
  * Is delete.
  * @return bool
  */
