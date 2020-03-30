@@ -1022,15 +1022,6 @@ function file_write(...$args)
 }
 
 /**
- * File path (alias of get_real_path()).
- * @since 4.0
- */
-function file_path(...$args)
-{
-    return get_real_path(...$args);
-}
-
-/**
  * File set contents (sets a file contents).
  * @param  string $file
  * @param  string $contents
@@ -1069,6 +1060,35 @@ function file_get_buffer_contents(string $file, array $file_data = null): ?strin
     include $file;
 
     return ob_get_clean();
+}
+
+/**
+ * File path (alias of get_real_path()).
+ * @since 4.0
+ */
+function file_path(...$args)
+{
+    return get_real_path(...$args);
+}
+
+/**
+ * File name (gets a file name).
+ * @param  string $file
+ * @param  bool   $extensioned
+ * @return ?string
+ * @since  4.0
+ */
+function file_name(string $file, bool $extensioned = true): ?string
+{
+    // Function basename() wants an explicit suffix to remove it from name, but using
+    // just a boolean here is more sexy..
+    $ret = basename($file);
+
+    if ($ret && !$extensioned && ($extension = file_extension($file))) {
+        $ret = substr($ret, 0, -strlen($extension));
+    }
+
+    return $ret ?: null;
 }
 
 /**
@@ -1113,26 +1133,6 @@ function file_type(string $file): ?string
                 }
             }
         }
-    }
-
-    return $ret ?: null;
-}
-
-/**
- * File name (gets a file name).
- * @param  string $file
- * @param  bool   $extensioned
- * @return ?string
- * @since  4.0
- */
-function file_name(string $file, bool $extensioned = true): ?string
-{
-    // Function basename() wants an explicit suffix to remove it from name, but using just a
-    // boolean here more sexy.
-    $ret = basename($file);
-
-    if ($ret && !$extensioned && ($extension = file_extension($file))) {
-        $ret = substr($ret, 0, -strlen($extension));
     }
 
     return $ret ?: null;
