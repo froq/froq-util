@@ -453,9 +453,9 @@ function get_real_path(string $target, bool $strict = false): ?string
     }
 
     $ret = '';
-    $tmp = explode(__dirsep, $target);
+    $exp = explode(__dirsep, $target);
 
-    foreach ($tmp as $i => $cur) {
+    foreach ($exp as $i => $cur) {
         $cur = trim($cur);
         if ($i == 0) {
             if ($cur == '~') { // Home path (eg: ~/Desktop).
