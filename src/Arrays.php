@@ -567,7 +567,6 @@ final class Arrays extends StaticClass
                 $values[] = $array[$key];
             }
         }
-
         return $values ?? [];
     }
 
@@ -586,7 +585,6 @@ final class Arrays extends StaticClass
                 $keys[] = $key;
             }
         }
-
         return $keys ?? [];
     }
 
