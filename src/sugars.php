@@ -804,7 +804,7 @@ function array_isset(array $array, ...$keys): ?bool
     }
 
     foreach ($keys as $key) {
-        if (!isset($key)) {
+        if (!isset($array[$key])) {
             return false;
         }
     }
