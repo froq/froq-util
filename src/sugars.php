@@ -463,8 +463,20 @@ function get_real_path(string $target, bool $strict = false): ?string
                 continue;
             } elseif ($cur == '.' || $cur == '..') {
                 if (!$ret) {
-                    $file = debug_backtrace(1, 1)[0]['file'];
-                    $ret  = ($cur == '.') ? dirname($file) : dirname(dirname($file));
+                    $file = getcwd(); // Fallback.
+
+                    foreach (debug_backtrace(0) as $trace) {
+                        // Search until finding the right target argument (sadly seems no way else
+                        // for that when call stack is chaining from a function to another function).
+                        if (empty($trace['args'][0]) || $trace['args'][0] != $target) {
+                            break;
+                        }
+
+                        $file = $trace['file'];
+                    }
+
+                    $ret  = ($cur == '.') ? dirname($file)
+                                          : dirname(dirname($file));
                 } // Else pass.
                 continue;
             }
@@ -485,6 +497,39 @@ function get_real_path(string $target, bool $strict = false): ?string
     }
 
     return $ret;
+}
+
+/**
+ * Get trace (get a bit detailed trace with default options, limit & index option).
+ * @param  int|null $options
+ * @param  int|null $limit
+ * @param  int|null $index
+ * @return ?array
+ * @since  4.0
+ */
+function get_trace(int $options = null, int $limit = null, int $index = null): ?array
+{
+    $trace = debug_backtrace($options ?? 0, $limit ?? 0);
+    array_shift($trace); // Drop self.
+
+    foreach ($trace as $i => &$cur) {
+        $cur += [
+            'caller'   => null,
+            'callee'   => $cur['function'] ?? null,
+            'callPath' => $cur['file'] .':'. $cur['line'],
+        ];
+
+        if (isset($cur['class'])) {
+            $cur['method']     = $cur['function'];
+            $cur['methodType'] = ($cur['type']  == '::') ? 'static' : 'this';
+        }
+
+        if (isset($trace[$i + 1]['function'])) {
+            $cur['caller'] = $trace[$i + 1]['function'];
+        }
+    }
+
+    return is_null($index) ? $trace : $trace[$index] ?? null;
 }
 
 /**
