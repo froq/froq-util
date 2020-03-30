@@ -554,6 +554,43 @@ final class Arrays extends StaticClass
     }
 
     /**
+     * Search keys.
+     * @param  array $array
+     * @param  array $keys
+     * @return array
+     * @since  4.0
+     */
+    public static function searchKeys(array $array, array $keys): array
+    {
+        foreach ($keys as $key) {
+            if (array_key_exists($key, $array)) {
+                $values[] = $array[$key];
+            }
+        }
+
+        return $values ?? [];
+    }
+
+    /**
+     * Search values.
+     * @param  array $array
+     * @param  array $values
+     * @param  bool  $strict
+     * @return array
+     * @since  4.0
+     */
+    public static function searchValues(array $array, array $values, bool $strict = true): array
+    {
+        foreach ($values as $value) {
+            if (($key = array_search($value, $array, $strict)) !== false) {
+                $keys[] = $key;
+            }
+        }
+
+        return $keys ?? [];
+    }
+
+    /**
      * Get int.
      * @param  array      &$array
      * @param  int|string  $key

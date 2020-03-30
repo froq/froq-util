@@ -328,3 +328,28 @@ function array_values_exists(array $array, array $values, bool $strict = true): 
 {
     return Arrays::valuesExists($array, $values, $strict);
 }
+
+/**
+ * Array search keys.
+ * @param  array $array
+ * @param  array $keys
+ * @return array
+ * @since  4.0
+ */
+function array_search_keys(array $array, array $keys): array
+{
+    return Arrays::searchKeys($array, $keys);
+}
+
+/**
+ * Array search values.
+ * @param  array $array
+ * @param  array $values
+ * @param  bool  $strict
+ * @return array
+ * @since  4.0
+ */
+function array_search_values(array $array, array $values, bool $strict = true): array
+{
+    return Arrays::searchValues($array, $values, $strict);
+}
