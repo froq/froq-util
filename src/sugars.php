@@ -451,9 +451,6 @@ function get_real_path(string $target, bool $strict = false): ?string
     if (!$target) {
         return null;
     }
-    if ($path = realpath($target)) {
-        return $path;
-    }
 
     $ret = '';
     $tmp = explode(__dirsep, $target);
@@ -466,7 +463,8 @@ function get_real_path(string $target, bool $strict = false): ?string
                 continue;
             } elseif ($cur == '.' || $cur == '..') {
                 if (!$ret) {
-                    $ret = ($cur == '.') ? getcwd() : dirname(getcwd());
+                    $file = debug_backtrace(1, 1)[0]['file'];
+                    $ret  = ($cur == '.') ? dirname($file) : dirname(dirname($file));
                 } // Else pass.
                 continue;
             }
@@ -482,7 +480,7 @@ function get_real_path(string $target, bool $strict = false): ?string
         $ret .= __dirsep . $cur; // Append current.
     }
 
-    if ($strict && !realpath($ret)) {
+    if ($strict && !file_exists($ret)) {
         $ret = null;
     }
 
@@ -976,6 +974,15 @@ function file_read(...$args)
 function file_write(...$args)
 {
     return file_put_contents(...$args) ?: null;
+}
+
+/**
+ * File path (alias of get_real_path()).
+ * @since 4.0
+ */
+function file_path(...$args)
+{
+    return get_real_path(...$args);
 }
 
 /**
