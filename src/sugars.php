@@ -1002,6 +1002,15 @@ function file_remove(...$args)
 }
 
 /**
+ * File write (alias of file_put_contents()).
+ * @since 4.0
+ */
+function file_write(...$args)
+{
+    return file_put_contents(...$args) ?: null;
+}
+
+/**
  * File read (alias of file_get_contents()).
  * @since 4.0
  */
@@ -1011,12 +1020,12 @@ function file_read(...$args)
 }
 
 /**
- * File write (alias of file_put_contents()).
+ * File read buffer (alias of file_get_buffer_contents()).
  * @since 4.0
  */
-function file_write(...$args)
+function file_read_buffer(...$args)
 {
-    return file_put_contents(...$args) ?: null;
+    return file_get_buffer_contents(...$args) ?: null;
 }
 
 /**
