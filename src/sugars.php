@@ -1045,8 +1045,8 @@ function file_set_contents(string $file, string $contents, int $flags = 0): ?int
 
 /**
  * File get buffer contents (loads & gets a file (rendered) buffer contents).
- * @param  string $file
- * @param  array  $file_data
+ * @param  string     $file
+ * @param  array|null $file_data
  * @return ?string
  * @since  4.0
  */
