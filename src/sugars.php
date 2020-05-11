@@ -1064,6 +1064,7 @@ function file_get_buffer_contents(string $file, array $file_data = null): ?strin
     if ($file_data) {
         extract($file_data);
     }
+
     include $file;
 
     return ob_get_clean();
@@ -1132,7 +1133,7 @@ function file_type(string $file): ?string
             static $cache; // Some speed..
 
             if (empty($cache[$extension])) {
-                foreach (include ('statics/mime.php') as $type => $extensions) {
+                foreach (include 'statics/mime.php' as $type => $extensions) {
                     if (in_array($extension, $extensions, true)) {
                         $cache[$extension] = $ret = $type;
                         break;
