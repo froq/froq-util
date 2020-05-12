@@ -132,7 +132,7 @@ final class Strings extends StaticClass
         if ($in !== '') {
             if ($caseInsensitive && $multiByte) {
                 // Double, cos for eg: Turkish characters issues (ı => I, İ => i).
-                $in  = mb_convert_case(mb_convert_case($in, MB_CASE_UPPER_SIMPLE), MB_CASE_LOWER_SIMPLE);
+                $in = mb_convert_case(mb_convert_case($in, MB_CASE_UPPER_SIMPLE), MB_CASE_LOWER_SIMPLE);
                 $search = mb_convert_case(mb_convert_case($search, MB_CASE_UPPER_SIMPLE), MB_CASE_LOWER_SIMPLE);
             }
             return substr_compare($in, $search, 0, strlen($search), $caseInsensitive) === 0;
@@ -171,7 +171,7 @@ final class Strings extends StaticClass
         if ($in !== '') {
             if ($caseInsensitive && $multiByte) {
                 // Double, cos for eg: Turkish characters issues (ı => I, İ => i).
-                $in  = mb_convert_case(mb_convert_case($in, MB_CASE_UPPER_SIMPLE), MB_CASE_LOWER_SIMPLE);
+                $in = mb_convert_case(mb_convert_case($in, MB_CASE_UPPER_SIMPLE), MB_CASE_LOWER_SIMPLE);
                 $search = mb_convert_case(mb_convert_case($search, MB_CASE_UPPER_SIMPLE), MB_CASE_LOWER_SIMPLE);
             }
             return substr_compare($in, $search, -strlen($search), null, $caseInsensitive) === 0;

@@ -36,21 +36,21 @@ function equal($a, $b, ...$c): bool { return in_array($a, [$b, ...$c]); }
 function equals($a, $b, ...$c): bool { return in_array($a, [$b, ...$c], true); }
 
 /**
- * Strsrc & strisrc (the ever most most most wanted functions..).
- * @alias of str_contains(),str_ends_with(),str_starts_with()
+ * The ever most wanted functions.
+ * @alias of str_contains(),str_starts_with(),str_ends_with()
  * @since 4.0
  */
-function strsrc(string $str, string $src, bool $case_insensitive = false): bool
+function strsrc(string $str, string $src, bool $icase = false): bool
 {
-    return str_contains($str, $src, $case_insensitive);
+    return str_contains($str, $src, $icase);
 }
-function strasrc(string $str, string $src, bool $case_insensitive = false): bool
+function strbsrc(string $str, string $src, bool $icase = false): bool
 {
-    return str_ends_with($str, $src, $case_insensitive);
+    return str_starts_with($str, $src, $icase);
 }
-function strbsrc(string $str, string $src, bool $case_insensitive = false): bool
+function strasrc(string $str, string $src, bool $icase = false): bool
 {
-    return str_starts_with($str, $src, $case_insensitive);
+    return str_ends_with($str, $src, $icase);
 }
 
 /**
@@ -83,17 +83,19 @@ function strcut(string $str, int $length): string
  * @param  string   $str
  * @param  string   $src
  * @param  int|null $length
- * @param  bool     $case_insensitive
+ * @param  bool     $icase
  * @return ?string
  * @since  4.0
  */
-function stracut(string $str, string $src, int $length = null, bool $case_insensitive = false): ?string
+function stracut(string $str, string $src, int $length = null, bool $icase = false): ?string
 {
-    $pos = !$case_insensitive ? strpos($str, $src) : stripos($str, $src);
+    $pos = !$icase ? strpos($str, $src) : stripos($str, $src);
+
     if ($pos !== false) {
         $cut = substr($str, $pos + strlen($src)); // After (a).
         return !$length ? $cut : strcut($cut, $length);
     }
+
     return null; // Not found.
 }
 
@@ -102,17 +104,19 @@ function stracut(string $str, string $src, int $length = null, bool $case_insens
  * @param  string   $str
  * @param  string   $src
  * @param  int|null $length
- * @param  bool     $case_insensitive
+ * @param  bool     $icase
  * @return ?string
  * @since  4.0
  */
-function strbcut(string $str, string $src, int $length = null, bool $case_insensitive = false): ?string
+function strbcut(string $str, string $src, int $length = null, bool $icase = false): ?string
 {
-    $pos = !$case_insensitive ? strpos($str, $src) : stripos($str, $src);
+    $pos = !$icase ? strpos($str, $src) : stripos($str, $src);
+
     if ($pos !== false) {
         $cut = substr($str, 0, $pos); // Before (b).
         return !$length ? $cut : strcut($cut, $length);
     }
+
     return null; // Not found.
 }
 
@@ -124,35 +128,35 @@ function strbcut(string $str, string $src, int $length = null, bool $case_insens
  * @return bool
  * @since  4.0
  */
-function str_contains(string $str, string $src, bool $case_insensitive = false): bool
+function str_contains(string $str, string $src, bool $icase = false): bool
 {
-    return (!$case_insensitive ? strpos($str, $src) : stripos($str, $src)) !== false;
+    return (!$icase ? strpos($str, $src) : stripos($str, $src)) !== false;
 }
 
 /**
  * Str starts with (RFC: http://wiki.php.net/rfc/add_str_begin_and_end_functions).
  * @param  string $str
  * @param  string $src
- * @param  bool   $case_insensitive
+ * @param  bool   $icase
  * @return bool
  * @since  4.0
  */
-function str_starts_with(string $str, string $src, bool $case_insensitive = false): bool
+function str_starts_with(string $str, string $src, bool $icase = false): bool
 {
-    return substr_compare($str, $src, 0, strlen($src), $case_insensitive) === 0;
+    return substr_compare($str, $src, 0, strlen($src), $icase) === 0;
 }
 
 /**
  * Str ends with (RFC: http://wiki.php.net/rfc/add_str_begin_and_end_functions).
  * @param  string $str
  * @param  string $src
- * @param  bool   $case_insensitive
+ * @param  bool   $icase
  * @return bool
  * @since  4.0
  */
-function str_ends_with(string $str, string $src, bool $case_insensitive = false): bool
+function str_ends_with(string $str, string $src, bool $icase = false): bool
 {
-    return substr_compare($str, $src, -strlen($src), null, $case_insensitive) === 0;
+    return substr_compare($str, $src, -strlen($src), null, $icase) === 0;
 }
 
 /**

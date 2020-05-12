@@ -72,8 +72,7 @@ function string_contains_all(string $in, array $searches, bool $case_insensitive
  * @return bool
  * @since  3.0
  */
-function string_starts_with(string $in, $search, bool $case_insensitive = false,
-    bool $multi_byte = false): bool
+function string_starts_with(string $in, $search, bool $case_insensitive = false, bool $multi_byte = false): bool
 {
     return is_array($search) ? Strings::startsWithAny($in, $search, $case_insensitive, $multi_byte)
                              : Strings::startsWith($in, $search, $case_insensitive, $multi_byte);
@@ -86,8 +85,7 @@ function string_starts_with(string $in, $search, bool $case_insensitive = false,
  * @return bool
  * @since  3.0
  */
-function string_ends_with(string $in, $search, bool $case_insensitive = false,
-    bool $multi_byte = false): bool
+function string_ends_with(string $in, $search, bool $case_insensitive = false, bool $multi_byte = false): bool
 {
     return is_array($search) ? Strings::endsWithAny($in, $search, $case_insensitive, $multi_byte)
                              : Strings::endsWith($in, $search, $case_insensitive, $multi_byte);
@@ -96,7 +94,7 @@ function string_ends_with(string $in, $search, bool $case_insensitive = false,
 /**
  * Is utf.
  * @param  string $in
- * @param  int     $bits
+ * @param  int    $bits
  * @return bool
  * @since  4.0
  */
