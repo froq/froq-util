@@ -79,27 +79,6 @@ function strcut(string $str, int $length): string
 }
 
 /**
- * Stracut.
- * @param  string   $str
- * @param  string   $src
- * @param  int|null $length
- * @param  bool     $icase
- * @return ?string
- * @since  4.0
- */
-function stracut(string $str, string $src, int $length = null, bool $icase = false): ?string
-{
-    $pos = !$icase ? strpos($str, $src) : stripos($str, $src);
-
-    if ($pos !== false) {
-        $cut = substr($str, $pos + strlen($src)); // After (a).
-        return !$length ? $cut : strcut($cut, $length);
-    }
-
-    return null; // Not found.
-}
-
-/**
  * Strbcut.
  * @param  string   $str
  * @param  string   $src
@@ -120,6 +99,26 @@ function strbcut(string $str, string $src, int $length = null, bool $icase = fal
     return null; // Not found.
 }
 
+/**
+ * Stracut.
+ * @param  string   $str
+ * @param  string   $src
+ * @param  int|null $length
+ * @param  bool     $icase
+ * @return ?string
+ * @since  4.0
+ */
+function stracut(string $str, string $src, int $length = null, bool $icase = false): ?string
+{
+    $pos = !$icase ? strpos($str, $src) : stripos($str, $src);
+
+    if ($pos !== false) {
+        $cut = substr($str, $pos + strlen($src)); // After (a).
+        return !$length ? $cut : strcut($cut, $length);
+    }
+
+    return null; // Not found.
+}
 
 /**
  * Str contains (RFC: http://wiki.php.net/rfc/str_contains).
