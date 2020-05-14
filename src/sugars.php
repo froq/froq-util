@@ -33,40 +33,24 @@ defined('nil') || require 'sugars-constant.php';
  * Yes man..
  */
 function equal($a, $b, ...$c): bool {
-    return $a == $b || ($c && in_array($a, [$b, ...$c])); }
+    return ($a == $b) || ($c && in_array($a, [$b, ...$c])); }
 function equals($a, $b, ...$c): bool {
-    return $a === $b || ($c && in_array($a, [$b, ...$c], true)); }
+    return ($a === $b) || ($c && in_array($a, [$b, ...$c], true)); }
 
 /**
- * The ever most wanted functions.
- * @alias of str_contains(),str_starts_with(),str_ends_with()
+ * The ever most wanted functions (finally come with 8.0, but without case option).
+ * @alias of str_has(),str_has_prefix(),str_has_suffix()
  * @since 4.0
  */
-function strsrc(string $str, string $src, bool $icase = false): bool
-{
-    return str_contains($str, $src, $icase);
-}
-function strbsrc(string $str, string $src, bool $icase = false): bool
-{
-    return str_starts_with($str, $src, $icase);
-}
-function strasrc(string $str, string $src, bool $icase = false): bool
-{
-    return str_ends_with($str, $src, $icase);
-}
+function strsrc(...$args): bool { return str_has(...$args); }        // Search.
+function strpfx(...$args): bool { return str_has_prefix(...$args); } // Search prefix.
+function strsfx(...$args): bool { return str_has_suffix(...$args); } // Search suffix.
 
 /**
- * Strsub.
- * @param  string   $str
- * @param  int      $start
- * @param  int|null $length
- * @return string
- * @since  4.0
+ * Strsub (fun for substr()).
+ * @since 4.0
  */
-function strsub(string $str, int $start, int $length = null): string
-{
-    return !$length ? substr($str, $start) : substr($str, $start, $length);
-}
+function strsub(...$args): string { return substr(...$args); }
 
 /**
  * Strcut.
@@ -123,39 +107,40 @@ function stracut(string $str, string $src, int $length = null, bool $icase = fal
 }
 
 /**
- * Str contains (RFC: http://wiki.php.net/rfc/str_contains).
+ * Str has (RFC: http://wiki.php.net/rfc/str_contains).
  * @param  string $str
  * @param  string $src
+ * @param  bool   $icase
  * @return bool
  * @since  4.0
  */
-function str_contains(string $str, string $src, bool $icase = false): bool
+function str_has(string $str, string $src, bool $icase = false): bool
 {
     return (!$icase ? strpos($str, $src) : stripos($str, $src)) !== false;
 }
 
 /**
- * Str starts with (RFC: http://wiki.php.net/rfc/add_str_begin_and_end_functions).
+ * Str has prefix (RFC: http://wiki.php.net/rfc/add_str_starts_with_and_ends_with_functions).
  * @param  string $str
  * @param  string $src
  * @param  bool   $icase
  * @return bool
  * @since  4.0
  */
-function str_starts_with(string $str, string $src, bool $icase = false): bool
+function str_has_prefix(string $str, string $src, bool $icase = false): bool
 {
     return substr_compare($str, $src, 0, strlen($src), $icase) === 0;
 }
 
 /**
- * Str ends with (RFC: http://wiki.php.net/rfc/add_str_begin_and_end_functions).
+ * Str has suffix (RFC: http://wiki.php.net/rfc/add_str_starts_with_and_ends_with_functions).
  * @param  string $str
  * @param  string $src
  * @param  bool   $icase
  * @return bool
  * @since  4.0
  */
-function str_ends_with(string $str, string $src, bool $icase = false): bool
+function str_has_suffix(string $str, string $src, bool $icase = false): bool
 {
     return substr_compare($str, $src, -strlen($src), null, $icase) === 0;
 }
@@ -480,8 +465,7 @@ function get_real_path(string $target, bool $strict = false): ?string
                         $file = $trace['file'];
                     }
 
-                    $ret  = ($cur == '.') ? dirname($file)
-                                          : dirname(dirname($file));
+                    $ret  = ($cur == '.') ? dirname($file) : dirname(dirname($file));
                 } // Else pass.
                 continue;
             }
