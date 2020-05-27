@@ -87,7 +87,7 @@ function response(...$arguments): Response
 
         $code && $response->setStatus($code);
 
-        if (!is_null($content)) {
+        if (count($arguments) >= 3) {
             $response->setBody($content, (array) $content_attributes);
         }
 
