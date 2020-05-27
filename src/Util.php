@@ -114,7 +114,7 @@ final /* fuckic static */ class Util extends StaticClass
      */
     public static function getClientIp(): ?string
     {
-        if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+        if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
             $ips = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
             return end($ips);
         }
@@ -126,7 +126,8 @@ final /* fuckic static */ class Util extends StaticClass
         ];
 
         foreach ($names as $name) {
-            if (isset($_SERVER[$name])) {
+            // Not using isset(), cos variables may be set but empty.
+            if (!empty($_SERVER[$name])) {
                 return $_SERVER[$name];
             }
         }
@@ -151,7 +152,8 @@ final /* fuckic static */ class Util extends StaticClass
         ];
 
         foreach ($names as $name) {
-            if (isset($_SERVER[$name])) {
+            // Not using isset(), cos variables may be set but empty.
+            if (!empty($_SERVER[$name])) {
                 return $_SERVER[$name];
             }
         }
