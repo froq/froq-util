@@ -55,11 +55,3 @@ const __dirsep = DIRECTORY_SEPARATOR,
  */
 const BASE36_CHARACTERS = '0123456789abcdefghijklmnopqrstuvwxyz',
       BASE62_CHARACTERS = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
-
-/**
- * Tmp/cwd (system temporary_directory/current working directory).
- * @const string
- * @since 4.0
- */
-define('__tmp', gettmp());
-define('__cwd', getcwd());
