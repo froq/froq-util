@@ -208,7 +208,7 @@ function html_compress(?string $in): string
             $in = trim($match[2]);
 
             // Line comments (protect "http://" etc).
-            $in = preg_replace('~(^|[^\'":])//([^\r\n]+)$~sm', '', $in);
+            $in = preg_replace('~(^|[^\'":])//(.*?)[\r\n]$~sm', '', $in);
 
             // Doc comments.
             preg_match_all('~[^\'"]/\*+(?:.*)\*/\s*~smU', $in, $matches);
