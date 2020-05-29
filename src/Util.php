@@ -115,8 +115,11 @@ final /* fuckic static */ class Util extends StaticClass
     public static function getClientIp(): ?string
     {
         if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-            $ips = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
-            return end($ips);
+            $ips = array_filter(array_map('trim',
+                explode(',', $_SERVER['HTTP_X_FORWARDED_FOR'])));
+            if (!empty($ips)) {
+                return end($ips);
+            }
         }
 
         // Possible header names.
@@ -131,6 +134,7 @@ final /* fuckic static */ class Util extends StaticClass
                 return $_SERVER[$name];
             }
         }
+
         return null;
     }
 
@@ -157,6 +161,7 @@ final /* fuckic static */ class Util extends StaticClass
                 return $_SERVER[$name];
             }
         }
+
         return null;
     }
 
