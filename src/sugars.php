@@ -391,7 +391,7 @@ function get_temporary_directory(): string
     $dir = sys_get_temp_dir() . __dirsep .'froq-temporary';
 
     if (!is_dir($dir)) {
-        mkdir($dir, 0777, true);
+        mkdir($dir, 0755, true);
     }
 
     return __dirsep . trim($dir, __dirsep);
@@ -407,7 +407,7 @@ function get_cache_directory(): string
     $dir = dirname(get_temporary_directory()) . __dirsep .'froq-cache';
 
     if (!is_dir($dir)) {
-        mkdir($dir, 0777, true);
+        mkdir($dir, 0755, true);
     }
 
     return $dir;
@@ -560,7 +560,7 @@ function mkfile(string $file, int $mode = 0644): ?bool
         return null;
     }
 
-    $ok = is_dir(dirname($file)) || mkdir(dirname($file), 0777, true);
+    $ok = is_dir(dirname($file)) || mkdir(dirname($file), 0755, true);
 
     return $mode ? ($ok && touch($file) && chmod($file, $mode))
                  : ($ok && touch($file));
