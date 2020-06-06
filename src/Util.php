@@ -303,6 +303,8 @@ final /* fuckic static */ class Util extends StaticClass
 
         if ($decode) {
             $ret = urldecode($ret);
+            // Fix such "=#foo" queries that not taken as parameter.
+            $ret = str_replace('=#', '=%23', $ret);
         }
         if ($stripTags && strpos($ret, '%3C')) {
             $ret = preg_replace('~%3C[\w]+(%2F)?%3E~ismU', '', $ret);
