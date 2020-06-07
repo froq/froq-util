@@ -219,10 +219,10 @@ final /* fuckic static */ class Util extends StaticClass
     public static function parseQueryString(string $qs, bool $encode = false,
         string $ignoredKeys = null): array
     {
-        $ret = [];
+        $qa = [];
 
         if ($qs == '') {
-            return $ret;
+            return $qa;
         }
 
         $hexed = false;
@@ -250,22 +250,22 @@ final /* fuckic static */ class Util extends StaticClass
         if ($hexed) {
             // Unhex keys.
             foreach ($qsp as $key => $value) {
-                $ret[hex2bin((string) $key)] = $value;
+                $qa[hex2bin((string) $key)] = $value;
             }
         } else {
-            $ret = $qsp;
+            $qa = $qsp;
         }
 
         if ($ignoredKeys != '') {
             $ignoredKeys = explode(',', $ignoredKeys);
-            foreach ($ret as $key => $_) {
+            foreach ($qa as $key => $_) {
                 if (in_array($key, $ignoredKeys)) {
-                    unset($ret[$key]);
+                    unset($qa[$key]);
                 }
             }
         }
 
-        return $ret;
+        return $qa;
     }
 
     /**
@@ -299,20 +299,20 @@ final /* fuckic static */ class Util extends StaticClass
                };
         }
 
-        $ret = http_build_query($filter($qa));
+        $qs = http_build_query($filter($qa));
 
         if ($decode) {
-            $ret = urldecode($ret);
+            $qs = urldecode($qs);
             // Fix such "=#foo" queries that not taken as parameter.
-            $ret = str_replace('=#', '=%23', $ret);
+            $qs = str_replace('=#', '=%23', $qs);
         }
-        if ($stripTags && strpos($ret, '%3C')) {
-            $ret = preg_replace('~%3C[\w]+(%2F)?%3E~ismU', '', $ret);
+        if ($stripTags && strpos($qs, '%3C')) {
+            $qs = preg_replace('~%3C[\w]+(%2F)?%3E~ismU', '', $qs);
         }
-        if ($normalizeArrays && strpos($ret, '%5D')) {
-            $ret = preg_replace('~([\w\.\-]+)%5B([\w\.\-]+)%5D(=)?~iU', '\1[\2]\3', $ret);
+        if ($normalizeArrays && strpos($qs, '%5D')) {
+            $qs = preg_replace('~([\w\.\-]+)%5B([\w\.\-]+)%5D(=)?~iU', '\1[\2]\3', $qs);
         }
 
-        return trim($ret);
+        return trim($qs);
     }
 }
