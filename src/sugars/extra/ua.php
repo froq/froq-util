@@ -56,17 +56,17 @@ function is_bot(): bool
         $ret = !($ua = get_user_agent()) || (
             stripos($ua, '+http') !== false || // Some speed..
             preg_match('~bot|slurp|(crawl|archiv|spid)er|fetch‎(er)?~i', $ua) ||
-            preg_match('~google|yahoo|yandex|bing|msn|lycos|baidu|altavista|netcraft|alexa~i', $ua) ||
+            preg_match('~google|yahoo|yandex|bing|msn|lycos|baidu|sogou|altavista|netcraft|alexa~i', $ua) ||
             preg_match('~facebook|whatsapp|(twit|tweet.*)~i', $ua) ||
-            preg_match('~'
-                .'zyborg|rambler|scooter|estyle|scrubby|scrapy|aspseek|accoona|jack|peerindex'
-                .'|topsy|butterfly|ningmetauri|js-kit|unwindfetchor|kraken|digg|twit|tweet|inagist|longurl|newsme'
-                .'|mail\.ru|ia_?archiver|voyager|goo|wordpress|amsu|mj12bot|majestic\d*'
-                .'|(link|url).*(controller|resolver|checker)'
-                .'|ahref|grapeshot|semrush|bbbike|sogou|ichiro|youdao|cyberduck|iframely|openlinkprofiler'
-                .'|curl|libwww|wget|moget|lwp|java|nmap'
-                .'|cortex|adreview|ttd-content|admantx'
-            .'~i', $ua)
+            preg_match('~
+                zyborg|rambler|scooter|estyle|scrubby|scrapy|aspseek|accoona|jack|peerindex|
+                topsy|butterfly|ningmetauri|js-kit|unwindfetchor|kraken|digg|twit|tweet|inagist|longurl|newsme|
+                ahref|grapeshot|semrush|bbbike|ichiro|youdao|cyberduck|iframely|openlinkprofiler|
+                voyager|goo|wordpress|amsu *\d|majestic\d*|mail\.ru|
+                (link|url).*(controll|resolv|check)er|
+                curl|libwww|wget|moget|lwp|java|nmap|
+                cortex|adreview|ttd-content|admantx
+            ~xi', $ua)
         );
     }
 
