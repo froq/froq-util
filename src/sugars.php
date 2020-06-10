@@ -376,9 +376,10 @@ function get_request_id(): string
 {
     sscanf(microtime(), '%d.%s %s', $_, $msec, $sec);
 
-    return sprintf('%s-%s-%s', $sec, $msec,
-        // Use an ephemeral port if no port exists (~$ cat /proc/sys/net/ipv4/ip_local_port_range)
-        $_SERVER['REMOTE_PORT'] ?? rand(32768, 60999));
+    // Use an ephemeral port if no port exists (~$ cat /proc/sys/net/ipv4/ip_local_port_range)
+    $port = $_SERVER['REMOTE_PORT'] ?? rand(32768, 60999);
+
+    return sprintf('%d-%d-%d', $sec, $msec, $port);
 }
 
 /**
