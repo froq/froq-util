@@ -187,6 +187,13 @@ final /* fuckic static */ class Util extends StaticClass
             $url .= $host;
         }
 
+        $colon = strpos($uri, ':');
+
+        // Fix parse_url()'s fail with ":" character.
+        if ($colon) {
+            $uri = str_replace(':', '%3A', $uri);
+        }
+
         $uri .= '';
         // PHP thinks it's a host, not path (also gives false if URI kinda "//").
         if (($i = strpos($uri, '//')) === 0) {
@@ -201,7 +208,12 @@ final /* fuckic static */ class Util extends StaticClass
             $tmp = parse_url($uri) ?: [];
         }
 
-        $url .= $tmp['path'] ?? '/';
+        $tmp['path'] ??= '/';
+        if ($colon) {
+            $tmp['path'] = str_replace('%3A', ':', $tmp['path']);
+        }
+
+        $url .= $tmp['path'];
         if ($withQuery && ($query = $tmp['query'] ?? '') !== '') {
             $url .= '?'. $query;
         }
