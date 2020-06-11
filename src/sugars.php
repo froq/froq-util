@@ -967,7 +967,7 @@ function preg_remove($pattern, $subject, int $limit = null, int &$count = null)
  */
 function file_create(string $file = null, int $mode = 0644): ?string
 {
-    if ($file === null) {
+    if (is_null($file)) {
         return mkfiletemp();
     }
     return mkfile($file, $mode) ? $file : null;
