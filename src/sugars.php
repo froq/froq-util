@@ -612,11 +612,11 @@ function rmfile(string $file): ?bool
 }
 
 /**
- * Ftopen (opens a temporary file).
+ * Fopentemp (opens a temporary file).
  * @return ?resource
  * @since  4.0
  */
-function ftopen()
+function fopentemp()
 {
     return tmpfile() ?: null;
 }
