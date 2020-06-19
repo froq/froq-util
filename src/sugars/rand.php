@@ -58,7 +58,7 @@ function rand_float(float $min = null, float $max = null): float
 function rand_string(int $length = 10, int $type = null): string
 {
     static $chars; if (!$chars) {
-        $chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
     }
 
     switch ($type) {
