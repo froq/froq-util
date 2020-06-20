@@ -49,62 +49,83 @@ function rand_float(float $min = null, float $max = null): float
 }
 
 /**
- * Rand string.
+ * Rand nonce.
  * @param  int      $length
- * @param  int|null $type Base option (1-3).
- * @return string
- * @since  4.0
+ * @param  int|null $base
+ * @return ?string 20-length or N-length base2-62 characters.
+ * @since  4.0, 4.1 Changed from rand_string().
  */
-function rand_string(int $length = 10, int $type = null): string
+function rand_nonce(int $length = null, int $base = null): ?string
 {
-    static $chars; if (!$chars) {
-        $chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+    $length ??= 20;
+    if ($length < 1) {
+        trigger_error(sprintf('%s(): Invalid length, min=1', __function__));
+        return null;
     }
 
-    switch ($type) {
-         case 1:  $str = substr($chars, 0, 10); break; // Base 10.
-         case 2:  $str = substr($chars, 0, 16); break; // Base 16.
-         case 3:  $str = substr($chars, 0, 36); break; // Base 36.
-        default:  $str = $chars; // Base 62.
+    $characters = BASE62_CHARACTERS_REVERSED;
+
+    if ($base) {
+        if ($base < 2 || $base > 62) {
+            trigger_error(sprintf('%s(): Invalid base, min=2 & max=62', __function__));
+            return null;
+        }
+
+        $characters = strcut($characters, $base);
     }
 
     $ret = '';
     while (strlen($ret) < $length) {
-        $ret .= str_shuffle($str)[0];
+        $ret .= strrnd($characters);
     }
 
-    return $ret;
+    return strsub($ret, 0, $length);
 }
 
 /**
  * Rand id.
- * @return string A 20-length digits.
+ * @param  int|null $length
+ * @param  int|null $base
+ * @return ?string 20-length digits or N-length digits|base2-62 characters.
  * @since  4.0
  */
-function rand_id(): string
+function rand_id(int $length = null, int $base = null): ?string
 {
-    $tmp = explode(' ', microtime());
+    $length ??= 20;
+    if ($length < 1) {
+        trigger_error(sprintf('%s(): Invalid length, min=1', __function__));
+        return null;
+    }
 
-    return $tmp[1] . substr($tmp[0], 2, 6) . mt_rand(1000, 9999);
-}
+    $characters = BASE62_CHARACTERS_REVERSED;
 
-/**
- * Rand uid.
- * @param  bool $simple
- * @return string A 14|20-length hex.
- * @since  4.0
- */
-function rand_uid(bool $simple = true): string
-{
-    $tmp = explode('.', uniqid('', true));
+    if ($base) {
+        if ($base < 11 || $base > 62) {
+            trigger_error(sprintf('%s(): Invalid base, min=11 & max=62', __function__));
+            return null;
+        }
 
-    return $simple ? $tmp[0] : substr(vsprintf('%14s%\'06x', $tmp), 0, 20);
+        $characters = strcut($characters, $base);
+    }
+
+    $ret = explode(' ', microtime());
+    $ret = $ret[1] . substr($ret[0], 2, 6) . mt_rand(1000, 9999);
+
+    if ($base > 10) { // No convert for digits.
+        $ret = str_base_convert($ret, BASE10_CHARACTERS, $characters);
+    }
+
+    while (strlen($ret) < $length) {
+        $ret .= strrnd($characters);
+    }
+
+    return strsub($ret, 0, $length);
 }
 
 /**
  * Rand oid.
  * @param  bool $count
- * @return string A 24-length hex like Mongo.ObjectId.
+ * @return string 24-length hex like Mongo.ObjectId.
  * @since  4.0
  */
 function rand_oid(bool $count = true): string
