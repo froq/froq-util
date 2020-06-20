@@ -47,10 +47,38 @@ function strpfx(...$args): bool { return str_has_prefix(...$args); } // Search p
 function strsfx(...$args): bool { return str_has_suffix(...$args); } // Search suffix.
 
 /**
- * Strsub (fun for substr()).
+ * Strsub (fun for substr() with null-length option).
  * @since 4.0
  */
-function strsub(...$args): string { return substr(...$args); }
+function strsub(...$args): string
+{
+    if (empty($args[2])) { // Check null-length.
+        unset($args[2]);
+    }
+
+    return substr(...$args);
+}
+
+/**
+ * Strrnd.
+ * @param  string $str
+ * @param  int    $length
+ * @return ?string
+ * @since  4.1
+ */
+function strrnd(string $str, int $length = 1): ?string
+{
+    if ($str == '') {
+        trigger_error(sprintf('%s(): Empty string given', __function__));
+        return null;
+    }
+    if ($length < 1) {
+        trigger_error(sprintf('%s(): Length must be minimum 1', __function__));
+        return null;
+    }
+
+    return strcut(str_shuffle($str), $length);
+}
 
 /**
  * Strcut.
@@ -320,8 +348,8 @@ function get_uniqid(bool $convert = false, bool $long = false): string
 
 /**
  * Get nano uniqid.
- * @param  int    $length
- * @param  bool   $convert
+ * @param  int  $length
+ * @param  bool $convert
  * @return string
  * @since  4.0
  */
@@ -343,8 +371,8 @@ function get_nano_uniqid(bool $convert = false): string
 
 /**
  * Get random uniqid.
- * @param  bool   $convert
- * @param  int    $length
+ * @param  bool $convert
+ * @param  int  $length
  * @return string
  * @since  4.0
  */
