@@ -753,14 +753,32 @@ function gmtime(): int
 }
 
 /**
- * Strtoitime (gets an interval time by given format, eg: "1 day" instead of "60*60*24" or "86400").
+ * Strtoitime (gets an interval time by given format, eg: "1 day" or "1D" instead of "60*60*24" or "86400").
  * @param  string   $format
  * @param  int|null $time
- * @return int
+ * @return ?int
  * @since  4.0
  */
-function strtoitime(string $format, int $time = null): int
+function strtoitime(string $format, int $time = null): ?int
 {
+    if (preg_match_all('~([+-]?\d+)([smhDMY])~', $format, $matches)) {
+        [, $numbers, $formats] = $matches;
+        foreach ($formats as $i => $format) {
+            switch ($format) {
+                case 's': $format_list[] = $numbers[$i] .' second'; break;
+                case 'm': $format_list[] = $numbers[$i] .' minute'; break;
+                case 'h': $format_list[] = $numbers[$i] .' hour';   break;
+                case 'D': $format_list[] = $numbers[$i] .' day';    break;
+                case 'M': $format_list[] = $numbers[$i] .' month';  break;
+                case 'Y': $format_list[] = $numbers[$i] .' year';   break;
+            }
+        }
+
+        if (isset($format_list)) {
+            $format = join(' ', $format_list);
+        }
+    }
+
     $time = $time ?? time();
 
     return strtotime($format, $time) - $time;
