@@ -59,6 +59,54 @@ function generate_nonce(int $length = null, int $base = null): ?string
 }
 
 /**
+ * Generate nonce hash.
+ * @param  int|null $length
+ * @param  string   $algo
+ * @return ?string
+ * @since  4.1
+ */
+function generate_nonce_hash(int $length = 20, string $algo = 'md5'): ?string
+{
+    if (!$algo) {
+        trigger_error(sprintf('%s(): Empty algo given', __function__));
+        return null;
+    }
+
+    $ret =@ hash($algo, generate_nonce($length));
+
+    if (!$ret) {
+        trigger_error(sprintf('%s(): %s', __function__, error_get_last()['message']));
+        return null;
+    }
+
+    return $ret;
+}
+
+/**
+ * Generate random bytes.
+ * @param  int|null $length
+ * @param  string   $algo
+ * @return ?string
+ * @since  4.1
+ */
+function generate_random_bytes(int $length = 20, string $algo = 'md5'): ?string
+{
+    if (!$algo) {
+        trigger_error(sprintf('%s(): Empty algo given', __function__));
+        return null;
+    }
+
+    $ret =@ hash($algo, random_bytes($length));
+
+    if (!$ret) {
+        trigger_error(sprintf('%s(): %s', __function__, error_get_last()['message']));
+        return null;
+    }
+
+    return $ret;
+}
+
+/**
  * Generate id.
  * @param  int|null $length
  * @param  int|null $base
@@ -124,10 +172,10 @@ function generate_oid(bool $count = true): string
  * Generate uuid.
  * @param  int  $type
  * @param  bool $option
- * @return string
+ * @return ?string
  * @since  4.0, 4.1 Changed from rand_uuid().
  */
-function generate_uuid(int $type = 1, bool $option = false): string
+function generate_uuid(int $type = 1, bool $option = false): ?string
 {
     // Random (UUID/v4 or GUID).
     if ($type == 1) {
@@ -168,12 +216,9 @@ function generate_uuid(int $type = 1, bool $option = false): string
         return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split($digits, 4));
     }
 
-    trigger_error(sprintf(
-        '%s(): Invalid type %s; 1, 2 and 3 are accepted only',
-        __function__, $type
-    ));
+    trigger_error(sprintf('%s(): Invalid type %s; 1, 2 or 3 accepted only', __function__, $type));
 
-    return '';
+    return null;
 }
 
 /**
