@@ -220,7 +220,8 @@ function post_has($name): bool
  */
 function cookie($name = null, $value_default = null)
 {
-    return app()->request()->cookie($name, $value_default);
+    return func_num_args() > 1 ? app()->request()->cookie($name, $value_default)
+                               : app()->request()->cookie($name);
 }
 
 /**
