@@ -140,10 +140,11 @@ final /* fuckic static */ class Util extends StaticClass
 
     /**
      * Get client user agent.
+     * @param  bool $safe
      * @return ?string
      * @since  3.6
      */
-    public static function getClientUserAgent(): ?string
+    public static function getClientUserAgent(bool $safe = false): ?string
     {
         // Possible header names.
         static $names = [
@@ -158,7 +159,7 @@ final /* fuckic static */ class Util extends StaticClass
         foreach ($names as $name) {
             // Not using isset(), cos variables may be set but empty.
             if (!empty($_SERVER[$name])) {
-                return $_SERVER[$name];
+                return !$safe ? $_SERVER[$name] : substr($_SERVER[$name], 0, 250);
             }
         }
 
