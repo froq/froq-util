@@ -135,7 +135,9 @@ function generate_id(int $length = null, int $base = null): ?string
     $ret = explode(' ', microtime());
     $ret = $ret[1] . substr($ret[0], 2, 6) . mt_rand(1000, 9999);
 
-    if ($base > 10) { // No convert for digits.
+    if (!$base) {
+        $characters = BASE10_CHARACTERS;
+    } elseif ($base && $base >= 11) { // No convert for digits.
         $ret = str_base_convert($ret, BASE10_CHARACTERS, $characters);
     }
 
@@ -144,6 +146,23 @@ function generate_id(int $length = null, int $base = null): ?string
     }
 
     return strsub($ret, 0, $length);
+}
+
+/**
+ * Generate serial id.
+ * @param  int|null $length_option
+ * @return ?string
+ * @since  4.1
+ */
+function generate_serial_id(int $length = null): ?string
+{
+    $length ??= 20;
+    if ($length < 20) {
+        trigger_error(sprintf('%s(): Invalid length, min=20', __function__));
+        return null;
+    }
+
+    return generate_id($length);
 }
 
 /**
