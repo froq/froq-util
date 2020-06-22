@@ -241,6 +241,20 @@ function array_flatten(array $array, bool $use_keys = false, bool $fix_keys = fa
 }
 
 /**
+ * Array swap.
+ * @param  array      &$array
+ * @param  int|string  $old_key
+ * @param  int|string  $new_key
+ * @param  any|null    $new_value_default
+ * @return array
+ * @since  4.2
+ */
+function array_swap(array &$array, $old_key, $new_key, $new_value_default = null): array
+{
+    return Arrays::swap($array, $old_key, $new_key, $new_value_default);
+}
+
+/**
  * Array sweep.
  * @param  array      &$array
  * @param  array|null  $ignored_keys
