@@ -52,8 +52,8 @@ function strsfx(...$args): bool { return str_has_suffix(...$args); } // Search s
  */
 function strsub(...$args): string
 {
-    if (empty($args[2])) { // Check null-length.
-        unset($args[2]);
+    if (!isset($args[2])) { // Check null-length.
+         unset($args[2]);
     }
 
     return substr(...$args);
@@ -61,23 +61,23 @@ function strsub(...$args): string
 
 /**
  * Strrnd.
- * @param  string $str
- * @param  int    $length
+ * @param  string   $str
+ * @param  int|null $length
  * @return ?string
  * @since  4.1
  */
-function strrnd(string $str, int $length = 1): ?string
+function strrnd(string $str, int $length = null): ?string
 {
     if ($str == '') {
         trigger_error(sprintf('%s(): Empty string given', __function__));
         return null;
     }
-    if ($length < 1) {
-        trigger_error(sprintf('%s(): Length must be minimum 1', __function__));
+    if ($length && $length < 1) {
+        trigger_error(sprintf('%s(): Length must be minimum 1 or null', __function__));
         return null;
     }
 
-    return strcut(str_shuffle($str), $length);
+    return !$length ? str_shuffle($str) : substr(str_shuffle($str), 0, $length);
 }
 
 /**
@@ -326,13 +326,13 @@ function get_uniqid(bool $convert = false, bool $long = false): string
     $parts = explode('.', uniqid('', true));
 
     if (!$long) {
-        $ret = substr($parts[0], 0, 13);
+        $ret = substr($parts[0], 0, 14);
         if (!$convert) {
             return $ret;
         }
 
         $ret = base_convert($ret, 16, 36); // Normally 10-length.
-        $ret = str_pad($ret, 13, str_shuffle(BASE36_CHARACTERS));
+        $ret = str_pad($ret, 14, str_shuffle(BASE36_CHARACTERS));
     } else {
         if (!$convert) {
             $ret = substr($parts[0] . dechex($parts[1]), 0, 20);
@@ -360,10 +360,10 @@ function get_nano_uniqid(bool $convert = false): string
 
     if (!$convert) {
         $ret = dechex($parts[0]) . dechex($parts[1]);
-        $ret = str_pad($ret, 13, '0');
+        $ret = str_pad($ret, 14, '0');
     } else {
         $ret = base_convert(join($parts), 10, 36);
-        $ret = str_pad($ret, 13, str_shuffle(BASE36_CHARACTERS));
+        $ret = str_pad($ret, 14, str_shuffle(BASE36_CHARACTERS));
     }
 
     return $ret;
@@ -376,13 +376,11 @@ function get_nano_uniqid(bool $convert = false): string
  * @return string
  * @since  4.0
  */
-function get_random_uniqid(bool $convert = false, int $length = 13): string
+function get_random_uniqid(bool $convert = false, int $length = 14): string
 {
-    static $chars = '0123456789abcdef';
-
     $rands = '';
     while (strlen($rands) < $length) {
-        $rands .= str_shuffle($chars)[0];
+        $rands .= str_shuffle(BASE16_CHARACTERS)[0];
     }
 
     if (!$convert) {
@@ -606,7 +604,7 @@ function mkfiletemp(string $extension = null, bool $froq_temp = true): ?string
 {
     $file = get_real_path(
         ($froq_temp ? get_temporary_directory() : dirname(get_temporary_directory()))
-        . __dirsep . get_uniqid(true)
+        . __dirsep . get_uniqid()
         . ($extension ? '.'. trim($extension, '.') : '')
     );
 

@@ -52,7 +52,7 @@ function generate_nonce(int $length = null, int $base = null): ?string
 
     $ret = '';
     while (strlen($ret) < $length) {
-        $ret .= strrnd($characters);
+        $ret .= strrnd($characters, 1);
     }
 
     return strsub($ret, 0, $length);
@@ -142,7 +142,7 @@ function generate_id(int $length = null, int $base = null): ?string
     }
 
     while (strlen($ret) < $length) {
-        $ret .= strrnd($characters);
+        $ret .= strrnd($characters, 1);
     }
 
     return strsub($ret, 0, $length);
