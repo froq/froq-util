@@ -317,15 +317,15 @@ function get_type($var, bool $scalars = false): string
 /**
  * Get uniqid.
  * @param  bool $convert
- * @param  bool $long
+ * @param  bool $extend
  * @return string
  * @since  4.0
  */
-function get_uniqid(bool $convert = false, bool $long = false): string
+function get_uniqid(bool $convert = false, bool $extend = false): string
 {
     $parts = explode('.', uniqid('', true));
 
-    if (!$long) {
+    if (!$extend) {
         $ret = substr($parts[0], 0, 14);
         if (!$convert) {
             return $ret;
