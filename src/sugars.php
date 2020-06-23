@@ -290,7 +290,7 @@ function get_type($var, bool $scalars = false): string
     if ($type == 'object') {
         $ret = get_class($var);
         // Anonymous class.
-        if (($pos = strpos($ret, "\0")) > -1) {
+        if ($pos = strpos($ret, "\0")) {
             $ret = strsub($ret, 0, $pos);
         }
     } else {
