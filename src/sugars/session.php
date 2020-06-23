@@ -43,9 +43,6 @@ function session($key = null, $value = null)
 {
     static $session; if (!$session) {
         $session = app()->session();
-        if ($session) {
-            $session->start();
-        }
     }
 
     // Set/get.
