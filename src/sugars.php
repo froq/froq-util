@@ -331,7 +331,7 @@ function get_uniqid(bool $convert = false, bool $extend = false): string
             return $ret;
         }
 
-        $ret = base_convert($ret, 16, 36); // Normally 10-length.
+        $ret = base_convert($ret, 16, 36); // Normally 11-length.
         $ret = str_pad($ret, 14, str_shuffle(BASE36_CHARACTERS));
     } else {
         if (!$convert) {
