@@ -338,7 +338,7 @@ function get_uniqid(bool $convert = false, bool $extend = false): string
             $ret = substr($parts[0] . dechex($parts[1]), 0, 20);
             $ret = str_pad($ret, 20, '0');
         } else {
-            $ret = base_convert(join($parts), 16, 36);
+            $ret = base_convert($parts[0], 16, 36) . base_convert($parts[1], 10, 36);
             $ret = str_pad($ret, 20, str_shuffle(BASE36_CHARACTERS));
         }
     }
@@ -362,7 +362,7 @@ function get_nano_uniqid(bool $convert = false): string
         $ret = dechex($parts[0]) . dechex($parts[1]);
         $ret = str_pad($ret, 14, '0');
     } else {
-        $ret = base_convert(join($parts), 10, 36);
+        $ret = base_convert($parts[0], 10, 36) . base_convert($parts[1], 10, 36);
         $ret = str_pad($ret, 14, str_shuffle(BASE36_CHARACTERS));
     }
 
