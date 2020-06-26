@@ -49,12 +49,12 @@ const __dirsep = DIRECTORY_SEPARATOR,
       __patsep = PATH_SEPARATOR;
 
 /**
- * Base 36/64 characters.
+ * Base 10/16/36/62 characters.
  * @const string
  * @since 4.0, 4.1
  */
 const BASE10_CHARACTERS = '0123456789',
       BASE16_CHARACTERS = '0123456789abcdef',
       BASE36_CHARACTERS = '0123456789abcdefghijklmnopqrstuvwxyz',
-      BASE62_CHARACTERS = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz',
-      BASE62_CHARACTERS_REVERSED = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+      BASE62_CHARACTERS = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ',
+      BASE62_CHARACTERS_NATURAL = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';

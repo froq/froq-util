@@ -176,14 +176,40 @@ function str_has_suffix(string $str, string $src, bool $icase = false): bool
 /**
  * Str base convert (converts given digits to chars from a chars, orginal source:
  * http://stackoverflow.com/a/4668620/362780).
- * @param  string $digits
- * @param  string $from_chars
- * @param  string $to_chars
- * @return string
+ * @param  string     $digits
+ * @param  int|string $from_chars
+ * @param  int|string $to_chars
+ * @return ?string
+ * @throws TypeError
  * @since  4.0
  */
-function str_base_convert(string $digits, string $from_chars, string $to_chars): string
+function str_base_convert(string $digits, $from_chars, $to_chars): ?string
 {
+    if (!is_int($from_chars) && !is_string($from_chars)) {
+        throw new TypeError(sprintf(
+            '%s() expects parameter 1 to be int|string, %s given', __function__, get_type($from_chars)
+        ));
+    } elseif (!is_int($to_chars) && !is_string($to_chars)) {
+        throw new TypeError(sprintf(
+            '%s() expects parameter 1 to be int|string, %s given', __function__, get_type($to_chars)
+        ));
+    }
+
+    if (is_int($from_chars)) {
+        if ($from_chars < 2 || $from_chars > 62) {
+            trigger_error(sprintf('%s(): Invalid base for from chars, min=2 & max=62', __function__));
+            return null;
+        }
+        $from_chars = strcut(BASE62_CHARACTERS, $from_chars);
+    }
+    if (is_int($to_chars)) {
+        if ($to_chars < 2 || $to_chars > 62) {
+            trigger_error(sprintf('%s(): Invalid base for to chars, min=2 & max=62', __function__));
+            return null;
+        }
+        $to_chars = strcut(BASE62_CHARACTERS, $to_chars);
+    }
+
     [$digits_length, $from_base, $to_base] = [
         strlen($digits), strlen($from_chars), strlen($to_chars)];
 
@@ -699,13 +725,14 @@ function finfo($fp): array
  * @param  resource &$handle
  * @param  string    $contents
  * @return bool
+ * @throws TypeError
  * @since  4.0
  */
 function stream_set_contents(&$handle, string $contents): bool
 {
     if (!is_resource($handle) || get_resource_type($handle) != 'stream') {
         throw new TypeError(sprintf(
-            '%s() expects parameter 1 to be resource, %s given', __function__, gettype($handle)
+            '%s() expects parameter 1 to be resource, %s given', __function__, get_type($handle)
         ));
     }
 

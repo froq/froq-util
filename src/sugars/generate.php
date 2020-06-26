@@ -39,7 +39,7 @@ function generate_nonce(int $length = null, int $base = null): ?string
         return null;
     }
 
-    $characters = BASE62_CHARACTERS_REVERSED;
+    $characters = BASE62_CHARACTERS;
 
     if ($base) {
         if ($base < 2 || $base > 62) {
@@ -121,7 +121,7 @@ function generate_id(int $length = null, int $base = null): ?string
         return null;
     }
 
-    $characters = BASE62_CHARACTERS_REVERSED;
+    $characters = BASE62_CHARACTERS;
 
     if ($base) {
         if ($base < 11 || $base > 62) {
@@ -134,6 +134,11 @@ function generate_id(int $length = null, int $base = null): ?string
 
     $ret = explode(' ', microtime());
     $ret = $ret[1] . substr($ret[0], 2, 6) . mt_rand(1000, 9999);
+
+    // Prevent wrong convert below cos of length.
+    if (strlen($ret) > $length) {
+        $ret = strcut($ret, $length);
+    }
 
     if (!$base) {
         $characters = BASE10_CHARACTERS;
@@ -150,7 +155,7 @@ function generate_id(int $length = null, int $base = null): ?string
 
 /**
  * Generate serial id.
- * @param  int|null $length_option
+ * @param  int|null $length
  * @return ?string
  * @since  4.1
  */
