@@ -85,7 +85,7 @@ function is_google_bot(): bool
             preg_match('~'
                 .'Googlebot'
                 .'|(AdsBot|Mediapartners|FeedFetcher|DuplexWeb)-Google'
-                .'|Google(-Read-Aloud| Favicon)'
+                .'|Google(-Read-Aloud|[ -]Favicon)'
             .'~i', $ua)
         );
     }
