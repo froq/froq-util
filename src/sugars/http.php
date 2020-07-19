@@ -25,7 +25,7 @@
 declare(strict_types=1);
 
 use froq\App;
-use froq\http\{Http, Request, Response, response\Status};
+use froq\http\{Http, Request, Response, request\Segments, response\Status};
 use froq\util\UtilException;
 
 // Check dependencies (all others already come with froq\App).
@@ -236,22 +236,31 @@ function cookie_has($name): bool
 
 /**
  * Segment.
- * @param  int      $i
- * @param  any|null $value_default
+ * @param  int|string $key
+ * @param  any|null   $value_default
  * @return any|null
  */
-function segment(int $i, $value_default = null)
+function segment($key, $value_default = null)
 {
-    return app()->request()->uri()->segment($i, $value_default);
+    $segments = app()->request()->uri()->segments();
+
+    return $segments ? $segments->get($key, $value_default) : $value_default;
 }
 
 /**
  * Segments.
- * @return array
+ * @param  bool $as_array
+ * @return ?froq\http\request\Segments|?array
  */
-function segments(): array
+function segments(bool $as_array = false)
 {
-    return app()->request()->uri()->segments();
+    $segments = app()->request()->uri()->segments();
+
+    if ($segments && $as_array) {
+        $segments = $segments->toArray();
+    }
+
+    return $segments;
 }
 
 /**
