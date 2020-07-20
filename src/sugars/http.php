@@ -249,15 +249,15 @@ function segment($key, $value_default = null)
 
 /**
  * Segments.
- * @param  bool $as_array
+ * @param  bool $list
  * @return ?froq\http\request\Segments|?array
  */
-function segments(bool $as_array = false)
+function segments(bool $list = false)
 {
     $segments = app()->request()->uri()->segments();
 
-    if ($segments && $as_array) {
-        $segments = $segments->toArray();
+    if ($segments && $list) {
+        $segments = $segments->toList();
     }
 
     return $segments;
