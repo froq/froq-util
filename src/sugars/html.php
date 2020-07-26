@@ -126,6 +126,9 @@ function html_options(iterable $in, $value_current = null, bool $strict = false,
 
     $ret = '';
     foreach ($in as $value => $text) {
+        if (is_array($text)) {
+            @ [$value, $text] = $text;
+        }
         $ret .= sprintf('<option value="%s"%s%s>%s</option>', $value,
             html_selected($value, $value_current, $strict), $extra, $text);
     }
@@ -142,23 +145,7 @@ function html_options(iterable $in, $value_current = null, bool $strict = false,
  */
 function html_checked($a, $b, bool $strict = false): string
 {
-    return ($a === null) ? '' : (
-        $strict ? ($a === $b ? ' checked' : '') : ($a == $b ? ' checked' : '')
-    );
-}
-
-/**
- * Html disabled.
- * @param  any  $a
- * @param  any  $b
- * @param  bool $strict
- * @return string
- */
-function html_disabled($a, $b, bool $strict = false): string
-{
-    return ($a === null) ? '' : (
-        $strict ? ($a === $b ? ' disabled' : '') : ($a == $b ? ' disabled' : '')
-    );
+    return ($a !== null) ? (($strict ? $a === $b : $a == $b) ? ' checked' : '') : '';
 }
 
 /**
@@ -170,9 +157,7 @@ function html_disabled($a, $b, bool $strict = false): string
  */
 function html_selected($a, $b, bool $strict = false): string
 {
-    return ($a === null) ? '' : (
-        $strict ? ($a === $b ? ' selected' : '') : ($a == $b ? ' selected' : '')
-    );
+    return ($a !== null) ? (($strict ? $a === $b : $a == $b) ? ' selected' : '') : '';
 }
 
 /**
