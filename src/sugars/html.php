@@ -174,7 +174,7 @@ function html_compress(?string $in): string
 
     // Styles.
     if (strpos($in, '<style>')) {
-        $in = preg_replace_callback('~(<style>(.*?)</style>)~sm', function($match) {
+        $in = preg_replace_callback('~(<style>(.*?)</style>)~sm', function ($match) {
             $in = trim($match[2]);
 
             // Comments.
@@ -189,7 +189,7 @@ function html_compress(?string $in): string
 
     // Scripts.
     if (strpos($in, '<script>')) {
-        $in = preg_replace_callback('~(<script>(.*?)</script>)~sm', function($match) {
+        $in = preg_replace_callback('~(<script>(.*?)</script>)~sm', function ($match) {
             $in = trim($match[2]);
 
             // Line comments (protect "http://" etc).

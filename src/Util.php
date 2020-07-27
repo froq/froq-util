@@ -248,9 +248,7 @@ final /* fuckic static */ class Util extends StaticClass
             }
 
             // Hex keys.
-            $qs = preg_replace_callback('~(^|(?<=&))[^=&\[]+~', function($match) {
-                return bin2hex($match[0]);
-            }, $qs);
+            $qs = preg_replace_callback('~(^|(?<=&))[^=&\[]+~', fn($m) => bin2hex($m[0]), $qs);
         }
 
         // Preserve pluses (otherwise parse_str() will replace all with spaces).
