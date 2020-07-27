@@ -261,7 +261,11 @@ final /* fuckic static */ class Util extends StaticClass
         if ($hexed) {
             // Unhex keys.
             foreach ($qsp as $key => $value) {
-                $qa[hex2bin((string) $key)] = $value;
+                $key = hex2bin((string) $key);
+                if (strpos($key, '%') > -1) {
+                    $key = rawurldecode($key);
+                }
+                $qa[$key] = $value;
             }
         } else {
             $qa = $qsp;
