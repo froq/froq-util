@@ -120,19 +120,30 @@ function is_class($in): bool
 /**
  * Is class method.
  * @param  string|object $in
- * @param  string|null   $method
+ * @param  string|null   $name
  * @return bool
  * @since  3.0
  */
-function is_class_method($in, string $method = null): bool
+function is_class_method($in, string $name = null): bool
 {
-    // Eg: ['foo' or $foo, 'bar'].
-    if ($method) {
-        return method_exists($in, $method);
+    // Eg: Foo::bar (for publics only, seems not fixed @see https://bugs.php.net/bug.php?id=29210).
+    if ($name === null) {
+        return is_string($in) && strpos($in, '::') && is_callable($in);
     }
 
-    // Eg: Foo::bar (for publics only, seems not fixed @see https://bugs.php.net/bug.php?id=29210).
-    return is_string($in) && strpos($in, '::') && is_callable($in);
+    return (is_string($in) || is_object($in)) && method_exists($in, $name);
+}
+
+/**
+ * Is class property.
+ * @param  string|object $in
+ * @param  string        $name
+ * @return bool
+ * @since  3.0 ( actually)
+ */
+function is_class_property($in, string $name): bool
+{
+    return (is_string($in) || is_object($in)) && property_exists($in, $name);
 }
 
 /**
