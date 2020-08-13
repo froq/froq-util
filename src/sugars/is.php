@@ -139,7 +139,7 @@ function is_class_method($in, string $name = null): bool
  * @param  string|object $in
  * @param  string        $name
  * @return bool
- * @since  3.0 (4.3.4 actually)
+ * @since  3.0 (4.3.3 actually)
  */
 function is_class_property($in, string $name): bool
 {
