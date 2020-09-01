@@ -33,8 +33,7 @@ declare(strict_types=1);
  */
 function generate_nonce(int $length = null, int $base = null): ?string
 {
-    $length ??= 20;
-    if ($length < 1) {
+    if (($length ??= 20) < 1) {
         trigger_error(sprintf('%s(): Invalid length, min=1', __function__));
         return null;
     }
@@ -115,8 +114,7 @@ function generate_random_bytes(int $length = 20, string $algo = 'md5'): ?string
  */
 function generate_id(int $length = null, int $base = null): ?string
 {
-    $length ??= 20;
-    if ($length < 1) {
+    if (($length ??= 20) < 1) {
         trigger_error(sprintf('%s(): Invalid length, min=1', __function__));
         return null;
     }
@@ -132,8 +130,8 @@ function generate_id(int $length = null, int $base = null): ?string
         $characters = strcut($characters, $base);
     }
 
-    $ret = explode(' ', microtime());
-    $ret = $ret[1] . substr($ret[0], 2, 6) . mt_rand(1000, 9999);
+    $mic = explode(' ', microtime());
+    $ret = $mic[1] . substr($mic[0], 2, 6) . mt_rand(1000, 9999);
 
     // Prevent wrong convert below cos of length.
     if (strlen($ret) > $length) {
@@ -156,18 +154,27 @@ function generate_id(int $length = null, int $base = null): ?string
 /**
  * Generate serial id.
  * @param  int|null $length
+ * @param  bool     $use_date
  * @return ?string
  * @since  4.1
  */
-function generate_serial_id(int $length = null): ?string
+function generate_serial_id(int $length = null, bool $use_date = false): ?string
 {
-    $length ??= 20;
-    if ($length < 20) {
+    if (($length ??= 20) < 20) {
         trigger_error(sprintf('%s(): Invalid length, min=20', __function__));
         return null;
     }
 
-    return generate_id($length);
+    $mic = explode(' ', microtime());
+    $ret = (!$use_date ? $mic[1] : date('YmdHis')) . substr($mic[0], 2, 6) . mt_rand(1000, 9999);
+
+    $characters = BASE10_CHARACTERS;
+
+    while (strlen($ret) < $length) {
+        $ret .= strrnd($characters, 1);
+    }
+
+    return strsub($ret, 0, $length);
 }
 
 /**
@@ -193,56 +200,65 @@ function generate_oid(bool $count = true): string
 }
 
 /**
- * Generate uuid.
+ * Generate uid.
  * @param  int  $type
  * @param  bool $option
  * @return ?string
+ * @since  4.4 Replaced with generate_uuid().
+ */
+function generate_uid(int $type = 1, bool $option = false): ?string
+{
+    switch ($type) {
+        case 1: // Random (UUID/v4 or GUID).
+            $ret = random_bytes(16);
+
+            // GUID doesn't use 4 (version) or 8, 9, A, or B.
+            if (!$option) { // Guid?
+                $ret[6] = chr(ord($ret[6]) & 0x0f | 0x40);
+                $ret[8] = chr(ord($ret[8]) & 0x3f | 0x80);
+            }
+
+            return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($ret), 4));
+        case 2: // Simple serial.
+            $date = getdate();
+            $uniq = sscanf(uniqid('', true), '%8s%6s.%s');
+
+            return sprintf('%.08s-%04x-%04x-%04x-%.6s%.6s',
+                $uniq[0], $date['year'],
+                ($date['mon'] . $date['mday']),
+                ($date['minutes'] . $date['seconds']),
+                $uniq[1], $uniq[2]
+            );
+        case 3: // All digit.
+            if ($option) { // Rand?
+                $digits = '';
+                do {
+                    $digits .= mt_rand();
+                } while (strlen($digits) < 32);
+            } else {
+                [$msec, $sec] = explode(' ', microtime());
+                $digits = $sec . hrtime(true) . substr($msec, 2);
+            }
+
+            return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split($digits, 4));
+        default:
+            trigger_error(sprintf(
+                '%s(): Invalid type %s; 1, 2 or 3 accepted only', __function__, $type
+            ));
+
+            return null;
+    }
+
+}
+
+/**
+ * Generate uuid.
+ * @return string
  * @since  4.0, 4.1 Changed from rand_uuid().
  */
-function generate_uuid(int $type = 1, bool $option = false): ?string
+function generate_uuid(): string
 {
-    // Random (UUID/v4 or GUID).
-    if ($type == 1) {
-        $ret = random_bytes(16);
-
-        // GUID doesn't use 4 (version) or 8, 9, A, or B.
-        if (!$option) { // Guid?
-            $ret[6] = chr(ord($ret[6]) & 0x0f | 0x40);
-            $ret[8] = chr(ord($ret[8]) & 0x3f | 0x80);
-        }
-
-        return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($ret), 4));
-    }
-    // Simple serial.
-    elseif ($type == 2) {
-        $date = getdate();
-        $uniq = sscanf(uniqid('', true), '%8s%6s.%s');
-
-        return sprintf('%.08s-%04x-%04x-%04x-%.6s%.6s',
-            $uniq[0], $date['year'],
-            ($date['mon'] . $date['mday']),
-            ($date['minutes'] . $date['seconds']),
-            $uniq[1], $uniq[2]
-        );
-    }
-    // All digit.
-    elseif ($type == 3) {
-        if ($option) { // Rand?
-            $digits = '';
-            do {
-                $digits .= mt_rand();
-            } while (strlen($digits) < 32);
-        } else {
-            [$msec, $sec] = explode(' ', microtime());
-            $digits = $sec . hrtime(true) . substr($msec, 2);
-        }
-
-        return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split($digits, 4));
-    }
-
-    trigger_error(sprintf('%s(): Invalid type %s; 1, 2 or 3 accepted only', __function__, $type));
-
-    return null;
+    return generate_uid(1, false);
 }
 
 /**
@@ -252,5 +268,5 @@ function generate_uuid(int $type = 1, bool $option = false): ?string
  */
 function generate_guid(): string
 {
-    return generate_uuid(1, true);
+    return generate_uid(1, true);
 }
