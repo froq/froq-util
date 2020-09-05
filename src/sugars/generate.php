@@ -152,6 +152,43 @@ function generate_id(int $length = null, int $base = null): ?string
 }
 
 /**
+ * Generate uniq id.
+ * @param  int $length
+ * @param  int $base
+ * @return ?string
+ * @since  4.4
+ */
+function generate_uniq_id(int $length = 20, int $base = 16): ?string
+{
+    return generate_id($length, $base);
+}
+
+/**
+ * Generate random id.
+ * @param  int $length Bytes length actually.
+ * @param  int $base
+ * @return ?string
+ * @since  4.4
+ */
+function generate_random_id(int $length = 20, int $base = 16): ?string
+{
+    $ret = md5(random_bytes($length));
+
+    // Note: this will change the id's length.
+    if ($base != 16) {
+        $ret = str_base_convert($ret, 16, $base);
+
+        // Just an exception for base 36/62 for fixing id's length.
+        switch ($base) {
+            case 36: $ret = str_pad($ret, 26, strrnd(BASE36_CHARACTERS)); break;
+            case 62: $ret = str_pad($ret, 22, strrnd(BASE62_CHARACTERS)); break;
+        }
+    }
+
+    return $ret;
+}
+
+/**
  * Generate serial id.
  * @param  int|null $length
  * @param  bool     $use_date
@@ -168,10 +205,8 @@ function generate_serial_id(int $length = null, bool $use_date = false): ?string
     $mic = explode(' ', microtime());
     $ret = (!$use_date ? $mic[1] : date('YmdHis')) . substr($mic[0], 2, 6) . mt_rand(1000, 9999);
 
-    $characters = BASE10_CHARACTERS;
-
     while (strlen($ret) < $length) {
-        $ret .= strrnd($characters, 1);
+        $ret .= strrnd(BASE10_CHARACTERS, 1);
     }
 
     return strsub($ret, 0, $length);
@@ -248,7 +283,6 @@ function generate_uid(int $type = 1, bool $option = false): ?string
 
             return null;
     }
-
 }
 
 /**
