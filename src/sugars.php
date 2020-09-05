@@ -321,10 +321,8 @@ function get_type($var, bool $scalars = false): string
         }
     } else {
         static $scalars_array   = ['int', 'float', 'string', 'bool'];
-        static $translate_array = [
-            'NULL'   => 'null',  'integer' => 'int',
-            'double' => 'float', 'boolean' => 'bool'
-        ];
+        static $translate_array = ['NULL' => 'null', 'integer' => 'int',
+                                   'double' => 'float', 'boolean' => 'bool'];
 
         $ret = strtr($type, $translate_array);
 
