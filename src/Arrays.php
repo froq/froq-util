@@ -28,7 +28,6 @@ namespace froq\util;
 
 use froq\common\objects\StaticClass;
 use froq\common\exceptions\InvalidArgumentException;
-use Closure;
 
 /**
  * Arrays.
@@ -465,6 +464,22 @@ final class Arrays extends StaticClass
         }
 
         return $array;
+    }
+
+    /**
+     * Average.
+     * @param  array $array
+     * @param  bool  $includeEmpties
+     * @return float
+     * @since  4.5
+     */
+    public static function average(array $array, bool $includeEmpties = true): float
+    {
+        $array = array_filter($array, fn($v) => (
+            $includeEmpties ? is_numeric($v) : is_numeric($v) && ($v > 0)
+        ));
+
+        return array_sum($array) / count($array);
     }
 
     /**

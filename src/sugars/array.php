@@ -267,6 +267,18 @@ function array_sweep(array &$array, array $ignored_keys = null): array
 }
 
 /**
+ * Array average.
+ * @param  array $array
+ * @param  bool  $include_empties
+ * @return float
+ * @since  4.5
+ */
+function array_average(array $array, bool $include_empties = true): float
+{
+    return Arrays::average($array, $include_empties);
+}
+
+/**
  * Array default.
  * @param  array    $array
  * @param  array    $keys
