@@ -24,7 +24,7 @@
  */
 declare(strict_types=1);
 
-use froq\util\Objects;
+use froq\util\{Arrays, Objects};
 
 // Ensure constants.
 defined('nil') || require 'sugars-constant.php';
@@ -942,6 +942,18 @@ function array_top(array &$array)
 function array_unpop(array &$array, ...$values): int
 {
     return array_push($array, ...$values);
+}
+
+/**
+ * Array avg (for the of array_sum()).
+ * @param  array $array
+ * @param  bool  $include_empties
+ * @return float
+ * @since  4.5
+ */
+function array_avg(array $array, bool $include_empties = true): float
+{
+    return Arrays::average($array, $include_empties);
 }
 
 /**
