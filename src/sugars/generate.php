@@ -237,11 +237,12 @@ function generate_oid(bool $count = true): string
 /**
  * Generate uid.
  * @param  int  $type
+ * @param  bool $dashed
  * @param  bool $option
  * @return ?string
  * @since  4.4 Replaced with generate_uuid().
  */
-function generate_uid(int $type = 1, bool $option = false): ?string
+function generate_uid(int $type = 1, bool $dashed = true, bool $option = false): ?string
 {
     switch ($type) {
         case 1: // Random (UUID/v4 or GUID).
@@ -253,17 +254,19 @@ function generate_uid(int $type = 1, bool $option = false): ?string
                 $ret[8] = chr(ord($ret[8]) & 0x3f | 0x80);
             }
 
-            return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($ret), 4));
+            $ret = vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($ret), 4));
+            break;
         case 2: // Simple serial.
             $date = getdate();
             $uniq = sscanf(uniqid('', true), '%8s%6s.%s');
 
-            return sprintf('%.08s-%04x-%04x-%04x-%.6s%.6s',
+            $ret = sprintf('%.08s-%04x-%04x-%04x-%.6s%.6s',
                 $uniq[0], $date['year'],
                 ($date['mon'] . $date['mday']),
                 ($date['minutes'] . $date['seconds']),
                 $uniq[1], $uniq[2]
             );
+            break;
         case 3: // All digit.
             if ($option) { // Rand?
                 $digits = '';
@@ -275,32 +278,38 @@ function generate_uid(int $type = 1, bool $option = false): ?string
                 $digits = $sec . hrtime(true) . substr($msec, 2);
             }
 
-            return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split($digits, 4));
+            $ret = vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split($digits, 4));
+            break;
         default:
             trigger_error(sprintf(
                 '%s(): Invalid type %s; 1, 2 or 3 accepted only', __function__, $type
             ));
 
-            return null;
+            $ret = null;
+            break;
     }
+
+    return $dashed ? $ret : str_replace('-', '', $ret);
 }
 
 /**
  * Generate uuid.
+ * @param  bool $dashed
  * @return string
  * @since  4.0, 4.1 Changed from rand_uuid().
  */
-function generate_uuid(): string
+function generate_uuid(bool $dashed = true): string
 {
-    return generate_uid(1, false);
+    return generate_uid(1, $dashed, false);
 }
 
 /**
  * Generate guid.
+ * @param  bool $dashed
  * @return string
  * @since  4.0, 4.1 Changed from rand_guid().
  */
-function generate_guid(): string
+function generate_guid(bool $dashed = true): string
 {
-    return generate_uid(1, true);
+    return generate_uid(1, $dashed, true);
 }
