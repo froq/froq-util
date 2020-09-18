@@ -60,13 +60,13 @@ function strsub(...$args): string
 }
 
 /**
- * Strrnd.
+ * Strran.
  * @param  string   $str
  * @param  int|null $length
  * @return ?string
- * @since  4.1
+ * @since  4.1, 4.6 Changed from strrnd()
  */
-function strrnd(string $str, int $length = null): ?string
+function strran(string $str, int $length = null): ?string
 {
     if ($str == '') {
         trigger_error(sprintf('%s(): Empty string given', __function__));
@@ -78,6 +78,20 @@ function strrnd(string $str, int $length = null): ?string
     }
 
     return !$length ? str_shuffle($str) : substr(str_shuffle($str), 0, $length);
+}
+
+/**
+ * Strpad.
+ * @param  string $str
+ * @param  string $pstr
+ * @param  int    $length
+ * @param  int    $side
+ * @return ?string
+ * @since  4.6
+ */
+function strpad(string $str, string $pstr, int $length, int $side = STR_PAD_RIGHT): ?string
+{
+    return str_pad($str, $length, $pstr, $side) ?: null;
 }
 
 /**
