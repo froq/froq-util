@@ -95,7 +95,7 @@ function generate_token(?int $base = 62, string $hash_algo = 'md5'): ?string
         return null;
     }
 
-    $ret =@ hash($hash_algo, uniqid(random_bytes(20), true));
+    $ret =@ hash($hash_algo, uniqid(random_bytes(16), true));
 
     if (!$ret) {
         trigger_error(sprintf('%s(): %s', __function__, error_get_last()['message']));
@@ -132,7 +132,7 @@ function generate_token_hash(string $hash_algo = 'md5'): ?string
  * @return string
  * @since  4.1
  */
-function generate_random_bytes(int $length = 20): string
+function generate_random_bytes(int $length = 16): string
 {
     $len = ($length < 4) ? 4 : $length;
     $ret = bin2hex(random_bytes(($len - ($len % 2)) / 2));
