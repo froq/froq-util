@@ -64,7 +64,7 @@ function strsub(...$args): string
  * @param  string   $str
  * @param  int|null $length
  * @return ?string
- * @since  4.1, 4.6 Changed from strrnd()
+ * @since  4.1, 4.6 Changed from strrnd().
  */
 function strran(string $str, int $length = null): ?string
 {
