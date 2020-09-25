@@ -44,7 +44,7 @@ function logger(): Logger
 
 /**
  * Log any.
- * @param  any $message
+ * @param  string|Throwable $message
  * @return bool
  */
 function log_any($message): bool
@@ -54,7 +54,7 @@ function log_any($message): bool
 
 /**
  * Log error.
- * @param  any $message
+ * @param  string|Throwable $message
  * @return bool
  */
 function log_error($message): bool
@@ -64,7 +64,7 @@ function log_error($message): bool
 
 /**
  * Log warn.
- * @param  any $message
+ * @param  string|Throwable $message
  * @return bool
  */
 function log_warn($message): bool
@@ -74,7 +74,7 @@ function log_warn($message): bool
 
 /**
  * Log info.
- * @param  any $message
+ * @param  string|Throwable $message
  * @return bool
  */
 function log_info($message): bool
@@ -84,7 +84,7 @@ function log_info($message): bool
 
 /**
  * Log debug.
- * @param  any $message
+ * @param  string|Throwable $message
  * @return bool
  */
 function log_debug($message): bool
