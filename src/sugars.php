@@ -325,9 +325,7 @@ function get_class_properties($class, bool $with_names = true, bool $scope_check
  */
 function get_type($var, bool $scalars = false): string
 {
-    $type = gettype($var);
-
-    if ($type == 'object') {
+    if (is_object($var)) {
         $ret = get_class($var);
         // Anonymous class.
         if ($pos = strpos($ret, "\0")) {
@@ -335,10 +333,9 @@ function get_type($var, bool $scalars = false): string
         }
     } else {
         static $scalars_array   = ['int', 'float', 'string', 'bool'];
-        static $translate_array = ['NULL' => 'null', 'integer' => 'int',
-                                   'double' => 'float', 'boolean' => 'bool'];
+        static $translate_array = ['integer' => 'int', 'double' => 'float', 'boolean' => 'bool'];
 
-        $ret = strtr($type, $translate_array);
+        $ret = strtr(strtolower(gettype($var)), $translate_array);
 
         if ($scalars && in_array($ret, $scalars_array)) {
             $ret = 'scalar';
