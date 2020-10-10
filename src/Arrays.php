@@ -89,7 +89,7 @@ final class Arrays extends StaticClass
             if (strpos($key, '.') === false) {
                 $array[$key] = $value;
             } else {
-                $keys = explode('.', $key);
+                $keys = explode('.', trim($key, '.'));
 
                 if (count($keys) <= 1) { // Direct access.
                     $array[$keys[0]] = $value;
@@ -162,7 +162,7 @@ final class Arrays extends StaticClass
                     unset($array[$key]);
                 }
             } else {
-                $keys = explode('.', $key);
+                $keys = explode('.', trim($key, '.'));
                 $key  = array_shift($keys);
 
                 if (empty($keys)) {
