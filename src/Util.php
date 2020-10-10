@@ -325,7 +325,7 @@ final /* fuckic static */ class Util extends StaticClass
             $qs = preg_replace('~%3C[\w]+(%2F)?%3E~ismU', '', $qs);
         }
         if ($normalizeArrays && strpos($qs, '%5D')) {
-            $qs = preg_replace('~([\w\.\-]+)%5B([\w\.\-]+)%5D(=)?~iU', '\1[\2]\3', $qs);
+            $qs = str_replace(['%5B', '%5D'], ['[', ']'], $qs);
         }
 
         return trim($qs);
