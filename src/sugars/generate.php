@@ -256,6 +256,44 @@ function generate_serial_id(int $length = null, bool $use_date = false): ?string
 }
 
 /**
+ * Generate session id.
+ * @param  array|null $options
+ * @return ?string
+ * @since  4.7
+ */
+function generate_session_id(array $options = null): ?string
+{
+    $options = array_merge(['hash' => false, 'hash_length' => 32, 'hash_upper_case' => false],
+        $options ?? []);
+
+    extract($options);
+
+    // May be not loaded, generate_nonce() mimics it (see the source above).
+    $ret = function_exists('session_create_id') ? session_create_id() : generate_nonce(26, 36);
+
+    if ($hash) {
+        // Hash by length (default=32).
+        switch ($hash_length) {
+            case 40: $ret = hash('sha1', $ret);    break;
+            case 32: $ret = hash('md5', $ret);     break;
+            case 16: $ret = hash('fnv1a64', $ret); break;
+            default:
+                trigger_error(sprintf(
+                    '%s(): Invalid hash length "%s" option, valids are: 40, 16, 32',
+                    __function__, $hash_length
+                ));
+                return null;
+        }
+
+        if ($hash_upper_case) {
+            $ret = strtoupper($ret);
+        }
+    }
+
+    return $ret;
+}
+
+/**
  * Generate oid.
  * @param  bool $count
  * @return string 24-length hex like Mongo.ObjectId.
