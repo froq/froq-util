@@ -394,8 +394,8 @@ final class Objects extends StaticClass
                 $initialized = $property->isInitialized($class);
             }
 
-            $nullable    = $nullable ?? ($value === null);
-            $initialized = $initialized ?? ($value !== null);
+            $nullable    ??= ($value === null);
+            $initialized ??= ($value !== null);
 
             // Using name as key, since all names will be overridden internally in children.
             $ret[$property->name] = [
