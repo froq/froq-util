@@ -56,7 +56,7 @@ function generate_nonce(int $length = null, int $base = null, string $hash_algo 
     }
 
     if ($hash_algo) {
-        $ret =@ hash($hash_algo, generate_nonce($length));
+        $ret =@ hash($hash_algo, $ret);
 
         if (!$ret) {
             trigger_error(sprintf('%s(): %s', __function__, error_get_last()['message']));
