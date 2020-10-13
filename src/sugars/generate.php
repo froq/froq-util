@@ -39,7 +39,7 @@ function generate_nonce(int $length = null, int $base = null, string $hash_algo 
         return null;
     }
 
-    $characters = BASE62_CHARACTERS;
+    $chars = BASE_62_CHARS;
 
     if ($base) {
         if ($base < 2 || $base > 62) {
@@ -47,12 +47,12 @@ function generate_nonce(int $length = null, int $base = null, string $hash_algo 
             return null;
         }
 
-        $characters = strcut($characters, $base);
+        $chars = strcut($chars, $base);
     }
 
     $ret = '';
     while (strlen($ret) < $length) {
-        $ret .= strran($characters, 1);
+        $ret .= strran($chars, 1);
     }
 
     if ($hash_algo) {
@@ -162,7 +162,7 @@ function generate_id(int $length = null, int $base = null): ?string
         return null;
     }
 
-    $characters = BASE62_CHARACTERS;
+    $chars = BASE_62_CHARS;
 
     if ($base) {
         if ($base < 11 || $base > 62) {
@@ -170,7 +170,7 @@ function generate_id(int $length = null, int $base = null): ?string
             return null;
         }
 
-        $characters = strcut($characters, $base);
+        $chars = strcut($chars, $base);
     }
 
     $mic = explode(' ', microtime());
@@ -182,13 +182,13 @@ function generate_id(int $length = null, int $base = null): ?string
     }
 
     if (!$base) {
-        $characters = BASE10_CHARACTERS;
+        $chars = BASE_10_CHARS;
     } elseif ($base && $base >= 11) { // No convert for digits.
-        $ret = str_base_convert($ret, BASE10_CHARACTERS, $characters);
+        $ret = str_base_convert($ret, BASE_10_CHARS, $chars);
     }
 
     while (strlen($ret) < $length) {
-        $ret .= strran($characters, 1);
+        $ret .= strran($chars, 1);
     }
 
     return strsub($ret, 0, $length);
@@ -249,7 +249,7 @@ function generate_serial_id(int $length = null, bool $use_date = false): ?string
     $ret = (!$use_date ? $mic[1] : date('YmdHis')) . substr($mic[0], 2, 6) . mt_rand(1000, 9999);
 
     while (strlen($ret) < $length) {
-        $ret .= strran(BASE10_CHARACTERS, 1);
+        $ret .= strran(BASE_10_CHARS, 1);
     }
 
     return strsub($ret, 0, $length);

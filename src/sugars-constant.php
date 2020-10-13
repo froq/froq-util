@@ -53,8 +53,8 @@ const __dirsep = DIRECTORY_SEPARATOR,
  * @const string
  * @since 4.0, 4.1
  */
-const BASE10_CHARACTERS = '0123456789',
-      BASE16_CHARACTERS = '0123456789abcdef',
-      BASE36_CHARACTERS = '0123456789abcdefghijklmnopqrstuvwxyz',
-      BASE62_CHARACTERS = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ',
-      BASE62_CHARACTERS_NATURAL = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+const BASE_10_CHARS  = '0123456789',
+      BASE_16_CHARS  = '0123456789abcdef',
+      BASE_36_CHARS  = '0123456789abcdefghijklmnopqrstuvwxyz',
+      BASE_62_CHARS  = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ',
+      BASE_62N_CHARS = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';

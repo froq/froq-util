@@ -196,6 +196,7 @@ function str_has_suffix(string $str, string $src, bool $icase = false): bool
  * @return ?string
  * @throws TypeError
  * @since  4.0
+ * @todo   Use "union" types for $from_chars & $to_chars.
  */
 function str_base_convert(string $digits, $from_chars, $to_chars): ?string
 {
@@ -214,14 +215,14 @@ function str_base_convert(string $digits, $from_chars, $to_chars): ?string
             trigger_error(sprintf('%s(): Invalid base for from chars, min=2 & max=62', __function__));
             return null;
         }
-        $from_chars = strcut(BASE62_CHARACTERS, $from_chars);
+        $from_chars = strcut(BASE_62_CHARS, $from_chars);
     }
     if (is_int($to_chars)) {
         if ($to_chars < 2 || $to_chars > 62) {
             trigger_error(sprintf('%s(): Invalid base for to chars, min=2 & max=62', __function__));
             return null;
         }
-        $to_chars = strcut(BASE62_CHARACTERS, $to_chars);
+        $to_chars = strcut(BASE_62_CHARS, $to_chars);
     }
 
     [$digits_length, $from_base, $to_base] = [
@@ -367,14 +368,14 @@ function get_uniqid(bool $convert = false, bool $extend = false): string
         }
 
         $ret = base_convert($ret, 16, 36); // Normally 11-length.
-        $ret = str_pad($ret, 14, str_shuffle(BASE36_CHARACTERS));
+        $ret = str_pad($ret, 14, str_shuffle(BASE_36_CHARS));
     } else {
         if (!$convert) {
             $ret = substr($parts[0] . dechex($parts[1]), 0, 20);
             $ret = str_pad($ret, 20, '0');
         } else {
             $ret = base_convert($parts[0], 16, 36) . base_convert($parts[1], 10, 36);
-            $ret = str_pad($ret, 20, str_shuffle(BASE36_CHARACTERS));
+            $ret = str_pad($ret, 20, str_shuffle(BASE_36_CHARS));
         }
     }
 
@@ -398,7 +399,7 @@ function get_nano_uniqid(bool $convert = false): string
         $ret = str_pad($ret, 14, '0');
     } else {
         $ret = base_convert($parts[0], 10, 36) . base_convert($parts[1], 10, 36);
-        $ret = str_pad($ret, 14, str_shuffle(BASE36_CHARACTERS));
+        $ret = str_pad($ret, 14, str_shuffle(BASE_36_CHARS));
     }
 
     return $ret;
@@ -415,14 +416,14 @@ function get_random_uniqid(bool $convert = false, int $length = 14): string
 {
     $rands = '';
     while (strlen($rands) < $length) {
-        $rands .= str_shuffle(BASE16_CHARACTERS)[0];
+        $rands .= str_shuffle(BASE_16_CHARS)[0];
     }
 
     if (!$convert) {
         $ret = $rands;
     } else {
         $ret = base_convert($rands, 16, 36);
-        $ret = str_pad($ret, $length, str_shuffle(BASE36_CHARACTERS));
+        $ret = str_pad($ret, $length, str_shuffle(BASE_36_CHARS));
     }
 
     return $ret;
