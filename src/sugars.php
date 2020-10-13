@@ -372,10 +372,10 @@ function get_uniqid(bool $convert = false, bool $extend = false): string
     } else {
         if (!$convert) {
             $ret = substr($parts[0] . dechex($parts[1]), 0, 20);
-            $ret = str_pad($ret, 20, '0');
+            $ret = str_pad($ret, 20, '0'); // If it needs.
         } else {
             $ret = base_convert($parts[0], 16, 36) . base_convert($parts[1], 10, 36);
-            $ret = str_pad($ret, 20, str_shuffle(BASE_36_CHARS));
+            $ret = str_pad($ret, 20, str_shuffle(BASE_36_CHARS)); // Yes it needs.
         }
     }
 
@@ -391,7 +391,7 @@ function get_uniqid(bool $convert = false, bool $extend = false): string
  */
 function get_nano_uniqid(bool $convert = false): string
 {
-    // Use parts apart to prevent big number -> float issue.
+    // Use parts apart to prevent big number (to float) issue.
     $parts = hrtime();
 
     if (!$convert) {
@@ -416,7 +416,7 @@ function get_random_uniqid(bool $convert = false, int $length = 14): string
 {
     $rands = '';
     while (strlen($rands) < $length) {
-        $rands .= str_shuffle(BASE_16_CHARS)[0];
+        $rands .= strran(BASE_16_CHARS, 1);
     }
 
     if (!$convert) {
@@ -427,6 +427,17 @@ function get_random_uniqid(bool $convert = false, int $length = 14): string
     }
 
     return $ret;
+}
+
+/**
+ * Get extended uniqid.
+ * @param  bool $convert
+ * @return string
+ * @since  4.8
+ */
+function get_extended_uniqid(bool $convert = false): string
+{
+    return get_uniqid($convert, true);
 }
 
 /**
@@ -638,9 +649,9 @@ function mkfile(string $file, int $mode = 0644): ?bool
  */
 function mkfiletemp(string $extension = null, bool $froq_temp = true): ?string
 {
-    $file = get_real_path(
+    $file = ( // Seems like "/tmp/froq-temporary/5f858f253527c91a4006" fully.
         ($froq_temp ? get_temporary_directory() : dirname(get_temporary_directory()))
-        . __dirsep . get_uniqid()
+        . __dirsep . get_extended_uniqid()
         . ($extension ? '.'. trim($extension, '.') : '')
     );
 
