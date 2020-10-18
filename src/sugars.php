@@ -976,7 +976,7 @@ function array_unpop(array &$array, ...$values): int
  * @param  array      &$array
  * @param  int|string  $key
  * @param  bool        $drop
- * @return float
+ * @return any|null
  * @since  4.9
  */
 function array_pick(array &$array, $key, bool $drop = false)
