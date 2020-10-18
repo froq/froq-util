@@ -260,7 +260,7 @@ function str_base_convert(string $digits, $from_chars, $to_chars): ?string
 
 /**
  * Constant exists.
- * @param  object|string $class
+ * @param  string|object $class
  * @param  string        $name
  * @param  bool          $scope_check
  * @return ?bool
@@ -269,13 +269,15 @@ function str_base_convert(string $digits, $from_chars, $to_chars): ?string
 function constant_exists($class, string $name, bool $scope_check = true): ?bool
 {
     if ($scope_check) {
-        $callerClass =@ debug_backtrace(2, 2)[1]['class'];
-        if ($callerClass) {
-            return ($callerClass == Objects::getName($class))
+        $caller_class = debug_backtrace(2, 2)[1]['class'] ?? '';
+        if ($caller_class) {
+            return ($caller_class === Objects::getName($class))
                 && Objects::hasConstant($class, $name);
         }
+
         return defined(Objects::getName($class) .'::'. $name);
     }
+
     return Objects::hasConstant($class, $name);
 }
 
@@ -290,11 +292,12 @@ function constant_exists($class, string $name, bool $scope_check = true): ?bool
 function get_class_constants($class, bool $with_names = true, bool $scope_check = true): ?array
 {
     if ($scope_check) {
-        $callerClass =@ debug_backtrace(2, 2)[1]['class'];
-        if ($callerClass) {
-            $all = ($callerClass == Objects::getName($class));
+        $caller_class = debug_backtrace(2, 2)[1]['class'] ?? '';
+        if ($caller_class) {
+            $all = ($caller_class === Objects::getName($class));
         }
     }
+
     return Objects::getConstantValues($class, $all ?? false, $with_names);
 }
 
@@ -309,11 +312,12 @@ function get_class_constants($class, bool $with_names = true, bool $scope_check 
 function get_class_properties($class, bool $with_names = true, bool $scope_check = true): ?array
 {
     if ($scope_check) {
-        $callerClass =@ debug_backtrace(2, 2)[1]['class'];
-        if ($callerClass) {
-            $all = ($callerClass == Objects::getName($class));
+        $caller_class = debug_backtrace(2, 2)[1]['class'] ?? '';
+        if ($caller_class) {
+            $all = ($caller_class === Objects::getName($class));
         }
     }
+
     return Objects::getPropertyValues($class, $all ?? false, $with_names);
 }
 
@@ -1176,18 +1180,38 @@ function file_path(...$args)
 /**
  * File name (gets a file name).
  * @param  string $file
- * @param  bool   $extensioned
+ * @param  bool   $with_extension
  * @return ?string
  * @since  4.0
  */
-function file_name(string $file, bool $extensioned = true): ?string
+function file_name(string $file, bool $with_extension = true): ?string
 {
-    // Function basename() wants an explicit suffix to remove it from name, but using
-    // just a boolean here is more sexy..
+    // Function basename() wants an explicit suffix to remove it from name,
+    // but using just a boolean here is more sexy..
     $ret = basename($file);
 
-    if ($ret && !$extensioned && ($extension = file_extension($file))) {
-        $ret = substr($ret, 0, -strlen($extension));
+    if ($ret && !$with_extension && ($extension = file_extension($file))) {
+        $ret = strsub($ret, 0, -strlen($extension));
+    }
+
+    return $ret ?: null;
+}
+
+/**
+ * File extension (gets a file extension).
+ * @param  string $file
+ * @param  bool   $with_dot
+ * @return ?string
+ * @since  4.0
+ */
+function file_extension(string $file, bool $with_dot = true): ?string
+{
+    // Function pathinfo() returns ".foo" for example "/some/path/.foo" and
+    // if $with_dot false then this function return ".", no baybe!
+    $ret = strrchr($file, '.');
+
+    if ($ret && !$with_dot) {
+        $ret = ltrim($ret, '.');
     }
 
     return $ret ?: null;
@@ -1203,30 +1227,25 @@ function file_type(string $file): ?string
 {
     $ret = null;
 
-    if (is_file($file)) {
-        try {
-            $ret = function_exists('mime_content_type') ? mime_content_type($file) : false;
-            if ($ret === false && function_exists('exec')) {
-                $exec = exec('file -i '. escapeshellarg($file));
-                if ($exec && preg_match('~: *([^/ ]+/[^; ]+)~', $exec, $match)) {
-                    $ret = $match[1];
-                    if ($ret == 'inode/directory') {
-                        $ret = 'directory';
-                    }
+    if (is_file($file)) try {
+        $ret = mime_content_type($file);
+        if ($ret === false) try {
+            $exec = exec('file -i '. escapeshellarg($file));
+            if ($exec && preg_match('~: *([^/ ]+/[^; ]+)~', $exec, $match)) {
+                $ret = $match[1];
+                if ($ret == 'inode/directory') {
+                    $ret = 'directory';
                 }
             }
         } catch (Error $e) {}
-    }
+    } catch (Error $e) {}
 
-    // Try by extension.
+    // Try with extension.
     if (!$ret) {
         $extension = file_extension($file, false);
         if ($extension) {
-            $extension = strtolower($extension);
-
-            static $cache; // Some speed..
-
-            if (empty($cache[$extension])) {
+            static $cache; // For some speed..
+            if (empty($cache[$extension = strtolower($extension)])) {
                 foreach (include 'statics/mime.php' as $type => $extensions) {
                     if (in_array($extension, $extensions, true)) {
                         $cache[$extension] = $ret = $type;
@@ -1235,26 +1254,6 @@ function file_type(string $file): ?string
                 }
             }
         }
-    }
-
-    return $ret ?: null;
-}
-
-/**
- * File extension (gets a file extension).
- * @param  string $file
- * @param  bool   $dotted
- * @return ?string
- * @since  4.0
- */
-function file_extension(string $file, bool $dotted = true): ?string
-{
-    // Function pathinfo() returns ".foo" for example "/some/path/.foo" and if $dotted false
-    // then this function return ".", no baybe!
-    $ret = strrchr($file, '.');
-
-    if ($ret && !$dotted) {
-        $ret = ltrim($ret, '.');
     }
 
     return $ret ?: null;
