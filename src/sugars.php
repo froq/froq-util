@@ -968,7 +968,7 @@ function array_unpop(array &$array, ...$values): int
 }
 
 /**
- * Array avg (for the of array_sum()).
+ * Array avg (for the sake of array_sum()).
  * @param  array $array
  * @param  bool  $include_empties
  * @return float
