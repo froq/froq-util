@@ -469,14 +469,14 @@ final class Arrays extends StaticClass
     /**
      * Average.
      * @param  array $array
-     * @param  bool  $includeEmpties
+     * @param  bool  $includeZeros
      * @return float
      * @since  4.5
      */
-    public static function average(array $array, bool $includeEmpties = true): float
+    public static function average(array $array, bool $includeZeros = true): float
     {
         $array = array_filter($array, fn($v) => (
-            $includeEmpties ? is_numeric($v) : is_numeric($v) && ($v > 0)
+            $includeZeros ? is_numeric($v) : is_numeric($v) && ($v > 0)
         ));
 
         return array_sum($array) / count($array);

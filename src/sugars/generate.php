@@ -52,7 +52,7 @@ function generate_nonce(int $length = null, int $base = null, string $hash_algo 
 
     $ret = '';
     while (strlen($ret) < $length) {
-        $ret .= strran($chars, 1);
+        $ret .= str_rand($chars, 1);
     }
 
     if ($hash_algo) {
@@ -188,7 +188,7 @@ function generate_id(int $length = null, int $base = null): ?string
     }
 
     while (strlen($ret) < $length) {
-        $ret .= strran($chars, 1);
+        $ret .= str_rand($chars, 1);
     }
 
     return strsub($ret, 0, $length);
@@ -249,7 +249,7 @@ function generate_serial_id(int $length = null, bool $use_date = false): ?string
     $ret = (!$use_date ? $mic[1] : date('YmdHis')) . substr($mic[0], 2, 6) . mt_rand(1000, 9999);
 
     while (strlen($ret) < $length) {
-        $ret .= strran(BASE_10_CHARS, 1);
+        $ret .= str_rand(BASE_10_CHARS, 1);
     }
 
     return strsub($ret, 0, $length);

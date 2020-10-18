@@ -60,27 +60,6 @@ function strsub(...$args): string
 }
 
 /**
- * Strran.
- * @param  string   $str
- * @param  int|null $length
- * @return ?string
- * @since  4.1, 4.6 Changed from strrnd().
- */
-function strran(string $str, int $length = null): ?string
-{
-    if ($str == '') {
-        trigger_error(sprintf('%s(): Empty string given', __function__));
-        return null;
-    }
-    if ($length && $length < 1) {
-        trigger_error(sprintf('%s(): Length must be minimum 1 or null', __function__));
-        return null;
-    }
-
-    return !$length ? str_shuffle($str) : substr(str_shuffle($str), 0, $length);
-}
-
-/**
  * Strpad.
  * @param  string $str
  * @param  string $pstr
@@ -259,6 +238,27 @@ function str_base_convert(string $digits, $from_chars, $to_chars): ?string
 }
 
 /**
+ * Str rand.
+ * @param  string   $str
+ * @param  int|null $length
+ * @return ?string
+ * @since  4.9
+ */
+function str_rand(string $str, int $length = null): ?string
+{
+    if ($str == '') {
+        trigger_error(sprintf('%s(): Empty string given', __function__));
+        return null;
+    }
+    if ($length && $length < 1) {
+        trigger_error(sprintf('%s(): Length must be minimum 1 or null', __function__));
+        return null;
+    }
+
+    return !$length ? str_shuffle($str) : substr(str_shuffle($str), 0, $length);
+}
+
+/**
  * Constant exists.
  * @param  string|object $class
  * @param  string        $name
@@ -420,7 +420,7 @@ function get_random_uniqid(bool $convert = false, int $length = 14): string
 {
     $rands = '';
     while (strlen($rands) < $length) {
-        $rands .= strran(BASE_16_CHARS, 1);
+        $rands .= str_shuffle(BASE_16_CHARS)[0];
     }
 
     if (!$convert) {
@@ -972,15 +972,30 @@ function array_unpop(array &$array, ...$values): int
 }
 
 /**
+ * Array pick.
+ * @param  array      &$array
+ * @param  int|string  $key
+ * @param  bool        $drop
+ * @return float
+ * @since  4.9
+ */
+function array_pick(array &$array, $key, bool $drop = false)
+{
+    // Just got sick of "if isset(array[..]) x=array[..] & unset(array[..])"
+    // and/or "x=array[..] ?? .." stuffs.
+    return Arrays::get($array, $key, null, $drop);
+}
+
+/**
  * Array avg (for the sake of array_sum()).
  * @param  array $array
- * @param  bool  $include_empties
+ * @param  bool  $include_zeros
  * @return float
  * @since  4.5
  */
-function array_avg(array $array, bool $include_empties = true): float
+function array_avg(array $array, bool $include_zeros = true): float
 {
-    return Arrays::average($array, $include_empties);
+    return Arrays::average($array, $include_zeros);
 }
 
 /**
