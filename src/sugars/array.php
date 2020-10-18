@@ -152,6 +152,19 @@ function array_remove_all(array &$array, array $keys): array
 }
 
 /**
+ * Array compose.
+ * @param  array    $keys
+ * @param  array    $values
+ * @param  any|null $values_default
+ * @return array
+ * @since  4.11
+ */
+function array_compose(array $keys, array $values, $values_default = null): array
+{
+    return Arrays::compose($keys, $values, $values_default);
+}
+
+/**
  * Array test (like JavaScript Array.every()).
  * @param  array    $array
  * @param  callable $func

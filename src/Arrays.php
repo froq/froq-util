@@ -259,6 +259,25 @@ final class Arrays extends StaticClass
     }
 
     /**
+     * Compose.
+     * @param  array    $keys
+     * @param  array    $values
+     * @param  any|null $valuesDefault
+     * @return array
+     * @since  4.11
+     */
+    public static function compose(array $keys, array $values, $valuesDefault = null): array
+    {
+        $ret = [];
+
+        foreach ($keys as $i => $key) {
+            $ret[$key] = $values[$i] ?? $valuesDefault;
+        }
+
+        return $ret;
+    }
+
+    /**
      * Test (like JavaScript Array.some()).
      * @param  array    $array
      * @param  callable $func
