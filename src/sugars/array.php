@@ -61,12 +61,12 @@ function array_set(array &$array, $key, $value): array
 }
 
 /**
-* Array set all.
-* @param  array &$array
-* @param  array  $items
-* @return array
-* @since  4.0
-*/
+ * Array set all.
+ * @param  array &$array
+ * @param  array  $items
+ * @return array
+ * @since  4.0
+ */
 function array_set_all(array &$array, array $items): array
 {
     return Arrays::setAll($array, $items);
@@ -173,6 +173,31 @@ function array_test(array $array, callable $func): bool
 function array_test_all(array $array, callable $func): bool
 {
     return Arrays::testAll($array, $func);
+}
+
+/**
+ * Array find.
+ * @param  array    $array
+ * @param  callable $func
+ * @return any|null
+ * @since  4.10
+ */
+function array_find(array $array, callable $func)
+{
+    return Arrays::find($array, $func);
+}
+
+/**
+ * Array find all.
+ * @param  array    $array
+ * @param  callable $func
+ * @param  bool     $useKeys
+ * @return array
+ * @since  4.10
+ */
+function array_find_all(array $array, callable $func, bool $useKeys = false): array
+{
+    return Arrays::findAll($array, $func, $useKeys);
 }
 
 /**

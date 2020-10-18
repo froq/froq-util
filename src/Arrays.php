@@ -291,6 +291,48 @@ final class Arrays extends StaticClass
     }
 
     /**
+     * Find.
+     * @param  array    $array
+     * @param  callable $func
+     * @return any|null
+     * @since  4.10
+     */
+    public static function find(array $array, callable $func)
+    {
+        $i = 0; $ret = null;
+
+        foreach ($array as $key => $value) {
+            if ($func($value, $key, $i++)) {
+                $ret = $value;
+                break;
+            }
+        }
+
+        return $ret;
+    }
+
+    /**
+     * Find all.
+     * @param  array    $array
+     * @param  callable $func
+     * @param  bool     $useKeys
+     * @return array
+     * @since  4.10
+     */
+    public static function findAll(array $array, callable $func, bool $useKeys = false): array
+    {
+        $i = 0; $ret = [];
+
+        foreach ($array as $key => $value) {
+            if ($func($value, $key, $i++)) {
+                !$useKeys ? $ret[] = $value : $ret[$key] = $value;
+            }
+        }
+
+        return $ret;
+    }
+
+    /**
      * Random.
      * @param  array &$array
      * @param  int    $limit
