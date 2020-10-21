@@ -50,36 +50,45 @@ function rand_float(float $min = null, float $max = null): float
 
 /**
  * Rand item.
- * @param  array      $array
+ * @param  array       $array
  * @param  int|string &$key
- * @return any
+ * @return ?any
  * @since  4.1
  */
 function rand_item(array $array, &$key = null)
 {
     $key = array_rand($array);
+    if ($key === null) {
+        return null;
+    }
 
-    return $array[$key] ?? null;
+    return $array[$key];
 }
 
 /**
  * Rand items.
- * @param  array             $array
- * @param  int               $count
+ * @param  array              $array
+ * @param  int                $limit
  * @param  array<int|string> &$keys
- * @return array
+ * @return ?array
  * @since  4.1
  */
-function rand_items(array $array, int $count, array &$keys = null): array
+function rand_items(array $array, int $limit, array &$keys = null): ?array
 {
     $ret = [];
+    $len = count($array);
 
-    while (count($ret) < $count) {
+    do {
         $key = array_rand($array);
-        $ret[$key] = $array[$key] ?? null;
-    }
+        if ($key === null) {
+            return null;
+        }
 
-    $keys = array_keys($ret);
+        $ret[$key] = $array[$key];
+        $retlen    = count($ret);
+    } while ($retlen < $len && $retlen < $limit);
+
+    $keys = array_keys($ret) ?: null;
 
     return $ret;
 }
