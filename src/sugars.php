@@ -451,12 +451,12 @@ function get_extended_uniqid(bool $convert = false): string
  */
 function get_request_id(): string
 {
-    sscanf(microtime(), '%d.%s %s', $_, $msec, $sec);
+    $parts = explode('.', uniqid('', true));
 
-    // Use an ephemeral port if no port exists (~$ cat /proc/sys/net/ipv4/ip_local_port_range)
-    $port = $_SERVER['REMOTE_PORT'] ?? rand(32768, 60999);
+    // Add & use an ephemeral port if no port (~$ cat /proc/sys/net/ipv4/ip_local_port_range).
+    $parts[2] = ($_SERVER['REMOTE_PORT'] ?? rand(32768, 60999));
 
-    return sprintf('%s-%s-%s', $sec, $msec, $port);
+    return vsprintf('%014s-%07x-%04x', $parts);
 }
 
 /**
