@@ -31,8 +31,8 @@ declare(strict_types=1);
  */
 function is_local(): bool
 {
-    static $ret; return $ret ?? $ret = (
-        defined('__local__') && (__local__ == true)
+    static $ret; return $ret ??= (
+        defined('__local__') && (__local__ === true)
     );
 }
 
@@ -42,7 +42,7 @@ function is_local(): bool
  */
 function is_cli(): bool
 {
-    return (PHP_SAPI == 'cli');
+    return (PHP_SAPI === 'cli');
 }
 
 /**
@@ -51,7 +51,7 @@ function is_cli(): bool
  */
 function is_cli_server(): bool
 {
-    return (PHP_SAPI == 'cli-server');
+    return (PHP_SAPI === 'cli-server');
 }
 
 /**
@@ -218,6 +218,7 @@ function is_empty($in, ...$ins): bool
     }
 
     foreach ($ins as $in) {
+        // Also check empty objects.
         $in = is_object($in) ? get_object_vars($in) : $in;
         if (empty($in)) {
             return true;
