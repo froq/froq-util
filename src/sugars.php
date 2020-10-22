@@ -867,7 +867,7 @@ function preg_remove($pattern, $subject, int $limit = null, int &$count = null)
 function array_clean(array $array): array
 {
     return array_filter($array, function ($value) {
-        return ($value !== '' && $value !== null && $value !== []);
+        return ($value !== null && $value !== '' && $value !== []);
     });
 }
 
