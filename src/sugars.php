@@ -839,6 +839,26 @@ function strtoitime(string $format, int $time = null): ?int
 }
 
 /**
+ * Preg remove (perform a regular expression search and remove).
+ * @param  string|array  $pattern
+ * @param  string|array  $subject
+ * @param  int|null      $limit
+ * @param  int|null     &$count
+ * @return string|array|null
+ * @since  4.0
+ */
+function preg_remove($pattern, $subject, int $limit = null, int &$count = null)
+{
+    if (is_string($pattern)) {
+        $replacement = '';
+    } elseif (is_array($pattern)) {
+        $replacement = array_fill(0, count($pattern), '');
+    }
+
+    return preg_replace($pattern, $replacement, $subject, $limit ?? -1, $count);
+}
+
+/**
  * Array clean (cleans given array filtering/dropping non-empty values).
  * @param  array $array
  * @return array
@@ -978,33 +998,6 @@ function array_unpop(array &$array, ...$values): int
 }
 
 /**
- * Array pick.
- * @param  array      &$array
- * @param  int|string  $key
- * @param  bool        $drop
- * @return any|null
- * @since  4.9
- */
-function array_pick(array &$array, $key, bool $drop = false)
-{
-    // Just got sick of "if isset(array[..]) x=array[..] & unset(array[..])"
-    // and/or "x=array[..] ?? .." stuffs.
-    return Arrays::get($array, $key, null, $drop);
-}
-
-/**
- * Array avg (for the sake of array_sum()).
- * @param  array $array
- * @param  bool  $include_zeros
- * @return float
- * @since  4.5
- */
-function array_avg(array $array, bool $include_zeros = true): float
-{
-    return Arrays::average($array, $include_zeros);
-}
-
-/**
  * Array pad keys (ensures keys padding the given keys on array).
  * @param  array    $array
  * @param  array    $keys
@@ -1069,22 +1062,30 @@ function array_columns(array $array, array $column_keys, $index_key = null, bool
 }
 
 /**
- * Preg remove (perform a regular expression search and remove).
- * @param  string|array  $pattern
- * @param  string|array  $subject
- * @param  int|null      $limit
- * @param  int|null     &$count
- * @return string|array|null
+ * Array avg (for the sake of array_sum()).
+ * @param  array $array
+ * @param  bool  $include_zeros
+ * @return float
+ * @since  4.5
  */
-function preg_remove($pattern, $subject, int $limit = null, int &$count = null)
+function array_avg(array $array, bool $include_zeros = true): float
 {
-    if (is_string($pattern)) {
-        $replacement = '';
-    } elseif (is_array($pattern)) {
-        $replacement = array_fill(0, count($pattern), '');
-    }
+    return Arrays::average($array, $include_zeros);
+}
 
-    return preg_replace($pattern, $replacement, $subject, $limit ?? -1, $count);
+/**
+ * Array pick.
+ * @param  array      &$array
+ * @param  int|string  $key
+ * @param  bool        $drop
+ * @return any|null
+ * @since  4.9
+ */
+function array_pick(array &$array, $key, bool $drop = false)
+{
+    // Just got sick of "if isset(array[..]) x=array[..] & unset(array[..])"
+    // and/or "x=array[..] ?? .." stuffs.
+    return Arrays::get($array, $key, null, $drop);
 }
 
 /**
