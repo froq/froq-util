@@ -860,18 +860,20 @@ function array_clean(array $array): array
  */
 function array_apply(array $array, callable $func): array
 {
+    $i = 0; $ret = [];
+
     foreach ($array as $key => $value) {
         // Because array_map() tricky with array_keys() only for value => key notation, and also
         // just warns about argument count (e.g: if $func is strval()) and foolishly making all
         // values NULL; simply use this way here with try/catch, catching ArgumentCountError only.
         try {
-            $ret[$key] = $func($value, $key);
+            $ret[$key] = $func($value, $key, $i++);
         } catch (ArgumentCountError $e) {
             $ret[$key] = $func($value);
         }
     }
 
-    return $ret ?? [];
+    return $ret;
 }
 
 /**
@@ -1086,17 +1088,14 @@ function preg_remove($pattern, $subject, int $limit = null, int &$count = null)
 }
 
 /**
- * File create (create a new file or a new temporary file).
- * @param  string|null $file
- * @param  int|null    $mode
+ * File create (create a new file with given name).
+ * @param  string $file
+ * @param  int    $mode
  * @return ?string
  * @since  4.0
  */
-function file_create(string $file = null, int $mode = 0644): ?string
+function file_create(string $file, int $mode = 0644): ?string
 {
-    if (is_null($file)) {
-        return mkfiletemp();
-    }
     return mkfile($file, $mode) ? $file : null;
 }
 
@@ -1178,10 +1177,10 @@ function file_get_buffer_contents(string $file, array $file_data = null): ?strin
 
     ob_start();
 
-    if ($file_data) {
-        extract($file_data);
-    }
+    // Data, used in file.
+    $file_data && extract($file_data);
 
+    // Simply include file.
     include $file;
 
     return ob_get_clean();
