@@ -1083,9 +1083,23 @@ function array_avg(array $array, bool $include_zeros = true): float
  */
 function array_pick(array &$array, $key, bool $drop = false)
 {
-    // Just got sick of "if isset(array[..]) x=array[..] & unset(array[..])"
-    // and/or "x=array[..] ?? .." stuffs.
+    // Just got sick of "if isset(array[..]) value=array[..]: unset(array[..])"
+    // and "value=array[..] ?? .." stuffs.
     return Arrays::get($array, $key, null, $drop);
+}
+
+/**
+ * Array rand value.
+ * @param  array  &$array
+ * @param  int     $limit
+ * @param  bool    $drop
+ * @return any|null
+ * @since  4.12
+ */
+function array_rand_value(array $array, int $limit = 1, bool $drop = false)
+{
+    // Just got sick of "value = array[array_rand(array)]" stuffs.
+    return Arrays::getRandom($array, $limit, false, $drop);
 }
 
 /**

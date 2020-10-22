@@ -27,7 +27,6 @@ declare(strict_types=1);
 namespace froq\util;
 
 use froq\common\objects\StaticClass;
-use froq\common\exceptions\InvalidArgumentException;
 
 /**
  * Arrays.
@@ -259,6 +258,47 @@ final class Arrays extends StaticClass
     }
 
     /**
+     * Get random.
+     * @param  array  &$array
+     * @param  int     $limit
+     * @param  bool    $pack
+     * @param  bool    $drop
+     * @return any|null
+     * @since  4.12
+     */
+    public static function getRandom(array &$array, int $limit = 1, bool $pack = false, bool $drop = false)
+    {
+        return self::random($array, $limit, $pack, $drop);
+    }
+
+    /**
+     * Pull random.
+     * @param  array  &$array
+     * @param  int     $limit
+     * @param  bool    $pack
+     * @return any|null
+     * @since  4.12
+     */
+    public static function pullRandom(array &$array, int $limit = 1, bool $pack = false)
+    {
+        return self::random($array, $limit, $pack, true);
+    }
+
+    /**
+     * Remove random.
+     * @param  array  &$array
+     * @param  int     $limit
+     * @return any|null
+     * @since  4.12
+     */
+    public static function removeRandom(array &$array, int $limit = 1): array
+    {
+        self::random($array, $limit, false, true);
+
+        return $array;
+    }
+
+    /**
      * Compose.
      * @param  array    $keys
      * @param  array    $values
@@ -358,7 +398,6 @@ final class Arrays extends StaticClass
      * @param  bool   $pack Return as [key,value] pairs.
      * @param  bool   $drop
      * @return any|null
-     * @throws froq\common\exceptions\InvalidArgumentException
      */
     public static function random(array &$array, int $limit = 1, bool $pack = false, bool $drop = false)
     {
@@ -367,22 +406,28 @@ final class Arrays extends StaticClass
             return null;
         }
 
+        // Prevent trivial corruption from limit errors, but notice.
         if ($limit < 1) {
-            throw new InvalidArgumentException('Minimum limit must be 1, %s given', [$limit]);
+            $limit = 1;
+            trigger_error(sprintf(
+                '%s(): Minimum limit must be 1, %s given', $limit
+            ));
         } elseif ($limit > $count) {
-            throw new InvalidArgumentException('Maximum limit must not be greater than %s, '.
-                'given limit %s is exceeding the count of items', [$count, $limit]);
+            $limit = $count;
+            trigger_error(sprintf(
+                '%s(): Maximum limit must not be greater than %s, given limit %s is exceeding '.
+                'count of given array(%s)', __method__, $count, $limit, $count
+            ));
         }
 
-        $keys = array_keys($array);
-        shuffle($keys);
-
         $ret = [];
-        while ($limit--) {
-            $key = $keys[$limit];
-            $value = $array[$key];
 
-            !$pack ? $ret[] = $value : $ret[$key] = $value;
+        // Get & arrayify single keys (limit=1).
+        $keys = (array) array_rand($array, $limit);
+
+        foreach ($keys as $key) {
+            !$pack ? $ret[] = $array[$key]
+                   : $ret[$key] = $array[$key];
 
             // Drop used item.
             if ($drop) {
@@ -390,8 +435,10 @@ final class Arrays extends StaticClass
             }
         }
 
+        // Assign return by pack option.
         if (count($ret) == 1) {
-            $ret = !$pack ? current($ret) : [key($ret), current($ret)];
+            $ret = !$pack ? current($ret)
+                          : [key($ret), current($ret)];
         }
 
         return $ret;
@@ -405,22 +452,22 @@ final class Arrays extends StaticClass
      */
     public static function shuffle(array &$array, bool $keepKeys = true): array
     {
-        if (!$keepKeys) {
-            shuffle($array);
-        } else {
+        if ($keepKeys) {
             $keys = array_keys($array);
             shuffle($keys);
 
-            $shuffledArray = [];
+            $temp = [];
             foreach ($keys as $key) {
-                $shuffledArray[$key] = $array[$key];
+                $temp[$key] = $array[$key];
             }
-            $array = $shuffledArray;
+            $array = $temp;
 
             // Nope.. (cos killing speed and also randomness).
             // uasort($array, function () {
             //     return rand(-1, 1);
             // });
+        } else {
+            shuffle($array);
         }
 
         return $array;

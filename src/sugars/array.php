@@ -100,6 +100,20 @@ function array_get_all(array $array, array $keys, $value_default = null): array
 }
 
 /**
+ * Array get random.
+ * @param  array  &$array
+ * @param  int     $limit
+ * @param  bool    $pack
+ * @param  bool    $drop
+ * @return any|null
+ * @since  4.12
+ */
+function array_get_random(array &$array, int $limit = 1, bool $pack = false, bool $drop = false)
+{
+    return Arrays::getRandom($array, $limit, $pack, $drop);
+}
+
+/**
  * Array pull.
  * @param  array                        &$array
  * @param  int|string|array<int|string>  $key
@@ -127,6 +141,19 @@ function array_pull_all(array &$array, array $keys, $value_default = null): arra
 }
 
 /**
+ * Array pull random.
+ * @param  array  &$array
+ * @param  int     $limit
+ * @param  bool    $pack
+ * @return any|null
+ * @since  4.12
+ */
+function array_pull_random(array &$array, int $limit = 1, bool $pack = false)
+{
+    return Arrays::pullRandom($array, $limit, $pack);
+}
+
+/**
  * Remove.
  * @param  array                        &$array
  * @param  int|string|array<int|string>  $key
@@ -149,6 +176,18 @@ function array_remove(array &$array, $key): array
 function array_remove_all(array &$array, array $keys): array
 {
     return Arrays::removeAll($array, $keys);
+}
+
+/**
+ * Array remove random.
+ * @param  array  &$array
+ * @param  int     $limit
+ * @return any|null
+ * @since  4.12
+ */
+function array_remove_random(array &$array, int $limit = 1): array
+{
+    return Arrays::removeRandom($array, $limit);
 }
 
 /**
