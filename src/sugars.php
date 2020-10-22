@@ -770,14 +770,14 @@ function stream_set_contents(&$handle, string $contents): bool
 }
 
 /**
- * Utime (gets microtime as string or float).
- * @param  bool $float
- * @return string|float
+ * Utime (gets microtime as float or string).
+ * @param  bool $string
+ * @return float|string
  * @since  4.0
  */
-function utime(bool $float = false)
+function utime(bool $string = false)
 {
-    return !$float ? utimes()[3] : utimes()[2];
+    return !$string ? utimes()[2] : utimes()[3];
 }
 
 /**
@@ -803,7 +803,7 @@ function gmtime(): int
 }
 
 /**
- * Strtoitime (gets an interval time by given format, eg: "1 day" or "1D" instead of "60*60*24" or "86400").
+ * Strtoitime (gets an interval time by given format).
  * @param  string   $format
  * @param  int|null $time
  * @return ?int
@@ -811,7 +811,10 @@ function gmtime(): int
  */
 function strtoitime(string $format, int $time = null): ?int
 {
+    // Eg: "1 day" or "1D" (instead "60*60*24" or "86400").
     if (preg_match_all('~([+-]?\d+)([smhDMY])~', $format, $matches)) {
+        $format_list = null;
+
         [, $numbers, $formats] = $matches;
         foreach ($formats as $i => $format) {
             switch ($format) {
@@ -824,9 +827,10 @@ function strtoitime(string $format, int $time = null): ?int
             }
         }
 
-        if (isset($format_list)) {
-            $format = join(' ', $format_list);
-        }
+        // Update format.
+        $format_list && (
+            $format = join(' ', $format_list)
+        );
     }
 
     $time = $time ?? time();
