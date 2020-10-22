@@ -1075,17 +1075,33 @@ function array_avg(array $array, bool $include_zeros = true): float
 
 /**
  * Array pick.
- * @param  array      &$array
- * @param  int|string  $key
- * @param  bool        $drop
+ * @param  array                        &$array
+ * @param  int|string|array<int|string>  $key
+ * @param  any|null                      $default
+ * @param  bool                          $drop
  * @return any|null
- * @since  4.9
+ * @since  4.9, 4.13 Default added.
  */
-function array_pick(array &$array, $key, bool $drop = false)
+function array_pick(array &$array, $key, $default = null, bool $drop = false)
 {
-    // Just got sick of "if isset(array[..]) value=array[..]: unset(array[..])"
-    // and "value=array[..] ?? .." stuffs.
-    return Arrays::get($array, $key, null, $drop);
+    // Just got sick of "value=array[..] ?? .." stuffs.
+    return is_array($key) ? Arrays::getAll($array, $key, $default, $drop)
+                          : Arrays::get($array, $key, $default, $drop);
+}
+
+/**
+ * Array pluck.
+ * @param  array                        &$array
+ * @param  int|string|array<int|string>  $key
+ * @param  any|null                      $default
+ * @return any|null
+ * @since  4.9, 4.13 Actual version.
+ */
+function array_pluck(array &$array, $key, $default = null)
+{
+    // Just got sick of "if isset array[..]: value=array[..], unset(array[..])" stuffs.
+    return is_array($key) ? Arrays::pullAll($array, $key, $default)
+                          : Arrays::pull($array, $key, $default);
 }
 
 /**

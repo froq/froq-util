@@ -77,26 +77,28 @@ function array_set_all(array &$array, array $items): array
  * @param  array                        &$array
  * @param  int|string|array<int|string>  $key
  * @param  any|null                      $value_default
+ * @param  bool                          $drop
  * @return any|null
  * @since  3.0
  */
-function array_get(array $array, $key, $value_default = null)
+function array_get(array $array, $key, $value_default = null, bool $drop = false)
 {
-    return is_array($key) ? Arrays::getAll($array, $key, $value_default)
-                          : Arrays::get($array, $key, $value_default);
+    return is_array($key) ? Arrays::getAll($array, $key, $value_default, $drop)
+                          : Arrays::get($array, $key, $value_default, $drop);
 }
 
 /**
  * Array get all.
- * @param  array    &$array
- * @param  array     $keys
- * @param  any|null  $value_default
+ * @param  array             &$array
+ * @param  array<int|string>  $keys
+ * @param  any|null           $value_default
+ * @param  bool               $drop
  * @return array
  * @since  3.0
  */
-function array_get_all(array $array, array $keys, $value_default = null): array
+function array_get_all(array $array, array $keys, $value_default = null, bool $drop = false): array
 {
-    return Arrays::getAll($array, $keys, $value_default);
+    return Arrays::getAll($array, $keys, $value_default, $drop);
 }
 
 /**
@@ -129,9 +131,9 @@ function array_pull(array &$array, $key, $value_default = null)
 
 /**
  * Array pull all.
- * @param  array   &$array
- * @param  array    $keys
- * @param  any|null $value_default
+ * @param  array             &$array
+ * @param  array<int|string>  $keys
+ * @param  any|null           $value_default
  * @return array
  * @since  3.0
  */
@@ -168,8 +170,8 @@ function array_remove(array &$array, $key): array
 
 /**
  * Remove all.
- * @param  array &$array
- * @param  array  $keys
+ * @param  array             &$array
+ * @param  array<int|string>  $keys
  * @return array
  * @since  4.0
  */
@@ -192,9 +194,9 @@ function array_remove_random(array &$array, int $limit = 1): array
 
 /**
  * Array compose.
- * @param  array    $keys
- * @param  array    $values
- * @param  any|null $values_default
+ * @param  array<int|string> $keys
+ * @param  array             $values
+ * @param  any|null          $values_default
  * @return array
  * @since  4.11
  */
@@ -280,8 +282,8 @@ function array_shuffle(array &$array, bool $keep_keys = true): array
 
 /**
  * Array include.
- * @param  array $array
- * @param  array $keys
+ * @param  array             $array
+ * @param  array<int|string> $keys
  * @return array
  * @since  3.0
  */
@@ -292,8 +294,8 @@ function array_include(array $array, array $keys): array
 
 /**
  * Array exclude.
- * @param  array $array
- * @param  array $keys
+ * @param  array             $array
+ * @param  array<int|string> $keys
  * @return array
  * @since  3.0
  */
@@ -411,8 +413,8 @@ function array_last(array $array, $value_default = null, bool $drop = false)
 
 /**
  * Array keys exists.
- * @param  array $array
- * @param  array $keys
+ * @param  array             $array
+ * @param  array<int|string> $keys
  * @return bool
  */
 function array_keys_exists(array $array, array $keys): bool
@@ -434,8 +436,8 @@ function array_values_exists(array $array, array $values, bool $strict = true): 
 
 /**
  * Array search keys.
- * @param  array $array
- * @param  array $keys
+ * @param  array             $array
+ * @param  array<int|string> $keys
  * @return array
  * @since  4.0
  */

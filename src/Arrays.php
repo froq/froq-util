@@ -183,10 +183,10 @@ final class Arrays extends StaticClass
 
     /**
      * Get all (shortcuts like: list(..) = Arrays::getAll(..)).
-     * @param  array   &$array
-     * @param  array    $keys AKA paths.
-     * @param  any|null $valueDefault
-     * @param  bool     $drop
+     * @param  array             &$array
+     * @param  array<int|string>  $keys AKA paths.
+     * @param  any|null           $valueDefault
+     * @param  bool               $drop
      * @return array
      */
     public static function getAll(array &$array, array $keys, $valueDefault = null, bool $drop = false): array
@@ -219,9 +219,9 @@ final class Arrays extends StaticClass
 
     /**
      * Pull all (shortcuts like: list(..) = Arrays::pullAll(..)).
-     * @param  array    &$array
-     * @param  array     $keys
-     * @param  any|null  $valueDefault
+     * @param  array             &$array
+     * @param  array<int|string>  $keys
+     * @param  any|null           $valueDefault
      * @return array
      */
     public static function pullAll(array &$array, array $keys, $valueDefault = null): array
@@ -245,8 +245,8 @@ final class Arrays extends StaticClass
 
     /**
      * Remove all.
-     * @param  array &$array
-     * @param  array  $keys
+     * @param  array             &$array
+     * @param  array<int|string>  $keys
      * @return array
      * @since  4.0
      */
@@ -475,8 +475,8 @@ final class Arrays extends StaticClass
 
     /**
      * Include.
-     * @param  array $array
-     * @param  array $keys
+     * @param  array             $array
+     * @param  array<int|string> $keys
      * @return array
      */
     public static function include(array $array, array $keys): array
@@ -486,8 +486,8 @@ final class Arrays extends StaticClass
 
     /**
      * Exclude.
-     * @param  array $array
-     * @param  array $keys
+     * @param  array             $array
+     * @param  array<int|string> $keys
      * @return array
      */
     public static function exclude(array $array, array $keys): array
@@ -667,8 +667,8 @@ final class Arrays extends StaticClass
 
     /**
      * Keys exists.
-     * @param  array $array
-     * @param  array $keys
+     * @param  array             $array
+     * @param  array<int|string> $keys
      * @return bool
      */
     public static function keysExists(array $array, array $keys): bool
@@ -700,8 +700,8 @@ final class Arrays extends StaticClass
 
     /**
      * Search keys.
-     * @param  array $array
-     * @param  array $keys
+     * @param  array             $array
+     * @param  array<int|string> $keys
      * @return array
      * @since  4.0
      */
