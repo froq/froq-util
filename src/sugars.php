@@ -1113,7 +1113,7 @@ function array_pluck(array &$array, $key, $default = null)
  * @return any|null
  * @since  4.12
  */
-function array_rand_value(array $array, int $limit = 1, $default = null, bool $drop = false)
+function array_rand_value(array &$array, int $limit = 1, $default = null, bool $drop = false)
 {
     // Just got sick of "value = array[array_rand(array)]" stuffs.
     return Arrays::getRandom($array, $limit, false, $drop) ?? $default;
