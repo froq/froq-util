@@ -148,9 +148,9 @@ final class Objects extends StaticClass
     public static function getShortName($class): string
     {
         $name = self::getName($class);
-        $npos = strrpos($name, '\\');
+        $spos = strrpos($name, '\\');
 
-        return substr($name, ($npos !== false) ? $npos + 1 : 0);
+        return substr($name, ($spos !== false) ? $spos + 1 : 0);
     }
 
     /**
@@ -162,9 +162,9 @@ final class Objects extends StaticClass
     public static function getNamespace($class, bool $baseOnly = false): string
     {
         $name = self::getName($class);
-        $npos = !$baseOnly ? strrpos($name, '\\') : strpos($name, '\\');
+        $spos = !$baseOnly ? strrpos($name, '\\') : strpos($name, '\\');
 
-        return substr($name, 0, ($npos !== false) ? $npos : 0);
+        return substr($name, 0, ($spos !== false) ? $spos : 0);
     }
 
     /**
