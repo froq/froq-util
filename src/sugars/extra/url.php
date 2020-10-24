@@ -35,9 +35,8 @@ use froq\util\Util;
  */
 function get_url(): ?string
 {
-    static $ret; return $ret ??= (
-        Util::getCurrentUrl()
-    );
+    static $ret;
+    return $ret ??= Util::getCurrentUrl();
 }
 
 /**

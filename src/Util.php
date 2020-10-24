@@ -271,7 +271,7 @@ final /* fuckic static */ class Util extends StaticClass
             $qa = $qsp;
         }
 
-        if ($ignoredKeys != '') {
+        if ($ignoredKeys != null) {
             $ignoredKeys = explode(',', $ignoredKeys);
             foreach ($qa as $key => $_) {
                 if (in_array($key, $ignoredKeys)) {
@@ -295,7 +295,7 @@ final /* fuckic static */ class Util extends StaticClass
     public static function buildQueryString(array $qa, bool $decode = false,
         string $ignoredKeys = null, bool $stripTags = true, bool $normalizeArrays = true): string
     {
-        if ($ignoredKeys != '') {
+        if ($ignoredKeys != null) {
             $ignoredKeys = explode(',', $ignoredKeys);
             foreach (array_keys($qa) as $key) {
                 if (in_array($key, $ignoredKeys)) {
@@ -305,14 +305,12 @@ final /* fuckic static */ class Util extends StaticClass
         }
 
         // Memoize: fix skipped NULL values by http_build_query().
-        static $filter; if (!$filter) {
-               $filter = function ($in) use (&$filter) {
-                    foreach ($in as $key => $value) {
-                        $in[$key] = is_array($value) ? $filter($value) : strval($value);
-                    }
-                    return $in;
-               };
-        }
+        static $filter; $filter ??= function ($data) use (&$filter) {
+            foreach ($data as $key => $value) {
+                $data[$key] = is_array($value) ? $filter($value) : strval($value);
+            }
+            return $data;
+        };
 
         $qs = http_build_query($filter($qa));
 

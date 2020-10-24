@@ -41,9 +41,8 @@ if (!class_exists(App::class, false)) {
  */
 function session($key = null, $value = null)
 {
-    static $session; if (!$session) {
-        $session = app()->session();
-    }
+    static $session;
+    $session ??= app()->session();
 
     // Set/get.
     if ($session) {
