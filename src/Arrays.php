@@ -308,13 +308,43 @@ final class Arrays extends StaticClass
      */
     public static function compose(array $keys, array $values, $valuesDefault = null): array
     {
-        $ret = [];
+        return self::aggregate($keys, fn(&$ret, $key, $i) => (
+            $ret[$key] = $values[$i] ?? $valuesDefault
+        ));
+    }
 
-        foreach ($keys as $i => $key) {
-            $ret[$key] = $values[$i] ?? $valuesDefault;
-        }
+    /**
+     * Complete.
+     * @param  array    $keys
+     * @param  array ...$arrays
+     * @return array
+     * @since  4.14
+     */
+    public static function complete(array $keys, array ...$arrays): array
+    {
+        // Append keys to arrays.
+        $arrays[] = array_fill_keys($keys, null);
 
-        return $ret;
+        return self::aggregate($arrays, fn($ret, $array) => self::coalesce($ret, $array));
+    }
+
+    /**
+     * Coalesce.
+     * @param  array ...$arrays
+     * @return array
+     * @since  4.14
+     */
+    public static function coalesce(array ...$arrays): array
+    {
+        // Memoize merge function.
+        static $merge; $merge ??= function ($array1, $array2, $new = []) {
+            foreach ($array2 as $key => $value) {
+                isset($array1[$key]) || $new[$key] = $value;
+            }
+            return array_merge($array1, $new);
+        };
+
+        return self::aggregate($arrays, fn($ret, $array) => $merge($ret, $array));
     }
 
     /**
@@ -557,9 +587,9 @@ final class Arrays extends StaticClass
     public static function sweep(array &$array, array $ignoredKeys = null): array
     {
         // Memoize test function.
-        static $test; $test or $test = (
-            fn($v) => ($v !== '' && $v !== null && $v !== [])
-        );
+        static $test; $test ??= function ($value) {
+            return ($value !== null && $value !== '' && $value !== []);
+        };
 
         if ($ignoredKeys == null) {
             $array = array_filter($array, $test);
@@ -588,6 +618,33 @@ final class Arrays extends StaticClass
         ));
 
         return array_sum($array) / count($array);
+    }
+
+    /**
+     * Aggregate.
+     * @param  array      $array
+     * @param  callable   $func
+     * @param  array|null $carry
+     * @return array
+     * @since  4.14
+     */
+    public static function aggregate(array $array, callable $func, array $carry = null): array
+    {
+        $carry ??= [];
+
+        foreach ($array as $key => $value) {
+            // Note: when "return" not used carry must be ref'ed (eg: (&$carry, $value, ..)).
+            $ret = $func($carry, $value, $key, $array);
+
+            // When "return" used.
+            if ($ret && is_array($ret)) {
+                $carry = $ret;
+            }
+
+            $carry = (array) $carry;
+        }
+
+        return $carry;
     }
 
     /**

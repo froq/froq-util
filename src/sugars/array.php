@@ -206,6 +206,29 @@ function array_compose(array $keys, array $values, $values_default = null): arra
 }
 
 /**
+ * Array complete.
+ * @param  array    $keys
+ * @param  array ...$arrays
+ * @return array
+ * @since  4.14
+ */
+function array_complete(array $keys, array ...$arrays): array
+{
+    return Arrays::complete($keys, ...$arrays);
+}
+
+/**
+ * Array coalesce.
+ * @param  array ...$arrays
+ * @return array
+ * @since  4.14
+ */
+function array_coalesce(array ...$arrays): array
+{
+    return Arrays::coalesce(...$arrays);
+}
+
+/**
  * Array test (like JavaScript Array.every()).
  * @param  array    $array
  * @param  callable $func
@@ -348,13 +371,26 @@ function array_sweep(array &$array, array $ignored_keys = null): array
 /**
  * Array average.
  * @param  array $array
- * @param  bool  $include_empties
+ * @param  bool  $include_zeros
  * @return float
  * @since  4.5
  */
-function array_average(array $array, bool $include_empties = true): float
+function array_average(array $array, bool $include_zeros = true): float
 {
-    return Arrays::average($array, $include_empties);
+    return Arrays::average($array, $include_zeros);
+}
+
+/**
+ * Array aggregate.
+ * @param  array      $array
+ * @param  callable   $func
+ * @param  array|null $carry
+ * @return array
+ * @since  4.14
+ */
+function array_aggregate(array $array, callable $func, array $carry = null): array
+{
+    return Arrays::aggregate($array, $func, $carry);
 }
 
 /**

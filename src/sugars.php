@@ -1074,6 +1074,19 @@ function array_avg(array $array, bool $include_zeros = true): float
 }
 
 /**
+ * Array agg (for the sake of array_fuck()).
+ * @param  array      $array
+ * @param  callable   $func
+ * @param  array|null $carry
+ * @return array
+ * @since  4.14
+ */
+function array_agg(array $array, callable $func, array $carry = null): array
+{
+    return Arrays::aggregate($array, $func, $carry);
+}
+
+/**
  * Array pick.
  * @param  array                        &$array
  * @param  int|string|array<int|string>  $key
