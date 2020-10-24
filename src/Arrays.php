@@ -637,11 +637,11 @@ final class Arrays extends StaticClass
      */
     public static function aggregate(array $array, callable $func, array $carry = null): array
     {
-        $carry ??= [];
+        $i = 0; $carry ??= [];
 
         foreach ($array as $key => $value) {
             // Note: when "return" not used carry must be ref'ed (eg: (&$carry, $value, ..)).
-            $ret = $func($carry, $value, $key, $array);
+            $ret = $func($carry, $value, $key, $i++, $array);
 
             // When "return" used.
             if ($ret && is_array($ret)) {
@@ -795,6 +795,64 @@ final class Arrays extends StaticClass
             }
         }
         return $keys ?? [];
+    }
+
+    /**
+     * Filter.
+     * @param  array         $array
+     * @param  callable|null $func
+     * @param  bool          $keepKeys
+     * @return array
+     */
+    public static function filter(array $array, callable $func = null, bool $keepKeys = true): array
+    {
+        // Set default tester.
+        $func ??= fn($v) => $v !== null && $v !== '' && $v !== [];
+
+        $i = 0; $ret = [];
+
+        foreach ($array as $key => $value) {
+            $func($value, $key, $i++, $array) && (
+                $keepKeys ? $ret[$key] = $value : $ret[] = $value
+            );
+        }
+
+        return $ret;
+    }
+
+    /**
+     * Map.
+     * @param  array    $array
+     * @param  callable $func
+     * @return array
+     */
+    public static function map(array $array, callable $func): array
+    {
+        $i = 0; $ret = [];
+
+        foreach ($array as $key => $value) {
+            $ret[$key] = $func($value, $key, $i++, $array);
+        }
+
+        return $ret;
+    }
+
+    /**
+     * Reduce.
+     * @param  array    $array
+     * @param  any      $carry
+     * @param  callable $func
+     * @return any
+     */
+    public static function reduce(array $array, $carry, callable $func)
+    {
+        $i = 0; $ret = $carry;
+
+        foreach ($array as $key => $value) {
+            $ret = $func($ret, $value, $key, $i++, $array);
+        }
+
+        return $ret;
     }
 
     /**
