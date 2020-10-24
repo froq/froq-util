@@ -1062,31 +1062,6 @@ function array_columns(array $array, array $column_keys, $index_key = null, bool
 }
 
 /**
- * Array avg (for the sake of array_sum()).
- * @param  array $array
- * @param  bool  $include_zeros
- * @return float
- * @since  4.5
- */
-function array_avg(array $array, bool $include_zeros = true): float
-{
-    return Arrays::average($array, $include_zeros);
-}
-
-/**
- * Array agg (for the sake of array_fuck()).
- * @param  array      $array
- * @param  callable   $func
- * @param  array|null $carry
- * @return array
- * @since  4.14
- */
-function array_agg(array $array, callable $func, array $carry = null): array
-{
-    return Arrays::aggregate($array, $func, $carry);
-}
-
-/**
  * Array pick.
  * @param  array                        &$array
  * @param  int|string|array<int|string>  $key
@@ -1130,6 +1105,20 @@ function array_rand_value(array &$array, int $limit = 1, $default = null, bool $
 {
     // Just got sick of "value = array[array_rand(array)]" stuffs.
     return Arrays::getRandom($array, $limit, false, $drop) ?? $default;
+}
+
+/**
+ * Array aggregate.
+ * @param  array      $array
+ * @param  callable   $func
+ * @param  array|null $carry
+ * @return array
+ * @since  4.14, 4.15 Renamed from array_agg().
+ */
+function array_aggregate(array $array, callable $func, array $carry = null): array
+{
+    // Just got sick of must to use "return" for array_reduce() stuffs.
+    return Arrays::aggregate($array, $func, $carry);
 }
 
 /**

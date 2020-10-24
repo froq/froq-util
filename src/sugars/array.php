@@ -383,19 +383,6 @@ function array_average(array $array, bool $include_zeros = true): float
 }
 
 /**
- * Array aggregate.
- * @param  array      $array
- * @param  callable   $func
- * @param  array|null $carry
- * @return array
- * @since  4.14
- */
-function array_aggregate(array $array, callable $func, array $carry = null): array
-{
-    return Arrays::aggregate($array, $func, $carry);
-}
-
-/**
  * Array default.
  * @param  array    $array
  * @param  array    $keys

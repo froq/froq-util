@@ -346,7 +346,7 @@ final class Arrays extends StaticClass
                          : !isset($array[$key])
         );
         static $merge; $merge ??= fn($array1, $array2, $new = []) => (
-            array_merge($array1, array_agg($array2, fn(&$new, $value, $key) =>
+            array_merge($array1, array_aggregate($array2, fn(&$new, $value, $key) =>
                 $test($array1, $key) && $new[$key] = $value
             ))
         );
