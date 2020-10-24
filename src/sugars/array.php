@@ -208,24 +208,26 @@ function array_compose(array $keys, array $values, $values_default = null): arra
 /**
  * Array complete.
  * @param  array    $keys
+ * @param  bool     $null_strings
  * @param  array ...$arrays
  * @return array
  * @since  4.14
  */
-function array_complete(array $keys, array ...$arrays): array
+function array_complete(array $keys, bool $null_strings = false, array ...$arrays): array
 {
-    return Arrays::complete($keys, ...$arrays);
+    return Arrays::complete($keys, $null_strings, ...$arrays);
 }
 
 /**
  * Array coalesce.
+ * @param  bool     $null_strings
  * @param  array ...$arrays
  * @return array
  * @since  4.14
  */
-function array_coalesce(array ...$arrays): array
+function array_coalesce(bool $null_strings = false, array ...$arrays): array
 {
-    return Arrays::coalesce(...$arrays);
+    return Arrays::coalesce($null_strings, ...$arrays);
 }
 
 /**

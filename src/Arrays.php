@@ -316,33 +316,40 @@ final class Arrays extends StaticClass
     /**
      * Complete.
      * @param  array    $keys
+     * @param  bool     $nullStrings
      * @param  array ...$arrays
      * @return array
      * @since  4.14
      */
-    public static function complete(array $keys, array ...$arrays): array
+    public static function complete(array $keys, bool $nullStrings = false, array ...$arrays): array
     {
         // Append keys to arrays.
         $arrays[] = array_fill_keys($keys, null);
 
-        return self::aggregate($arrays, fn($ret, $array) => self::coalesce($ret, $array));
+        return self::aggregate($arrays, fn($ret, $array) => (
+            self::coalesce($nullStrings, $ret, $array)
+        ));
     }
 
     /**
      * Coalesce.
+     * @param  bool     $nullStrings
      * @param  array ...$arrays
      * @return array
      * @since  4.14
      */
-    public static function coalesce(array ...$arrays): array
+    public static function coalesce(bool $nullStrings, array ...$arrays): array
     {
-        // Memoize merge function.
-        static $merge; $merge ??= function ($array1, $array2, $new = []) {
-            foreach ($array2 as $key => $value) {
-                isset($array1[$key]) || $new[$key] = $value;
-            }
-            return array_merge($array1, $new);
-        };
+        // Memoize test/merge function.
+        static $test; $test ??= fn($array, $key) => (
+            $nullStrings ? !isset($array[$key]) || ($array[$key] === '')
+                         : !isset($array[$key])
+        );
+        static $merge; $merge ??= fn($array1, $array2, $new = []) => (
+            array_merge($array1, array_agg($array2, fn(&$new, $value, $key) =>
+                $test($array1, $key) && $new[$key] = $value
+            ))
+        );
 
         return self::aggregate($arrays, fn($ret, $array) => $merge($ret, $array));
     }
