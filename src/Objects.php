@@ -120,8 +120,7 @@ final class Objects extends StaticClass
      */
     public static function getSerializedHash(object $object, string $algo = null): string
     {
-        return hash($algo ?: 'crc32',
-            // For a unique hash, use id & hash.
+        return hash($algo ?: 'crc32', // For a unique hash, use id & hash.
             spl_object_id($object) . spl_object_hash($object) . serialize($object));
     }
 
