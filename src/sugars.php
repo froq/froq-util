@@ -1075,6 +1075,18 @@ function array_columns(array $array, array $column_keys, $index_key = null, bool
 }
 
 /**
+ * Array put.
+ * @param  array  &$array
+ * @param  array   $items
+ * @return array
+ * @since  4.9, 4.18 Actual version.
+ */
+function array_put(array &$array, array $items): array
+{
+    return Arrays::setAll($array, $items);
+}
+
+/**
  * Array pick.
  * @param  array                        &$array
  * @param  int|string|array<int|string>  $key
