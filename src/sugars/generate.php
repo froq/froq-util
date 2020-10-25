@@ -28,18 +28,18 @@ declare(strict_types=1);
  * Generate nonce.
  * @param  int         $length
  * @param  int|null    $base
- * @param  string|null $hash_algo
+ * @param  string|null $algo
  * @return ?string 20-length or N-length base 2-62 characters.
  * @since  4.0, 4.1 Changed from rand_string(),rand_nonce().
  */
-function generate_nonce(int $length = null, int $base = null, string $hash_algo = null): ?string
+function generate_nonce(?int $length = 20, int $base = null, string $algo = null): ?string
 {
     if (($length ??= 20) < 1) {
         trigger_error(sprintf('%s(): Invalid length, min=1', __function__));
         return null;
     }
 
-    $chars = BASE_62_CHARS;
+    $base_chars = BASE_62_CHARS;
 
     if ($base) {
         if ($base < 2 || $base > 62) {
@@ -47,16 +47,16 @@ function generate_nonce(int $length = null, int $base = null, string $hash_algo 
             return null;
         }
 
-        $chars = strcut($chars, $base);
+        $base_chars = strcut($base_chars, $base);
     }
 
     $ret = '';
     while (strlen($ret) < $length) {
-        $ret .= str_rand($chars, 1);
+        $ret .= str_rand($base_chars, 1);
     }
 
-    if ($hash_algo) {
-        $ret =@ hash($hash_algo, $ret);
+    if ($algo) {
+        $ret =@ hash($algo, $ret);
 
         if (!$ret) {
             trigger_error(sprintf('%s(): %s', __function__, error_get_last_message()));
@@ -66,36 +66,43 @@ function generate_nonce(int $length = null, int $base = null, string $hash_algo 
         return $ret;
     }
 
-    return strsub($ret, 0, $length);
+    return substr($ret, 0, $length);
 }
 
 /**
  * Generate nonce hash.
  * @param  ?int   $length
- * @param  string $hash_algo
+ * @param  string $algo
  * @return ?string
  * @since  4.1
  */
-function generate_nonce_hash(?int $length = 20, string $hash_algo = 'md5'): ?string
+function generate_nonce_hash(?int $length = 20, string $algo = 'md5'): ?string
 {
-    return generate_nonce($length, null, $hash_algo);
+    $algo = trim($algo);
+
+    if (!$algo) {
+        trigger_error(sprintf('%s(): No hash algo given', __function__));
+        return null;
+    }
+
+    return generate_nonce($length, null, $algo);
 }
 
 /**
  * Generate token.
  * @param  ?int    $base
- * @param  string  $hash_algo
+ * @param  string  $algo
  * @return ?string
  * @since  4.6
  */
-function generate_token(?int $base = 62, string $hash_algo = 'md5'): ?string
+function generate_token(?int $base = 62, string $algo = 'md5'): ?string
 {
-    if (!$hash_algo) {
+    if (!$algo) {
         trigger_error(sprintf('%s(): Empty algo given', __function__));
         return null;
     }
 
-    $ret =@ hash($hash_algo, uniqid(random_bytes(16), true));
+    $ret =@ hash($algo, uniqid(random_bytes(16), true));
 
     if (!$ret) {
         trigger_error(sprintf('%s(): %s', __function__, error_get_last_message()));
@@ -117,13 +124,20 @@ function generate_token(?int $base = 62, string $hash_algo = 'md5'): ?string
 
 /**
  * Generate token hash.
- * @param  string $hash_algo
+ * @param  string $algo
  * @return ?string
  * @since  4.6
  */
-function generate_token_hash(string $hash_algo = 'md5'): ?string
+function generate_token_hash(string $algo = 'md5'): ?string
 {
-    return generate_token(null, $hash_algo);
+    $algo = trim($algo);
+
+    if (!$algo) {
+        trigger_error(sprintf('%s(): No hash algo given', __function__));
+        return null;
+    }
+
+    return generate_token(null, $algo);
 }
 
 /**
@@ -137,12 +151,12 @@ function generate_random_bytes(int $length = 16): string
     $len = ($length < 4) ? 4 : $length;
     $ret = bin2hex(random_bytes(($len - ($len % 2)) / 2));
 
-    if (strlen($ret) != $length) { // Implicit length, sorry..
+    if (strlen($ret) != $length) { // Implicit length needed.
         while (strlen($ret) < $length) {
             $ret .= bin2hex(random_bytes(1));
         }
 
-        $ret = strsub($ret, 0, $length);
+        $ret = substr($ret, 0, $length);
     }
 
     return $ret;
@@ -152,17 +166,18 @@ function generate_random_bytes(int $length = 16): string
  * Generate id.
  * @param  int|null $length
  * @param  int|null $base
- * @return ?string 20-length digits or N-length digits|base2-62 characters.
+ * @param  bool     $use_date
+ * @return ?string 20-length digits or N-length digits|base11-62 characters.
  * @since  4.0, 4.1 Changed from rand_id().
  */
-function generate_id(int $length = null, int $base = null): ?string
+function generate_id(?int $length = 20, int $base = null, bool $use_date = false): ?string
 {
     if (($length ??= 20) < 1) {
         trigger_error(sprintf('%s(): Invalid length, min=1', __function__));
         return null;
     }
 
-    $chars = BASE_62_CHARS;
+    $base_chars = BASE_62_CHARS;
 
     if ($base) {
         if ($base < 11 || $base > 62) {
@@ -170,11 +185,12 @@ function generate_id(int $length = null, int $base = null): ?string
             return null;
         }
 
-        $chars = strcut($chars, $base);
+        $base_chars = strcut($base_chars, $base);
     }
 
     $mic = explode(' ', microtime());
-    $ret = $mic[1] . substr($mic[0], 2, 6) . mt_rand(1000, 9999);
+    $ret = (!$use_date ? $mic[1] : date('YmdHis'))
+         . substr($mic[0], 2, 6) . mt_rand(1000, 9999);
 
     // Prevent wrong convert below cos of length.
     if (strlen($ret) > $length) {
@@ -182,16 +198,16 @@ function generate_id(int $length = null, int $base = null): ?string
     }
 
     if (!$base) {
-        $chars = BASE_10_CHARS;
-    } elseif ($base && $base >= 11) { // No convert for digits.
-        $ret = str_base_convert($ret, BASE_10_CHARS, $chars);
+        $base_chars = BASE_10_CHARS;
+    } elseif ($base >= 11) { // No convert for digits.
+        $ret = str_base_convert($ret, BASE_10_CHARS, $base_chars);
     }
 
     while (strlen($ret) < $length) {
-        $ret .= str_rand($chars, 1);
+        $ret .= str_rand($base_chars, 1);
     }
 
-    return strsub($ret, 0, $length);
+    return substr($ret, 0, $length);
 }
 
 /**
@@ -224,7 +240,7 @@ function generate_random_id(int $length = 20, int $base = 16): ?string
         // Just an exception for base 36/62 for fixing id's length.
         switch ($base) {
             case 36: $ret = str_pad($ret, 25, '0'); break;
-            case 62: $ret = str_pad($ret, 22, '0'); break; // 22-char-length spotify ids.. :P
+            case 62: $ret = str_pad($ret, 22, '0'); break; // 22-char length Spotify ids.. :P
         }
     }
 
@@ -238,7 +254,7 @@ function generate_random_id(int $length = 20, int $base = 16): ?string
  * @return ?string
  * @since  4.1
  */
-function generate_serial_id(int $length = null, bool $use_date = false): ?string
+function generate_serial_id(?int $length = 20, bool $use_date = false): ?string
 {
     if (($length ??= 20) < 20) {
         trigger_error(sprintf('%s(): Invalid length, min=20', __function__));
@@ -246,13 +262,14 @@ function generate_serial_id(int $length = null, bool $use_date = false): ?string
     }
 
     $mic = explode(' ', microtime());
-    $ret = (!$use_date ? $mic[1] : date('YmdHis')) . substr($mic[0], 2, 6) . mt_rand(1000, 9999);
+    $ret = (!$use_date ? $mic[1] : date('YmdHis'))
+         . substr($mic[0], 2, 6) . mt_rand(1000, 9999);
 
     while (strlen($ret) < $length) {
         $ret .= str_rand(BASE_10_CHARS, 1);
     }
 
-    return strsub($ret, 0, $length);
+    return substr($ret, 0, $length);
 }
 
 /**

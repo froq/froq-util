@@ -179,6 +179,7 @@ function str_has_suffix(string $str, string $src, bool $icase = false): bool
  */
 function str_base_convert(string $digits, $from_chars, $to_chars): ?string
 {
+    // @todo: Use union types for from_chars/to_chars.
     if (!is_int($from_chars) && !is_string($from_chars)) {
         throw new TypeError(sprintf(
             '%s() expects parameter 1 to be int|string, %s given', __function__, get_type($from_chars)
