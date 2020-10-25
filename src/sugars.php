@@ -355,6 +355,18 @@ function get_type($var, bool $scalars = false): string
 }
 
 /**
+ * Get error.
+ * @param  string|null $field
+ * @return any
+ * @since  4.17
+ */
+function get_error(string $field = null)
+{
+    return $field ? error_get_last()[$field] ?? null
+                  : error_get_last();
+}
+
+/**
  * Get uniqid.
  * @param  bool $convert
  * @param  bool $extend
@@ -1309,4 +1321,46 @@ function file_type(string $file): ?string
     }
 
     return $ret ?: null;
+}
+
+/**
+ * Error get last message.
+ * @return ?string
+ * @since  4.17
+ */
+function error_get_last_message(): ?string
+{
+    return error_get_last()['message'] ?? null;
+}
+
+/**
+ * Preg last error message.
+ * @return ?string
+ * @since  4.17
+ */
+function preg_last_error_message(): ?string
+{
+    // @todo: use preg_last_error_msg() [Froq/5.0, PHP/8.0].
+    static $messages = [
+        PREG_NO_ERROR              => null,
+        PREG_INTERNAL_ERROR        => 'Internal PCRE error',
+        PREG_BACKTRACK_LIMIT_ERROR => 'Backtrack limit is exhausted',
+        PREG_RECURSION_LIMIT_ERROR => 'Recursion limit is exhausted',
+        PREG_BAD_UTF8_ERROR        => 'Bad UTF8 data',
+        PREG_BAD_UTF8_OFFSET_ERROR => 'Bad UTF8 offset',
+        PREG_JIT_STACKLIMIT_ERROR  => 'JIT stack limit exhausted',
+    ];
+
+    return $messages[preg_last_error()] ?? null;
+}
+
+/**
+ * Json last error message.
+ * @return ?string
+ * @since  4.17
+ */
+function json_last_error_message(): ?string
+{
+    // Check code first instead returning "No error" message.
+    return json_last_error() ? json_last_error_msg() : null;
 }
