@@ -270,7 +270,7 @@ function str_rand(string $str, int $length = null): ?string
 function constant_exists($class, string $name, bool $scope_check = true): ?bool
 {
     if ($scope_check) {
-        $caller_class = debug_backtrace(2, 2)[1]['class'] ?? '';
+        $caller_class = debug_backtrace(2, 2)[1]['class'] ?? null;
         if ($caller_class) {
             return ($caller_class === Objects::getName($class))
                 && Objects::hasConstant($class, $name);
@@ -292,7 +292,7 @@ function constant_exists($class, string $name, bool $scope_check = true): ?bool
 function get_class_constants($class, bool $with_names = true, bool $scope_check = true): ?array
 {
     if ($scope_check) {
-        $caller_class = debug_backtrace(2, 2)[1]['class'] ?? '';
+        $caller_class = debug_backtrace(2, 2)[1]['class'] ?? null;
         if ($caller_class) {
             $all = ($caller_class === Objects::getName($class));
         }
@@ -312,7 +312,7 @@ function get_class_constants($class, bool $with_names = true, bool $scope_check 
 function get_class_properties($class, bool $with_names = true, bool $scope_check = true): ?array
 {
     if ($scope_check) {
-        $caller_class = debug_backtrace(2, 2)[1]['class'] ?? '';
+        $caller_class = debug_backtrace(2, 2)[1]['class'] ?? null;
         if ($caller_class) {
             $all = ($caller_class === Objects::getName($class));
         }

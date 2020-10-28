@@ -293,9 +293,9 @@ final class Objects extends StaticClass
             $ret = !$withNames ? array_values($ref->getConstants())
                                : $ref->getConstants();
         } else {
-            foreach ($ref->getReflectionConstants() as $i => $constant) {
+            foreach ($ref->getReflectionConstants() as $constant) {
                 if ($constant->isPublic()) {
-                    !$withNames ? $ret[$i] = $constant->getValue()
+                    !$withNames ? $ret[] = $constant->getValue()
                                 : $ret[$constant->name] = $constant->getValue();
                 }
             }
@@ -469,7 +469,8 @@ final class Objects extends StaticClass
                 } catch (Error $e) {}
             }
 
-            !$withNames ? $ret[] = $value : $ret[$name] = $value;
+            !$withNames ? $ret[] = $value
+                        : $ret[$name] = $value;
         }
 
         return $ret ?? [];
