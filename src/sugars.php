@@ -1024,6 +1024,58 @@ function array_pad_keys(array $array, array $keys, $value = null): array
 }
 
 /**
+ * Array convert keys (convert keys cases mapping by given separator).
+ * @param  array       $array
+ * @param  int         $case
+ * @param  string|null $sep
+ * @return ?array
+ * @since  4.19
+ */
+function array_convert_keys(array $array, int $case, string $sep = null): ?array
+{
+    // Check valid cases.
+    if (!in_array($case, [CASE_LOWER, CASE_UPPER, CASE_DASH, CASE_SNAKE, CASE_TITLE, CASE_CAMEL])) {
+        trigger_error(sprintf('%s(): Invalid case %s, use a case from 0..5 range', __function__, $case));
+        return null;
+    }
+
+    if ($case == CASE_LOWER || $case == CASE_UPPER) {
+        return array_change_key_case($array, $case);
+    }
+
+    if (!$sep) {
+        trigger_error(sprintf('%s(): No separator given', __function__, $case));
+        return null;
+    }
+
+    $ret = [];
+
+    foreach ($array as $key => $value) {
+        $key = strtolower($key);
+
+        switch ($case) {
+            case CASE_DASH:
+                $key = implode('-', explode($sep, $key));
+                break;
+            case CASE_SNAKE:
+                $key = implode('_', explode($sep, $key));
+                break;
+            case CASE_TITLE:
+            case CASE_CAMEL:
+                $key = implode('', array_map('ucfirst', explode($sep, $key)));
+                if ($case == CASE_CAMEL) {
+                    $key = lcfirst($key);
+                }
+                break;
+        }
+
+        $ret[$key] = $value;
+    }
+
+    return $ret;
+}
+
+/**
  * Array value exists (checks a value if exists with strict comparison).
  * @param  any   $value
  * @param  array $array
@@ -1051,7 +1103,7 @@ function array_columns(array $array, array $column_keys, $index_key = null, bool
     foreach ($array as $i => $value) {
         if (!is_array($value) && !is_object($value)) {
             trigger_error(sprintf(
-                '%s(): Non-array/object value encountered at index %i', __function__, $i
+                '%s(): Non-array/object value encountered at index %s', __function__, $i
             ));
             continue;
         }

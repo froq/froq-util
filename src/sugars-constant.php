@@ -58,3 +58,13 @@ const BASE_10_CHARS  = '0123456789',
       BASE_36_CHARS  = '0123456789abcdefghijklmnopqrstuvwxyz',
       BASE_62_CHARS  = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ',
       BASE_62N_CHARS = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+
+/**
+ * Cases (0/1 already defined as CASSE_LOWER/UPPER).
+ * @const string
+ * @since 4.19
+ */
+const CASE_TITLE = 2,
+      CASE_DASH  = 3,
+      CASE_CAMEL = 4,
+      CASE_SNAKE = 5;
