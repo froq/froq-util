@@ -275,7 +275,6 @@ function constant_exists($class, string $name, bool $scope_check = true): ?bool
             return ($caller_class === Objects::getName($class))
                 && Objects::hasConstant($class, $name);
         }
-
         return defined(Objects::getName($class) .'::'. $name);
     }
 
