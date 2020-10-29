@@ -308,27 +308,39 @@ final class Arrays extends StaticClass
      */
     public static function compose(array $keys, array $values, $valuesDefault = null): array
     {
-        return self::aggregate($keys, fn(&$ret, $key, $i) => (
-            $ret[$key] = $values[$i] ?? $valuesDefault
-        ));
+        $ret = [];
+
+        foreach ($keys as $i => $key) {
+            $ret[$key] = $values[$i] ?? $valuesDefault;
+        }
+
+        return $ret;
     }
 
     /**
      * Complete.
-     * @param  array    $keys
      * @param  bool     $nullStrings
+     * @param  array    $keys
      * @param  array ...$arrays
      * @return array
      * @since  4.14
      */
-    public static function complete(array $keys, bool $nullStrings = false, array ...$arrays): array
+    public static function complete(bool $nullStrings, array $keys, array ...$arrays): array
     {
-        // Append keys to arrays.
-        $arrays[] = array_fill_keys($keys, null);
+        $ret = [];
 
-        return self::aggregate($arrays, fn($ret, $array) => (
-            self::coalesce($nullStrings, $ret, $array)
-        ));
+        foreach ($keys as $key) {
+            foreach ($arrays as $array) {
+                $test = $nullStrings ? !isset($ret[$key]) || $ret[$key] === ''
+                                     : !isset($ret[$key]);
+
+                if ($test) { // Try array.key, ret.key (current) or set null (not ret.key ??= ..).
+                    $ret[$key] = $array[$key] ?? $ret[$key] ?? null;
+                }
+            }
+        }
+
+        return $ret;
     }
 
     /**
@@ -340,18 +352,20 @@ final class Arrays extends StaticClass
      */
     public static function coalesce(bool $nullStrings, array ...$arrays): array
     {
-        // Memoize test/merge function.
-        static $test; $test ??= fn($array, $key) => (
-            $nullStrings ? !isset($array[$key]) || ($array[$key] === '')
-                         : !isset($array[$key])
-        );
-        static $merge; $merge ??= fn($array1, $array2, $new = []) => (
-            array_merge($array1, array_aggregate($array2, fn(&$new, $value, $key) =>
-                $test($array1, $key) && $new[$key] = $value
-            ))
-        );
+        $ret = [];
 
-        return self::aggregate($arrays, fn($ret, $array) => $merge($ret, $array));
+        foreach ($arrays as $array) {
+            foreach ($array as $key => $value) {
+                $test = $nullStrings ? !isset($ret[$key]) || $ret[$key] === ''
+                                     : !isset($ret[$key]);
+
+                if ($test) { // Try value, ret.key (current) or set null (not ret.key ??= ..).
+                    $ret[$key] = $value ?? $ret[$key] ?? null;
+                }
+            }
+        }
+
+        return $ret;
     }
 
     /**

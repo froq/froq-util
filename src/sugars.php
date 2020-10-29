@@ -1184,6 +1184,18 @@ function array_rand_value(array &$array, int $limit = 1, $default = null, bool $
 }
 
 /**
+ * Array average.
+ * @param  array $array
+ * @param  bool  $include_zeros
+ * @return float
+ * @since  4.5, 4.20 Renamed from array_avg().
+ */
+function array_average(array $array, bool $include_zeros = true): float
+{
+    return Arrays::average($array);
+}
+
+/**
  * Array aggregate.
  * @param  array      $array
  * @param  callable   $func
@@ -1193,7 +1205,6 @@ function array_rand_value(array &$array, int $limit = 1, $default = null, bool $
  */
 function array_aggregate(array $array, callable $func, array $carry = null): array
 {
-    // Just got sick of must to use "return" for array_reduce() stuffs.
     return Arrays::aggregate($array, $func, $carry);
 }
 

@@ -207,15 +207,15 @@ function array_compose(array $keys, array $values, $values_default = null): arra
 
 /**
  * Array complete.
- * @param  array    $keys
  * @param  bool     $null_strings
+ * @param  array    $keys
  * @param  array ...$arrays
  * @return array
  * @since  4.14
  */
-function array_complete(array $keys, bool $null_strings = false, array ...$arrays): array
+function array_complete(bool $null_strings, array $keys, array ...$arrays): array
 {
-    return Arrays::complete($keys, $null_strings, ...$arrays);
+    return Arrays::complete($null_strings, $keys, ...$arrays);
 }
 
 /**
@@ -225,7 +225,7 @@ function array_complete(array $keys, bool $null_strings = false, array ...$array
  * @return array
  * @since  4.14
  */
-function array_coalesce(bool $null_strings = false, array ...$arrays): array
+function array_coalesce(bool $null_strings, array ...$arrays): array
 {
     return Arrays::coalesce($null_strings, ...$arrays);
 }
@@ -368,18 +368,6 @@ function array_swap(array &$array, $old_key, $new_key, $new_value_default = null
 function array_sweep(array &$array, array $ignored_keys = null): array
 {
     return Arrays::sweep($array, $ignored_keys);
-}
-
-/**
- * Array average.
- * @param  array $array
- * @param  bool  $include_zeros
- * @return float
- * @since  4.5
- */
-function array_average(array $array, bool $include_zeros = true): float
-{
-    return Arrays::average($array, $include_zeros);
 }
 
 /**
