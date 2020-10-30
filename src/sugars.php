@@ -322,6 +322,24 @@ function get_class_properties($class, bool $with_names = true, bool $scope_check
 }
 
 /**
+ * Class extends.
+ * @param  string $class1
+ * @param  string $class2
+ * @param  bool   $parent_only
+ * @return bool
+ * @since  4.21
+ */
+function class_extends(string $class1, string $class2, bool $parent_only = false): bool
+{
+    if (!$parent_only) {
+        return is_subclass_of($class1, $class2, true);
+    }
+
+    return ($parents = class_parents($class1))
+        && (current($parents) === $class2);
+}
+
+/**
  * Get type (RFC: http://wiki.php.net/rfc/get_debug_type).
  * @param  any  $var
  * @param  bool $scalars
