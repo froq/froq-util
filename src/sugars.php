@@ -335,8 +335,7 @@ function class_extends(string $class1, string $class2, bool $parent_only = false
         return is_subclass_of($class1, $class2, true);
     }
 
-    return ($parents = class_parents($class1))
-        && (current($parents) === $class2);
+    return ($parents = class_parents($class1)) && (current($parents) === $class2);
 }
 
 /**
