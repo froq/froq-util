@@ -332,7 +332,7 @@ function get_class_properties($class, bool $with_names = true, bool $scope_check
 function class_extends(string $class1, string $class2, bool $parent_only = false): bool
 {
     if (!$parent_only) {
-        return is_subclass_of($class1, $class2, true);
+        return is_subclass_of($class1, $class2);
     }
 
     return ($parents = class_parents($class1)) && (current($parents) === $class2);
