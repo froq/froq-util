@@ -38,6 +38,17 @@ function equals($a, $b, ...$c): bool {
     return ($a === $b) || ($c && in_array($a, [$b, ...$c], true)); }
 
 /**
+ * Pick/pluck..
+ * Loving https://docs.zephir-lang.com/0.12/en/operators#fetch
+ */
+function pick(array &$array, $key, &$value = null, bool $drop = false): bool {
+    return ($value = array_pick($array, $key, null, $drop)) !== null;
+}
+function pluck(array &$array, $key, &$value = null): bool {
+    return ($value = array_pluck($array, $key, null)) !== null;
+}
+
+/**
  * The ever most wanted functions (finally come with 8.0, but without case option).
  * @alias of str_has(),str_has_prefix(),str_has_suffix()
  * @since 4.0
