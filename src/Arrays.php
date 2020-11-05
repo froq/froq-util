@@ -83,7 +83,7 @@ final class Arrays extends StaticClass
         if (array_key_exists($key, $array)) { // Direct access.
             $array[$key] = $value;
         } else {
-            $key = strval($key);
+            $key = (string) $key;
 
             if (strpos($key, '.') === false) {
                 $array[$key] = $value;
@@ -153,7 +153,7 @@ final class Arrays extends StaticClass
                 unset($array[$key]);
             }
         } else {
-            $key = strval($key);
+            $key = (string) $key;
 
             if (strpos($key, '.') === false) {
                 $value = $array[$key] ?? $value;
