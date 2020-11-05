@@ -616,7 +616,7 @@ function get_real_path(string $target, bool $strict = false): ?string
  */
 function get_trace(int $options = null, int $limit = null, int $index = null): ?array
 {
-    $trace = debug_backtrace($options ?? 0, $limit ?? 0);
+    $trace = debug_backtrace($options ?? 0, $limit ? $limit + 1 : 0);
     array_shift($trace); // Drop self.
 
     foreach ($trace as $i => &$cur) {
