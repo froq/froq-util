@@ -1106,12 +1106,13 @@ function array_convert_keys(array $array, int $case, string $sep = null): ?array
  * Array value exists (checks a value if exists with strict comparison).
  * @param  any   $value
  * @param  array $array
+ * @param  bool  $strict
  * @return bool
  * @since  4.0
  */
-function array_value_exists($value, array $array): bool
+function array_value_exists($value, array $array, bool $strict = true): bool
 {
-    return in_array($value, $array, true);
+    return in_array($value, $array, $strict);
 }
 
 /**
