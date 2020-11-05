@@ -164,6 +164,7 @@ final class Arrays extends StaticClass
                 $keys = explode('.', trim($key, '.'));
                 $key  = array_shift($keys);
 
+                // No more dig.
                 if (empty($keys)) {
                     if (array_key_exists($key, $array)) {
                         $value = $array[$key];
@@ -171,9 +172,10 @@ final class Arrays extends StaticClass
                             unset($array[$key]);
                         }
                     }
-                } elseif (isset($array[$key]) && is_array($array[$key])) { // Dig more..
-                    $keys  = implode('.', $keys);
-                    $value = self::get($array[$key], $keys, $value, $drop);
+                }
+                // Dig more..
+                elseif (isset($array[$key]) && is_array($array[$key])) {
+                    $value = self::get($array[$key], implode('.', $keys), $value, $drop);
                 }
             }
         }
@@ -194,12 +196,7 @@ final class Arrays extends StaticClass
         $values = [];
 
         foreach ($keys as $key) {
-            if (is_array($key)) { // Default value given as array (eg: $keys=[['x',1], 'y']).
-                @ [$_key, $_valueDefault] = $key;
-                $values[] = self::get($array, $_key, $_valueDefault, $drop);
-            } else {
-                $values[] = self::get($array, $key, $valueDefault, $drop);
-            }
+            $values[] = self::get($array, $key, $valueDefault, $drop);
         }
 
         return $values;
