@@ -830,21 +830,20 @@ final class Arrays extends StaticClass
         $i = 0; $ret = [];
 
         foreach ($array as $key => $value) {
-            $func($value, $key, $i++, $array) && (
-                $keepKeys ? $ret[$key] = $value : $ret[] = $value
-            );
+            $func($value, $key, $i++, $array) && $ret[$key] = $value;
         }
 
-        return $ret;
+        return $keepKeys ? $ret : array_values($ret);
     }
 
     /**
      * Map.
      * @param  array    $array
      * @param  callable $func
+     * @param  bool     $keepKeys
      * @return array
      */
-    public static function map(array $array, callable $func): array
+    public static function map(array $array, callable $func, bool $keepKeys = true): array
     {
         $i = 0; $ret = [];
 
@@ -852,7 +851,7 @@ final class Arrays extends StaticClass
             $ret[$key] = $func($value, $key, $i++, $array);
         }
 
-        return $ret;
+        return $keepKeys ? $ret : array_values($ret);
     }
 
     /**
