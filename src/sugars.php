@@ -397,30 +397,27 @@ function get_error(string $field = null)
 /**
  * Get uniqid.
  * @param  bool $convert
- * @param  bool $extend
- * @return string
+ * @param  int  $length
+ * @return ?string
  * @since  4.0
  */
-function get_uniqid(bool $convert = false, bool $extend = false): string
+function get_uniqid(bool $convert = false, int $length = 14): ?string
 {
-    $parts = explode('.', uniqid('', true));
+    if ($length < 14) {
+        trigger_error(sprintf('%s(): Invalid length, min=14', __function__));
+        return null;
+    }
 
-    if (!$extend) {
-        $ret = substr($parts[0], 0, 14);
-        if (!$convert) {
-            return $ret;
-        }
-
-        $ret = base_convert($ret, 16, 36); // Normally 11-length.
-        $ret = str_pad($ret, 14, str_shuffle(BASE_36_CHARS));
+    if (!$convert) {
+        $ret = uniqid();
+        [$chars, $chars_length] = [BASE_16_CHARS, 16];
     } else {
-        if (!$convert) {
-            $ret = substr($parts[0] . dechex($parts[1]), 0, 20);
-            $ret = str_pad($ret, 20, '0'); // If it needs.
-        } else {
-            $ret = base_convert($parts[0], 16, 36) . base_convert($parts[1], 10, 36);
-            $ret = str_pad($ret, 20, str_shuffle(BASE_36_CHARS)); // Yes it needs.
-        }
+        $ret = str_base_convert(uniqid(), 16, 62);
+        [$chars, $chars_length] = [BASE_62_CHARS, 62];
+    }
+
+    while (strlen($ret) < $length) {
+        $ret .= $chars[rand(0, $chars_length - 1)];
     }
 
     return $ret;
@@ -428,22 +425,34 @@ function get_uniqid(bool $convert = false, bool $extend = false): string
 
 /**
  * Get nano uniqid.
- * @param  int  $length
  * @param  bool $convert
- * @return string
+ * @param  int  $length
+ * @return ?string
  * @since  4.0
  */
-function get_nano_uniqid(bool $convert = false): string
+function get_nano_uniqid(bool $convert = false, int $length = 14): ?string
 {
-    // Use parts apart to prevent big number (to float) issue.
+    if ($length < 14) {
+        trigger_error(sprintf('%s(): Invalid length, min=14', __function__));
+        return null;
+    }
+
+    // Use parts apart to prevent big int (to float) issue.
     $parts = hrtime();
 
     if (!$convert) {
         $ret = dechex($parts[0]) . dechex($parts[1]);
-        $ret = str_pad($ret, 14, '0');
+        [$chars, $chars_length] = [BASE_16_CHARS, 16];
     } else {
-        $ret = base_convert($parts[0], 10, 36) . base_convert($parts[1], 10, 36);
-        $ret = str_pad($ret, 14, str_shuffle(BASE_36_CHARS));
+        $ret = str_base_convert((string) $parts[0], 10, 62)
+             . str_base_convert((string) $parts[1], 10, 62);
+        [$chars, $chars_length] = [BASE_62_CHARS, 62];
+    }
+
+    unset($parts);
+
+    while (strlen($ret) < $length) {
+        $ret .= $chars[rand(0, $chars_length - 1)];
     }
 
     return $ret;
@@ -453,35 +462,28 @@ function get_nano_uniqid(bool $convert = false): string
  * Get random uniqid.
  * @param  bool $convert
  * @param  int  $length
- * @return string
+ * @return ?string
  * @since  4.0
  */
-function get_random_uniqid(bool $convert = false, int $length = 14): string
+function get_random_uniqid(bool $convert = false, int $length = 14): ?string
 {
-    $rands = '';
-    while (strlen($rands) < $length) {
-        $rands .= str_shuffle(BASE_16_CHARS)[0];
+    if ($length < 14) {
+        trigger_error(sprintf('%s(): Invalid length, min=14', __function__));
+        return null;
     }
 
     if (!$convert) {
-        $ret = $rands;
+        [$chars, $chars_length] = [BASE_16_CHARS, 16];
     } else {
-        $ret = base_convert($rands, 16, 36);
-        $ret = str_pad($ret, $length, str_shuffle(BASE_36_CHARS));
+        [$chars, $chars_length] = [BASE_62_CHARS, 62];
+    }
+
+    $ret = '';
+    while (strlen($ret) < $length) {
+        $ret .= $chars[rand(0, $chars_length - 1)];
     }
 
     return $ret;
-}
-
-/**
- * Get extended uniqid.
- * @param  bool $convert
- * @return string
- * @since  4.8
- */
-function get_extended_uniqid(bool $convert = false): string
-{
-    return get_uniqid($convert, true);
 }
 
 /**
@@ -695,7 +697,7 @@ function mkfiletemp(string $extension = null, bool $froq_temp = true): ?string
 {
     $file = ( // Seems like "/tmp/froq-temporary/5f858f253527c91a4006" fully.
         ($froq_temp ? get_temporary_directory() : dirname(get_temporary_directory()))
-        . __dirsep . get_extended_uniqid()
+        . __dirsep . get_uniqid(false, 20)
         . ($extension ? '.'. trim($extension, '.') : '')
     );
 
