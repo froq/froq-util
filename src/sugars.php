@@ -835,16 +835,6 @@ function utimes(): array
 }
 
 /**
- * Gmtime (gets Greenwich Mean time).
- * @return int
- * @since  4.0
- */
-function gmtime(): int
-{
-    return time() - date('Z');
-}
-
-/**
  * Strtoitime (gets an interval time by given format).
  * @param  string   $format
  * @param  int|null $time
