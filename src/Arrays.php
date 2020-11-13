@@ -428,7 +428,7 @@ final class Arrays extends StaticClass
      */
     public static function findAll(array $array, callable $func, bool $useKeys = false): array
     {
-        $i = 0; $ret = [];
+        $ret = []; $i = 0;
 
         foreach ($array as $key => $value) {
             if ($func($value, $key, $i++)) {
@@ -824,7 +824,7 @@ final class Arrays extends StaticClass
         // Set default tester.
         $func ??= fn($v) => $v !== null && $v !== '' && $v !== [];
 
-        $i = 0; $ret = [];
+        $ret = []; $i = 0;
 
         foreach ($array as $key => $value) {
             $func($value, $key, $i++, $array) && $ret[$key] = $value;
@@ -842,7 +842,7 @@ final class Arrays extends StaticClass
      */
     public static function map(array $array, callable $func, bool $keepKeys = true): array
     {
-        $i = 0; $ret = [];
+        $ret = []; $i = 0;
 
         foreach ($array as $key => $value) {
             $ret[$key] = $func($value, $key, $i++, $array);
