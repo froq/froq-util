@@ -58,7 +58,7 @@ function strpfx(...$args): bool { return str_has_prefix(...$args); } // Search p
 function strsfx(...$args): bool { return str_has_suffix(...$args); } // Search suffix.
 
 /**
- * Strcut.
+ * Strcut (cut a string with given length).
  * @param  string $str
  * @param  int    $length
  * @return string
@@ -70,7 +70,7 @@ function strcut(string $str, int $length): string
 }
 
 /**
- * Strbcut.
+ * Strbcut (cut a string before given search position with/without given length).
  * @param  string   $str
  * @param  string   $src
  * @param  int|null $length
@@ -91,7 +91,7 @@ function strbcut(string $str, string $src, int $length = null, bool $icase = fal
 }
 
 /**
- * Stracut.
+ * Stracut (cut a string after given search position with/without given length).
  * @param  string   $str
  * @param  string   $src
  * @param  int|null $length
@@ -199,19 +199,22 @@ function convert_base($in, $from, $to): ?string
         ));
     }
 
+    // Using base62 chars.
+    static $chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+
     if (is_int($from)) {
         if ($from < 2 || $from > 62) {
             trigger_error(sprintf('%s(): Invalid base for from chars, min=2 & max=62', __function__));
             return null;
         }
-        $from = strcut(BASE_62_CHARS, $from);
+        $from = strcut($chars, $from);
     }
     if (is_int($to)) {
         if ($to < 2 || $to > 62) {
             trigger_error(sprintf('%s(): Invalid base for to chars, min=2 & max=62', __function__));
             return null;
         }
-        $to = strcut(BASE_62_CHARS, $to);
+        $to = strcut($chars, $to);
     }
 
     $in = strval($in);
@@ -247,6 +250,53 @@ function convert_base($in, $from, $to): ?string
 
         $ret = $to[$div] . $ret;
     } while ($new_length != 0);
+
+    return $ret;
+}
+
+/**
+ * Convert case.
+ * @param  string      $in
+ * @param  int         $case
+ * @param  string|null $spliter
+ * @param  string|null $joiner
+ * @return ?string
+ * @since  4.26
+ */
+function convert_case(string $in, int $case, string $spliter = null, string $joiner = null): ?string
+{
+    // Check valid cases.
+    if (!in_array($case, [CASE_LOWER, CASE_UPPER, CASE_TITLE, CASE_DASH, CASE_SNAKE, CASE_CAMEL])) {
+        trigger_error(sprintf('%s(): Invalid case %s, use a case from 0..5 range', __function__, $case));
+        return null;
+    }
+
+    if ($case == CASE_LOWER) {
+        return strtolower($in);
+    } elseif ($case == CASE_UPPER) {
+        return strtoupper($in);
+    }
+
+    // Set default split char.
+    $spliter = ($spliter === null || $spliter === '') ? ' ' : $spliter;
+
+    $ret = strtolower($in);
+
+    switch ($case) {
+        case CASE_DASH:
+            $ret = implode('-', explode($spliter, $ret));
+            break;
+        case CASE_SNAKE:
+            $ret = implode('_', explode($spliter, $ret));
+            break;
+        case CASE_CAMEL:
+            $ret = implode($joiner ?? '', array_map('ucfirst', explode($spliter, $ret)));
+            $ret = lcfirst($ret);
+            break;
+        case CASE_TITLE:
+            $ret = implode($joiner ?? $spliter, array_map('ucfirst', explode($spliter, $ret)));
+            break;
+    }
 
     return $ret;
 }
@@ -440,13 +490,16 @@ function get_random_uniqid(int $length = 14, int $base = 16, bool $check_length 
 
     $ret = '';
 
-    // Adjust base chars & length.
-    $chars = substr(BASE_62_CHARS, 0, $base);
-    $chars_length = strlen($chars);
-
     while (strlen($ret) < $length) {
-        $ret .= $chars[rand(0, $chars_length - 1)];
+        $id = bin2hex(random_bytes(1));
+
+        // Convert non-hex ids.
+        $ret .= ($base == 16) ? $id
+              : convert_base($id, 16, $base);
     }
+
+    // Crop if needed (usually 1 char only).
+    $ret = strcut($ret, $length);
 
     return $ret;
 }
@@ -460,7 +513,7 @@ function get_request_id(): string
 {
     $parts = explode('.', uniqid('', true));
 
-    // Add & use an ephemeral port if no port (~$ cat /proc/sys/net/ipv4/ip_local_port_range).
+    // Add/use an ephemeral number if no port (~$ cat /proc/sys/net/ipv4/ip_local_port_range).
     $parts[2] = ($_SERVER['REMOTE_PORT'] ?? rand(32768, 60999));
 
     return vsprintf('%014s-%07x-%04x', $parts);
@@ -1051,10 +1104,10 @@ function array_pad_keys(array $array, array $keys, $value = null): array
  * @return ?array
  * @since  4.19
  */
-function array_convert_keys(array $array, int $case, string $sep = null): ?array
+function array_convert_keys(array $array, int $case, string $spliter = null, string $joiner = null): ?array
 {
     // Check valid cases.
-    if (!in_array($case, [CASE_LOWER, CASE_UPPER, CASE_DASH, CASE_SNAKE, CASE_TITLE, CASE_CAMEL])) {
+    if (!in_array($case, [CASE_LOWER, CASE_UPPER, CASE_TITLE, CASE_DASH, CASE_SNAKE, CASE_CAMEL])) {
         trigger_error(sprintf('%s(): Invalid case %s, use a case from 0..5 range', __function__, $case));
         return null;
     }
@@ -1063,7 +1116,7 @@ function array_convert_keys(array $array, int $case, string $sep = null): ?array
         return array_change_key_case($array, $case);
     }
 
-    if (!$sep) {
+    if (!$spliter) {
         trigger_error(sprintf('%s(): No separator given', __function__, $case));
         return null;
     }
@@ -1071,24 +1124,7 @@ function array_convert_keys(array $array, int $case, string $sep = null): ?array
     $ret = [];
 
     foreach ($array as $key => $value) {
-        $key = strtolower($key);
-
-        switch ($case) {
-            case CASE_DASH:
-                $key = implode('-', explode($sep, $key));
-                break;
-            case CASE_SNAKE:
-                $key = implode('_', explode($sep, $key));
-                break;
-            case CASE_TITLE:
-            case CASE_CAMEL:
-                $key = implode('', array_map('ucfirst', explode($sep, $key)));
-                if ($case == CASE_CAMEL) {
-                    $key = lcfirst($key);
-                }
-                break;
-        }
-
+        $key = convert_case($key, $case, $spliter, $joiner);
         $ret[$key] = $value;
     }
 
