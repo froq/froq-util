@@ -58,33 +58,6 @@ function strpfx(...$args): bool { return str_has_prefix(...$args); } // Search p
 function strsfx(...$args): bool { return str_has_suffix(...$args); } // Search suffix.
 
 /**
- * Strsub (fun for substr() with null-length option).
- * @since 4.0
- */
-function strsub(...$args): string
-{
-    if (!isset($args[2])) { // Check null-length.
-         unset($args[2]);
-    }
-
-    return substr(...$args);
-}
-
-/**
- * Strpad.
- * @param  string $str
- * @param  string $pstr
- * @param  int    $length
- * @param  int    $side
- * @return ?string
- * @since  4.6
- */
-function strpad(string $str, string $pstr, int $length, int $side = STR_PAD_RIGHT): ?string
-{
-    return str_pad($str, $length, $pstr, $side) ?: null;
-}
-
-/**
  * Strcut.
  * @param  string $str
  * @param  int    $length
@@ -178,78 +151,6 @@ function str_has_suffix(string $str, string $src, bool $icase = false): bool
 }
 
 /**
- * Str base convert (converts given digits to chars from a chars, orginal source:
- * http://stackoverflow.com/a/4668620/362780).
- * @param  string     $digits
- * @param  int|string $from_chars
- * @param  int|string $to_chars
- * @return ?string
- * @throws TypeError
- * @since  4.0
- * @todo   Use "union" types for $from_chars & $to_chars.
- */
-function str_base_convert(string $digits, $from_chars, $to_chars): ?string
-{
-    // @todo: Use union types for from_chars/to_chars.
-    if (!is_int($from_chars) && !is_string($from_chars)) {
-        throw new TypeError(sprintf(
-            '%s() expects parameter 1 to be int|string, %s given', __function__, get_type($from_chars)
-        ));
-    } elseif (!is_int($to_chars) && !is_string($to_chars)) {
-        throw new TypeError(sprintf(
-            '%s() expects parameter 1 to be int|string, %s given', __function__, get_type($to_chars)
-        ));
-    }
-
-    if (is_int($from_chars)) {
-        if ($from_chars < 2 || $from_chars > 62) {
-            trigger_error(sprintf('%s(): Invalid base for from chars, min=2 & max=62', __function__));
-            return null;
-        }
-        $from_chars = strcut(BASE_62_CHARS, $from_chars);
-    }
-    if (is_int($to_chars)) {
-        if ($to_chars < 2 || $to_chars > 62) {
-            trigger_error(sprintf('%s(): Invalid base for to chars, min=2 & max=62', __function__));
-            return null;
-        }
-        $to_chars = strcut(BASE_62_CHARS, $to_chars);
-    }
-
-    [$digits_length, $from_base, $to_base] = [
-        strlen($digits), strlen($from_chars), strlen($to_chars)];
-
-    $numbers = [];
-    for ($i = 0; $i < $digits_length; $i++) {
-        $numbers[$i] = strpos($from_chars, $digits[$i]);
-    }
-
-    $ret = '';
-
-    $old_len = $digits_length;
-    do {
-        $new_len = $div = 0;
-
-        for ($i = 0; $i < $old_len; $i++) {
-            $div = ($div * $from_base) + $numbers[$i];
-            if ($div >= $to_base) {
-                $numbers[$new_len++] = ($div / $to_base) | 0;
-                $div = $div % $to_base;
-            } elseif ($new_len > 0) {
-                $numbers[$new_len++] = 0;
-            }
-        }
-
-        $old_len = $new_len;
-
-        // Prepend chars(n).
-        $ret = $to_chars[$div] . $ret;
-    } while ($new_len != 0);
-
-    return $ret;
-}
-
-/**
  * Str rand.
  * @param  string   $str
  * @param  int|null $length
@@ -262,8 +163,10 @@ function str_rand(string $str, int $length = null): ?string
         trigger_error(sprintf('%s(): Empty string given', __function__));
         return null;
     }
-    if ($length && $length < 1) {
-        trigger_error(sprintf('%s(): Length must be minimum 1 or null', __function__));
+
+    $str_length = strlen($str);
+    if ($length && ($length < 1 || $length > $str_length)) {
+        trigger_error(sprintf('%s(): Length must be between 1-%s or null', __function__, $str_length));
         return null;
     }
 
@@ -271,16 +174,94 @@ function str_rand(string $str, int $length = null): ?string
 }
 
 /**
+ * Convert base (original source: http://stackoverflow.com/a/4668620/362780).
+ * @param  int|string $in    Digits to convert.
+ * @param  int|string $from  From chars or base.
+ * @param  int|string $to    To chars or base.
+ * @return ?string
+ * @throws TypeError
+ * @since  4.0, 4.25 Derived from str_base_convert().
+ * @todo   Use "union" types for arguments.
+ */
+function convert_base($in, $from, $to): ?string
+{
+    if (!is_int($in) && !is_string($in)) {
+        throw new TypeError(sprintf(
+            '%s() expects parameter 1 to be int|string, %s given', __function__, get_type($in)
+        ));
+    } elseif (!is_int($from) && !is_string($from)) {
+        throw new TypeError(sprintf(
+            '%s() expects parameter 2 to be int|string, %s given', __function__, get_type($from)
+        ));
+    } elseif (!is_int($to) && !is_string($to)) {
+        throw new TypeError(sprintf(
+            '%s() expects parameter 3 to be int|string, %s given', __function__, get_type($to)
+        ));
+    }
+
+    if (is_int($from)) {
+        if ($from < 2 || $from > 62) {
+            trigger_error(sprintf('%s(): Invalid base for from chars, min=2 & max=62', __function__));
+            return null;
+        }
+        $from = strcut(BASE_62_CHARS, $from);
+    }
+    if (is_int($to)) {
+        if ($to < 2 || $to > 62) {
+            trigger_error(sprintf('%s(): Invalid base for to chars, min=2 & max=62', __function__));
+            return null;
+        }
+        $to = strcut(BASE_62_CHARS, $to);
+    }
+
+    $in = strval($in);
+    if (!$in || $from == $to) {
+        return $in;
+    }
+
+    [$in_length, $from_base, $to_base]
+        = [strlen($in), strlen($from), strlen($to)];
+
+    $numbers = [];
+    for ($i = 0; $i < $in_length; $i++) {
+        $numbers[$i] = strpos($from, $in[$i]);
+    }
+
+    $ret = '';
+
+    $old_length = $in_length;
+    do {
+        $new_length = $div = 0;
+
+        for ($i = 0; $i < $old_length; $i++) {
+            $div = ($div * $from_base) + $numbers[$i];
+            if ($div >= $to_base) {
+                $numbers[$new_length++] = ($div / $to_base) | 0;
+                $div = $div % $to_base;
+            } elseif ($new_length > 0) {
+                $numbers[$new_length++] = 0;
+            }
+        }
+
+        $old_length = $new_length;
+
+        $ret = $to[$div] . $ret;
+    } while ($new_length != 0);
+
+    return $ret;
+}
+
+/**
  * Constant exists.
  * @param  string|object $class
  * @param  string        $name
- * @param  bool          $scope_check
+ * @param  bool          $check_scope
  * @return ?bool
  * @since  4.0
  */
-function constant_exists($class, string $name, bool $scope_check = true): ?bool
+function constant_exists($class, string $name, bool $check_scope = true): ?bool
 {
-    if ($scope_check) {
+    if ($check_scope) {
         $caller_class = debug_backtrace(2, 2)[1]['class'] ?? null;
         if ($caller_class) {
             return ($caller_class === Objects::getName($class))
@@ -296,13 +277,13 @@ function constant_exists($class, string $name, bool $scope_check = true): ?bool
  * Get class constants.
  * @param  string|object $class
  * @param  bool          $with_names
- * @param  bool          $scope_check
+ * @param  bool          $check_scope
  * @return ?array
  * @since  4.0
  */
-function get_class_constants($class, bool $with_names = true, bool $scope_check = true): ?array
+function get_class_constants($class, bool $with_names = true, bool $check_scope = true): ?array
 {
-    if ($scope_check) {
+    if ($check_scope) {
         $caller_class = debug_backtrace(2, 2)[1]['class'] ?? null;
         if ($caller_class) {
             $all = ($caller_class === Objects::getName($class));
@@ -316,13 +297,13 @@ function get_class_constants($class, bool $with_names = true, bool $scope_check 
  * Get class properties.
  * @param  string|object $class
  * @param  bool          $with_names
- * @param  bool          $scope_check
+ * @param  bool          $check_scope
  * @return ?array
  * @since  4.0
  */
-function get_class_properties($class, bool $with_names = true, bool $scope_check = true): ?array
+function get_class_properties($class, bool $with_names = true, bool $check_scope = true): ?array
 {
-    if ($scope_check) {
+    if ($check_scope) {
         $caller_class = debug_backtrace(2, 2)[1]['class'] ?? null;
         if ($caller_class) {
             $all = ($caller_class === Objects::getName($class));
@@ -362,7 +343,7 @@ function get_type($var, bool $scalars = false): string
         $ret = get_class($var);
         // Anonymous class.
         if ($pos = strpos($ret, "\0")) {
-            $ret = strsub($ret, 0, $pos);
+            $ret = substr($ret, 0, $pos);
         }
     } else {
         static $scalars_array   = ['int', 'float', 'string', 'bool'];
@@ -396,63 +377,43 @@ function get_error(string $field = null)
 
 /**
  * Get uniqid.
- * @param  bool $convert
  * @param  int  $length
+ * @param  int  $base
+ * @param  bool $use_hrtime
  * @return ?string
  * @since  4.0
  */
-function get_uniqid(bool $convert = false, int $length = 14): ?string
+function get_uniqid(int $length = 14, int $base = 16, bool $use_hrtime = false): ?string
 {
     if ($length < 14) {
         trigger_error(sprintf('%s(): Invalid length, min=14', __function__));
         return null;
     }
-
-    if (!$convert) {
-        $ret = uniqid();
-        [$chars, $chars_length] = [BASE_16_CHARS, 16];
-    } else {
-        $ret = str_base_convert(uniqid(), 16, 62);
-        [$chars, $chars_length] = [BASE_62_CHARS, 62];
-    }
-
-    while (strlen($ret) < $length) {
-        $ret .= $chars[rand(0, $chars_length - 1)];
-    }
-
-    return $ret;
-}
-
-/**
- * Get nano uniqid.
- * @param  bool $convert
- * @param  int  $length
- * @return ?string
- * @since  4.0
- */
-function get_nano_uniqid(bool $convert = false, int $length = 14): ?string
-{
-    if ($length < 14) {
-        trigger_error(sprintf('%s(): Invalid length, min=14', __function__));
+    if ($base < 10 || $base > 62) {
+        trigger_error(sprintf('%s(): Invalid base, min=10, max=62', __function__));
         return null;
     }
 
-    // Use parts apart to prevent big int (to float) issue.
-    $parts = hrtime();
-
-    if (!$convert) {
-        $ret = dechex($parts[0]) . dechex($parts[1]);
-        [$chars, $chars_length] = [BASE_16_CHARS, 16];
+    // Grab 14-length hex from uniqid() or map to hex hrtime() stuff.
+    if (!$use_hrtime) {
+        $id = strstr(uniqid('', true), '.', true);
     } else {
-        $ret = str_base_convert((string) $parts[0], 10, 62)
-             . str_base_convert((string) $parts[1], 10, 62);
-        [$chars, $chars_length] = [BASE_62_CHARS, 62];
+        $id = join('', array_map('dechex', hrtime()));
     }
 
-    unset($parts);
+    $ret = $id;
 
+    // Convert non-hex ids.
+    if ($base != 16) {
+        $ret = '';
+        foreach (str_split($id, 8) as $i) {
+            $ret .= convert_base($i, 16, $base);
+        }
+    }
+
+    // Pad if needed.
     while (strlen($ret) < $length) {
-        $ret .= $chars[rand(0, $chars_length - 1)];
+        $ret .= get_random_uniqid(1, $base, false);
     }
 
     return $ret;
@@ -460,25 +421,29 @@ function get_nano_uniqid(bool $convert = false, int $length = 14): ?string
 
 /**
  * Get random uniqid.
- * @param  bool $convert
  * @param  int  $length
+ * @param  int  $base
+ * @param  bool $check_length @internal
  * @return ?string
  * @since  4.0
  */
-function get_random_uniqid(bool $convert = false, int $length = 14): ?string
+function get_random_uniqid(int $length = 14, int $base = 16, bool $check_length = true): ?string
 {
-    if ($length < 14) {
+    if ($length < 14 && $check_length) {
         trigger_error(sprintf('%s(): Invalid length, min=14', __function__));
         return null;
     }
-
-    if (!$convert) {
-        [$chars, $chars_length] = [BASE_16_CHARS, 16];
-    } else {
-        [$chars, $chars_length] = [BASE_62_CHARS, 62];
+    if ($base < 10 || $base > 62) {
+        trigger_error(sprintf('%s(): Invalid base, min=10, max=62', __function__));
+        return null;
     }
 
     $ret = '';
+
+    // Adjust base chars & length.
+    $chars = substr(BASE_62_CHARS, 0, $base);
+    $chars_length = strlen($chars);
+
     while (strlen($ret) < $length) {
         $ret .= $chars[rand(0, $chars_length - 1)];
     }
@@ -503,34 +468,34 @@ function get_request_id(): string
 
 /**
  * Get temporary directory.
+ * @param  string|null $subdir
  * @return string
  * @since  4.0
  */
-function get_temporary_directory(): string
+function get_temporary_directory(string $subdir = null): string
 {
-    $dir = sys_get_temp_dir() . __dirsep .'froq-temporary';
+    $dir = sys_get_temp_dir() . __dirsep . 'froq-temporary'
+         . ($subdir ? __dirsep . trim($subdir, __dirsep) : '');
 
-    if (!is_dir($dir)) {
-        mkdir($dir, 0755, true);
-    }
+    is_dir($dir) || mkdir($dir, 0755, true);
 
     return __dirsep . trim($dir, __dirsep);
 }
 
 /**
  * Get cache directory.
+ * @param  string|null $subdir
  * @return string
  * @since  4.0
  */
-function get_cache_directory(): string
+function get_cache_directory(string $subdir = null): string
 {
-    $dir = dirname(get_temporary_directory()) . __dirsep .'froq-cache';
+    $dir = sys_get_temp_dir() . __dirsep . 'froq-cache'
+         . ($subdir ? __dirsep . trim($subdir, __dirsep) : '');
 
-    if (!is_dir($dir)) {
-        mkdir($dir, 0755, true);
-    }
+    is_dir($dir) || mkdir($dir, 0755, true);
 
-    return $dir;
+    return __dirsep . trim($dir, __dirsep);
 }
 
 /**
@@ -546,7 +511,6 @@ function get_real_user(): ?string
         return getenv('USER') ?: getenv('USERNAME') ?: null;
     }
 }
-
 
 /**
  * Get real path.
@@ -695,9 +659,9 @@ function mkfile(string $file, int $mode = 0644): ?bool
  */
 function mkfiletemp(string $extension = null, bool $froq_temp = true): ?string
 {
-    $file = ( // Seems like "/tmp/froq-temporary/5f858f253527c91a4006" fully.
+    $file = ( // Eg: "/tmp/froq-temporary/5f858f253527c91a4006"
         ($froq_temp ? get_temporary_directory() : dirname(get_temporary_directory()))
-        . __dirsep . get_uniqid(false, 20)
+        . __dirsep . get_uniqid(20)
         . ($extension ? '.'. trim($extension, '.') : '')
     );
 
@@ -812,14 +776,48 @@ function stream_set_contents(&$handle, string $contents): bool
 }
 
 /**
+ * Udate (inits a DateTime object by given "when" option & with timezone if given or default timezone).
+ * @param  int|float|string $when
+ * @param  string|null      $where
+ * @return DateTime
+ * @throws TypeError
+ * @since  4.25
+ */
+function udate($when = null, string $where = null): DateTime
+{
+    $when ??= '';
+    $where ??= date_default_timezone_get();
+
+    switch (get_type($when)) {
+        case 'int': // Eg: 1603339284
+            $date = new DateTime('', new DateTimeZone($where));
+            $date->setTimestamp($when);
+            break;
+        case 'float': // Eg: 1603339284.221243
+            $date = DateTime::createFromFormat('U.u', sprintf('%.6F', $when));
+            $date->setTimezone(new DateTimeZone($where));
+            break;
+        case 'string': // Eg: 2012-09-12 23:42:53
+            $date = new DateTime($when, new DateTimeZone($where));
+            break;
+        default:
+            throw new TypeError(sprintf(
+                'Argument $when must be int|float|string or null, %s given', get_type($when)
+            ));
+    }
+
+    return $date;
+}
+
+/**
  * Utime (gets microtime as float or string).
- * @param  bool $string
+ * @param  bool $as_string
  * @return float|string
  * @since  4.0
  */
-function utime(bool $string = false)
+function utime(bool $as_string = false)
 {
-    return !$string ? utimes()[2] : utimes()[3];
+    return !$as_string ? utimes()[2] : utimes()[3];
 }
 
 /**
@@ -829,9 +827,12 @@ function utime(bool $string = false)
  */
 function utimes(): array
 {
-    sscanf(microtime(), '%f %i', $msec, $sec);
+    sscanf(microtime(), '%f %d', $msec, $sec);
 
-    return [$sec, $msec, $fsec = ($sec + $msec), number_format($fsec, 6, '.', '')];
+    // This will lost its precision (https://php.net/types.float).
+    $usec = round($sec + $msec, 6);
+
+    return [$sec, $msec, $usec, sprintf('%.6F', $usec)];
 }
 
 /**
@@ -912,7 +913,7 @@ function array_clean(array $array): array
  */
 function array_apply(array $array, callable $func): array
 {
-    $i = 0; $ret = [];
+    $ret = []; $i = 0;
 
     foreach ($array as $key => $value) {
         // Because array_map() tricky with array_keys() only for value => key notation, and also
@@ -1351,7 +1352,7 @@ function file_name(string $file, bool $with_extension = true): ?string
     $ret = basename($file);
 
     if ($ret && !$with_extension && ($extension = file_extension($file))) {
-        $ret = strsub($ret, 0, -strlen($extension));
+        $ret = substr($ret, 0, -strlen($extension));
     }
 
     return $ret ?: null;
