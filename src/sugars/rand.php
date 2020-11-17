@@ -41,11 +41,12 @@ function rand_int(int $min = null, int $max = null): int
  * Rand float.
  * @param  float|null $min
  * @param  float|null $max
+ * @param  int|null   $precision
  * @return float
  */
-function rand_float(float $min = null, float $max = null): float
+function rand_float(float $min = null, float $max = null, int $precision = null): float
 {
-    return Numbers::randomFloat($min, $max);
+    return Numbers::randomFloat($min, $max, $precision);
 }
 
 /**

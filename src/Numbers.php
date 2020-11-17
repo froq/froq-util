@@ -65,13 +65,15 @@ final class Numbers extends StaticClass
 
     /**
      * Compare.
-     * @param  numeric $a
-     * @param  numeric $b
-     * @param  int     $precision
+     * @param  numeric  $a
+     * @param  numeric  $b
+     * @param  int|null $precision
      * @return ?int
      */
-    public static function compare($a, $b, int $precision = 14): ?int
+    public static function compare($a, $b, int $precision = null): ?int
     {
+        $precision ??= 14;
+
         if (is_numeric($a) && is_numeric($b)) {
             return round($a, $precision) <=> round($b, $precision);
         }
@@ -80,13 +82,15 @@ final class Numbers extends StaticClass
 
     /**
      * Equals.
-     * @param  numeric $a
-     * @param  numeric $b
-     * @param  int     $precision
+     * @param  numeric  $a
+     * @param  numeric  $b
+     * @param  int|null $precision
      * @return ?bool
      */
-    public static function equals($a, $b, int $precision = 14): ?bool
+    public static function equals($a, $b, int $precision = null): ?bool
     {
+        $precision ??= 14;
+
         return ($ret = self::compare($a, $b, $precision)) === null ? null // Error, non-number(s).
              : ($ret === 0);
     }
@@ -180,15 +184,22 @@ final class Numbers extends StaticClass
      * Random float.
      * @param  float|null $min
      * @param  float|null $max
+     * @param  int|null   $precision
      * @return float
      * @since  4.0
      */
-    public static function randomFloat(float $min = null, float $max = null): float
+    public static function randomFloat(float $min = null, float $max = null, int $precision = null): float
     {
         $min = $min ?? 0;
         $max = $max ?? 1 + $min;
 
-        return lcg_value() * ($max - $min) + $min;
+        $ret = lcg_value() * ($max - $min) + $min;
+
+        if ($precision !== null) {
+            $ret = round($ret, $precision);
+        }
+
+        return $ret;
     }
 
 }
