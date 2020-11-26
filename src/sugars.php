@@ -527,8 +527,9 @@ function get_request_id(): string
  */
 function get_temporary_directory(string $subdir = null): string
 {
-    $dir = sys_get_temp_dir() . __dirsep . 'froq-temporary'
-         . ($subdir ? __dirsep . trim($subdir, __dirsep) : '');
+    $dir = sys_get_temp_dir() . __dirsep .'froq-temporary'. (
+        $subdir ? __dirsep . trim($subdir, __dirsep) : ''
+    );
 
     is_dir($dir) || mkdir($dir, 0755, true);
 
@@ -659,17 +660,35 @@ function get_trace(int $options = null, int $limit = null, int $index = null): ?
 }
 
 /**
- * Gettmp (gets system temporary dirname).
+ * Tmp (gets system temporary directory).
  * @return string
  * @since  4.0
  */
-function gettmp(): string
+function tmp(): string
 {
     return dirname(get_temporary_directory());
 }
 
 /**
- * Mkfile (creates a new file).
+ * Tmpdir (creates a folder in system temporary directory).
+ * @param  string|null $prefix
+ * @param  int         $mode
+ * @return string
+ * @since  4.0
+ */
+function tmpdir(string $prefix = null, int $mode = 755): string
+{
+    $dir = ( // Eg: "/tmp/froq-5f858f253527c91a4006".
+        tmp() . __dirsep . ($prefix ?? 'froq-') . get_uniqid(20)
+    );
+
+    is_dir($dir) || mkdir($dir, $mode);
+
+    return $dir;
+}
+
+/**
+ * Mkfile (creates a file with given path).
  * @param  string  $file
  * @param  int     $mode
  * @return ?bool
@@ -704,25 +723,7 @@ function mkfile(string $file, int $mode = 0644): ?bool
 }
 
 /**
- * Mkfiletemp (creates a new file in temporary directory).
- * @param  string|null $extension
- * @param  bool        $froq_temp
- * @return ?string
- * @since  4.0
- */
-function mkfiletemp(string $extension = null, bool $froq_temp = true): ?string
-{
-    $file = ( // Eg: "/tmp/froq-temporary/5f858f253527c91a4006"
-        ($froq_temp ? get_temporary_directory() : dirname(get_temporary_directory()))
-        . __dirsep . get_uniqid(20)
-        . ($extension ? '.'. trim($extension, '.') : '')
-    );
-
-    return mkfile($file) ? $file : null;
-}
-
-/**
- * Rmfile.
+ * Rmfile (removes a file).
  * @param  string $file
  * @return ?bool
  * @since  4.0
@@ -741,6 +742,74 @@ function rmfile(string $file): ?bool
         trigger_error(sprintf(
             '%s(): Cannot remove %s, it is a directory', __function__, $file
         ));
+        return null;
+    }
+
+    return is_file($file) && unlink($file);
+}
+
+/**
+ * Mkdirtemp (creates a folder in system temporary directory).
+ * @alias of tmpdir().
+ * @since 4.0
+ */
+function mkdirtemp(...$args): ?string
+{
+    return tmpdir(...$args);
+}
+
+/**
+ * Rmdirtemp (removes a folder from system temporary directory).
+ * @param  string $dir
+ * @return ?bool
+ * @since 4.0
+ */
+function rmdirtemp(string $dir): ?bool
+{
+    if (dirname($dir) != tmp()) {
+        trigger_error(sprintf('%s(): Cannot remove a directory which is outside of %s directory',
+            __function__, tmp()));
+        return null;
+    }
+
+    // Clean inside but not recursive.
+    foreach (glob($dir .'/*') as $file) {
+        unlink($file);
+    }
+
+    return is_dir($dir) && rmdir($dir);
+}
+
+/**
+ * Mkfiletemp (creates a file in temporary directory).
+ * @param  string|null $extension
+ * @param  int         $mode
+ * @param  bool        $froq_temp
+ * @return ?string
+ * @since  4.0
+ */
+function mkfiletemp(string $extension = null, int $mode = 644, bool $froq_temp = true): ?string
+{
+    $file = ( // Eg: "/tmp/froq-temporary/5f858f253527c91a4006".
+        ($froq_temp ? get_temporary_directory() : dirname(get_temporary_directory()))
+        . __dirsep . get_uniqid(20)
+        . ($extension ? '.'. trim($extension, '.') : '')
+    );
+
+    return mkfile($file, $mode) ? $file : null;
+}
+
+/**
+ * Rmfiletemp (removes a file from in temporary directory).
+ * @param  string $file
+ * @return ?bool
+ * @since  4.0
+ */
+function rmfiletemp(string $file): ?bool
+{
+    if (!strpfx($file, tmp())) {
+        trigger_error(sprintf('%s(): Cannot remove a file which is outside of %s directory',
+            __function__));
         return null;
     }
 
@@ -1267,7 +1336,7 @@ function array_aggregate(array $array, callable $func, array $carry = null): arr
 }
 
 /**
- * File create (create a new file with given name).
+ * File create (create a file with given path).
  * @param  string $file
  * @param  int    $mode
  * @return ?string
