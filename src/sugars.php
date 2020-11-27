@@ -994,6 +994,20 @@ function strtoitime(string $format, int $time = null): ?int
 }
 
 /**
+ * Preg test (perform a regular expression search returning a bool result).
+ * @param  string   $pattern
+ * @param  string   $subject
+ * @param  int|null $flags
+ * @param  int|null $offset
+ * @return bool
+ * @since  4.0
+ */
+function preg_test(string $pattern, string $subject, int $flags = null, int $offset = null): bool
+{
+    return (bool) preg_match($pattern, $subject, $flags ?? 0, $offset ?? 0);
+}
+
+/**
  * Preg remove (perform a regular expression search and remove).
  * @param  string|array  $pattern
  * @param  string|array  $subject
