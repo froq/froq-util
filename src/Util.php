@@ -159,7 +159,7 @@ final /* fuckic static */ class Util extends StaticClass
         foreach ($names as $name) {
             // Not using isset(), cos variables may be set but empty.
             if (!empty($_SERVER[$name])) {
-                return !$safe ? $_SERVER[$name] : substr($_SERVER[$name], 0, 250);
+                return !$safe ? $_SERVER[$name] : substr($_SERVER[$name], 0, 255);
             }
         }
 
