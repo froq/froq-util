@@ -995,16 +995,14 @@ function strtoitime(string $format, int $time = null): ?int
 
 /**
  * Preg test (perform a regular expression search returning a bool result).
- * @param  string   $pattern
- * @param  string   $subject
- * @param  int|null $flags
- * @param  int|null $offset
+ * @param  string $pattern
+ * @param  string $subject
  * @return bool
  * @since  4.0
  */
-function preg_test(string $pattern, string $subject, int $flags = null, int $offset = null): bool
+function preg_test(string $pattern, string $subject): bool
 {
-    return (bool) preg_match($pattern, $subject, $flags ?? 0, $offset ?? 0);
+    return (bool) preg_match($pattern, $subject);
 }
 
 /**
