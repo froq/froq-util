@@ -26,7 +26,7 @@ declare(strict_types=1);
 
 use froq\util\{Arrays, Objects};
 
-// Ensure constants.
+// Load constants.
 defined('nil') || require 'sugars-constant.php';
 
 /**
@@ -42,20 +42,18 @@ function equals($a, $b, ...$c): bool {
  * Loving https://docs.zephir-lang.com/0.12/en/operators#fetch
  */
 function pick(array &$array, $key, &$value = null, bool $drop = false): bool {
-    return ($value = array_pick($array, $key, null, $drop)) !== null;
-}
+    return ($value = array_pick($array, $key, null, $drop)) !== null; }
 function pluck(array &$array, $key, &$value = null): bool {
-    return ($value = array_pluck($array, $key, null)) !== null;
-}
+    return ($value = array_pluck($array, $key, null)) !== null; }
 
 /**
  * The ever most wanted functions (finally come with 8.0, but without case option).
  * @alias of str_has(),str_has_prefix(),str_has_suffix()
  * @since 4.0
  */
-function strsrc(...$args): bool { return str_has(...$args); }        // Search.
-function strpfx(...$args): bool { return str_has_prefix(...$args); } // Search prefix.
-function strsfx(...$args): bool { return str_has_suffix(...$args); } // Search suffix.
+function strsrc(...$args) { return str_has(...$args); }        // Search.
+function strpfx(...$args) { return str_has_prefix(...$args); } // Search prefix.
+function strsfx(...$args) { return str_has_suffix(...$args); } // Search suffix.
 
 /**
  * Strcut (cut a string with given length).
@@ -302,25 +300,20 @@ function convert_case(string $in, int $case, string $spliter = null, string $joi
 }
 
 /**
- * Constant exists.
- * @param  string|object $class
- * @param  string        $name
- * @param  bool          $check_scope
- * @return ?bool
- * @since  4.0
+ * Class extends.
+ * @param  string $class1
+ * @param  string $class2
+ * @param  bool   $parent_only
+ * @return bool
+ * @since  4.21
  */
-function constant_exists($class, string $name, bool $check_scope = true): ?bool
+function class_extends(string $class1, string $class2, bool $parent_only = false): bool
 {
-    if ($check_scope) {
-        $caller_class = debug_backtrace(2, 2)[1]['class'] ?? null;
-        if ($caller_class) {
-            return ($caller_class === Objects::getName($class))
-                && Objects::hasConstant($class, $name);
-        }
-        return defined(Objects::getName($class) .'::'. $name);
+    if (!$parent_only) {
+        return is_subclass_of($class1, $class2);
     }
 
-    return Objects::hasConstant($class, $name);
+    return ($parents = class_parents($class1)) && (current($parents) === $class2);
 }
 
 /**
@@ -364,20 +357,25 @@ function get_class_properties($class, bool $with_names = true, bool $check_scope
 }
 
 /**
- * Class extends.
- * @param  string $class1
- * @param  string $class2
- * @param  bool   $parent_only
- * @return bool
- * @since  4.21
+ * Constant exists.
+ * @param  string|object $class
+ * @param  string        $name
+ * @param  bool          $check_scope
+ * @return ?bool
+ * @since  4.0
  */
-function class_extends(string $class1, string $class2, bool $parent_only = false): bool
+function constant_exists($class, string $name, bool $check_scope = true): ?bool
 {
-    if (!$parent_only) {
-        return is_subclass_of($class1, $class2);
+    if ($check_scope) {
+        $caller_class = debug_backtrace(2, 2)[1]['class'] ?? null;
+        if ($caller_class) {
+            return ($caller_class === Objects::getName($class))
+                && Objects::hasConstant($class, $name);
+        }
+        return defined(Objects::getName($class) .'::'. $name);
     }
 
-    return ($parents = class_parents($class1)) && (current($parents) === $class2);
+    return Objects::hasConstant($class, $name);
 }
 
 /**
@@ -939,22 +937,7 @@ function udate($when = null, string $where = null): DateTime
  */
 function utime(bool $as_string = false)
 {
-    return !$as_string ? utimes()[2] : utimes()[3];
-}
-
-/**
- * Utimes (gets time, microtime, time + microtime & time + microtime string).
- * @return array
- * @since  4.0
- */
-function utimes(): array
-{
-    sscanf(microtime(), '%f %d', $msec, $sec);
-
-    // This will lost its precision (https://php.net/types.float).
-    $usec = round($sec + $msec, 6);
-
-    return [$sec, $msec, $usec, sprintf('%.6F', $usec)];
+    return !$as_string ? microtime(true) : sprintf('%.6F', microtime(true));
 }
 
 /**
@@ -1420,7 +1403,8 @@ function file_set_contents(string $file, string $contents, int $flags = 0): ?int
 }
 
 /**
- * File get buffer contents (loads & gets a file (rendered) buffer contents).
+ * Load a file & get its buffer (rendered) contents.
+ *
  * @param  string     $file
  * @param  array|null $file_data
  * @return ?string
@@ -1429,9 +1413,10 @@ function file_set_contents(string $file, string $contents, int $flags = 0): ?int
 function file_get_buffer_contents(string $file, array $file_data = null): ?string
 {
     if (!is_file($file)) {
-        trigger_error(sprintf(
-            '%s(): No file exists such %s', __function__, $file
-        ));
+        trigger_error(sprintf('%s(): No file exists such %s', __function__, $file));
+        return null;
+    } elseif (!strsfx($file, '.php')) {
+        trigger_error(sprintf('%s(): Cannot include non-PHP file such %s', __function__, $file));
         return null;
     }
 
@@ -1440,7 +1425,6 @@ function file_get_buffer_contents(string $file, array $file_data = null): ?strin
     // Data, used in file.
     $file_data && extract($file_data);
 
-    // Simply include file.
     include $file;
 
     return ob_get_clean();
@@ -1538,21 +1522,23 @@ function file_type(string $file): ?string
 }
 
 /**
- * Error get last message.
+ * Get PHP' last error message.
+ *
  * @return ?string
  * @since  4.17
  */
-function error_get_last_message(): ?string
+function error_message(): ?string
 {
     return error_get_last()['message'] ?? null;
 }
 
 /**
- * Preg last error message.
+ * Get PECL' last error message.
+ *
  * @return ?string
  * @since  4.17
  */
-function preg_last_error_message(): ?string
+function preg_error_message(): ?string
 {
     // @todo: use preg_last_error_msg() [Froq/5.0, PHP/8.0].
     static $messages = [
@@ -1569,12 +1555,66 @@ function preg_last_error_message(): ?string
 }
 
 /**
- * Json last error message.
+ * Get JSON' last error message.
+ *
  * @return ?string
  * @since  4.17
  */
-function json_last_error_message(): ?string
+function json_error_message(): ?string
 {
     // Check code first instead returning "No error" message.
     return json_last_error() ? json_last_error_msg() : null;
+}
+
+/**
+ * Generate a random UUID.
+ *
+ * @param  bool $dashed
+ * @return string
+ * @since  5.0
+ */
+function uuid(bool $dashed = true): string
+{
+    $id = random_bytes(16);
+
+    // Add signs: 4 (version) & 8, 9, A, B.
+    $id[6] = chr(ord($id[6]) & 0x0f | 0x40);
+    $id[8] = chr(ord($id[8]) & 0x3f | 0x80);
+
+    $ret = vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($id), 4));
+
+    $dashed || $ret = str_replace('-', '', $ret);
+
+    return $ret;
+}
+
+/**
+ * Generate a random UUID hash.
+ *
+ * @param  int  $length
+ * @param  bool $dashed
+ * @return string
+ * @since  5.0
+ */
+function uuid_hash(int $length = 32, bool $format = false): ?string
+{
+    switch ($length) {
+        case 32: $ret = hash('md5', uuid()); break;
+        case 40: $ret = hash('sha1', uuid()); break;
+        case 64: $ret = hash('sha256', uuid()); break;
+        case 16: $ret = hash('fnv1a64', uuid()); break;
+        default:
+            trigger_error(sprintf('%s(): Invalid length, valids are: 32,40,64,16', __function__));
+            return null;
+    }
+
+    if ($format) {
+        if ($length != 32) {
+            trigger_error(sprintf('%s(): Format option for only 32-length hashes', __function__));
+            return null;
+        }
+        $ret = vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split($ret, 4));
+    }
+
+    return $ret;
 }
