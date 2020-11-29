@@ -59,18 +59,18 @@ final /* fuckic static */ class Util extends StaticClass
 
     /**
      * Get type.
-     * @param  any  $in
+     * @param  any  $var
      * @param  bool $classes
      * @param  bool $scalars
      * @return string
      * @since  4.0
      */
-    public static function getType($in, bool $classes = false, bool $scalars = false): string
+    public static function getType($var, bool $classes = false, bool $scalars = false): string
     {
-        $type = gettype($in);
+        $type = gettype($var);
 
         if ($classes && $type == 'object') {
-            $class = get_class($in);
+            $class = get_class($var);
             // Return 'object' for silly stdClass stuff.
             return ($class != 'stdClass') ? $class : 'object';
         }
