@@ -570,7 +570,7 @@ final class Arrays extends StaticClass
 
         if ($newValue !== null) {
             self::set($array, $newKey, $newValue);
-        } elseif (func_num_args() === 4) { // Create directive.
+        } elseif (func_num_args() == 4) { // Create directive.
             self::set($array, $newKey, $newValueDefault);
         }
 
