@@ -43,16 +43,6 @@ function logger(): Logger
 }
 
 /**
- * Log any.
- * @param  string|Throwable $message
- * @return bool
- */
-function log_any($message): bool
-{
-    return app()->logger()->log($message);
-}
-
-/**
  * Log error.
  * @param  string|Throwable $message
  * @return bool
