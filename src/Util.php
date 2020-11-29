@@ -67,27 +67,14 @@ final /* fuckic static */ class Util extends StaticClass
      */
     public static function getType($var, bool $classes = false, bool $scalars = false): string
     {
-        $type = gettype($var);
-
-        if ($classes && $type == 'object') {
+        if ($classes && is_object($var)) {
             $class = get_class($var);
+
             // Return 'object' for silly stdClass stuff.
             return ($class != 'stdClass') ? $class : 'object';
         }
 
-        static $scalarsArray   = ['int', 'float', 'string', 'bool'];
-        static $translateArray = [
-            'NULL'   => 'null',  'integer' => 'int',
-            'double' => 'float', 'boolean' => 'bool'
-        ];
-
-        $ret = strtr($type, $translateArray);
-
-        if ($scalars && in_array($ret, $scalarsArray)) {
-            return 'scalar';
-        }
-
-        return $ret;
+        return get_type($var, $scalars);
     }
 
     /**
@@ -97,8 +84,7 @@ final /* fuckic static */ class Util extends StaticClass
     public static function getClientIp(): ?string
     {
         if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-            $ips = array_filter(array_map('trim',
-                explode(',', $_SERVER['HTTP_X_FORWARDED_FOR'])));
+            $ips = array_filter(array_map('trim', explode(',', $_SERVER['HTTP_X_FORWARDED_FOR'])));
             if (!empty($ips)) {
                 return end($ips);
             }
