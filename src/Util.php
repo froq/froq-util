@@ -28,17 +28,17 @@ final /* fuckic static */ class Util extends StaticClass
      */
     public static function loadSugar(string $name): void
     {
-        $file = __dir__ .'/sugars/'. $name .'.php';
+        $file = __dir__ . '/sugars/' . $name . '.php';
 
         if (!is_file($file)) {
-            $files = glob(__dir__ .'/sugars/{*.php,extra/*.php}', GLOB_BRACE);
+            $files = glob(__dir__ . '/sugars/{*.php,extra/*.php}', GLOB_BRACE);
             $names = array_map(
                 fn($file) => strpos($file, 'extra/')
                     ? 'extra/'. pathinfo($file, PATHINFO_FILENAME)
                     : pathinfo($file, PATHINFO_FILENAME)
             , $files);
 
-            throw new UtilException('Invalid sugar name "%s" given, valids are: %s',
+            throw new UtilException("Invalid sugar name '%s' given, valids are: %s",
                 [$name, join(', ', $names)]);
         }
 
@@ -148,10 +148,10 @@ final /* fuckic static */ class Util extends StaticClass
             return null;
         }
 
-        $url = $scheme .'://';
+        $url = $scheme . '://';
         if ($port && !(($port == '80' && $scheme == 'http') ||
                        ($port == '443' && $scheme == 'https'))) {
-            $url .= $host .':'. $port;
+            $url .= $host . ':' . $port;
         } else {
             $url .= $host;
         }
@@ -184,7 +184,7 @@ final /* fuckic static */ class Util extends StaticClass
 
         $url .= $tmp['path'];
         if ($withQuery && ($query = $tmp['query'] ?? '') !== '') {
-            $url .= '?'. $query;
+            $url .= '?' . $query;
         }
 
         return $url;
