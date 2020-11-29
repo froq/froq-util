@@ -21,13 +21,13 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- */
+  */
 declare(strict_types=1);
 
 use froq\util\Util;
 
 /**
- * Get url (gets current URL).
+ * Get current URL (from server environment).
  *
  * @param  string|null $url
  * @return ?string
@@ -40,7 +40,7 @@ function get_url(): ?string
 }
 
 /**
- * Get url scheme (gets scheme part from current or given URL).
+ * Get scheme part from current or given URL.
  *
  * @param  string|null $url
  * @return ?string
@@ -54,7 +54,7 @@ function get_url_scheme(string $url = null): ?string
 }
 
 /**
- * Get url host (gets host part from current or given URL).
+ * Get host part from current or given URL.
  *
  * @param  string|null $url
  * @return ?string
@@ -68,7 +68,7 @@ function get_url_host(string $url = null): ?string
 }
 
 /**
- * Get url port (gets port part from current or given URL).
+ * Get port part from current or given URL.
  *
  * @param  string|null $url
  * @return ?int
@@ -82,7 +82,7 @@ function get_url_port(string $url = null): ?int
 }
 
 /**
- * Get url path (gets path part from current or given URL).
+ * Get path part from current or given URL.
  *
  * @param  string|null $url
  * @return ?string
@@ -96,7 +96,7 @@ function get_url_path(string $url = null): ?string
 }
 
 /**
- * Get url query (gets query part from current or given URL).
+ * Get query part from current or given URL.
  *
  * @param  string|null $url
  * @return ?string
@@ -110,7 +110,7 @@ function get_url_query(string $url = null): ?string
 }
 
 /**
- * Get url fragment (gets fragment part from current or given URL).
+ * Get fragment part from current or given URL.
  *
  * @param  string|null $url
  * @return ?string
@@ -124,7 +124,7 @@ function get_url_fragment(string $url = null): ?string
 }
 
 /**
- * Get url segments (gets a segment by index from current or given URL).
+ * Get a segment by index from current or given URL.
  *
  * @param  string|null $url
  * @return ?string
@@ -137,7 +137,7 @@ function get_url_segment(int $i, string $url = null): ?string
 }
 
 /**
- * Get url segments (gets all segments from current or given URL).
+ * Get all segments from current or given URL.
  *
  * @param  string|null $url
  * @return ?array
