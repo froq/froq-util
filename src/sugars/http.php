@@ -103,7 +103,7 @@ function status(int $code = null)
  */
 function is_get(): bool
 {
-    return app()->request()->method()->isGet();
+    return app()->request()->isGet();
 }
 
 /**
@@ -112,7 +112,7 @@ function is_get(): bool
  */
 function is_post(): bool
 {
-    return app()->request()->method()->isPost();
+    return app()->request()->isPost();
 }
 
 /**
@@ -121,7 +121,7 @@ function is_post(): bool
  */
 function is_put(): bool
 {
-    return app()->request()->method()->isPut();
+    return app()->request()->isPut();
 }
 
 /**
@@ -131,7 +131,7 @@ function is_put(): bool
  */
 function is_patch(): bool
 {
-    return app()->request()->method()->isPatch();
+    return app()->request()->isPatch();
 }
 
 /**
@@ -140,7 +140,7 @@ function is_patch(): bool
  */
 function is_delete(): bool
 {
-    return app()->request()->method()->isDelete();
+    return app()->request()->isDelete();
 }
 
 /**
@@ -149,7 +149,7 @@ function is_delete(): bool
  */
 function is_ajax(): bool
 {
-    return app()->request()->method()->isAjax();
+    return app()->request()->isAjax();
 }
 
 /**
