@@ -56,25 +56,25 @@ final class Strings extends StaticClass
      * Contains.
      * @param  string $in
      * @param  string $search
-     * @param  bool   $caseInsensitive
+     * @param  bool   $icase
      * @return bool
      */
-    public static function contains(string $in, string $search, bool $caseInsensitive = false): bool
+    public static function contains(string $in, string $search, bool $icase = false): bool
     {
-        return (!$caseInsensitive ? strpos($in, $search) : stripos($in, $search)) !== false;
+        return (!$icase ? strpos($in, $search) : stripos($in, $search)) !== false;
     }
 
     /**
      * Contains any.
      * @param  string        $in
      * @param  array<string> $searches
-     * @param  bool          $caseInsensitive
+     * @param  bool          $icase
      * @return bool
      */
-    public static function containsAny(string $in, array $searches, bool $caseInsensitive = false): bool
+    public static function containsAny(string $in, array $searches, bool $icase = false): bool
     {
         foreach ($searches as $search) {
-            if (self::contains($in, $search, $caseInsensitive)) {
+            if (self::contains($in, $search, $icase)) {
                 return true;
             }
         }
@@ -85,13 +85,13 @@ final class Strings extends StaticClass
      * Contains all.
      * @param  string        $in
      * @param  array<string> $searches
-     * @param  bool          $caseInsensitive
+     * @param  bool          $icase
      * @return bool
      */
-    public static function containsAll(string $in, array $searches, bool $caseInsensitive = false): bool
+    public static function containsAll(string $in, array $searches, bool $icase = false): bool
     {
         foreach ($searches as $search) {
-            if (!self::contains($in, $search, $caseInsensitive)) {
+            if (!self::contains($in, $search, $icase)) {
                 return false;
             }
         }
@@ -102,20 +102,22 @@ final class Strings extends StaticClass
      * Starts with.
      * @param  string $in
      * @param  string $search
-     * @param  bool   $caseInsensitive
+     * @param  bool   $icase
+     * @param  bool   $mbyte
      * @return bool
      */
-    public static function startsWith(string $in, string $search, bool $caseInsensitive = false,
-        bool $multiByte = false): bool
+    public static function startsWith(string $in, string $search, bool $icase = false, bool $mbyte = false): bool
     {
         if ($in !== '') {
-            if ($caseInsensitive && $multiByte) {
+            if ($icase && $mbyte) {
                 // Double, cos for eg: Turkish characters issues (ı => I, İ => i).
                 $in = mb_convert_case(mb_convert_case($in, MB_CASE_UPPER_SIMPLE), MB_CASE_LOWER_SIMPLE);
                 $search = mb_convert_case(mb_convert_case($search, MB_CASE_UPPER_SIMPLE), MB_CASE_LOWER_SIMPLE);
             }
-            return substr_compare($in, $search, 0, strlen($search), $caseInsensitive) === 0;
+
+            return substr_compare($in, $search, 0, strlen($search), $icase) === 0;
         }
+
         return false;
     }
 
@@ -123,15 +125,15 @@ final class Strings extends StaticClass
      * Starts with any.
      * @param  string        $in
      * @param  array<string> $searches
-     * @param  bool          $caseInsensitive
+     * @param  bool          $icase
+     * @param  bool          $mbyte
      * @return bool
      * @since  4.0
      */
-    public static function startsWithAny(string $in, array $searches, bool $caseInsensitive = false,
-        bool $multiByte = false): bool
+    public static function startsWithAny(string $in, array $searches, bool $icase = false, bool $mbyte = false): bool
     {
         foreach ($searches as $search) {
-            if (self::startsWith($in, (string) $search, $caseInsensitive, $multiByte)) {
+            if (self::startsWith($in, (string) $search, $icase, $mbyte)) {
                 return true;
             }
         }
@@ -142,19 +144,22 @@ final class Strings extends StaticClass
      * Ends with.
      * @param  string $in
      * @param  string $search
+     * @param  bool   $icase
+     * @param  bool   $mbyte
      * @return bool
      */
-    public static function endsWith(string $in, string $search, bool $caseInsensitive = false,
-        bool $multiByte = false): bool
+    public static function endsWith(string $in, string $search, bool $icase = false, bool $mbyte = false): bool
     {
         if ($in !== '') {
-            if ($caseInsensitive && $multiByte) {
+            if ($icase && $mbyte) {
                 // Double, cos for eg: Turkish characters issues (ı => I, İ => i).
                 $in = mb_convert_case(mb_convert_case($in, MB_CASE_UPPER_SIMPLE), MB_CASE_LOWER_SIMPLE);
                 $search = mb_convert_case(mb_convert_case($search, MB_CASE_UPPER_SIMPLE), MB_CASE_LOWER_SIMPLE);
             }
-            return substr_compare($in, $search, -strlen($search), null, $caseInsensitive) === 0;
+
+            return substr_compare($in, $search, -strlen($search), null, $icase) === 0;
         }
+
         return false;
     }
 
@@ -162,15 +167,15 @@ final class Strings extends StaticClass
      * Ends with any.
      * @param  string        $in
      * @param  array<string> $searches
-     * @param  bool          $caseInsensitive
+     * @param  bool          $icase
+     * @param  bool          $mbyte
      * @return bool
      * @since  4.0
      */
-    public static function endsWithAny(string $in, array $searches, bool $caseInsensitive = false,
-        bool $multiByte = false): bool
+    public static function endsWithAny(string $in, array $searches, bool $icase = false, bool $mbyte = false): bool
     {
         foreach ($searches as $search) {
-            if (self::endsWith($in, (string) $search, $caseInsensitive, $multiByte)) {
+            if (self::endsWith($in, (string) $search, $icase, $mbyte)) {
                 return true;
             }
         }

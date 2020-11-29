@@ -11,39 +11,39 @@ use froq\util\Strings;
  * String contains.
  * @param  string $in
  * @param  string $search
- * @param  bool   $case_insensitive
+ * @param  bool   $icase
  * @return bool
  * @since  3.0
  */
-function string_contains(string $in, string $search, bool $case_insensitive = false): bool
+function string_contains(string $in, string $search, bool $icase = false): bool
 {
-    return Strings::contains($in, $search, $case_insensitive);
+    return Strings::contains($in, $search, $icase);
 }
 
 /**
  * String contains any.
  * @param  string $in
  * @param  array  $search
- * @param  bool   $case_insensitive
+ * @param  bool   $icase
  * @return bool
  * @since  3.0
  */
-function string_contains_any(string $in, array $searches, bool $case_insensitive = false): bool
+function string_contains_any(string $in, array $searches, bool $icase = false): bool
 {
-    return Strings::containsAny($in, $searches, $case_insensitive);
+    return Strings::containsAny($in, $searches, $icase);
 }
 
 /**
  * String contains all.
  * @param  string $in
  * @param  array  $search
- * @param  bool   $case_insensitive
+ * @param  bool   $icase
  * @return bool
  * @since  3.0
  */
-function string_contains_all(string $in, array $searches, bool $case_insensitive = false): bool
+function string_contains_all(string $in, array $searches, bool $icase = false): bool
 {
-    return Strings::containsAll($in, $searches, $case_insensitive);
+    return Strings::containsAll($in, $searches, $icase);
 }
 
 /**
@@ -53,10 +53,10 @@ function string_contains_all(string $in, array $searches, bool $case_insensitive
  * @return bool
  * @since  3.0
  */
-function string_starts_with(string $in, $search, bool $case_insensitive = false, bool $multi_byte = false): bool
+function string_starts_with(string $in, $search, bool $icase = false, bool $mbyte = false): bool
 {
-    return is_array($search) ? Strings::startsWithAny($in, $search, $case_insensitive, $multi_byte)
-                             : Strings::startsWith($in, $search, $case_insensitive, $multi_byte);
+    return is_array($search) ? Strings::startsWithAny($in, $search, $icase, $mbyte)
+                             : Strings::startsWith($in, $search, $icase, $mbyte);
 }
 
 /**
@@ -66,10 +66,10 @@ function string_starts_with(string $in, $search, bool $case_insensitive = false,
  * @return bool
  * @since  3.0
  */
-function string_ends_with(string $in, $search, bool $case_insensitive = false, bool $multi_byte = false): bool
+function string_ends_with(string $in, $search, bool $icase = false, bool $mbyte = false): bool
 {
-    return is_array($search) ? Strings::endsWithAny($in, $search, $case_insensitive, $multi_byte)
-                             : Strings::endsWith($in, $search, $case_insensitive, $multi_byte);
+    return is_array($search) ? Strings::endsWithAny($in, $search, $icase, $mbyte)
+                             : Strings::endsWith($in, $search, $icase, $mbyte);
 }
 
 /**
