@@ -503,7 +503,7 @@ final class Objects extends StaticClass
             if ($method->hasReturnType()) {
                 $return = $method->getReturnType()->getName();
             } elseif ($doc = $method->getDocComment()) {
-                preg_match('~(?=@(returns?|alias(?:Of|For)?) *([^\s]+))~', $doc, $match);
+                preg_match('~(?=@(returns?|alias *(?:Of|To|For)?) *([^\s]+))~i', $doc, $match);
                 if ($match) {
                     $return = strpos($match[1], 'alias') > -1  // Alias stuff.
                         ? '@see '. $match[2] : $match[2];
@@ -589,7 +589,7 @@ final class Objects extends StaticClass
      */
     public static function getParents($class): ?array
     {
-        $ret =@ class_parents($class);
+        $ret = class_parents($class);
         if ($ret !== false) {
             $ret = array_keys($ret);
             return $ret;
@@ -604,7 +604,7 @@ final class Objects extends StaticClass
      */
     public static function getInterfaces($class): ?array
     {
-        $ret =@ class_implements($class);
+        $ret = class_implements($class);
         if ($ret !== false) {
             $ret = array_keys($ret);
             $ret = array_reverse($ret); // Fix weird reverse order..
@@ -621,7 +621,7 @@ final class Objects extends StaticClass
      */
     public static function getTraits($class, bool $all = true): ?array
     {
-        $ret =@ class_uses($class);
+        $ret = class_uses($class);
         if ($ret !== false) {
             $ret = array_keys($ret);
             if ($all) {
