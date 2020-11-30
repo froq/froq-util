@@ -281,16 +281,16 @@ final class Arrays extends StaticClass
      * Compose.
      * @param  array    $keys
      * @param  array    $values
-     * @param  any|null $valuesDefault
+     * @param  any|null $default
      * @return array
      * @since  4.11
      */
-    public static function compose(array $keys, array $values, $valuesDefault = null): array
+    public static function compose(array $keys, array $values, $default = null): array
     {
         $ret = [];
 
         foreach ($keys as $i => $key) {
-            $ret[$key] = $values[$i] ?? $valuesDefault;
+            $ret[$key] = $values[$i] ?? $default;
         }
 
         return $ret;
