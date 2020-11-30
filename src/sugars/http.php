@@ -238,7 +238,7 @@ function segments(bool $list = false)
 {
     $segments = app()->request()->uri()->segments();
 
-    if ($segments && $list) {
+    if ($list && $segments) {
         $segments = $segments->toList();
     }
 
