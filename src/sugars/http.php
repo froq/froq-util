@@ -155,12 +155,12 @@ function is_ajax(): bool
 /**
  * Get.
  * @param  string|array|null $name
- * @param  any|null          $value_default
+ * @param  any|null          $default
  * @return any|null
  */
-function get($name = null, $value_default = null)
+function get($name = null, $default = null)
 {
-    return app()->request()->get($name, $value_default);
+    return app()->request()->get($name, $default);
 }
 
 /**
@@ -176,12 +176,12 @@ function get_has($name): bool
 /**
  * Post.
  * @param  string|array|null $name
- * @param  any|null          $value_default
+ * @param  any|null          $default
  * @return any|null
  */
-function post($name = null, $value_default = null)
+function post($name = null, $default = null)
 {
-    return app()->request()->post($name, $value_default);
+    return app()->request()->post($name, $default);
 }
 
 /**
@@ -197,12 +197,12 @@ function post_has($name): bool
 /**
  * Cookie.
  * @param  string|array|null $name
- * @param  any|null          $value_default
+ * @param  any|null          $default
  * @return any|null
  */
-function cookie($name = null, $value_default = null)
+function cookie($name = null, $default = null)
 {
-    return func_num_args() > 1 ? app()->request()->cookie($name, $value_default)
+    return func_num_args() > 1 ? app()->request()->cookie($name, $default)
                                : app()->request()->cookie($name);
 }
 
@@ -219,14 +219,14 @@ function cookie_has($name): bool
 /**
  * Segment.
  * @param  int|string $key
- * @param  any|null   $value_default
+ * @param  any|null   $default
  * @return any|null
  */
-function segment($key, $value_default = null)
+function segment($key, $default = null)
 {
     $segments = app()->request()->uri()->segments();
 
-    return $segments ? $segments->get($key, $value_default) : $value_default;
+    return $segments ? $segments->get($key, $default) : $default;
 }
 
 /**

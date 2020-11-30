@@ -91,9 +91,9 @@ function session_set($key, $value = null): ?bool
  * @param  bool         $remove
  * @return ?any
  */
-function session_get($key, $value_default = null, bool $remove = false)
+function session_get($key, $default = null, bool $remove = false)
 {
-    return ($session = session()) ? $session->get($key, $value_default, $remove) : null;
+    return ($session = session()) ? $session->get($key, $default, $remove) : null;
 }
 
 /**

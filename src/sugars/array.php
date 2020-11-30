@@ -57,29 +57,29 @@ function array_set_all(array &$array, array $items): array
  * Array get.
  * @param  array                        &$array
  * @param  int|string|array<int|string>  $key
- * @param  any|null                      $value_default
+ * @param  any|null                      $default
  * @param  bool                          $drop
  * @return any|null
  * @since  3.0
  */
-function array_get(array $array, $key, $value_default = null, bool $drop = false)
+function array_get(array $array, $key, $default = null, bool $drop = false)
 {
-    return is_array($key) ? Arrays::getAll($array, $key, $value_default, $drop)
-                          : Arrays::get($array, $key, $value_default, $drop);
+    return is_array($key) ? Arrays::getAll($array, $key, $default, $drop)
+                          : Arrays::get($array, $key, $default, $drop);
 }
 
 /**
  * Array get all.
  * @param  array             &$array
  * @param  array<int|string>  $keys
- * @param  any|null           $value_default
+ * @param  any|null           $default
  * @param  bool               $drop
  * @return array
  * @since  3.0
  */
-function array_get_all(array $array, array $keys, $value_default = null, bool $drop = false): array
+function array_get_all(array $array, array $keys, $default = null, bool $drop = false): array
 {
-    return Arrays::getAll($array, $keys, $value_default, $drop);
+    return Arrays::getAll($array, $keys, $default, $drop);
 }
 
 /**
@@ -100,27 +100,27 @@ function array_get_random(array &$array, int $limit = 1, bool $pack = false, boo
  * Array pull.
  * @param  array                        &$array
  * @param  int|string|array<int|string>  $key
- * @param  any|null                      $value_default
+ * @param  any|null                      $default
  * @return any|null
  * @since  3.0
  */
-function array_pull(array &$array, $key, $value_default = null)
+function array_pull(array &$array, $key, $default = null)
 {
-    return is_array($key) ? Arrays::pullAll($array, $key, $value_default)
-                          : Arrays::pull($array, $key, $value_default);
+    return is_array($key) ? Arrays::pullAll($array, $key, $default)
+                          : Arrays::pull($array, $key, $default);
 }
 
 /**
  * Array pull all.
  * @param  array             &$array
  * @param  array<int|string>  $keys
- * @param  any|null           $value_default
+ * @param  any|null           $default
  * @return array
  * @since  3.0
  */
-function array_pull_all(array &$array, array $keys, $value_default = null): array
+function array_pull_all(array &$array, array $keys, $default = null): array
 {
-    return Arrays::pullAll($array, $keys, $value_default);
+    return Arrays::pullAll($array, $keys, $default);
 }
 
 /**
@@ -177,13 +177,13 @@ function array_remove_random(array &$array, int $limit = 1): array
  * Array compose.
  * @param  array<int|string> $keys
  * @param  array             $values
- * @param  any|null          $values_default
+ * @param  any|null          $default
  * @return array
  * @since  4.11
  */
-function array_compose(array $keys, array $values, $values_default = null): array
+function array_compose(array $keys, array $values, $default = null): array
 {
-    return Arrays::compose($keys, $values, $values_default);
+    return Arrays::compose($keys, $values, $default);
 }
 
 /**
@@ -330,13 +330,13 @@ function array_flatten(array $array, bool $use_keys = false, bool $fix_keys = fa
  * @param  array      &$array
  * @param  int|string  $old_key
  * @param  int|string  $new_key
- * @param  any|null    $new_value_default
+ * @param  any|null    $new_default
  * @return array
  * @since  4.2
  */
-function array_swap(array &$array, $old_key, $new_key, $new_value_default = null): array
+function array_swap(array &$array, $old_key, $new_key, $new_default = null): array
 {
-    return Arrays::swap($array, $old_key, $new_key, $new_value_default);
+    return Arrays::swap($array, $old_key, $new_key, $new_default);
 }
 
 /**
@@ -382,27 +382,27 @@ function array_index(array $array, $value, bool $strict = true)
 /**
  * Array first.
  * @param  array &$array
- * @param  any    $value_default
+ * @param  any    $default
  * @param  bool   $drop
  * @return any|null
  * @since  3.0
  */
-function array_first(array $array, $value_default = null, bool $drop = false)
+function array_first(array $array, $default = null, bool $drop = false)
 {
-    return Arrays::first($array, $value_default, $drop);
+    return Arrays::first($array, $default, $drop);
 }
 
 /**
  * Array last.
  * @param  array &$array
- * @param  any    $value_default
+ * @param  any    $default
  * @param  bool   $drop
  * @return any|null
  * @since  3.0
  */
-function array_last(array $array, $value_default = null, bool $drop = false)
+function array_last(array $array, $default = null, bool $drop = false)
 {
-    return Arrays::last($array, $value_default, $drop);
+    return Arrays::last($array, $default, $drop);
 }
 
 /**
