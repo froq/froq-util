@@ -425,7 +425,7 @@ function get_uniqid(int $length = 14, int $base = 16, bool $use_hrtime = false):
 
     // Grab 14-length hex from uniqid() or map to hex hrtime() stuff.
     if (!$use_hrtime) {
-        $id = strstr(uniqid('', true), '.', true);
+        $id = explode('.', uniqid('', true))[0];
     } else {
         $id = join('', array_map('dechex', hrtime()));
     }
@@ -473,8 +473,7 @@ function get_random_uniqid(int $length = 14, int $base = 16, bool $check_length 
         $id = bin2hex(random_bytes(1));
 
         // Convert non-hex ids.
-        $ret .= ($base == 16) ? $id
-              : convert_base($id, 16, $base);
+        $ret .= ($base == 16) ? $id : convert_base($id, 16, $base);
     }
 
     // Crop if needed (usually 1 char only).
@@ -506,7 +505,7 @@ function get_request_id(): string
  */
 function get_temporary_directory(string $subdir = null): string
 {
-    $dir = sys_get_temp_dir() . __dirsep .'froq-temporary'. (
+    $dir = sys_get_temp_dir() . __dirsep . 'froq-temporary' . (
         $subdir ? __dirsep . trim($subdir, __dirsep) : ''
     );
 
@@ -622,7 +621,7 @@ function get_trace(int $options = null, int $limit = null, int $index = null): ?
         $cur += [
             'caller'   => null,
             'callee'   => $cur['function'] ?? null,
-            'callPath' => $cur['file'] .':'. $cur['line'],
+            'callPath' => $cur['file'] . ':' . $cur['line'],
         ];
 
         if (isset($cur['class'])) {
@@ -752,7 +751,7 @@ function rmdirtemp(string $dir): ?bool
     }
 
     // Clean inside but not recursive.
-    foreach (glob($dir .'/*') as $file) {
+    foreach (glob($dir . '/*') as $file) {
         unlink($file);
     }
 
@@ -772,7 +771,7 @@ function mkfiletemp(string $extension = null, int $mode = 644, bool $froq_temp =
     $file = ( // Eg: "/tmp/froq-temporary/5f858f253527c91a4006".
         ($froq_temp ? get_temporary_directory() : dirname(get_temporary_directory()))
         . __dirsep . get_uniqid(20)
-        . ($extension ? '.'. trim($extension, '.') : '')
+        . ($extension ? '.' . trim($extension, '.') : '')
     );
 
     return mkfile($file, $mode) ? $file : null;
@@ -937,12 +936,12 @@ function strtoitime(string $format, int $time = null): ?int
         [, $numbers, $formats] = $matches;
         foreach ($formats as $i => $format) {
             switch ($format) {
-                case 's': $format_list[] = $numbers[$i] .' second'; break;
-                case 'm': $format_list[] = $numbers[$i] .' minute'; break;
-                case 'h': $format_list[] = $numbers[$i] .' hour';   break;
-                case 'D': $format_list[] = $numbers[$i] .' day';    break;
-                case 'M': $format_list[] = $numbers[$i] .' month';  break;
-                case 'Y': $format_list[] = $numbers[$i] .' year';   break;
+                case 's': $format_list[] = $numbers[$i] . ' second'; break;
+                case 'm': $format_list[] = $numbers[$i] . ' minute'; break;
+                case 'h': $format_list[] = $numbers[$i] . ' hour';   break;
+                case 'D': $format_list[] = $numbers[$i] . ' day';    break;
+                case 'M': $format_list[] = $numbers[$i] . ' month';  break;
+                case 'Y': $format_list[] = $numbers[$i] . ' year';   break;
             }
         }
 
@@ -1473,7 +1472,7 @@ function file_type(string $file): ?string
     if (is_file($file)) try {
         $ret = mime_content_type($file);
         if ($ret === false) try {
-            $exec = exec('file -i '. escapeshellarg($file));
+            $exec = exec('file -i ' . escapeshellarg($file));
             if ($exec && preg_match('~: *([^/ ]+/[^; ]+)~', $exec, $match)) {
                 $ret = $match[1];
                 if ($ret == 'inode/directory') {
@@ -1514,6 +1513,18 @@ function error_message(): ?string
 }
 
 /**
+ * Get JSON' last error message.
+ *
+ * @return ?string
+ * @since  4.17
+ */
+function json_error_message(): ?string
+{
+    // Check code first instead returning "No error" message.
+    return json_last_error() ? json_last_error_msg() : null;
+}
+
+/**
  * Get PECL' last error message.
  *
  * @return ?string
@@ -1533,18 +1544,6 @@ function preg_error_message(): ?string
     ];
 
     return $messages[preg_last_error()] ?? null;
-}
-
-/**
- * Get JSON' last error message.
- *
- * @return ?string
- * @since  4.17
- */
-function json_error_message(): ?string
-{
-    // Check code first instead returning "No error" message.
-    return json_last_error() ? json_last_error_msg() : null;
 }
 
 /**
