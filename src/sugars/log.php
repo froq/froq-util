@@ -26,39 +26,43 @@ function logger(): Logger
 /**
  * Log error.
  * @param  string|Throwable $message
+ * @param  bool             $separate
  * @return bool
  */
-function log_error($message): bool
+function log_error($message, $separate): bool
 {
-    return app()->logger()->logError($message);
+    return app()->logger()->logError($message, $separate);
 }
 
 /**
  * Log warn.
  * @param  string|Throwable $message
+ * @param  bool             $separate
  * @return bool
  */
-function log_warn($message): bool
+function log_warn($message, $separate): bool
 {
-    return app()->logger()->logWarn($message);
+    return app()->logger()->logWarn($message, $separate);
 }
 
 /**
  * Log info.
  * @param  string|Throwable $message
+ * @param  bool             $separate
  * @return bool
  */
-function log_info($message): bool
+function log_info($message, $separate): bool
 {
-    return app()->logger()->logInfo($message);
+    return app()->logger()->logInfo($message, $separate);
 }
 
 /**
  * Log debug.
  * @param  string|Throwable $message
+ * @param  bool             $separate
  * @return bool
  */
-function log_debug($message): bool
+function log_debug($message, $separate): bool
 {
-    return app()->logger()->logDebug($message);
+    return app()->logger()->logDebug($message, $separate);
 }
