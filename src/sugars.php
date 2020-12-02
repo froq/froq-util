@@ -1484,7 +1484,7 @@ function file_type(string $file): ?string
 }
 
 /**
- * Get PHP' last error message.
+ * Get PHP's last error message.
  *
  * @return ?string
  * @since  4.17
@@ -1495,7 +1495,7 @@ function error_message(): ?string
 }
 
 /**
- * Get JSON' last error message if any, instead "No error".
+ * Get JSON's last error message if any, instead "No error".
  *
  * @return ?string
  * @since  4.17
@@ -1506,7 +1506,7 @@ function json_error_message(): ?string
 }
 
 /**
- * Get PECL' last error message if any, instead "No error".
+ * Get PECL's last error message if any, instead "No error".
  *
  * @return ?string
  * @since  4.17
@@ -1567,4 +1567,42 @@ function uuid_hash(int $length = 32, bool $format = false): ?string
     }
 
     return $ret;
+}
+
+/**
+ * Convert a multi-byte string's first character to upper-case.
+ *
+ * @param  string      $in
+ * @param  string|null $encoding
+ * @param  bool        $tr
+ * @return string
+ * @since  5.0
+ */
+function mb_ucfirst(string $in, string $encoding = null, bool $tr = false): string
+{
+    $first = mb_substr($in, 0, 1, $encoding);
+    if ($tr && $first === 'i') {
+        $first = 'İ';
+    }
+
+    return mb_strtoupper($first, $encoding) . mb_substr($in, 1, null, $encoding);
+}
+
+/**
+ * Convert a multi-byte string's first character to lower-case.
+ *
+ * @param  string      $in
+ * @param  string|null $encoding
+ * @param  bool        $tr
+ * @return string
+ * @since  5.0
+ */
+function mb_lcfirst(string $in, string $encoding = null, bool $tr = true): string
+{
+    $first = mb_substr($in, 0, 1, $encoding);
+    if ($tr && $first === 'I') {
+        $first = 'ı';
+    }
+
+    return mb_strtolower($first, $encoding) . mb_substr($in, 1, null, $encoding);
 }
