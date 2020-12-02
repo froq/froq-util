@@ -1509,37 +1509,25 @@ function error_message(): ?string
 }
 
 /**
- * Get JSON' last error message.
+ * Get JSON' last error message if any, instead "No error".
  *
  * @return ?string
  * @since  4.17
  */
 function json_error_message(): ?string
 {
-    // Check code first instead returning "No error" message.
     return json_last_error() ? json_last_error_msg() : null;
 }
 
 /**
- * Get PECL' last error message.
+ * Get PECL' last error message if any, instead "No error".
  *
  * @return ?string
  * @since  4.17
  */
 function preg_error_message(): ?string
 {
-    // @todo: use preg_last_error_msg() [Froq/5.0, PHP/8.0].
-    static $messages = [
-        PREG_NO_ERROR              => null,
-        PREG_INTERNAL_ERROR        => 'Internal PCRE error',
-        PREG_BACKTRACK_LIMIT_ERROR => 'Backtrack limit is exhausted',
-        PREG_RECURSION_LIMIT_ERROR => 'Recursion limit is exhausted',
-        PREG_BAD_UTF8_ERROR        => 'Bad UTF8 data',
-        PREG_BAD_UTF8_OFFSET_ERROR => 'Bad UTF8 offset',
-        PREG_JIT_STACKLIMIT_ERROR  => 'JIT stack limit exhausted',
-    ];
-
-    return $messages[preg_last_error()] ?? null;
+    return preg_last_error() ? preg_last_error_msg() : null;
 }
 
 /**
