@@ -368,24 +368,10 @@ function constant_exists($class, string $name, bool $check_scope = true): ?bool
  */
 function get_type($var, bool $scalars = false): string
 {
-    if (is_object($var)) {
-        $ret = get_class($var);
-        // Anonymous class.
-        if ($pos = strpos($ret, "\0")) {
-            $ret = substr($ret, 0, $pos);
-        }
-    } else {
-        static $scalars_array   = ['int', 'float', 'string', 'bool'];
-        static $translate_array = ['integer' => 'int', 'double' => 'float', 'boolean' => 'bool'];
-
-        $ret = strtr(strtolower(gettype($var)), $translate_array);
-
-        if ($scalars && in_array($ret, $scalars_array)) {
-            $ret = 'scalar';
-        }
+    if ($scalars && is_scalar($var)) {
+        return 'scalar';
     }
-
-    return $ret;
+    return get_debug_type($var);
 }
 
 /**
