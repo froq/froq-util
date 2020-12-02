@@ -470,13 +470,13 @@ function get_random_uniqid(int $length = 14, int $base = 16, bool $check_length 
     $ret = '';
 
     while (strlen($ret) < $length) {
-        $id = bin2hex(random_bytes(1));
+        $id = bin2hex(random_bytes(3));
 
         // Convert non-hex ids.
         $ret .= ($base == 16) ? $id : convert_base($id, 16, $base);
     }
 
-    // Crop if needed (usually 1 char only).
+    // Crop if needed (usually 1-4 chars only).
     $ret = strcut($ret, $length);
 
     return $ret;
