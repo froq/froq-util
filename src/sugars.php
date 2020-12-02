@@ -382,10 +382,6 @@ function get_type($var, bool $scalars = false): string
 
         if ($scalars && in_array($ret, $scalars_array)) {
             $ret = 'scalar';
-        } elseif ($ret == 'resource (closed)') {
-            $ret = 'resource-closed';
-        } elseif ($ret == 'unknown type') {
-            $ret = 'unknown';
         }
     }
 
