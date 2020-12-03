@@ -613,9 +613,8 @@ final class Arrays extends StaticClass
      */
     public static function average(array $array, bool $includeZeros = true): float
     {
-        $array = array_filter($array, fn($v) => (
-            $includeZeros ? is_numeric($v) : is_numeric($v) && ($v > 0)
-        ));
+        $array = array_filter($array,
+            fn($v) => $includeZeros ? is_numeric($v) : is_numeric($v) && ($v > 0));
 
         return fdiv(array_sum($array), count($array));
     }
