@@ -1414,13 +1414,18 @@ function file_read_buffer(...$args)
 }
 
 /**
- * Set a file contents.
+ * Set a file contents, but no append.
  *
- * @alias of file_put_contents()
+ * @param  string $file
+ * @param  string $contents
+ * @param  int    $flags
  * @since  4.0
  */
-function file_set_contents(string $file, string $contents, int $flags = 0): ?int
+function file_set_contents(string $file, string $contents, int $flags = 0): int|null
 {
+    // Because, setting entire file contents.
+    if ($flags) $flags &= ~FILE_APPEND;
+
     $ret = file_put_contents($file, $contents, $flags);
 
     return ($ret !== false) ? $ret : null;
