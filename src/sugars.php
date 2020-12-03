@@ -532,22 +532,22 @@ function get_real_user(): string|null
 }
 
 /**
- * Get real path of given target.
+ * Get real path of given path.
  *
- * @param  string $target
+ * @param  string $path
  * @param  bool   $strict
  * @return string|null
  * @since  4.0
  */
-function get_real_path(string $target, bool $strict = false): string|null
+function get_real_path(string $path, bool $strict = false): string|null
 {
-    $target = trim($target);
-    if (!$target) {
+    $path = trim($path);
+    if (!$path) {
         return null;
     }
 
     $ret = '';
-    $exp = explode(__dirsep, $target);
+    $exp = explode(__dirsep, $path);
 
     foreach ($exp as $i => $cur) {
         $cur = trim($cur);
@@ -560,9 +560,9 @@ function get_real_path(string $target, bool $strict = false): string|null
                     $file = getcwd(); // Fallback.
 
                     foreach (debug_backtrace(0) as $trace) {
-                        // Search until finding the right target argument (sadly seems no way else
+                        // Search until finding the right path argument (sadly seems no way else
                         // for that when call stack is chaining from a function to another function).
-                        if (empty($trace['args'][0]) || $trace['args'][0] != $target) {
+                        if (empty($trace['args'][0]) || $trace['args'][0] != $path) {
                             break;
                         }
 
@@ -587,6 +587,42 @@ function get_real_path(string $target, bool $strict = false): string|null
 
     if ($strict && !file_exists($ret)) {
         $ret = null;
+    }
+
+    return $ret;
+}
+
+/**
+ * Get path info of given path.
+ *
+ * @param  string   $path
+ * @param  int|null $component
+ * @return string|array|null
+ * @since  5.0
+ */
+function get_path_info(string $path, int $component = null): string|array|null
+{
+    $path = trim($path);
+    if (!$path) {
+        return null;
+    }
+
+    if (!$info = pathinfo($path)) {
+        return null;
+    }
+
+    $ret = ['path' => $path] + array_map(fn($v) => strlen($v) ? $v : null, $info);
+    $ret['filename'] = file_name($path, false);
+    $ret['extension'] = file_extension($path, false);
+
+    if ($component) {
+        $ret = match ($component) {
+            PATHINFO_DIRNAME => $ret['dirname'],
+            PATHINFO_BASENAME => $ret['basename'],
+            PATHINFO_FILENAME => $ret['filename'],
+            PATHINFO_EXTENSION => $ret['extension'],
+            default => null,
+        };
     }
 
     return $ret;
@@ -1438,6 +1474,11 @@ function file_path(...$args)
  */
 function file_name(string $file, bool $with_ext = true): string|null
 {
+    // A directory is not a file.
+    if (substr($file, -1) === __dirsep) {
+        return null;
+    }
+
     // Function basename() wants an explicit suffix to remove it from name,
     // but using just a boolean here is more sexy..
     $ret = basename($file);
@@ -1459,9 +1500,15 @@ function file_name(string $file, bool $with_ext = true): string|null
  */
 function file_extension(string $file, bool $with_dot = true): string|null
 {
+    $info = pathinfo($file);
+
     // Function pathinfo() returns ".foo" for example "/some/path/.foo" and
     // if $with_dot false then this function return ".", no baybe!
-    $ret = strrchr($file, '.');
+    if (empty($info['filename']) || empty($info['extension'])) {
+        return null;
+    }
+
+    $ret = strrchr($info['basename'], '.');
 
     if ($ret && !$with_dot) {
         $ret = ltrim($ret, '.');
@@ -1491,8 +1538,8 @@ function file_type(string $file): string|null
                     $ret = 'directory';
                 }
             }
-        } catch (Error $e) {}
-    } catch (Error $e) {}
+        } catch (Error) {}
+    } catch (Error) {}
 
     // Try with extension.
     if (!$ret) {
