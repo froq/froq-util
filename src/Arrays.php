@@ -617,7 +617,7 @@ final class Arrays extends StaticClass
             $includeZeros ? is_numeric($v) : is_numeric($v) && ($v > 0)
         ));
 
-        return array_sum($array) / count($array);
+        return fdiv(array_sum($array), count($array));
     }
 
     /**
