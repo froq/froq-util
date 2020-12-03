@@ -46,17 +46,6 @@ function number_equals($a, $b, int $precision = null): ?bool
 }
 
 /**
- * Is number.
- * @param  any $in
- * @return bool
- * @since  3.0
- */
-function is_number($in): bool
-{
-    return Numbers::isNumber($in);
-}
-
-/**
  * Is digit.
  * @param  any $in
  * @return bool

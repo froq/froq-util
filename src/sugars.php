@@ -1636,3 +1636,15 @@ function mb_lcfirst(string $in, string $encoding = null, bool $tr = true): strin
 
     return mb_strtolower($first, $encoding) . mb_substr($in, 1, null, $encoding);
 }
+
+/**
+ * Check whether given var is a number or not.
+ *
+ * @param  any $var
+ * @return bool
+ * @since  5.0
+ */
+function is_number($var): bool
+{
+    return is_int($var) || is_float($var);
+}
