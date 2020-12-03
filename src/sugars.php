@@ -595,12 +595,12 @@ function get_real_path(string $path, bool $strict = false): string|null
 /**
  * Get path info of given path.
  *
- * @param  string   $path
- * @param  int|null $component
+ * @param  string          $path
+ * @param  string|int|null $component
  * @return string|array|null
  * @since  5.0
  */
-function get_path_info(string $path, int $component = null): string|array|null
+function get_path_info(string $path, string|int $component = null): string|array|null
 {
     $path = trim($path);
     if (!$path) {
@@ -616,11 +616,12 @@ function get_path_info(string $path, int $component = null): string|array|null
     $ret['extension'] = file_extension($path, false);
 
     if ($component) {
-        $ret = match ($component) {
-            PATHINFO_DIRNAME => $ret['dirname'],
-            PATHINFO_BASENAME => $ret['basename'],
-            PATHINFO_FILENAME => $ret['filename'],
-            PATHINFO_EXTENSION => $ret['extension'],
+        if (is_string($component)) {
+            return $ret[$component] ?? null;
+        }
+        return match ($component) {
+            PATHINFO_DIRNAME => $ret['dirname'], PATHINFO_BASENAME => $ret['basename'],
+            PATHINFO_FILENAME => $ret['filename'], PATHINFO_EXTENSION => $ret['extension'],
             default => null,
         };
     }
