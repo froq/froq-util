@@ -94,7 +94,7 @@ final class Numbers extends StaticClass
      */
     public static function isDigit($in): bool
     {
-        return is_numeric($in) && (is_int($in) || ctype_digit($in)) && ($in >= 0);
+        return is_numeric($in) && (is_int($in) || ctype_digit((string) $in)) && ($in >= 0);
     }
 
     /**
@@ -104,7 +104,7 @@ final class Numbers extends StaticClass
      */
     public static function isId($in): bool
     {
-        return is_numeric($in) && (is_int($in) || ctype_digit($in)) && ($in >= 1);
+        return is_numeric($in) && (is_int($in) || ctype_digit((string) $in)) && ($in >= 1);
     }
 
     /**
