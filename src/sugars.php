@@ -1638,13 +1638,13 @@ function mb_lcfirst(string $in, string $encoding = null, bool $tr = true): strin
 }
 
 /**
- * Check whether given var is a number or not.
+ * Check whether given input is a number or not.
  *
- * @param  any $var
+ * @param  any $in
  * @return bool
  * @since  5.0
  */
-function is_number($var): bool
+function is_number($in): bool
 {
-    return is_int($var) || is_float($var);
+    return is_int($in) || is_float($in);
 }
