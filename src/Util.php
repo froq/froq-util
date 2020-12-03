@@ -58,26 +58,6 @@ final /* fuckic static */ class Util extends StaticClass
     }
 
     /**
-     * Get type.
-     * @param  any  $var
-     * @param  bool $classes
-     * @param  bool $scalars
-     * @return string
-     * @since  4.0
-     */
-    public static function getType($var, bool $classes = false, bool $scalars = false): string
-    {
-        if ($classes && is_object($var)) {
-            $class = get_class($var);
-
-            // Return 'object' for silly stdClass stuff.
-            return ($class != 'stdClass') ? $class : 'object';
-        }
-
-        return get_type($var, $scalars);
-    }
-
-    /**
      * Get client ip.
      * @return ?string
      */
