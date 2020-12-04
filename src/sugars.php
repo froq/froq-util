@@ -831,12 +831,21 @@ function rmfiletemp(string $file): bool|null
 /**
  * Open a temporary file.
  *
+ * @param  string|null $mode
+ * @param  int|null    $memo
  * @return resource|null
  * @since  4.0
  */
-function fopentemp()
+function fopentemp(string $mode = null, int $memo = null)
 {
-    return tmpfile() ?: null;
+    if ($mode || $memo) {
+        $mode ??= 'w+b'; // Set as default.
+        $ret = $memo ? fopen('php://temp/maxmemory:'. $memo, $mode) : fopen('php://temp', $mode);
+    } else {
+        $ret = tmpfile();
+    }
+
+    return $ret ?: null;
 }
 
 /**
