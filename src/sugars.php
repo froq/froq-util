@@ -1498,7 +1498,7 @@ function file_name(string $file, bool $with_ext = true): string|null
     // but using just a boolean here is more sexy..
     $ret = basename($file);
 
-    if ($ret && !$with_ext && ($ext = file_extension($file))) {
+    if ($ret && !$with_ext && ($ext = file_extension($file, true))) {
         $ret = substr($ret, 0, -strlen($ext));
     }
 
