@@ -274,7 +274,7 @@ function convert_case(string $in, int $case, string $spliter = null, string $joi
 }
 
 /**
- * Check whether class 1 extends class 2 or not.
+ * Check whether class 1 extends class 2.
  *
  * @param  string $class1
  * @param  string $class2
@@ -1729,7 +1729,7 @@ function mb_lcfirst(string $in, string $encoding = null, bool $tr = true): strin
 }
 
 /**
- * Check whether given input is a number or not.
+ * Check whether given input is a number.
  *
  * @param  any $in
  * @return bool
@@ -1738,4 +1738,16 @@ function mb_lcfirst(string $in, string $encoding = null, bool $tr = true): strin
 function is_number($in): bool
 {
     return is_int($in) || is_float($in);
+}
+
+/**
+ * Check whether given input is a stream.
+ *
+ * @param  any $in
+ * @return bool
+ * @since  5.0
+ */
+function is_stream($in): bool
+{
+    return is_resource($resource) && get_resource_type($resource) == 'stream';
 }
