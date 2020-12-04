@@ -284,11 +284,22 @@ function convert_case(string $in, int $case, string $spliter = null, string $joi
  */
 function class_extends(string $class1, string $class2, bool $parent_only = false): bool
 {
-    if (!$parent_only) {
-        return is_subclass_of($class1, $class2);
-    }
+    return $parent_only ? (
+        ($parents = class_parents($class1)) && (current($parents) === $class2)
+    ) : is_subclass_of($class1, $class2);
+}
 
-    return ($parents = class_parents($class1)) && (current($parents) === $class2);
+/**
+ * Get class name or short name.
+ *
+ * @param  string|object $class
+ * @param  bool          $short
+ * @return string
+ * @since  5.0
+ */
+function get_class_name(string|object $class, bool $short = true): string
+{
+    return $short ? Objects::getShortName($class) : Objects::getName($class);
 }
 
 /**
