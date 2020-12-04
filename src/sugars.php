@@ -851,7 +851,8 @@ function fopentemp(string $mode = null, int $memo = null)
 {
     if ($mode || $memo) {
         $mode ??= 'w+b'; // Set as default.
-        $ret = $memo ? fopen('php://temp/maxmemory:'. $memo, $mode) : fopen('php://temp', $mode);
+        $ret = $memo ? fopen('php://temp/maxmemory:'. $memo, $mode)
+            : fopen('php://temp', $mode);
     } else {
         $ret = tmpfile();
     }
@@ -860,7 +861,18 @@ function fopentemp(string $mode = null, int $memo = null)
 }
 
 /**
- * Rewind given handle.
+ * Read a file handle entirely.
+ *
+ * @alias of file_read_stream().
+ * @since 5.0
+ */
+function freadall($fp): string|null
+{
+    return file_read_stream($fp);
+}
+
+/**
+ * Rewind a file handle.
  *
  * @param  resource &$fp
  * @return bool
@@ -872,7 +884,7 @@ function frewind(&$fp): bool
 }
 
 /**
- * Reset given handle contents & position.
+ * Reset a file handle contents & position.
  *
  * @param  resource &$fp
  * @param  string    $contents
@@ -887,7 +899,7 @@ function freset(&$fp, string $contents): bool
 }
 
 /**
- * Get handle metadata.
+ * Get a file handle metadata.
  *
  * @param  resource $fp
  * @return array
@@ -899,7 +911,7 @@ function fmeta($fp): array
 }
 
 /**
- * Get handle statistics & metadata.
+ * Get a file handle stats & metadata.
  *
  * @param  resource $fp
  * @return array
@@ -911,7 +923,7 @@ function finfo($fp): array
 }
 
 /**
- * Set handle contents & position.
+ * Set a handle contents & position.
  *
  * @param  resource &$handle
  * @param  string    $contents
@@ -1449,7 +1461,7 @@ function file_read_output(string $file, array $file_data = null): string|null
 }
 
 /**
- * Read a file stream contents.
+ * Read a file stream contents entirely.
  *
  * @param  resource $handle
  * @return string|null
