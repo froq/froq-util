@@ -1749,5 +1749,5 @@ function is_number($in): bool
  */
 function is_stream($in): bool
 {
-    return is_resource($resource) && get_resource_type($resource) == 'stream';
+    return is_resource($in) && get_resource_type($in) == 'stream';
 }
