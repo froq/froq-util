@@ -1441,7 +1441,7 @@ function file_read_buffer(...$args)
  * @throws TypeError
  * @since  5.0
  */
-function file_read_stream(&$handle, string $contents): string|null
+function file_read_stream(&$handle): string|null
 {
     if (!is_resource($handle) || get_resource_type($handle) != 'stream') {
         throw new TypeError(sprintf(
