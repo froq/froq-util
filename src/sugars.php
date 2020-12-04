@@ -1513,7 +1513,7 @@ function file_name(string $file, bool $with_ext = true): string|null
  * @return string|null
  * @since  4.0
  */
-function file_extension(string $file, bool $with_dot = true): string|null
+function file_extension(string $file, bool $with_dot = false): string|null
 {
     $info = pathinfo($file);
 
