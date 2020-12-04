@@ -923,7 +923,7 @@ function stream_set_contents(&$handle, string $contents): bool
 {
     if (!is_resource($handle) || get_resource_type($handle) != 'stream') {
         throw new TypeError(sprintf(
-            '%s() expects parameter 1 to be resource, %s given', __function__, get_type($handle)
+            '%s() expects parameter 1 to be stream resource, %s given', __function__, get_type($handle)
         ));
     }
 
@@ -1431,6 +1431,25 @@ function file_read(...$args)
 function file_read_buffer(...$args)
 {
     return file_get_buffer_contents(...$args) ?: null;
+}
+
+/**
+ * Read a file stream contents.
+ *
+ * @param  resource &$handle
+ * @return string|null
+ * @throws TypeError
+ * @since  5.0
+ */
+function file_read_stream(&$handle, string $contents): string|null
+{
+    if (!is_resource($handle) || get_resource_type($handle) != 'stream') {
+        throw new TypeError(sprintf(
+            '%s() expects parameter 1 to be stream resource, %s given', __function__, get_type($handle)
+        ));
+    }
+
+    return stream_get_contents($handle, -1, 0) ?: null;
 }
 
 /**
