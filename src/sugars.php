@@ -1423,25 +1423,40 @@ function file_read(...$args)
 }
 
 /**
- * Read a file buffer contents.
+ * Read a file output (buffer) contents.
  *
- * @alias of file_get_buffer_contents()
- * @since 4.0
+ * @param  string     $file
+ * @param  array|null $file_data
+ * @return string|null
+ * @since  4.0
  */
-function file_read_buffer(...$args)
+function file_read_output(string $file, array $file_data = null): string|null
 {
-    return file_get_buffer_contents(...$args) ?: null;
+    if (!is_file($file)) {
+        trigger_error(sprintf('%s(): No file exists such %s', __function__, $file));
+        return null;
+    } elseif (!strsfx($file, '.php')) {
+        trigger_error(sprintf('%s(): Cannot include non-PHP file such %s', __function__, $file));
+        return null;
+    }
+
+    // Data, used in file.
+    $file_data && extract($file_data);
+
+    ob_start();
+    include $file;
+    return ob_get_clean();
 }
 
 /**
  * Read a file stream contents.
  *
- * @param  resource &$handle
+ * @param  resource $handle
  * @return string|null
  * @throws TypeError
  * @since  5.0
  */
-function file_read_stream(&$handle): string|null
+function file_read_stream($handle): string|null
 {
     if (!is_resource($handle) || get_resource_type($handle) != 'stream') {
         throw new TypeError(sprintf(
@@ -1468,34 +1483,6 @@ function file_set_contents(string $file, string $contents, int $flags = 0): int|
     $ret = file_put_contents($file, $contents, $flags);
 
     return ($ret !== false) ? $ret : null;
-}
-
-/**
- * Load a file and get its buffer (rendered) contents.
- *
- * @param  string     $file
- * @param  array|null $file_data
- * @return string|null
- * @since  4.0
- */
-function file_get_buffer_contents(string $file, array $file_data = null): string|null
-{
-    if (!is_file($file)) {
-        trigger_error(sprintf('%s(): No file exists such %s', __function__, $file));
-        return null;
-    } elseif (!strsfx($file, '.php')) {
-        trigger_error(sprintf('%s(): Cannot include non-PHP file such %s', __function__, $file));
-        return null;
-    }
-
-    ob_start();
-
-    // Data, used in file.
-    $file_data && extract($file_data);
-
-    include $file;
-
-    return ob_get_clean();
 }
 
 /**
