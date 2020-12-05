@@ -1496,7 +1496,7 @@ function file_path(...$args)
  * @return string|null
  * @since  4.0
  */
-function file_name(string $file, bool $with_ext = true): string|null
+function file_name(string $file, bool $with_ext = false): string|null
 {
     // A directory is not a file.
     if (substr($file, -1) === __dirsep) {
