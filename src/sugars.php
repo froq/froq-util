@@ -1585,36 +1585,41 @@ function file_type(string $file): string|null
 }
 
 /**
- * Get PHP last error message.
+ * Get PHP last error message with code.
  *
+ * @param  int|null $code
  * @return string|null
  * @since  4.17
  */
-function error_message(): string|null
+function error_message(int &$code = null): string|null
 {
-    return error_get_last()['message'] ?? null;
+    $error = error_get_last();
+
+    return ($code = $error['type'] ?? null) ? $error['message'] : null;
 }
 
 /**
- * Get JSON last error message if any, instead "No error".
+ * Get JSON last error message with code if any, instead "No error".
  *
+ * @param  int|null $code
  * @return string|null
  * @since  4.17
  */
-function json_error_message(): string|null
+function json_error_message(int &$code = null): string|null
 {
-    return json_last_error() ? json_last_error_msg() : null;
+    return ($code = json_last_error()) ? json_last_error_msg() : null;
 }
 
 /**
- * Get PECL last error message if any, instead "No error".
+ * Get PECL last error message with code if any, instead "No error".
  *
+ * @param  int|null $code
  * @return string|null
  * @since  4.17
  */
-function preg_error_message(): string|null
+function preg_error_message(int &$code = null): string|null
 {
-    return preg_last_error() ? preg_last_error_msg() : null;
+    return ($code = preg_last_error()) ? preg_last_error_msg() : null;
 }
 
 /**
