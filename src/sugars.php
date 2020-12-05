@@ -1251,6 +1251,24 @@ function array_value_exists($value, array $array, bool $strict = true): bool
 }
 
 /**
+ * Select item(s) from an array by given key(s).
+ *
+ * @param  int|string|array<int|string> $array
+ * @param  array                        $key
+ * @param  any|null                     $default
+ * @return any
+ * @since  5.0
+ */
+function array_select(array $array, int|string|array $key, $default = null)
+{
+    // A little bit faster comparing to array_pick().
+    foreach ((array) $key as $key) {
+        $ret[$key] = $array[$key] ?? $default;
+    }
+    return $ret;
+}
+
+/**
  * Put given items into an array.
  *
  * @param  array  &$array
@@ -1271,7 +1289,7 @@ function array_put(array &$array, array $items): array
  * @param  any|null                      $default
  * @param  bool                          $drop
  * @return any|null
- * @since  4.9, 4.13 Default added.
+ * @since  4.9, 4.13 Added default.
  */
 function array_pick(array &$array, int|string|array $key, $default = null, bool $drop = false)
 {
