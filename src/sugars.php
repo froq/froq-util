@@ -1663,11 +1663,11 @@ function uuid(bool $dashed = true): string
  * Generate a random UUID hash.
  *
  * @param  int  $length
- * @param  bool $dashed
+ * @param  bool $format
  * @return string|null
  * @since  5.0
  */
-function uuid_hash(int $length = 32, bool $dashed = false): string|null
+function uuid_hash(int $length = 32, bool $format = false): string|null
 {
     $ret = match ($length) {
         32 => hash('md5', uuid()), 40 => hash('sha1', uuid()),
@@ -1680,9 +1680,9 @@ function uuid_hash(int $length = 32, bool $dashed = false): string|null
         return null;
     }
 
-    if ($dashed) {
+    if ($format) {
         if ($length != 32) {
-            trigger_error(sprintf('%s(): Dashed option for only 32-length hashes', __function__));
+            trigger_error(sprintf('%s(): Format option for only 32-length hashes', __function__));
             return null;
         }
 
