@@ -1667,23 +1667,25 @@ function uuid(bool $dashed = true): string
  * @return string|null
  * @since  5.0
  */
-function uuid_hash(int $length = 32, bool $format = false): string|null
+function uuid_hash(int $length = 32, bool $dashed = false): string|null
 {
-    switch ($length) {
-        case 32: $ret = hash('md5', uuid()); break;
-        case 40: $ret = hash('sha1', uuid()); break;
-        case 64: $ret = hash('sha256', uuid()); break;
-        case 16: $ret = hash('fnv1a64', uuid()); break;
-        default:
-            trigger_error(sprintf('%s(): Invalid length, valids are: 32,40,64,16', __function__));
-            return null;
+    $ret = match ($length) {
+        32 => hash('md5', uuid()), 40 => hash('sha1', uuid()),
+        64 => hash('sha256', uuid()), 16 => hash('fnv1a64', uuid()),
+        default => null
+    };
+
+    if (!$ret) {
+        trigger_error(sprintf('%s(): Invalid length, valids are: 32,40,64,16', __function__));
+        return null;
     }
 
-    if ($format) {
+    if ($dashed) {
         if ($length != 32) {
-            trigger_error(sprintf('%s(): Format option for only 32-length hashes', __function__));
+            trigger_error(sprintf('%s(): Dashed option for only 32-length hashes', __function__));
             return null;
         }
+
         $ret = vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split($ret, 4));
     }
 
