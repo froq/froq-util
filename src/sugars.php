@@ -1587,10 +1587,10 @@ function file_type(string $file): string|null
 /**
  * Get PHP last error message.
  *
- * @return ?string
+ * @return string|null
  * @since  4.17
  */
-function error_message(): ?string
+function error_message(): string|null
 {
     return error_get_last()['message'] ?? null;
 }
@@ -1598,10 +1598,10 @@ function error_message(): ?string
 /**
  * Get JSON last error message if any, instead "No error".
  *
- * @return ?string
+ * @return string|null
  * @since  4.17
  */
-function json_error_message(): ?string
+function json_error_message(): string|null
 {
     return json_last_error() ? json_last_error_msg() : null;
 }
@@ -1609,10 +1609,10 @@ function json_error_message(): ?string
 /**
  * Get PECL last error message if any, instead "No error".
  *
- * @return ?string
+ * @return string|null
  * @since  4.17
  */
-function preg_error_message(): ?string
+function preg_error_message(): string|null
 {
     return preg_last_error() ? preg_last_error_msg() : null;
 }
