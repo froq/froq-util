@@ -1744,10 +1744,8 @@ function is_stream($in): bool
  */
 function is_type_of($in, string $type): bool
 {
-    switch ($type) {
-        case 'number': return is_number($in);
-        case 'stream': return is_stream($in);
-    }
-
-    return strtolower(get_type($in)) == strtolower($type);
+    return match ($type) {
+        'number' => is_number($in), 'stream' => is_stream($in),
+        default  => strtolower($type) == strtolower(get_type($in))
+    };
 }
