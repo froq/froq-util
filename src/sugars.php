@@ -1737,21 +1737,17 @@ function is_stream($in): bool
 /**
  * Check whether given input is type of other.
  *
- * @param  any           $in
- * @param  string|object $of
+ * @param  any    $in
+ * @param  string $type
  * @return bool
  * @since  5.0
  */
-function is_type_of($in, string|object $of): bool
+function is_type_of($in, string $type): bool
 {
-    if (is_object($of)) {
-        return ($in && $in instanceof $of);
-    }
-
-    switch ($of) {
+    switch ($type) {
         case 'number': return is_number($in);
         case 'stream': return is_stream($in);
     }
 
-    return strtolower(get_type($in)) == strtolower($of);
+    return strtolower(get_type($in)) == strtolower($type);
 }
