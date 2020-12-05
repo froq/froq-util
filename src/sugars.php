@@ -1263,7 +1263,7 @@ function array_select(array $array, int|string|array $key, $default = null)
 {
     // A little bit faster comparing to array_pick().
     foreach ((array) $key as $key) {
-        $ret[$key] = $array[$key] ?? $default;
+        $ret[] = $array[$key] ?? $default;
     }
     return $ret;
 }
