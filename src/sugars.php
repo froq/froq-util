@@ -1054,7 +1054,7 @@ function preg_remove(string|array $pattern, string|array $subject, int $limit = 
 {
     if (is_string($pattern)) {
         $replacement = '';
-    } elseif (is_array($pattern)) {
+    } else {
         $replacement = array_fill(0, count($pattern), '');
     }
 
