@@ -1251,44 +1251,6 @@ function array_value_exists($value, array $array, bool $strict = true): bool
 }
 
 /**
- * Select columns only by given column keys.
- *
- * @param  array           $array
- * @param  array           $column_keys
- * @param  int|string|null $index_key
- * @param  bool            $use_column_keys
- * @return array
- * @since  4.0
- */
-function array_columns(array $array, array $column_keys, int|string $index_key = null, bool $use_column_keys = false): array
-{
-    $ret = [];
-
-    foreach ($array as $i => $value) {
-        if (!is_array($value) && !is_object($value)) {
-            trigger_error(sprintf('%s(): Non-array/object value at index %s', __function__, $i));
-            continue;
-        }
-
-        foreach ($column_keys as $ik => $key) {
-            $columns = array_column($value, $key, $index_key);
-            if ($columns) {
-                foreach ($columns as $ic => $column) {
-                    $i = !$use_column_keys ? $ik : $key;
-                    if ($index_key === null || $index_key === '') {
-                        $ret[$i][] = $column;
-                    } else {
-                        $ret[$i][$ic] = $column;
-                    }
-                }
-            }
-        }
-    }
-
-    return $ret;
-}
-
-/**
  * Put given items into an array.
  *
  * @param  array  &$array
