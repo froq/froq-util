@@ -1463,6 +1463,7 @@ function file_read_stream($handle): string|null
  * @param  string $file
  * @param  string $contents
  * @param  int    $flags
+ * @return int|null
  * @since  4.0
  */
 function file_set_contents(string $file, string $contents, int $flags = 0): int|null
