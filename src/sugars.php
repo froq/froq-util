@@ -499,9 +499,9 @@ function get_request_id(): string
  * @return string
  * @since  4.0
  */
-function get_temporary_directory(string $subdir = null): string
+function get_temp_directory(string $subdir = null): string
 {
-    $dir = sys_get_temp_dir() . __dirsep . 'froq-temporary' . (
+    $dir = sys_get_temp_dir() . __dirsep . 'froq-temp' . (
         $subdir ? __dirsep . trim($subdir, __dirsep) : ''
     );
 
@@ -682,7 +682,7 @@ function get_trace(int $options = null, int $limit = null, int $index = null): a
  */
 function tmp(): string
 {
-    return dirname(get_temporary_directory());
+    return dirname(get_temp_directory());
 }
 
 /**
@@ -813,7 +813,7 @@ function rmdirtemp(string $dir): bool|null
 function mkfiletemp(string $extension = null, int $mode = 644, bool $froq_temp = true): string|null
 {
     $file = ( // Eg: "/tmp/froq-temporary/5f858f253527c91a4006".
-        ($froq_temp ? get_temporary_directory() : dirname(get_temporary_directory()))
+        ($froq_temp ? get_temp_directory() : dirname(get_temp_directory()))
         . __dirsep . get_uniqid(20)
         . ($extension ? '.' . trim($extension, '.') : '')
     );
