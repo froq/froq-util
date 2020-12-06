@@ -872,6 +872,18 @@ function freadall($fp, int $from = 0): string|null
 }
 
 /**
+ * Get a file handle size.
+ *
+ * @param  resource $fp
+ * @return int|null
+ * @since  5.0
+ */
+function fsize($fp): int|null
+{
+    return fstat($fp)['size'] ?? null;
+}
+
+/**
  * Rewind a file handle.
  *
  * @alias of rewind()
