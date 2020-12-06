@@ -1729,6 +1729,18 @@ function is_number($in): bool
 }
 
 /**
+ * Check whether given input is a GDImage.
+ *
+ * @param  any $in
+ * @return bool
+ * @since  5.0
+ */
+function is_image($in): bool
+{
+    return $in && is_a($in, 'GDImage');
+}
+
+/**
  * Check whether given input is a stream.
  *
  * @param  any $in
@@ -1737,7 +1749,7 @@ function is_number($in): bool
  */
 function is_stream($in): bool
 {
-    return is_resource($in) && get_resource_type($in) == 'stream';
+    return $in && is_resource($in) && get_resource_type($in) == 'stream';
 }
 
 /**
@@ -1751,7 +1763,9 @@ function is_stream($in): bool
 function is_type_of($in, string $type): bool
 {
     return match ($type) {
-        'number' => is_number($in), 'stream' => is_stream($in),
+        'number' => is_number($in),
+        'image'  => is_image($in),
+        'stream' => is_stream($in),
         default  => strtolower($type) == strtolower(get_type($in))
     };
 }
