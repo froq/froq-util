@@ -1412,18 +1412,22 @@ function file_remove(...$args)
  */
 function file_write(...$args)
 {
-    return file_put_contents(...$args) ?: null;
+    $ret = file_put_contents(...$args);
+
+    return ($ret !== false) ? $ret : null;
 }
 
 /**
- * Read a file contents
+ * Read a file contents.
  *
  * @alias of file_get_contents()
  * @since 4.0
  */
 function file_read(...$args)
 {
-    return file_get_contents(...$args) ?: null;
+    $ret = file_get_contents(...$args);
+
+    return ($ret !== false) ? $ret : null;
 }
 
 /**
@@ -1467,7 +1471,9 @@ function file_read_stream($handle, int $from = 0): string|null
         '%s() expects parameter 1 to be stream resource, %s given', __function__, get_type($handle)
     ));
 
-    return stream_get_contents($handle, -1, $from) ?: null;
+    $ret = stream_get_contents($handle, -1, $from);
+
+    return ($ret !== false) ? $ret : null;
 }
 
 /**
