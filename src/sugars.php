@@ -861,7 +861,7 @@ function fopentemp(string $mode = null, int $memo = null)
 }
 
 /**
- * Read a file handle entirely.
+ * Read all contents of given file handle.
  *
  * @alias of file_read_stream().
  * @since 5.0
@@ -933,11 +933,9 @@ function finfo($fp): array
  */
 function stream_set_contents(&$handle, string $contents): bool
 {
-    if (!is_resource($handle) || get_resource_type($handle) != 'stream') {
-        throw new TypeError(sprintf(
-            '%s() expects parameter 1 to be stream resource, %s given', __function__, get_type($handle)
-        ));
-    }
+    is_stream($handle) || throw new TypeError(sprintf(
+        '%s() expects parameter 1 to be stream resource, %s given', __function__, get_type($handle)
+    ));
 
     // Since handle stat size also pointer position is not changing even after ftruncate() for
     // files (not "php://temp" etc), we rewind the handle.
@@ -1450,11 +1448,9 @@ function file_read_output(string $file, array $file_data = null): string|null
  */
 function file_read_stream($handle): string|null
 {
-    if (!is_resource($handle) || get_resource_type($handle) != 'stream') {
-        throw new TypeError(sprintf(
-            '%s() expects parameter 1 to be stream resource, %s given', __function__, get_type($handle)
-        ));
-    }
+    is_stream($handle) || throw new TypeError(sprintf(
+        '%s() expects parameter 1 to be stream resource, %s given', __function__, get_type($handle)
+    ));
 
     return stream_get_contents($handle, -1, 0) ?: null;
 }
