@@ -893,7 +893,7 @@ function frewind(&$fp): bool
  */
 function freset(&$fp, string $contents): bool
 {
-    rewind($fp);
+    rewind($fp); // Without this, stats won't be resetted.
 
     return ftruncate($fp, 0) && fwrite($fp, $contents) && !fseek($fp, 0);
 }
