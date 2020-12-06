@@ -863,20 +863,19 @@ function fopentemp(string $mode = null, int $memo = null)
 /**
  * Read all contents a file handle.
  *
- * @alias of file_read_stream().
+ * @alias of file_read_stream()
  * @since 5.0
  */
-function freadall($fp): string|null
+function freadall($fp, int $from = 0): string|null
 {
-    return file_read_stream($fp);
+    return file_read_stream($fp, $from);
 }
 
 /**
  * Rewind a file handle.
  *
- * @param  resource &$fp
- * @return bool
- * @since  4.0
+ * @alias of rewind()
+ * @since 4.0
  */
 function frewind(&$fp): bool
 {
@@ -884,7 +883,7 @@ function frewind(&$fp): bool
 }
 
 /**
- * Reset a file handle contents & position.
+ * Reset a file handle contents & seek position.
  *
  * @param  resource &$fp
  * @param  string    $contents
@@ -925,7 +924,7 @@ function finfo($fp): array|null
 }
 
 /**
- * Set a handle contents & position.
+ * Set a handle contents & seek position.
  *
  * @param  resource &$handle
  * @param  string    $contents
@@ -948,7 +947,8 @@ function stream_set_contents(&$handle, string $contents): bool
 }
 
 /**
- * Init a DateTime object without/without given when option & with/without timezone if given or default timezone.
+ * Init a DateTime object without/without given when option & with/without timezone if given
+ * or default timezone.
  *
  * @param  int|float|string $when
  * @param  string|null      $where
@@ -1441,20 +1441,21 @@ function file_read_output(string $file, array $file_data = null): string|null
 }
 
 /**
- * Read a file stream contents entirely.
+ * Read a file stream contents entirely without modifing seek position.
  *
  * @param  resource $handle
+ * @param  int      $from
  * @return string|null
  * @throws TypeError
  * @since  5.0
  */
-function file_read_stream($handle): string|null
+function file_read_stream($handle, int $from = 0): string|null
 {
     is_stream($handle) || throw new TypeError(sprintf(
         '%s() expects parameter 1 to be stream resource, %s given', __function__, get_type($handle)
     ));
 
-    return stream_get_contents($handle, -1, 0) ?: null;
+    return stream_get_contents($handle, -1, $from) ?: null;
 }
 
 /**
