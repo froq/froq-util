@@ -861,7 +861,7 @@ function fopentemp(string $mode = null, int $memo = null)
 }
 
 /**
- * Read all contents of given file handle.
+ * Read all contents a file handle.
  *
  * @alias of file_read_stream().
  * @since 5.0
@@ -902,24 +902,26 @@ function freset(&$fp, string $contents): bool
  * Get a file handle metadata.
  *
  * @param  resource $fp
- * @return array
+ * @return array|null
  * @since  4.0
  */
-function fmeta($fp): array
+function fmeta($fp): array|null
 {
-    return stream_get_meta_data($fp);
+    return stream_get_meta_data($fp) ?: null;
 }
 
 /**
  * Get a file handle stats & metadata.
  *
  * @param  resource $fp
- * @return array
+ * @return array|null
  * @since  4.0
  */
-function finfo($fp): array
+function finfo($fp): array|null
 {
-    return fstat($fp) + ['meta' => stream_get_meta_data($fp)];
+    [$stat, $meta] = [fstat($fp), fmeta($fp)];
+
+    return ($stat && $meta) ? $stat + ['meta' => $meta] : null;
 }
 
 /**
