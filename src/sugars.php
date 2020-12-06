@@ -693,7 +693,7 @@ function tmp(): string
  * @return string
  * @since  4.0
  */
-function tmpdir(string $prefix = null, int $mode = 755): string
+function tmpdir(string $prefix = null, int $mode = 0755): string
 {
     $dir = ( // Eg: "/tmp/froq-5f858f253527c91a4006".
         tmp() . __dirsep . ($prefix ?? 'froq-') . get_uniqid(20)
@@ -723,14 +723,10 @@ function mkfile(string $file, int $mode = 0644): bool|null
     $file = get_real_path($file);
 
     if (is_dir($file)) {
-        trigger_error(sprintf(
-            '%s(): Cannot create %s, it is a directory', __function__, $file
-        ));
+        trigger_error(sprintf('%s(): Cannot create %s, it is a directory', __function__, $file));
         return null;
     } elseif (is_file($file)) {
-        trigger_error(sprintf(
-            '%s(): Cannot create %s, it is already exists', __function__, $file
-        ));
+        trigger_error(sprintf('%s(): Cannot create %s, it is already exists', __function__, $file));
         return null;
     }
 
@@ -758,9 +754,7 @@ function rmfile(string $file): bool|null
     $file = get_real_path($file);
 
     if (is_dir($file)) {
-        trigger_error(sprintf(
-            '%s(): Cannot remove %s, it is a directory', __function__, $file
-        ));
+        trigger_error(sprintf('%s(): Cannot remove %s, it is a directory', __function__, $file));
         return null;
     }
 
@@ -810,9 +804,9 @@ function rmdirtemp(string $dir): bool|null
  * @return string|null
  * @since  4.0
  */
-function mkfiletemp(string $extension = null, int $mode = 644, bool $froq_temp = true): string|null
+function mkfiletemp(string $extension = null, int $mode = 0644, bool $froq_temp = true): string|null
 {
-    $file = ( // Eg: "/tmp/froq-temporary/5f858f253527c91a4006".
+    $file = ( // Eg: "/tmp/froq-temp/5f858f253527c91a4006".
         ($froq_temp ? get_temp_directory() : dirname(get_temp_directory()))
         . __dirsep . get_uniqid(20)
         . ($extension ? '.' . trim($extension, '.') : '')
@@ -831,8 +825,7 @@ function mkfiletemp(string $extension = null, int $mode = 644, bool $froq_temp =
 function rmfiletemp(string $file): bool|null
 {
     if (!strpfx($file, tmp())) {
-        trigger_error(sprintf('%s(): Cannot remove a file which is outside of %s directory',
-            __function__));
+        trigger_error(sprintf('%s(): Cannot remove a file which is outside of %s directory', __function__));
         return null;
     }
 
@@ -941,15 +934,10 @@ function finfo($fp): array|null
  * @param  resource &$handle
  * @param  string    $contents
  * @return bool
- * @throws TypeError
  * @since  4.0
  */
 function stream_set_contents(&$handle, string $contents): bool
 {
-    is_stream($handle) || throw new TypeError(sprintf(
-        '%s() expects parameter 1 to be stream resource, %s given', __function__, get_type($handle)
-    ));
-
     // Since handle stat size also pointer position is not changing even after ftruncate() for
     // files (not "php://temp" etc), we rewind the handle.
     rewind($handle);
@@ -1388,7 +1376,7 @@ function file_create(string $file, int $mode = 0644): string|null
  * @alias of mkfiletemp()
  * @since 4.0
  */
-function file_create_temporary(...$args)
+function file_create_temp(...$args)
 {
     return mkfiletemp(...$args);
 }
@@ -1462,15 +1450,10 @@ function file_read_output(string $file, array $file_data = null): string|null
  * @param  resource $handle
  * @param  int      $from
  * @return string|null
- * @throws TypeError
  * @since  5.0
  */
 function file_read_stream($handle, int $from = 0): string|null
 {
-    is_stream($handle) || throw new TypeError(sprintf(
-        '%s() expects parameter 1 to be stream resource, %s given', __function__, get_type($handle)
-    ));
-
     $ret = stream_get_contents($handle, -1, $from);
 
     return ($ret !== false) ? $ret : null;
