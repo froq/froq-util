@@ -1729,7 +1729,7 @@ function is_number($in): bool
 }
 
 /**
- * Check whether given input is a GDImage.
+ * Check whether given input is a GdImage.
  *
  * @param  any $in
  * @return bool
@@ -1737,7 +1737,7 @@ function is_number($in): bool
  */
 function is_image($in): bool
 {
-    return $in && is_a($in, 'GDImage');
+    return $in && is_a($in, 'GdImage');
 }
 
 /**
