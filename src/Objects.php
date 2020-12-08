@@ -370,7 +370,7 @@ final class Objects extends StaticClass
                         $property->setAccessible(true);
                     }
                     $value = $property->getValue($class);
-                } catch (Error $e) {}
+                } catch (Error) {}
 
                 $initialized = $property->isInitialized($class);
             }
@@ -448,7 +448,7 @@ final class Objects extends StaticClass
                 try {
                     $property->setAccessible(true);
                     $value = $property->getValue($class);
-                } catch (Error $e) {}
+                } catch (Error) {}
             }
 
             !$withNames ? $ret[] = $value
