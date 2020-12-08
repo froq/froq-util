@@ -130,6 +130,71 @@ function slice(array|string $in, int $start, int $end = null): array|string|null
     };
 }
 
+
+
+/**
+ * Grep, actually grabs something from given input.
+ *
+ * @param  string $in
+ * @param  string $pattern
+ * @return string|null
+ * @since  3.0, 5.0 Moved from froq/fun.
+ */
+function grep(string $in, string $pattern): string|null
+{
+    preg_match($pattern, $in, $match, PREG_UNMATCHED_AS_NULL);
+
+    return $match[1] ?? null;
+}
+
+/**
+ * Grep all, actually grabs somethings from given input.
+ *
+ * @param  string $in
+ * @param  string $pattern
+ * @param  bool   $uniform
+ * @return array<string|null>|null
+ * @since  3.15, 5.0 Moved from froq/fun.
+ */
+function grep_all(string $in, string $pattern, bool $uniform = false): array|null
+{
+    preg_match_all($pattern, $in, $matches, PREG_UNMATCHED_AS_NULL);
+
+    if (isset($matches[1])) {
+        unset($matches[0]); // Drop input.
+
+        $ret = [];
+        if (count($matches) == 1) {
+            $ret = $matches[1];
+        } else {
+            foreach ($matches as $i => $match) {
+                // Nullify all empty strings.
+                $match = map($match, fn($m) => ($m !== '') ? $m : null);
+
+                $ret[$i] = (count($match) == 1) ? $match[0] : $match;
+            }
+
+            // Useful for in case '~href="(.+?)"|">(.+?)</~' etc.
+            if ($uniform) {
+                foreach ($ret as $i => &$re) {
+                    if (is_array($re)) {
+                        $re = array_filter($re, 'strlen');
+                        if (count($re) == 1) {
+                            $re = current($re);
+                        }
+                    }
+                }
+
+                // Maintain keys (so reset to 0-N).
+                $ret = array_slice($ret, 0);
+            }
+        }
+        return $ret;
+    }
+
+    return null;
+}
+
 /**
  * Cut a string with given length.
  *
