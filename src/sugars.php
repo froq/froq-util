@@ -37,6 +37,100 @@ function strpfx(...$args) { return str_has_prefix(...$args); } // Search prefix.
 function strsfx(...$args) { return str_has_suffix(...$args); } // Search suffix.
 
 /**
+ * Filter an array with value/key notation.
+ *
+ * @param  array           $array
+ * @param  callable        $func
+ * @param  bool            $keep_keys
+ * @return array
+ * @since  3.0, 5.0 Moved from common.inits.
+ */
+function filter(array $array, callable $func = null, bool $keep_keys = true): array
+{
+    return Arrays::filter($array, $func, $keep_keys);
+}
+
+/**
+ * Map an array with value/key notation.
+ *
+ * @param  array           $array
+ * @param  callable        $func
+ * @param  bool            $keep_keys
+ * @return array
+ * @since  3.0, 5.0 Moved from common.inits.
+ */
+function map(array $array, callable $func, bool $keep_keys = true): array
+{
+    return Arrays::map($array, $func, $keep_keys);
+}
+
+/**
+ * Reduce an array with value/key notation.
+ *
+ * @param  array         $array
+ * @param  any           $carry
+ * @param  callable|null $func
+ * @return any
+ * @since  4.0, 5.0 Moved from common.inits.
+ */
+function reduce(array $array, $carry = null, callable $func = null)
+{
+    return !is_array($carry) ? Arrays::reduce($array, $func, $carry)
+                             : Arrays::aggregate($array, $func, $carry);
+}
+
+/**
+ * Get size/count/length of given input.
+ *
+ * @param  any  $in
+ * @param  bool $mb
+ * @return int|null
+ * @since  3.0, 5.0 Moved from froq/fun.
+ */
+function size($in, bool $mb = false): int|null
+{
+    return match (true) {
+        is_string($in)            => !$mb ? strlen($in) : mb_strlen($in),
+        is_countable($in)         => count($in),
+        ($in instanceof stdClass) => count((array) $in),
+        default                   => null // No valid input.
+    };
+}
+
+/**
+ * Concat an array or string.
+ *
+ * @param  array|string    $in
+ * @param  array|string ...$ins
+ * @return array|string|null
+ * @since  4.0, 5.0 Moved from froq/fun.
+ */
+function concat(array|string $in, ...$ins): array|string|null
+{
+    return match (true) {
+        is_array($in)  => array_append($in, ...$ins),
+        is_string($in) => $in . join('', $ins)
+    };
+}
+
+/**
+ * Slice an array or string.
+ *
+ * @param  array|string $in
+ * @param  int          $start
+ * @param  int|null     $end
+ * @return array|string|null
+ * @since  3.0, 4.0 Added back, 5.0 Moved from froq/fun.
+ */
+function slice(array|string $in, int $start, int $end = null): array|string|null
+{
+    return match (true) {
+        is_array($in)  => array_slice($in, $start, $end),
+        is_string($in) => mb_substr($in, $start, $end)
+    };
+}
+
+/**
  * Cut a string with given length.
  *
  * @param  string $str
@@ -252,25 +346,18 @@ function convert_case(string $in, int $case, string $spliter = null, string $joi
     // Set default split char.
     $spliter = ($spliter !== null || $spliter !== '') ? $spliter : ' ';
 
-    $ret = strtolower($in);
-
-    switch ($case) {
-        case CASE_DASH:
-            $ret = implode('-', explode($spliter, $ret));
-            break;
-        case CASE_SNAKE:
-            $ret = implode('_', explode($spliter, $ret));
-            break;
-        case CASE_CAMEL:
-            $ret = implode($joiner ?? '', array_map('ucfirst', explode($spliter, $ret)));
-            $ret = lcfirst($ret);
-            break;
-        case CASE_TITLE:
-            $ret = implode($joiner ?? $spliter, array_map('ucfirst', explode($spliter, $ret)));
-            break;
-    }
-
-    return $ret;
+    return match ($case) {
+        CASE_DASH  => implode('-', explode($spliter, strtolower($in))),
+        CASE_SNAKE => implode('_', explode($spliter, strtolower($in))),
+        CASE_CAMEL => lcfirst(
+            implode($joiner ?? '', array_map(
+                fn($s) => ucfirst(trim($s)), explode($spliter, strtolower($in))
+            ))
+        ),
+        CASE_TITLE => implode($joiner ?? $spliter, array_map(
+            fn($s) => ucfirst(trim($s)), explode($spliter, strtolower($in))
+        )),
+    };
 }
 
 /**
@@ -284,9 +371,8 @@ function convert_case(string $in, int $case, string $spliter = null, string $joi
  */
 function class_extends(string $class1, string $class2, bool $parent_only = false): bool
 {
-    return $parent_only ? (
-        ($parents = class_parents($class1)) && (current($parents) === $class2)
-    ) : is_subclass_of($class1, $class2);
+    return !$parent_only ? is_subclass_of($class1, $class2)
+        : ($parents = class_parents($class1)) && (current($parents) === $class2);
 }
 
 /**
@@ -307,13 +393,13 @@ function get_class_name(string|object $class, bool $short = true): string
  *
  * @param  string|object $class
  * @param  bool          $with_names
- * @param  bool          $check_scope
+ * @param  bool          $scope_check
  * @return array|null
  * @since  4.0
  */
-function get_class_constants(string|object $class, bool $with_names = true, bool $check_scope = true): array|null
+function get_class_constants(string|object $class, bool $with_names = true, bool $scope_check = true): array|null
 {
-    if ($check_scope) {
+    if ($scope_check) {
         $caller_class = debug_backtrace(2, 2)[1]['class'] ?? null;
         if ($caller_class) {
             $all = ($caller_class === Objects::getName($class));
@@ -328,13 +414,13 @@ function get_class_constants(string|object $class, bool $with_names = true, bool
  *
  * @param  string|object $class
  * @param  bool          $with_names
- * @param  bool          $check_scope
+ * @param  bool          $scope_check
  * @return array|null
  * @since  4.0
  */
-function get_class_properties(string|object $class, bool $with_names = true, bool $check_scope = true): array|null
+function get_class_properties(string|object $class, bool $with_names = true, bool $scope_check = true): array|null
 {
-    if ($check_scope) {
+    if ($scope_check) {
         $caller_class = debug_backtrace(2, 2)[1]['class'] ?? null;
         if ($caller_class) {
             $all = ($caller_class === Objects::getName($class));
@@ -349,13 +435,13 @@ function get_class_properties(string|object $class, bool $with_names = true, boo
  *
  * @param  string|object $class
  * @param  string        $name
- * @param  bool          $check_scope
+ * @param  bool          $scope_check
  * @return bool|null
  * @since  4.0
  */
-function constant_exists(string|object $class, string $name, bool $check_scope = true): bool|null
+function constant_exists(string|object $class, string $name, bool $scope_check = true): bool|null
 {
-    if ($check_scope) {
+    if ($scope_check) {
         $caller_class = debug_backtrace(2, 2)[1]['class'] ?? null;
         if ($caller_class) {
             return ($caller_class === Objects::getName($class))
@@ -420,7 +506,7 @@ function get_uniqid(int $length = 14, int $base = 16, bool $use_hrtime = false):
     if (!$use_hrtime) {
         $id = explode('.', uniqid('', true))[0];
     } else {
-        $id = join('', array_map('dechex', hrtime()));
+        $id = join('', map(hrtime(), 'dechex'));
     }
 
     $ret = $id;
@@ -435,10 +521,10 @@ function get_uniqid(int $length = 14, int $base = 16, bool $use_hrtime = false):
 
     // Pad if needed.
     while (strlen($ret) < $length) {
-        $ret .= get_random_uniqid(1, $base, false);
+        $ret .= get_random_uniqid(3, $base, false);
     }
 
-    return $ret;
+    return strcut($ret, $length);
 }
 
 /**
@@ -446,13 +532,13 @@ function get_uniqid(int $length = 14, int $base = 16, bool $use_hrtime = false):
  *
  * @param  int  $length
  * @param  int  $base
- * @param  bool $check_length @internal
+ * @param  bool $length_check @internal
  * @return string|null
  * @since  4.0
  */
-function get_random_uniqid(int $length = 14, int $base = 16, bool $check_length = true): string|null
+function get_random_uniqid(int $length = 14, int $base = 16, bool $length_check = true): string|null
 {
-    if ($length < 14 && $check_length) {
+    if ($length < 14 && $length_check) {
         trigger_error(sprintf('%s(): Invalid length, min=14', __function__));
         return null;
     }
@@ -470,10 +556,7 @@ function get_random_uniqid(int $length = 14, int $base = 16, bool $check_length 
         $ret .= ($base == 16) ? $id : convert_base($id, 16, $base);
     }
 
-    // Crop if needed (usually 1-4 chars only).
-    $ret = strcut($ret, $length);
-
-    return $ret;
+    return strcut($ret, $length);
 }
 
 /**
@@ -622,19 +705,20 @@ function get_path_info(string $path, string|int $component = null): string|array
         return null;
     }
 
-    $ret = ['path' => $path] + array_map(fn($v) => strlen($v) ? $v : null, $info);
+    $ret = ['path' => $path] + map($info, fn($v) => strlen($v) ? $v : null);
     $ret['filename'] = file_name($path, false);
     $ret['extension'] = file_extension($path, false);
 
     if ($component) {
         if (is_string($component)) {
-            return $ret[$component] ?? null;
+            $ret = $ret[$component] ?? null;
+        } else {
+            $ret = match ($component) {
+                PATHINFO_DIRNAME  => $ret['dirname'],  PATHINFO_BASENAME  => $ret['basename'],
+                PATHINFO_FILENAME => $ret['filename'], PATHINFO_EXTENSION => $ret['extension'],
+                default           => null,
+            };
         }
-        return match ($component) {
-            PATHINFO_DIRNAME => $ret['dirname'], PATHINFO_BASENAME => $ret['basename'],
-            PATHINFO_FILENAME => $ret['filename'], PATHINFO_EXTENSION => $ret['extension'],
-            default => null,
-        };
     }
 
     return $ret;
@@ -825,7 +909,8 @@ function mkfiletemp(string $extension = null, int $mode = 0644, bool $froq_temp 
 function rmfiletemp(string $file): bool|null
 {
     if (!strpfx($file, tmp())) {
-        trigger_error(sprintf('%s(): Cannot remove a file which is outside of %s directory', __function__));
+        trigger_error(sprintf('%s(): Cannot remove a file which is outside of %s directory',
+            __function__, tmp()));
         return null;
     }
 
@@ -1090,7 +1175,7 @@ function array_apply(array $array, callable $func): array
         // just warns about argument count (e.g: if $func is strval()) and foolishly making all
         // values NULL; simply use this way here with try/catch, catching ArgumentCountError only.
         try {
-            $ret[$key] = $func($value, $key, $i++);
+            $ret[$key] = $func($value, $key, $i++, $array);
         } catch (ArgumentCountError) {
             $ret[$key] = $func($value);
         }
@@ -1334,13 +1419,13 @@ function array_rand_value(array &$array, int $limit = 1, $default = null, bool $
  * Caculate average an array summing all items.
  *
  * @param  array $array
- * @param  bool  $include_zeros
+ * @param  bool  $zeros
  * @return float
  * @since  4.5, 4.20 Derived from array_avg().
  */
-function array_average(array $array, bool $include_zeros = true): float
+function array_average(array $array, bool $zeros = true): float
 {
-    return Arrays::average($array, $include_zeros);
+    return Arrays::average($array, $zeros);
 }
 
 /**
@@ -1753,7 +1838,7 @@ function is_number($in): bool
  */
 function is_image($in): bool
 {
-    return $in && is_a($in, 'GdImage');
+    return $in && ($in instanceof GdImage);
 }
 
 /**
