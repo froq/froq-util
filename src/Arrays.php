@@ -832,12 +832,8 @@ final class Arrays extends StaticClass
             // //     $carry = $ret;
             // // }
 
-            try {
-                // Note: carry must be ref'ed (eg: (&$carry, $value, ..)).
-                $func($carry, $value, $key, $i++, $array);
-            } catch (ArgumentCountError $e) {
-                $func($carry, $value);
-            }
+            // Note: carry must be ref'ed (eg: (&$carry, $value, ..)).
+            $func($carry, $value, $key, $i++, $array);
 
             $carry = (array) $carry;
         }
