@@ -406,7 +406,7 @@ function get_class_constants(string|object $class, bool $with_names = true, bool
         }
     }
 
-    return Objects::getConstantValues($class, $all ?? false, $with_names);
+    return Objects::getConstantValues($class, ($all ?? !$scope_check), $with_names);
 }
 
 /**
@@ -427,7 +427,7 @@ function get_class_properties(string|object $class, bool $with_names = true, boo
         }
     }
 
-    return Objects::getPropertyValues($class, $all ?? false, $with_names);
+    return Objects::getPropertyValues($class, ($all ?? !$scope_check), $with_names);
 }
 
 /**
