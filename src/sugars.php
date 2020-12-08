@@ -1586,7 +1586,23 @@ function file_type(string $file): string|null
 }
 
 /**
- * Get PHP last error message with code.
+ * Remove last error message with/without code.
+ *
+ * @param  int|null $code
+ * @return void
+ * @since  5.0
+ */
+function error_clear(int $code = null): void
+{
+    if ($code && $code !== (error_get_last()['type'] ?? '')) {
+        return;
+    }
+
+    error_clear_last();
+}
+
+/**
+ * Get last error message with code.
  *
  * @param  int|null $code
  * @return string|null
@@ -1596,7 +1612,7 @@ function error_message(int &$code = null): string|null
 {
     $error = error_get_last();
 
-    return ($code = $error['type'] ?? null) ? $error['message'] : null;
+    return ($code = $error['type'] ?? '') ? $error['message'] : null;
 }
 
 /**
