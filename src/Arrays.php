@@ -8,6 +8,7 @@ declare(strict_types=1);
 namespace froq\util;
 
 use froq\common\objects\StaticClass;
+use ArgumentCountError;
 
 /**
  * Arrays.
@@ -560,18 +561,18 @@ final class Arrays extends StaticClass
      * @param  array      &$array
      * @param  int|string  $oldKey
      * @param  int|string  $newKey
-     * @param  any|null    $newdefault
+     * @param  any|null    $newDefault
      * @return array
      * @since  4.2
      */
-    public static function swap(array &$array, $oldKey, $newKey, $newdefault = null): array
+    public static function swap(array &$array, $oldKey, $newKey, $newDefault = null): array
     {
         $newValue = self::pull($array, $oldKey);
 
         if ($newValue !== null) {
             self::set($array, $newKey, $newValue);
         } elseif (func_num_args() == 4) { // Create directive.
-            self::set($array, $newKey, $newdefault);
+            self::set($array, $newKey, $newDefault);
         }
 
         return $array;
@@ -602,52 +603,6 @@ final class Arrays extends StaticClass
         }
 
         return $array;
-    }
-
-    /**
-     * Average.
-     * @param  array $array
-     * @param  bool  $includeZeros
-     * @return float
-     * @since  4.5
-     */
-    public static function average(array $array, bool $includeZeros = true): float
-    {
-        $array = array_filter($array,
-            fn($v) => $includeZeros ? is_numeric($v) : is_numeric($v) && ($v > 0));
-
-        return fdiv(array_sum($array), count($array));
-    }
-
-    /**
-     * Aggregate.
-     * @param  array      $array
-     * @param  callable   $func
-     * @param  array|null $carry
-     * @return array
-     * @since  4.14
-     */
-    public static function aggregate(array $array, callable $func, array $carry = null): array
-    {
-        $i = 0; $carry ??= [];
-
-        foreach ($array as $key => $value) {
-            // // Note: when "return" not used carry must be ref'ed (eg: (&$carry, $value, ..)).
-            // $ret = $func($carry, $value, $key, $i++, $array);
-
-            // @cancel: Return can always be an array..
-            // // When "return" used.
-            // if ($ret && is_array($ret)) {
-            //     $carry = $ret;
-            // }
-
-            // Note: carry must be ref'ed (eg: (&$carry, $value, ..)).
-            $func($carry, $value, $key, $i++, $array);
-
-            $carry = (array) $carry;
-        }
-
-        return $carry;
     }
 
     /**
@@ -794,6 +749,54 @@ final class Arrays extends StaticClass
     }
 
     /**
+     * Average.
+     * @param  array $array
+     * @param  bool  $zeros
+     * @return float
+     * @since  4.5
+     */
+    public static function average(array $array, bool $zeros = true): float
+    {
+        $array = array_filter($array, fn($v) => $zeros ? is_numeric($v) : is_numeric($v) && $v > 0);
+
+        return fdiv(array_sum($array), count($array));
+    }
+
+    /**
+     * Aggregate.
+     * @param  array      $array
+     * @param  callable   $func
+     * @param  array|null $carry
+     * @return array
+     * @since  4.14
+     */
+    public static function aggregate(array $array, callable $func, array $carry = null): array
+    {
+        $carry ??= []; $i = 0;
+
+        foreach ($array as $key => $value) {
+            // @cancel: Return can always be an array..
+            // // Note: when "return" not used carry must be ref'ed (eg: (&$carry, $value, ..)).
+            // // $ret = $func($carry, $value, $key, $i++, $array);
+            // // When "return" used.
+            // // if ($ret && is_array($ret)) {
+            // //     $carry = $ret;
+            // // }
+
+            try {
+                // Note: carry must be ref'ed (eg: (&$carry, $value, ..)).
+                $func($carry, $value, $key, $i++, $array);
+            } catch (ArgumentCountError $e) {
+                $func($carry, $value);
+            }
+
+            $carry = (array) $carry;
+        }
+
+        return $carry;
+    }
+
+    /**
      * Filter.
      * @param  array         $array
      * @param  callable|null $func
@@ -807,8 +810,10 @@ final class Arrays extends StaticClass
 
         $ret = []; $i = 0;
 
-        foreach ($array as $key => $value) {
+        foreach ($array as $key => $value) try {
             $func($value, $key, $i++, $array) && $ret[$key] = $value;
+        } catch (ArgumentCountError $e) {
+            $func($value) && $ret[$key] = $value;
         }
 
         return $keepKeys ? $ret : array_values($ret);
@@ -825,8 +830,10 @@ final class Arrays extends StaticClass
     {
         $ret = []; $i = 0;
 
-        foreach ($array as $key => $value) {
+        foreach ($array as $key => $value) try {
             $ret[$key] = $func($value, $key, $i++, $array);
+        } catch (ArgumentCountError $e) {
+            $ret[$key] = $func($value);
         }
 
         return $keepKeys ? $ret : array_values($ret);
@@ -843,8 +850,10 @@ final class Arrays extends StaticClass
     {
         $i = 0; $ret = $carry;
 
-        foreach ($array as $key => $value) {
+        foreach ($array as $key => $value) try {
             $ret = $func($ret, $value, $key, $i++, $array);
+        } catch (ArgumentCountError $e) {
+            $ret = $func($ret, $value);
         }
 
         return $ret;
