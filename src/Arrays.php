@@ -749,54 +749,6 @@ final class Arrays extends StaticClass
     }
 
     /**
-     * Average.
-     * @param  array $array
-     * @param  bool  $zeros
-     * @return float
-     * @since  4.5
-     */
-    public static function average(array $array, bool $zeros = true): float
-    {
-        $array = array_filter($array, fn($v) => $zeros ? is_numeric($v) : is_numeric($v) && $v > 0);
-
-        return fdiv(array_sum($array), count($array));
-    }
-
-    /**
-     * Aggregate.
-     * @param  array      $array
-     * @param  callable   $func
-     * @param  array|null $carry
-     * @return array
-     * @since  4.14
-     */
-    public static function aggregate(array $array, callable $func, array $carry = null): array
-    {
-        $carry ??= []; $i = 0;
-
-        foreach ($array as $key => $value) {
-            // @cancel: Return can always be an array..
-            // // Note: when "return" not used carry must be ref'ed (eg: (&$carry, $value, ..)).
-            // // $ret = $func($carry, $value, $key, $i++, $array);
-            // // When "return" used.
-            // // if ($ret && is_array($ret)) {
-            // //     $carry = $ret;
-            // // }
-
-            try {
-                // Note: carry must be ref'ed (eg: (&$carry, $value, ..)).
-                $func($carry, $value, $key, $i++, $array);
-            } catch (ArgumentCountError $e) {
-                $func($carry, $value);
-            }
-
-            $carry = (array) $carry;
-        }
-
-        return $carry;
-    }
-
-    /**
      * Filter.
      * @param  array         $array
      * @param  callable|null $func
@@ -857,6 +809,54 @@ final class Arrays extends StaticClass
         }
 
         return $ret;
+    }
+
+    /**
+     * Aggregate.
+     * @param  array      $array
+     * @param  callable   $func
+     * @param  array|null $carry
+     * @return array
+     * @since  4.14
+     */
+    public static function aggregate(array $array, callable $func, array $carry = null): array
+    {
+        $carry ??= []; $i = 0;
+
+        foreach ($array as $key => $value) {
+            // @cancel: Return can always be an array..
+            // // Note: when "return" not used carry must be ref'ed (eg: (&$carry, $value, ..)).
+            // // $ret = $func($carry, $value, $key, $i++, $array);
+            // // When "return" used.
+            // // if ($ret && is_array($ret)) {
+            // //     $carry = $ret;
+            // // }
+
+            try {
+                // Note: carry must be ref'ed (eg: (&$carry, $value, ..)).
+                $func($carry, $value, $key, $i++, $array);
+            } catch (ArgumentCountError $e) {
+                $func($carry, $value);
+            }
+
+            $carry = (array) $carry;
+        }
+
+        return $carry;
+    }
+
+    /**
+     * Average.
+     * @param  array $array
+     * @param  bool  $zeros
+     * @return float
+     * @since  4.5
+     */
+    public static function average(array $array, bool $zeros = true): float
+    {
+        $array = array_filter($array, fn($v) => $zeros ? is_numeric($v) : is_numeric($v) && $v > 0);
+
+        return fdiv(array_sum($array), count($array));
     }
 
     /**
