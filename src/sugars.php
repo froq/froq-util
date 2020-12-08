@@ -37,6 +37,15 @@ function strpfx(...$args) { return str_has_prefix(...$args); } // Search prefix.
 function strsfx(...$args) { return str_has_suffix(...$args); } // Search suffix.
 
 /**
+ * Loving shorter stuffs?
+ * @since  3.0, 5.0 Moved from froq/fun.
+ */
+function upper(string $in, bool $mb = false): string {
+    return !$mb ? strtoupper($in) : mb_strtoupper($in); }
+function lower(string $in, bool $mb = false): string {
+    return !$mb ? strtolower($in) : mb_strtolower($in); }
+
+/**
  * Filter an array with value/key notation.
  *
  * @param  array           $array
@@ -130,7 +139,75 @@ function slice(array|string $in, int $start, int $end = null): array|string|null
     };
 }
 
+/**
+ * Strip a string, with RegExp (~) option.
+ *
+ * @param  string      $in
+ * @param  string|null $chars
+ * @return string
+ * @since  3.0, 5.0 Moved from froq/fun.
+ */
+function strip(string $in, string $chars = null): string
+{
+    if ($chars === null) {
+        return trim($in);
+    } else {
+        // RegExp: only ~..~ patterns accepted.
+        if (strlen($chars) >= 3 && $chars[0] == '~') {
+            $ruls = substr($chars, 1, ($pos = strrpos($chars, '~')) - 1);
+            $mods = substr($chars, $pos + 1);
+            return preg_replace(sprintf('~^%s|%s$~%s', $ruls, $ruls, $mods), '', $in);
+        }
+        return trim($in, $chars);
+    }
+}
 
+/**
+ * Split a string, with RegExp (~) option.
+ *
+ * @param  string   $sep
+ * @param  string   $in
+ * @param  int|null $limit
+ * @param  int|null $flags
+ * @return array
+ * @since  5.0 Moved from froq/fun.
+ */
+function split(string $sep, string $in, int $limit = null, int $flags = null): array
+{
+    if ($sep === '') {
+        $ret = (array) preg_split('~~u', $in, -1, 1);
+    } else {
+        $flags ??= 1; // No empty: null|1.
+
+        // RegExp: only "~..~" patterns accepted.
+        if (strlen($sep) >= 3 && $sep[0] == '~') {
+            $ret = (array) preg_split($sep, $in, ($limit ?? -1), $flags);
+        } else {
+            $ret = (array) explode($sep, $in, ($limit ?? PHP_INT_MAX));
+            $flags && $ret = array_filter($ret, 'strlen');
+        }
+    }
+
+    // Plus: prevent 'undefined index..' error.
+    if ($limit && $limit != count($ret)) {
+        $ret = array_pad($ret, $limit, null);
+    }
+
+    return $ret;
+}
+
+/**
+ * Unsplit, a fun function.
+ *
+ * @param  string $sep
+ * @param  array  $in
+ * @return string
+ * @since  3.0, 5.0 Moved from froq/fun.
+ */
+function unsplit(string $sep, array $in): string
+{
+    return join($sep, $in);
+}
 
 /**
  * Grep, actually grabs something from given input.
@@ -1355,7 +1432,8 @@ function array_pad_keys(array $array, array $keys, $value = null): array
  *
  * @param  array       $array
  * @param  int         $case
- * @param  string|null $sep
+ * @param  string|null $spliter
+ * @param  string|null $joiner
  * @return array|null
  * @since  4.19
  */
