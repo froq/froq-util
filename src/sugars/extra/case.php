@@ -10,19 +10,12 @@ declare(strict_types=1);
  *
  * @param  string      $in
  * @param  string|null $sep
- * @param  bool        $lower
  * @return string
  * @since  4.0
  */
-function to_title_case(string $in, string $sep = null, bool $lower = true): string
+function to_title_case(string $in, string $sep = null): string
 {
-    if ($lower) {
-        $in = strtolower($in);
-    }
-
-    $sep ??= ' ';
-
-    return implode('', array_map(fn($s) => ucfirst(trim($s)), explode($sep, $in)));
+    return convert_case($in, CASE_TITLE, $sep);
 }
 
 /**
@@ -30,41 +23,12 @@ function to_title_case(string $in, string $sep = null, bool $lower = true): stri
  *
  * @param  string      $in
  * @param  string|null $sep
- * @param  bool        $lower
  * @return string
  * @since  4.0
  */
-function to_dash_case(string $in, string $sep = null, bool $lower = true): string
+function to_dash_case(string $in, string $sep = null): string
 {
-    if ($lower) {
-        $in = strtolower($in);
-    }
-
-    $sep ??= ' ';
-
-    return implode('-', array_map('trim', explode($sep, $in)));
-}
-
-/**
- * To camel case (eg: "foo bar" => "fooBar").
- *
- * @param  string      $in
- * @param  string|null $sep
- * @param  bool        $lower
- * @return string
- * @since  4.0
- */
-function to_camel_case(string $in, string $sep = null, bool $lower = true): string
-{
-    if ($lower) {
-        $in = strtolower($in);
-    }
-
-    $sep ??= ' ';
-
-    return lcfirst(
-        implode('', array_map(fn($s) => ucfirst(trim($s)), explode($sep, $in)))
-    );
+    return convert_case($in, CASE_DASH, $sep);
 }
 
 /**
@@ -72,17 +36,23 @@ function to_camel_case(string $in, string $sep = null, bool $lower = true): stri
  *
  * @param  string      $in
  * @param  string|null $sep
- * @param  bool        $lower
  * @return string
  * @since  4.0
  */
-function to_snake_case(string $in, string $sep = null, bool $lower = true): string
+function to_snake_case(string $in, string $sep = null): string
 {
-    if ($lower) {
-        $in = strtolower($in);
-    }
+    return convert_case($in, CASE_SNAKE, $sep);
+}
 
-    $sep ??= ' ';
-
-    return implode('_', array_map('trim', explode($sep, $in)));
+/**
+ * To camel case (eg: "foo bar" => "fooBar").
+ *
+ * @param  string      $in
+ * @param  string|null $sep
+ * @return string
+ * @since  4.0
+ */
+function to_camel_case(string $in, string $sep = null): string
+{
+    return convert_case($in, CASE_CAMEL, $sep);
 }
