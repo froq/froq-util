@@ -115,7 +115,7 @@ final class Objects extends StaticClass
     public static function getName($class): string
     {
         if (is_string($class)) return $class;
-        if (is_object($class)) return get_class($class);
+        if (is_object($class)) return get_type($class);
 
         throw new InvalidArgumentException('Invalid $class argument, string and object arguments '.
             'accepted only, "%s" given', [gettype($class)]);
