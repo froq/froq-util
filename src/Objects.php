@@ -625,15 +625,14 @@ final class Objects extends StaticClass
         if ($ret !== false) {
             $ret = array_keys($ret);
             if ($all) {
-                $parents = self::getParents($class) ?? [];
-                foreach ($parents as $parent) {
-                    $ret = array_merge($ret, self::getTraits($parent) ?? []);
+                foreach ((array) self::getParents($class) as $parent) {
+                    $ret = array_merge($ret, (array) self::getTraits($parent));
                 }
 
                 // Really all..
                 if ($ret) {
                     foreach ($ret as $re) {
-                        $ret = array_merge($ret, self::getTraits($re) ?? []);
+                        $ret = array_merge($ret, (array) self::getTraits($re));
                     }
                     $ret = array_unique($ret);
                 }
