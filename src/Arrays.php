@@ -764,7 +764,7 @@ final class Arrays extends StaticClass
 
         foreach ($array as $key => $value) try {
             $func($value, $key, $i++, $array) && $ret[$key] = $value;
-        } catch (ArgumentCountError $e) {
+        } catch (ArgumentCountError) {
             $func($value) && $ret[$key] = $value;
         }
 
@@ -784,7 +784,7 @@ final class Arrays extends StaticClass
 
         foreach ($array as $key => $value) try {
             $ret[$key] = $func($value, $key, $i++, $array);
-        } catch (ArgumentCountError $e) {
+        } catch (ArgumentCountError) {
             $ret[$key] = $func($value);
         }
 
@@ -804,7 +804,7 @@ final class Arrays extends StaticClass
 
         foreach ($array as $key => $value) try {
             $ret = $func($ret, $value, $key, $i++, $array);
-        } catch (ArgumentCountError $e) {
+        } catch (ArgumentCountError) {
             $ret = $func($ret, $value);
         }
 

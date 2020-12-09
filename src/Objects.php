@@ -32,7 +32,7 @@ final class Objects extends StaticClass
     {
         try {
             return (new ReflectionClass($class))->hasConstant($name);
-        } catch (ReflectionException $e) {
+        } catch (ReflectionException) {
             return null;
         }
     }
@@ -47,7 +47,7 @@ final class Objects extends StaticClass
     {
         try {
             return (new ReflectionClass($class))->hasProperty($name);
-        } catch (ReflectionException $e) {
+        } catch (ReflectionException) {
             return null;
         }
     }
@@ -61,7 +61,7 @@ final class Objects extends StaticClass
     {
         try {
             return new ReflectionClass($class);
-        } catch (ReflectionException $e) {
+        } catch (ReflectionException) {
             return null;
         }
     }
@@ -541,7 +541,7 @@ final class Objects extends StaticClass
                         } elseif ($param->isDefaultValueConstant()) {
                             $parameter['value'] = $param->getDefaultValueConstantName();
                         }
-                    } catch (ReflectionException $e) {}
+                    } catch (ReflectionException) {}
 
                     $parameters[] = $parameter;
                 }

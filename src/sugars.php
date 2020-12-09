@@ -762,7 +762,7 @@ function get_real_user(): string|null
 {
     try {
         return posix_getpwuid(posix_geteuid())['name'] ?? null;
-    } catch (Error $e) {
+    } catch (Error) {
         return getenv('USER') ?: getenv('USERNAME') ?: null;
     }
 }
