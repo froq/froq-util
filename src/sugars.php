@@ -1081,26 +1081,28 @@ function fopentemp(string $mode = null, int $memo = null)
 }
 
 /**
- * Read all contents a file handle.
+ * Read all contents a file handle without modifing seek offset.
  *
- * @alias of file_read_stream()
- * @since 5.0
+ * @param  resource &$fp
+ * @return string|null
+ * @since  5.0
  */
-function freadall($fp, int $from = 0): string|null
+function freads(&$fp): string|null
 {
-    return file_read_stream($fp, $from);
+    return file_read_stream($fp);
 }
 
 /**
- * Get a file handle size.
+ * Write all contents on a file handle "truncating" its contents first.
  *
- * @param  resource $fp
+ * @param  resource &$fp
+ * @param  string   $contents
  * @return int|null
  * @since  5.0
  */
-function fsize($fp): int|null
+function fwrites(&$fp, string $contents): int|null
 {
-    return fstat($fp)['size'] ?? null;
+    return stream_set_contents($fp, $contents);
 }
 
 /**
@@ -1126,7 +1128,7 @@ function freset(&$fp, string $contents): bool
 {
     rewind($fp); // Without this, stats won't be resetted.
 
-    return ftruncate($fp, 0) && fwrite($fp, $contents) && !fseek($fp, 0);
+    return ftruncate($fp, 0) && fwrite($fp, $contents) && rewind($fp);
 }
 
 /**
@@ -1156,21 +1158,37 @@ function finfo($fp): array|null
 }
 
 /**
+ * Get a file handle size.
+ *
+ * @param  resource $fp
+ * @return int|null
+ * @since  5.0
+ */
+function fsize($fp): int|null
+{
+    return fstat($fp)['size'] ?? null;
+}
+
+/**
  * Set a handle contents & seek position.
  *
  * @param  resource &$handle
  * @param  string    $contents
- * @return bool
+ * @return int|null
  * @since  4.0
  */
-function stream_set_contents(&$handle, string $contents): bool
+function stream_set_contents(&$handle, string $contents): int|null
 {
     // Since handle stat size also pointer position is not changing even after ftruncate() for
     // files (not "php://temp" etc), we rewind the handle.
     rewind($handle);
 
     // Empty, write & rewind.
-    return ftruncate($handle, 0) && fwrite($handle, $contents) && !fseek($handle, 0);
+    ftruncate($handle, 0);
+    $ret = fwrite($handle, $contents);
+    rewind($handle);
+
+    return ($ret !== false) ? $ret : null;
 }
 
 /**
@@ -1673,16 +1691,18 @@ function file_read_output(string $file, array $file_data = null): string|null
 }
 
 /**
- * Read a file stream contents entirely without modifing seek position.
+ * Read a file stream contents without modifing seek position.
  *
- * @param  resource $handle
- * @param  int      $from
+ * @param  resource &$handle
+ * @param  int       $from
  * @return string|null
  * @since  5.0
  */
-function file_read_stream($handle, int $from = 0): string|null
+function file_read_stream(&$handle, int $from = 0): string|null
 {
+    $pos = ftell($handle);
     $ret = stream_get_contents($handle, -1, $from);
+    fseek($handle, $pos);
 
     return ($ret !== false) ? $ret : null;
 }
