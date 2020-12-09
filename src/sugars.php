@@ -1170,7 +1170,7 @@ function fsize($fp): int|null
 }
 
 /**
- * Set a handle contents & seek position.
+ * Reset a handle contents setting seek position to 0.
  *
  * @param  resource &$handle
  * @param  string    $contents
