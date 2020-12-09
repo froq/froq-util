@@ -1511,7 +1511,7 @@ function array_select(array $array, int|string|array $key, $default = null)
     foreach ((array) $key as $key) {
         $ret[] = $array[$key] ?? $default;
     }
-    return $ret;
+    return $ret ?? null;
 }
 
 /**
