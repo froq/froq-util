@@ -771,11 +771,12 @@ function get_real_user(): string|null
  * Get real path of given path.
  *
  * @param  string $path
- * @param  bool   $strict
+ * @param  bool   $check
+ * @param  bool   $check_file
  * @return string|null
  * @since  4.0
  */
-function get_real_path(string $path, bool $strict = false): string|null
+function get_real_path(string $path, bool $check = false, bool $check_file = false): string|null
 {
     $path = trim($path);
     if (!$path) {
@@ -821,8 +822,10 @@ function get_real_path(string $path, bool $strict = false): string|null
         $ret .= __dirsep . $cur; // Append current.
     }
 
-    if ($strict && !file_exists($ret)) {
-        $ret = null;
+    // Validate file/directory etc existence or file only.
+    if ($check) {
+        $ok = $check_file ? is_file($path) : file_exists($ret);
+        if (!$ok) $ret = null;
     }
 
     return $ret;
