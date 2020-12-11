@@ -1318,7 +1318,7 @@ function file_set_contents(string $file, string $contents, int $flags = 0): int|
 }
 
 /**
- * Get a file path
+ * Get a file path.
  *
  * @alias of get_real_path()
  * @since 4.0
@@ -1329,7 +1329,7 @@ function file_path(...$args)
 }
 
 /**
- * Get a file name.
+ * Get a file name, not base name.
  *
  * @param  string $file
  * @param  bool   $with_ext
