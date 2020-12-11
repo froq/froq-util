@@ -1382,46 +1382,32 @@ function file_extension(string $file, bool $with_dot = false): string|null
 }
 
 /**
- * Get a file (mime) type.
+ * Get a file mime type.
  *
  * @param  string $file
  * @return string|null
  * @since  4.0
  */
-function file_type(string $file): string|null
+function file_mime(string $file): string|null
 {
-    $ret = null;
-
-    if (is_file($file)) try {
-        $ret = mime_content_type($file);
-        if ($ret === false) try {
-            $exec = exec('file -i ' . escapeshellarg($file));
-            if ($exec && preg_match('~: *([^/ ]+/[^; ]+)~', $exec, $match)) {
-                $ret = $match[1];
-                if ($ret == 'inode/directory') {
-                    $ret = 'directory';
-                }
-            }
-        } catch (Error) {}
-    } catch (Error) {}
+    if (is_file($file)) {
+        return mime_content_type($file) ?: null;
+    }
 
     // Try with extension.
-    if (!$ret) {
-        $extension = file_extension($file, false);
-        if ($extension) {
-            static $cache; // For some speed..
-            if (empty($cache[$extension = strtolower($extension)])) {
-                foreach (include 'statics/mime.php' as $type => $extensions) {
-                    if (in_array($extension, $extensions, true)) {
-                        $cache[$extension] = $ret = $type;
-                        break;
-                    }
+    $extension = file_extension($file, false);
+    if ($extension) {
+        static $cache; // For some speed..
+        if (empty($cache[$extension = strtolower($extension)])) {
+            foreach (include 'statics/mime.php' as $type => $extensions) {
+                if (in_array($extension, $extensions, true)) {
+                    return ($cache[$extension] = $type);
                 }
             }
         }
     }
 
-    return $ret ?: null;
+    return null;
 }
 
 /**
