@@ -1329,7 +1329,7 @@ function file_path(...$args)
 }
 
 /**
- * Get a file name, not base name.
+ * Get file name, not base name.
  *
  * @param  string $file
  * @param  bool   $with_ext
@@ -1355,7 +1355,7 @@ function file_name(string $file, bool $with_ext = false): string|null
 }
 
 /**
- * Get a file extension.
+ * Get file extension.
  *
  * @param  string $file
  * @param  bool   $with_dot
@@ -1382,7 +1382,7 @@ function file_extension(string $file, bool $with_dot = false): string|null
 }
 
 /**
- * Get a file mime type.
+ * Get file mime.
  *
  * @param  string $file
  * @return string|null
