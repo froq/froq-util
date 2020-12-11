@@ -1195,6 +1195,236 @@ function stream_set_contents(&$handle, string $contents): int|null
 }
 
 /**
+ * Create a file with given path.
+ *
+ * @param  string $file
+ * @param  int    $mode
+ * @return string|null
+ * @since  4.0
+ */
+function file_create(string $file, int $mode = 0644): string|null
+{
+    return mkfile($file, $mode) ? $file : null;
+}
+
+/**
+ * Create a temporary file.
+ *
+ * @alias of mkfiletemp()
+ * @since 4.0
+ */
+function file_create_temp(...$args)
+{
+    return mkfiletemp(...$args);
+}
+
+/**
+ * Remove a file.
+ *
+ * @alias of rmfile()
+ * @since 4.0
+ */
+function file_remove(...$args)
+{
+    return rmfile(...$args);
+}
+
+/**
+ * Write a file contents.
+ *
+ * @alias of file_put_contents()
+ * @since 4.0
+ */
+function file_write(...$args)
+{
+    $ret = file_put_contents(...$args);
+
+    return ($ret !== false) ? $ret : null;
+}
+
+/**
+ * Read a file contents.
+ *
+ * @alias of file_get_contents()
+ * @since 4.0
+ */
+function file_read(...$args)
+{
+    $ret = file_get_contents(...$args);
+
+    return ($ret !== false) ? $ret : null;
+}
+
+/**
+ * Read a file output (buffer) contents.
+ *
+ * @param  string     $file
+ * @param  array|null $file_data
+ * @return string|null
+ * @since  4.0
+ */
+function file_read_output(string $file, array $file_data = null): string|null
+{
+    if (!is_file($file)) {
+        trigger_error(sprintf('%s(): No file exists such %s', __function__, $file));
+        return null;
+    } elseif (!strsfx($file, '.php')) {
+        trigger_error(sprintf('%s(): Cannot include non-PHP file such %s', __function__, $file));
+        return null;
+    }
+
+    // Data, used in file.
+    $file_data && extract($file_data);
+
+    ob_start();
+    include $file;
+    return ob_get_clean();
+}
+
+/**
+ * Read a file stream contents without modifing seek position.
+ *
+ * @param  resource &$handle
+ * @param  int       $from
+ * @return string|null
+ * @since  5.0
+ */
+function file_read_stream(&$handle, int $from = 0): string|null
+{
+    $pos = ftell($handle);
+    $ret = stream_get_contents($handle, -1, $from);
+    fseek($handle, $pos);
+
+    return ($ret !== false) ? $ret : null;
+}
+
+/**
+ * Set a file contents, but no append.
+ *
+ * @param  string $file
+ * @param  string $contents
+ * @param  int    $flags
+ * @return int|null
+ * @since  4.0
+ */
+function file_set_contents(string $file, string $contents, int $flags = 0): int|null
+{
+    // Because, setting entire file contents.
+    if ($flags) $flags &= ~FILE_APPEND;
+
+    $ret = file_put_contents($file, $contents, $flags);
+
+    return ($ret !== false) ? $ret : null;
+}
+
+/**
+ * Get a file path
+ *
+ * @alias of get_real_path()
+ * @since 4.0
+ */
+function file_path(...$args)
+{
+    return get_real_path(...$args);
+}
+
+/**
+ * Get a file name.
+ *
+ * @param  string $file
+ * @param  bool   $with_ext
+ * @return string|null
+ * @since  4.0
+ */
+function file_name(string $file, bool $with_ext = false): string|null
+{
+    // A directory is not a file.
+    if (substr($file, -1) === __dirsep) {
+        return null;
+    }
+
+    // Function basename() wants an explicit suffix to remove it from name,
+    // but using just a boolean here is more sexy..
+    $ret = basename($file);
+
+    if ($ret && !$with_ext && ($ext = file_extension($file, true))) {
+        $ret = substr($ret, 0, -strlen($ext));
+    }
+
+    return $ret ?: null;
+}
+
+/**
+ * Get a file extension.
+ *
+ * @param  string $file
+ * @param  bool   $with_dot
+ * @return string|null
+ * @since  4.0
+ */
+function file_extension(string $file, bool $with_dot = false): string|null
+{
+    $info = pathinfo($file);
+
+    // Function pathinfo() returns ".foo" for example "/some/path/.foo" and
+    // if $with_dot false then this function return ".", no baybe!
+    if (empty($info['filename']) || empty($info['extension'])) {
+        return null;
+    }
+
+    $ret = strrchr($info['basename'], '.');
+
+    if ($ret && !$with_dot) {
+        $ret = ltrim($ret, '.');
+    }
+
+    return $ret ?: null;
+}
+
+/**
+ * Get a file (mime) type.
+ *
+ * @param  string $file
+ * @return string|null
+ * @since  4.0
+ */
+function file_type(string $file): string|null
+{
+    $ret = null;
+
+    if (is_file($file)) try {
+        $ret = mime_content_type($file);
+        if ($ret === false) try {
+            $exec = exec('file -i ' . escapeshellarg($file));
+            if ($exec && preg_match('~: *([^/ ]+/[^; ]+)~', $exec, $match)) {
+                $ret = $match[1];
+                if ($ret == 'inode/directory') {
+                    $ret = 'directory';
+                }
+            }
+        } catch (Error) {}
+    } catch (Error) {}
+
+    // Try with extension.
+    if (!$ret) {
+        $extension = file_extension($file, false);
+        if ($extension) {
+            static $cache; // For some speed..
+            if (empty($cache[$extension = strtolower($extension)])) {
+                foreach (include 'statics/mime.php' as $type => $extensions) {
+                    if (in_array($extension, $extensions, true)) {
+                        $cache[$extension] = $ret = $type;
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    return $ret ?: null;
+}
+
+/**
  * Init a DateTime object without/without given when option & with/without timezone if given
  * or default timezone.
  *
@@ -1604,236 +1834,6 @@ function array_average(array $array, bool $zeros = true): float
 function array_aggregate(array $array, callable $func, array $carry = null): array
 {
     return Arrays::aggregate($array, $func, $carry);
-}
-
-/**
- * Create a file with given path.
- *
- * @param  string $file
- * @param  int    $mode
- * @return string|null
- * @since  4.0
- */
-function file_create(string $file, int $mode = 0644): string|null
-{
-    return mkfile($file, $mode) ? $file : null;
-}
-
-/**
- * Create a temporary file.
- *
- * @alias of mkfiletemp()
- * @since 4.0
- */
-function file_create_temp(...$args)
-{
-    return mkfiletemp(...$args);
-}
-
-/**
- * Remove a file.
- *
- * @alias of rmfile()
- * @since 4.0
- */
-function file_remove(...$args)
-{
-    return rmfile(...$args);
-}
-
-/**
- * Write a file contents.
- *
- * @alias of file_put_contents()
- * @since 4.0
- */
-function file_write(...$args)
-{
-    $ret = file_put_contents(...$args);
-
-    return ($ret !== false) ? $ret : null;
-}
-
-/**
- * Read a file contents.
- *
- * @alias of file_get_contents()
- * @since 4.0
- */
-function file_read(...$args)
-{
-    $ret = file_get_contents(...$args);
-
-    return ($ret !== false) ? $ret : null;
-}
-
-/**
- * Read a file output (buffer) contents.
- *
- * @param  string     $file
- * @param  array|null $file_data
- * @return string|null
- * @since  4.0
- */
-function file_read_output(string $file, array $file_data = null): string|null
-{
-    if (!is_file($file)) {
-        trigger_error(sprintf('%s(): No file exists such %s', __function__, $file));
-        return null;
-    } elseif (!strsfx($file, '.php')) {
-        trigger_error(sprintf('%s(): Cannot include non-PHP file such %s', __function__, $file));
-        return null;
-    }
-
-    // Data, used in file.
-    $file_data && extract($file_data);
-
-    ob_start();
-    include $file;
-    return ob_get_clean();
-}
-
-/**
- * Read a file stream contents without modifing seek position.
- *
- * @param  resource &$handle
- * @param  int       $from
- * @return string|null
- * @since  5.0
- */
-function file_read_stream(&$handle, int $from = 0): string|null
-{
-    $pos = ftell($handle);
-    $ret = stream_get_contents($handle, -1, $from);
-    fseek($handle, $pos);
-
-    return ($ret !== false) ? $ret : null;
-}
-
-/**
- * Set a file contents, but no append.
- *
- * @param  string $file
- * @param  string $contents
- * @param  int    $flags
- * @return int|null
- * @since  4.0
- */
-function file_set_contents(string $file, string $contents, int $flags = 0): int|null
-{
-    // Because, setting entire file contents.
-    if ($flags) $flags &= ~FILE_APPEND;
-
-    $ret = file_put_contents($file, $contents, $flags);
-
-    return ($ret !== false) ? $ret : null;
-}
-
-/**
- * Get a file path
- *
- * @alias of get_real_path()
- * @since 4.0
- */
-function file_path(...$args)
-{
-    return get_real_path(...$args);
-}
-
-/**
- * Get a file name.
- *
- * @param  string $file
- * @param  bool   $with_ext
- * @return string|null
- * @since  4.0
- */
-function file_name(string $file, bool $with_ext = false): string|null
-{
-    // A directory is not a file.
-    if (substr($file, -1) === __dirsep) {
-        return null;
-    }
-
-    // Function basename() wants an explicit suffix to remove it from name,
-    // but using just a boolean here is more sexy..
-    $ret = basename($file);
-
-    if ($ret && !$with_ext && ($ext = file_extension($file, true))) {
-        $ret = substr($ret, 0, -strlen($ext));
-    }
-
-    return $ret ?: null;
-}
-
-/**
- * Get a file extension.
- *
- * @param  string $file
- * @param  bool   $with_dot
- * @return string|null
- * @since  4.0
- */
-function file_extension(string $file, bool $with_dot = false): string|null
-{
-    $info = pathinfo($file);
-
-    // Function pathinfo() returns ".foo" for example "/some/path/.foo" and
-    // if $with_dot false then this function return ".", no baybe!
-    if (empty($info['filename']) || empty($info['extension'])) {
-        return null;
-    }
-
-    $ret = strrchr($info['basename'], '.');
-
-    if ($ret && !$with_dot) {
-        $ret = ltrim($ret, '.');
-    }
-
-    return $ret ?: null;
-}
-
-/**
- * Get a file (mime) type.
- *
- * @param  string $file
- * @return string|null
- * @since  4.0
- */
-function file_type(string $file): string|null
-{
-    $ret = null;
-
-    if (is_file($file)) try {
-        $ret = mime_content_type($file);
-        if ($ret === false) try {
-            $exec = exec('file -i ' . escapeshellarg($file));
-            if ($exec && preg_match('~: *([^/ ]+/[^; ]+)~', $exec, $match)) {
-                $ret = $match[1];
-                if ($ret == 'inode/directory') {
-                    $ret = 'directory';
-                }
-            }
-        } catch (Error) {}
-    } catch (Error) {}
-
-    // Try with extension.
-    if (!$ret) {
-        $extension = file_extension($file, false);
-        if ($extension) {
-            static $cache; // For some speed..
-            if (empty($cache[$extension = strtolower($extension)])) {
-                foreach (include 'statics/mime.php' as $type => $extensions) {
-                    if (in_array($extension, $extensions, true)) {
-                        $cache[$extension] = $ret = $type;
-                        break;
-                    }
-                }
-            }
-        }
-    }
-
-    return $ret ?: null;
 }
 
 /**
