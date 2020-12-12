@@ -874,6 +874,7 @@ function tmp(): string
  */
 function tmpdir(string $prefix = null, int $mode = 0755): string|null
 {
+    // Prefix may becomes subdir here.
     $dir = tmp() . __dirsep . ($prefix ?? 'froq-') . suid();
 
     return mkdir($dir, $mode, true) ? $dir : null;
@@ -889,6 +890,7 @@ function tmpdir(string $prefix = null, int $mode = 0755): string|null
  */
 function tmpnam(string $prefix = null, int $mode = 0644): string|null
 {
+    // Prefix may becomes subdir here.
     $nam = tmp() . __dirsep . ($prefix ?? 'froq-') . suid();
 
     return mkfile($nam, $mode, true) ? $nam : null;
@@ -990,14 +992,10 @@ function rmfile(string $file): bool|null
  */
 function mkdirtemp(string $prefix = null, int $mode = 0755, bool $froq = false): string|null
 {
-    if (!$froq) {
-        return tmpdir($prefix, $mode);
-    }
+    // Make froq subdir.
+    $froq && $prefix = 'froq/' . $prefix;
 
-    // Prefix may becomes subdir here.
-    $dir = tmp() . __dirsep . 'froq' . __dirsep . $prefix . suid();
-
-    return is_dir($dir) || mkdir($dir, $mode, true) ? $dir : null;
+    return tmpdir($prefix, $mode);
 }
 
 /**
@@ -1036,14 +1034,10 @@ function rmdirtemp(string $dir): bool|null
  */
 function mkfiletemp(string $prefix = null, int $mode = 0644, bool $froq = false): string|null
 {
-    if (!$froq) {
-        return tmpnam($prefix, $mode);
-    }
+    // Make froq subdir.
+    $froq && $prefix = 'froq/' . $prefix;
 
-    // Prefix may becomes subdir here.
-    $file = tmp() . __dirsep . 'froq' . __dirsep . $prefix . suid();
-
-    return is_file($file) || mkfile($file, $mode, true) ? $file : null;
+    return tmpnam($prefix, $mode);
 }
 
 /**
