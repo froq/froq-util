@@ -1090,7 +1090,7 @@ function mkfiletemp(string $prefix = null, int $mode = 0644, bool $froq = true):
  */
 function rmfiletemp(string $file): bool|null
 {
-    if (!is_tmpname($file)) {
+    if (!is_tmpnam($file)) {
         trigger_error(sprintf('%s(): Cannot remove a file which is outside of %s directory',
             __function__, tmp()));
         return null;
