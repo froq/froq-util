@@ -1039,21 +1039,21 @@ function rmdirtemp(string $dir): bool|null
 /**
  * Create a file in temporary directory.
  *
- * @param  string|null $extension
+ * @param  string|null $prefix
  * @param  int         $mode
- * @param  bool        $froq_temp
+ * @param  bool        $froq
  * @return string|null
  * @since  4.0
  */
-function mkfiletemp(string $extension = null, int $mode = 0644, bool $froq_temp = true): string|null
+function mkfiletemp(string $prefix = null, int $mode = 0644, bool $froq = true): string|null
 {
-    $file = ( // Eg: "/tmp/froq-temp/5f858f253527c91a4006".
-        ($froq_temp ? get_temp_directory() : dirname(get_temp_directory()))
-        . __dirsep . get_uniqid(20)
-        . ($extension ? '.' . trim($extension, '.') : '')
-    );
+    if ($froq) {
+        $file = get_temp_directory() . __dirsep . ($prefix ?? '') . get_uniqid(20);
 
-    return mkfile($file, $mode) ? $file : null;
+        return mkfile($file, $mode) ? $file : null;
+    }
+
+    return tmpnam($prefix, $mode);
 }
 
 /**
