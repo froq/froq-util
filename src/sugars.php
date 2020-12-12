@@ -1005,7 +1005,7 @@ function mkdirtemp(string $prefix = null, int $mode = 0755, bool $froq = false):
  *
  * @param  string $dir
  * @return bool|null
- * @since 4.0
+ * @since  4.0
  */
 function rmdirtemp(string $dir): bool|null
 {
@@ -1016,8 +1016,10 @@ function rmdirtemp(string $dir): bool|null
     }
 
     // Clean inside but not recursive.
-    foreach (glob($dir . '/*') as $file) {
-        unlink($file);
+    if (is_dir($dir)) {
+        foreach (glob($dir . '/*') as $file) {
+            unlink($file);
+        }
     }
 
     return is_dir($dir) && rmdir($dir);
