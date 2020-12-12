@@ -1210,7 +1210,7 @@ function stream_set_contents(&$handle, string $contents): int|null
 }
 
 /**
- * Create a file with given path.
+ * Create a file.
  *
  * @param  string $file
  * @param  int    $mode
@@ -1220,17 +1220,6 @@ function stream_set_contents(&$handle, string $contents): int|null
 function file_create(string $file, int $mode = 0644): string|null
 {
     return mkfile($file, $mode) ? $file : null;
-}
-
-/**
- * Create a temporary file.
- *
- * @alias of mkfiletemp()
- * @since 4.0
- */
-function file_create_temp(...$args)
-{
-    return mkfiletemp(...$args);
 }
 
 /**
