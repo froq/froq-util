@@ -1092,19 +1092,6 @@ function freads(&$fp): string|null
 }
 
 /**
- * Write all contents on a file handle "truncating" its contents first.
- *
- * @param  resource &$fp
- * @param  string   $contents
- * @return int|null
- * @since  5.0
- */
-function fwrites(&$fp, string $contents): int|null
-{
-    return stream_set_contents($fp, $contents);
-}
-
-/**
  * Reset a file handle contents & seek position.
  *
  * @param  resource &$fp
