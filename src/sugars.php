@@ -920,7 +920,7 @@ function tmp(): string
  * @param  string|null $prefix
  * @param  int         $mode
  * @return string
- * @since  4.0
+ * @since  5.0
  */
 function tmpdir(string $prefix = null, int $mode = 0755): string
 {
