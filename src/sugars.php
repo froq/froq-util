@@ -732,7 +732,7 @@ function get_temp_directory(string $subdir = null): string
 
     is_dir($dir) || mkdir($dir, 0755, true);
 
-    return __dirsep . trim($dir, __dirsep);
+    return $dir;
 }
 
 /**
@@ -749,7 +749,7 @@ function get_cache_directory(string $subdir = null): string
 
     is_dir($dir) || mkdir($dir, 0755, true);
 
-    return __dirsep . trim($dir, __dirsep);
+    return $dir;
 }
 
 /**
@@ -911,7 +911,7 @@ function get_trace(int $options = null, int $limit = null, int $index = null): a
  */
 function tmp(): string
 {
-    return dirname(get_temp_directory());
+    return sys_get_temp_dir();
 }
 
 /**
@@ -924,13 +924,28 @@ function tmp(): string
  */
 function tmpdir(string $prefix = null, int $mode = 0755): string
 {
-    $dir = ( // Eg: "/tmp/froq-5f858f253527c91a4006".
-        tmp() . __dirsep . ($prefix ?? 'froq-') . get_uniqid(20)
-    );
+    $dir = tmp() . __dirsep . ($prefix ?? 'froq-') . get_uniqid(20);
 
     is_dir($dir) || mkdir($dir, $mode);
 
     return $dir;
+}
+
+/**
+ * Create a file in system temporary directory.
+ *
+ * @param  string|null $prefix
+ * @param  int         $mode
+ * @return string
+ * @since  5.0
+ */
+function tmpnam(string $prefix = null, int $mode = 0644): string
+{
+    $nam = tempnam(tmp(), $prefix ?? 'froq-');
+
+    $mode && chmod($nam, $mode);
+
+    return $nam;
 }
 
 /**
@@ -1063,7 +1078,7 @@ function rmfiletemp(string $file): bool|null
 }
 
 /**
- * Open a temporary file.
+ * Open a temporary file handle.
  *
  * @param  string|null $mode
  * @param  int|null    $memo
@@ -1173,7 +1188,7 @@ function fsize($fp): int|null
 }
 
 /**
- * Reset a handle contents setting seek position to 0.
+ * Reset a file/stream handle contents setting seek position to 0.
  *
  * @param  resource &$handle
  * @param  string    $contents
