@@ -874,7 +874,7 @@ function tmp(): string
  */
 function tmpdir(string $prefix = null, int $mode = 0755): string|null
 {
-    $dir = tmp() . __dirsep . ($prefix ?? 'froq-') . get_uniqid(16);
+    $dir = tmp() . __dirsep . ($prefix ?? 'froq-') . suid();
 
     return mkdir($dir, $mode, true) ? $dir : null;
 }
@@ -889,7 +889,7 @@ function tmpdir(string $prefix = null, int $mode = 0755): string|null
  */
 function tmpnam(string $prefix = null, int $mode = 0644): string|null
 {
-    $nam = tmp() . __dirsep . ($prefix ?? 'froq-') . get_uniqid(16);
+    $nam = tmp() . __dirsep . ($prefix ?? 'froq-') . suid();
 
     return mkfile($nam, $mode, true) ? $nam : null;
 }
@@ -1042,9 +1042,9 @@ function mkfiletemp(string $prefix = null, int $mode = 0644, bool $froq = false)
         return tmpnam($prefix, $mode);
     }
 
-    $file = tmp() . __dirsep . ($prefix ?? 'froq-') . get_uniqid(16);
+    $file = tmp() . __dirsep . ($prefix ?? 'froq-') . suid();
 
-    return mkfile($file, $mode) ? $file : null;
+    return is_file($file) || mkfile($file, $mode, true) ? $file : null;
 }
 
 /**
@@ -1880,7 +1880,62 @@ function preg_error_message(int &$code = null): string|null
 }
 
 /**
- * Generate a random UUID.
+ * Generate a random string UID.
+ *
+ * @param  int    $length
+ * @param  int    $bpc
+ * @return string|null
+ * @since  5.0
+ */
+function suid(int $length = 6, int $bpc = 6): string|null
+{
+    if ($length < 1) {
+        trigger_error(sprintf('Invalid length `%s`, it must be greater than 0', $length));
+        return null;
+    } elseif ($bpc < 1 || $bpc > 8) {
+        trigger_error(sprintf('Invalid bits-per-char `%s`, it must be between 1-8', $bpc));
+        return null;
+    }
+
+    // Using base62 chars.
+    static $chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+
+    $bytes = random_bytes($length);
+
+    $p = 0; $q = strlen($bytes);
+    $w = 0; $have = 0; $mask = (1 << $bpc) - 1;
+
+    $out = '';
+
+    while ($length--) {
+        if ($have < $bpc) {
+            if ($p < $q) {
+                $byte = ord($bytes[$p++]);
+                $w |= ($byte << $have);
+                $have += 8;
+            } else {
+                break;
+            }
+        }
+
+        $i = $w & $mask;
+
+        // Fix up index picking a random index.
+        if ($i > 61) {
+            $i = rand(0, 61);
+        }
+
+        $out .= $chars[$i];
+
+        $w >>= $bpc;
+        $have -= $bpc;
+    }
+
+    return $out;
+}
+
+/**
+ * Generate a random unique UID.
  *
  * @param  bool $dashed
  * @return string
