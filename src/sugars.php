@@ -994,12 +994,8 @@ function mkdirtemp(string $prefix = null, int $mode = 0755, bool $froq = false):
         return tmpdir($prefix, $mode);
     }
 
-    $dir = tmp() . __dirsep . 'froq';
-
-    // Prefix becomes subdir here.
-    if ($prefix != '') {
-        $dir .= __dirsep . trim($prefix, __dirsep);
-    }
+    // Prefix may becomes subdir here.
+    $dir = tmp() . __dirsep . 'froq' . __dirsep . $prefix . suid();
 
     return is_dir($dir) || mkdir($dir, $mode, true) ? $dir : null;
 }
@@ -1042,7 +1038,8 @@ function mkfiletemp(string $prefix = null, int $mode = 0644, bool $froq = false)
         return tmpnam($prefix, $mode);
     }
 
-    $file = tmp() . __dirsep . ($prefix ?? 'froq-') . suid();
+    // Prefix may becomes subdir here.
+    $file = tmp() . __dirsep . 'froq' . __dirsep . $prefix . suid();
 
     return is_file($file) || mkfile($file, $mode, true) ? $file : null;
 }
