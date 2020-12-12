@@ -946,6 +946,30 @@ function tmpnam(string $prefix = null, int $mode = 0644): string|null
 }
 
 /**
+ * Check whether given directory is in temporary directory.
+ *
+ * @param  string $dir
+ * @return bool
+ * @since  5.0
+ */
+function is_tmpdir(string $dir): bool
+{
+    return is_dir($dir) && strpfx($dir, tmp());
+}
+
+/**
+ * Check whether given file is in temporary directory.
+ *
+ * @param  string $nam
+ * @return bool
+ * @since  5.0
+ */
+function is_tmpnam(string $nam): bool
+{
+    return is_file($nam) && strpfx($nam, tmp());
+}
+
+/**
  * Create a file with given file path.
  *
  * @param  string  $file
@@ -1022,7 +1046,7 @@ function mkdirtemp(...$args)
  */
 function rmdirtemp(string $dir): bool|null
 {
-    if (dirname($dir) != tmp()) {
+    if (!is_tmpdir($dir)) {
         trigger_error(sprintf('%s(): Cannot remove a directory which is outside of %s directory',
             __function__, tmp()));
         return null;
@@ -1048,7 +1072,8 @@ function rmdirtemp(string $dir): bool|null
 function mkfiletemp(string $prefix = null, int $mode = 0644, bool $froq = true): string|null
 {
     if ($froq) {
-        $file = get_temp_directory() . __dirsep . ($prefix ?? '') . get_uniqid(20);
+        $file = get_temp_directory() . __dirsep . ($prefix ?? '')
+              . get_uniqid(20);
 
         return mkfile($file, $mode) ? $file : null;
     }
@@ -1065,7 +1090,7 @@ function mkfiletemp(string $prefix = null, int $mode = 0644, bool $froq = true):
  */
 function rmfiletemp(string $file): bool|null
 {
-    if (!strpfx($file, tmp())) {
+    if (!is_tmpname($file)) {
         trigger_error(sprintf('%s(): Cannot remove a file which is outside of %s directory',
             __function__, tmp()));
         return null;
@@ -1217,6 +1242,17 @@ function stream_set_contents(&$handle, string $contents): int|null
 function file_create(string $file, int $mode = 0644): string|null
 {
     return mkfile($file, $mode) ? $file : null;
+}
+
+/**
+ * Create a temporary file.
+ *
+ * @alias of mkfiletemp()
+ * @since 4.0
+ */
+function file_create_temp(...$args)
+{
+    return mkfiletemp(...$args);
 }
 
 /**
