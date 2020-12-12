@@ -1105,17 +1105,6 @@ function fwrites(&$fp, string $contents): int|null
 }
 
 /**
- * Rewind a file handle.
- *
- * @alias of rewind()
- * @since 4.0
- */
-function frewind(&$fp): bool
-{
-    return rewind($fp);
-}
-
-/**
  * Reset a file handle contents & seek position.
  *
  * @param  resource &$fp
