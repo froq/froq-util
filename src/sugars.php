@@ -919,16 +919,14 @@ function tmp(): string
  *
  * @param  string|null $prefix
  * @param  int         $mode
- * @return string
+ * @return string|null
  * @since  5.0
  */
-function tmpdir(string $prefix = null, int $mode = 0755): string
+function tmpdir(string $prefix = null, int $mode = 0755): string|null
 {
     $dir = tmp() . __dirsep . ($prefix ?? 'froq-') . get_uniqid(20);
 
-    is_dir($dir) || mkdir($dir, $mode);
-
-    return $dir;
+    return mkdir($dir, $mode) ? $dir : null;
 }
 
 /**
@@ -936,16 +934,15 @@ function tmpdir(string $prefix = null, int $mode = 0755): string
  *
  * @param  string|null $prefix
  * @param  int         $mode
- * @return string
+ * @return string|null
  * @since  5.0
  */
-function tmpnam(string $prefix = null, int $mode = 0644): string
+function tmpnam(string $prefix = null, int $mode = 0644): string|null
 {
     $nam = tempnam(tmp(), $prefix ?? 'froq-');
+    $nam && $mode && chmod($nam, $mode);
 
-    $mode && chmod($nam, $mode);
-
-    return $nam;
+    return $nam ?: null;
 }
 
 /**
