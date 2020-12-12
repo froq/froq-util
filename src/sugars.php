@@ -718,41 +718,6 @@ function get_request_id(): string
 }
 
 /**
- * Get Froq's temporary directory.
- *
- * @param  string|null $subdir
- * @return string
- * @since  4.0
- */
-function get_temp_directory(string $subdir = null): string
-{
-    $dir = sys_get_temp_dir() . __dirsep . 'froq-temp' . (
-        $subdir ? __dirsep . trim($subdir, __dirsep) : ''
-    );
-
-    is_dir($dir) || mkdir($dir, 0755, true);
-
-    return $dir;
-}
-
-/**
- * Get Froq's cache directory.
- *
- * @param  string|null $subdir
- * @return string
- * @since  4.0
- */
-function get_cache_directory(string $subdir = null): string
-{
-    $dir = sys_get_temp_dir() . __dirsep . 'froq-cache'
-         . ($subdir ? __dirsep . trim($subdir, __dirsep) : '');
-
-    is_dir($dir) || mkdir($dir, 0755, true);
-
-    return $dir;
-}
-
-/**
  * Get real user.
  *
  * @return string|null
@@ -924,9 +889,9 @@ function tmp(): string
  */
 function tmpdir(string $prefix = null, int $mode = 0755): string|null
 {
-    $dir = tmp() . __dirsep . ($prefix ?? 'froq-') . get_uniqid(20);
+    $dir = tmp() . __dirsep . ($prefix ?? 'froq-') . get_uniqid(16);
 
-    return mkdir($dir, $mode) ? $dir : null;
+    return mkdir($dir, $mode, true) ? $dir : null;
 }
 
 /**
@@ -939,10 +904,9 @@ function tmpdir(string $prefix = null, int $mode = 0755): string|null
  */
 function tmpnam(string $prefix = null, int $mode = 0644): string|null
 {
-    $nam = tempnam(tmp(), $prefix ?? 'froq-');
-    $nam && $mode && chmod($nam, $mode);
+    $nam = tmp() . __dirsep . ($prefix ?? 'froq-') . get_uniqid(16);
 
-    return $nam ?: null;
+    return mkfile($nam, $mode, true) ? $nam : null;
 }
 
 /**
@@ -974,10 +938,11 @@ function is_tmpnam(string $nam): bool
  *
  * @param  string  $file
  * @param  int     $mode
+ * @param  bool    $tmp @internal
  * @return bool|null
  * @since  4.0
  */
-function mkfile(string $file, int $mode = 0644): bool|null
+function mkfile(string $file, int $mode = 0644, bool $tmp = false): bool|null
 {
     $file = trim($file);
     if (!$file) {
@@ -985,20 +950,23 @@ function mkfile(string $file, int $mode = 0644): bool|null
         return null;
     }
 
-    $file = get_real_path($file);
+    // Some speed for internal tmp calls.
+    if (!$tmp) {
+        $file = get_real_path($file);
 
-    if (is_dir($file)) {
-        trigger_error(sprintf('%s(): Cannot create %s, it is a directory', __function__, $file));
-        return null;
-    } elseif (is_file($file)) {
-        trigger_error(sprintf('%s(): Cannot create %s, it is already exists', __function__, $file));
-        return null;
+        if (is_dir($file)) {
+            trigger_error(sprintf('%s(): Cannot create %s, it is a directory', __function__, $file));
+            return null;
+        } elseif (is_file($file)) {
+            trigger_error(sprintf('%s(): Cannot create %s, it is already exist', __function__, $file));
+            return null;
+        }
     }
 
-    $ok = is_dir(dirname($file)) || mkdir(dirname($file), 0755, true);
+    // Ensure directory.
+    is_dir(dirname($file)) || mkdir(dirname($file), 0755, true);
 
-    return $mode ? ($ok && touch($file) && chmod($file, $mode))
-                 : ($ok && touch($file));
+    return touch($file) && chmod($file, $mode);
 }
 
 /**
@@ -1029,12 +997,26 @@ function rmfile(string $file): bool|null
 /**
  * Create a folder in system temporary directory.
  *
- * @alias of tmpdir().
- * @since 4.0
+ * @param  string|null $prefix
+ * @param  int         $mode
+ * @param  bool        $froq
+ * @since  4.0
+ * @return string|null
  */
-function mkdirtemp(...$args)
+function mkdirtemp(string $prefix = null, int $mode = 0755, bool $froq = false): string|null
 {
-    return tmpdir(...$args);
+    if (!$froq) {
+        return tmpdir($prefix, $mode);
+    }
+
+    $dir = tmp() . __dirsep . 'froq';
+
+    // Prefix becomes subdir here.
+    if ($prefix != '') {
+        $dir .= __dirsep . trim($prefix, __dirsep);
+    }
+
+    return is_dir($dir) || mkdir($dir, $mode, true) ? $dir : null;
 }
 
 /**
@@ -1069,16 +1051,15 @@ function rmdirtemp(string $dir): bool|null
  * @return string|null
  * @since  4.0
  */
-function mkfiletemp(string $prefix = null, int $mode = 0644, bool $froq = true): string|null
+function mkfiletemp(string $prefix = null, int $mode = 0644, bool $froq = false): string|null
 {
-    if ($froq) {
-        $file = get_temp_directory() . __dirsep . ($prefix ?? '')
-              . get_uniqid(20);
-
-        return mkfile($file, $mode) ? $file : null;
+    if (!$froq) {
+        return tmpnam($prefix, $mode);
     }
 
-    return tmpnam($prefix, $mode);
+    $file = tmp() . __dirsep . ($prefix ?? 'froq-') . get_uniqid(16);
+
+    return mkfile($file, $mode) ? $file : null;
 }
 
 /**
