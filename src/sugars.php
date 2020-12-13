@@ -1091,7 +1091,7 @@ function freadall(&$fp): string|null
 }
 
 /**
- * Reset a file handle contents & seek position to top.
+ * Reset a file handle contents & set seek position to top.
  *
  * @alias of stream_set_contents()
  * @since 4.0
@@ -1111,20 +1111,6 @@ function freset(&$fp, string $contents): int|null
 function fmeta($fp): array|null
 {
     return stream_get_meta_data($fp) ?: null;
-}
-
-/**
- * Get a file handle stats & metadata.
- *
- * @param  resource $fp
- * @return array|null
- * @since  4.0
- */
-function finfo($fp): array|null
-{
-    [$stat, $meta] = [fstat($fp), fmeta($fp)];
-
-    return ($stat && $meta) ? $stat + ['meta' => $meta] : null;
 }
 
 /**
