@@ -629,11 +629,11 @@ function get_error(string $field = null)
  *
  * @param  int  $length
  * @param  int  $base
- * @param  bool $use_hrtime
+ * @param  bool $hrtime
  * @return string|null
  * @since  4.0
  */
-function get_uniqid(int $length = 14, int $base = 16, bool $use_hrtime = false): string|null
+function get_uniqid(int $length = 14, int $base = 16, bool $hrtime = false): string|null
 {
     if ($length < 14) {
         trigger_error(sprintf('%s(): Invalid length, min=14', __function__));
@@ -645,11 +645,8 @@ function get_uniqid(int $length = 14, int $base = 16, bool $use_hrtime = false):
     }
 
     // Grab 14-length hex from uniqid() or map to hex hrtime() stuff.
-    if (!$use_hrtime) {
-        $id = explode('.', uniqid('', true))[0];
-    } else {
-        $id = join('', map(hrtime(), 'dechex'));
-    }
+    $id = !$hrtime ? split('.', uniqid('', true))[0]
+                   : join('', map(hrtime(), 'dechex'));
 
     $ret = $id;
 
