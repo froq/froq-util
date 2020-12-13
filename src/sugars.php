@@ -1082,9 +1082,8 @@ function fopentemp(string $mode = null, int $memo = null)
 /**
  * Read all contents a file handle without modifing seek offset.
  *
- * @param  resource &$fp
- * @return string|null
- * @since  5.0
+ * @alias of file_read_stream()
+ * @since 5.0
  */
 function freadall(&$fp): string|null
 {
@@ -1094,17 +1093,12 @@ function freadall(&$fp): string|null
 /**
  * Reset a file handle contents & seek position to top.
  *
- * @param  resource &$fp
- * @param  string    $contents
- * @return int|null
- * @since  4.0
+ * @alias of stream_set_contents()
+ * @since 4.0
  */
 function freset(&$fp, string $contents): int|null
 {
-    $ret = stream_set_contents($fp, $contents);
-    rewind($fp);
-
-    return $ret;
+    return stream_set_contents($fp, $contents);
 }
 
 /**
@@ -1146,7 +1140,7 @@ function fsize($fp): int|null
 }
 
 /**
- * Reset a file/stream handle contents setting seek position to current.
+ * Reset a file/stream handle contents setting seek position to top.
  *
  * @param  resource &$handle
  * @param  string    $contents
