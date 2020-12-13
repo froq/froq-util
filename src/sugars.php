@@ -1086,24 +1086,25 @@ function fopentemp(string $mode = null, int $memo = null)
  * @return string|null
  * @since  5.0
  */
-function freads(&$fp): string|null
+function freadall(&$fp): string|null
 {
     return file_read_stream($fp);
 }
 
 /**
- * Reset a file handle contents & seek position.
+ * Reset a file handle contents & seek position to top.
  *
  * @param  resource &$fp
  * @param  string    $contents
- * @return bool
+ * @return int|null
  * @since  4.0
  */
-function freset(&$fp, string $contents): bool
+function freset(&$fp, string $contents): int|null
 {
-    rewind($fp); // Without this, stats won't be resetted.
+    $ret = stream_set_contents($fp, $contents);
+    rewind($fp);
 
-    return ftruncate($fp, 0) && fwrite($fp, $contents) && rewind($fp);
+    return $ret;
 }
 
 /**
@@ -1145,7 +1146,7 @@ function fsize($fp): int|null
 }
 
 /**
- * Reset a file/stream handle contents setting seek position to 0.
+ * Reset a file/stream handle contents setting seek position to current.
  *
  * @param  resource &$handle
  * @param  string    $contents
@@ -1155,7 +1156,7 @@ function fsize($fp): int|null
 function stream_set_contents(&$handle, string $contents): int|null
 {
     // Since handle stat size also pointer position is not changing even after ftruncate() for
-    // files (not "php://temp" etc), we rewind the handle.
+    // files (not "php://temp" etc), we rewind the handle. Without this, stats won't be resetted!
     rewind($handle);
 
     // Empty, write & rewind.
@@ -1257,14 +1258,13 @@ function file_read_output(string $file, array $file_data = null): string|null
  * Read a file stream contents without modifing seek position.
  *
  * @param  resource &$handle
- * @param  int       $from
  * @return string|null
  * @since  5.0
  */
-function file_read_stream(&$handle, int $from = 0): string|null
+function file_read_stream(&$handle): string|null
 {
     $pos = ftell($handle);
-    $ret = stream_get_contents($handle, -1, $from);
+    $ret = stream_get_contents($handle, -1, 0);
     fseek($handle, $pos);
 
     return ($ret !== false) ? $ret : null;
