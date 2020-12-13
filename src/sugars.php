@@ -429,7 +429,7 @@ function convert_base(int|string $in, int|string $from, int|string $to): string|
         return $in;
     }
 
-    [$in_length, $from_base, $to_base]
+    [$in_length, $from_base_length, $to_base_length]
         = [strlen($in), strlen($from), strlen($to)];
 
     $numbers = [];
@@ -438,16 +438,16 @@ function convert_base(int|string $in, int|string $from, int|string $to): string|
     }
 
     $ret = '';
-
     $old_length = $in_length;
+
     do {
         $new_length = $div = 0;
 
         for ($i = 0; $i < $old_length; $i++) {
-            $div = ($div * $from_base) + $numbers[$i];
-            if ($div >= $to_base) {
-                $numbers[$new_length++] = ($div / $to_base) | 0;
-                $div = $div % $to_base;
+            $div = ($div * $from_base_length) + $numbers[$i];
+            if ($div >= $to_base_length) {
+                $numbers[$new_length++] = ($div / $to_base_length) | 0;
+                $div = $div % $to_base_length;
             } elseif ($new_length > 0) {
                 $numbers[$new_length++] = 0;
             }
