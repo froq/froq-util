@@ -444,7 +444,7 @@ final class Objects extends StaticClass
                 continue;
             }
 
-            if (is_null($value) && is_object($class)) {
+            if (is_object($class)) {
                 try {
                     $property->setAccessible(true);
                     $value = $property->getValue($class);
