@@ -832,10 +832,13 @@ function get_trace(int $options = null, int $limit = null, int $index = null, st
 
     foreach ($trace as $i => &$cur) {
         $cur += [
-            'caller'   => null,
-            'callee'   => $cur['function'] ?? null,
-            'callPath' => $cur['file'] . ':' . $cur['line'],
+            'caller' => null,
+            'callee' => $cur['function'] ?? null,
         ];
+
+        if (isset($cur['file'], $cur['line'])) {
+            $cur['callPath'] = $cur['file'] . ':' . $cur['line'];
+        }
 
         if (isset($cur['class'])) {
             $cur['method']     = $cur['function'];
