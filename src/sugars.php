@@ -340,7 +340,8 @@ function stracut(string $str, string $src, int $length = null, bool $icase = fal
  */
 function str_has(string $str, string $src, bool $icase = false): bool
 {
-    return (!$icase ? strpos($str, $src) : stripos($str, $src)) !== false;
+    return !$icase ? str_contains($str, $src)
+        : stripos($str, $src) !== false;
 }
 
 /**
@@ -354,7 +355,8 @@ function str_has(string $str, string $src, bool $icase = false): bool
  */
 function str_has_prefix(string $str, string $src, bool $icase = false): bool
 {
-    return substr_compare($str, $src, 0, strlen($src), $icase) === 0;
+    return !$icase ? str_starts_with($str, $src)
+        : substr_compare($str, $src, 0, strlen($src), true) === 0;
 }
 
 /**
@@ -368,7 +370,8 @@ function str_has_prefix(string $str, string $src, bool $icase = false): bool
  */
 function str_has_suffix(string $str, string $src, bool $icase = false): bool
 {
-    return substr_compare($str, $src, -strlen($src), null, $icase) === 0;
+    return !$icase ? str_ends_with($str, $src)
+        : substr_compare($str, $src, -strlen($src), null, true) === 0;
 }
 
 /**
