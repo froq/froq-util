@@ -40,10 +40,8 @@ function strsfx(...$args) { return str_has_suffix(...$args); } // Search suffix.
  * Loving shorter stuffs?
  * @since  3.0, 5.0 Moved from froq/fun.
  */
-function upper(string $in, bool $mb = false): string {
-    return !$mb ? strtoupper($in) : mb_strtoupper($in); }
-function lower(string $in, bool $mb = false): string {
-    return !$mb ? strtolower($in) : mb_strtolower($in); }
+function upper(string $in): string { return mb_strtoupper($in); }
+function lower(string $in): string { return mb_strtolower($in); }
 
 /**
  * Filter an array with value/key notation.
@@ -92,14 +90,13 @@ function reduce(array $array, $carry = null, callable $func = null)
  * Get size/count/length of given input.
  *
  * @param  any  $in
- * @param  bool $mb
  * @return int|null
  * @since  3.0, 5.0 Moved from froq/fun.
  */
-function size($in, bool $mb = false): int|null
+function size($in): int|null
 {
     return match (true) {
-        is_string($in)            => !$mb ? strlen($in) : mb_strlen($in),
+        is_string($in)            => mb_strlen($in),
         is_countable($in)         => count($in),
         ($in instanceof stdClass) => count((array) $in),
         default                   => null // No valid input.
@@ -282,7 +279,7 @@ function grep_all(string $in, string $pattern, bool $uniform = false): array|nul
  */
 function strcut(string $str, int $length): string
 {
-    return ($length > 0) ? substr($str, 0, $length) : substr($str, $length);
+    return ($length > 0) ? mb_substr($str, 0, $length) : mb_substr($str, $length);
 }
 
 /**
@@ -297,10 +294,10 @@ function strcut(string $str, int $length): string
  */
 function strbcut(string $str, string $src, int $length = null, bool $icase = false): string|null
 {
-    $pos = !$icase ? strpos($str, $src) : stripos($str, $src);
+    $pos = !$icase ? mb_strpos($str, $src) : mb_stripos($str, $src);
 
     if ($pos !== false) {
-        $cut = substr($str, 0, $pos); // Before (b).
+        $cut = mb_substr($str, 0, $pos); // Before (b).
         return !$length ? $cut : strcut($cut, $length);
     }
 
@@ -319,10 +316,10 @@ function strbcut(string $str, string $src, int $length = null, bool $icase = fal
  */
 function stracut(string $str, string $src, int $length = null, bool $icase = false): string|null
 {
-    $pos = !$icase ? strpos($str, $src) : stripos($str, $src);
+    $pos = !$icase ? mb_strpos($str, $src) : mb_stripos($str, $src);
 
     if ($pos !== false) {
-        $cut = substr($str, $pos + strlen($src)); // After (a).
+        $cut = mb_substr($str, $pos + mb_strlen($src)); // After (a).
         return !$length ? $cut : strcut($cut, $length);
     }
 
@@ -386,13 +383,13 @@ function str_rand(string $str, int $length = null): string|null
         return null;
     }
 
-    $str_length = strlen($str);
+    $str_length = mb_strlen($str);
     if ($length && ($length < 1 || $length > $str_length)) {
         trigger_error(sprintf('%s(): Length must be between 1-%s or null', __function__, $str_length));
         return null;
     }
 
-    return !$length ? str_shuffle($str) : substr(str_shuffle($str), 0, $length);
+    return !$length ? str_shuffle($str) : mb_substr(str_shuffle($str), 0, $length);
 }
 
 /**
@@ -480,24 +477,24 @@ function convert_case(string $in, int $case, string $spliter = null, string $joi
     }
 
     if ($case == CASE_LOWER) {
-        return strtolower($in);
+        return mb_strtolower($in);
     } elseif ($case == CASE_UPPER) {
-        return strtoupper($in);
+        return mb_strtoupper($in);
     }
 
     // Set default split char.
     $spliter = ($spliter !== null || $spliter !== '') ? $spliter : ' ';
 
     return match ($case) {
-        CASE_DASH  => implode('-', explode($spliter, strtolower($in))),
-        CASE_SNAKE => implode('_', explode($spliter, strtolower($in))),
+        CASE_DASH  => implode('-', explode($spliter, mb_strtolower($in))),
+        CASE_SNAKE => implode('_', explode($spliter, mb_strtolower($in))),
         CASE_CAMEL => lcfirst(
             implode($joiner ?? '', array_map(
-                fn($s) => ucfirst(trim($s)), explode($spliter, strtolower($in))
+                fn($s) => mb_ucfirst(trim($s)), explode($spliter, mb_strtolower($in))
             ))
         ),
         CASE_TITLE => implode($joiner ?? $spliter, array_map(
-            fn($s) => ucfirst(trim($s)), explode($spliter, strtolower($in))
+            fn($s) => mb_ucfirst(trim($s)), explode($spliter, mb_strtolower($in))
         )),
     };
 }
@@ -663,7 +660,7 @@ function get_uniqid(int $length = 14, int $base = 16, bool $hrtime = false): str
         $ret .= get_random_uniqid(3, $base, false);
     }
 
-    return strcut($ret, $length);
+    return substr($ret, 0, $length);
 }
 
 /**
@@ -695,7 +692,7 @@ function get_random_uniqid(int $length = 14, int $base = 16, bool $length_check 
         $ret .= ($base == 16) ? $id : convert_base($id, 16, $base);
     }
 
-    return strcut($ret, $length);
+    return substr($ret, 0, $length);
 }
 
 /**
