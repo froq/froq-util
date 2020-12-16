@@ -23,36 +23,6 @@ use Error, Reflection, ReflectionException, ReflectionClass, ReflectionProperty;
 final class Objects extends StaticClass
 {
     /**
-     * Has constant.
-     * @param  string|object $class
-     * @param  string        $name
-     * @return ?bool
-     */
-    public static function hasConstant($class, string $name): ?bool
-    {
-        try {
-            return (new ReflectionClass($class))->hasConstant($name);
-        } catch (ReflectionException) {
-            return null;
-        }
-    }
-
-    /**
-     * Has property.
-     * @param  string|object $class
-     * @param  string        $name
-     * @return ?bool
-     */
-    public static function hasProperty($class, string $name): ?bool
-    {
-        try {
-            return (new ReflectionClass($class))->hasProperty($name);
-        } catch (ReflectionException) {
-            return null;
-        }
-    }
-
-    /**
      * Get reflection.
      * @param  string|object $class
      * @return ?ReflectionClass
@@ -146,6 +116,21 @@ final class Objects extends StaticClass
         $pos = !$baseOnly ? strrpos($name, '\\') : strpos($name, '\\');
 
         return substr($name, 0, ($pos !== false) ? $pos : 0);
+    }
+
+    /**
+     * Has constant.
+     * @param  string|object $class
+     * @param  string        $name
+     * @return ?bool
+     */
+    public static function hasConstant($class, string $name): ?bool
+    {
+        try {
+            return (new ReflectionClass($class))->hasConstant($name);
+        } catch (ReflectionException) {
+            return null;
+        }
     }
 
     /**
@@ -284,6 +269,21 @@ final class Objects extends StaticClass
         }
 
         return $ret ?? [];
+    }
+
+    /**
+     * Has property.
+     * @param  string|object $class
+     * @param  string        $name
+     * @return ?bool
+     */
+    public static function hasProperty($class, string $name): ?bool
+    {
+        try {
+            return (new ReflectionClass($class))->hasProperty($name);
+        } catch (ReflectionException) {
+            return null;
+        }
     }
 
     /**
