@@ -288,13 +288,14 @@ function strcut(string $str, int $length): string
  * @param  string   $str
  * @param  string   $src
  * @param  int|null $length
+ * @param  int|null $offset
  * @param  bool     $icase
  * @return string|null
  * @since  4.0
  */
-function strbcut(string $str, string $src, int $length = null, bool $icase = false): string|null
+function strbcut(string $str, string $src, int $length = null, int $offset = null, bool $icase = false): string|null
 {
-    $pos = !$icase ? mb_strpos($str, $src) : mb_stripos($str, $src);
+    $pos = !$icase ? mb_strpos($str, $src, $offset ?? 0) : mb_stripos($str, $src, $offset ?? 0);
 
     if ($pos !== false) {
         $cut = mb_substr($str, 0, $pos); // Before (b).
@@ -310,13 +311,14 @@ function strbcut(string $str, string $src, int $length = null, bool $icase = fal
  * @param  string   $str
  * @param  string   $src
  * @param  int|null $length
+ * @param  int|null $offset
  * @param  bool     $icase
  * @return string|null
  * @since  4.0
  */
-function stracut(string $str, string $src, int $length = null, bool $icase = false): string|null
+function stracut(string $str, string $src, int $length = null, int $offset = null, bool $icase = false): string|null
 {
-    $pos = !$icase ? mb_strpos($str, $src) : mb_stripos($str, $src);
+    $pos = !$icase ? mb_strpos($str, $src, $offset ?? 0) : mb_stripos($str, $src, $offset ?? 0);
 
     if ($pos !== false) {
         $cut = mb_substr($str, $pos + mb_strlen($src)); // After (a).
@@ -814,15 +816,16 @@ function get_path_info(string $path, string|int $component = null): string|array
 }
 
 /**
- * Get a bit detailed trace with default options, limit & index options.
+ * Get a bit detailed trace with default options, limit, index and field options.
  *
- * @param  int|null $options
- * @param  int|null $limit
- * @param  int|null $index
- * @return array|null
+ * @param  int|null    $options
+ * @param  int|null    $limit
+ * @param  int|null    $index
+ * @param  string|null $field
+ * @return any|null
  * @since  4.0
  */
-function get_trace(int $options = null, int $limit = null, int $index = null): array|null
+function get_trace(int $options = null, int $limit = null, int $index = null, string $field = null)
 {
     $trace = debug_backtrace($options ?? 0, $limit ? $limit + 1 : 0);
     array_shift($trace); // Drop self.
@@ -844,7 +847,7 @@ function get_trace(int $options = null, int $limit = null, int $index = null): a
         }
     }
 
-    return is_null($index) ? $trace : $trace[$index] ?? null;
+    return is_null($index) ? $trace : $trace[$index][$field] ?? $trace[$index] ?? null;
 }
 
 /**
