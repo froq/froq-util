@@ -1495,14 +1495,14 @@ function array_apply(array $array, callable $func): array
 }
 
 /**
- * Test all given keys are set in an array.
+ * Check whether all given keys are set in given array.
  *
- * @param  array $array
- * @param  array $keys
+ * @param  array         $array
+ * @param  int|string ...$keys
  * @return bool
  * @since  4.0
  */
-function array_isset(array $array, array $keys): bool
+function array_isset(array $array, int|string ...$keys): bool
 {
     foreach ($keys as $key) {
         if (!isset($array[$key])) {
@@ -1513,17 +1513,54 @@ function array_isset(array $array, array $keys): bool
 }
 
 /**
- * Drop all given keys from an array.
+ * Drop all given keys from given array.
  *
- * @param  array &$array
- * @param  array  $keys
+ * @param  array         &$array
+ * @param  int|string  ...$keys
  * @return array
  * @since  4.0
  */
-function array_unset(array &$array, array $keys): array
+function array_unset(array &$array, int|string ...$keys): array
 {
     foreach ($keys as $key) {
         unset($array[$key]);
+    }
+    return $array;
+}
+
+/**
+ * Check whether all given values are set in given array.
+ *
+ * @param  array    $array
+ * @param  any   ...$values
+ * @return bool
+ * @since  5.0
+ */
+function array_contains(array $array, ...$values): bool
+{
+    foreach ($values as $value) {
+        if (!in_array($value, $array, true)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+/**
+ * Drop given values from given array if exist.
+ *
+ * @param  array    &$array
+ * @param  any   ...$values
+ * @return array
+ * @since  5.0
+ */
+function array_delete(array &$array, ...$values): array
+{
+    foreach ($values as $value) {
+        $key = array_search($value, $array, true);
+        if ($key !== false) {
+            unset($array[$key]);
+        }
     }
     return $array;
 }
