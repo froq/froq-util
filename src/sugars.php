@@ -2005,6 +2005,7 @@ function is_type_of($in, string $type): bool
         'gd', 'image' => is_image($in),
         'stream'      => is_stream($in),
         'number'      => is_number($in),
+        'scalar'      => is_scalar($in),
         default       => strtolower($type) == strtolower(get_type($in))
     };
 }
