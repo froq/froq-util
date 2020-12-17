@@ -44,8 +44,7 @@ final class Objects extends StaticClass
      */
     public static function getId(object $object, bool $withName = true): string
     {
-        return $withName ? get_class($object) .'#'. spl_object_id($object)
-                         : spl_object_id($object) .'';
+        return $withName ? $object::class .'#'. spl_object_id($object) : spl_object_id($object) .'';
     }
 
     /**
@@ -61,7 +60,7 @@ final class Objects extends StaticClass
         if ($withRehash) {
             $hash = hash('crc32', $hash); // Pack "000..." stuff.
         }
-        return $withName ? get_class($object) .'#'. $hash : $hash;
+        return $withName ? $object::class .'#'. $hash : $hash;
     }
 
     /**
