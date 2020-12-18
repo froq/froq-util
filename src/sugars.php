@@ -1689,6 +1689,41 @@ function array_value_exists($value, array $array, bool $strict = true): bool
 }
 
 /**
+ * Fetch item(s) from an array by given path(s) with dot notation.
+ *
+ * @param  array        $array
+ * @param  string|array $path
+ * @param  any|null     $default
+ * @return any
+ * @since  5.0
+ */
+function array_fetch(array $array, string|array $path, $default = null)
+{
+    if (is_array($path)) {
+        foreach ($path as $pat) {
+            $ret[] = array_fetch($array, $pat, $default);
+        }
+        return $ret;
+    }
+
+    if (array_key_exists($path, $array)) {
+        return $array[$path] ?? $default;
+    }
+
+    $keys = explode('.', $path);
+    $key  = array_shift($keys);
+
+    if (empty($keys)) {
+        return $array[$key] ?? $default;
+    }
+    if (isset($array[$key]) && is_array($array[$key])) {
+        return array_fetch($array[$key], implode('.', $keys), $default);
+    }
+
+    return $default;
+}
+
+/**
  * Select item(s) from an array by given key(s).
  *
  * @param  int|string|array<int|string> $array
@@ -1745,7 +1780,7 @@ function array_pick(array &$array, int|string|array $key, $default = null, bool 
  * @return any|null
  * @since  4.9, 4.13 Actual version.
  */
-function array_pluck(array &$array, $key, $default = null)
+function array_pluck(array &$array, int|string|array $key, $default = null)
 {
     // Just got sick of "if isset array[..]: value=array[..], unset(array[..])" stuffs.
     return is_array($key) ? Arrays::pullAll($array, $key, $default)
