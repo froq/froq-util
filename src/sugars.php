@@ -492,11 +492,13 @@ function convert_case(string $in, int $case, string $spliter = null, string $joi
         CASE_SNAKE => implode('_', explode($spliter, mb_strtolower($in))),
         CASE_CAMEL => lcfirst(
             implode($joiner ?? '', array_map(
-                fn($s) => mb_ucfirst(trim($s)), explode($spliter, mb_strtolower($in))
+                fn($s) => mb_ucfirst(trim($s)),
+                explode($spliter, mb_strtolower($in))
             ))
         ),
         CASE_TITLE => implode($joiner ?? $spliter, array_map(
-            fn($s) => mb_ucfirst(trim($s)), explode($spliter, mb_strtolower($in))
+            fn($s) => mb_ucfirst(trim($s)),
+            explode($spliter, mb_strtolower($in))
         )),
     };
 }
@@ -644,8 +646,11 @@ function get_uniqid(int $length = 14, int $base = 16, bool $hrtime = false): str
     }
 
     // Grab 14-length hex from uniqid() or map to hex hrtime() stuff.
-    $id = !$hrtime ? split('.', uniqid('', true))[0]
-                   : join('', map(hrtime(), 'dechex'));
+    if (!$hrtime) {
+        $id = explode('.', uniqid('', true))[0];
+    } else {
+        $id = implode('', array_map('dechex', hrtime()));
+    }
 
     $ret = $id;
 
