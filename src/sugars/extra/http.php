@@ -37,47 +37,55 @@ function parse_query_string(string $query, string $ignored_keys = null): array
 /**
  * Build cookie.
  *
- * @param  array  $cookie
- * @return string
+ * @param  string      $name
+ * @param  scalar|null $value
+ * @param  array|null  $options
+ * @return string|null
  * @since  4.0
  */
-function build_cookie(array $cookie): string
+function build_cookie(string $name, $value, array $options = null): string|null
 {
-    if (empty($cookie['name']) || !array_key_exists('value', $cookie)) {
-        trigger_error('Both cookie name & value required');
-        return '';
+    if ($name == '') {
+        trigger_error('No cookie name given');
+        return null;
+    }
+    if ($value != null && !is_scalar($value)) {
+        trigger_error(sprintf('Invalid value type `%s`, scalar or null values accepted only',
+            get_type($value)));
+        return null;
     }
 
-    $ret = rawurlencode($cookie['name']) .'=';
+    static $optionsDefault; $optionsDefault ??= array_fill_keys(
+        ['expires', 'path', 'domain', 'secure', 'httpOnly', 'sameSite'], null);
 
-    if ($cookie['value'] === null || $cookie['value'] === ''
-        || (isset($cookie['expires']) && $cookie['expires'] < 0)) {
+    $cookie = ['name' => $name, 'value' => $value] + array_merge($optionsDefault, ($options ?? []));
+
+    extract($cookie);
+
+    $ret = rawurlencode($name) .'=';
+
+    if ($value === null || $expires < 0) {
         $ret .= sprintf('NULL; Expires=%s; Max-Age=0', gmdate('D, d M Y H:i:s \G\M\T'));
     } else {
         // String, bool, int or float.
-        switch (gettype($cookie['value'])) {
-            case 'string':
-                $ret .= rawurlencode($cookie['value']);
-                break;
-            case 'boolean':
-                $ret .= $cookie['value'] ? 'true' : 'false';
-                break;
-            default:
-                $ret .= strval($cookie['value']);
-        }
+        $ret .= match (get_type($value)) {
+            'string' => rawurlencode($value),
+            'bool'   => $value ? 'true' : 'false',
+            default  => strval($value)
+        };
 
         // Must be given in-seconds format.
-        if (isset($cookie['expires'])) {
+        if ($expires != null) {
             $ret .= sprintf('; Expires=%s; Max-Age=%s', gmdate('D, d M Y H:i:s \G\M\T',
-                time() + $cookie['expires']), $cookie['expires']);
+                time() + $expires), $expires);
         }
     }
 
-    isset($cookie['path'])     && $ret .= '; Path='. $cookie['path'];
-    isset($cookie['domain'])   && $ret .= '; Domain='. $cookie['domain'];
-    isset($cookie['secure'])   && $ret .= '; Secure';
-    isset($cookie['httpOnly']) && $ret .= '; HttpOnly';
-    isset($cookie['sameSite']) && $ret .= '; SameSite='. $cookie['sameSite'];
+    $path     && $ret .= '; Path='. $path;
+    $domain   && $ret .= '; Domain='. $domain;
+    $secure   && $ret .= '; Secure';
+    $httpOnly && $ret .= '; HttpOnly';
+    $sameSite && $ret .= '; SameSite='. $sameSite;
 
     return $ret;
 }
