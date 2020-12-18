@@ -561,18 +561,18 @@ final class Arrays extends StaticClass
      * @param  array      &$array
      * @param  int|string  $oldKey
      * @param  int|string  $newKey
-     * @param  any|null    $newDefault
+     * @param  any|null    $default
      * @return array
      * @since  4.2
      */
-    public static function swap(array &$array, $oldKey, $newKey, $newDefault = null): array
+    public static function swap(array &$array, $oldKey, $newKey, $default = null): array
     {
         $newValue = self::pull($array, $oldKey);
 
         if ($newValue !== null) {
             self::set($array, $newKey, $newValue);
         } elseif (func_num_args() == 4) { // Create directive.
-            self::set($array, $newKey, $newDefault);
+            self::set($array, $newKey, $default);
         }
 
         return $array;
