@@ -68,7 +68,7 @@ final class Arrays extends StaticClass
         } else {
             $key = (string) $key;
 
-            if (strpos($key, '.') === false) {
+            if (!str_contains($key, '.')) {
                 $array[$key] = $value;
             } else {
                 $keys = explode('.', trim($key, '.'));
@@ -138,7 +138,7 @@ final class Arrays extends StaticClass
         } else {
             $key = (string) $key;
 
-            if (strpos($key, '.') === false) {
+            if (!str_contains($key, '.')) {
                 $value = $array[$key] ?? $value;
                 if ($drop) { // Drop gotten item.
                     unset($array[$key]);
