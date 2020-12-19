@@ -1694,7 +1694,7 @@ function array_value_exists($value, array $array, bool $strict = true): bool
  * @param  array        $array
  * @param  string|array $path
  * @param  any|null     $default
- * @return any
+ * @return any|null
  * @since  5.0
  */
 function array_fetch(array $array, string|array $path, $default = null)
@@ -1729,16 +1729,16 @@ function array_fetch(array $array, string|array $path, $default = null)
  * @param  int|string|array<int|string> $array
  * @param  array                        $key
  * @param  any|null                     $default
- * @return any
+ * @return any|null
  * @since  5.0
  */
 function array_select(array $array, int|string|array $key, $default = null)
 {
     // A little bit faster comparing to array_pick().
-    foreach ((array) $key as $key) {
-        $ret[] = $array[$key] ?? $default;
+    foreach ((array) $key as $ke) {
+        $ret[] = $array[$ke] ?? $default;
     }
-    return $ret ?? null;
+    return is_array($key) ? ($ret ?? null) : ($ret[0] ?? null);
 }
 
 /**
