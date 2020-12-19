@@ -38,8 +38,7 @@ final /* fuckic static */ class Util extends StaticClass
                     : pathinfo($file, PATHINFO_FILENAME)
             , $files);
 
-            throw new UtilException("Invalid sugar name '%s' given, valids are: %s",
-                [$name, join(', ', $names)]);
+            throw new UtilException('Invalid sugar name %s, valids are: %s', [$name, join(', ', $names)]);
         }
 
         include_once $file;

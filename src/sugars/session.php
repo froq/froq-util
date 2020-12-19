@@ -10,7 +10,7 @@ use froq\App;
 
 // Check dependencies (all others already come with froq\App).
 if (!class_exists(App::class, false)) {
-    throw new UtilException("Session sugars dependent to 'froq' module but not found");
+    throw new UtilException('Session sugars dependent to froq module but not found');
 }
 
 /**
@@ -21,8 +21,7 @@ if (!class_exists(App::class, false)) {
  */
 function session($key = null, $value = null)
 {
-    static $session;
-    $session ??= app()->session();
+    static $session; $session ??= app()->session();
 
     // Set/get.
     if ($session) {
