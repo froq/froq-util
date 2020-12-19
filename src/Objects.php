@@ -7,7 +7,7 @@ declare(strict_types=1);
 
 namespace froq\util;
 
-use froq\common\objects\StaticClass;
+use froq\common\object\StaticClass;
 use Error, Reflection, ReflectionException, ReflectionClass, ReflectionProperty;
 
 /**
