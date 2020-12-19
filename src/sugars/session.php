@@ -102,7 +102,7 @@ function session_get($key, $default = null, bool $remove = false)
  */
 function session_remove($key): ?bool
 {
-    return ($session = session()) ? $session->remove($key) == null : null;
+    return ($session = session()) ? $session->remove($key) : null;
 }
 
 /**
@@ -121,4 +121,30 @@ function start_session(): ?bool
 function end_session(): ?bool
 {
     return ($session = session()) ? $session->end() : null;
+}
+
+/**
+ * Generate a CSRF token.
+ *
+ * @param  string $form
+ * @param  string $token
+ * @return bool|null
+ * @since  5.0
+ */
+function generate_csrf_token(string $form): string|null
+{
+    return ($session = session()) ? $session->generateCsrfToken() : null;
+}
+
+/**
+ * Validate a CSRF token.
+ *
+ * @param  string $form
+ * @param  string $token
+ * @return bool|null
+ * @since  5.0
+ */
+function validate_csrf_token(string $form, string $token): bool|null
+{
+    return ($session = session()) ? $session->validateCsrfToken($form, $token) : null;
 }
