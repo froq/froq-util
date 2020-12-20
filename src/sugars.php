@@ -279,7 +279,7 @@ function grep_all(string $in, string $pattern, bool $uniform = false): array|nul
  */
 function strcut(string $str, int $length): string
 {
-    return ($length > 0) ? mb_substr($str, 0, $length) : mb_substr($str, $length);
+    return ($length >= 0) ? mb_substr($str, 0, $length) : mb_substr($str, $length);
 }
 
 /**
@@ -290,10 +290,10 @@ function strcut(string $str, int $length): string
  * @param  int|null $length
  * @param  int|null $offset
  * @param  bool     $icase
- * @return string|null
+ * @return string
  * @since  4.0
  */
-function strbcut(string $str, string $src, int $length = null, int $offset = null, bool $icase = false): string|null
+function strbcut(string $str, string $src, int $length = null, int $offset = null, bool $icase = false): string
 {
     $pos = !$icase ? mb_strpos($str, $src, $offset ?? 0) : mb_stripos($str, $src, $offset ?? 0);
 
@@ -302,7 +302,7 @@ function strbcut(string $str, string $src, int $length = null, int $offset = nul
         return !$length ? $cut : strcut($cut, $length);
     }
 
-    return null; // Not found.
+    return ''; // Not found.
 }
 
 /**
@@ -313,10 +313,10 @@ function strbcut(string $str, string $src, int $length = null, int $offset = nul
  * @param  int|null $length
  * @param  int|null $offset
  * @param  bool     $icase
- * @return string|null
+ * @return string
  * @since  4.0
  */
-function stracut(string $str, string $src, int $length = null, int $offset = null, bool $icase = false): string|null
+function stracut(string $str, string $src, int $length = null, int $offset = null, bool $icase = false): string
 {
     $pos = !$icase ? mb_strpos($str, $src, $offset ?? 0) : mb_stripos($str, $src, $offset ?? 0);
 
@@ -325,7 +325,7 @@ function stracut(string $str, string $src, int $length = null, int $offset = nul
         return !$length ? $cut : strcut($cut, $length);
     }
 
-    return null; // Not found.
+    return ''; // Not found.
 }
 
 /**
