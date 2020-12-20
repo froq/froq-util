@@ -16,8 +16,8 @@ if (!class_exists(App::class, false)) {
 /**
  * Session.
  * @param  string|array|null $key
- * @param  any               $value
- * @return froq\session\Session|any
+ * @param  any|null          $value
+ * @return any|null|froq\session\Session
  */
 function session($key = null, $value = null)
 {

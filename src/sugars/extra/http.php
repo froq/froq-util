@@ -35,7 +35,7 @@ function parse_query_string(string $query, string $ignored_keys = null): array
 }
 
 /**
- * Build cookie.
+ * Build a cookie.
  *
  * @param  string      $name
  * @param  scalar|null $value
@@ -91,7 +91,7 @@ function build_cookie(string $name, $value, array $options = null): string|null
 }
 
 /**
- * Parse cookie.
+ * Parse a cookie from a header line.
  *
  * @param  string $cookie
  * @return array
@@ -101,22 +101,22 @@ function parse_cookie(string $cookie): array
 {
     $ret = [];
 
-    foreach (explode(';', $cookie) as $i => $component) {
+    foreach (split(';', $cookie) as $i => $component) {
         $component = trim($component);
         if ($component) {
-            @ [$name, $value] = explode('=', $component, 2);
+            [$name, $value] = split('=', $component, 2);
             if ($i == 0) {
-                $ret['name']  = ($name !== null) ? rawurldecode($name) : $name;
-                $ret['value'] = ($value !== null) ? rawurldecode($value) : $value;
+                $ret['name']  = isset($name)  ? rawurldecode($name)  : $name;
+                $ret['value'] = isset($value) ? rawurldecode($value) : $value;
                 continue;
             }
 
             $name = strtolower($name ?? '');
             if ($name) {
                 switch ($name) {
-                    case 'secure': $value = true; break;
+                    case 'secure':                       $value = true; break;
                     case 'httponly': $name = 'httpOnly'; $value = true; break;
-                    case 'samesite': $name  = 'sameSite'; $value = true; break;
+                    case 'samesite': $name = 'sameSite'; $value = true; break;
                 }
                 $ret[$name] = $value;
             }
@@ -127,7 +127,7 @@ function parse_cookie(string $cookie): array
 }
 
 /**
- * Build url.
+ * Build an URL.
  *
  * @param  array $url
  * @return string

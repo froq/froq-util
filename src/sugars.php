@@ -1402,17 +1402,17 @@ function strtoitime(string $format, int $time = null): int
     // Eg: "1 day" or "1D" (instead "60*60*24" or "86400").
     if (preg_match_all('~([+-]?\d+)([smhDMY])~', $format, $matches)) {
         $format_list = null;
-
         [, $numbers, $formats] = $matches;
+
         foreach ($formats as $i => $format) {
-            switch ($format) {
-                case 's': $format_list[] = $numbers[$i] . ' second'; break;
-                case 'm': $format_list[] = $numbers[$i] . ' minute'; break;
-                case 'h': $format_list[] = $numbers[$i] . ' hour';   break;
-                case 'D': $format_list[] = $numbers[$i] . ' day';    break;
-                case 'M': $format_list[] = $numbers[$i] . ' month';  break;
-                case 'Y': $format_list[] = $numbers[$i] . ' year';   break;
-            }
+            $format_list[] = match ($format) {
+                's' => $numbers[$i] . ' second',
+                'm' => $numbers[$i] . ' minute',
+                'h' => $numbers[$i] . ' hour',
+                'D' => $numbers[$i] . ' day',
+                'M' => $numbers[$i] . ' month',
+                'Y' => $numbers[$i] . ' year',
+            };
         }
 
         // Update format.
