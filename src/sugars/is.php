@@ -65,17 +65,6 @@ function is_iterable_like($in): bool
 }
 
 /**
- * Is primitive.
- * @param  any $in
- * @return bool
- * @since  3.0
- */
-function is_primitive($in): bool
-{
-    return is_scalar($in);
-}
-
-/**
  * Is closure.
  * @param  any $in
  * @return bool
@@ -84,46 +73,6 @@ function is_primitive($in): bool
 function is_closure($in): bool
 {
     return ($in instanceof Closure);
-}
-
-/**
- * Is class.
- * @param  any $in
- * @return bool
- * @since  3.0
- */
-function is_class($in): bool
-{
-    return is_string($in) && class_exists($in, false);
-}
-
-/**
- * Is class method.
- * @param  string|object $in
- * @param  string|null   $name
- * @return bool
- * @since  3.0
- */
-function is_class_method($in, string $name = null): bool
-{
-    // Eg: Foo::bar (for publics only, seems not fixed @see https://bugs.php.net/bug.php?id=29210).
-    if (func_num_args() == 1) {
-        return is_string($in) && str_contains($in, '::') && is_callable($in);
-    }
-
-    return (is_string($in) || is_object($in)) && method_exists($in, $name);
-}
-
-/**
- * Is class property.
- * @param  string|object $in
- * @param  string        $name
- * @return bool
- * @since  3.0 (4.3.3 actually)
- */
-function is_class_property($in, string $name): bool
-{
-    return (is_string($in) || is_object($in)) && property_exists($in, $name);
 }
 
 /**
