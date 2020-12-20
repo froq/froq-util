@@ -65,12 +65,12 @@ function response(...$args): Response
     $response = app()->response();
 
     if ($args) {
-        @ [$code, $content, $content_attributes, $headers, $cookies] = $args;
+        @ [$code, $content, $attributes, $headers, $cookies] = $args;
 
         $code && $response->setStatus($code);
 
         if (count($args) >= 3) {
-            $response->setBody($content, (array) $content_attributes);
+            $response->setBody($content, (array) $attributes);
         }
 
         $headers && $response->setHeaders($headers);

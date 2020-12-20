@@ -40,9 +40,7 @@ function html_decode(?string $in, bool $simple = false): string
  */
 function html_strip(?string $in, ?string $allowed_tags = '', bool $decode = false): string
 {
-    if ($decode) {
-        $in = html_decode($in, true);
-    }
+    $decode && $in = html_decode($in, true);
 
     if ($allowed_tags != '') {
         $allowed_tags = explode(',', $allowed_tags);
@@ -60,9 +58,7 @@ function html_strip(?string $in, ?string $allowed_tags = '', bool $decode = fals
  */
 function html_remove(?string $in, ?string $allowed_tags = '', bool $decode = false): string
 {
-    if ($decode) {
-        $in = html_decode($in, true);
-    }
+    $decode && $in = html_decode($in, true);
 
     if ($allowed_tags != '') {
         $pattern = '~<(?!(?:'. str_replace(',', '|', $allowed_tags) .')\b)(\w+)\b[^>]*/?>(?:.*?</\1>)?~is';
@@ -81,6 +77,7 @@ function html_remove(?string $in, ?string $allowed_tags = '', bool $decode = fal
 function html_attributes(array $in): string
 {
     $ret = [];
+
     foreach ($in as $name => $value) {
         $ret[] = sprintf('%s="%s"', $name, $value);
     }
@@ -90,28 +87,31 @@ function html_attributes(array $in): string
 
 /**
  * Html options.
- * @param  iterable     $in
- * @param  any          $value_current
+ * @param  array        $in
+ * @param  any          $current
  * @param  bool         $strict
  * @param  string|array $extra
  * @return string
  */
-function html_options(iterable $in, $value_current = null, bool $strict = false, $extra = null): string
+function html_options(array $in, $current = null, bool $strict = false, $extra = null): string
 {
     if ($extra !== null) {
         if (is_array($extra)) {
             $extra = html_attributes($extra);
         }
+
         $extra = ' '. trim($extra);
     }
 
     $ret = '';
+
     foreach ($in as $value => $text) {
         if (is_array($text)) {
-            @ [$value, $text] = $text;
+            [$value, $text] = $text;
         }
+
         $ret .= sprintf('<option value="%s"%s%s>%s</option>', $value,
-            html_selected($value, $value_current, $strict), $extra, $text);
+            html_selected($value, $current, $strict), $extra, $text);
     }
 
     return $ret;
@@ -196,7 +196,7 @@ function html_compress(?string $in): string
     $in = preg_replace('~</(\w+)>\s+~', '</\1> ', $in);
 
     // Text area "\n" problem.
-    $textarea_tpl = '%{{{TEXTAREA}}}';
+    $textarea_tpl   = '%{{{TEXTAREA}}}';
     $textarea_found = preg_match_all('~(<textarea(.*?)>(.*?)</textarea>)~sm', $in, $matches);
 
     // Fix text areas.
