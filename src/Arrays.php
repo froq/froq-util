@@ -389,7 +389,7 @@ final class Arrays extends StaticClass
      */
     public static function find(array $array, callable $func)
     {
-        $i = 0; $ret = null;
+        $ret = null; $i = 0;
 
         foreach ($array as $key => $value) {
             if ($func($value, $key, $i++)) {
@@ -588,9 +588,7 @@ final class Arrays extends StaticClass
     public static function sweep(array &$array, array $ignoredKeys = null): array
     {
         // Memoize test function.
-        static $test; $test ??= function ($value) {
-            return ($value !== null && $value !== '' && $value !== []);
-        };
+        static $test; $test ??= fn($v) => $v !== null && $v !== '' && $v !== [];
 
         if ($ignoredKeys == null) {
             $array = array_filter($array, $test);
@@ -800,7 +798,7 @@ final class Arrays extends StaticClass
      */
     public static function reduce(array $array, $carry, callable $func)
     {
-        $i = 0; $ret = $carry;
+        $ret = $carry; $i = 0;
 
         foreach ($array as $key => $value) try {
             $ret = $func($ret, $value, $key, $i++, $array);
