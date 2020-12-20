@@ -8,7 +8,7 @@ declare(strict_types=1);
 namespace froq\util;
 
 use froq\common\object\StaticClass;
-use ArgumentCountError;
+use ValueError, ArgumentCountError;
 
 /**
  * Arrays.
@@ -439,13 +439,11 @@ final class Arrays extends StaticClass
 
         // Prevent trivial corruption from limit errors, but notice.
         if ($limit < 1) {
-            $limit = 1;
-            trigger_error(sprintf(
+            throw new ValueError(sprintf(
                 '%s(): Minimum limit must be 1, %s given', $limit
             ));
         } elseif ($limit > $count) {
-            $limit = $count;
-            trigger_error(sprintf(
+            throw new ValueError(sprintf(
                 '%s(): Maximum limit must not be greater than %s, given limit %s is exceeding '.
                 'count of given array(%s)', __method__, $count, $limit, $count
             ));
