@@ -33,7 +33,7 @@ final /* fuckic static */ class Util extends StaticClass
         if (!is_file($file)) {
             $files = glob(__dir__ . '/sugars/{*.php,extra/*.php}', GLOB_BRACE);
             $names = array_map(
-                fn($file) => strpos($file, 'extra/')
+                fn($file) => strsrc($file, 'extra/')
                     ? 'extra/'. pathinfo($file, PATHINFO_FILENAME)
                     : pathinfo($file, PATHINFO_FILENAME)
             , $files);
@@ -186,11 +186,11 @@ final /* fuckic static */ class Util extends StaticClass
         }
 
         $hexed = false;
-        if (strpos($qs, '.')) {
+        if (str_contains($qs, '.')) {
             $hexed = true;
 
             // Normalize arrays.
-            if (strpos($qs, '%5D')) {
+            if (str_contains($qs, '%5D')) {
                 $qs = str_replace(['%5B', '%5D'], ['[', ']'], $qs);
             }
 
@@ -209,7 +209,7 @@ final /* fuckic static */ class Util extends StaticClass
             // Unhex keys.
             foreach ($qsp as $key => $value) {
                 $key = hex2bin((string) $key);
-                if (strpos($key, '%') > -1) {
+                if (str_contains($key, '%')) {
                     $key = rawurldecode($key);
                 }
                 $qa[$key] = $value;
@@ -266,10 +266,10 @@ final /* fuckic static */ class Util extends StaticClass
             // Fix such "=#foo" queries that not taken as parameter.
             $qs = str_replace('=#', '=%23', $qs);
         }
-        if ($stripTags && strpos($qs, '%3C')) {
+        if ($stripTags && str_contains($qs, '%3C')) {
             $qs = preg_replace('~%3C[\w]+(%2F)?%3E~ismU', '', $qs);
         }
-        if ($normalizeArrays && strpos($qs, '%5D')) {
+        if ($normalizeArrays && str_contains($qs, '%5D')) {
             $qs = str_replace(['%5B', '%5D'], ['[', ']'], $qs);
         }
 

@@ -38,8 +38,7 @@ final class Numbers extends StaticClass
                 $in = number_format((float) $in, $decimals);
             }
 
-            return is_string($in) && strpos($in, '.') > -1
-                ? (float) $in : (int) $in;
+            return is_string($in) && str_contains($in, '.') ? (float) $in : (int) $in;
         }
 
         return null; // Error, not a number.
@@ -59,6 +58,7 @@ final class Numbers extends StaticClass
         if (is_numeric($a) && is_numeric($b)) {
             return round($a, $precision) <=> round($b, $precision);
         }
+
         return null; // Error, non-number(s).
     }
 

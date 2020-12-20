@@ -61,7 +61,7 @@ final class Strings extends StaticClass
      */
     public static function contains(string $in, string $search, bool $icase = false): bool
     {
-        return (!$icase ? strpos($in, $search) : stripos($in, $search)) !== false;
+        return (!$icase ? mb_strpos($in, $search) : mb_stripos($in, $search)) !== false;
     }
 
     /**

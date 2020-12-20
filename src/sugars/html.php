@@ -154,7 +154,7 @@ function html_compress(?string $in): string
     }
 
     // Styles.
-    if (strpos($in, '<style>')) {
+    if (str_contains($in, '<style>')) {
         $in = preg_replace_callback('~(<style>(.*?)</style>)~sm', function ($match) {
             $in = trim($match[2]);
 
@@ -169,7 +169,7 @@ function html_compress(?string $in): string
     }
 
     // Scripts.
-    if (strpos($in, '<script>')) {
+    if (str_contains($in, '<script>')) {
         $in = preg_replace_callback('~(<script>(.*?)</script>)~sm', function ($match) {
             $in = trim($match[2]);
 

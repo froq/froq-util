@@ -107,8 +107,8 @@ function is_class($in): bool
 function is_class_method($in, string $name = null): bool
 {
     // Eg: Foo::bar (for publics only, seems not fixed @see https://bugs.php.net/bug.php?id=29210).
-    if ($name === null) {
-        return is_string($in) && strpos($in, '::') && is_callable($in);
+    if (func_num_args() == 1) {
+        return is_string($in) && str_contains($in, '::') && is_callable($in);
     }
 
     return (is_string($in) || is_object($in)) && method_exists($in, $name);
