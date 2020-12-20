@@ -1839,7 +1839,7 @@ function array_aggregate(array $array, callable $func, array $carry = null): arr
  */
 function error_clear(int $code = null): void
 {
-    if ($code && $code !== (error_get_last()['type'] ?? null)) {
+    if ($code && $code !== get_error('type')) {
         return;
     }
 
