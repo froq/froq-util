@@ -30,11 +30,14 @@ function pluck(array &$array, int|string $key, &$value = null): bool {
 /**
  * The ever most wanted functions (finally come with 8.0, but without case option).
  * @alias of str_has(),str_has_prefix(),str_has_suffix()
- * @since 4.0
+ * @since 4.0, 5.0 Dropped ...$args calls due to speed issues.
  */
-function strsrc(...$args) { return str_has(...$args); }        // Search.
-function strpfx(...$args) { return str_has_prefix(...$args); } // Search prefix.
-function strsfx(...$args) { return str_has_suffix(...$args); } // Search suffix.
+function strsrc(string $str, string $src, bool $icase = false): bool { // Search.
+    return str_has($str, $src, $icase); }
+function strpfx(string $str, string $src, bool $icase = false): bool { // Search prefix.
+    return str_has_prefix($str, $src, $icase); }
+function strsfx(string $str, string $src, bool $icase = false): bool { // Search suffix.
+    return str_has_suffix($str, $src, $icase); }
 
 /**
  * Loving shorter stuffs?
