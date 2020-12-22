@@ -8,12 +8,12 @@ declare(strict_types=1);
 use froq\util\Util;
 
 /**
- * Gets user agent.
+ * Get user agent.
  *
  * @param  bool $cut
- * @return ?string
+ * @return string|null
  */
-function get_user_agent(bool $cut = true): ?string
+function get_user_agent(bool $cut = true): string|null
 {
     static $ret;
     $ret ??= Util::getClientUserAgent();
@@ -26,7 +26,7 @@ function get_user_agent(bool $cut = true): ?string
 }
 
 /**
- * Detect whether user agent is a bot or not.
+ * Detect whether user agent is a bot.
  *
  * @return bool
  */
@@ -51,7 +51,7 @@ function is_bot(): bool
 }
 
 /**
- * Detect whether user agent is a Google bot or not.
+ * Detect whether user agent is a Google bot.
  *
  * @return bool
  */
@@ -68,7 +68,7 @@ function is_google_bot(): bool
 }
 
 /**
- * Detect whether user agent is a mobile browser or not.
+ * Detect whether user agent is a mobile browser.
  *
  * @return bool
  */
@@ -86,7 +86,7 @@ function is_mobile(): bool
 }
 
 /**
- * Detect whether user agent is a tablet browser or not.
+ * Detect whether user agent is a tablet browser.
  *
  * @return bool
  */
@@ -102,7 +102,7 @@ function is_tablet(): bool
 }
 
 /**
- * Detect whether user agent is a desktop browser or not.
+ * Detect whether user agent is a desktop browser.
  *
  * @return bool
  */
