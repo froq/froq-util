@@ -8,7 +8,7 @@ declare(strict_types=1);
 use froq\util\Util;
 
 /**
- * Build query string.
+ * Build a query string.
  *
  * @param  array       $query
  * @param  string|null $ignored_keys
@@ -22,7 +22,7 @@ function build_query_string(array $query, string $ignored_keys = null, bool $nor
 }
 
 /**
- * Parse query string.
+ * Parse a query string.
  *
  * @param  string      $query
  * @param  string|null $ignored_keys
@@ -91,7 +91,7 @@ function build_cookie(string $name, $value, array $options = null): string|null
 }
 
 /**
- * Parse a cookie from a header line.
+ * Parse a cookie (from a header line).
  *
  * @param  string $cookie
  * @return array
@@ -127,7 +127,7 @@ function parse_cookie(string $cookie): array
 }
 
 /**
- * Build an URL.
+ * Build a URL.
  *
  * @param  array $url
  * @return string
