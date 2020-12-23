@@ -40,7 +40,7 @@ function rand_float(float $min = null, float $max = null, int $precision = null)
  * @return ?any
  * @since  4.1
  */
-function rand_item(array $array, &$key = null)
+function rand_item(array $array, int|string &$key = null)
 {
     $key = array_rand($array);
     if ($key === null) {
@@ -56,10 +56,10 @@ function rand_item(array $array, &$key = null)
  * @param  array              $array
  * @param  int                $limit
  * @param  array<int|string> &$keys
- * @return ?array
+ * @return array|null
  * @since  4.1
  */
-function rand_items(array $array, int $limit, array &$keys = null): ?array
+function rand_items(array $array, int $limit, array &$keys = null): array|null
 {
     $ret = [];
     $len = count($array);

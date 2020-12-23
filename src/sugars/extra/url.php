@@ -52,10 +52,10 @@ function get_url_host(string $url = null): string|null
  * Get port part from current or given URL.
  *
  * @param  string|null $url
- * @return ?int
+ * @return int|null
  * @since  4.0
  */
-function get_url_port(string $url = null): ?int
+function get_url_port(string $url = null): int|null
 {
     $url = ''. (func_num_args() ? $url : get_url());
 
@@ -121,10 +121,10 @@ function get_url_segment(int $i, string $url = null): string|null
  * Get all segments from current or given URL.
  *
  * @param  string|null $url
- * @return ?array
+ * @return array|null
  * @since  4.0
  */
-function get_url_segments(string $url = null): ?array
+function get_url_segments(string $url = null): array|null
 {
     $path = func_num_args() ? get_url_path($url) : get_url_path();
     if (!$path) {

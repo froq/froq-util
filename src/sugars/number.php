@@ -26,10 +26,10 @@ function number($in, int $decimals = null): int|float|null
  * @param  string|number $a
  * @param  string|number $b
  * @param  int|null      $precision
- * @return ?int
+ * @return int|null
  * @since  3.0
  */
-function number_compare($a, $b, int $precision = null): ?int
+function number_compare($a, $b, int $precision = null): int|null
 {
     return Numbers::compare($a, $b, $precision);
 }
@@ -40,10 +40,10 @@ function number_compare($a, $b, int $precision = null): ?int
  * @param  string|number $a
  * @param  string|number $b
  * @param  int|null      $precision
- * @return ?bool
+ * @return bool|null
  * @since  3.0
  */
-function number_equals($a, $b, int $precision = null): ?bool
+function number_equals($a, $b, int $precision = null): bool|null
 {
     return Numbers::equals($a, $b, $precision);
 }
