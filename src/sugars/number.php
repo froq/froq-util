@@ -8,19 +8,21 @@ declare(strict_types=1);
 use froq\util\Numbers;
 
 /**
- * Number.
+ * Make a number from given a numeric input.
+ *
  * @param  numeric  $in
  * @param  int|null $decimals
  * @return int|float|null
  * @since  3.0
  */
-function number($in, int $decimals = null)
+function number($in, int $decimals = null): int|float|null
 {
     return Numbers::convert($in, $decimals);
 }
 
 /**
- * Number compare.
+ * Compare two numbers.
+ *
  * @param  string|number $a
  * @param  string|number $b
  * @param  int|null      $precision
@@ -33,7 +35,8 @@ function number_compare($a, $b, int $precision = null): ?int
 }
 
 /**
- * Number equals.
+ * Check whether given numbers are equal.
+ *
  * @param  string|number $a
  * @param  string|number $b
  * @param  int|null      $precision
@@ -46,7 +49,8 @@ function number_equals($a, $b, int $precision = null): ?bool
 }
 
 /**
- * Is digit.
+ * Check whether given input is digit.
+ *
  * @param  any $in
  * @return bool
  * @since  3.0
@@ -57,7 +61,8 @@ function is_digit($in): bool
 }
 
 /**
- * Is id (useful for any (db) incremental id checking).
+ * Check whether given input is an ID (useful for any (db) incremental id checking).
+ *
  * anyparam  number $in
  * @return bool
  * @since  3.0
@@ -68,7 +73,8 @@ function is_id($in): bool
 }
 
 /**
- * Is uint.
+ * Check whether given input is uint.
+ *
  * @param  any $in
  * @return bool
  * @since  3.0
@@ -79,7 +85,8 @@ function is_uint($in): bool
 }
 
 /**
- * Is ufloat.
+ * Check whether given input is ufloat.
+ *
  * @param  any $in
  * @return bool
  * @since  3.0
@@ -90,7 +97,8 @@ function is_ufloat($in): bool
 }
 
 /**
- * Is signed.
+ * Check whether given input is signed.
+ *
  * @param  any $in
  * @return bool
  * @since  3.0
@@ -101,7 +109,8 @@ function is_signed($in): bool
 }
 
 /**
- * Is unsigned.
+ * Check whether given input is unsigned.
+ *
  * @param  any $in
  * @return bool
  * @since  3.0

@@ -6,39 +6,42 @@
 declare(strict_types=1);
 
 /**
- * Html encode.
- * @param  ?string $in
+ * Encode HTML characters on given input.
+ *
+ * @param  string $in
  * @param  bool    $simple
  * @return string
  */
-function html_encode(?string $in, bool $simple = false): string
+function html_encode(string $in, bool $simple = false): string
 {
     return $simple
-         ? str_replace(['<', '>'], ['&lt;', '&gt;'], (string) $in)
-         : str_replace(["'", '"', '<', '>'], ['&#39;', '&#34;', '&lt;', '&gt;'], (string) $in);
+         ? str_replace(['<', '>'], ['&lt;', '&gt;'], $in)
+         : str_replace(["'", '"', '<', '>'], ['&#39;', '&#34;', '&lt;', '&gt;'], $in);
 }
 
 /**
- * Html decode.
- * @param  ?string $in
+ * Decode HTML characters on given input.
+ *
+ * @param  string $in
  * @param  bool    $simple
  * @return string
  */
-function html_decode(?string $in, bool $simple = false): string
+function html_decode(string $in, bool $simple = false): string
 {
     return $simple
-         ? str_ireplace(['&lt;', '&gt;'], ['<', '>'], (string) $in)
-         : str_ireplace(['&#39;', '&#34;', '&lt;', '&gt;'], ["'", '"', '<', '>'], (string) $in);
+         ? str_ireplace(['&lt;', '&gt;'], ['<', '>'], $in)
+         : str_ireplace(['&#39;', '&#34;', '&lt;', '&gt;'], ["'", '"', '<', '>'], $in);
 }
 
 /**
- * Html strip.
- * @param  ?string $in
- * @param  ?string $allowed_tags
+ * Strip HTML characters on given input.
+ *
+ * @param  string $in
+ * @param  string $allowed_tags
  * @param  bool    $decode
  * @return string
  */
-function html_strip(?string $in, ?string $allowed_tags = '', bool $decode = false): string
+function html_strip(string $in, string $allowed_tags = '', bool $decode = false): string
 {
     $decode && $in = html_decode($in, true);
 
@@ -46,17 +49,18 @@ function html_strip(?string $in, ?string $allowed_tags = '', bool $decode = fals
         $allowed_tags = explode(',', $allowed_tags);
     }
 
-    return strip_tags((string) $in, $allowed_tags);
+    return strip_tags($in, $allowed_tags);
 }
 
 /**
- * Html remove.
- * @param  ?string $in
- * @param  ?string $allowed_tags
+ * Remove HTML characters on given input.
+ *
+ * @param  string $in
+ * @param  string $allowed_tags
  * @param  bool    $decode
  * @return string
  */
-function html_remove(?string $in, ?string $allowed_tags = '', bool $decode = false): string
+function html_remove(string $in, string $allowed_tags = '', bool $decode = false): string
 {
     $decode && $in = html_decode($in, true);
 
@@ -66,11 +70,12 @@ function html_remove(?string $in, ?string $allowed_tags = '', bool $decode = fal
         $pattern = '~<(\w+)\b[^>]*/?>(?:.*?</\1>)?~is';
     }
 
-    return preg_replace($pattern, '', (string) $in);
+    return preg_replace($pattern, '', $in);
 }
 
 /**
- * Html attributes.
+ * Make an attribute string with given [name=>value] notated array.
+ *
  * @param  array $in
  * @return string
  */
@@ -86,14 +91,15 @@ function html_attributes(array $in): string
 }
 
 /**
- * Html options.
+ * Make options string with given [name=>value] notated array.
+ *
  * @param  array        $in
  * @param  any          $current
  * @param  bool         $strict
  * @param  string|array $extra
  * @return string
  */
-function html_options(array $in, $current = null, bool $strict = false, $extra = null): string
+function html_options(array $in, $current = null, bool $strict = false, string|array $extra = null): string
 {
     if ($extra !== null) {
         if (is_array($extra)) {
@@ -118,7 +124,8 @@ function html_options(array $in, $current = null, bool $strict = false, $extra =
 }
 
 /**
- * Html checked.
+ * Make a checked attribute string when given a & b equal.
+ *
  * @param  any  $a
  * @param  any  $b
  * @param  bool $strict
@@ -130,7 +137,8 @@ function html_checked($a, $b, bool $strict = false): string
 }
 
 /**
- * Html selected.
+ * Make a selected attribute string when given a & b equal.
+ *
  * @param  any  $a
  * @param  any  $b
  * @param  bool $strict
@@ -142,13 +150,13 @@ function html_selected($a, $b, bool $strict = false): string
 }
 
 /**
- * Html compress.
- * @param  ?string $in
+ * Compress given HTML input.
+ *
+ * @param  string $in
  * @return string
  */
-function html_compress(?string $in): string
+function html_compress(string $in): string
 {
-    $in = (string) $in;
     if ($in == '') {
         return $in;
     }

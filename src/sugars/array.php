@@ -8,7 +8,8 @@ declare(strict_types=1);
 use froq\util\Arrays;
 
 /**
- * Is set array.
+ * Check whether all keys are "int" in given array.
+ *
  * @param  any $in
  * @return bool
  */
@@ -18,7 +19,8 @@ function is_set_array($in): bool
 }
 
 /**
- * Is map array.
+ * Check whether all keys are "string" in given array.
+ *
  * @param  any $in
  * @return bool
  */
@@ -28,21 +30,23 @@ function is_map_array($in): bool
 }
 
 /**
- * Array set.
+ * Bridge function to Arrays.set()/setAll().
+ *
  * @param  array                        &$array
  * @param  int|string|array<int|string>  $key
  * @param  any                           $value
  * @return array
  * @since  3.0
  */
-function array_set(array &$array, $key, $value): array
+function array_set(array &$array, int|string|array $key, $value): array
 {
     return is_array($key) ? Arrays::setAll($array, $key)
                           : Arrays::set($array, $key, $value);
 }
 
 /**
- * Array set all.
+ * Bridge function to Arrays.setAll().
+ *
  * @param  array &$array
  * @param  array  $items
  * @return array
@@ -54,7 +58,8 @@ function array_set_all(array &$array, array $items): array
 }
 
 /**
- * Array get.
+ * Bridge function to Arrays.get()/getAll().
+ *
  * @param  array                        &$array
  * @param  int|string|array<int|string>  $key
  * @param  any|null                      $default
@@ -62,14 +67,15 @@ function array_set_all(array &$array, array $items): array
  * @return any|null
  * @since  3.0
  */
-function array_get(array $array, $key, $default = null, bool $drop = false)
+function array_get(array $array, int|string|array $key, $default = null, bool $drop = false)
 {
     return is_array($key) ? Arrays::getAll($array, $key, $default, $drop)
                           : Arrays::get($array, $key, $default, $drop);
 }
 
 /**
- * Array get all.
+ * Bridge function to Arrays.getAll().
+
  * @param  array             &$array
  * @param  array<int|string>  $keys
  * @param  any|null           $default
@@ -83,7 +89,8 @@ function array_get_all(array $array, array $keys, $default = null, bool $drop = 
 }
 
 /**
- * Array get random.
+ * Bridge function to Arrays.getRandom().
+ *
  * @param  array  &$array
  * @param  int     $limit
  * @param  bool    $pack
@@ -97,21 +104,23 @@ function array_get_random(array &$array, int $limit = 1, bool $pack = false, boo
 }
 
 /**
- * Array pull.
+ * Bridge function to Arrays.pull()/pullAll().
+ *
  * @param  array                        &$array
  * @param  int|string|array<int|string>  $key
  * @param  any|null                      $default
  * @return any|null
  * @since  3.0
  */
-function array_pull(array &$array, $key, $default = null)
+function array_pull(array &$array, int|string|array $key, $default = null)
 {
     return is_array($key) ? Arrays::pullAll($array, $key, $default)
                           : Arrays::pull($array, $key, $default);
 }
 
 /**
- * Array pull all.
+ * Bridge function to Arrays.pullAll().
+ *
  * @param  array             &$array
  * @param  array<int|string>  $keys
  * @param  any|null           $default
@@ -124,7 +133,8 @@ function array_pull_all(array &$array, array $keys, $default = null): array
 }
 
 /**
- * Array pull random.
+ * Bridge function to Arrays.pullRandom().
+ *
  * @param  array  &$array
  * @param  int     $limit
  * @param  bool    $pack
@@ -137,7 +147,8 @@ function array_pull_random(array &$array, int $limit = 1, bool $pack = false)
 }
 
 /**
- * Remove.
+ * Bridge function to Arrays.remove()/removeAll().
+ *
  * @param  array                        &$array
  * @param  int|string|array<int|string>  $key
  * @return array
@@ -150,7 +161,8 @@ function array_remove(array &$array, $key): array
 }
 
 /**
- * Remove all.
+ * Bridge function to Arrays.removeAll().
+ *
  * @param  array             &$array
  * @param  array<int|string>  $keys
  * @return array
@@ -162,7 +174,8 @@ function array_remove_all(array &$array, array $keys): array
 }
 
 /**
- * Array remove random.
+ * Bridge function to Arrays.removeRandom().
+ *
  * @param  array  &$array
  * @param  int     $limit
  * @return any|null
@@ -174,7 +187,8 @@ function array_remove_random(array &$array, int $limit = 1): array
 }
 
 /**
- * Array compose.
+ * Bridge function to Arrays.compose().
+ *
  * @param  array<int|string> $keys
  * @param  array             $values
  * @param  any|null          $default
@@ -187,7 +201,8 @@ function array_compose(array $keys, array $values, $default = null): array
 }
 
 /**
- * Array complete.
+ * Bridge function to Arrays.complete().
+ *
  * @param  bool     $null_strings
  * @param  array    $keys
  * @param  array ...$arrays
@@ -200,7 +215,8 @@ function array_complete(bool $null_strings, array $keys, array ...$arrays): arra
 }
 
 /**
- * Array coalesce.
+ * Bridge function to Arrays.coalesce().
+ *
  * @param  bool     $null_strings
  * @param  array ...$arrays
  * @return array
@@ -212,7 +228,8 @@ function array_coalesce(bool $null_strings, array ...$arrays): array
 }
 
 /**
- * Array test (like JavaScript Array.every()).
+ * Bridge function to Arrays.test().
+ *
  * @param  array    $array
  * @param  callable $func
  * @return bool
@@ -224,7 +241,8 @@ function array_test(array $array, callable $func): bool
 }
 
 /**
- * Array test all (like JavaScript Array.every()).
+ * Bridge function to Arrays.testAll().
+ *
  * @param  array    $array
  * @param  callable $func
  * @return bool
@@ -236,7 +254,8 @@ function array_test_all(array $array, callable $func): bool
 }
 
 /**
- * Array find.
+ * Bridge function to Arrays.find().
+ *
  * @param  array    $array
  * @param  callable $func
  * @return any|null
@@ -248,7 +267,8 @@ function array_find(array $array, callable $func)
 }
 
 /**
- * Array find all.
+ * Bridge function to Arrays.findAll().
+ *
  * @param  array    $array
  * @param  callable $func
  * @param  bool     $useKeys
@@ -261,7 +281,8 @@ function array_find_all(array $array, callable $func, bool $useKeys = false): ar
 }
 
 /**
- * Array random.
+ * Bridge function to Arrays.random().
+ *
  * @param  array &$array
  * @param  int    $limit
  * @param  bool   $pack Return as [key,value] pairs.
@@ -275,7 +296,8 @@ function array_random(array &$array, int $limit = 1, bool $pack = false, bool $d
 }
 
 /**
- * Array shuffle.
+ * Bridge function to Arrays.shuffle().
+ *
  * @param  array &$array
  * @param  bool   $keep_keys
  * @return array
@@ -287,7 +309,8 @@ function array_shuffle(array &$array, bool $keep_keys = true): array
 }
 
 /**
- * Array include.
+ * Bridge function to Arrays.include().
+ *
  * @param  array             $array
  * @param  array<int|string> $keys
  * @return array
@@ -299,7 +322,8 @@ function array_include(array $array, array $keys): array
 }
 
 /**
- * Array exclude.
+ * Bridge function to Arrays.exclude().
+ *
  * @param  array             $array
  * @param  array<int|string> $keys
  * @return array
@@ -311,7 +335,8 @@ function array_exclude(array $array, array $keys): array
 }
 
 /**
- * Array flatten.
+ * Bridge function to Arrays.flatten().
+ *
  * @param  array $array
  * @param  bool $use_keys
  * @param  bool $fix_keys
@@ -319,28 +344,29 @@ function array_exclude(array $array, array $keys): array
  * @return array
  * @since  4.0
  */
-function array_flatten(array $array, bool $use_keys = false, bool $fix_keys = false,
-        bool $one_dimension = false): array
+function array_flatten(array $array, bool $use_keys = false, bool $fix_keys = false, bool $one_dimension = false): array
 {
     return Arrays::flatten($array, $use_keys, $fix_keys, $one_dimension);
 }
 
 /**
- * Array swap.
+ * Bridge function to Arrays.swap().
+ *
  * @param  array      &$array
  * @param  int|string  $old_key
  * @param  int|string  $new_key
- * @param  any|null    $new_default
+ * @param  any|null    $default
  * @return array
  * @since  4.2
  */
-function array_swap(array &$array, $old_key, $new_key, $new_default = null): array
+function array_swap(array &$array, int|string $old_key, int|string $new_key, $default = null): array
 {
-    return Arrays::swap($array, $old_key, $new_key, $new_default);
+    return Arrays::swap($array, $old_key, $new_key, $default);
 }
 
 /**
- * Array sweep.
+ * Bridge function to Arrays.sweep().
+ *
  * @param  array      &$array
  * @param  array|null  $ignored_keys
  * @return array
@@ -352,7 +378,8 @@ function array_sweep(array &$array, array $ignored_keys = null): array
 }
 
 /**
- * Array default.
+ * Bridge function to Arrays.default().
+ *
  * @param  array    $array
  * @param  array    $keys
  * @param  bool     $use_keys
@@ -366,7 +393,7 @@ function array_default(array $array, array $keys, bool $use_keys = true, $defaul
 }
 
 /**
- * Array index.
+ * Bridge function to Arrays.index().
  *
  * @param  array $array
  * @param  any   $value
@@ -380,7 +407,8 @@ function array_index(array $array, $value, bool $strict = true)
 }
 
 /**
- * Array first.
+ * Bridge function to Arrays.first().
+ *
  * @param  array &$array
  * @param  any    $default
  * @param  bool   $drop
@@ -393,7 +421,8 @@ function array_first(array $array, $default = null, bool $drop = false)
 }
 
 /**
- * Array last.
+ * Bridge function to Arrays.last().
+ *
  * @param  array &$array
  * @param  any    $default
  * @param  bool   $drop
@@ -406,7 +435,8 @@ function array_last(array $array, $default = null, bool $drop = false)
 }
 
 /**
- * Array keys exist.
+ * Bridge function to Arrays.keysExist().
+ *
  * @param  array             $array
  * @param  array<int|string> $keys
  * @return bool
@@ -417,7 +447,8 @@ function array_keys_exist(array $array, array $keys): bool
 }
 
 /**
- * Array values exist.
+ * Bridge function to Arrays.valuesExist().
+ *
  * @param  array $array
  * @param  any   $values
  * @param  bool  $strict
@@ -429,7 +460,8 @@ function array_values_exist(array $array, array $values, bool $strict = true): b
 }
 
 /**
- * Array search keys.
+ * Bridge function to Arrays.searchKeys().
+ *
  * @param  array             $array
  * @param  array<int|string> $keys
  * @return array
@@ -441,7 +473,8 @@ function array_search_keys(array $array, array $keys): array
 }
 
 /**
- * Array search values.
+ * Bridge function to Arrays.searchValues().
+ *
  * @param  array $array
  * @param  array $values
  * @param  bool  $strict

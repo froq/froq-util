@@ -15,7 +15,8 @@ if (!class_exists(App::class, false)) {
 }
 
 /**
- * Logger.
+ * Get app's logger.
+ *
  * @return froq\logger\Logger.
  */
 function logger(): Logger
@@ -24,7 +25,8 @@ function logger(): Logger
 }
 
 /**
- * Log error.
+ * Log an error message.
+ *
  * @param  string|Throwable $message
  * @param  bool             $separate
  * @return bool
@@ -35,7 +37,8 @@ function log_error($message, $separate): bool
 }
 
 /**
- * Log warn.
+ * Log a warning message.
+ *
  * @param  string|Throwable $message
  * @param  bool             $separate
  * @return bool
@@ -46,7 +49,8 @@ function log_warn($message, $separate): bool
 }
 
 /**
- * Log info.
+ * Log an info message.
+ *
  * @param  string|Throwable $message
  * @param  bool             $separate
  * @return bool
@@ -57,7 +61,8 @@ function log_info($message, $separate): bool
 }
 
 /**
- * Log debug.
+ * Log a debug message.
+ *
  * @param  string|Throwable $message
  * @param  bool             $separate
  * @return bool

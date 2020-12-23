@@ -8,72 +8,78 @@ declare(strict_types=1);
 use froq\util\Strings;
 
 /**
- * String contains.
+ * Check whether given input contains given search.
+ *
  * @param  string $in
- * @param  string $search
+ * @param  string $src
  * @param  bool   $icase
  * @return bool
  * @since  3.0
  */
-function string_contains(string $in, string $search, bool $icase = false): bool
+function string_contains(string $in, string $src, bool $icase = false): bool
 {
-    return Strings::contains($in, $search, $icase);
+    return Strings::contains($in, $src, $icase);
 }
 
 /**
- * String contains any.
+ * Check whether given input contains any of given searches.
+ *
  * @param  string $in
- * @param  array  $search
+ * @param  array  $srcs
  * @param  bool   $icase
  * @return bool
  * @since  3.0
  */
-function string_contains_any(string $in, array $searches, bool $icase = false): bool
+function string_contains_any(string $in, array $srcs, bool $icase = false): bool
 {
-    return Strings::containsAny($in, $searches, $icase);
+    return Strings::containsAny($in, $srcs, $icase);
 }
 
 /**
- * String contains all.
+ * Check whether given input contains all given search.
+ *
  * @param  string $in
- * @param  array  $search
+ * @param  array  $srcs
  * @param  bool   $icase
  * @return bool
  * @since  3.0
  */
-function string_contains_all(string $in, array $searches, bool $icase = false): bool
+function string_contains_all(string $in, array $srcs, bool $icase = false): bool
 {
-    return Strings::containsAll($in, $searches, $icase);
+    return Strings::containsAll($in, $srcs, $icase);
 }
 
 /**
- * String starts with.
+ * Check whether given input starts with given search/searches.
+ *
  * @param  string               $in
- * @param  string|array<string> $search
+ * @param  string|array<string> $src
  * @return bool
  * @since  3.0
  */
-function string_starts_with(string $in, $search, bool $icase = false, bool $mbyte = false): bool
+function string_starts_with(string $in, string|array $src, bool $icase = false, bool $mbyte = false): bool
 {
-    return is_array($search) ? Strings::startsWithAny($in, $search, $icase, $mbyte)
-                             : Strings::startsWith($in, $search, $icase, $mbyte);
+    return is_string($src) ? Strings::startsWith($in, $src, $icase, $mbyte)
+                           : Strings::startsWithAny($in, $src, $icase, $mbyte);
 }
 
 /**
- * String ends with.
+ * Check whether given input ends with given search/searches.
+ *
  * @param  string               $in
- * @param  string|array<string> $search
+ * @param  string|array<string> $src
  * @return bool
  * @since  3.0
  */
-function string_ends_with(string $in, $search, bool $icase = false, bool $mbyte = false): bool
+function string_ends_with(string $in, string|array $src, bool $icase = false, bool $mbyte = false): bool
 {
-    return is_array($search) ? Strings::endsWithAny($in, $search, $icase, $mbyte)
-                             : Strings::endsWith($in, $search, $icase, $mbyte);
+    return is_string($src) ? Strings::endsWith($in, $src, $icase, $mbyte)
+                           : Strings::endsWithAny($in, $src, $icase, $mbyte);
 }
 
 /**
- * Is utf.
+ * Check whether given input encoding is UTF.
+ *
  * @param  string $in
  * @param  int    $bits
  * @return bool
@@ -85,7 +91,8 @@ function is_utf_string(string $in, int $bits = 8): bool
 }
 
 /**
- * Is ascii.
+ * Check whether given input encoding is ASCII.
+ *
  * @param  string $in
  * @return bool
  * @since  4.0
@@ -96,7 +103,8 @@ function is_ascii_string(string $in): bool
 }
 
 /**
- * Is binary.
+ * Check whether given input contains binary.
+ *
  * @param  string $in
  * @return bool
  * @since  4.0
@@ -107,7 +115,8 @@ function is_binary_string(string $in): bool
 }
 
 /**
- * Is base64.
+ * Check whether given input is base64-ed.
+ *
  * @param  string $in
  * @return bool
  * @since  4.0

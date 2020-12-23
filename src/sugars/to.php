@@ -6,12 +6,13 @@
 declare(strict_types=1);
 
 /**
- * To array.
+ * Make an array with given input.
+ *
  * @param  array|object $in
  * @param  bool         $deep
  * @return array
  */
-function to_array($in, bool $deep = true): array
+function to_array(array|object $in, bool $deep = true): array
 {
     if ($in && is_object($in)) {
         $out = (array) (
@@ -36,12 +37,13 @@ function to_array($in, bool $deep = true): array
 }
 
 /**
- * To object.
+ * Make an object with given input.
+ *
  * @param  array|object $in
  * @param  bool         $deep
  * @return object
  */
-function to_object($in, bool $deep = true): object
+function to_object(array|object $in, bool $deep = true): object
 {
     if ($in && is_object($in)) {
         $out = (object) (
@@ -66,7 +68,8 @@ function to_object($in, bool $deep = true): object
 }
 
 /**
- * To closure.
+ * Make a closure with given input.
+ *
  * @param  string   $func
  * @param  int|null $argc
  * @return Closure

@@ -14,31 +14,34 @@ if (!class_exists(Generator::class, true)) {
 }
 
 /**
- * Generate salt.
+ * Generate a salt by given length.
+ *
  * @param  int $length
- * @param  int $bits_per_char
+ * @param  int $bpc
  * @return string
  * @since  4.25
  */
-function generate_salt(int $length = 40, int $bits_per_char = 6): string
+function generate_salt(int $length = 40, int $bpc = 6): string
 {
-    return Generator::generateSalt($length, $bits_per_char);
+    return Generator::generateSalt($length, $bpc);
 }
 
 /**
- * Generate nonce.
+ * Generate a nonce by given length.
+ *
  * @param  int $length
- * @param  int $bits_per_char
+ * @param  int $bpc
  * @return string
  * @since  4.0, 4.1 Changed from rand_string(),rand_nonce().
  */
-function generate_nonce(int $length = 16, int $bits_per_char = 4): string
+function generate_nonce(int $length = 16, int $bpc = 4): string
 {
-    return Generator::generateNonce($length, $bits_per_char);
+    return Generator::generateNonce($length, $bpc);
 }
 
 /**
- * Generate token.
+ * Generate a token by given length.
+ *
  * @param  int $hash_length
  * @return string
  * @since  4.6
@@ -49,7 +52,8 @@ function generate_token(int $hash_length = 32): string
 }
 
 /**
- * Generate id.
+ * Generate an ID.
+ *
  * @param  int  $length
  * @param  int  $base
  * @param  bool $dated
@@ -62,7 +66,8 @@ function generate_id(int $length, int $base = 10, bool $dated = false): string
 }
 
 /**
- * Generate serial id.
+ * Generate a serial ID.
+ *
  * @param  bool $dated
  * @return string
  * @since  4.1
@@ -73,7 +78,8 @@ function generate_serial_id(bool $dated = false): string
 }
 
 /**
- * Generate random id.
+ * Generate a random ID.
+ *
  * @param  int $length
  * @param  int $base
  * @return string
@@ -85,7 +91,8 @@ function generate_random_id(int $length, int $base = 16): string
 }
 
 /**
- * Generate session id.
+ * Generate a session ID.
+ *
  * @param  array|null $options
  * @return string
  * @since  4.7
@@ -96,7 +103,8 @@ function generate_session_id(array $options = null): string
 }
 
 /**
- * Generate oid.
+ * Generate an OID, like Mongo.ObjectId.
+ *
  * @param  bool $counted
  * @return string
  * @since  4.0, 4.1 Changed from rand_oid().
@@ -107,7 +115,8 @@ function generate_oid(bool $counted = true): string
 }
 
 /**
- * Generate uuid.
+ * Generate a UUID.
+ *
  * @param  bool $dashed
  * @return string
  * @since  4.0, 4.1 Changed from rand_uuid().
@@ -118,7 +127,8 @@ function generate_uuid(bool $dashed = true): string
 }
 
 /**
- * Generate guid.
+ * Generate a GUID.
+ *
  * @param  bool $dashed
  * @return string
  * @since  4.0, 4.1 Changed from rand_guid().
@@ -129,7 +139,8 @@ function generate_guid(bool $dashed = true): string
 }
 
 /**
- * Generate password.
+ * Generate a password by given length.
+ *
  * @param  int  $length
  * @param  bool $puncted
  * @return string

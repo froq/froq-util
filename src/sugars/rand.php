@@ -8,7 +8,8 @@ declare(strict_types=1);
 use froq\util\Numbers;
 
 /**
- * Rand int.
+ * Get a random int, optionally with min/max directives.
+ *
  * @param  int|null $min
  * @param  int|null $max
  * @return int
@@ -19,7 +20,8 @@ function rand_int(int $min = null, int $max = null): int
 }
 
 /**
- * Rand float.
+ * Get a random float, optionally with min/max and precision directives.
+ *
  * @param  float|null $min
  * @param  float|null $max
  * @param  int|null   $precision
@@ -31,7 +33,8 @@ function rand_float(float $min = null, float $max = null, int $precision = null)
 }
 
 /**
- * Rand item.
+ * Get a random item from given array, filling ref'ed key with found key.
+ *
  * @param  array       $array
  * @param  int|string &$key
  * @return ?any
@@ -48,7 +51,8 @@ function rand_item(array $array, &$key = null)
 }
 
 /**
- * Rand items.
+ * Get a random items from given array by given limit, filling ref'ed key with found key.
+ *
  * @param  array              $array
  * @param  int                $limit
  * @param  array<int|string> &$keys
@@ -68,7 +72,7 @@ function rand_items(array $array, int $limit, array &$keys = null): ?array
 
         $ret[$key] = $array[$key];
         $retlen    = count($ret);
-    } while ($retlen < $len && $retlen < $limit);
+    } while ($retlen < $limit && $retlen < $len);
 
     $keys = array_keys($ret) ?: null;
 

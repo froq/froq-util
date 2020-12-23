@@ -7,7 +7,7 @@ declare(strict_types=1);
 
 
 /**
- * Is local.
+ * Check whether current env is local.
  * @return bool
  */
 function is_local(): bool
@@ -17,7 +17,8 @@ function is_local(): bool
 }
 
 /**
- * Is cli.
+ * Check whether current env is CLI.
+ *
  * @return bool
  */
 function is_cli(): bool
@@ -26,7 +27,8 @@ function is_cli(): bool
 }
 
 /**
- * Is cli server.
+ * Check whether current env is CLI Server.
+ *
  * @return bool
  */
 function is_cli_server(): bool
@@ -35,7 +37,8 @@ function is_cli_server(): bool
 }
 
 /**
- * Is plain object.
+ * Check whether given input is a plain object.
+ *
  * @param  any $in
  * @return bool
  */
@@ -45,7 +48,8 @@ function is_plain_object($in): bool
 }
 
 /**
- * Is array like.
+ * Check whether given input is array-like.
+ *
  * @param  any $in
  * @return bool
  */
@@ -55,7 +59,8 @@ function is_array_like($in): bool
 }
 
 /**
- * Is iterable like.
+ * Check whether given input is iterable-like.
+ *
  * @param  any $in
  * @return bool
  */
@@ -65,7 +70,8 @@ function is_iterable_like($in): bool
 }
 
 /**
- * Is closure.
+ * Check whether given input is a closure.
+ *
  * @param  any $in
  * @return bool
  * @since  3.0
@@ -76,7 +82,8 @@ function is_closure($in): bool
 }
 
 /**
- * Is between.
+ * Check whether given input is between given min/max directives.
+ *
  * @param  any $in
  * @param  any $min
  * @param  any $max
@@ -89,7 +96,8 @@ function is_between($in, $min, $max): bool
 }
 
 /**
- * Is true.
+ * Check whether given input is true.
+ *
  * @param  any $in
  * @return bool
  * @since  3.5
@@ -100,7 +108,8 @@ function is_true($in): bool
 }
 
 /**
- * Is false.
+ * Check whether given input is false.
+ *
  * @param  any $in
  * @return bool
  * @since  3.5
@@ -111,7 +120,8 @@ function is_false($in): bool
 }
 
 /**
- * Is nil.
+ * Check whether given input is nil (null).
+ *
  * @param  any $in
  * @return bool
  * @since  4.0 Added back.
@@ -122,7 +132,8 @@ function is_nil($in): bool
 }
 
 /**
- * Is nils.
+ * Check whether given input is nils (null string).
+ *
  * @param  any $in
  * @return bool
  * @since  4.0 Added back.
@@ -133,7 +144,8 @@ function is_nils($in): bool
 }
 
 /**
- * Is empty.
+ * Check whether all given inputs are not empty.
+ *
  * @param  any $in
  * @param  ... $ins
  * @return bool

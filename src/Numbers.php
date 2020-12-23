@@ -80,7 +80,7 @@ final class Numbers extends StaticClass
     }
 
     /**
-     * Is number.
+     * Check whether given input is number.
      *
      * @param  any $in
      * @return bool
@@ -91,7 +91,7 @@ final class Numbers extends StaticClass
     }
 
     /**
-     * Is digit.
+     * Check whether given input is digit.
      *
      * @param  any $in
      * @return bool
@@ -102,7 +102,7 @@ final class Numbers extends StaticClass
     }
 
     /**
-     * Is id (useful for any (db) incremental id check).
+     * Check whether given input is an ID (useful for any (db) incremental id check).
      *
      * @param  any $in
      * @return bool
@@ -113,7 +113,7 @@ final class Numbers extends StaticClass
     }
 
     /**
-     * Is uint.
+     * Check whether given input is uint.
      *
      * @param  any $in
      * @return bool
@@ -124,7 +124,7 @@ final class Numbers extends StaticClass
     }
 
     /**
-     * Is ufloat.
+     * Check whether given input is ufloat.
      *
      * @param  any $in
      * @return bool
@@ -135,7 +135,7 @@ final class Numbers extends StaticClass
     }
 
     /**
-     * Is signed.
+     * Check whether given input is signed.
      *
      * @param  any $in
      * @return bool
@@ -146,7 +146,7 @@ final class Numbers extends StaticClass
     }
 
     /**
-     * Is unsigned.
+     * Check whether given input is unsigned.
      * @param  any $in
      * @return bool
      */
