@@ -8,6 +8,21 @@ declare(strict_types=1);
 use froq\util\Strings;
 
 /**
+ * Compare two strings, optionally by a locale.
+ *
+ * @param  string      $in1
+ * @param  string      $in2
+ * @param  string|null $locale
+ * @return int
+ * @since  5.0
+ */
+function string_compare(string $in1, string $in2, string $locale = null): int
+{
+    return is_null($locale) ? Strings::compare($in1, $in2)
+                            : Strings::compareLocale($in1, $in2, $locale);
+}
+
+/**
  * Check whether given input contains given search.
  *
  * @param  string $in
