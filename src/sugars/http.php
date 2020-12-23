@@ -15,12 +15,23 @@ if (!class_exists(App::class, false)) {
 }
 
 /**
- * Get HTTP version.
+ * Get HTTP protocol.
  *
  * @return string
+ * @since  5.0
+ */
+function http_protocol(): string
+{
+    return Http::protocol();
+}
+
+/**
+ * Get HTTP version.
+ *
+ * @return float
  * @since  4.0
  */
-function http_version(): string
+function http_version(): float
 {
     return Http::version();
 }
