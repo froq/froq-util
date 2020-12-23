@@ -6,7 +6,7 @@
 declare(strict_types=1);
 
 /**
- * To title case (eg: "foo bar" => "FooBar").
+ * Convert given input to title case (eg: "foo bar" => "FooBar").
  *
  * @param  string      $in
  * @param  string|null $sep
@@ -19,7 +19,7 @@ function to_title_case(string $in, string $sep = null): string
 }
 
 /**
- * To dash case (eg: "foo bar" => "foo-bar").
+ * Convert given input to dash case (eg: "foo bar" => "foo-bar").
  *
  * @param  string      $in
  * @param  string|null $sep
@@ -32,7 +32,7 @@ function to_dash_case(string $in, string $sep = null): string
 }
 
 /**
- * To snake case (eg: "foo bar" => "foo_bar").
+ * Convert given input to snake case (eg: "foo bar" => "foo_bar").
  *
  * @param  string      $in
  * @param  string|null $sep
@@ -45,7 +45,7 @@ function to_snake_case(string $in, string $sep = null): string
 }
 
 /**
- * To camel case (eg: "foo bar" => "fooBar").
+ * Convert given input to camel case (eg: "foo bar" => "fooBar").
  *
  * @param  string      $in
  * @param  string|null $sep
