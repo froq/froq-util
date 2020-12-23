@@ -715,7 +715,7 @@ final class Arrays extends StaticClass
      * @param  array<int|string> $keys
      * @return bool
      */
-    public static function keysExists(array $array, array $keys): bool
+    public static function keysExist(array $array, array $keys): bool
     {
         foreach ($keys as $key) {
             if (!array_key_exists($key, $array)) {
@@ -733,7 +733,7 @@ final class Arrays extends StaticClass
      * @param  bool  $strict
      * @return bool
      */
-    public static function valuesExists(array $array, array $values, bool $strict = true): bool
+    public static function valuesExist(array $array, array $values, bool $strict = true): bool
     {
         foreach ($values as $value) {
             if (!array_value_exists($value, $array, $strict)) {

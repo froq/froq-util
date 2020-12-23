@@ -406,26 +406,26 @@ function array_last(array $array, $default = null, bool $drop = false)
 }
 
 /**
- * Array keys exists.
+ * Array keys exist.
  * @param  array             $array
  * @param  array<int|string> $keys
  * @return bool
  */
-function array_keys_exists(array $array, array $keys): bool
+function array_keys_exist(array $array, array $keys): bool
 {
-    return Arrays::keysExists($array, $keys);
+    return Arrays::keysExist($array, $keys);
 }
 
 /**
- * Array values exists.
+ * Array values exist.
  * @param  array $array
  * @param  any   $values
  * @param  bool  $strict
  * @return bool
  */
-function array_values_exists(array $array, array $values, bool $strict = true): bool
+function array_values_exist(array $array, array $values, bool $strict = true): bool
 {
-    return Arrays::valuesExists($array, $values, $strict);
+    return Arrays::valuesExist($array, $values, $strict);
 }
 
 /**
