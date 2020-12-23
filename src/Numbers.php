@@ -22,18 +22,19 @@ final class Numbers extends StaticClass
 {
     /**
      * Convert.
+     *
      * @param  numeric  $in
      * @param  int|null $decimals
      * @return int|float|null
      * @since  4.0
      */
-    public static function convert($in, int $decimals = null)
+    public static function convert($in, int $decimals = null): int|float|null
     {
-        if (is_numeric($in)) {
-            if (is_int($in) || is_float($in)) {
-                return $in;
-            }
+        if (is_number($in)) {
+            return $in;
+        }
 
+        if (is_numeric($in)) {
             if ($decimals !== null) {
                 $in = number_format((float) $in, $decimals);
             }
@@ -46,12 +47,13 @@ final class Numbers extends StaticClass
 
     /**
      * Compare.
+     *
      * @param  numeric  $a
      * @param  numeric  $b
      * @param  int|null $precision
-     * @return ?int
+     * @return int|null
      */
-    public static function compare($a, $b, int $precision = null): ?int
+    public static function compare($a, $b, int $precision = null): int|null
     {
         $precision ??= 14;
 
@@ -67,9 +69,9 @@ final class Numbers extends StaticClass
      * @param  numeric  $a
      * @param  numeric  $b
      * @param  int|null $precision
-     * @return ?bool
+     * @return bool|null
      */
-    public static function equals($a, $b, int $precision = null): ?bool
+    public static function equals($a, $b, int $precision = null): bool|null
     {
         $precision ??= 14;
 
@@ -78,17 +80,19 @@ final class Numbers extends StaticClass
     }
 
     /**
-     * Is digit.
+     * Is number.
+     *
      * @param  any $in
      * @return bool
      */
     public static function isNumber($in): bool
     {
-        return is_int($in) || is_float($in);
+        return is_number($in);
     }
 
     /**
      * Is digit.
+     *
      * @param  any $in
      * @return bool
      */
@@ -99,6 +103,7 @@ final class Numbers extends StaticClass
 
     /**
      * Is id (useful for any (db) incremental id check).
+     *
      * @param  any $in
      * @return bool
      */
@@ -109,6 +114,7 @@ final class Numbers extends StaticClass
 
     /**
      * Is uint.
+     *
      * @param  any $in
      * @return bool
      */
@@ -119,6 +125,7 @@ final class Numbers extends StaticClass
 
     /**
      * Is ufloat.
+     *
      * @param  any $in
      * @return bool
      */
@@ -129,12 +136,13 @@ final class Numbers extends StaticClass
 
     /**
      * Is signed.
+     *
      * @param  any $in
      * @return bool
      */
     public static function isSigned($in): bool
     {
-        return (is_int($in) || is_float($in)) && ($in <= 0);
+        return is_number($in) && ($in < 0);
     }
 
     /**
@@ -144,11 +152,12 @@ final class Numbers extends StaticClass
      */
     public static function isUnsigned($in): bool
     {
-        return (is_int($in) || is_float($in)) && ($in >= 0);
+        return is_number($in) && ($in >= 0);
     }
 
     /**
      * Random int.
+     *
      * @param  int|null $min
      * @param  int|null $max
      * @return int
@@ -164,6 +173,7 @@ final class Numbers extends StaticClass
 
     /**
      * Random float.
+     *
      * @param  float|null $min
      * @param  float|null $max
      * @param  int|null   $precision

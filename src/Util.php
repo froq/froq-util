@@ -23,6 +23,7 @@ final /* fuckic static */ class Util extends StaticClass
 {
     /**
      * Load sugar.
+     *
      * @param  string $name
      * @return void
      */
@@ -46,6 +47,7 @@ final /* fuckic static */ class Util extends StaticClass
 
     /**
      * Load sugars.
+     *
      * @param  array<string> $names
      * @return void
      */
@@ -57,14 +59,15 @@ final /* fuckic static */ class Util extends StaticClass
     }
 
     /**
-     * Get client ip.
-     * @return ?string
+     * Get client IP.
+     *
+     * @return string|null
      */
-    public static function getClientIp(): ?string
+    public static function getClientIp(): string|null
     {
         if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-            $ips = array_filter(array_map('trim', explode(',', $_SERVER['HTTP_X_FORWARDED_FOR'])));
-            if (!empty($ips)) {
+            $ips = split(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
+            if ($ips) {
                 return end($ips);
             }
         }
@@ -87,11 +90,12 @@ final /* fuckic static */ class Util extends StaticClass
 
     /**
      * Get client user agent.
+     *
      * @param  bool $safe
-     * @return ?string
+     * @return string|null
      * @since  3.6
      */
-    public static function getClientUserAgent(bool $safe = false): ?string
+    public static function getClientUserAgent(bool $safe = false): string|null
     {
         // Possible header names.
         static $names = [
@@ -114,11 +118,12 @@ final /* fuckic static */ class Util extends StaticClass
     }
 
     /**
-     * Get current url.
+     * Get current URL.
+     *
      * @param  bool $withQuery
-     * @return ?string
+     * @return string|null
      */
-    public static function getCurrentUrl(bool $withQuery = true): ?string
+    public static function getCurrentUrl(bool $withQuery = true): string|null
     {
         @ ['REQUEST_SCHEME' => $scheme, 'SERVER_NAME' => $host,
            'REQUEST_URI'    => $uri,    'SERVER_PORT' => $port]  = $_SERVER;
@@ -170,14 +175,15 @@ final /* fuckic static */ class Util extends StaticClass
     }
 
     /**
-     * Parse query string (without changing dotted param keys [https://github.com/php/php-src/blob/master/main/php_variables.c#L103]).
+     * Parse query string (without changing dotted param keys).
+     * https://github.com/php/php-src/blob/master/main/php_variables.c#L103
+     *
      * @param  string      $qs
      * @param  bool        $encode
      * @param  string|null $ignoredKeys
      * @return array
      */
-    public static function parseQueryString(string $qs, bool $encode = false,
-        string $ignoredKeys = null): array
+    public static function parseQueryString(string $qs, bool $encode = false, string $ignoredKeys = null): array
     {
         $qa = [];
 
@@ -190,7 +196,7 @@ final /* fuckic static */ class Util extends StaticClass
             $hexed = true;
 
             // Normalize arrays.
-            if (str_contains($qs, '%5D')) {
+            if (str_contains($qs, '%5D=')) {
                 $qs = str_replace(['%5B', '%5D'], ['[', ']'], $qs);
             }
 
@@ -232,6 +238,7 @@ final /* fuckic static */ class Util extends StaticClass
 
     /**
      * Build query string.
+     *
      * @param  array       $qa
      * @param  bool        $decode
      * @param  string|null $ignoredKeys
@@ -239,8 +246,8 @@ final /* fuckic static */ class Util extends StaticClass
      * @param  bool        $normalizeArrays
      * @return string
      */
-    public static function buildQueryString(array $qa, bool $decode = false,
-        string $ignoredKeys = null, bool $stripTags = true, bool $normalizeArrays = true): string
+    public static function buildQueryString(array $qa, bool $decode = false, string $ignoredKeys = null,
+        bool $stripTags = true, bool $normalizeArrays = true): string
     {
         if ($ignoredKeys != null) {
             $ignoredKeys = explode(',', $ignoredKeys);
@@ -269,7 +276,7 @@ final /* fuckic static */ class Util extends StaticClass
         if ($stripTags && str_contains($qs, '%3C')) {
             $qs = preg_replace('~%3C[\w]+(%2F)?%3E~ismU', '', $qs);
         }
-        if ($normalizeArrays && str_contains($qs, '%5D')) {
+        if ($normalizeArrays && str_contains($qs, '%5D=')) {
             $qs = str_replace(['%5B', '%5D'], ['[', ']'], $qs);
         }
 

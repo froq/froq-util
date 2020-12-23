@@ -22,7 +22,8 @@ use ValueError, ArgumentCountError;
 final class Arrays extends StaticClass
 {
     /**
-     * Is set.
+     * Check whether all keys are "int" in given array.
+     *
      * @param  array $array
      * @return bool
      */
@@ -37,7 +38,8 @@ final class Arrays extends StaticClass
     }
 
     /**
-     * Is map.
+     * Check whether all keys are "string" in given array.
+     *
      * @param  array $array
      * @return bool
      */
@@ -52,13 +54,14 @@ final class Arrays extends StaticClass
     }
 
     /**
-     * Set (with dot notation support for sub-array paths).
+     * Put an item into given array, with dot notation support for sub-array paths.
+     *
      * @param  array      &$array
      * @param  int|string  $key
      * @param  any         $value
      * @return array
      */
-    public static function set(array &$array, $key, $value): array
+    public static function set(array &$array, int|string $key, $value): array
     {
         // Usage:
         // Arrays::set($array, 'a.b.c', 1) => ['a' => ['b' => ['c' => 1]]]
@@ -95,7 +98,8 @@ final class Arrays extends StaticClass
     }
 
     /**
-     * Set all (with dot notation support for sub-array paths).
+     * Bridge method to set() for multiple items.
+     *
      * @param  array &$array
      * @param  array  $items
      * @return array
@@ -111,14 +115,15 @@ final class Arrays extends StaticClass
     }
 
     /**
-     * Get (with dot notation support for sub-array paths).
+     * Get an item form given array, with dot notation support for sub-array paths.
+     *
      * @param  array      &$array
      * @param  int|string  $key AKA path.
      * @param  any|null    $default
      * @param  bool        $drop
      * @return any|null
      */
-    public static function get(array &$array, $key, $default = null, bool $drop = false)
+    public static function get(array &$array, int|string $key, $default = null, bool $drop = false)
     {
         // Usage:
         // $array = ['a' => ['b' => ['c' => ['d' => 1, 'd.e' => '...']]]]
@@ -167,7 +172,8 @@ final class Arrays extends StaticClass
     }
 
     /**
-     * Get all (shortcuts like: list(..) = Arrays::getAll(..)).
+     * Bridge method to get() for multiple items. Useful in some times eg. list(..) = Arrays::getAll(..).
+     *
      * @param  array             &$array
      * @param  array<int|string>  $keys AKA paths.
      * @param  any|null           $default
@@ -186,7 +192,8 @@ final class Arrays extends StaticClass
     }
 
     /**
-     * Pull.
+     * Pull an item from given array by a key.
+     *
      * @param  array      &$array
      * @param  int|string  $key
      * @param  any|null    $default
@@ -198,7 +205,8 @@ final class Arrays extends StaticClass
     }
 
     /**
-     * Pull all (shortcuts like: list(..) = Arrays::pullAll(..)).
+     * Bridge method to get() for multiple items. Useful in some times eg. list(..) = Arrays::pullAll(..).
+     *
      * @param  array             &$array
      * @param  array<int|string>  $keys
      * @param  any|null           $default
@@ -210,7 +218,8 @@ final class Arrays extends StaticClass
     }
 
     /**
-     * Remove.
+     * Remove an item from given array by a key.
+     *
      * @param  array      &$array
      * @param  int|string  $key
      * @return array
@@ -224,7 +233,8 @@ final class Arrays extends StaticClass
     }
 
     /**
-     * Remove all.
+     * Bridge method to remove() for multiple items.
+     *
      * @param  array             &$array
      * @param  array<int|string>  $keys
      * @return array
@@ -238,7 +248,8 @@ final class Arrays extends StaticClass
     }
 
     /**
-     * Get random.
+     * Get one/multi items from given array randomly.
+     *
      * @param  array  &$array
      * @param  int     $limit
      * @param  bool    $pack
@@ -252,7 +263,8 @@ final class Arrays extends StaticClass
     }
 
     /**
-     * Pull random.
+     * Pull one/multi items from given array randomly.
+     *
      * @param  array  &$array
      * @param  int     $limit
      * @param  bool    $pack
@@ -265,7 +277,8 @@ final class Arrays extends StaticClass
     }
 
     /**
-     * Remove random.
+     * Pull one/multi items from given array randomly.
+     *
      * @param  array  &$array
      * @param  int     $limit
      * @return any|null
@@ -279,7 +292,9 @@ final class Arrays extends StaticClass
     }
 
     /**
-     * Compose.
+     * Compose an array with given keys/values, unlike errorizing array_combine() when keys/values count
+     * not match.
+     *
      * @param  array    $keys
      * @param  array    $values
      * @param  any|null $default
@@ -298,7 +313,8 @@ final class Arrays extends StaticClass
     }
 
     /**
-     * Complete.
+     * Complete an array keys checking given other arrays to find non-null/non-null string value.
+     *
      * @param  bool     $nullStrings
      * @param  array    $keys
      * @param  array ...$arrays
@@ -324,7 +340,8 @@ final class Arrays extends StaticClass
     }
 
     /**
-     * Coalesce.
+     * Coalesce an array keys checking given other arrays to find non-null/non-null string value.
+     *
      * @param  bool     $nullStrings
      * @param  array ...$arrays
      * @return array
@@ -349,7 +366,8 @@ final class Arrays extends StaticClass
     }
 
     /**
-     * Test (like JavaScript Array.some()).
+     * Test, like JavaScript Array.some().
+     *
      * @param  array    $array
      * @param  callable $func
      * @return bool
@@ -365,7 +383,8 @@ final class Arrays extends StaticClass
     }
 
     /**
-     * Test all (like JavaScript Array.every()).
+     * Test all, like JavaScript Array.every().
+     *
      * @param  array    $array
      * @param  callable $func
      * @return bool
@@ -381,7 +400,8 @@ final class Arrays extends StaticClass
     }
 
     /**
-     * Find.
+     * Find first item that fulfills given test function.
+     *
      * @param  array    $array
      * @param  callable $func
      * @return any|null
@@ -402,7 +422,8 @@ final class Arrays extends StaticClass
     }
 
     /**
-     * Find all.
+     * Find all all items that fulfill given test function.
+     *
      * @param  array    $array
      * @param  callable $func
      * @param  bool     $useKeys
@@ -423,10 +444,11 @@ final class Arrays extends StaticClass
     }
 
     /**
-     * Random.
+     * Randomize given array, optionally returning as [key,value] pairs.
+     *
      * @param  array &$array
      * @param  int    $limit
-     * @param  bool   $pack Return as [key,value] pairs.
+     * @param  bool   $pack
      * @param  bool   $drop
      * @return any|null
      */
@@ -474,7 +496,8 @@ final class Arrays extends StaticClass
     }
 
     /**
-     * Shuffle.
+     * Shuffle given array, keeping keys as default.
+     *
      * @param  array &$array
      * @param  bool   $keepKeys
      * @return array
@@ -503,7 +526,8 @@ final class Arrays extends StaticClass
     }
 
     /**
-     * Include.
+     * Filter given array including given keys.
+     *
      * @param  array             $array
      * @param  array<int|string> $keys
      * @return array
@@ -514,7 +538,8 @@ final class Arrays extends StaticClass
     }
 
     /**
-     * Exclude.
+     * Filter given array excluding given keys.
+     *
      * @param  array             $array
      * @param  array<int|string> $keys
      * @return array
@@ -525,7 +550,8 @@ final class Arrays extends StaticClass
     }
 
     /**
-     * Flatten.
+     * Flatten given array.
+     *
      * @param  array $array
      * @param  bool  $useKeys
      * @param  bool  $fixKeys
@@ -555,7 +581,8 @@ final class Arrays extends StaticClass
     }
 
     /**
-     * Swap.
+     * Swap two keys on given array.
+     *
      * @param  array      &$array
      * @param  int|string  $oldKey
      * @param  int|string  $newKey
@@ -577,7 +604,8 @@ final class Arrays extends StaticClass
     }
 
     /**
-     * Sweep.
+     * Sweep given array filtering null, '' and [] values.
+     *
      * @param  array      &$array
      * @param  array|null  $ignoredKeys
      * @return array
@@ -602,7 +630,8 @@ final class Arrays extends StaticClass
     }
 
     /**
-     * Default.
+     * Filte an array with default=null to ensure given keys.
+     *
      * @param  array    $array
      * @param  array    $keys
      * @param  bool     $useKeys
@@ -618,7 +647,8 @@ final class Arrays extends StaticClass
     }
 
     /**
-     * Index.
+     * Find index of given value.
+     *
      * @param  array $array
      * @param  any   $value
      * @param  bool  $strict
@@ -633,7 +663,8 @@ final class Arrays extends StaticClass
     }
 
     /**
-     * First.
+     * Get first item from given array.
+     *
      * @param  array    &$array
      * @param  any|null  $default
      * @param  bool      $drop
@@ -655,7 +686,8 @@ final class Arrays extends StaticClass
     }
 
     /**
-     * Last.
+     * Get last item from given array.
+     *
      * @param  array    &$array
      * @param  any|null  $default
      * @param  bool      $drop
@@ -677,7 +709,8 @@ final class Arrays extends StaticClass
     }
 
     /**
-     * Keys exists.
+     * Check whether given keys exist in given array.
+     *
      * @param  array             $array
      * @param  array<int|string> $keys
      * @return bool
@@ -693,7 +726,8 @@ final class Arrays extends StaticClass
     }
 
     /**
-     * Values exists.
+     * Check whether given values exist given array.
+     *
      * @param  array $array
      * @param  array $values
      * @param  bool  $strict
@@ -702,7 +736,7 @@ final class Arrays extends StaticClass
     public static function valuesExists(array $array, array $values, bool $strict = true): bool
     {
         foreach ($values as $value) {
-            if (!in_array($value, $array, $strict)) {
+            if (!array_value_exists($value, $array, $strict)) {
                 return false;
             }
         }
@@ -710,7 +744,8 @@ final class Arrays extends StaticClass
     }
 
     /**
-     * Search keys.
+     * Search given keys returning found values.
+     *
      * @param  array             $array
      * @param  array<int|string> $keys
      * @return array
@@ -727,7 +762,8 @@ final class Arrays extends StaticClass
     }
 
     /**
-     * Search values.
+     * Search values returning found keys.
+     *
      * @param  array $array
      * @param  array $values
      * @param  bool  $strict
@@ -745,7 +781,9 @@ final class Arrays extends StaticClass
     }
 
     /**
-     * Filter.
+     * Filter, unlike array_filter() using [value,key,i,array] notation but fallback to [value] notation when
+     * ArgumentCountError occurs.
+     *
      * @param  array         $array
      * @param  callable|null $func
      * @param  bool          $keepKeys
@@ -768,7 +806,9 @@ final class Arrays extends StaticClass
     }
 
     /**
-     * Map.
+     * Map, unlike array_map() using [value,key,i,array] notation but fallback to [value] notation when
+     * ArgumentCountError occurs.
+     *
      * @param  array    $array
      * @param  callable $func
      * @param  bool     $keepKeys
@@ -788,7 +828,9 @@ final class Arrays extends StaticClass
     }
 
     /**
-     * Reduce.
+     * Reduce, unlike array_reduce() using [value,key,i,array] notation but fallback to [value] notation when
+     * ArgumentCountError occurs.
+     *
      * @param  array    $array
      * @param  any      $carry
      * @param  callable $func
@@ -808,7 +850,9 @@ final class Arrays extends StaticClass
     }
 
     /**
-     * Aggregate.
+     * Aggregate an array with given carry variable that must be ref'ed like `fn(&$carry, $value, ..) => ..`
+     * in given aggregate function.
+     *
      * @param  array      $array
      * @param  callable   $func
      * @param  array|null $carry
@@ -838,7 +882,8 @@ final class Arrays extends StaticClass
     }
 
     /**
-     * Average.
+     * Get average of values.
+     *
      * @param  array $array
      * @param  bool  $zeros
      * @return float
@@ -852,7 +897,8 @@ final class Arrays extends StaticClass
     }
 
     /**
-     * Get int.
+     * Get an item as int.
+     *
      * @param  array      &$array
      * @param  int|string  $key
      * @param  int|null    $default
@@ -865,7 +911,8 @@ final class Arrays extends StaticClass
     }
 
     /**
-     * Get float.
+     * Get an item as float.
+     *
      * @param  array      &$array
      * @param  int|string  $key
      * @param  float|null  $default
@@ -878,7 +925,8 @@ final class Arrays extends StaticClass
     }
 
     /**
-     * Get string.
+     * Get an item as string.
+     *
      * @param  array       &$array
      * @param  int|string   $key
      * @param  string|null  $default
@@ -891,7 +939,8 @@ final class Arrays extends StaticClass
     }
 
     /**
-     * Get bool.
+     * Get an item as bool.
+     *
      * @param  array      &$array
      * @param  int|string  $key
      * @param  bool|null   $default

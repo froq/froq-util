@@ -23,6 +23,7 @@ final class Objects extends StaticClass
 {
     /**
      * Get reflection.
+     *
      * @param  string|object $class
      * @return ReflectionClass|null
      */
@@ -37,6 +38,7 @@ final class Objects extends StaticClass
 
     /**
      * Get id.
+     *
      * @param  object $object
      * @param  bool   $withName
      * @return string
@@ -48,6 +50,7 @@ final class Objects extends StaticClass
 
     /**
      * Get hash.
+     *
      * @param  object $object
      * @param  bool   $withName
      * @param  bool   $withRehash
@@ -64,6 +67,7 @@ final class Objects extends StaticClass
 
     /**
      * Get serialized hash.
+     *
      * @param  object      $object
      * @param  string|null $algo
      * @return string
@@ -76,6 +80,7 @@ final class Objects extends StaticClass
 
     /**
      * Get name.
+     *
      * @param  string|object $class
      * @return string
      */
@@ -86,6 +91,7 @@ final class Objects extends StaticClass
 
     /**
      * Get short name.
+     *
      * @param  string|object $class
      * @return string
      */
@@ -99,6 +105,7 @@ final class Objects extends StaticClass
 
     /**
      * Get namespace.
+     *
      * @param  string|object $class
      * @param  bool          $baseOnly
      * @return string
@@ -113,6 +120,7 @@ final class Objects extends StaticClass
 
     /**
      * Has constant.
+     *
      * @param  string|object $class
      * @param  string        $name
      * @return bool|null
@@ -128,6 +136,7 @@ final class Objects extends StaticClass
 
     /**
      * Get constant.
+     *
      * @param  string|object $class
      * @param  string        $name
      * @return array|null
@@ -139,6 +148,7 @@ final class Objects extends StaticClass
 
     /**
      * Get constant value.
+     *
      * @param  string|object $class
      * @param  string        $name
      * @return any
@@ -149,7 +159,8 @@ final class Objects extends StaticClass
     }
 
     /**
-     * Get constants registry.
+     * Get constants.
+     *
      * @param  string|object $class
      * @param  bool          $all
      * @param  string        $_name @internal
@@ -209,6 +220,7 @@ final class Objects extends StaticClass
 
     /**
      * Get constant names.
+     *
      * @param  string|object $class
      * @param  bool          $all
      * @return array|null
@@ -236,6 +248,7 @@ final class Objects extends StaticClass
 
     /**
      * Get constant values.
+     *
      * @param  string|object $class
      * @param  bool          $all
      * @param  bool          $withNames
@@ -266,6 +279,7 @@ final class Objects extends StaticClass
 
     /**
      * Has property.
+     *
      * @param  string|object $class
      * @param  string        $name
      * @return bool|null
@@ -281,6 +295,7 @@ final class Objects extends StaticClass
 
     /**
      * Get property.
+     *
      * @param  string|object $class
      * @param  string        $name
      * @return array|null
@@ -292,6 +307,7 @@ final class Objects extends StaticClass
 
     /**
      * Get property value.
+     *
      * @param  string|object $class
      * @param  string        $name
      * @return any
@@ -302,7 +318,8 @@ final class Objects extends StaticClass
     }
 
     /**
-     * Get properties registry.
+     * Get properties.
+     *
      * @param  string|object $class
      * @param  bool          $all
      * @param  string        $_name @internal
@@ -386,6 +403,7 @@ final class Objects extends StaticClass
 
     /**
      * Get property names.
+     *
      * @param  string|object $class
      * @param  bool          $all
      * @return array|null
@@ -409,6 +427,7 @@ final class Objects extends StaticClass
 
     /**
      * Get property values.
+     *
      * @param  string|object $class
      * @param  bool          $all
      * @param  bool          $withNames
@@ -453,6 +472,7 @@ final class Objects extends StaticClass
 
     /**
      * Get method.
+     *
      * @param  string|object $class
      * @param  string        $name
      * @return array|null
@@ -464,6 +484,7 @@ final class Objects extends StaticClass
 
     /**
      * Get methods.
+     *
      * @param  string|object $class
      * @param  bool          $all
      * @param  string        $_name @internal
@@ -554,6 +575,7 @@ final class Objects extends StaticClass
 
     /**
      * Get method names.
+     *
      * @param  string|object $class
      * @param  bool          $all
      * @return array|null
@@ -577,6 +599,7 @@ final class Objects extends StaticClass
 
     /**
      * Get parents.
+     *
      * @param  string|object $class
      * @return array|null
      */
@@ -592,6 +615,7 @@ final class Objects extends StaticClass
 
     /**
      * Get interfaces.
+     *
      * @param  string|object $class
      * @return array|null
      */
@@ -600,7 +624,7 @@ final class Objects extends StaticClass
         $ret = class_implements($class);
         if ($ret !== false) {
             $ret = array_keys($ret);
-            $ret = array_reverse($ret); // Fix weird reverse order..
+            $ret = array_reverse($ret); // Fix weird reverse order.
             return $ret;
         }
         return null;
@@ -608,6 +632,7 @@ final class Objects extends StaticClass
 
     /**
      * Get traits.
+     *
      * @param  string|object $class
      * @param  bool          $all
      * @return array|null
