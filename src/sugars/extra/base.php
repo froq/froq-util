@@ -14,7 +14,7 @@ declare(strict_types=1);
  */
 function base64_encode_urlsafe(string $in): string
 {
-    return chop(strtr(base64_encode($in), '/+', '_-'), '=');
+    return chop(strtr((string) base64_encode($in), '/+', '_-'), '=');
 }
 
 /**
@@ -27,5 +27,5 @@ function base64_encode_urlsafe(string $in): string
  */
 function base64_decode_urlsafe(string $in, bool $strict = false): string
 {
-    return base64_decode(strtr($in, '_-', '/+'), $strict);
+    return (string) base64_decode(strtr($in, '_-', '/+'), $strict);
 }
