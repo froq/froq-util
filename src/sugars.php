@@ -1,7 +1,7 @@
 <?php
 /**
  * Copyright (c) 2015 · Kerem Güneş
- * Apache License 2.0 <https://opensource.org/licenses/apache-2.0>
+ * Apache License 2.0 · http://github.com/froq/froq-util
  */
 declare(strict_types=1);
 
@@ -14,18 +14,22 @@ defined('nil') || require 'sugars-constant.php';
  * Yes man..
  */
 function equal($a, $b, ...$c): bool {
-    return ($a == $b) || ($c && in_array($a, [$b, ...$c])); }
+    return ($a == $b) || ($c && in_array($a, [$b, ...$c]));
+}
 function equals($a, $b, ...$c): bool {
-    return ($a === $b) || ($c && in_array($a, [$b, ...$c], true)); }
+    return ($a === $b) || ($c && in_array($a, [$b, ...$c], true));
+}
 
 /**
  * Pick/pluck..
  * Loving https://docs.zephir-lang.com/0.12/en/operators#fetch
  */
 function pick(array &$array, int|string $key, &$value = null, bool $drop = false): bool {
-    return ($value = array_pick($array, $key, null, $drop)) !== null; }
+    return ($value = array_pick($array, $key, null, $drop)) !== null;
+}
 function pluck(array &$array, int|string $key, &$value = null): bool {
-    return ($value = array_pluck($array, $key, null)) !== null; }
+    return ($value = array_pluck($array, $key, null)) !== null;
+}
 
 /**
  * The ever most wanted functions (finally come with 8.0, but without case option).
@@ -33,11 +37,14 @@ function pluck(array &$array, int|string $key, &$value = null): bool {
  * @since 4.0, 5.0 Dropped ...$args calls due to speed issues.
  */
 function strsrc(string $str, string $src, bool $icase = false): bool { // Search.
-    return str_has($str, $src, $icase); }
+    return str_has($str, $src, $icase);
+}
 function strpfx(string $str, string $src, bool $icase = false): bool { // Search prefix.
-    return str_has_prefix($str, $src, $icase); }
+    return str_has_prefix($str, $src, $icase);
+}
 function strsfx(string $str, string $src, bool $icase = false): bool { // Search suffix.
-    return str_has_suffix($str, $src, $icase); }
+    return str_has_suffix($str, $src, $icase);
+}
 
 /**
  * Loving shorter stuffs?
