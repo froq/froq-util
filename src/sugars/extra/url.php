@@ -11,10 +11,10 @@ use froq\util\Util;
  * Get current URL (from server environment).
  *
  * @param  string|null $url
- * @return ?string
+ * @return string|null
  * @since  4.0
  */
-function get_url(): ?string
+function get_url(): string|null
 {
     static $ret;
     return $ret ??= Util::getCurrentUrl();
@@ -24,10 +24,10 @@ function get_url(): ?string
  * Get scheme part from current or given URL.
  *
  * @param  string|null $url
- * @return ?string
+ * @return string|null
  * @since  4.0
  */
-function get_url_scheme(string $url = null): ?string
+function get_url_scheme(string $url = null): string|null
 {
     $url = ''. (func_num_args() ? $url : get_url());
 
@@ -38,10 +38,10 @@ function get_url_scheme(string $url = null): ?string
  * Get host part from current or given URL.
  *
  * @param  string|null $url
- * @return ?string
+ * @return string|null
  * @since  4.0
  */
-function get_url_host(string $url = null): ?string
+function get_url_host(string $url = null): string|null
 {
     $url = ''. (func_num_args() ? $url : get_url());
 
@@ -66,10 +66,10 @@ function get_url_port(string $url = null): ?int
  * Get path part from current or given URL.
  *
  * @param  string|null $url
- * @return ?string
+ * @return string|null
  * @since  4.0
  */
-function get_url_path(string $url = null): ?string
+function get_url_path(string $url = null): string|null
 {
     $url = ''. (func_num_args() ? $url : get_url());
 
@@ -80,10 +80,10 @@ function get_url_path(string $url = null): ?string
  * Get query part from current or given URL.
  *
  * @param  string|null $url
- * @return ?string
+ * @return string|null
  * @since  4.0
  */
-function get_url_query(string $url = null): ?string
+function get_url_query(string $url = null): string|null
 {
     $url = ''. (func_num_args() ? $url : get_url());
 
@@ -94,10 +94,10 @@ function get_url_query(string $url = null): ?string
  * Get fragment part from current or given URL.
  *
  * @param  string|null $url
- * @return ?string
+ * @return string|null
  * @since  4.0
  */
-function get_url_fragment(string $url = null): ?string
+function get_url_fragment(string $url = null): string|null
 {
     $url = ''. (func_num_args() ? $url : get_url());
 
@@ -108,10 +108,10 @@ function get_url_fragment(string $url = null): ?string
  * Get a segment by index from current or given URL.
  *
  * @param  string|null $url
- * @return ?string
+ * @return string|null
  * @since  4.0
  */
-function get_url_segment(int $i, string $url = null): ?string
+function get_url_segment(int $i, string $url = null): string|null
 {
     return (func_num_args() == 1) ? get_url_segments()[$i] ?? null
                                   : get_url_segments($url)[$i] ?? null;
