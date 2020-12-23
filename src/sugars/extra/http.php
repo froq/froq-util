@@ -38,20 +38,15 @@ function parse_query_string(string $query, string $ignored_keys = null): array
  * Build a cookie.
  *
  * @param  string      $name
- * @param  scalar|null $value
+ * @param  string|null $value
  * @param  array|null  $options
  * @return string|null
  * @since  4.0
  */
-function build_cookie(string $name, $value, array $options = null): string|null
+function build_cookie(string $name, string|null $value, array $options = null): string|null
 {
     if ($name == '') {
         trigger_error('No cookie name given');
-        return null;
-    }
-    if ($value !== null && !is_scalar($value)) {
-        trigger_error(sprintf('Invalid value type `%s`, scalar or null values accepted only',
-            get_type($value)));
         return null;
     }
 
@@ -64,20 +59,14 @@ function build_cookie(string $name, $value, array $options = null): string|null
 
     $ret = rawurlencode($name) .'=';
 
-    if ($value === null || $expires < 0) {
-        $ret .= sprintf('NULL; Expires=%s; Max-Age=0', gmdate('D, d M Y H:i:s \G\M\T'));
+    if ($value === null || $value === '' || $expires < 0) {
+        $ret .= sprintf('n/a; Expires=%s; Max-Age=0', gmdate('D, d M Y H:i:s \G\M\T', 0));
     } else {
-        // String, bool, int or float.
-        $ret .= match (get_type($value)) {
-            'string' => rawurlencode($value),
-            'bool'   => $value ? 'true' : 'false',
-            default  => strval($value)
-        };
+        $ret .= rawurlencode($value);
 
         // Must be given in-seconds format.
-        if ($expires != null) {
-            $ret .= sprintf('; Expires=%s; Max-Age=%s', gmdate('D, d M Y H:i:s \G\M\T',
-                time() + $expires), $expires);
+        if ($expires !== null) {
+            $ret .= sprintf('; Expires=%s; Max-Age=%s', gmdate('D, d M Y H:i:s \G\M\T', time() + $expires), $expires);
         }
     }
 
