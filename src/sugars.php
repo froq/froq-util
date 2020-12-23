@@ -1329,24 +1329,24 @@ function file_extension(string $file, bool $with_dot = false): string|null
  */
 function file_mime(string $file): string|null
 {
-    if (is_file($file)) {
-        return mime_content_type($file) ?: null;
-    }
+    $mime = mime_content_type($file) ?: null;
 
-    // Try with extension.
-    $extension = file_extension($file, false);
-    if ($extension) {
-        static $cache; // For some speed..
-        if (empty($cache[$extension = strtolower($extension)])) {
-            foreach (include 'statics/mime.php' as $type => $extensions) {
-                if (in_array($extension, $extensions, true)) {
-                    return ($cache[$extension] = $type);
+    if (!$mime) {
+        // Try with extension.
+        $extension = file_extension($file, false);
+        if ($extension) {
+            static $cache; // For some speed..
+            if (empty($cache[$extension = strtolower($extension)])) {
+                foreach (include 'statics/mime.php' as $type => $extensions) {
+                    if (in_array($extension, $extensions, true)) {
+                        return ($cache[$extension] = $type);
+                    }
                 }
             }
         }
     }
 
-    return null;
+    return $mime;
 }
 
 /**
