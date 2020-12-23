@@ -31,7 +31,7 @@ function logger(): Logger
  * @param  bool             $separate
  * @return bool
  */
-function log_error($message, $separate): bool
+function log_error(string|Throwable $message, bool $separate = true): bool
 {
     return app()->logger()->logError($message, $separate);
 }
@@ -43,7 +43,7 @@ function log_error($message, $separate): bool
  * @param  bool             $separate
  * @return bool
  */
-function log_warn($message, $separate): bool
+function log_warn(string|Throwable $message, bool $separate = true): bool
 {
     return app()->logger()->logWarn($message, $separate);
 }
@@ -55,7 +55,7 @@ function log_warn($message, $separate): bool
  * @param  bool             $separate
  * @return bool
  */
-function log_info($message, $separate): bool
+function log_info(string|Throwable $message, bool $separate = true): bool
 {
     return app()->logger()->logInfo($message, $separate);
 }
@@ -67,7 +67,7 @@ function log_info($message, $separate): bool
  * @param  bool             $separate
  * @return bool
  */
-function log_debug($message, $separate): bool
+function log_debug(string|Throwable $message, bool $separate = true): bool
 {
     return app()->logger()->logDebug($message, $separate);
 }

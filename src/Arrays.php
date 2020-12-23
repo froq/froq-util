@@ -199,7 +199,7 @@ final class Arrays extends StaticClass
      * @param  any|null    $default
      * @return any|null
      */
-    public static function pull(array &$array, $key, $default = null)
+    public static function pull(array &$array, int|string $key, $default = null)
     {
         return self::get($array, $key, $default, true);
     }
@@ -225,7 +225,7 @@ final class Arrays extends StaticClass
      * @return array
      * @since  4.0
      */
-    public static function remove(array &$array, $key): array
+    public static function remove(array &$array, int|string $key): array
     {
         self::pull($array, $key);
 
@@ -590,7 +590,7 @@ final class Arrays extends StaticClass
      * @return array
      * @since  4.2
      */
-    public static function swap(array &$array, $oldKey, $newKey, $default = null): array
+    public static function swap(array &$array, int|string $oldKey, int|string $newKey, $default = null): array
     {
         $newValue = self::pull($array, $oldKey);
 
@@ -905,7 +905,7 @@ final class Arrays extends StaticClass
      * @param  bool        $drop
      * @return int
      */
-    public static function getInt(array &$array, $key, int $default = null, bool $drop = false): int
+    public static function getInt(array &$array, int|string $key, int $default = null, bool $drop = false): int
     {
         return (int) self::get($array, $key, $default, $drop);
     }
@@ -919,7 +919,7 @@ final class Arrays extends StaticClass
      * @param  bool        $drop
      * @return float
      */
-    public static function getFloat(array &$array, $key, float $default = null, bool $drop = false): float
+    public static function getFloat(array &$array, int|string $key, float $default = null, bool $drop = false): float
     {
         return (float) self::get($array, $key, $default, $drop);
     }
@@ -933,7 +933,7 @@ final class Arrays extends StaticClass
      * @param  bool         $drop
      * @return string
      */
-    public static function getString(array &$array, $key, string $default = null, bool $drop = false): string
+    public static function getString(array &$array, int|string $key, string $default = null, bool $drop = false): string
     {
         return (string) self::get($array, $key, $default, $drop);
     }
@@ -947,7 +947,7 @@ final class Arrays extends StaticClass
      * @param  bool        $drop
      * @return bool
      */
-    public static function getBool(array &$array, $key, bool $default = null, bool $drop = false): bool
+    public static function getBool(array &$array, int|string $key, bool $default = null, bool $drop = false): bool
     {
         return (bool) self::get($array, $key, $default, $drop);
     }

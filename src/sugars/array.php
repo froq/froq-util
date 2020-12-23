@@ -154,7 +154,7 @@ function array_pull_random(array &$array, int $limit = 1, bool $pack = false)
  * @return array
  * @since  4.0
  */
-function array_remove(array &$array, $key): array
+function array_remove(array &$array, int|string|array $key): array
 {
     return is_array($key) ? Arrays::removeAll($array, $key)
                           : Arrays::remove($array, $key);

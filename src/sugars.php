@@ -111,10 +111,10 @@ function size($in): int|null
  *
  * @param  array|string    $in
  * @param  array|string ...$ins
- * @return array|string|null
+ * @return array|string
  * @since  4.0, 5.0 Moved from froq/fun.
  */
-function concat(array|string $in, ...$ins): array|string|null
+function concat(array|string $in, ...$ins): array|string
 {
     return match (true) {
         is_array($in)  => array_append($in, ...$ins),
@@ -128,10 +128,10 @@ function concat(array|string $in, ...$ins): array|string|null
  * @param  array|string $in
  * @param  int          $start
  * @param  int|null     $end
- * @return array|string|null
+ * @return array|string
  * @since  3.0, 4.0 Added back, 5.0 Moved from froq/fun.
  */
-function slice(array|string $in, int $start, int $end = null): array|string|null
+function slice(array|string $in, int $start, int $end = null): array|string
 {
     return match (true) {
         is_array($in)  => array_slice($in, $start, $end),
@@ -1353,8 +1353,8 @@ function file_mime(string $file): string|null
  * Init a DateTime object without/without given when option & with/without timezone if given
  * or default timezone.
  *
- * @param  int|float|string $when
- * @param  string|null      $where
+ * @param  int|float|string|null $when
+ * @param  string|null           $where
  * @return DateTime
  * @since  4.25
  */
@@ -1452,8 +1452,7 @@ function preg_test(string $pattern, string $subject): bool
  * @return string|array|null
  * @since  4.0
  */
-function preg_remove(string|array $pattern, string|array $subject, int $limit = null,
-    int &$count = null): string|array|null
+function preg_remove(string|array $pattern, string|array $subject, int $limit = null, int &$count = null): string|array|null
 {
     if (is_string($pattern)) {
         $replacement = '';
@@ -1694,9 +1693,9 @@ function array_value_exists($value, array $array, bool $strict = true): bool
 /**
  * Fetch item(s) from an array by given path(s) with dot notation.
  *
- * @param  array        $array
- * @param  string|array $path
- * @param  any|null     $default
+ * @param  array                $array
+ * @param  string|array<string> $path
+ * @param  any|null             $default
  * @return any|null
  * @since  5.0
  */
@@ -1750,7 +1749,7 @@ function array_select(array $array, int|string|array $key, $default = null)
  * @param  array  &$array
  * @param  array   $items
  * @return array
- * @since  4.9, 4.18 Actual version.
+ * @since  4.18
  */
 function array_put(array &$array, array $items): array
 {
@@ -1781,7 +1780,7 @@ function array_pick(array &$array, int|string|array $key, $default = null, bool 
  * @param  int|string|array<int|string>  $key
  * @param  any|null                      $default
  * @return any|null
- * @since  4.9, 4.13 Actual version.
+ * @since  4.13
  */
 function array_pluck(array &$array, int|string|array $key, $default = null)
 {

@@ -49,7 +49,7 @@ function build_cookie(string $name, $value, array $options = null): string|null
         trigger_error('No cookie name given');
         return null;
     }
-    if ($value != null && !is_scalar($value)) {
+    if ($value !== null && !is_scalar($value)) {
         trigger_error(sprintf('Invalid value type `%s`, scalar or null values accepted only',
             get_type($value)));
         return null;

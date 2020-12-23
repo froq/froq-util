@@ -225,7 +225,7 @@ function post_has(string|array $name): bool
  * @param  any|null          $default
  * @return any|null
  */
-function cookie($name = null, $default = null)
+function cookie(string|array $name = null, $default = null)
 {
     return func_num_args() > 1 ? app()->request()->cookie($name, $default)
                                : app()->request()->cookie($name);
@@ -237,7 +237,7 @@ function cookie($name = null, $default = null)
  * @param  string|array $name
  * @return bool
  */
-function cookie_has($name): bool
+function cookie_has(string|array $name): bool
 {
     return app()->request()->hasCookie($name);
 }

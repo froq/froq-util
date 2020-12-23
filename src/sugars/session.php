@@ -20,7 +20,7 @@ if (!class_exists(App::class, false)) {
  * @param  any|null          $value
  * @return any|null|froq\session\Session
  */
-function session($key = null, $value = null)
+function session(string|array $key = null, $value = null)
 {
     static $session; $session ??= app()->session();
 
@@ -83,7 +83,7 @@ function session_has(string $key): bool|null
  * @param  any|null     $value
  * @return bool|null
  */
-function session_set($key, $value = null): bool|null
+function session_set(string|array $key, $value = null): bool|null
 {
     return session()?->set($key, $value) ? true : null;
 }
@@ -96,7 +96,7 @@ function session_set($key, $value = null): bool|null
  * @param  bool         $remove
  * @return any|null
  */
-function session_get($key, $default = null, bool $remove = false)
+function session_get(string|array $key, $default = null, bool $remove = false)
 {
     return session()?->get($key, $default, $remove);
 }
@@ -107,7 +107,7 @@ function session_get($key, $default = null, bool $remove = false)
  * @param  string|array $key
  * @return bool|null
  */
-function session_remove($key): bool|null
+function session_remove(string|array $key): bool|null
 {
     return session()?->remove($key);
 }
