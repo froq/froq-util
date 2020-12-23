@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 /**
  * Check whether current env is local.
+ *
  * @return bool
  */
 function is_local(): bool
