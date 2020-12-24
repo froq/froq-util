@@ -24,11 +24,16 @@ final /* fuckic static */ class Util extends StaticClass
     /**
      * Load sugar.
      *
-     * @param  string $name
+     * @param  string|array $name
      * @return void
      */
-    public static function loadSugar(string $name): void
+    public static function loadSugar(string|array $name): void
     {
+        if (is_array($name)) {
+            self::loadSugar($name);
+            return;
+        }
+
         $file = __dir__ . '/sugars/' . $name . '.php';
 
         if (!is_file($file)) {
