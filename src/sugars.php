@@ -1949,21 +1949,23 @@ function suid(int $length = 6, int $bpc = 6): string|null
 }
 
 /**
- * Generate a random unique UID.
+ * Generate a random UUID, optionally with current timestamp.
  *
  * @param  bool $dashed
+ * @param  bool $timed
  * @return string
  * @since  5.0
  */
-function uuid(bool $dashed = true): string
+function uuid(bool $dashed = true, bool $timed = false): string
 {
-    $id = random_bytes(16);
+    $bytes = !$timed ? random_bytes(16)               // 16-random bytes.
+        : hex2bin(dechex(time())) . random_bytes(12); // Bin of time prefix & 12-random bytes.
 
     // Add signs: 4 (version) & 8, 9, A, B.
-    $id[6] = chr(ord($id[6]) & 0x0f | 0x40);
-    $id[8] = chr(ord($id[8]) & 0x3f | 0x80);
+    $bytes[6] = chr(ord($bytes[6]) & 0x0f | 0x40);
+    $bytes[8] = chr(ord($bytes[8]) & 0x3f | 0x80);
 
-    $ret = vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($id), 4));
+    $ret = vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($bytes), 4));
 
     $dashed || $ret = str_replace('-', '', $ret);
 
@@ -1971,18 +1973,19 @@ function uuid(bool $dashed = true): string
 }
 
 /**
- * Generate a random UUID hash.
+ * Generate a random UUID hash, optionally with current timestamp.
  *
  * @param  int  $length
  * @param  bool $format
+ * @param  bool $timed
  * @return string|null
  * @since  5.0
  */
-function uuid_hash(int $length = 32, bool $format = false): string|null
+function uuid_hash(int $length = 32, bool $format = false, bool $timed = false): string|null
 {
     $ret = match ($length) {
-        32 => hash('md5', uuid()), 40 => hash('sha1', uuid()),
-        64 => hash('sha256', uuid()), 16 => hash('fnv1a64', uuid()),
+        32      => hash('md5', uuid(false, $timed)),    40 => hash('sha1', uuid(false, $timed)),
+        64      => hash('sha256', uuid(false, $timed)), 16 => hash('fnv1a64', uuid(false, $timed)),
         default => null
     };
 
