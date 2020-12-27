@@ -2111,3 +2111,29 @@ function is_type_of($in, string $type): bool
         default       => strtolower($type) == strtolower(get_type($in)) // All others with primitives.
     };
 }
+
+/**
+ * Check empty state(s) of given input(s).
+ *
+ * @param  any $in
+ * @param  ... $ins
+ * @return bool
+ * @since  4.0 Added back, 5.0 Moved from sugars/is.
+ */
+function is_empty($in, ...$ins): bool
+{
+    // Require at least one argument.
+    if (empty($in)) {
+        return true;
+    }
+
+    foreach ($ins as $in) {
+        // Also check empty objects.
+        $in = is_object($in) ? get_object_vars($in) : $in;
+        if (empty($in)) {
+            return true;
+        }
+    }
+
+    return false;
+}

@@ -143,29 +143,3 @@ function is_nils($in): bool
 {
     return ($in === '');
 }
-
-/**
- * Check whether all given inputs are not empty.
- *
- * @param  any $in
- * @param  ... $ins
- * @return bool
- * @since  4.0 Added back.
- */
-function is_empty($in, ...$ins): bool
-{
-    // Require at least one argument.
-    if (empty($in)) {
-        return true;
-    }
-
-    foreach ($ins as $in) {
-        // Also check empty objects.
-        $in = is_object($in) ? get_object_vars($in) : $in;
-        if (empty($in)) {
-            return true;
-        }
-    }
-
-    return false;
-}
