@@ -2127,7 +2127,7 @@ function is_empty($in, ...$ins): bool
         return true;
     }
 
-    foreach ($ins as $in) {
+    if ($ins) foreach ($ins as $in) {
         // Also check empty objects.
         $in = is_object($in) ? get_object_vars($in) : $in;
         if (empty($in)) {
