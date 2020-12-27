@@ -165,8 +165,8 @@ final class Numbers extends StaticClass
      */
     public static function randomInt(int $min = null, int $max = null): int
     {
-        $min = $min ?? 0;
-        $max = $max ?? PHP_INT_MAX;
+        $min ??= 0;
+        $max ??= PHP_INT_MAX;
 
         return random_int($min, $max);
     }
@@ -182,8 +182,8 @@ final class Numbers extends StaticClass
      */
     public static function randomFloat(float $min = null, float $max = null, int $precision = null): float
     {
-        $min = $min ?? 0;
-        $max = $max ?? 1 + $min;
+        $min ??= 0;
+        $max ??= 1 + $min;
 
         $ret = lcg_value() * ($max - $min) + $min;
 
