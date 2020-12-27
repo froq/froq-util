@@ -5,7 +5,7 @@
  */
 declare(strict_types=1);
 
-use froq\util\{Arrays, Objects};
+use froq\util\{Arrays, Objects, Numbers};
 
 // Load constants.
 defined('nil') || require 'sugars-constant.php';
@@ -1409,9 +1409,7 @@ function utime(bool $string = false): float|string
  */
 function urand(float $min = null, float $max = null): float
 {
-    [$min, $max] = [($min ?? 0), ($max ?? 1) + ($min ?? 0)];
-
-    return lcg_value() * ($max - $min) + $min;
+    return Numbers::randomFloat($min, $max);
 }
 
 /**
