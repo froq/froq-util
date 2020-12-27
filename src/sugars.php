@@ -1400,6 +1400,21 @@ function utime(bool $string = false): float|string
 }
 
 /**
+ * Get a random float.
+ *
+ * @param  float|null $min
+ * @param  float|null $max
+ * @return float
+ * @since  5.0
+ */
+function urand(float $min = null, float $max = null): float
+{
+    [$min, $max] = [($min ?? 0), ($max ?? 1) + ($min ?? 0)];
+
+    return lcg_value() * ($max - $min) + $min;
+}
+
+/**
  * Get an interval by given format.
  *
  * @param  string   $format
@@ -1459,7 +1474,8 @@ function preg_test(string $pattern, string $subject): bool
  * @return string|array|null
  * @since  4.0
  */
-function preg_remove(string|array $pattern, string|array $subject, int $limit = null, int &$count = null): string|array|null
+function preg_remove(string|array $pattern, string|array $subject, int $limit = null,
+    int &$count = null): string|array|null
 {
     if (is_string($pattern)) {
         $replacement = '';
