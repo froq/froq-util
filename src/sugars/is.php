@@ -14,7 +14,7 @@ declare(strict_types=1);
 function is_local(): bool
 {
     static $ret;
-    return $ret ??= defined('__local__') && !!(__local__);
+    return $ret ??= defined('__local__') && __local__;
 }
 
 /**
