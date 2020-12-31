@@ -473,6 +473,8 @@ final class Arrays extends StaticClass
 
         $ret = [];
 
+        srand(); // Ensure a new seed (@see https://wiki.php.net/rfc/object_scope_prng).
+
         // Get & arrayify single keys (limit=1).
         $keys = (array) array_rand($array, $limit);
 
@@ -504,6 +506,8 @@ final class Arrays extends StaticClass
      */
     public static function shuffle(array &$array, bool $keepKeys = true): array
     {
+        srand(); // Ensure a new seed (@see https://wiki.php.net/rfc/object_scope_prng).
+
         if ($keepKeys) {
             $keys = array_keys($array);
             shuffle($keys);

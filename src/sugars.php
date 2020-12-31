@@ -401,6 +401,8 @@ function str_rand(string $str, int $length = null): string|null
         return null;
     }
 
+    srand(); // Ensure a new seed (@see https://wiki.php.net/rfc/object_scope_prng).
+
     return !$length ? str_shuffle($str) : mb_substr(str_shuffle($str), 0, $length);
 }
 

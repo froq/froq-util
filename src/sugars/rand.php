@@ -42,6 +42,8 @@ function rand_float(float $min = null, float $max = null, int $precision = null)
  */
 function rand_item(array $array, int|string &$key = null)
 {
+    srand();
+
     $key = array_rand($array);
     if ($key === null) {
         return null;
@@ -61,6 +63,8 @@ function rand_item(array $array, int|string &$key = null)
  */
 function rand_items(array $array, int $limit, array &$keys = null): array|null
 {
+    srand();
+
     $ret = [];
     $len = count($array);
 
