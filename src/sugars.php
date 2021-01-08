@@ -2023,16 +2023,16 @@ function uuid(bool $dashed = true, bool $timed = false): string
  */
 function uuid_hash(int $length = 32, bool $format = false, bool $timed = false): string|null
 {
-    $ret = match ($length) {
-        32      => hash('md5', uuid(false, $timed)),    40 => hash('sha1', uuid(false, $timed)),
-        64      => hash('sha256', uuid(false, $timed)), 16 => hash('fnv1a64', uuid(false, $timed)),
-        default => null
-    };
+    static $algos = [32 => 'md5', 40 => 'sha1', 64 => 'sha256', 16 => 'fnv1a64'];
 
-    if (!$ret) {
+    $algo = $algos[$length] ?? null;
+
+    if (!$algo) {
         trigger_error(sprintf('%s(): Invalid length, valids are: 32,40,64,16', __function__));
         return null;
     }
+
+    $ret = hash($algo, uuid(false, $timed));
 
     if ($format) {
         if ($length != 32) {
