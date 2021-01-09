@@ -1936,8 +1936,8 @@ function preg_error_message(int &$code = null): string|null
 /**
  * Generate a random string UID.
  *
- * @param  int    $length
- * @param  int    $bpc
+ * @param  int $length
+ * @param  int $bpc
  * @return string|null
  * @since  5.0
  */
