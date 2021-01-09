@@ -1946,12 +1946,12 @@ function suid(int $length = 6, int $bpc = 6): string|null
     if ($length < 1) {
         trigger_error(sprintf('Invalid length `%s`, it must be greater than 0', $length));
         return null;
-    } elseif ($bpc < 1 || $bpc > 8) {
-        trigger_error(sprintf('Invalid bits-per-char `%s`, it must be between 1-8', $bpc));
+    } elseif ($bpc < 1 || $bpc > 6) {
+        trigger_error(sprintf('Invalid bits-per-char `%s`, it must be between 1-6', $bpc));
         return null;
     }
 
-    // Using base62 chars.
+    // Uses hex for bpc=4, base36 for bpc=5, base62 chars for bpc=6.
     static $chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
     $bytes = random_bytes($length);
@@ -1966,7 +1966,7 @@ function suid(int $length = 6, int $bpc = 6): string|null
             if ($p < $q) {
                 $byte = ord($bytes[$p++]);
                 $w |= ($byte << $have);
-                $have += 8;
+                $have += $bpc;
             } else {
                 break;
             }
