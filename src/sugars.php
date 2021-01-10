@@ -417,7 +417,7 @@ function str_rand(string $str, int $length = null): string|null
  */
 function convert_base(int|string $in, int|string $from, int|string $to): string|null
 {
-    // Try to use power of GMP.
+    // Try to use speed/power of GMP.
     if (extension_loaded('gmp') && is_int($from) && is_int($to)) {
         return gmp_strval(gmp_init($in, $from), $to);
     }
