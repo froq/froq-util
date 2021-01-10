@@ -1391,8 +1391,7 @@ function file_mime(string $file): string|null
  */
 function udate(int|float|string $when = null, string $where = null): DateTime
 {
-    $when ??= '';
-    $where ??= date_default_timezone_get();
+    $when ??= ''; $where ??= date_default_timezone_get();
 
     switch (get_type($when)) {
         case 'int': // Eg: 1603339284
