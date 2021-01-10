@@ -130,6 +130,23 @@ function concat(array|string $in, ...$ins): array|string
 }
 
 /**
+ * Chunk an array or string.
+ *
+ * @param  array|string $in
+ * @param  int          $length
+ * @param  bool         $keep_keys
+ * @return array
+ * @since  5.0
+ */
+function chunk(array|string $in, int $length, bool $keep_keys = false): array
+{
+    return match (true) {
+        is_array($in)  => array_chunk($in, $length, $keep_keys),
+        is_string($in) => str_split($in, $length)
+    };
+}
+
+/**
  * Slice an array or string.
  *
  * @param  array|string $in
