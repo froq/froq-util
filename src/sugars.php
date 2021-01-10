@@ -2136,10 +2136,10 @@ function is_stream($in): bool
 function is_type_of($in, string $type): bool
 {
     return match ($type) {
-        'gd', 'image' => is_image($in),  'stream' => is_stream($in),
-        'number'      => is_number($in), 'scalar' => is_scalar($in),
-        'array'       => is_array($in),  'object' => is_object($in),
-        default       => strtolower($type) == strtolower(get_type($in)) // All others with primitives.
+        'image'  => is_image($in),  'stream' => is_stream($in),
+        'number' => is_number($in), 'scalar' => is_scalar($in),
+        'array'  => is_array($in),  'object' => is_object($in),
+        default  => strtolower($type) == strtolower(get_type($in)) // All others.
     };
 }
 
