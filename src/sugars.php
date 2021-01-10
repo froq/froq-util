@@ -99,17 +99,17 @@ function reduce(array $array, $carry = null, callable $func = null)
 /**
  * Get size/count/length of given input.
  *
- * @param  any  $in
+ * @param  any $in
  * @return int|null
  * @since  3.0, 5.0 Moved from froq/fun.
  */
 function size($in): int|null
 {
     return match (true) {
-        is_string($in)            => mb_strlen($in),
-        is_countable($in)         => count($in),
-        ($in instanceof stdClass) => count((array) $in),
-        default                   => null // No valid input.
+        is_string($in)    => mb_strlen($in),
+        is_countable($in) => count($in),
+        is_object($in)    => count(get_object_vars($in)),
+        default           => null // No valid input.
     };
 }
 
