@@ -1495,8 +1495,7 @@ function preg_test(string $pattern, string $subject): bool
  * @return string|array|null
  * @since  4.0
  */
-function preg_remove(string|array $pattern, string|array $subject, int $limit = null,
-    int &$count = null): string|array|null
+function preg_remove(string|array $pattern, string|array $subject, int $limit = null, int &$count = null): string|array|null
 {
     if (is_string($pattern)) {
         $replacement = '';
