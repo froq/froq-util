@@ -681,7 +681,7 @@ function get_uniqid(int $length = 14, int $base = 16, bool $hrtime = false): str
 
     // Grab 14-length hex from uniqid() or map to hex hrtime() stuff.
     if (!$hrtime) {
-        $id = explode('.', uniqid('', true))[0];
+        $id = explode('.', uniqid())[0];
     } else {
         $id = implode('', array_map('dechex', hrtime()));
     }
