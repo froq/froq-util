@@ -807,9 +807,9 @@ function get_real_path(string $path, bool $check = false, bool $check_file = fal
         $ret .= __dirsep . $cur; // Append current.
     }
 
-    // Validate file/directory etc existence or file only.
+    // Validate file/directory or file only existence.
     if ($check) {
-        $ok = $check_file ? is_file($path) : file_exists($ret);
+        $ok = $check_file ? is_file($path) : is_dir($ret);
         if (!$ok) $ret = null;
     }
 
