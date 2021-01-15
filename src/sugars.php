@@ -1438,12 +1438,12 @@ function urand(float $min = null, float $max = null): float
 /**
  * Get an interval by given format.
  *
- * @param  string   $format
- * @param  int|null $time
+ * @param  string          $format
+ * @param  string|int|null $time
  * @return int
  * @since  4.0
  */
-function strtoitime(string $format, int $time = null): int
+function strtoitime(string $format, string|int $time = null): int
 {
     // Eg: "1 day" or "1D" (instead "60*60*24" or "86400").
     if (preg_match_all('~([+-]?\d+)([smhDMY])~', $format, $matches)) {
@@ -1462,12 +1462,13 @@ function strtoitime(string $format, int $time = null): int
         }
 
         // Update format.
-        $format_list && (
-            $format = join(' ', $format_list)
-        );
+        $format_list && $format = join(' ', $format_list);
     }
 
-    $time = $time ?? time();
+    $time ??= (int) date('U');
+    if (is_string($time)) {
+        $time = strtotime($time);
+    }
 
     return strtotime($format, $time) - $time;
 }
