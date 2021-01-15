@@ -2009,21 +2009,24 @@ function suid(int $length = 6, int $bpc = 6): string|null
 }
 
 /**
- * Generate a random UUID, optionally with current timestamp.
+ * Generate a random UUID/GUID, optionally with current timestamp.
  *
  * @param  bool $dashed
  * @param  bool $timed
+ * @param  bool $guid
  * @return string
  * @since  5.0
  */
-function uuid(bool $dashed = true, bool $timed = false): string
+function uuid(bool $dashed = true, bool $timed = false, bool $guid = false): string
 {
-    $bytes = !$timed ? random_bytes(16)               // 16-random bytes.
+    $bytes = !$timed ? random_bytes(16)               // Fully 16-random bytes.
         : hex2bin(dechex(time())) . random_bytes(12); // Bin of time prefix & 12-random bytes.
 
-    // Add signs: 4 (version) & 8, 9, A, B.
-    $bytes[6] = chr(ord($bytes[6]) & 0x0f | 0x40);
-    $bytes[8] = chr(ord($bytes[8]) & 0x3f | 0x80);
+    // Add signs: 4 (version) & 8, 9, A, B, but GUID doesn't use them.
+    if (!$guid) {
+        $bytes[6] = chr(ord($bytes[6]) & 0x0f | 0x40);
+        $bytes[8] = chr(ord($bytes[8]) & 0x3f | 0x80);
+    }
 
     $ret = vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($bytes), 4));
 
@@ -2033,15 +2036,16 @@ function uuid(bool $dashed = true, bool $timed = false): string
 }
 
 /**
- * Generate a random UUID hash, optionally with current timestamp.
+ * Generate a random UUID/GUID hash, optionally with current timestamp.
  *
  * @param  int  $length
  * @param  bool $format
  * @param  bool $timed
+ * @param  bool $guid
  * @return string|null
  * @since  5.0
  */
-function uuid_hash(int $length = 32, bool $format = false, bool $timed = false): string|null
+function uuid_hash(int $length = 32, bool $format = false, bool $timed = false, bool $guid = false): string|null
 {
     static $algos = [32 => 'md5', 40 => 'sha1', 64 => 'sha256', 16 => 'fnv1a64'];
 
@@ -2052,7 +2056,7 @@ function uuid_hash(int $length = 32, bool $format = false, bool $timed = false):
         return null;
     }
 
-    $ret = hash($algo, uuid(false, $timed));
+    $ret = hash($algo, uuid(false, $timed, $guid));
 
     if ($format) {
         if ($length != 32) {
