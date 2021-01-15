@@ -1216,14 +1216,27 @@ function file_write(...$args)
 /**
  * Read a file contents.
  *
- * @alias of file_get_contents()
- * @since 4.0
+ * @params ... $args Same as file_get_contents().
+ * @since  4.0
  */
-function file_read(...$args)
+function file_read(...$args): string|null
 {
     $ret = file_get_contents(...$args);
 
     return ($ret !== false) ? $ret : null;
+}
+
+/**
+ * Read a file contents as base64-encoded.
+ *
+ * @params ... $args Same as file_get_contents().
+ * @since  5.0
+ */
+function file_read_base64(...$args): string|null
+{
+    $ret = file_get_contents(...$args);
+
+    return ($ret !== false) ? base64_encode($ret) : null;
 }
 
 /**
