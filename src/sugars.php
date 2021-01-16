@@ -1179,6 +1179,11 @@ function stream_set_contents(&$handle, string $contents): int|null
  */
 function file_create(string $file, int $mode = 0644, bool $tmp = false): string|null
 {
+    // Check tmp directive.
+    if ($file == '@tmp') {
+        [$file, $tmp] = [null, true];
+    }
+
     return $tmp ? mkfiletemp($file, $mode) : (
         mkfile($file, $mode) ? $file : null
     );
