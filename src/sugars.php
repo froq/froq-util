@@ -747,7 +747,7 @@ function get_request_id(): string
     $parts = explode('.', uniqid('', true));
 
     // Add/use an ephemeral number if no port (~$ cat /proc/sys/net/ipv4/ip_local_port_range).
-    $parts[2] = ($_SERVER['REMOTE_PORT'] ?? rand(32768, 60999));
+    $parts[2] = $_SERVER['REMOTE_PORT'] ?? rand(32768, 60999);
 
     return vsprintf('%014s-%07x-%04x', $parts);
 }
@@ -766,6 +766,9 @@ function get_real_path(string $path, bool $check = false, bool $check_file = fal
     $path = trim($path);
     if (!$path) {
         return null;
+    }
+    if (!strsrc($path, __dirsep)) {
+        return $path;
     }
 
     $ret = '';
@@ -810,7 +813,7 @@ function get_real_path(string $path, bool $check = false, bool $check_file = fal
     // Validate file/directory or file only existence.
     if ($check) {
         $ok = $check_file ? is_file($path) : file_exists($ret);
-        if (!$ok) $ret = null;
+        $ok || $ret = null;
     }
 
     return $ret;
@@ -830,13 +833,13 @@ function get_path_info(string $path, string|int $component = null): string|array
     if (!$path) {
         return null;
     }
-
     if (!$info = pathinfo($path)) {
         return null;
     }
 
     $ret = ['path' => $path] + map($info, fn($v) => strlen($v) ? $v : null);
-    $ret['filename'] = file_name($path, false);
+
+    $ret['filename']  = file_name($path, false);
     $ret['extension'] = file_extension($path, false);
 
     if ($component) {
@@ -1166,16 +1169,19 @@ function stream_set_contents(&$handle, string $contents): int|null
 }
 
 /**
- * Create a file.
+ * Create a file, optionally a temporary file.
  *
  * @param  string $file
  * @param  int    $mode
+ * @param  bool   $tmp
  * @return string|null
  * @since  4.0
  */
-function file_create(string $file, int $mode = 0644): string|null
+function file_create(string $file, int $mode = 0644, bool $tmp = false): string|null
 {
-    return mkfile($file, $mode) ? $file : null;
+    return $tmp ? mkfiletemp($file, $mode) : (
+        mkfile($file, $mode) ? $file : null
+    );
 }
 
 /**
