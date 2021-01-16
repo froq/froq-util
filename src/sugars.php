@@ -549,7 +549,7 @@ function convert_case(string $in, int $case, string $spliter = null, string $joi
 function class_extends(string $class1, string $class2, bool $parent_only = false): bool
 {
     return !$parent_only ? is_subclass_of($class1, $class2)
-        : ($parents = class_parents($class1)) && (current($parents) === $class2);
+         : ($parents = class_parents($class1)) && (current($parents) === $class2);
 }
 
 /**
