@@ -1996,17 +1996,13 @@ function suid(int $length = 6, int $base = 62): string|null
         return null;
     }
 
-    $bytes = random_bytes($length);
-    // [$a, $b] = [$base - 2, $base - 1]; // Some weird works..
+    srand();
 
+    $max = $base - 1;
     $ret = '';
 
-    srand();
-    for ($i = 0; $i < $length; $i++) {
-        $ord  = ord($bytes[$i]);
-        $pos  = $ord & rand(0, $base - 1);
-        // $pos  = abs(($ord | ~$a) + $b);
-        $ret .= ALPHABET[$pos];
+    while ($length--) {
+        $ret .= ALPHABET[rand(0, $max)];
     }
 
     return $ret;
