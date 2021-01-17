@@ -36,3 +36,9 @@ const __dirsep = DIRECTORY_SEPARATOR,
  */
 const CASE_TITLE = 2, CASE_DASH  = 3,
       CASE_SNAKE = 4, CASE_CAMEL = 5;
+
+/**
+ * Alphabet (Base-62).
+ * @since 5.0
+ */
+const ALPHABET = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';

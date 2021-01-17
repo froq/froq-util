@@ -440,7 +440,7 @@ function convert_base(int|string $in, int|string $from, int|string $to): string|
     }
 
     // Using base62 chars.
-    static $chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    static $chars = ALPHABET;
 
     if (is_int($from)) {
         if ($from < 2 || $from > 62) {
@@ -1979,58 +1979,37 @@ function preg_error_message(int &$code = null): string|null
 }
 
 /**
- * Generate a random string UID.
+ * Generate an arbitrary unique identifier in given/default base.
  *
  * @param  int $length
- * @param  int $bpc
+ * @param  int $base
  * @return string|null
  * @since  5.0
  */
-function suid(int $length = 6, int $bpc = 6): string|null
+function suid(int $length = 6, int $base = 62): string|null
 {
     if ($length < 1) {
-        trigger_error(sprintf('Invalid length `%s`, it must be greater than 0', $length));
+        trigger_error(sprintf('Invalid length `%s`, it must be > 0', $length));
         return null;
-    } elseif ($bpc < 1 || $bpc > 6) {
-        trigger_error(sprintf('Invalid bits-per-char `%s`, it must be between 1-6', $bpc));
+    } elseif ($base < 2 || $base > 62) {
+        trigger_error(sprintf('Invalid base `%s`, it must be between 2-62', $base));
         return null;
     }
-
-    // Uses hex for bpc=4, base36 for bpc=5, base62 chars for bpc=6.
-    static $chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
     $bytes = random_bytes($length);
+    // [$a, $b] = [$base - 2, $base - 1]; // Some weird works..
 
-    $p = 0; $q = strlen($bytes);
-    $w = 0; $have = 0; $mask = (1 << $bpc) - 1;
+    $ret = '';
 
-    $out = '';
-
-    while ($length--) {
-        if ($have < $bpc) {
-            if ($p < $q) {
-                $byte = ord($bytes[$p++]);
-                $w |= ($byte << $have);
-                $have += $bpc;
-            } else {
-                break;
-            }
-        }
-
-        $i = $w & $mask;
-
-        // Fix up index picking a random index.
-        if ($i > 61) {
-            $i = rand(0, 61);
-        }
-
-        $out .= $chars[$i];
-
-        $w >>= $bpc;
-        $have -= $bpc;
+    srand();
+    for ($i = 0; $i < $length; $i++) {
+        $ord  = ord($bytes[$i]);
+        $pos  = $ord & rand(0, $base - 1);
+        // $pos  = abs(($ord | ~$a) + $b);
+        $ret .= ALPHABET[$pos];
     }
 
-    return $out;
+    return $ret;
 }
 
 /**
