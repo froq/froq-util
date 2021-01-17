@@ -828,7 +828,7 @@ function get_real_path(string $path, bool $check = false, bool $check_file = fal
  */
 function get_path_info(string $path, string|int $component = null): string|array|null
 {
-    $path = trim($path);
+    $path = get_real_path($path);
     if (!$path) {
         return null;
     }
