@@ -698,10 +698,10 @@ function get_uniqid(int $length = 14, int $base = 16, bool $hrtime = false): str
 
     // Pad if needed.
     while (strlen($ret) < $length) {
-        $ret .= get_random_uniqid(3, $base, false);
+        $ret .= suid(2, $base);
     }
 
-    return substr($ret, 0, $length);
+    return strcut($ret, $length);
 }
 
 /**
@@ -709,13 +709,12 @@ function get_uniqid(int $length = 14, int $base = 16, bool $hrtime = false): str
  *
  * @param  int  $length
  * @param  int  $base
- * @param  bool $length_check @internal
  * @return string|null
  * @since  4.0
  */
-function get_random_uniqid(int $length = 14, int $base = 16, bool $length_check = true): string|null
+function get_random_uniqid(int $length = 14, int $base = 16): string|null
 {
-    if ($length < 14 && $length_check) {
+    if ($length < 14) {
         trigger_error(sprintf('%s(): Invalid length, min=14', __function__));
         return null;
     }
@@ -733,7 +732,7 @@ function get_random_uniqid(int $length = 14, int $base = 16, bool $length_check 
         $ret .= ($base == 16) ? $id : convert_base($id, 16, $base);
     }
 
-    return substr($ret, 0, $length);
+    return strcut($ret, $length);
 }
 
 /**
@@ -1989,10 +1988,10 @@ function preg_error_message(int &$code = null): string|null
 function suid(int $length = 6, int $base = 62): string|null
 {
     if ($length < 1) {
-        trigger_error(sprintf('Invalid length `%s`, it must be > 0', $length));
+        trigger_error(sprintf('%s(): Invalid length, min=14', __function__));
         return null;
     } elseif ($base < 2 || $base > 62) {
-        trigger_error(sprintf('Invalid base `%s`, it must be between 2-62', $base));
+        trigger_error(sprintf('%s(): Invalid base, min=10, max=62', __function__));
         return null;
     }
 
