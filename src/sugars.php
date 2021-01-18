@@ -743,12 +743,12 @@ function get_random_uniqid(int $length = 14, int $base = 16): string|null
  */
 function get_request_id(): string
 {
-    $parts = explode('.', uniqid('', true));
+    $parts[] = get_uniqid();
 
     // Add/use an ephemeral number if no port (~$ cat /proc/sys/net/ipv4/ip_local_port_range).
-    $parts[2] = $_SERVER['REMOTE_PORT'] ?? rand(32768, 60999);
+    $parts[] = $_SERVER['REMOTE_PORT'] ?? rand(32768, 60999);
 
-    return vsprintf('%014s-%07x-%04x', $parts);
+    return vsprintf('%s-%04x', $parts);
 }
 
 /**
