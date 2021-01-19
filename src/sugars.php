@@ -743,8 +743,7 @@ function get_random_uniqid(int $length = 14, int $base = 16): string|null
  */
 function get_request_id(): string
 {
-    $parts   = explode('.', utime(true));
-    $parts[] = ip2long($_SERVER['SERVER_ADDR'] ?? '');
+    $parts   = explode('.', utime(true) .'.'. ip2long($_SERVER['SERVER_ADDR'] ?? ''));
     $parts[] = $_SERVER['SERVER_PORT'] ?? 0;
     $parts[] = $_SERVER['REMOTE_PORT'] ?? 0;
 
