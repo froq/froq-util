@@ -1792,20 +1792,26 @@ function array_fetch(array $array, string|array $path, $default = null)
 }
 
 /**
- * Select item(s) from an array by given key(s).
+ * Select item(s) from an array by given key(s), optionally combining keys/values.
  *
  * @param  int|string|array<int|string> $array
  * @param  array                        $key
  * @param  any|null                     $default
+ * @param  bool                         $combine
  * @return any|null
  * @since  5.0
  */
-function array_select(array $array, int|string|array $key, $default = null)
+function array_select(array $array, int|string|array $key, $default = null, bool $combine = false)
 {
     // A little bit faster comparing to array_pick().
     foreach ((array) $key as $ke) {
         $ret[] = $array[$ke] ?? $default;
     }
+
+    if ($combine) {
+        return array_combine((array) $key, $ret);
+    }
+
     return is_array($key) ? ($ret ?? null) : ($ret[0] ?? null);
 }
 
