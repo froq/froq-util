@@ -765,8 +765,13 @@ function get_real_path(string $path, bool $check = false, bool $check_file = fal
     if (!$path) {
         return null;
     }
+    if ($rpath = realpath($path)) {
+        return $rpath;
+    }
+
+    // Make path "foo" => "./foo" so prevent invalid returns.
     if (!strsrc($path, __dirsep)) {
-        return $path;
+        $path = '.' . __dirsep . $path;
     }
 
     $ret = '';
