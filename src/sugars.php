@@ -1966,17 +1966,36 @@ function error_clear(int $code = null): void
 }
 
 /**
- * Get last error message with code.
+ * Get last error message with code, optionally formatted.
  *
  * @param  int|null $code
+ * @param  bool     $format
  * @return string|null
  * @since  4.17
  */
-function error_message(int &$code = null): string|null
+function error_message(int &$code = null, bool $format = false): string|null
 {
     $error = error_get_last();
+    if (!$error) {
+        return null;
+    }
 
-    return ($code = $error['type'] ?? null) ? $error['message'] : null;
+    $code = $error['type'];
+
+    if ($format) {
+        $error['name'] = match ($error['type']) {
+            E_NOTICE,     E_USER_NOTICE     => 'NOTICE',
+            E_WARNING,    E_USER_WARNING    => 'WARNING',
+            E_DEPRECATED, E_USER_DEPRECATED => 'DEPRECATED',
+            default                         => 'ERROR'
+        };
+
+        return vsprintf('%s(%d): %s at %s:%s', array_select(
+            $error, ['name', 'type', 'message', 'file', 'line']
+        ));
+    }
+
+    return $error['message'];
 }
 
 /**
