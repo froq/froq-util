@@ -1836,7 +1836,21 @@ function array_put(array &$array, int|string|array $item, $value = null): array
 }
 
 /**
- * Pick an item from an array by given key/path.
+ * Drop an item from an array by given key or dotted path.
+ *
+ * @param  array                        &$array
+ * @param  int|string|array<int|string>  $key
+ * @return any|null
+ * @since  5.0
+ */
+function array_drop(array &$array, int|string|array $key): array
+{
+    array_pluck($array, $key);
+    return $array;
+}
+
+/**
+ * Pick an item from an array by given key or dotted path.
  *
  * @param  array                        &$array
  * @param  int|string|array<int|string>  $key
@@ -1853,7 +1867,7 @@ function array_pick(array &$array, int|string|array $key, $default = null, bool 
 }
 
 /**
- * Pluck an item from an array by given key/path.
+ * Pluck an item from an array by given key or dotted path.
  *
  * @param  array                        &$array
  * @param  int|string|array<int|string>  $key
