@@ -1821,20 +1821,22 @@ function array_select(array $array, int|string|array $key, $default = null, bool
 }
 
 /**
- * Put given items into an array.
+ * Put given key,value item or item (key) with value into an array.
  *
- * @param  array  &$array
- * @param  array   $items
+ * @param  array   &$array
+ * @param  array    $item
+ * @param  any|null $value
  * @return array
  * @since  4.18
  */
-function array_put(array &$array, array $items): array
+function array_put(array &$array, int|string|array $item, $value = null): array
 {
-    return Arrays::setAll($array, $items);
+    return is_array($item) ? Arrays::setAll($array, $item)
+                           : Arrays::set($array, $item, $value);
 }
 
 /**
- * Pick an item form an array by given key/path.
+ * Pick an item from an array by given key/path.
  *
  * @param  array                        &$array
  * @param  int|string|array<int|string>  $key
@@ -1851,7 +1853,7 @@ function array_pick(array &$array, int|string|array $key, $default = null, bool 
 }
 
 /**
- * Pluck an item form an array by given key/path.
+ * Pluck an item from an array by given key/path.
  *
  * @param  array                        &$array
  * @param  int|string|array<int|string>  $key
@@ -1867,7 +1869,7 @@ function array_pluck(array &$array, int|string|array $key, $default = null)
 }
 
 /**
- * Get a/a few random item(s) form an array with/without given limit.
+ * Get a/a few random item(s) from an array with/without given limit.
  *
  * @param  array    &$array
  * @param  int       $limit
