@@ -1786,10 +1786,10 @@ function array_fetch(array $array, string|array $path, $default = null)
     $keys = explode('.', $path);
     $key  = array_shift($keys);
 
-    if (empty($keys)) {
+    if (!$keys) {
         return $array[$key] ?? $default;
     }
-    if (isset($array[$key]) && is_array($array[$key])) {
+    if (is_array($array[$key] ?? null)) {
         return array_fetch($array[$key], implode('.', $keys), $default);
     }
 
@@ -1808,7 +1808,7 @@ function array_fetch(array $array, string|array $path, $default = null)
  */
 function array_select(array $array, int|string|array $key, $default = null, bool $combine = false)
 {
-    // A little bit faster comparing to array_pick().
+    // A little bit faster comparing to array_fetch() & array_pick().
     foreach ((array) $key as $ke) {
         $ret[] = $array[$ke] ?? $default;
     }
