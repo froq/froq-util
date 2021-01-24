@@ -914,7 +914,6 @@ final class Arrays extends StaticClass
     {
         $value = self::get($array, $key, $default, $drop);
         settype($value, $type);
-
         return $value;
     }
 
