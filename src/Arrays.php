@@ -901,6 +901,24 @@ final class Arrays extends StaticClass
     }
 
     /**
+     * Get an item as given type.
+     *
+     * @param  array      &$array
+     * @param  int|string  $key
+     * @param  string      $type
+     * @param  any|null    $default
+     * @param  bool        $drop
+     * @return any
+     */
+    public static function getAs(array &$array, int|string $key, string $type, $default = null, bool $drop = false)
+    {
+        $value = self::get($array, $key, $default, $drop);
+        settype($value, $type);
+
+        return $value;
+    }
+
+    /**
      * Get an item as int.
      *
      * @param  array      &$array
