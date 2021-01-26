@@ -1150,6 +1150,33 @@ function fsize($fp): int|null
 }
 
 /**
+ * Get a directory size.
+ *
+ * @param  string $dir
+ * @param  bool   $deep
+ * @return int|null
+ * @since  5.0
+ */
+function dirsize(string $dir, bool $deep = true): int|null
+{
+    $dir = realpath($dir);
+    if (!$dir) {
+        return null;
+    }
+
+    $ret = 0;
+
+    foreach (glob(chop($dir, '/') . '/*') as $path) {
+        is_file($path) && $ret += filesize($path);
+        if ($deep) {
+            is_dir($path) && $ret += dirsize($path, $deep);
+        }
+    }
+
+    return $ret;
+}
+
+/**
  * Reset a file/stream handle contents setting seek position to top.
  *
  * @param  resource &$handle
