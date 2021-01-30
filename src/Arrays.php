@@ -22,13 +22,25 @@ use ValueError, ArgumentCountError;
 final class Arrays extends StaticClass
 {
     /**
-     * Check whether all keys are "int" in given array.
+     * Check whether all keys are "int" in given array, or array is a list when strict.
      *
      * @param  array $array
+     * @param  bool  $strict
      * @return bool
      */
-    public static function isSet(array $array): bool
+    public static function isSet(array $array, bool $strict = false): bool
     {
+        if ($strict) {
+            $ix = 0;
+            foreach ($array as $i => $_) {
+                if ($i !== $ix) {
+                    return false;
+                }
+                $ix++;
+            }
+            return true;
+        }
+
         foreach (array_keys($array) as $key) {
             if (!is_int($key)) {
                 return false;
