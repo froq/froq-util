@@ -1791,33 +1791,44 @@ function array_value_exists($value, array $array, bool $strict = true): bool
 /**
  * Fetch item(s) from an array by given path(s) with dot notation.
  *
- * @param  array                $array
- * @param  string|array<string> $path
- * @param  any|null             $default
+ * @param  array                &$array
+ * @param  string|array<string>  $path
+ * @param  any|null              $default
+ * @param  bool                  $drop
  * @return any|null
  * @since  5.0
  */
-function array_fetch(array $array, string|array $path, $default = null)
+function array_fetch(array &$array, string|array $path, $default = null, bool $drop = false)
 {
     if (is_array($path)) {
         foreach ($path as $pat) {
-            $ret[] = array_fetch($array, $pat, $default);
+            $ret[] = array_fetch($array, (string) $pat, $default, $drop);
         }
         return $ret;
     }
 
     if (array_key_exists($path, $array)) {
-        return $array[$path] ?? $default;
+        $ret = $array[$path] ?? $default;
+        if ($drop) {
+            unset($array[$path]);
+        }
+        return $ret;
     }
 
     $keys = explode('.', $path);
     $key  = array_shift($keys);
 
     if (!$keys) {
-        return $array[$key] ?? $default;
+        $ret = $array[$key] ?? $default;
+        if ($drop) {
+            unset($array[$key]);
+        }
+        return $ret;
     }
+
+    // Dig more..
     if (is_array($array[$key] ?? null)) {
-        return array_fetch($array[$key], implode('.', $keys), $default);
+        return array_fetch($array[$key], implode('.', $keys), $default, $drop);
     }
 
     return $default;
@@ -1826,18 +1837,22 @@ function array_fetch(array $array, string|array $path, $default = null)
 /**
  * Select item(s) from an array by given key(s), optionally combining keys/values.
  *
- * @param  int|string|array<int|string> $array
- * @param  array                        $key
- * @param  any|null                     $default
- * @param  bool                         $combine
+ * @param  array                        &$array
+ * @param  int|string|array<int|string>  $key
+ * @param  any|null                      $default
+ * @param  bool                          $drop
+ * @param  bool                          $combine
  * @return any|null
  * @since  5.0
  */
-function array_select(array $array, int|string|array $key, $default = null, bool $combine = false)
+function array_select(array &$array, int|string|array $key, $default = null, bool $drop = false, bool $combine = false)
 {
     // A little bit faster comparing to array_fetch() & array_pick().
     foreach ((array) $key as $ke) {
         $ret[] = $array[$ke] ?? $default;
+        if ($drop) {
+            unset($array[$ke]);
+        }
     }
 
     if ($combine) {
