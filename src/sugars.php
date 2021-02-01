@@ -1801,6 +1801,7 @@ function array_value_exists($value, array $array, bool $strict = true): bool
 function array_fetch(array &$array, string|array $path, $default = null, bool $drop = false)
 {
     if (is_array($path)) {
+        $ret = [];
         foreach ($path as $pat) {
             $ret[] = array_fetch($array, (string) $pat, $default, $drop);
         }
