@@ -1969,6 +1969,46 @@ function array_aggregate(array $array, callable $func, array $carry = null): arr
 }
 
 /**
+ * Perform a mathematical union on given array inputs.
+ *
+ * @param  array     $array1
+ * @param  array     $array2
+ * @param  array ... $others
+ * @return array
+ * @since  5.0
+ */
+function array_union(array $array1, array $array2, array ...$others): array
+{
+    return array_values(array_unique(array_merge($array1, $array2, ...$others)));
+}
+
+/**
+ * Check whether given key exists on given array.
+ *
+ * @param  string $key
+ * @param  array  $array
+ * @return bool
+ * @since  5.0
+ */
+function is_array_key(int|string $key, array $array): bool
+{
+    return array_key_exists($key, $array);
+}
+
+/**
+ * Check whether given value exists on given array in strict comparison.
+ *
+ * @param  any   $value
+ * @param  array $array
+ * @return bool
+ * @since  5.0
+ */
+function is_array_value($value, array $array): bool
+{
+    return array_value_exists($value, $array);
+}
+
+/**
  * Alias for array_keys() with null return.
  *
  * @param  array $array
