@@ -2009,30 +2009,6 @@ function is_array_value($value, array $array): bool
 }
 
 /**
- * Alias for array_keys() with null return.
- *
- * @param  array $array
- * @return array|null
- * @since  5.0
- */
-function keys(array $array): array|null
-{
-    return array_keys($array) ?: null;
-}
-
-/**
- * Alias for array_values() with null return.
- *
- * @param  array $array
- * @return array|null
- * @since  5.0
- */
-function values(array $array): array|null
-{
-    return array_values($array) ?: null;
-}
-
-/**
  * Remove last error message with/without code.
  *
  * @param  int|null $code
