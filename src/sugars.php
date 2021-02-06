@@ -64,7 +64,8 @@ function lower(string $in): string { return mb_strtolower($in); }
  */
 function filter(array $array, callable $func = null, bool $keep_keys = true): array
 {
-    return Arrays::filter($array, $func, $keep_keys);
+    return (func_num_args() == 1) ? Arrays::filter($array)
+                                  : Arrays::filter($array, $func, $keep_keys);
 }
 
 /**

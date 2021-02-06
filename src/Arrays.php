@@ -797,8 +797,8 @@ final class Arrays extends StaticClass
     }
 
     /**
-     * Filter, unlike array_filter() using [value,key,i,array] notation but fallback to [value] notation when
-     * ArgumentCountError occurs.
+     * Filter, unlike array_filter() using [value,key,i,array] notation for callablebut fallback to [value]
+     * notation when ArgumentCountError occurs.
      *
      * @param  array         $array
      * @param  callable|null $func
@@ -809,6 +809,11 @@ final class Arrays extends StaticClass
     {
         // Set default tester.
         $func ??= fn($v) => $v !== null && $v !== '' && $v !== [];
+
+        if (func_num_args() == 1) {
+            return $keepKeys ? array_filter($array, $func)
+                             : array_values(array_filter($array, $func));
+        }
 
         $ret = []; $i = 0;
 
@@ -822,8 +827,8 @@ final class Arrays extends StaticClass
     }
 
     /**
-     * Map, unlike array_map() using [value,key,i,array] notation but fallback to [value] notation when
-     * ArgumentCountError occurs.
+     * Map, unlike array_map() using [value,key,i,array] notation for callable but fallback to [value]
+     * notation when ArgumentCountError occurs.
      *
      * @param  array    $array
      * @param  callable $func
@@ -844,8 +849,8 @@ final class Arrays extends StaticClass
     }
 
     /**
-     * Reduce, unlike array_reduce() using [value,key,i,array] notation but fallback to [value] notation when
-     * ArgumentCountError occurs.
+     * Reduce, unlike array_reduce() using [value,key,i,array] notation for callable but fallback to [value]
+     * notation when ArgumentCountError occurs.
      *
      * @param  array    $array
      * @param  any      $carry
