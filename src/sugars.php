@@ -1649,7 +1649,7 @@ function array_contains(array $array, ...$values): bool
             return false;
         }
     }
-    return true;
+    return $array && $values;
 }
 
 /**
