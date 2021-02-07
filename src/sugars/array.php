@@ -336,18 +336,18 @@ function array_exclude(array $array, array $keys): array
 }
 
 /**
- * Bridge function to Arrays.flatten().
+ * Bridge function to Arrays.flat().
  *
  * @param  array $array
  * @param  bool $use_keys
  * @param  bool $fix_keys
- * @param  bool $one_dimension
+ * @param  bool $multi
  * @return array
  * @since  4.0
  */
-function array_flatten(array $array, bool $use_keys = false, bool $fix_keys = false, bool $one_dimension = false): array
+function array_flat(array $array, bool $use_keys = false, bool $fix_keys = false, bool $multi = true): array
 {
-    return Arrays::flatten($array, $use_keys, $fix_keys, $one_dimension);
+    return Arrays::flat($array, $use_keys, $fix_keys, $multi);
 }
 
 /**

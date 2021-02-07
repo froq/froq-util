@@ -566,21 +566,20 @@ final class Arrays extends StaticClass
     }
 
     /**
-     * Flatten given array.
+     * Flat given array.
      *
      * @param  array $array
      * @param  bool  $useKeys
      * @param  bool  $fixKeys
-     * @param  bool  $oneDimension
+     * @param  bool  $multi
      * @return array
      * @since  4.0
      */
-    public static function flatten(array $array, bool $useKeys = false, bool $fixKeys = false,
-        bool $oneDimension = false): array
+    public static function flat(array $array, bool $useKeys = false, bool $fixKeys = false, bool $multi = true): array
     {
         $ret = [];
 
-        if (!$oneDimension) {
+        if ($multi) {
             $i = 0;
             // Seems short functions (=>) not work here [ref (&) issue].
             array_walk_recursive($array, function ($value, $key) use (&$ret, &$i, $useKeys, $fixKeys) {
