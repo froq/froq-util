@@ -416,7 +416,7 @@ function array_index(array $array, $value, bool $strict = true)
  * @return any|null
  * @since  3.0
  */
-function array_first(array $array, $default = null, bool $drop = false)
+function array_first(array &$array, $default = null, bool $drop = false)
 {
     return Arrays::first($array, $default, $drop);
 }
@@ -430,7 +430,7 @@ function array_first(array $array, $default = null, bool $drop = false)
  * @return any|null
  * @since  3.0
  */
-function array_last(array $array, $default = null, bool $drop = false)
+function array_last(array &$array, $default = null, bool $drop = false)
 {
     return Arrays::last($array, $default, $drop);
 }
