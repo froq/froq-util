@@ -51,9 +51,10 @@ function build_cookie(string $name, string|null $value, array $options = null): 
     }
 
     static $optionsDefault; $optionsDefault ??= array_fill_keys(
-        ['expires', 'path', 'domain', 'secure', 'httpOnly', 'sameSite'], null);
+        ['expires', 'path', 'domain', 'secure', 'httponly', 'samesite'], null);
 
-    $cookie = ['name' => $name, 'value' => $value] + array_merge($optionsDefault, ($options ?? []));
+    $cookie = ['name' => $name, 'value' => $value] + array_merge($optionsDefault, array_map(
+        'strtolower', ($options ?? [])));
 
     extract($cookie);
 
@@ -66,15 +67,16 @@ function build_cookie(string $name, string|null $value, array $options = null): 
 
         // Must be given in-seconds format.
         if ($expires !== null) {
-            $ret .= sprintf('; Expires=%s; Max-Age=%s', gmdate('D, d M Y H:i:s \G\M\T', time() + $expires), $expires);
+            $ret .= sprintf('; Expires=%s; Max-Age=%s', gmdate('D, d M Y H:i:s \G\M\T', time() + $expires),
+                $expires);
         }
     }
 
     $path     && $ret .= '; Path='. $path;
     $domain   && $ret .= '; Domain='. $domain;
     $secure   && $ret .= '; Secure';
-    $httpOnly && $ret .= '; HttpOnly';
-    $sameSite && $ret .= '; SameSite='. $sameSite;
+    $httponly && $ret .= '; HttpOnly';
+    $samesite && $ret .= '; SameSite='. $samesite;
 
     return $ret;
 }
@@ -103,9 +105,9 @@ function parse_cookie(string $cookie): array
             $name = strtolower($name ?? '');
             if ($name) {
                 switch ($name) {
-                    case 'secure':                       $value = true; break;
-                    case 'httponly': $name = 'httpOnly'; $value = true; break;
-                    case 'samesite': $name = 'sameSite'; $value = true; break;
+                    case 'secure':   $value = true;               break;
+                    case 'httponly': $value = true;               break;
+                    case 'samesite': $value = strtolower($value); break;
                 }
                 $ret[$name] = $value;
             }
