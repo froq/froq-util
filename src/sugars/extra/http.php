@@ -67,7 +67,7 @@ function build_cookie(string $name, string|null $value, array $options = null): 
 
         // Must be given in-seconds format.
         if ($expires !== null) {
-            $ret .= sprintf('; Expires=%s; Max-Age=%s', gmdate('D, d M Y H:i:s \G\M\T', time() + $expires),
+            $ret .= sprintf('; Expires=%s; Max-Age=%d', gmdate('D, d M Y H:i:s \G\M\T', time() + $expires),
                 $expires);
         }
     }
