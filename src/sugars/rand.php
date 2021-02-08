@@ -78,7 +78,7 @@ function rand_items(array $array, int $limit, array &$keys = null): array|null
         $retlen    = count($ret);
     } while ($retlen < $limit && $retlen < $len);
 
-    $keys = array_keys($ret) ?: null;
+    $keys = array_keys($ret);
 
     return $ret;
 }
