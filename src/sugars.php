@@ -520,21 +520,21 @@ function convert_case(string $in, int $case, string $spliter = null, string $joi
     }
 
     // Set default split char.
-    $spliter = ($spliter !== null || $spliter !== '') ? $spliter : ' ';
+    $spliter = ($spliter !== null && $spliter !== '') ? $spliter : ' ';
 
     return match ($case) {
         CASE_DASH  => implode('-', explode($spliter, mb_strtolower($in))),
         CASE_SNAKE => implode('_', explode($spliter, mb_strtolower($in))),
+        CASE_TITLE => implode($joiner ?? $spliter, array_map(
+            fn($s) => mb_ucfirst(trim($s)),
+            explode($spliter, mb_strtolower($in))
+        )),
         CASE_CAMEL => lcfirst(
             implode($joiner ?? '', array_map(
                 fn($s) => mb_ucfirst(trim($s)),
                 explode($spliter, mb_strtolower($in))
             ))
         ),
-        CASE_TITLE => implode($joiner ?? $spliter, array_map(
-            fn($s) => mb_ucfirst(trim($s)),
-            explode($spliter, mb_strtolower($in))
-        )),
     };
 }
 
