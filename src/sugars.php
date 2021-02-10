@@ -1763,6 +1763,25 @@ function array_convert_keys(array $array, int $case, string $spliter = null, str
 }
 
 /**
+ * Change keys mapping by given function (@see https://wiki.php.net/rfc/array_change_keys).
+ *
+ * @param  array    $array
+ * @param  callable $func
+ * @return array
+ * @since  5.0
+ */
+function array_change_keys(array $array, callable $func): array
+{
+    $ret = [];
+
+    foreach ($array as $key => $value) {
+        $ret[$func($key)] = $value;
+    }
+
+    return $ret;
+}
+
+/**
  * Check a value if exists with/without strict comparison.
  *
  * @param  any   $value
