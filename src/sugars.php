@@ -1732,10 +1732,11 @@ function array_pad_keys(array $array, array $keys, $value = null): array
  * @param  int         $case
  * @param  string|null $spliter
  * @param  string|null $joiner
+ * @param  bool        $recursive
  * @return array|null
  * @since  4.19
  */
-function array_convert_keys(array $array, int $case, string $spliter = null, string $joiner = null): array|null
+function array_convert_keys(array $array, int $case, string $spliter = null, string $joiner = null, bool $recursive = false): array|null
 {
     // Check valid cases.
     if (!in_array($case, [CASE_LOWER, CASE_UPPER, CASE_TITLE, CASE_DASH, CASE_SNAKE, CASE_CAMEL])) {
@@ -1756,7 +1757,12 @@ function array_convert_keys(array $array, int $case, string $spliter = null, str
 
     foreach ($array as $key => $value) {
         $key = convert_case($key, $case, $spliter, $joiner);
-        $ret[$key] = $value;
+        if ($recursive && is_array($value)) {
+            $value = array_convert_keys($value, $case, $spliter, $joiner, true);
+            $ret[$key] = $value;
+        } else {
+            $ret[$key] = $value;
+        }
     }
 
     return $ret;
@@ -1767,15 +1773,21 @@ function array_convert_keys(array $array, int $case, string $spliter = null, str
  *
  * @param  array    $array
  * @param  callable $func
+ * @param  bool     $recursive
  * @return array
  * @since  5.0
  */
-function array_change_keys(array $array, callable $func): array
+function array_change_keys(array $array, callable $func, bool $recursive = false): array
 {
     $ret = [];
 
     foreach ($array as $key => $value) {
-        $ret[$func($key)] = $value;
+        $key = $func($key);
+        if ($recursive && is_array($value)) {
+            $ret[$key] = array_change_keys($value, $func, true);
+        } else {
+            $ret[$key] = $value;
+        }
     }
 
     return $ret;
