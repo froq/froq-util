@@ -1575,33 +1575,7 @@ function array_clean(array $array): array
 }
 
 /**
- * Apply a filter action on given array, passing keys also.
- *
- * @param  array         $array
- * @param  callable|null $func
- * @return array
- * @since  5.0
- */
-function array_ufilter(array $array, callable $func = null): array
-{
-    return array_filter($array, $func, 1);
-}
-
-/**
- * Apply a map action on given array, passing keys also.
- *
- * @param  array    $array
- * @param  callable $func
- * @return array
- * @since  5.0
- */
-function array_umap(array $array, callable $func): array
-{
-    return array_map($func, $array, array_keys($array));
-}
-
-/**
- * Apply given function to each element of given array.
+ * Apply given function to each element of given array with key/value notation.
  *
  * @param  array    $array
  * @param  callable $func
@@ -1610,20 +1584,7 @@ function array_umap(array $array, callable $func): array
  */
 function array_apply(array $array, callable $func): array
 {
-    $ret = []; $i = 0;
-
-    foreach ($array as $key => $value) {
-        // Because array_map() tricky with array_keys() only for value => key notation, and also
-        // just warns about argument count (e.g: if $func is strval()) and foolishly making all
-        // values NULL; simply use this way here with try/catch, catching ArgumentCountError only.
-        try {
-            $ret[$key] = $func($value, $key, $i++, $array);
-        } catch (ArgumentCountError) {
-            $ret[$key] = $func($value);
-        }
-    }
-
-    return $ret;
+    return array_map($func, $array, array_keys($array));
 }
 
 /**
