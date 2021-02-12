@@ -1659,7 +1659,7 @@ function array_delete(array &$array, ...$values): array
 }
 
 /**
- * Append given values to an array, returning array back.
+ * Append given values to an array, returning given array back.
  *
  * @param  array &$array
  * @param  ...    $values
@@ -1673,7 +1673,7 @@ function array_append(array &$array, ...$values): array
 }
 
 /**
- * Prepend given values to an array, returning array back.
+ * Prepend given values to an array, returning given array back.
  *
  * @param  array &$array
  * @param  ...    $values
