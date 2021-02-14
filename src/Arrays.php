@@ -810,8 +810,7 @@ final class Arrays extends StaticClass
         $func ??= fn($v) => $v !== null && $v !== '' && $v !== [];
 
         if (func_num_args() == 1) {
-            return $keepKeys ? array_filter($array, $func)
-                             : array_values(array_filter($array, $func));
+            return array_filter($array, $func);
         }
 
         $ret = []; $i = 0;
@@ -930,6 +929,7 @@ final class Arrays extends StaticClass
     {
         $value = self::get($array, $key, $default, $drop);
         settype($value, $type);
+
         return $value;
     }
 
