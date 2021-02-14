@@ -698,8 +698,9 @@ function get_uniqid(int $length = 14, int $base = 16, bool $hrtime = false): str
     }
 
     // Pad if needed.
-    while (strlen($ret) < $length) {
-        $ret .= suid(2, $base);
+    $ret_length = strlen($ret);
+    if ($ret_length < $length) {
+        $ret .= suid($length - $ret_length, $base);
     }
 
     return strcut($ret, $length);
