@@ -1723,7 +1723,10 @@ function array_unpop(array &$array, ...$values): int
  */
 function array_pad_keys(array $array, array $keys, $value = null): array
 {
-    return array_replace(array_fill_keys($keys, $value), $array);
+    foreach ($keys as $key) {
+        isset($array[$key]) || $array[$key] = $value;
+    }
+    return $array;
 }
 
 /**
