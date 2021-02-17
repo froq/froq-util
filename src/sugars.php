@@ -2227,7 +2227,7 @@ function mb_ucfirst(string $in, string $encoding = null, bool $tr = false): stri
  * @return string
  * @since  5.0
  */
-function mb_lcfirst(string $in, string $encoding = null, bool $tr = true): string
+function mb_lcfirst(string $in, string $encoding = null, bool $tr = false): string
 {
     $first = mb_substr($in, 0, 1, $encoding);
     if ($tr && $first === 'I') {
