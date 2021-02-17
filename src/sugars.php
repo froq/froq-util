@@ -178,7 +178,7 @@ function strip(string $in, string $chars = null): string
         return trim($in);
     } else {
         // RegExp: only ~..~ patterns accepted.
-        if (strlen($chars) >= 3 && $chars[0] == '~') {
+        if ($chars[0] == '~' && strlen($chars) >= 3) {
             $ruls = substr($chars, 1, ($pos = strrpos($chars, '~')) - 1);
             $mods = substr($chars, $pos + 1);
             return preg_replace(sprintf('~^%s|%s$~%s', $ruls, $ruls, $mods), '', $in);
@@ -201,11 +201,14 @@ function split(string $sep, string $in, int $limit = null, int $flags = null): a
 {
     if ($sep === '') {
         $ret = (array) preg_split('~~u', $in, -1, 1);
+        if ($limit) { // As like as str_split(), but with Unicode.
+            return array_map(fn($r) => join('', $r), array_chunk($ret, $limit));
+        }
     } else {
-        $flags ??= 1; // No empty: null|1.
+        $flags ??= 1; // No empty: null or 1.
 
         // RegExp: only "~..~" patterns accepted.
-        if (strlen($sep) >= 3 && $sep[0] == '~') {
+        if ($sep[0] == '~' && strlen($sep) >= 3) {
             $ret = (array) preg_split($sep, $in, ($limit ?? -1), $flags);
         } else {
             $ret = (array) explode($sep, $in, ($limit ?? PHP_INT_MAX));
@@ -213,7 +216,7 @@ function split(string $sep, string $in, int $limit = null, int $flags = null): a
         }
     }
 
-    // Plus: prevent 'undefined index..' error.
+    // Plus: prevent 'undefined index ..' error.
     if ($limit && $limit != count($ret)) {
         $ret = array_pad($ret, $limit, null);
     }
