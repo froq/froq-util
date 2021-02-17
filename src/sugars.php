@@ -2251,7 +2251,7 @@ function slug(string $in, string $preserve = '', string $replace = '-'): string
     static $chars; $chars ??= require 'statics/slug-chars.php';
 
     $preserve && $preserve = preg_quote($preserve, '~');
-                 $replace  = preg_quote($replace,  '~');
+    $replace  || $replace  = '-';
 
     $out = preg_replace(['~[^\w'. $preserve . $replace .']+~', '~['. $replace .']+~'],
         $replace, strtr($in, $chars));
