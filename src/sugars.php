@@ -1427,7 +1427,7 @@ function file_mime(string $file): string|null
         if ($extension) {
             static $cache; // For some speed..
             if (empty($cache[$extension = strtolower($extension)])) {
-                foreach (include 'statics/mime.php' as $type => $extensions) {
+                foreach (require 'statics/mime.php' as $type => $extensions) {
                     if (in_array($extension, $extensions, true)) {
                         return ($cache[$extension] = $type);
                     }
