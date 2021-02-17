@@ -2241,16 +2241,22 @@ function mb_lcfirst(string $in, string $encoding = null, bool $tr = false): stri
  * Translate given input to slugified output.
  *
  * @param  string $in
+ * @param  string $preserve
+ * @param  string $replace
  * @return string
  * @since  5.0
  */
-function slug(string $in): string
+function slug(string $in, string $preserve = '', string $replace = '-'): string
 {
     static $chars; $chars ??= require 'statics/slug-chars.php';
 
-    $out = preg_replace(['~[\W]+~', '~[-]+~'], '-', strtr($in, $chars));
+    $preserve && $preserve = preg_quote($preserve, '~');
+                 $replace  = preg_quote($replace,  '~');
 
-    return strtolower(trim($out, '-'));
+    $out = preg_replace(['~[^\w'. $preserve . $replace .']+~', '~['. $replace .']+~'],
+        $replace, strtr($in, $chars));
+
+    return strtolower(trim($out, $replace));
 }
 
 /**
