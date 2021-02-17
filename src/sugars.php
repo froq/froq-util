@@ -2238,6 +2238,22 @@ function mb_lcfirst(string $in, string $encoding = null, bool $tr = true): strin
 }
 
 /**
+ * Translate given input to slugified output.
+ *
+ * @param  string $in
+ * @return string
+ * @since  5.0
+ */
+function slug(string $in): string
+{
+    static $chars; $chars ??= require 'statics/slug-chars.php';
+
+    $out = preg_replace(['~[\W]+~', '~[-]+~'], '-', strtr($in, $chars));
+
+    return strtolower(trim($out, '-'));
+}
+
+/**
  * Check whether given input is a number.
  *
  * @param  any $in
