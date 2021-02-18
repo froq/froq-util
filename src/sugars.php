@@ -21,7 +21,7 @@ function equals($a, $b, ...$c): bool {
 }
 
 /**
- * Pick/pluck..
+ * Pick/pluck.
  * Loving https://docs.zephir-lang.com/0.12/en/operators#fetch
  */
 function pick(array &$array, int|string $key, &$value = null, bool $drop = false): bool {
@@ -29,6 +29,13 @@ function pick(array &$array, int|string $key, &$value = null, bool $drop = false
 }
 function pluck(array &$array, int|string $key, &$value = null): bool {
     return ($value = array_pluck($array, $key, null)) !== null;
+}
+
+/**
+ * Format for sprintf()/vsprintf().
+ */
+function format(string $in, $arg, ...$args): string {
+    return is_array($arg) ? vsprintf($in, $arg) : sprintf($in, $arg, ...$args);
 }
 
 /**
