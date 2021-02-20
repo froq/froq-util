@@ -116,6 +116,7 @@ function size($in): int|null
     return match (true) {
         is_string($in)    => mb_strlen($in),
         is_countable($in) => count($in),
+        is_iterable($in)  => iterator_count($in),
         is_object($in)    => count(get_object_vars($in)),
         default           => null // No valid input.
     };
@@ -2366,21 +2367,20 @@ function is_type_of($in, string $type): bool
 /**
  * Check empty state(s) of given input(s).
  *
- * @param  any $in
- * @param  ... $ins
+ * @param  any     $in
+ * @param  any ... $ins
  * @return bool
  * @since  4.0 Added back, 5.0 Moved from sugars/is.
  */
 function is_empty($in, ...$ins): bool
 {
-    // Require at least one argument.
-    if (empty($in)) {
-        return true;
-    }
+    $ins = [$in, ...$ins];
 
-    if ($ins) foreach ($ins as $in) {
-        // Also check empty objects.
-        $in = is_object($in) ? get_object_vars($in) : $in;
+    foreach ($ins as $in) {
+        $size = size($in);
+        if ($size !== null && !$size) {
+            return true;
+        }
         if (empty($in)) {
             return true;
         }
