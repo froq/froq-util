@@ -1740,6 +1740,23 @@ function array_pad_keys(array $array, array $keys, $value = null): array
 }
 
 /**
+ * Map given array fields by given keys only.
+ *
+ * @param  array    $array
+ * @param  array    $keys
+ * @param  callable $func
+ * @return array
+ * @since  5.0
+ */
+function array_map_keys(array $array, array $keys, callable $func): array
+{
+    foreach ($keys as $key) {
+        $array[$key] = $func($array[$key] ?? null);
+    }
+    return $array;
+}
+
+/**
  * Convert key cases mapping by given separator.
  *
  * @param  array       $array
