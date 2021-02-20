@@ -116,7 +116,6 @@ function size($in): int|null
     return match (true) {
         is_string($in)    => mb_strlen($in),
         is_countable($in) => count($in),
-        is_iterable($in)  => iterator_count($in),
         is_object($in)    => count(get_object_vars($in)),
         default           => null // No valid input.
     };
