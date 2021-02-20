@@ -2299,8 +2299,8 @@ function random_float(float $min = null, float $max = null, int $precision = nul
 /**
  * Generate a random string, optionally puncted.
  *
- * @param  int    $length
- * @param  bool   $puncted
+ * @param  int  $length
+ * @param  bool $puncted
  * @return string
  * @since  5.0
  */
