@@ -5,7 +5,7 @@
  */
 declare(strict_types=1);
 
-use froq\util\{Arrays, Objects, Numbers};
+use froq\util\{Arrays, Objects, Numbers, Strings};
 
 // Load constants.
 defined('nil') || require 'sugars-constant.php';
@@ -2149,11 +2149,10 @@ function suid(int $length = 6, int $base = 62): string|null
         return null;
     }
 
-    srand();
-
     $max = $base - 1;
     $ret = '';
 
+    srand();
     while ($length--) {
         $ret .= ALPHABET[rand(0, $max)];
     }
@@ -2281,6 +2280,33 @@ function slug(string $in, string $preserve = '', string $replace = '-'): string
         $replace, strtr($in, $chars));
 
     return strtolower(trim($out, $replace));
+}
+
+/**
+ * Generate a random float, optionally with precision.
+ *
+ * @param  float|null $min
+ * @param  float|null $max
+ * @param  int        $precision
+ * @return float
+ * @since  5.0
+ */
+function random_float(float $min = null, float $max = null, int $precision = null): float
+{
+    return Numbers::randomFloat($min, $max, $precision);
+}
+
+/**
+ * Generate a random string, optionally puncted.
+ *
+ * @param  int    $length
+ * @param  bool   $puncted
+ * @return string
+ * @since  5.0
+ */
+function random_string(int $length = 10, bool $puncted = false): string
+{
+    return Strings::random($length, $puncted);
 }
 
 /**

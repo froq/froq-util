@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace froq\util;
 
+use froq\util\UtilException;
 use froq\common\object\StaticClass;
 
 /**
@@ -240,5 +241,36 @@ final class Strings extends StaticClass
     public static function isBase64(string $in): bool
     {
         return ($in && !strcmp($in, ''. base64_encode(''. base64_decode($in, true))));
+    }
+
+    /**
+     * Generate a random output by given length.
+     *
+     * @param  int  $length
+     * @param  bool $puncted
+     * @return string
+     * @throws froq\util\UtilException
+     */
+    public static function random(int $length = 10, bool $puncted = false): string
+    {
+        if ($length < 1) {
+            throw new UtilException('Invalid length value `%s`, length must be equal or greater'
+                . ' than 1', $length);
+        }
+
+        $chars = ALPHABET;
+        if ($puncted) { // Add punctuation chars.
+            $chars .= '!^+%&/\(){}[]<>=*?-_|$#.:,;';
+        }
+        $charsLength = strlen($chars);
+
+        $ret = '';
+
+        srand();
+        while (strlen($ret) < $length) {
+            $ret .= $chars[rand(0, $charsLength - 1)];
+        }
+
+        return $ret;
     }
 }
