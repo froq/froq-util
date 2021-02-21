@@ -31,12 +31,12 @@ final class Arrays extends StaticClass
     public static function isSet(array $array, bool $strict = false): bool
     {
         if ($strict) {
-            $ix = 0;
-            foreach ($array as $i => $_) {
-                if ($i !== $ix) {
+            $ii = 0; // Expected (index increament).
+            foreach (array_keys($array) as $i) {
+                if ($i !== $ii) {
                     return false;
                 }
-                $ix++;
+                $ii++;
             }
             return true;
         }

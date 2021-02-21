@@ -2033,6 +2033,20 @@ function array_union(array $array1, array $array2, array ...$others): array
 }
 
 /**
+ * Check whether given array is a list array.
+ *
+ * @param  any  $in
+ * @param  bool $allow_empty
+ * @return bool
+ * @since  5.0
+ */
+function is_list($in, bool $allow_empty = true): bool
+{
+    return $allow_empty ? is_array($in) && Arrays::isSet($in, true)
+                 : $in && is_array($in) && Arrays::isSet($in, true);
+}
+
+/**
  * Check whether given key exists on given array.
  *
  * @param  string $key
