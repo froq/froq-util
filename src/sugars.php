@@ -63,9 +63,9 @@ function lower(string $in): string { return mb_strtolower($in); }
 /**
  * Filter an array with value/key notation.
  *
- * @param  array           $array
- * @param  callable        $func
- * @param  bool            $keep_keys
+ * @param  array         $array
+ * @param  callable|null $func
+ * @param  bool          $keep_keys
  * @return array
  * @since  3.0, 5.0 Moved from common.inits.
  */
@@ -78,9 +78,9 @@ function filter(array $array, callable $func = null, bool $keep_keys = true): ar
 /**
  * Map an array with value/key notation.
  *
- * @param  array           $array
- * @param  callable        $func
- * @param  bool            $keep_keys
+ * @param  array    $array
+ * @param  callable $func
+ * @param  bool     $keep_keys
  * @return array
  * @since  3.0, 5.0 Moved from common.inits.
  */
@@ -93,7 +93,7 @@ function map(array $array, callable $func, bool $keep_keys = true): array
  * Reduce an array with value/key notation.
  *
  * @param  array         $array
- * @param  any           $carry
+ * @param  any|null      $carry
  * @param  callable|null $func
  * @return any
  * @since  4.0, 5.0 Moved from common.inits.
