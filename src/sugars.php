@@ -276,15 +276,11 @@ function grep_all(string $in, string $pattern, bool $uniform = false): array|nul
         unset($matches[0]); // Drop input.
 
         $ret = [];
+
         if (count($matches) == 1) {
             $ret = $matches[1];
         } else {
-            foreach ($matches as $i => $match) {
-                // Nullify all empty strings.
-                $match = map($match, fn($m) => ($m !== '') ? $m : null);
-
-                $ret[$i] = (count($match) == 1) ? $match[0] : $match;
-            }
+            $ret = array_map(fn($m) => count($m) == 1 ? $m[0] : $m, $matches);
 
             // Useful for in case '~href="(.+?)"|">(.+?)</~' etc.
             if ($uniform) {
@@ -295,12 +291,13 @@ function grep_all(string $in, string $pattern, bool $uniform = false): array|nul
                             $re = current($re);
                         }
                     }
-                }
-
-                // Maintain keys (so reset to 0-N).
-                $ret = array_slice($ret, 0);
+                } unset($re);
             }
+
+            // Maintain keys (so reset to 0-N).
+            $ret = array_slice($ret, 0);
         }
+
         return $ret;
     }
 
