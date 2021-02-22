@@ -92,15 +92,15 @@ function map(array $array, callable $func, bool $keep_keys = true): array
 /**
  * Reduce an array with value/key notation.
  *
- * @param  array         $array
- * @param  any|null      $carry
- * @param  callable|null $func
+ * @param  array    $array
+ * @param  any      $carry
+ * @param  callable $func
  * @return any
  * @since  4.0, 5.0 Moved from common.inits.
  */
-function reduce(array $array, $carry = null, callable $func = null)
+function reduce(array $array, $carry, callable $func)
 {
-    return !is_array($carry) ? Arrays::reduce($array, $func, $carry)
+    return !is_array($carry) ? Arrays::reduce($array, $carry, $func)
                              : Arrays::aggregate($array, $func, $carry);
 }
 
