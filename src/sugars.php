@@ -2160,8 +2160,8 @@ function suid(int $length = 6, int $base = 62): string|null
         return null;
     }
 
-    $max = $base - 1;
     $ret = '';
+    $max = $base - 1;
 
     srand();
     while ($length--) {
