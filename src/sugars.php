@@ -25,10 +25,10 @@ function equals($a, $b, ...$c): bool {
  * Loving https://docs.zephir-lang.com/0.12/en/operators#fetch
  */
 function pick(array &$array, int|string $key, &$value = null, bool $drop = false): bool {
-    return ($value = array_pick($array, $key, null, $drop)) !== null;
+    return ($value = array_pick($array, $key, drop: $drop)) !== null;
 }
 function pluck(array &$array, int|string $key, &$value = null): bool {
-    return ($value = array_pluck($array, $key, null)) !== null;
+    return ($value = array_pluck($array, $key)) !== null;
 }
 
 /**
