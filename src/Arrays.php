@@ -378,6 +378,21 @@ final class Arrays extends StaticClass
     }
 
     /**
+     * Union.
+     *
+     * @param  array $array1
+     * @param  array $array2
+     * @return array
+     * @since  5.0
+     */
+    public static function union(array $array1, array $array2): array
+    {
+        return array_merge(array_intersect($array1, $array2),
+                           array_diff($array1, $array2),
+                           array_diff($array2, $array1));
+    }
+
+    /**
      * Test, like JavaScript Array.some().
      *
      * @param  array    $array
