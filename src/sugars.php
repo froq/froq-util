@@ -198,18 +198,19 @@ function strip(string $in, string $chars = null): string
 /**
  * Split a string, with RegExp (~) option.
  *
- * @param  string   $sep
- * @param  string   $in
- * @param  int|null $limit
- * @param  int|null $flags
+ * @param  string        $sep
+ * @param  string        $in
+ * @param  int|null      $limit
+ * @param  int|bool|null $flags
+ * @param  bool          $pad
  * @return array
  * @since  5.0 Moved from froq/fun.
  */
-function split(string $sep, string $in, int $limit = null, int $flags = null): array
+function split(string $sep, string $in, int $limit = null, int|bool $flags = null, bool $pad = true): array
 {
     if ($sep === '') {
         $ret = (array) preg_split('~~u', $in, -1, 1);
-        if ($limit) { // As like as str_split(), but with Unicode.
+        if (!$pad && $limit) { // Like str_split(), but with Unicode.
             return array_map(fn($r) => join('', $r), array_chunk($ret, $limit));
         }
     } else {
@@ -225,7 +226,7 @@ function split(string $sep, string $in, int $limit = null, int $flags = null): a
     }
 
     // Plus: prevent 'undefined index ..' error.
-    if ($limit && $limit != count($ret)) {
+    if ($pad || ($limit && $limit != count($ret))) {
         $ret = array_pad($ret, $limit, null);
     }
 
