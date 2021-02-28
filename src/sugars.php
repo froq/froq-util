@@ -1382,6 +1382,10 @@ function file_name(string $file, bool $with_ext = false): string|null
     // but using just a boolean here is more sexy..
     $ret = basename($file);
 
+    if ($ret == '.' || $ret == '..') {
+        return null;
+    }
+
     if ($ret && !$with_ext && ($ext = file_extension($file, true))) {
         $ret = substr($ret, 0, -strlen($ext));
     }
@@ -1394,10 +1398,11 @@ function file_name(string $file, bool $with_ext = false): string|null
  *
  * @param  string $file
  * @param  bool   $with_dot
+ * @param  bool   $lower
  * @return string|null
  * @since  4.0
  */
-function file_extension(string $file, bool $with_dot = false): string|null
+function file_extension(string $file, bool $with_dot = false, bool $lower = true): string|null
 {
     $info = pathinfo($file);
 
@@ -1409,8 +1414,11 @@ function file_extension(string $file, bool $with_dot = false): string|null
 
     $ret = strrchr($info['basename'], '.');
 
-    if ($ret && !$with_dot) {
-        $ret = ltrim($ret, '.');
+    if ($ret) {
+        $lower && $ret = strtolower($ret);
+        if (!$with_dot) {
+            $ret = ltrim($ret, '.');
+        }
     }
 
     return $ret ?: null;
@@ -1432,7 +1440,7 @@ function file_mime(string $file): string|null
         $extension = file_extension($file, false);
         if ($extension) {
             static $cache; // For some speed..
-            if (empty($cache[$extension = strtolower($extension)])) {
+            if (empty($cache[$extension])) {
                 foreach (require 'statics/mime.php' as $type => $extensions) {
                     if (in_array($extension, $extensions, true)) {
                         return ($cache[$extension] = $type);
