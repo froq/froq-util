@@ -758,7 +758,7 @@ function get_request_id(): string
     $parts[] = $_SERVER['SERVER_PORT'] ?? 0;
     $parts[] = $_SERVER['REMOTE_PORT'] ?? 0;
 
-    return join('-', map($parts, fn($p) => dechex((int) $p)));
+    return join('-', array_map(fn($p) => dechex((int) $p), $parts));
 }
 
 /**
@@ -851,7 +851,7 @@ function get_path_info(string $path, string|int $component = null): string|array
         return null;
     }
 
-    $ret = ['path' => $path] + map($info, fn($v) => strlen($v) ? $v : null);
+    $ret = ['path' => $path] + array_map(fn($v) => strlen($v) ? $v : null, $info);
 
     $ret['filename']  = file_name($path, false);
     $ret['extension'] = file_extension($path, false);
