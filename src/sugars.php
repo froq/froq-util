@@ -1394,6 +1394,35 @@ function file_name(string $file, bool $with_ext = false): string|null
 }
 
 /**
+ * Get file mime.
+ *
+ * @param  string $file
+ * @return string|null
+ * @since  4.0
+ */
+function file_mime(string $file): string|null
+{
+    $mime = mime_content_type($file) ?: null;
+
+    if (!$mime) {
+        // Try with extension.
+        $extension = file_extension($file, false);
+        if ($extension) {
+            static $cache; // For some speed..
+            if (empty($cache[$extension])) {
+                foreach (require 'statics/mime.php' as $type => $extensions) {
+                    if (in_array($extension, $extensions, true)) {
+                        return ($cache[$extension] = $type);
+                    }
+                }
+            }
+        }
+    }
+
+    return $mime;
+}
+
+/**
  * Get file extension.
  *
  * @param  string $file
@@ -1422,35 +1451,6 @@ function file_extension(string $file, bool $with_dot = false, bool $lower = true
     }
 
     return $ret ?: null;
-}
-
-/**
- * Get file mime.
- *
- * @param  string $file
- * @return string|null
- * @since  4.0
- */
-function file_mime(string $file): string|null
-{
-    $mime = mime_content_type($file) ?: null;
-
-    if (!$mime) {
-        // Try with extension.
-        $extension = file_extension($file, false);
-        if ($extension) {
-            static $cache; // For some speed..
-            if (empty($cache[$extension])) {
-                foreach (require 'statics/mime.php' as $type => $extensions) {
-                    if (in_array($extension, $extensions, true)) {
-                        return ($cache[$extension] = $type);
-                    }
-                }
-            }
-        }
-    }
-
-    return $mime;
 }
 
 /**
