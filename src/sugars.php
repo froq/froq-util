@@ -1353,6 +1353,13 @@ function file_set_contents(string $file, string $contents, int $flags = 0): int|
 }
 
 /**
+ * Aliases.
+ */
+function filepath(...$args) { return file_path(...$args); }
+function filename(...$args) { return file_name(...$args); }
+function filemime(...$args) { return file_mime(...$args); }
+
+/**
  * Get a file path.
  *
  * @alias of get_real_path()
