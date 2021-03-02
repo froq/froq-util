@@ -42,6 +42,7 @@ function select(...$args) { return array_select(...$args); }
  * Format for sprintf(),vsprintf().
  */
 function format(string $in, $arg, ...$args): string {
+    $in = str_replace('%q', "'%s'", $in); // Convert special format (quoted string).
     return is_array($arg) ? vsprintf($in, $arg) : sprintf($in, $arg, ...$args);
 }
 
