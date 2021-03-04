@@ -227,7 +227,7 @@ function split(string $sep, string $in, int $limit = null, int|bool $flags = nul
     }
 
     // Plus: prevent 'undefined index ..' error.
-    if ($pad || ($limit && $limit != count($ret))) {
+    if ($pad && $limit && $limit != count($ret)) {
         $ret = array_pad($ret, $limit, null);
     }
 
