@@ -197,17 +197,17 @@ function strip(string $in, string $chars = null): string
 }
 
 /**
- * Split a string, with RegExp (~) option.
+ * Split a string, with Unicode style.
  *
- * @param  string        $sep
- * @param  string        $in
- * @param  int|null      $limit
- * @param  int|bool|null $flags
- * @param  bool          $pad
+ * @param  string   $sep
+ * @param  string   $in
+ * @param  int|null $limit
+ * @param  bool     $pad
+ * @param  bool     $empty
  * @return array
  * @since  5.0 Moved from froq/fun.
  */
-function split(string $sep, string $in, int $limit = null, int|bool $flags = null, bool $pad = true): array
+function split(string $sep, string $in, int $limit = null, bool $pad = true, bool $empty = false): array
 {
     if ($sep === '') {
         $ret = (array) preg_split('~~u', $in, -1, 1);
@@ -215,14 +215,9 @@ function split(string $sep, string $in, int $limit = null, int|bool $flags = nul
             return array_map(fn($r) => join('', $r), array_chunk($ret, $limit));
         }
     } else {
-        $flags ??= 1; // No empty: null or 1.
-
-        // RegExp: only "~..~" patterns accepted.
-        if ($sep[0] == '~' && strlen($sep) >= 3) {
-            $ret = (array) preg_split($sep, $in, ($limit ?? -1), $flags);
-        } else {
-            $ret = (array) explode($sep, $in, ($limit ?? PHP_INT_MAX));
-            $flags && $ret = array_filter($ret, 'strlen');
+        $ret = $limit ? mb_split($sep, $in, $limit) : mb_split($sep, $in);
+        if (!$empty) { // When no empty fields wanted.
+            $ret = array_filter($ret, 'strlen');
         }
     }
 
