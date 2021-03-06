@@ -35,8 +35,8 @@ function pluck(array &$array, int|string $key, &$value = null): bool {
  * Fetch/select.
  * @alias of array_fetch(),array_select()
  */
-function fetch(...$args) { return array_fetch(...$args); }
-function select(...$args) { return array_select(...$args); }
+function fetch(array &$array, ...$args) { return array_fetch($array, ...$args); }
+function select(array &$array, ...$args) { return array_select($array, ...$args); }
 
 /**
  * Format for sprintf(),vsprintf().
