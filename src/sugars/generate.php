@@ -103,13 +103,13 @@ function generate_session_id(array $options = null): string
 }
 
 /**
- * Generate an OID, like Mongo.ObjectId.
+ * Generate an object ID, like Mongo.ObjectId.
  *
  * @param  bool $counted
  * @return string
  * @since  4.0, 4.1 Changed from rand_oid().
  */
-function generate_oid(bool $counted = true): string
+function generate_object_id(bool $counted = true): string
 {
     return Generator::generateObjectId($counted);
 }
