@@ -1986,6 +1986,21 @@ function array_pluck(array &$array, int|string|array $key, $default = null)
 }
 
 /**
+ * Bridge function to Arrays.flat().
+ *
+ * @param  array $array
+ * @param  bool  $use_keys
+ * @param  bool  $fix_keys
+ * @param  bool  $multi
+ * @return array
+ * @since  4.0
+ */
+function array_flat(array $array, bool $use_keys = false, bool $fix_keys = false, bool $multi = true): array
+{
+    return Arrays::flat($array, $use_keys, $fix_keys, $multi);
+}
+
+/**
  * Get a/a few random item(s) from an array with/without given limit.
  *
  * @param  array    &$array
