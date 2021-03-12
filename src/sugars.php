@@ -2003,6 +2003,42 @@ function array_pluck(array &$array, int|string|array $key, $default = null)
 }
 
 /**
+ * Choose a value that satisfies given callback.
+ *
+ * @param  array    $array
+ * @param  callable $func
+ * @return any|null
+ * @since  5.0
+ */
+function array_choose(array $array, callable $func)
+{
+    foreach ($array as $value) {
+        if ($func($value)) {
+            return $value;
+        }
+    }
+    return null;
+}
+
+/**
+ * Choose a value position that satisfies given callback.
+ *
+ * @param  array    $array
+ * @param  callable $func
+ * @return int|string|null
+ * @since  5.0
+ */
+function array_choose_key(array $array, callable $func)
+{
+    foreach ($array as $key => $value) {
+        if ($func($value)) {
+            return $key;
+        }
+    }
+    return null;
+}
+
+/**
  * Bridge function to Arrays.flat().
  *
  * @param  array $array
