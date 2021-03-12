@@ -140,6 +140,23 @@ function concat(array|string $in, ...$ins): array|string
 }
 
 /**
+ * Pad an array or string.
+ *
+ * @param  array|string $in
+ * @param  int          $length
+ * @param  any|null     $pad
+ * @return array|string
+ * @since  5.0
+ */
+function pad(array|string $in, int $length, $pad = null): array|string
+{
+    return match (true) {
+        is_array($in)  => array_pad($in, $length, $pad),
+        is_string($in) => str_pad($in, $length, strval($pad ?? ' '))
+    };
+}
+
+/**
  * Chunk an array or string.
  *
  * @param  array|string $in
