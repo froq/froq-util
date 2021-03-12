@@ -685,7 +685,7 @@ final class Arrays extends StaticClass
      * @return int|string|null
      * @since  4.0
      */
-    public static function index(array $array, $value, bool $strict = true)
+    public static function index(array $array, $value, bool $strict = true): int|string|null
     {
         $key = array_search($value, $array, $strict);
 
