@@ -393,34 +393,6 @@ function array_index(array $array, $value, bool $strict = true)
 }
 
 /**
- * Bridge function to Arrays.first().
- *
- * @param  array &$array
- * @param  any    $default
- * @param  bool   $drop
- * @return any|null
- * @since  3.0
- */
-function array_first(array &$array, $default = null, bool $drop = false)
-{
-    return Arrays::first($array, $default, $drop);
-}
-
-/**
- * Bridge function to Arrays.last().
- *
- * @param  array &$array
- * @param  any    $default
- * @param  bool   $drop
- * @return any|null
- * @since  3.0
- */
-function array_last(array &$array, $default = null, bool $drop = false)
-{
-    return Arrays::last($array, $default, $drop);
-}
-
-/**
  * Bridge function to Arrays.keysExist().
  *
  * @param  array             $array
