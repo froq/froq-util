@@ -2111,6 +2111,50 @@ function array_union(array $array1, array $array2, array ...$others): array
 }
 
 /**
+ * Get key of given value or return null when not found.
+ *
+ * @param  array array
+ * @param  any   $value
+ * @param  bool  strict
+ * @return int|string|null
+ * @since  5.0
+ */
+function array_key(array $array, $value, bool $strict = true): int|string|null
+{
+    $key = array_search($value, $array, $strict);
+
+    return ($key !== false) ? $key : null;
+}
+
+/**
+ * Get first value of given array.
+ *
+ * @param  array $array
+ * @return any|null
+ * @since  5.0
+ */
+function array_first(array $array)
+{
+    $key = array_key_first($array);
+
+    return ($key !== null) ?  $array[$key] : null;
+}
+
+/**
+ * Get last value of given array.
+ *
+ * @param  array $array
+ * @return any|null
+ * @since  5.0
+ */
+function array_last(array $array)
+{
+    $key = array_key_last($array);
+
+    return ($key !== null) ?  $array[$key] : null;
+}
+
+/**
  * Check whether given array is a list array.
  *
  * @param  any  $in
