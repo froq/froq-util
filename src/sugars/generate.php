@@ -17,26 +17,26 @@ if (!class_exists(Generator::class, true)) {
  * Generate a salt by given length.
  *
  * @param  int $length
- * @param  int $bpc
+ * @param  int $base
  * @return string
  * @since  4.25
  */
-function generate_salt(int $length = 40, int $bpc = 6): string
+function generate_salt(int $length = 40, int $base = 62): string
 {
-    return Generator::generateSalt($length, $bpc);
+    return Generator::generateSalt($length, $base);
 }
 
 /**
  * Generate a nonce by given length.
  *
  * @param  int $length
- * @param  int $bpc
+ * @param  int $base
  * @return string
  * @since  4.0, 4.1 Changed from rand_string(),rand_nonce().
  */
-function generate_nonce(int $length = 16, int $bpc = 4): string
+function generate_nonce(int $length = 16, int $base = 16): string
 {
-    return Generator::generateNonce($length, $bpc);
+    return Generator::generateNonce($length, $base);
 }
 
 /**
