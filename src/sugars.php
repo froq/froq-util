@@ -2427,7 +2427,7 @@ function random_float(float $min = null, float $max = null, int $precision = nul
  * @return string
  * @since  5.0
  */
-function random_string(int $length = 10, bool $puncted = false): string
+function random_string(int $length, bool $puncted = false): string
 {
     return Strings::random($length, $puncted);
 }

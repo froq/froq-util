@@ -251,11 +251,10 @@ final class Strings extends StaticClass
      * @return string
      * @throws froq\util\UtilException
      */
-    public static function random(int $length = 10, bool $puncted = false): string
+    public static function random(int $length, bool $puncted = false): string
     {
         if ($length < 1) {
-            throw new UtilException('Invalid length value `%s`, length must be equal or greater'
-                . ' than 1', $length);
+            throw new UtilException('Invalid length value `%s`, length must be minimun 1', $length);
         }
 
         $chars = ALPHABET;
