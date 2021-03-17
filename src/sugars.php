@@ -1516,19 +1516,6 @@ function utime(bool $string = false): float|string
 }
 
 /**
- * Get a random float.
- *
- * @param  float|null $min
- * @param  float|null $max
- * @return float
- * @since  5.0
- */
-function urand(float $min = null, float $max = null): float
-{
-    return Numbers::randomFloat($min, $max);
-}
-
-/**
  * Get an interval by given format.
  *
  * @param  string          $format
