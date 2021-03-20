@@ -194,13 +194,14 @@ function chunk(array|string $in, int $length, bool $keep_keys = false): array
  * @param  array|string $in
  * @param  int          $start
  * @param  int|null     $end
+ * @param  bool         $keep_keys
  * @return array|string
  * @since  3.0, 4.0 Added back, 5.0 Moved from froq/fun.
  */
-function slice(array|string $in, int $start, int $end = null): array|string
+function slice(array|string $in, int $start, int $end = null, bool $keep_keys = false): array|string
 {
     return match (true) {
-        is_array($in)  => array_slice($in, $start, $end),
+        is_array($in)  => array_slice($in, $start, $end, $keep_keys),
         is_string($in) => mb_substr($in, $start, $end)
     };
 }
