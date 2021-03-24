@@ -1561,7 +1561,7 @@ function strtoitime(string $format, string|int $time = null): int
         $format_list && $format = join(' ', $format_list);
     }
 
-    $time ??= (int) date('U');
+    $time ??= time();
     if (is_string($time)) {
         $time = strtotime($time);
     }
