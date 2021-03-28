@@ -2325,11 +2325,9 @@ function uuid(bool $dashed = true, bool $timed = false, bool $guid = false): str
         $bytes[8] = chr(ord($bytes[8]) & 0x3f | 0x80);
     }
 
-    $ret = vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($bytes), 4));
+    $ret = uuid_format(bin2hex($bytes));
 
-    $dashed || $ret = str_replace('-', '', $ret);
-
-    return $ret;
+    return $dashed ? $ret : str_replace('-', '', $ret);
 }
 
 /**
@@ -2346,7 +2344,7 @@ function uuid_hash(int $length = 32, bool $format = false, bool $timed = false, 
 {
     static $algos = [32 => 'md5', 40 => 'sha1', 64 => 'sha256', 16 => 'fnv1a64'];
 
-    $algo = $algos[$length] ?? null;
+    $algo =@ $algos[$length];
 
     if (!$algo) {
         trigger_error(sprintf('%s(): Invalid length, valids are: 32,40,64,16', __function__));
@@ -2355,16 +2353,24 @@ function uuid_hash(int $length = 32, bool $format = false, bool $timed = false, 
 
     $ret = hash($algo, uuid(false, $timed, $guid));
 
-    if ($format) {
-        if ($length != 32) {
-            trigger_error(sprintf('%s(): Format option for only 32-length hashes', __function__));
-            return null;
-        }
+    return !$format ? $ret : uuid_format($ret);
+}
 
-        $ret = vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split($ret, 4));
+/**
+ * Format given input as UUID/GUID.
+ *
+ * @param  string $in
+ * @return string|null
+ * @since  5.0
+ */
+function uuid_format(string $in): string|null
+{
+    if (strlen($in) != 32) {
+        trigger_error(sprintf('%s(): Format for only 32-length UUIDs', __function__));
+        return null;
     }
 
-    return $ret;
+    return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split($in, 4));
 }
 
 /**
