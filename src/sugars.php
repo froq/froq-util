@@ -704,10 +704,11 @@ function get_error(string $field = null)
  * @param  int  $length
  * @param  int  $base
  * @param  bool $hrtime
+ * @param  bool $upper
  * @return string|null
  * @since  4.0
  */
-function get_uniqid(int $length = 14, int $base = 16, bool $hrtime = false): string|null
+function get_uniqid(int $length = 14, int $base = 16, bool $hrtime = false, bool $upper = false): string|null
 {
     if ($length < 14) {
         trigger_error(sprintf('%s(): Invalid length, min=14', __function__));
@@ -741,6 +742,8 @@ function get_uniqid(int $length = 14, int $base = 16, bool $hrtime = false): str
         $ret .= suid($length - $ret_length, $base);
     }
 
+    $upper && $ret = strtoupper($ret);
+
     return strcut($ret, $length);
 }
 
@@ -749,10 +752,11 @@ function get_uniqid(int $length = 14, int $base = 16, bool $hrtime = false): str
  *
  * @param  int  $length
  * @param  int  $base
+ * @param  bool $upper
  * @return string|null
  * @since  4.0
  */
-function get_random_uniqid(int $length = 14, int $base = 16): string|null
+function get_random_uniqid(int $length = 14, int $base = 16, bool $upper = false): string|null
 {
     if ($length < 14) {
         trigger_error(sprintf('%s(): Invalid length, min=14', __function__));
@@ -771,6 +775,8 @@ function get_random_uniqid(int $length = 14, int $base = 16): string|null
         // Convert non-hex ids.
         $ret .= ($base == 16) ? $id : convert_base($id, 16, $base);
     }
+
+    $upper && $ret = strtoupper($ret);
 
     return strcut($ret, $length);
 }
