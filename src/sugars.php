@@ -1496,8 +1496,7 @@ function file_extension(string $file, bool $with_dot = false, bool $lower = true
 }
 
 /**
- * Init a DateTime object without/without given when option & with/without timezone if given
- * or default timezone.
+ * Init a DateTime object with/without given when option & with/without timezone if given or default timezone.
  *
  * @param  int|float|string|null $when
  * @param  string|null           $where
@@ -1526,7 +1525,7 @@ function udate(int|float|string $when = null, string $where = null): DateTime
 }
 
 /**
- * Get microtime as float or string.
+ * Get current microtime (float or string).
  *
  * @param  bool $string
  * @return float|string
@@ -1534,7 +1533,23 @@ function udate(int|float|string $when = null, string $where = null): DateTime
  */
 function utime(bool $string = false): float|string
 {
-    return !$string ? microtime(true) : sprintf('%.6F', microtime(true));
+    $time = microtime(true);
+
+    return $string ? sprintf('%.6F', $time): $time;
+}
+
+/**
+ * Get current microtime (high-resolution).
+ *
+ * @param  string|null $where
+ * @return int
+ * @since  5.0
+ */
+function ustime(string $where = null): int
+{
+    $date = udate(utime(), $where);
+
+    return (int) $date->format('Uu');
 }
 
 /**
