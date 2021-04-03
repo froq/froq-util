@@ -54,7 +54,7 @@ class Json extends StaticClass
         if ($flags) {
             $flags = abs((int) $flags);
 
-            // Subtract defaults from flags (if given).
+            // Subtract defaults from given flags.
             $flags &= self::FLAGS;
         }
 

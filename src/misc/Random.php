@@ -13,7 +13,7 @@ use froq\util\UtilException;
  * Random.
  *
  * Represents an RNG entity which generates pseudorandom numbers. This class is highly inspired by java.util.Random
- * class using some same implementations in (https://docs.oracle.com/javase/8/docs/api/java/util/Random.html).
+ * class using its some same implementations in (https://docs.oracle.com/javase/8/docs/api/java/util/Random.html).
  *
  * @package froq\util\misc
  * @object  froq\util\misc\Random
