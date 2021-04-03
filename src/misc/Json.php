@@ -51,17 +51,10 @@ class Json extends StaticClass
             }
         }
 
-        if ($flags) {
-            $flags = abs((int) $flags);
+        $flags  = abs((int) $flags);
+        $flags |= self::FLAGS; // Add defaults.
 
-            // Subtract defaults from given flags.
-            $flags &= self::FLAGS;
-        }
-
-        // Add defaults.
-        $flags |= self::FLAGS;
-
-        $out = json_encode($data, $flags);
+        $out = json_encode($data, flags: $flags);
 
         return ($out !== false) ? $out : null;
     }
