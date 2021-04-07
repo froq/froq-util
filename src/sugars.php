@@ -109,14 +109,14 @@ function reduce(array $array, $carry, callable $func)
 /**
  * Each wrapper for scoped function calls on given array or just for syntactic sugar.
  *
- * @param  array    $array
- * @param  callable $func
+ * @param  array    &$array
+ * @param  callable  $func
  * @return void
  * @since  5.0
  */
-function each(array $array, callable $func): void
+function each(array &$array, callable $func): void
 {
-    foreach ($array as $key => $value) {
+    foreach ($array as $key => &$value) {
         $func($value, $key);
     }
 }
