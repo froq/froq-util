@@ -119,6 +119,7 @@ function each(array &$array, callable $func): void
     foreach ($array as $key => &$value) {
         $func($value, $key);
     }
+    unset($value);
 }
 
 /**
