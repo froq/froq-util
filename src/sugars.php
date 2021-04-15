@@ -350,7 +350,7 @@ function strcut(string $str, int $length): string
 }
 
 /**
- * Cut a string before given search position with/without given length, or return null if no search found.
+ * Cut a string before given search position with/without given length, or return '' if no search found.
  *
  * @param  string   $str
  * @param  string   $src
@@ -373,7 +373,7 @@ function strbcut(string $str, string $src, int $length = null, int $offset = nul
 }
 
 /**
- * Cut a string after given search position with/without given length, or return null if no search found.
+ * Cut a string after given search position with/without given length, or return '' if no search found.
  *
  * @param  string   $str
  * @param  string   $src
@@ -2382,7 +2382,7 @@ function uuid_hash(int $length = 32, bool $format = false, bool $timed = false, 
 function uuid_format(string $in): string|null
 {
     if (strlen($in) != 32) {
-        trigger_error(sprintf('%s(): Format for only 32-length UUIDs', __function__));
+        trigger_error(sprintf('%s(): Format for only 32-length UUIDs/GUIDs', __function__));
         return null;
     }
 
