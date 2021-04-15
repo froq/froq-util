@@ -44,6 +44,8 @@ class JsonObject implements Arrayable, Jsonable, JsonSerializable, ArrayAccess
                 if (is_object($value)) {
                     $value = new static($value);
                 }
+
+                // Simply set all as dynamic vars.
                 $this->{$key} = $value;
             }
         }
@@ -155,7 +157,7 @@ class JsonObject implements Arrayable, Jsonable, JsonSerializable, ArrayAccess
     /**
      * @inheritDoc JsonSerializable
      */
-    public function jsonSerialize(): static
+    public function jsonSerialize()
     {
         return $this;
     }
