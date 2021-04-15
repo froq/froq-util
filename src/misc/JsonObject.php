@@ -54,8 +54,8 @@ class JsonObject implements Arrayable, Jsonable, JsonSerializable, ArrayAccess
     /**
      * Get a value by given key (or path with "." notation).
      *
-     * @param  string|array $key
-     * @param  any|null     $default
+     * @param  string   $key
+     * @param  any|null $default
      * @return any|null
      */
     public final function get(string $key, $default = null)
@@ -73,12 +73,12 @@ class JsonObject implements Arrayable, Jsonable, JsonSerializable, ArrayAccess
      * @param  any|null      $default
      * @return any|null
      */
-    public final function getAll(array $key, $default = null)
+    public final function getAll(array $keys, $default = null)
     {
         // Should really use cache?
         $data = self::$__JSON_OBJECT_CACHE[$this->id()] ??= $this->toArray();
 
-        return array_fetch($data, $key, $default);
+        return array_fetch($data, $keys, $default);
     }
 
     /**
