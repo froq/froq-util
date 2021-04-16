@@ -1865,7 +1865,7 @@ function array_change_keys(array $array, callable $func, bool $recursive = false
     $ret = [];
 
     foreach ($array as $key => $value) {
-        $key = $func($key);
+        $key = $func((string) $key);
         if ($recursive && is_array($value)) {
             $ret[$key] = array_change_keys($value, $func, true);
         } else {
