@@ -231,7 +231,7 @@ final /* fuckic static */ class Util extends StaticClass
 
         if ($ignoredKeys != null) {
             $ignoredKeys = explode(',', $ignoredKeys);
-            foreach ($qa as $key => $_) {
+            foreach (array_keys($qa) as $key) {
                 if (in_array($key, $ignoredKeys)) {
                     unset($qa[$key]);
                 }
