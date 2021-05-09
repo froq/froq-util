@@ -471,6 +471,23 @@ final class Objects extends StaticClass
     }
 
     /**
+     * Has method.
+     *
+     * @param  string|object $class
+     * @param  string        $name
+     * @return bool|null
+     * @since  5.0
+     */
+    public static function hasMethod(string|object $class, string $name): bool|null
+    {
+        try {
+            return (new ReflectionClass($class))->hasMethod($name);
+        } catch (ReflectionException) {
+            return null;
+        }
+    }
+
+    /**
      * Get method.
      *
      * @param  string|object $class
