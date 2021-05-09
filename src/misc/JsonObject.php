@@ -25,6 +25,7 @@ class JsonObject implements Arrayable, Jsonable, JsonSerializable, ArrayAccess
 {
     /**
      * Cache of array copy that indexed by object ID & filled on first get()/getAll() call.
+     * @var array.
      */
     private static array $__JSON_OBJECT_CACHE;
 
@@ -35,9 +36,7 @@ class JsonObject implements Arrayable, Jsonable, JsonSerializable, ArrayAccess
      */
     public function __construct(string|object $data)
     {
-        if (is_string($data)) {
-            $data = Json::parseObject($data);
-        }
+        is_string($data) && $data = Json::parseObject($data);
 
         if ($data != null) {
             foreach ($data as $key => $value) {
