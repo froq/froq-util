@@ -2531,6 +2531,24 @@ function is_type_of($in, string $type): bool
 }
 
 /**
+ * Check whether given class method is callable (exists & public).
+ *
+ * @param  string|object $class
+ * @param  string        $method
+ * @return bool
+ * @since  5.0
+ */
+function is_callable_method(string|object $class, string $method): bool
+{
+    try {
+        return ($ref = new ReflectionClass($class))
+            && ($ref->hasMethod($method) && $ref->getMethod($method)->isPublic());
+    } catch (ReflectionException) {
+        return false;
+    }
+}
+
+/**
  * Check empty state(s) of given input(s).
  *
  * @param  any     $in
