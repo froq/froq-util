@@ -24,8 +24,9 @@ use JsonSerializable, ArrayAccess;
 class JsonObject implements Arrayable, Jsonable, JsonSerializable, ArrayAccess
 {
     /**
-     * Cache of array copy that indexed by object ID & filled on first get()/getAll() call.
-     * @var array.
+     * Cache of array copy that indexed by object ID & filled on first get()/getAll() call,
+     * but not sure that is really needed.
+     * @var array
      */
     private static array $__JSON_OBJECT_CACHE;
 
@@ -36,18 +37,27 @@ class JsonObject implements Arrayable, Jsonable, JsonSerializable, ArrayAccess
      */
     public function __construct(string|object $data)
     {
+        // Parse when string given.
         is_string($data) && $data = Json::parseObject($data);
 
         if ($data != null) {
             foreach ($data as $key => $value) {
-                if (is_object($value)) {
-                    $value = new static($value);
-                }
+                // Convert objects to JsonObject when available.
+                $value = $this->objectify($value);
 
                 // Simply set all as dynamic vars.
                 $this->{$key} = $value;
             }
         }
+    }
+
+    /**
+     * Destructor.
+     */
+    public function __destruct()
+    {
+        // Must drop from cache stack to free the memo.
+        unset(self::$__JSON_OBJECT_CACHE[spl_object_id($this)]);
     }
 
     /**
@@ -59,8 +69,7 @@ class JsonObject implements Arrayable, Jsonable, JsonSerializable, ArrayAccess
      */
     public final function get(string $key, $default = null)
     {
-        // Should really use cache?
-        $data = self::$__JSON_OBJECT_CACHE[$this->id()] ??= $this->toArray();
+        $data = $this->arrayify();
 
         return array_fetch($data, $key, $default);
     }
@@ -74,8 +83,7 @@ class JsonObject implements Arrayable, Jsonable, JsonSerializable, ArrayAccess
      */
     public final function getAll(array $keys, $default = null)
     {
-        // Should really use cache?
-        $data = self::$__JSON_OBJECT_CACHE[$this->id()] ??= $this->toArray();
+        $data = $this->arrayify();
 
         return array_fetch($data, $keys, $default);
     }
@@ -136,7 +144,7 @@ class JsonObject implements Arrayable, Jsonable, JsonSerializable, ArrayAccess
         $ret = [];
 
         foreach ($this as $key => $value) {
-            if ($deep && $value instanceof $this) {
+            if ($deep && $value instanceof JsonObject) {
                 $value = $value->toArray(true);
             }
             $ret[$key] = $value;
@@ -181,9 +189,34 @@ class JsonObject implements Arrayable, Jsonable, JsonSerializable, ArrayAccess
     public function offsetSet($key, $value) {}
     public function offsetUnset($key) {}
 
-    /** @internal */
-    private function id(): string
+    /**
+     * Get/cache/convert JsonObject data as array.
+     *
+     * @return array
+     * @internal
+     */
+    private function arrayify(): array
     {
-        return $this::class .'#'. spl_object_id($this);
+        return self::$__JSON_OBJECT_CACHE[spl_object_id($this)] ??= $this->toArray();
+    }
+
+    /**
+     * Convert objects only to JsonObject, also map arrays.
+     *
+     * @param  any $input
+     * @return any
+     * @internal
+     */
+    private function objectify($input)
+    {
+        if (is_object($input)) {
+            $input = new static($input);
+        } elseif (is_array($input)) {
+            foreach ($input as $key => $value) {
+                $input[$key] = $this->objectify($value);
+            }
+        }
+
+        return $input;
     }
 }
