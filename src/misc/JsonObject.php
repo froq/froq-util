@@ -174,7 +174,7 @@ class JsonObject implements Arrayable, Jsonable, JsonSerializable, ArrayAccess
      */
     public function offsetExists($key)
     {
-        return isset($this->{$key});
+        return property_exists($this, $key);
     }
 
     /**
@@ -182,7 +182,7 @@ class JsonObject implements Arrayable, Jsonable, JsonSerializable, ArrayAccess
      */
     public function offsetGet($key)
     {
-        return $this->{$key} ?? $this->get($key);
+        return property_exists($this, $key) ? $this->{$key} : $this->get($key);
     }
 
     /** @notImplemented. */
