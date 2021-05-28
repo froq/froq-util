@@ -182,7 +182,7 @@ class JsonObject implements Arrayable, Jsonable, JsonSerializable, ArrayAccess
      */
     public function offsetGet($key)
     {
-        return $this->get($key);
+        return $this->{$key} ?? $this->get($key);
     }
 
     /** @notImplemented. */
