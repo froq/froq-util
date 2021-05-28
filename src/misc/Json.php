@@ -12,7 +12,7 @@ use froq\common\object\StaticClass;
 /**
  * Json.
  *
- * Represents a static entity which builds/parses JSON string safely.
+ * Represents a static entity which builds/parses JSON strings safely.
  *
  * @package froq\util\misc
  * @object  froq\util\misc\Json
