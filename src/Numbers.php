@@ -30,16 +30,12 @@ final class Numbers extends StaticClass
      */
     public static function convert($in, int $decimals = null): int|float|null
     {
-        if (is_number($in)) {
-            return $in;
-        }
-
         if (is_numeric($in)) {
             if ($decimals !== null) {
                 $in = number_format((float) $in, $decimals);
             }
 
-            return is_string($in) && str_contains($in, '.') ? (float) $in : (int) $in;
+            return $in + 0;
         }
 
         return null; // Error, not a number.
