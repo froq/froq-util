@@ -54,7 +54,7 @@ final class Numbers extends StaticClass
         $precision ??= 14;
 
         if (is_numeric($a) && is_numeric($b)) {
-            return round($a, $precision) <=> round($b, $precision);
+            return round((float) $a, $precision) <=> round((float) $b, $precision);
         }
 
         return null; // Error, non-number(s).
