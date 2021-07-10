@@ -1,38 +1,19 @@
 <?php
 /**
- * MIT License <https://opensource.org/licenses/mit>
- *
- * Copyright (c) 2015 Kerem Güneş
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is furnished
- * to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
+ * Copyright (c) 2015 · Kerem Güneş
+ * Apache License 2.0 · http://github.com/froq/froq-util
  */
 declare(strict_types=1);
 
 use froq\util\Util;
 
 /**
- * Gets user agent.
+ * Get user agent.
  *
  * @param  bool $cut
- * @return ?string
+ * @return string|null
  */
-function get_user_agent(bool $cut = true): ?string
+function get_user_agent(bool $cut = true): string|null
 {
     static $ret;
     $ret ??= Util::getClientUserAgent();
@@ -45,7 +26,7 @@ function get_user_agent(bool $cut = true): ?string
 }
 
 /**
- * Detect whether user agent is a bot or not.
+ * Detect whether user agent is a bot.
  *
  * @return bool
  */
@@ -70,7 +51,7 @@ function is_bot(): bool
 }
 
 /**
- * Detect whether user agent is a Google bot or not.
+ * Detect whether user agent is a Google bot.
  *
  * @return bool
  */
@@ -87,7 +68,7 @@ function is_google_bot(): bool
 }
 
 /**
- * Detect whether user agent is a mobile browser or not.
+ * Detect whether user agent is a mobile browser.
  *
  * @return bool
  */
@@ -105,7 +86,7 @@ function is_mobile(): bool
 }
 
 /**
- * Detect whether user agent is a tablet browser or not.
+ * Detect whether user agent is a tablet browser.
  *
  * @return bool
  */
@@ -121,7 +102,7 @@ function is_tablet(): bool
 }
 
 /**
- * Detect whether user agent is a desktop browser or not.
+ * Detect whether user agent is a desktop browser.
  *
  * @return bool
  */

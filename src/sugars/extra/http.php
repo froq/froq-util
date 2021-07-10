@@ -1,33 +1,14 @@
 <?php
 /**
- * MIT License <https://opensource.org/licenses/mit>
- *
- * Copyright (c) 2015 Kerem Güneş
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is furnished
- * to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
+ * Copyright (c) 2015 · Kerem Güneş
+ * Apache License 2.0 · http://github.com/froq/froq-util
  */
 declare(strict_types=1);
 
 use froq\util\Util;
 
 /**
- * Build query string.
+ * Build a query string.
  *
  * @param  array       $query
  * @param  string|null $ignored_keys
@@ -41,7 +22,7 @@ function build_query_string(array $query, string $ignored_keys = null, bool $nor
 }
 
 /**
- * Parse query string.
+ * Parse a query string.
  *
  * @param  string      $query
  * @param  string|null $ignored_keys
@@ -54,55 +35,54 @@ function parse_query_string(string $query, string $ignored_keys = null): array
 }
 
 /**
- * Build cookie.
+ * Build a cookie.
  *
- * @param  array  $cookie
- * @return string
+ * @param  string      $name
+ * @param  string|null $value
+ * @param  array|null  $options
+ * @return string|null
  * @since  4.0
  */
-function build_cookie(array $cookie): string
+function build_cookie(string $name, string|null $value, array $options = null): string|null
 {
-    if (empty($cookie['name']) || !array_key_exists('value', $cookie)) {
-        trigger_error('Both cookie name & value required');
-        return '';
+    if ($name == '') {
+        trigger_error('No cookie name given');
+        return null;
     }
 
-    $ret = rawurlencode($cookie['name']) .'=';
+    static $optionsDefault; $optionsDefault ??= array_fill_keys(
+        ['expires', 'path', 'domain', 'secure', 'httponly', 'samesite'], null);
 
-    if ($cookie['value'] === null || $cookie['value'] === ''
-        || (isset($cookie['expires']) && $cookie['expires'] < 0)) {
-        $ret .= sprintf('NULL; Expires=%s; Max-Age=0', gmdate('D, d M Y H:i:s \G\M\T'));
+    $cookie = ['name' => $name, 'value' => $value] + array_merge($optionsDefault, array_map(
+        'strtolower', ($options ?? [])));
+
+    extract($cookie);
+
+    $ret = rawurlencode($name) .'=';
+
+    if ($value === null || $value === '' || $expires < 0) {
+        $ret .= sprintf('n/a; Expires=%s; Max-Age=0', gmdate('D, d M Y H:i:s \G\M\T', 0));
     } else {
-        // String, bool, int or float.
-        switch (gettype($cookie['value'])) {
-            case 'string':
-                $ret .= rawurlencode($cookie['value']);
-                break;
-            case 'boolean':
-                $ret .= $cookie['value'] ? 'true' : 'false';
-                break;
-            default:
-                $ret .= strval($cookie['value']);
-        }
+        $ret .= rawurlencode($value);
 
         // Must be given in-seconds format.
-        if (isset($cookie['expires'])) {
-            $ret .= sprintf('; Expires=%s; Max-Age=%s', gmdate('D, d M Y H:i:s \G\M\T',
-                time() + $cookie['expires']), $cookie['expires']);
+        if ($expires !== null) {
+            $ret .= sprintf('; Expires=%s; Max-Age=%d', gmdate('D, d M Y H:i:s \G\M\T', time() + $expires),
+                $expires);
         }
     }
 
-    isset($cookie['path'])     && $ret .= '; Path='. $cookie['path'];
-    isset($cookie['domain'])   && $ret .= '; Domain='. $cookie['domain'];
-    isset($cookie['secure'])   && $ret .= '; Secure';
-    isset($cookie['httpOnly']) && $ret .= '; HttpOnly';
-    isset($cookie['sameSite']) && $ret .= '; SameSite='. $cookie['sameSite'];
+    $path     && $ret .= '; Path='. $path;
+    $domain   && $ret .= '; Domain='. $domain;
+    $secure   && $ret .= '; Secure';
+    $httponly && $ret .= '; HttpOnly';
+    $samesite && $ret .= '; SameSite='. $samesite;
 
     return $ret;
 }
 
 /**
- * Parse cookie.
+ * Parse a cookie (from a header line).
  *
  * @param  string $cookie
  * @return array
@@ -112,22 +92,22 @@ function parse_cookie(string $cookie): array
 {
     $ret = [];
 
-    foreach (explode(';', $cookie) as $i => $component) {
+    foreach (split(';', $cookie) as $i => $component) {
         $component = trim($component);
         if ($component) {
-            @ [$name, $value] = explode('=', $component, 2);
+            [$name, $value] = split('=', $component, 2);
             if ($i == 0) {
-                $ret['name']  = ($name !== null) ? rawurldecode($name) : $name;
-                $ret['value'] = ($value !== null) ? rawurldecode($value) : $value;
+                $ret['name']  = isset($name)  ? rawurldecode($name)  : $name;
+                $ret['value'] = isset($value) ? rawurldecode($value) : $value;
                 continue;
             }
 
             $name = strtolower($name ?? '');
             if ($name) {
                 switch ($name) {
-                    case 'secure': $value = true; break;
-                    case 'httponly': $name = 'httpOnly'; $value = true; break;
-                    case 'samesite': $name  = 'sameSite'; $value = true; break;
+                    case 'secure':   $value = true;               break;
+                    case 'httponly': $value = true;               break;
+                    case 'samesite': $value = strtolower($value); break;
                 }
                 $ret[$name] = $value;
             }
@@ -138,7 +118,7 @@ function parse_cookie(string $cookie): array
 }
 
 /**
- * Build url.
+ * Build a URL.
  *
  * @param  array $url
  * @return string

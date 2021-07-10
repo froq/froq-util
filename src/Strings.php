@@ -1,45 +1,29 @@
 <?php
 /**
- * MIT License <https://opensource.org/licenses/mit>
- *
- * Copyright (c) 2015 Kerem Güneş
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is furnished
- * to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
+ * Copyright (c) 2015 · Kerem Güneş
+ * Apache License 2.0 · http://github.com/froq/froq-util
  */
 declare(strict_types=1);
 
 namespace froq\util;
 
-use froq\common\objects\StaticClass;
+use froq\util\UtilException;
+use froq\common\object\StaticClass;
 
 /**
  * Strings.
+ *
  * @package froq\util
  * @object  froq\util\Strings
- * @author  Kerem Güneş <k-gun@mail.com>
+ * @author  Kerem Güneş
  * @since   1.0
  * @static
  */
 final class Strings extends StaticClass
 {
     /**
-     * Compare.
+     * Compare two strings.
+     *
      * @param  string $in1
      * @param  string $in2
      * @return int
@@ -50,7 +34,8 @@ final class Strings extends StaticClass
     }
 
     /**
-     * Compare locale.
+     * Compare two strings by a locale.
+     *
      * @param  string $in1
      * @param  string $in2
      * @param  string $locale
@@ -71,28 +56,30 @@ final class Strings extends StaticClass
     }
 
     /**
-     * Contains.
+     * Check whether given input contains given search.
+     *
      * @param  string $in
-     * @param  string $search
-     * @param  bool   $caseInsensitive
+     * @param  string $src
+     * @param  bool   $icase
      * @return bool
      */
-    public static function contains(string $in, string $search, bool $caseInsensitive = false): bool
+    public static function contains(string $in, string $src, bool $icase = false): bool
     {
-        return (!$caseInsensitive ? strpos($in, $search) : stripos($in, $search)) !== false;
+        return (!$icase ? mb_strpos($in, $src) : mb_stripos($in, $src)) !== false;
     }
 
     /**
-     * Contains any.
+     * Check whether given input contains any of given searches.
+     *
      * @param  string        $in
-     * @param  array<string> $searches
-     * @param  bool          $caseInsensitive
+     * @param  array<string> $srcs
+     * @param  bool          $icase
      * @return bool
      */
-    public static function containsAny(string $in, array $searches, bool $caseInsensitive = false): bool
+    public static function containsAny(string $in, array $srcs, bool $icase = false): bool
     {
-        foreach ($searches as $search) {
-            if (self::contains($in, $search, $caseInsensitive)) {
+        foreach ($srcs as $src) {
+            if (self::contains($in, $src, $icase)) {
                 return true;
             }
         }
@@ -100,16 +87,17 @@ final class Strings extends StaticClass
     }
 
     /**
-     * Contains all.
+     * Check whether given input contains all given search.
+     *
      * @param  string        $in
-     * @param  array<string> $searches
-     * @param  bool          $caseInsensitive
+     * @param  array<string> $srcs
+     * @param  bool          $icase
      * @return bool
      */
-    public static function containsAll(string $in, array $searches, bool $caseInsensitive = false): bool
+    public static function containsAll(string $in, array $srcs, bool $icase = false): bool
     {
-        foreach ($searches as $search) {
-            if (!self::contains($in, $search, $caseInsensitive)) {
+        foreach ($srcs as $src) {
+            if (!self::contains($in, $src, $icase)) {
                 return false;
             }
         }
@@ -117,39 +105,43 @@ final class Strings extends StaticClass
     }
 
     /**
-     * Starts with.
+     * Check whether given input starts with given search.
+     *
      * @param  string $in
-     * @param  string $search
-     * @param  bool   $caseInsensitive
+     * @param  string $src
+     * @param  bool   $icase
+     * @param  bool   $mbyte
      * @return bool
      */
-    public static function startsWith(string $in, string $search, bool $caseInsensitive = false,
-        bool $multiByte = false): bool
+    public static function startsWith(string $in, string $src, bool $icase = false, bool $mbyte = false): bool
     {
         if ($in !== '') {
-            if ($caseInsensitive && $multiByte) {
+            if ($icase && $mbyte) {
                 // Double, cos for eg: Turkish characters issues (ı => I, İ => i).
                 $in = mb_convert_case(mb_convert_case($in, MB_CASE_UPPER_SIMPLE), MB_CASE_LOWER_SIMPLE);
-                $search = mb_convert_case(mb_convert_case($search, MB_CASE_UPPER_SIMPLE), MB_CASE_LOWER_SIMPLE);
+                $src = mb_convert_case(mb_convert_case($src, MB_CASE_UPPER_SIMPLE), MB_CASE_LOWER_SIMPLE);
             }
-            return substr_compare($in, $search, 0, strlen($search), $caseInsensitive) === 0;
+
+            return substr_compare($in, $src, 0, strlen($src), $icase) === 0;
         }
+
         return false;
     }
 
     /**
-     * Starts with any.
+     * Check whether given input starts with any of given searches.
+     *
      * @param  string        $in
-     * @param  array<string> $searches
-     * @param  bool          $caseInsensitive
+     * @param  array<string> $srcs
+     * @param  bool          $icase
+     * @param  bool          $mbyte
      * @return bool
      * @since  4.0
      */
-    public static function startsWithAny(string $in, array $searches, bool $caseInsensitive = false,
-        bool $multiByte = false): bool
+    public static function startsWithAny(string $in, array $srcs, bool $icase = false, bool $mbyte = false): bool
     {
-        foreach ($searches as $search) {
-            if (self::startsWith($in, (string) $search, $caseInsensitive, $multiByte)) {
+        foreach ($srcs as $src) {
+            if (self::startsWith($in, (string) $src, $icase, $mbyte)) {
                 return true;
             }
         }
@@ -157,38 +149,43 @@ final class Strings extends StaticClass
     }
 
     /**
-     * Ends with.
+     * Check whether given input ends with given search.
+     *
      * @param  string $in
-     * @param  string $search
+     * @param  string $src
+     * @param  bool   $icase
+     * @param  bool   $mbyte
      * @return bool
      */
-    public static function endsWith(string $in, string $search, bool $caseInsensitive = false,
-        bool $multiByte = false): bool
+    public static function endsWith(string $in, string $src, bool $icase = false, bool $mbyte = false): bool
     {
         if ($in !== '') {
-            if ($caseInsensitive && $multiByte) {
+            if ($icase && $mbyte) {
                 // Double, cos for eg: Turkish characters issues (ı => I, İ => i).
                 $in = mb_convert_case(mb_convert_case($in, MB_CASE_UPPER_SIMPLE), MB_CASE_LOWER_SIMPLE);
-                $search = mb_convert_case(mb_convert_case($search, MB_CASE_UPPER_SIMPLE), MB_CASE_LOWER_SIMPLE);
+                $src = mb_convert_case(mb_convert_case($src, MB_CASE_UPPER_SIMPLE), MB_CASE_LOWER_SIMPLE);
             }
-            return substr_compare($in, $search, -strlen($search), null, $caseInsensitive) === 0;
+
+            return substr_compare($in, $src, -strlen($src), null, $icase) === 0;
         }
+
         return false;
     }
 
     /**
-     * Ends with any.
+     * Check whether given input ends with any of given searches.
+     *
      * @param  string        $in
-     * @param  array<string> $searches
-     * @param  bool          $caseInsensitive
+     * @param  array<string> $srcs
+     * @param  bool          $icase
+     * @param  bool          $mbyte
      * @return bool
      * @since  4.0
      */
-    public static function endsWithAny(string $in, array $searches, bool $caseInsensitive = false,
-        bool $multiByte = false): bool
+    public static function endsWithAny(string $in, array $srcs, bool $icase = false, bool $mbyte = false): bool
     {
-        foreach ($searches as $search) {
-            if (self::endsWith($in, (string) $search, $caseInsensitive, $multiByte)) {
+        foreach ($srcs as $src) {
+            if (self::endsWith($in, (string) $src, $icase, $mbyte)) {
                 return true;
             }
         }
@@ -196,7 +193,8 @@ final class Strings extends StaticClass
     }
 
     /**
-     * Is utf.
+     * Check whether given input encoding is UTF.
+     *
      * @param  string $in
      * @param  int     $bits
      * @return bool
@@ -209,7 +207,8 @@ final class Strings extends StaticClass
     }
 
     /**
-     * Is ascii.
+     * Check whether given input encoding is ASCII.
+     *
      * @param  string $in
      * @return bool
      * @since  4.0
@@ -221,7 +220,8 @@ final class Strings extends StaticClass
     }
 
     /**
-     * Is binary.
+     * Check whether given input contains binary.
+     *
      * @param  string $in
      * @return bool
      * @since  4.0
@@ -232,7 +232,8 @@ final class Strings extends StaticClass
     }
 
     /**
-     * Is base64.
+     * Check whether given input is base64-ed.
+     *
      * @param  string $in
      * @return bool
      * @since  4.0
@@ -240,5 +241,35 @@ final class Strings extends StaticClass
     public static function isBase64(string $in): bool
     {
         return ($in && !strcmp($in, ''. base64_encode(''. base64_decode($in, true))));
+    }
+
+    /**
+     * Generate a random output by given length.
+     *
+     * @param  int  $length
+     * @param  bool $puncted
+     * @return string
+     * @throws froq\util\UtilException
+     */
+    public static function random(int $length, bool $puncted = false): string
+    {
+        if ($length < 1) {
+            throw new UtilException('Invalid length value `%s`, length must be minimun 1', $length);
+        }
+
+        $chars = ALPHABET;
+        if ($puncted) { // Add punctuation chars.
+            $chars .= '!^+%&/\(){}[]<>=*?-_|$#.:,;';
+        }
+        $charsLength = strlen($chars);
+
+        $ret = '';
+
+        srand();
+        while (strlen($ret) < $length) {
+            $ret .= $chars[rand(0, $charsLength - 1)];
+        }
+
+        return $ret;
     }
 }

@@ -1,51 +1,49 @@
 <?php
 /**
- * MIT License <https://opensource.org/licenses/mit>
- *
- * Copyright (c) 2015 Kerem Güneş
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is furnished
- * to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
+ * Copyright (c) 2015 · Kerem Güneş
+ * Apache License 2.0 · http://github.com/froq/froq-util
  */
 declare(strict_types=1);
 
-use froq\util\{Arrays, Objects};
+use froq\util\{Arrays, Objects, Numbers, Strings};
 
-// Ensure constants.
+// Load constants.
 defined('nil') || require 'sugars-constant.php';
 
 /**
  * Yes man..
  */
 function equal($a, $b, ...$c): bool {
-    return ($a == $b) || ($c && in_array($a, [$b, ...$c])); }
+    return ($a == $b) || ($c && in_array($a, [$b, ...$c]));
+}
 function equals($a, $b, ...$c): bool {
-    return ($a === $b) || ($c && in_array($a, [$b, ...$c], true)); }
+    return ($a === $b) || ($c && in_array($a, [$b, ...$c], true));
+}
 
 /**
- * Pick/pluck..
+ * Pick/pluck.
  * Loving https://docs.zephir-lang.com/0.12/en/operators#fetch
  */
-function pick(array &$array, $key, &$value = null, bool $drop = false): bool {
-    return ($value = array_pick($array, $key, null, $drop)) !== null;
+function pick(array &$array, int|string $key, &$value = null, bool $drop = false): bool {
+    return ($value = array_pick($array, $key, drop: $drop)) !== null;
 }
-function pluck(array &$array, $key, &$value = null): bool {
-    return ($value = array_pluck($array, $key, null)) !== null;
+function pluck(array &$array, int|string $key, &$value = null): bool {
+    return ($value = array_pluck($array, $key)) !== null;
+}
+
+/**
+ * Fetch/select.
+ * @alias of array_fetch(),array_select()
+ */
+function fetch(array &$array, ...$args) { return array_fetch($array, ...$args); }
+function select(array &$array, ...$args) { return array_select($array, ...$args); }
+
+/**
+ * Format for sprintf(),vsprintf().
+ */
+function format(string $in, $arg, ...$args): string {
+    $in = str_replace('%q', "'%s'", $in); // Convert special format (quoted string).
+    return is_array($arg) ? vsprintf($in, $arg) : sprintf($in, $arg, ...$args);
 }
 
 /**
@@ -53,12 +51,294 @@ function pluck(array &$array, $key, &$value = null): bool {
  * @alias of str_has(),str_has_prefix(),str_has_suffix()
  * @since 4.0
  */
-function strsrc(...$args): bool { return str_has(...$args); }        // Search.
-function strpfx(...$args): bool { return str_has_prefix(...$args); } // Search prefix.
-function strsfx(...$args): bool { return str_has_suffix(...$args); } // Search suffix.
+function strsrc(...$args) { return str_has(...$args);         } // Search.
+function strpfx(...$args) { return str_has_prefix(...$args);  } // Search prefix.
+function strsfx(...$args) { return str_has_suffix(...$args);  } // Search suffix.
 
 /**
- * Strcut (cut a string with given length).
+ * Loving shorter stuffs?
+ * @since  3.0, 5.0 Moved from froq/fun.
+ */
+function upper(string $in): string { return mb_strtoupper($in); }
+function lower(string $in): string { return mb_strtolower($in); }
+
+/**
+ * Filter an array with value/key notation.
+ *
+ * @param  array         $array
+ * @param  callable|null $func
+ * @param  bool          $keep_keys
+ * @return array
+ * @since  3.0, 5.0 Moved from common.inits.
+ */
+function filter(array $array, callable $func = null, bool $keep_keys = true): array
+{
+    return (func_num_args() == 1) ? Arrays::filter($array)
+                                  : Arrays::filter($array, $func, $keep_keys);
+}
+
+/**
+ * Map an array with value/key notation.
+ *
+ * @param  array    $array
+ * @param  callable $func
+ * @param  bool     $keep_keys
+ * @return array
+ * @since  3.0, 5.0 Moved from common.inits.
+ */
+function map(array $array, callable $func, bool $keep_keys = true): array
+{
+    return Arrays::map($array, $func, $keep_keys);
+}
+
+/**
+ * Reduce an array with value/key notation.
+ *
+ * @param  array    $array
+ * @param  any      $carry
+ * @param  callable $func
+ * @return any
+ * @since  4.0, 5.0 Moved from common.inits.
+ */
+function reduce(array $array, $carry, callable $func)
+{
+    return !is_array($carry) ? Arrays::reduce($array, $carry, $func)
+                             : Arrays::aggregate($array, $func, $carry);
+}
+
+/**
+ * Each wrapper for scoped function calls on given array or just for syntactic sugar.
+ *
+ * @param  array    &$array
+ * @param  callable  $func
+ * @return void
+ * @since  5.0
+ */
+function each(array &$array, callable $func): void
+{
+    foreach ($array as $key => &$value) {
+        $func($value, $key);
+    }
+    unset($value);
+}
+
+/**
+ * Get size/count/length of given input.
+ *
+ * @param  any $in
+ * @return int|null
+ * @since  3.0, 5.0 Moved from froq/fun.
+ */
+function size($in): int|null
+{
+    return match (true) {
+        is_string($in)    => mb_strlen($in),
+        is_countable($in) => count($in),
+        is_object($in)    => count(get_object_vars($in)),
+        default           => null // No valid input.
+    };
+}
+
+/**
+ * Concat an array or string.
+ *
+ * @param  array|string    $in
+ * @param  array|string ...$ins
+ * @return array|string
+ * @since  4.0, 5.0 Moved from froq/fun.
+ */
+function concat(array|string $in, ...$ins): array|string
+{
+    return match (true) {
+        is_array($in)  => array_append($in, ...$ins),
+        is_string($in) => $in . join('', $ins)
+    };
+}
+
+/**
+ * Pad an array or string.
+ *
+ * @param  array|string $in
+ * @param  int          $length
+ * @param  any|null     $pad
+ * @return array|string
+ * @since  5.0
+ */
+function pad(array|string $in, int $length, $pad = null): array|string
+{
+    return match (true) {
+        is_array($in)  => array_pad($in, $length, $pad),
+        is_string($in) => str_pad($in, $length, strval($pad ?? ' '))
+    };
+}
+
+/**
+ * Chunk an array or string.
+ *
+ * @param  array|string $in
+ * @param  int          $length
+ * @param  bool         $keep_keys
+ * @return array
+ * @since  5.0
+ */
+function chunk(array|string $in, int $length, bool $keep_keys = false): array
+{
+    return match (true) {
+        is_array($in)  => array_chunk($in, $length, $keep_keys),
+        is_string($in) => str_split($in, $length)
+    };
+}
+
+/**
+ * Slice an array or string.
+ *
+ * @param  array|string $in
+ * @param  int          $start
+ * @param  int|null     $end
+ * @param  bool         $keep_keys
+ * @return array|string
+ * @since  3.0, 4.0 Added back, 5.0 Moved from froq/fun.
+ */
+function slice(array|string $in, int $start, int $end = null, bool $keep_keys = false): array|string
+{
+    return match (true) {
+        is_array($in)  => array_slice($in, $start, $end, $keep_keys),
+        is_string($in) => mb_substr($in, $start, $end)
+    };
+}
+
+/**
+ * Strip a string, with RegExp (~) option.
+ *
+ * @param  string      $in
+ * @param  string|null $chars
+ * @return string
+ * @since  3.0, 5.0 Moved from froq/fun.
+ */
+function strip(string $in, string $chars = null): string
+{
+    if ($chars === null) {
+        return trim($in);
+    } else {
+        // RegExp: only ~..~ patterns accepted.
+        if ($chars[0] == '~' && strlen($chars) >= 3) {
+            $ruls = substr($chars, 1, ($pos = strrpos($chars, '~')) - 1);
+            $mods = substr($chars, $pos + 1);
+            return preg_replace(sprintf('~^%s|%s$~%s', $ruls, $ruls, $mods), '', $in);
+        }
+        return trim($in, $chars);
+    }
+}
+
+/**
+ * Split a string, with Unicode style.
+ *
+ * @param  string   $sep
+ * @param  string   $in
+ * @param  int|null $limit
+ * @param  bool     $pad
+ * @param  bool     $empty
+ * @return array
+ * @since  5.0 Moved from froq/fun.
+ */
+function split(string $sep, string $in, int $limit = null, bool $pad = true, bool $empty = false): array
+{
+    if ($sep === '') {
+        $ret = (array) preg_split('~~u', $in, -1, 1);
+        if (!$pad && $limit) { // Like str_split(), but with Unicode.
+            return array_map(fn($r) => join('', $r), array_chunk($ret, $limit));
+        }
+    } else {
+        $ret = $limit ? mb_split($sep, $in, $limit) : mb_split($sep, $in);
+        if (!$empty) { // When no empty fields wanted.
+            $ret = array_filter($ret, 'strlen');
+        }
+    }
+
+    // Plus: prevent 'undefined index ..' error.
+    if ($pad && $limit && $limit != count($ret)) {
+        $ret = array_pad($ret, $limit, null);
+    }
+
+    return $ret;
+}
+
+/**
+ * Unsplit, a fun function.
+ *
+ * @param  string $sep
+ * @param  array  $in
+ * @return string
+ * @since  3.0, 5.0 Moved from froq/fun.
+ */
+function unsplit(string $sep, array $in): string
+{
+    return join($sep, $in);
+}
+
+/**
+ * Grep, actually grabs something from given input.
+ *
+ * @param  string $in
+ * @param  string $pattern
+ * @return string|null
+ * @since  3.0, 5.0 Moved from froq/fun.
+ */
+function grep(string $in, string $pattern): string|null
+{
+    preg_match($pattern, $in, $match, PREG_UNMATCHED_AS_NULL);
+
+    return $match[1] ?? null;
+}
+
+/**
+ * Grep all, actually grabs somethings from given input.
+ *
+ * @param  string $in
+ * @param  string $pattern
+ * @param  bool   $uniform
+ * @return array<string|null>|null
+ * @since  3.15, 5.0 Moved from froq/fun.
+ */
+function grep_all(string $in, string $pattern, bool $uniform = false): array|null
+{
+    preg_match_all($pattern, $in, $matches, PREG_UNMATCHED_AS_NULL);
+
+    if (isset($matches[1])) {
+        unset($matches[0]); // Drop input.
+
+        $ret = [];
+
+        if (count($matches) == 1) {
+            $ret = $matches[1];
+        } else {
+            $ret = array_map(fn($m) => count($m) == 1 ? $m[0] : $m, $matches);
+
+            // Useful for in case '~href="(.+?)"|">(.+?)</~' etc.
+            if ($uniform) {
+                foreach ($ret as $i => &$re) {
+                    if (is_array($re)) {
+                        $re = array_filter($re, 'strlen');
+                        if (count($re) == 1) {
+                            $re = current($re);
+                        }
+                    }
+                } unset($re);
+            }
+
+            // Maintain keys (so reset to 0-N).
+            $ret = array_slice($ret, 0);
+        }
+
+        return $ret;
+    }
+
+    return null;
+}
+
+/**
+ * Cut a string with given length.
+ *
  * @param  string $str
  * @param  int    $length
  * @return string
@@ -66,53 +346,58 @@ function strsfx(...$args): bool { return str_has_suffix(...$args); } // Search s
  */
 function strcut(string $str, int $length): string
 {
-    return ($length > 0) ? substr($str, 0, $length) : substr($str, $length);
+    return ($length >= 0) ? mb_substr($str, 0, $length) : mb_substr($str, $length);
 }
 
 /**
- * Strbcut (cut a string before given search position with/without given length).
+ * Cut a string before given search position with/without given length, or return '' if no search found.
+ *
  * @param  string   $str
  * @param  string   $src
  * @param  int|null $length
+ * @param  int|null $offset
  * @param  bool     $icase
- * @return ?string
+ * @return string
  * @since  4.0
  */
-function strbcut(string $str, string $src, int $length = null, bool $icase = false): ?string
+function strbcut(string $str, string $src, int $length = null, int $offset = null, bool $icase = false): string
 {
-    $pos = !$icase ? strpos($str, $src) : stripos($str, $src);
+    $pos = !$icase ? mb_strpos($str, $src, $offset ?? 0) : mb_stripos($str, $src, $offset ?? 0);
 
     if ($pos !== false) {
-        $cut = substr($str, 0, $pos); // Before (b).
+        $cut = mb_substr($str, 0, $pos); // Before (b).
         return !$length ? $cut : strcut($cut, $length);
     }
 
-    return null; // Not found.
+    return ''; // Not found.
 }
 
 /**
- * Stracut (cut a string after given search position with/without given length).
+ * Cut a string after given search position with/without given length, or return '' if no search found.
+ *
  * @param  string   $str
  * @param  string   $src
  * @param  int|null $length
+ * @param  int|null $offset
  * @param  bool     $icase
- * @return ?string
+ * @return string
  * @since  4.0
  */
-function stracut(string $str, string $src, int $length = null, bool $icase = false): ?string
+function stracut(string $str, string $src, int $length = null, int $offset = null, bool $icase = false): string
 {
-    $pos = !$icase ? strpos($str, $src) : stripos($str, $src);
+    $pos = !$icase ? mb_strpos($str, $src, $offset ?? 0) : mb_stripos($str, $src, $offset ?? 0);
 
     if ($pos !== false) {
-        $cut = substr($str, $pos + strlen($src)); // After (a).
+        $cut = mb_substr($str, $pos + mb_strlen($src)); // After (a).
         return !$length ? $cut : strcut($cut, $length);
     }
 
-    return null; // Not found.
+    return ''; // Not found.
 }
 
 /**
- * Str has (RFC: http://wiki.php.net/rfc/str_contains).
+ * Check whether a string has given search part or not with case-intensive option.
+ *
  * @param  string $str
  * @param  string $src
  * @param  bool   $icase
@@ -121,11 +406,12 @@ function stracut(string $str, string $src, int $length = null, bool $icase = fal
  */
 function str_has(string $str, string $src, bool $icase = false): bool
 {
-    return (!$icase ? strpos($str, $src) : stripos($str, $src)) !== false;
+    return !$icase ? str_contains($str, $src) : mb_stripos($str, $src) !== false;
 }
 
 /**
- * Str has prefix (RFC: http://wiki.php.net/rfc/add_str_starts_with_and_ends_with_functions).
+ * Check whether a string has given prefix or not with case-intensive option.
+ *
  * @param  string $str
  * @param  string $src
  * @param  bool   $icase
@@ -134,11 +420,12 @@ function str_has(string $str, string $src, bool $icase = false): bool
  */
 function str_has_prefix(string $str, string $src, bool $icase = false): bool
 {
-    return substr_compare($str, $src, 0, strlen($src), $icase) === 0;
+    return !$icase ? str_starts_with($str, $src) : mb_stripos($str, $src) === 0;
 }
 
 /**
- * Str has suffix (RFC: http://wiki.php.net/rfc/add_str_starts_with_and_ends_with_functions).
+ * Check whether a string has given suffix or not with case-intensive option.
+ *
  * @param  string $str
  * @param  string $src
  * @param  bool   $icase
@@ -147,60 +434,53 @@ function str_has_prefix(string $str, string $src, bool $icase = false): bool
  */
 function str_has_suffix(string $str, string $src, bool $icase = false): bool
 {
-    return substr_compare($str, $src, -strlen($src), null, $icase) === 0;
+    return !$icase ? str_ends_with($str, $src) : mb_strripos($str, $src) === (mb_strlen($str) - mb_strlen($src));
 }
 
 /**
- * Str rand.
+ * Randomize given string, return sub-part of when length given.
+ *
  * @param  string   $str
  * @param  int|null $length
- * @return ?string
+ * @return string|null
  * @since  4.9
  */
-function str_rand(string $str, int $length = null): ?string
+function str_rand(string $str, int $length = null): string|null
 {
     if ($str == '') {
         trigger_error(sprintf('%s(): Empty string given', __function__));
         return null;
     }
 
-    $str_length = strlen($str);
+    $str_length = mb_strlen($str);
     if ($length && ($length < 1 || $length > $str_length)) {
         trigger_error(sprintf('%s(): Length must be between 1-%s or null', __function__, $str_length));
         return null;
     }
 
-    return !$length ? str_shuffle($str) : substr(str_shuffle($str), 0, $length);
+    srand(); // Ensure a new seed (@see https://wiki.php.net/rfc/object_scope_prng).
+
+    return !$length ? str_shuffle($str) : mb_substr(str_shuffle($str), 0, $length);
 }
 
 /**
  * Convert base (original source: http://stackoverflow.com/a/4668620/362780).
+ *
  * @param  int|string $in    Digits to convert.
  * @param  int|string $from  From chars or base.
  * @param  int|string $to    To chars or base.
- * @return ?string
- * @throws TypeError
+ * @return string|null
  * @since  4.0, 4.25 Derived from str_base_convert().
- * @todo   Use "union" types for arguments.
  */
-function convert_base($in, $from, $to): ?string
+function convert_base(int|string $in, int|string $from, int|string $to): string|null
 {
-    if (!is_int($in) && !is_string($in)) {
-        throw new TypeError(sprintf(
-            '%s() expects parameter 1 to be int|string, %s given', __function__, get_type($in)
-        ));
-    } elseif (!is_int($from) && !is_string($from)) {
-        throw new TypeError(sprintf(
-            '%s() expects parameter 2 to be int|string, %s given', __function__, get_type($from)
-        ));
-    } elseif (!is_int($to) && !is_string($to)) {
-        throw new TypeError(sprintf(
-            '%s() expects parameter 3 to be int|string, %s given', __function__, get_type($to)
-        ));
+    // Try to use speed/power of GMP.
+    if (extension_loaded('gmp') && is_int($from) && is_int($to)) {
+        return gmp_strval(gmp_init($in, $from), $to);
     }
 
     // Using base62 chars.
-    static $chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    static $chars = ALPHABET;
 
     if (is_int($from)) {
         if ($from < 2 || $from > 62) {
@@ -222,7 +502,7 @@ function convert_base($in, $from, $to): ?string
         return $in;
     }
 
-    [$in_length, $from_base, $to_base]
+    [$in_length, $from_base_length, $to_base_length]
         = [strlen($in), strlen($from), strlen($to)];
 
     $numbers = [];
@@ -231,16 +511,16 @@ function convert_base($in, $from, $to): ?string
     }
 
     $ret = '';
-
     $old_length = $in_length;
+
     do {
         $new_length = $div = 0;
 
         for ($i = 0; $i < $old_length; $i++) {
-            $div = ($div * $from_base) + $numbers[$i];
-            if ($div >= $to_base) {
-                $numbers[$new_length++] = ($div / $to_base) | 0;
-                $div = $div % $to_base;
+            $div = ($div * $from_base_length) + $numbers[$i];
+            if ($div >= $to_base_length) {
+                $numbers[$new_length++] = ($div / $to_base_length) | 0;
+                $div = $div % $to_base_length;
             } elseif ($new_length > 0) {
                 $numbers[$new_length++] = 0;
             }
@@ -256,14 +536,15 @@ function convert_base($in, $from, $to): ?string
 
 /**
  * Convert case.
+ *
  * @param  string      $in
  * @param  int         $case
  * @param  string|null $spliter
  * @param  string|null $joiner
- * @return ?string
+ * @return string|null
  * @since  4.26
  */
-function convert_case(string $in, int $case, string $spliter = null, string $joiner = null): ?string
+function convert_case(string $in, int $case, string $spliter = null, string $joiner = null): string|null
 {
     // Check valid cases.
     if (!in_array($case, [CASE_LOWER, CASE_UPPER, CASE_TITLE, CASE_DASH, CASE_SNAKE, CASE_CAMEL])) {
@@ -272,46 +553,112 @@ function convert_case(string $in, int $case, string $spliter = null, string $joi
     }
 
     if ($case == CASE_LOWER) {
-        return strtolower($in);
+        return mb_strtolower($in);
     } elseif ($case == CASE_UPPER) {
-        return strtoupper($in);
+        return mb_strtoupper($in);
     }
 
     // Set default split char.
-    $spliter = ($spliter === null || $spliter === '') ? ' ' : $spliter;
+    $spliter = ($spliter !== null && $spliter !== '') ? $spliter : ' ';
 
-    $ret = strtolower($in);
-
-    switch ($case) {
-        case CASE_DASH:
-            $ret = implode('-', explode($spliter, $ret));
-            break;
-        case CASE_SNAKE:
-            $ret = implode('_', explode($spliter, $ret));
-            break;
-        case CASE_CAMEL:
-            $ret = implode($joiner ?? '', array_map('ucfirst', explode($spliter, $ret)));
-            $ret = lcfirst($ret);
-            break;
-        case CASE_TITLE:
-            $ret = implode($joiner ?? $spliter, array_map('ucfirst', explode($spliter, $ret)));
-            break;
-    }
-
-    return $ret;
+    return match ($case) {
+        CASE_DASH  => implode('-', explode($spliter, mb_strtolower($in))),
+        CASE_SNAKE => implode('_', explode($spliter, mb_strtolower($in))),
+        CASE_TITLE => implode($joiner ?? $spliter, array_map(
+            fn($s) => mb_ucfirst(trim($s)),
+            explode($spliter, mb_strtolower($in))
+        )),
+        CASE_CAMEL => lcfirst(
+            implode($joiner ?? '', array_map(
+                fn($s) => mb_ucfirst(trim($s)),
+                explode($spliter, mb_strtolower($in))
+            ))
+        ),
+    };
 }
 
 /**
- * Constant exists.
+ * Check whether class 1 extends class 2.
+ *
+ * @param  string $class1
+ * @param  string $class2
+ * @param  bool   $parent_only
+ * @return bool
+ * @since  4.21
+ */
+function class_extends(string $class1, string $class2, bool $parent_only = false): bool
+{
+    return !$parent_only ? is_subclass_of($class1, $class2)
+         : ($parents = class_parents($class1)) && (current($parents) === $class2);
+}
+
+/**
+ * Get class name or short name.
+ *
  * @param  string|object $class
- * @param  string        $name
- * @param  bool          $check_scope
- * @return ?bool
+ * @param  bool          $short
+ * @return string
+ * @since  5.0
+ */
+function get_class_name(string|object $class, bool $short = false): string
+{
+    return !$short ? Objects::getName($class) : Objects::getShortName($class);
+}
+
+/**
+ * Get constants of given class/object, or return null if no such class.
+ *
+ * @param  string|object $class
+ * @param  bool          $with_names
+ * @param  bool          $scope_check
+ * @return array|null
  * @since  4.0
  */
-function constant_exists($class, string $name, bool $check_scope = true): ?bool
+function get_class_constants(string|object $class, bool $with_names = true, bool $scope_check = true): array|null
 {
-    if ($check_scope) {
+    if ($scope_check) {
+        $caller_class = debug_backtrace(2, 2)[1]['class'] ?? null;
+        if ($caller_class) {
+            $all = ($caller_class === Objects::getName($class));
+        }
+    }
+
+    return Objects::getConstantValues($class, ($all ?? !$scope_check), $with_names);
+}
+
+/**
+ * Get properties of given class/object, or return null if no such class.
+ *
+ * @param  string|object $class
+ * @param  bool          $with_names
+ * @param  bool          $scope_check
+ * @return array|null
+ * @since  4.0
+ */
+function get_class_properties(string|object $class, bool $with_names = true, bool $scope_check = true): array|null
+{
+    if ($scope_check) {
+        $caller_class = debug_backtrace(2, 2)[1]['class'] ?? null;
+        if ($caller_class) {
+            $all = ($caller_class === Objects::getName($class));
+        }
+    }
+
+    return Objects::getPropertyValues($class, ($all ?? !$scope_check), $with_names);
+}
+
+/**
+ * Check a constant exists, or return null if no such class.
+ *
+ * @param  string|object $class
+ * @param  string        $name
+ * @param  bool          $scope_check
+ * @return bool|null
+ * @since  4.0
+ */
+function constant_exists(string|object $class, string $name, bool $scope_check = true): bool|null
+{
+    if ($scope_check) {
         $caller_class = debug_backtrace(2, 2)[1]['class'] ?? null;
         if ($caller_class) {
             return ($caller_class === Objects::getName($class))
@@ -324,64 +671,8 @@ function constant_exists($class, string $name, bool $check_scope = true): ?bool
 }
 
 /**
- * Get class constants.
- * @param  string|object $class
- * @param  bool          $with_names
- * @param  bool          $check_scope
- * @return ?array
- * @since  4.0
- */
-function get_class_constants($class, bool $with_names = true, bool $check_scope = true): ?array
-{
-    if ($check_scope) {
-        $caller_class = debug_backtrace(2, 2)[1]['class'] ?? null;
-        if ($caller_class) {
-            $all = ($caller_class === Objects::getName($class));
-        }
-    }
-
-    return Objects::getConstantValues($class, $all ?? false, $with_names);
-}
-
-/**
- * Get class properties.
- * @param  string|object $class
- * @param  bool          $with_names
- * @param  bool          $check_scope
- * @return ?array
- * @since  4.0
- */
-function get_class_properties($class, bool $with_names = true, bool $check_scope = true): ?array
-{
-    if ($check_scope) {
-        $caller_class = debug_backtrace(2, 2)[1]['class'] ?? null;
-        if ($caller_class) {
-            $all = ($caller_class === Objects::getName($class));
-        }
-    }
-
-    return Objects::getPropertyValues($class, $all ?? false, $with_names);
-}
-
-/**
- * Class extends.
- * @param  string $class1
- * @param  string $class2
- * @param  bool   $parent_only
- * @return bool
- * @since  4.21
- */
-function class_extends(string $class1, string $class2, bool $parent_only = false): bool
-{
-    if (!$parent_only) {
-        return is_subclass_of($class1, $class2);
-    }
-
-    return ($parents = class_parents($class1)) && (current($parents) === $class2);
-}
-
-/**
- * Get type (RFC: http://wiki.php.net/rfc/get_debug_type).
+ * Get type with/without scalars option.
+ *
  * @param  any  $var
  * @param  bool $scalars
  * @return string
@@ -389,32 +680,15 @@ function class_extends(string $class1, string $class2, bool $parent_only = false
  */
 function get_type($var, bool $scalars = false): string
 {
-    if (is_object($var)) {
-        $ret = get_class($var);
-        // Anonymous class.
-        if ($pos = strpos($ret, "\0")) {
-            $ret = substr($ret, 0, $pos);
-        }
-    } else {
-        static $scalars_array   = ['int', 'float', 'string', 'bool'];
-        static $translate_array = ['integer' => 'int', 'double' => 'float', 'boolean' => 'bool'];
-
-        $ret = strtr(strtolower(gettype($var)), $translate_array);
-
-        if ($scalars && in_array($ret, $scalars_array)) {
-            $ret = 'scalar';
-        } elseif ($ret == 'resource (closed)') {
-            $ret = 'resource-closed';
-        } elseif ($ret == 'unknown type') {
-            $ret = 'unknown';
-        }
+    if ($scalars && is_scalar($var)) {
+        return 'scalar';
     }
-
-    return $ret;
+    return get_debug_type($var);
 }
 
 /**
- * Get error.
+ * Get last error if exists, by field when given.
+ *
  * @param  string|null $field
  * @return any
  * @since  4.17
@@ -426,14 +700,16 @@ function get_error(string $field = null)
 }
 
 /**
- * Get uniqid.
+ * Get a uniq-id with/without length & base options.
+ *
  * @param  int  $length
  * @param  int  $base
- * @param  bool $use_hrtime
- * @return ?string
+ * @param  bool $hrtime
+ * @param  bool $upper
+ * @return string|null
  * @since  4.0
  */
-function get_uniqid(int $length = 14, int $base = 16, bool $use_hrtime = false): ?string
+function get_uniqid(int $length = 14, int $base = 16, bool $hrtime = false, bool $upper = false): string|null
 {
     if ($length < 14) {
         trigger_error(sprintf('%s(): Invalid length, min=14', __function__));
@@ -445,10 +721,10 @@ function get_uniqid(int $length = 14, int $base = 16, bool $use_hrtime = false):
     }
 
     // Grab 14-length hex from uniqid() or map to hex hrtime() stuff.
-    if (!$use_hrtime) {
-        $id = strstr(uniqid('', true), '.', true);
+    if (!$hrtime) {
+        $id = explode('.', uniqid('', true))[0];
     } else {
-        $id = join('', array_map('dechex', hrtime()));
+        $id = implode('', array_map('dechex', hrtime()));
     }
 
     $ret = $id;
@@ -462,24 +738,28 @@ function get_uniqid(int $length = 14, int $base = 16, bool $use_hrtime = false):
     }
 
     // Pad if needed.
-    while (strlen($ret) < $length) {
-        $ret .= get_random_uniqid(1, $base, false);
+    $ret_length = strlen($ret);
+    if ($ret_length < $length) {
+        $ret .= suid($length - $ret_length, $base);
     }
 
-    return $ret;
+    $upper && $ret = strtoupper($ret);
+
+    return strcut($ret, $length);
 }
 
 /**
- * Get random uniqid.
+ * Get a random uniq-id with/without length & base options.
+ *
  * @param  int  $length
  * @param  int  $base
- * @param  bool $check_length @internal
- * @return ?string
+ * @param  bool $upper
+ * @return string|null
  * @since  4.0
  */
-function get_random_uniqid(int $length = 14, int $base = 16, bool $check_length = true): ?string
+function get_random_uniqid(int $length = 14, int $base = 16, bool $upper = false): string|null
 {
-    if ($length < 14 && $check_length) {
+    if ($length < 14) {
         trigger_error(sprintf('%s(): Invalid length, min=14', __function__));
         return null;
     }
@@ -491,97 +771,58 @@ function get_random_uniqid(int $length = 14, int $base = 16, bool $check_length 
     $ret = '';
 
     while (strlen($ret) < $length) {
-        $id = bin2hex(random_bytes(1));
+        $id = bin2hex(random_bytes(3));
 
         // Convert non-hex ids.
-        $ret .= ($base == 16) ? $id
-              : convert_base($id, 16, $base);
+        $ret .= ($base == 16) ? $id : convert_base($id, 16, $base);
     }
 
-    // Crop if needed (usually 1 char only).
-    $ret = strcut($ret, $length);
+    $upper && $ret = strtoupper($ret);
 
-    return $ret;
+    return strcut($ret, $length);
 }
 
 /**
  * Get request id.
+ *
  * @return string
  * @since  4.0
  */
 function get_request_id(): string
 {
-    $parts = explode('.', uniqid('', true));
+    $parts   = explode('.', utime(true) .'.'. ip2long($_SERVER['SERVER_ADDR'] ?? ''));
+    $parts[] = $_SERVER['SERVER_PORT'] ?? 0;
+    $parts[] = $_SERVER['REMOTE_PORT'] ?? 0;
 
-    // Add/use an ephemeral number if no port (~$ cat /proc/sys/net/ipv4/ip_local_port_range).
-    $parts[2] = ($_SERVER['REMOTE_PORT'] ?? rand(32768, 60999));
-
-    return vsprintf('%014s-%07x-%04x', $parts);
+    return join('-', array_map(fn($p) => dechex((int) $p), $parts));
 }
 
 /**
- * Get temporary directory.
- * @param  string|null $subdir
- * @return string
+ * Get real path of given path.
+ *
+ * @param  string $path
+ * @param  bool   $check
+ * @param  bool   $check_file
+ * @return string|null
  * @since  4.0
  */
-function get_temporary_directory(string $subdir = null): string
+function get_real_path(string $path, bool $check = false, bool $check_file = false): string|null
 {
-    $dir = sys_get_temp_dir() . __dirsep .'froq-temporary'. (
-        $subdir ? __dirsep . trim($subdir, __dirsep) : ''
-    );
-
-    is_dir($dir) || mkdir($dir, 0755, true);
-
-    return __dirsep . trim($dir, __dirsep);
-}
-
-/**
- * Get cache directory.
- * @param  string|null $subdir
- * @return string
- * @since  4.0
- */
-function get_cache_directory(string $subdir = null): string
-{
-    $dir = sys_get_temp_dir() . __dirsep . 'froq-cache'
-         . ($subdir ? __dirsep . trim($subdir, __dirsep) : '');
-
-    is_dir($dir) || mkdir($dir, 0755, true);
-
-    return __dirsep . trim($dir, __dirsep);
-}
-
-/**
- * Get real user.
- * @return ?string
- * @since  4.0
- */
-function get_real_user(): ?string
-{
-    try {
-        return posix_getpwuid(posix_geteuid())['name'] ?? null;
-    } catch (Error $e) {
-        return getenv('USER') ?: getenv('USERNAME') ?: null;
-    }
-}
-
-/**
- * Get real path.
- * @param string $target
- * @param bool   $strict
- * @return ?string
- * @since  4.0
- */
-function get_real_path(string $target, bool $strict = false): ?string
-{
-    $target = trim($target);
-    if (!$target) {
+    $path = trim($path);
+    if (!$path) {
         return null;
+    }
+    if ($rpath = realpath($path)) {
+        return $rpath;
+    }
+
+    // Make path "foo" => "./foo" so prevent invalid returns.
+    if (!strsrc($path, __dirsep)) {
+        $path = '.' . __dirsep . $path;
     }
 
     $ret = '';
-    $exp = explode(__dirsep, $target);
+    $exp = explode(__dirsep, $path);
 
     foreach ($exp as $i => $cur) {
         $cur = trim($cur);
@@ -594,9 +835,9 @@ function get_real_path(string $target, bool $strict = false): ?string
                     $file = getcwd(); // Fallback.
 
                     foreach (debug_backtrace(0) as $trace) {
-                        // Search until finding the right target argument (sadly seems no way else
+                        // Search until finding the right path argument (sadly seems no way else
                         // for that when call stack is chaining from a function to another function).
-                        if (empty($trace['args'][0]) || $trace['args'][0] != $target) {
+                        if (empty($trace['args'][0]) || $trace['args'][0] != $path) {
                             break;
                         }
 
@@ -619,32 +860,77 @@ function get_real_path(string $target, bool $strict = false): ?string
         $ret .= __dirsep . $cur; // Append current.
     }
 
-    if ($strict && !file_exists($ret)) {
-        $ret = null;
+    // Validate file/directory or file only existence.
+    if ($check) {
+        $ok = $check_file ? is_file($path) : file_exists($ret);
+        $ok || $ret = null;
     }
 
     return $ret;
 }
 
 /**
- * Get trace (get a bit detailed trace with default options, limit & index option).
- * @param  int|null $options
- * @param  int|null $limit
- * @param  int|null $index
- * @return ?array
+ * Get path info of given path.
+ *
+ * @param  string          $path
+ * @param  string|int|null $component
+ * @return string|array|null
+ * @since  5.0
+ */
+function get_path_info(string $path, string|int $component = null): string|array|null
+{
+    $path = get_real_path($path);
+    if (!$path) {
+        return null;
+    }
+    if (!$info = pathinfo($path)) {
+        return null;
+    }
+
+    $ret = ['path' => $path] + array_map(fn($v) => strlen($v) ? $v : null, $info);
+
+    $ret['filename']  = file_name($path, false);
+    $ret['extension'] = file_extension($path, false);
+
+    if ($component) {
+        if (is_string($component)) {
+            $ret = $ret[$component] ?? null;
+        } else {
+            $ret = match ($component) {
+                PATHINFO_DIRNAME  => $ret['dirname'],  PATHINFO_BASENAME  => $ret['basename'],
+                PATHINFO_FILENAME => $ret['filename'], PATHINFO_EXTENSION => $ret['extension'],
+                default           => null,
+            };
+        }
+    }
+
+    return $ret;
+}
+
+/**
+ * Get a bit detailed trace with default options, limit, index and field options.
+ *
+ * @param  int|null    $options
+ * @param  int|null    $limit
+ * @param  int|null    $index
+ * @param  string|null $field
+ * @return any|null
  * @since  4.0
  */
-function get_trace(int $options = null, int $limit = null, int $index = null): ?array
+function get_trace(int $options = null, int $limit = null, int $index = null, string $field = null)
 {
     $trace = debug_backtrace($options ?? 0, $limit ? $limit + 1 : 0);
     array_shift($trace); // Drop self.
 
     foreach ($trace as $i => &$cur) {
         $cur += [
-            'caller'   => null,
-            'callee'   => $cur['function'] ?? null,
-            'callPath' => $cur['file'] .':'. $cur['line'],
+            'caller' => null,
+            'callee' => $cur['function'] ?? null,
         ];
+
+        if (isset($cur['file'], $cur['line'])) {
+            $cur['callPath'] = $cur['file'] . ':' . $cur['line'];
+        }
 
         if (isset($cur['class'])) {
             $cur['method']     = $cur['function'];
@@ -656,45 +942,86 @@ function get_trace(int $options = null, int $limit = null, int $index = null): ?
         }
     }
 
-    return is_null($index) ? $trace : $trace[$index] ?? null;
+    return is_null($index) ? $trace : $trace[$index][$field] ?? $trace[$index] ?? null;
 }
 
 /**
- * Tmp (gets system temporary directory).
+ * Get system temporary directory.
+ *
  * @return string
  * @since  4.0
  */
 function tmp(): string
 {
-    return dirname(get_temporary_directory());
+    return sys_get_temp_dir();
 }
 
 /**
- * Tmpdir (creates a folder in system temporary directory).
+ * Create a folder in system temporary directory.
+ *
  * @param  string|null $prefix
  * @param  int         $mode
- * @return string
- * @since  4.0
+ * @return string|null
+ * @since  5.0
  */
-function tmpdir(string $prefix = null, int $mode = 755): string
+function tmpdir(string $prefix = null, int $mode = 0755): string|null
 {
-    $dir = ( // Eg: "/tmp/froq-5f858f253527c91a4006".
-        tmp() . __dirsep . ($prefix ?? 'froq-') . get_uniqid(20)
-    );
+    // Prefix may becomes subdir here.
+    $dir = tmp() . __dirsep . ($prefix ?? 'froq-') . suid();
 
-    is_dir($dir) || mkdir($dir, $mode);
-
-    return $dir;
+    return mkdir($dir, $mode, true) ? $dir : null;
 }
 
 /**
- * Mkfile (creates a file with given path).
+ * Create a file in system temporary directory.
+ *
+ * @param  string|null $prefix
+ * @param  int         $mode
+ * @return string|null
+ * @since  5.0
+ */
+function tmpnam(string $prefix = null, int $mode = 0644): string|null
+{
+    // Prefix may becomes subdir here.
+    $nam = tmp() . __dirsep . ($prefix ?? 'froq-') . suid();
+
+    return mkfile($nam, $mode, true) ? $nam : null;
+}
+
+/**
+ * Check whether given directory is in temporary directory.
+ *
+ * @param  string $dir
+ * @return bool
+ * @since  5.0
+ */
+function is_tmpdir(string $dir): bool
+{
+    return is_dir($dir) && strpfx($dir, tmp());
+}
+
+/**
+ * Check whether given file is in temporary directory.
+ *
+ * @param  string $nam
+ * @return bool
+ * @since  5.0
+ */
+function is_tmpnam(string $nam): bool
+{
+    return is_file($nam) && strpfx($nam, tmp());
+}
+
+/**
+ * Create a file with given file path.
+ *
  * @param  string  $file
  * @param  int     $mode
- * @return ?bool
+ * @param  bool    $tmp @internal
+ * @return bool|null
  * @since  4.0
  */
-function mkfile(string $file, int $mode = 0644): ?bool
+function mkfile(string $file, int $mode = 0644, bool $tmp = false): bool|null
 {
     $file = trim($file);
     if (!$file) {
@@ -702,33 +1029,33 @@ function mkfile(string $file, int $mode = 0644): ?bool
         return null;
     }
 
-    $file = get_real_path($file);
+    // Some speed for internal tmp calls.
+    if (!$tmp) {
+        $file = get_real_path($file);
 
-    if (is_dir($file)) {
-        trigger_error(sprintf(
-            '%s(): Cannot create %s, it is a directory', __function__, $file
-        ));
-        return null;
-    } elseif (is_file($file)) {
-        trigger_error(sprintf(
-            '%s(): Cannot create %s, it is already exists', __function__, $file
-        ));
-        return null;
+        if (is_dir($file)) {
+            trigger_error(sprintf('%s(): Cannot create %s, it is a directory', __function__, $file));
+            return null;
+        } elseif (is_file($file)) {
+            trigger_error(sprintf('%s(): Cannot create %s, it is already exist', __function__, $file));
+            return null;
+        }
     }
 
-    $ok = is_dir(dirname($file)) || mkdir(dirname($file), 0755, true);
+    // Ensure directory.
+    is_dir(dirname($file)) || mkdir(dirname($file), 0755, true);
 
-    return $mode ? ($ok && touch($file) && chmod($file, $mode))
-                 : ($ok && touch($file));
+    return touch($file) && chmod($file, $mode);
 }
 
 /**
- * Rmfile (removes a file).
+ * Remove a file.
+ *
  * @param  string $file
- * @return ?bool
+ * @return bool|null
  * @since  4.0
  */
-function rmfile(string $file): ?bool
+function rmfile(string $file): bool|null
 {
     $file = trim($file);
     if (!$file) {
@@ -739,9 +1066,7 @@ function rmfile(string $file): ?bool
     $file = get_real_path($file);
 
     if (is_dir($file)) {
-        trigger_error(sprintf(
-            '%s(): Cannot remove %s, it is a directory', __function__, $file
-        ));
+        trigger_error(sprintf('%s(): Cannot remove %s, it is a directory', __function__, $file));
         return null;
     }
 
@@ -749,67 +1074,76 @@ function rmfile(string $file): ?bool
 }
 
 /**
- * Mkdirtemp (creates a folder in system temporary directory).
- * @alias of tmpdir().
- * @since 4.0
+ * Create a folder in system temporary directory.
+ *
+ * @param  string|null $prefix
+ * @param  int         $mode
+ * @param  bool        $froq
+ * @since  4.0
+ * @return string|null
  */
-function mkdirtemp(...$args): ?string
+function mkdirtemp(string $prefix = null, int $mode = 0755, bool $froq = false): string|null
 {
-    return tmpdir(...$args);
+    // Make froq subdir.
+    $froq && $prefix = 'froq/' . $prefix;
+
+    return tmpdir($prefix, $mode);
 }
 
 /**
- * Rmdirtemp (removes a folder from system temporary directory).
+ * Remove a folder from system temporary directory.
+ *
  * @param  string $dir
- * @return ?bool
- * @since 4.0
+ * @return bool|null
+ * @since  4.0
  */
-function rmdirtemp(string $dir): ?bool
+function rmdirtemp(string $dir): bool|null
 {
-    if (dirname($dir) != tmp()) {
+    if (!is_tmpdir($dir)) {
         trigger_error(sprintf('%s(): Cannot remove a directory which is outside of %s directory',
             __function__, tmp()));
         return null;
     }
 
     // Clean inside but not recursive.
-    foreach (glob($dir .'/*') as $file) {
-        unlink($file);
+    if (is_dir($dir)) {
+        foreach (glob($dir . '/*') as $file) {
+            unlink($file);
+        }
     }
 
     return is_dir($dir) && rmdir($dir);
 }
 
 /**
- * Mkfiletemp (creates a file in temporary directory).
- * @param  string|null $extension
+ * Create a file in temporary directory.
+ *
+ * @param  string|null $prefix
  * @param  int         $mode
- * @param  bool        $froq_temp
- * @return ?string
+ * @param  bool        $froq
+ * @return string|null
  * @since  4.0
  */
-function mkfiletemp(string $extension = null, int $mode = 644, bool $froq_temp = true): ?string
+function mkfiletemp(string $prefix = null, int $mode = 0644, bool $froq = false): string|null
 {
-    $file = ( // Eg: "/tmp/froq-temporary/5f858f253527c91a4006".
-        ($froq_temp ? get_temporary_directory() : dirname(get_temporary_directory()))
-        . __dirsep . get_uniqid(20)
-        . ($extension ? '.'. trim($extension, '.') : '')
-    );
+    // Make froq subdir.
+    $froq && $prefix = 'froq/' . $prefix;
 
-    return mkfile($file, $mode) ? $file : null;
+    return tmpnam($prefix, $mode);
 }
 
 /**
- * Rmfiletemp (removes a file from in temporary directory).
+ * Remove a file from in temporary directory.
+ *
  * @param  string $file
- * @return ?bool
+ * @return bool|null
  * @since  4.0
  */
-function rmfiletemp(string $file): ?bool
+function rmfiletemp(string $file): bool|null
 {
-    if (!strpfx($file, tmp())) {
+    if (!is_tmpnam($file)) {
         trigger_error(sprintf('%s(): Cannot remove a file which is outside of %s directory',
-            __function__));
+            __function__, tmp()));
         return null;
     }
 
@@ -817,98 +1151,362 @@ function rmfiletemp(string $file): ?bool
 }
 
 /**
- * Fopentemp (opens a temporary file).
- * @return ?resource
- * @since  4.0
+ * Read all contents a file handle without modifing seek offset.
+ *
+ * @alias of file_read_stream()
+ * @since 5.0
  */
-function fopentemp()
+function freadall(&$fp): string|null
 {
-    return tmpfile() ?: null;
+    return file_read_stream($fp);
 }
 
 /**
- * Frewind (rewinds the file pointer).
- * @param  resource &$fp
- * @return bool
- * @since  4.0
+ * Reset a file handle contents & set seek position to top.
+ *
+ * @alias of stream_set_contents()
+ * @since 4.0
  */
-function frewind(&$fp): bool
+function freset(&$fp, string $contents): int|null
 {
-    return rewind($fp);
+    return stream_set_contents($fp, $contents);
 }
 
 /**
- * Freset (resets the file pointer contents & position).
- * @param  resource &$fp
- * @param  string    $contents
- * @return bool
- * @since  4.0
- */
-function freset(&$fp, string $contents): bool
-{
-    rewind($fp);
-
-    return ftruncate($fp, 0) && fwrite($fp, $contents) && !fseek($fp, 0);
-}
-
-/**
- * Fmeta (gets the file pointer metadata).
+ * Get a file handle metadata.
+ *
  * @param  resource $fp
- * @return array
+ * @return array|null
  * @since  4.0
  */
-function fmeta($fp): array
+function fmeta($fp): array|null
 {
-    return stream_get_meta_data($fp);
+    return stream_get_meta_data($fp) ?: null;
 }
 
 /**
- * Finfo (gets the file pointer statistics & metadata).
+ * Get a file handle size.
+ *
  * @param  resource $fp
- * @return array
- * @since  4.0
+ * @return int|null
+ * @since  5.0
  */
-function finfo($fp): array
+function fsize($fp): int|null
 {
-    return fstat($fp) + ['meta' => stream_get_meta_data($fp)];
+    return fstat($fp)['size'] ?? null;
 }
 
 /**
- * Stream set contents (resets the handle contents & position).
- * @param  resource &$handle
- * @param  string    $contents
- * @return bool
- * @throws TypeError
- * @since  4.0
+ * Get a directory size.
+ *
+ * @param  string $dir
+ * @param  bool   $deep
+ * @return int|null
+ * @since  5.0
  */
-function stream_set_contents(&$handle, string $contents): bool
+function dirsize(string $dir, bool $deep = true): int|null
 {
-    if (!is_resource($handle) || get_resource_type($handle) != 'stream') {
-        throw new TypeError(sprintf(
-            '%s() expects parameter 1 to be resource, %s given', __function__, get_type($handle)
-        ));
+    $dir = realpath($dir);
+    if (!$dir) {
+        return null;
     }
 
-    // Since handle stat size also pointer position is not changing even after ftruncate() for
-    // files (not "php://temp" etc), we rewind the handle.
-    rewind($handle);
+    $ret = 0;
 
-    return ftruncate($handle, 0) // Empty.
-        && fwrite($handle, $contents) && !fseek($handle, 0); // Write & rewind.
+    foreach (glob(chop($dir, '/') . '/*') as $path) {
+        is_file($path) && $ret += filesize($path);
+        if ($deep) {
+            is_dir($path) && $ret += dirsize($path, $deep);
+        }
+    }
+
+    return $ret;
 }
 
 /**
- * Udate (inits a DateTime object by given "when" option & with timezone if given or default timezone).
- * @param  int|float|string $when
- * @param  string|null      $where
+ * Reset a file/stream handle contents setting seek position to top.
+ *
+ * @param  resource &$handle
+ * @param  string    $contents
+ * @return int|null
+ * @since  4.0
+ */
+function stream_set_contents(&$handle, string $contents): int|null
+{
+    // Since handle stat size also pointer position is not changing even after ftruncate() for
+    // files (not "php://temp" etc), we rewind the handle. Without this, stats won't be resetted!
+    rewind($handle);
+
+    // Empty, write & rewind.
+    ftruncate($handle, 0);
+    $ret = fwrite($handle, $contents);
+    rewind($handle);
+
+    return ($ret !== false) ? $ret : null;
+}
+
+/**
+ * Create a file, optionally a temporary file.
+ *
+ * @param  string $file
+ * @param  int    $mode
+ * @param  bool   $tmp
+ * @return string|null
+ * @since  4.0
+ */
+function file_create(string $file, int $mode = 0644, bool $tmp = false): string|null
+{
+    // Check tmp directive.
+    if ($file == '@tmp') {
+        [$file, $tmp] = [null, true];
+    }
+
+    return $tmp ? mkfiletemp($file, $mode) : (
+        mkfile($file, $mode) ? $file : null
+    );
+}
+
+/**
+ * Create a temporary file.
+ *
+ * @alias of mkfiletemp()
+ * @since 4.0
+ */
+function file_create_temp(...$args)
+{
+    return mkfiletemp(...$args);
+}
+
+/**
+ * Remove a file.
+ *
+ * @alias of rmfile()
+ * @since 4.0
+ */
+function file_remove(...$args)
+{
+    return rmfile(...$args);
+}
+
+/**
+ * Write a file contents.
+ *
+ * @alias of file_put_contents()
+ * @since 4.0
+ */
+function file_write(...$args)
+{
+    $ret = file_put_contents(...$args);
+
+    return ($ret !== false) ? $ret : null;
+}
+
+/**
+ * Read a file contents.
+ *
+ * @params ... $args Same as file_get_contents().
+ * @since  4.0
+ */
+function file_read(...$args): string|null
+{
+    $ret = file_get_contents(...$args);
+
+    return ($ret !== false) ? $ret : null;
+}
+
+/**
+ * Read a file contents as base64-encoded.
+ *
+ * @params ... $args Same as file_get_contents().
+ * @since  5.0
+ */
+function file_read_base64(...$args): string|null
+{
+    $ret = file_get_contents(...$args);
+
+    return ($ret !== false) ? base64_encode($ret) : null;
+}
+
+/**
+ * Read a file output (buffer) contents.
+ *
+ * @param  string     $file
+ * @param  array|null $file_data
+ * @return string|null
+ * @since  4.0
+ */
+function file_read_output(string $file, array $file_data = null): string|null
+{
+    if (!is_file($file)) {
+        trigger_error(sprintf('%s(): No file exists such %s', __function__, $file));
+        return null;
+    } elseif (!strsfx($file, '.php')) {
+        trigger_error(sprintf('%s(): Cannot include non-PHP file such %s', __function__, $file));
+        return null;
+    }
+
+    // Data, used in file.
+    $file_data && extract($file_data);
+
+    ob_start();
+    include $file;
+    return ob_get_clean();
+}
+
+/**
+ * Read a file stream contents without modifing seek position.
+ *
+ * @param  resource &$handle
+ * @return string|null
+ * @since  5.0
+ */
+function file_read_stream(&$handle): string|null
+{
+    $pos = ftell($handle);
+    $ret = stream_get_contents($handle, -1, 0);
+    fseek($handle, $pos);
+
+    return ($ret !== false) ? $ret : null;
+}
+
+/**
+ * Set a file contents, but no append.
+ *
+ * @param  string $file
+ * @param  string $contents
+ * @param  int    $flags
+ * @return int|null
+ * @since  4.0
+ */
+function file_set_contents(string $file, string $contents, int $flags = 0): int|null
+{
+    // Because, setting entire file contents.
+    if ($flags) $flags &= ~FILE_APPEND;
+
+    $ret = file_put_contents($file, $contents, $flags);
+
+    return ($ret !== false) ? $ret : null;
+}
+
+/**
+ * Aliases.
+ */
+function filepath(...$args) { return file_path(...$args); }
+function filename(...$args) { return file_name(...$args); }
+function filemime(...$args) { return file_mime(...$args); }
+
+/**
+ * Get a file path.
+ *
+ * @alias of get_real_path()
+ * @since 4.0
+ */
+function file_path(...$args)
+{
+    return get_real_path(...$args);
+}
+
+/**
+ * Get file name, not base name.
+ *
+ * @param  string $file
+ * @param  bool   $with_ext
+ * @return string|null
+ * @since  4.0
+ */
+function file_name(string $file, bool $with_ext = false): string|null
+{
+    // A directory is not a file.
+    if (substr($file, -1) === __dirsep) {
+        return null;
+    }
+
+    // Function basename() wants an explicit suffix to remove it from name,
+    // but using just a boolean here is more sexy..
+    $ret = basename($file);
+
+    if ($ret == '.' || $ret == '..') {
+        return null;
+    }
+
+    if ($ret && !$with_ext && ($ext = file_extension($file, true))) {
+        $ret = substr($ret, 0, -strlen($ext));
+    }
+
+    return $ret ?: null;
+}
+
+/**
+ * Get file mime.
+ *
+ * @param  string $file
+ * @return string|null
+ * @since  4.0
+ */
+function file_mime(string $file): string|null
+{
+    $mime = mime_content_type($file) ?: null;
+
+    if (!$mime) {
+        // Try with extension.
+        $extension = file_extension($file, false);
+        if ($extension) {
+            static $cache; // For some speed..
+            if (empty($cache[$extension])) {
+                foreach (require 'statics/mime.php' as $type => $extensions) {
+                    if (in_array($extension, $extensions, true)) {
+                        return ($cache[$extension] = $type);
+                    }
+                }
+            }
+        }
+    }
+
+    return $mime;
+}
+
+/**
+ * Get file extension.
+ *
+ * @param  string $file
+ * @param  bool   $with_dot
+ * @param  bool   $lower
+ * @return string|null
+ * @since  4.0
+ */
+function file_extension(string $file, bool $with_dot = false, bool $lower = true): string|null
+{
+    $info = pathinfo($file);
+
+    // Function pathinfo() returns ".foo" for example "/some/path/.foo" and
+    // if $with_dot false then this function return ".", no baybe!
+    if (empty($info['filename']) || empty($info['extension'])) {
+        return null;
+    }
+
+    $ret = strrchr($info['basename'], '.');
+
+    if ($ret) {
+        $lower && $ret = strtolower($ret);
+        if (!$with_dot) {
+            $ret = ltrim($ret, '.');
+        }
+    }
+
+    return $ret ?: null;
+}
+
+/**
+ * Init a DateTime object with/without given when option & with/without timezone if given or default timezone.
+ *
+ * @param  int|float|string|null $when
+ * @param  string|null           $where
  * @return DateTime
- * @throws TypeError
  * @since  4.25
  */
-function udate($when = null, string $where = null): DateTime
+function udate(int|float|string $when = null, string $where = null): DateTime
 {
-    $when ??= '';
-    $where ??= date_default_timezone_get();
+    $when ??= ''; $where ??= date_default_timezone_get();
 
     switch (get_type($when)) {
         case 'int': // Eg: 1603339284
@@ -922,79 +1520,80 @@ function udate($when = null, string $where = null): DateTime
         case 'string': // Eg: 2012-09-12 23:42:53
             $date = new DateTime($when, new DateTimeZone($where));
             break;
-        default:
-            throw new TypeError(sprintf(
-                'Argument $when must be int|float|string or null, %s given', get_type($when)
-            ));
     }
 
     return $date;
 }
 
 /**
- * Utime (gets microtime as float or string).
- * @param  bool $as_string
+ * Get current microtime (float or string).
+ *
+ * @param  bool $string
  * @return float|string
  * @since  4.0
  */
-function utime(bool $as_string = false)
+function utime(bool $string = false): float|string
 {
-    return !$as_string ? utimes()[2] : utimes()[3];
+    $time = microtime(true);
+
+    return $string ? sprintf('%.6F', $time): $time;
 }
 
 /**
- * Utimes (gets time, microtime, time + microtime & time + microtime string).
- * @return array
- * @since  4.0
+ * Get current microtime (high-resolution).
+ *
+ * @param  string|null $where
+ * @return int
+ * @since  5.0
  */
-function utimes(): array
+function ustime(string $where = null): int
 {
-    sscanf(microtime(), '%f %d', $msec, $sec);
+    $date = udate(utime(), $where);
 
-    // This will lost its precision (https://php.net/types.float).
-    $usec = round($sec + $msec, 6);
-
-    return [$sec, $msec, $usec, sprintf('%.6F', $usec)];
+    return (int) $date->format('Uu');
 }
 
 /**
- * Strtoitime (gets an interval time by given format).
- * @param  string   $format
- * @param  int|null $time
- * @return ?int
+ * Get an interval by given format.
+ *
+ * @param  string          $format
+ * @param  string|int|null $time
+ * @return int
  * @since  4.0
  */
-function strtoitime(string $format, int $time = null): ?int
+function strtoitime(string $format, string|int $time = null): int
 {
     // Eg: "1 day" or "1D" (instead "60*60*24" or "86400").
     if (preg_match_all('~([+-]?\d+)([smhDMY])~', $format, $matches)) {
         $format_list = null;
-
         [, $numbers, $formats] = $matches;
+
         foreach ($formats as $i => $format) {
-            switch ($format) {
-                case 's': $format_list[] = $numbers[$i] .' second'; break;
-                case 'm': $format_list[] = $numbers[$i] .' minute'; break;
-                case 'h': $format_list[] = $numbers[$i] .' hour';   break;
-                case 'D': $format_list[] = $numbers[$i] .' day';    break;
-                case 'M': $format_list[] = $numbers[$i] .' month';  break;
-                case 'Y': $format_list[] = $numbers[$i] .' year';   break;
-            }
+            $format_list[] = match ($format) {
+                's' => $numbers[$i] . ' second',
+                'm' => $numbers[$i] . ' minute',
+                'h' => $numbers[$i] . ' hour',
+                'D' => $numbers[$i] . ' day',
+                'M' => $numbers[$i] . ' month',
+                'Y' => $numbers[$i] . ' year',
+            };
         }
 
         // Update format.
-        $format_list && (
-            $format = join(' ', $format_list)
-        );
+        $format_list && $format = join(' ', $format_list);
     }
 
-    $time = $time ?? time();
+    $time ??= time();
+    if (is_string($time)) {
+        $time = strtotime($time);
+    }
 
     return strtotime($format, $time) - $time;
 }
 
 /**
- * Preg test (perform a regular expression search returning a bool result).
+ * Perform a regular expression search returning a bool result.
+ *
  * @param  string $pattern
  * @param  string $subject
  * @return bool
@@ -1006,7 +1605,8 @@ function preg_test(string $pattern, string $subject): bool
 }
 
 /**
- * Preg remove (perform a regular expression search and remove).
+ * Perform a regular expression search & remove.
+ *
  * @param  string|array  $pattern
  * @param  string|array  $subject
  * @param  int|null      $limit
@@ -1014,11 +1614,11 @@ function preg_test(string $pattern, string $subject): bool
  * @return string|array|null
  * @since  4.0
  */
-function preg_remove($pattern, $subject, int $limit = null, int &$count = null)
+function preg_remove(string|array $pattern, string|array $subject, int $limit = null, int &$count = null): string|array|null
 {
     if (is_string($pattern)) {
         $replacement = '';
-    } elseif (is_array($pattern)) {
+    } else {
         $replacement = array_fill(0, count($pattern), '');
     }
 
@@ -1026,20 +1626,20 @@ function preg_remove($pattern, $subject, int $limit = null, int &$count = null)
 }
 
 /**
- * Array clean (cleans given array filtering/dropping non-empty values).
+ * Clean given array filtering non-empty values.
+ *
  * @param  array $array
  * @return array
  * @since  4.0
  */
 function array_clean(array $array): array
 {
-    return array_filter($array, function ($value) {
-        return ($value !== null && $value !== '' && $value !== []);
-    });
+    return array_filter($array, fn($v) => $v !== null && $v !== '' && $v !== []);
 }
 
 /**
- * Array apply (apply the given function to each element of the given array).
+ * Apply given function to each element of given array with key/value notation.
+ *
  * @param  array    $array
  * @param  callable $func
  * @return array
@@ -1047,76 +1647,83 @@ function array_clean(array $array): array
  */
 function array_apply(array $array, callable $func): array
 {
-    $ret = []; $i = 0;
-
-    foreach ($array as $key => $value) {
-        // Because array_map() tricky with array_keys() only for value => key notation, and also
-        // just warns about argument count (e.g: if $func is strval()) and foolishly making all
-        // values NULL; simply use this way here with try/catch, catching ArgumentCountError only.
-        try {
-            $ret[$key] = $func($value, $key, $i++);
-        } catch (ArgumentCountError $e) {
-            $ret[$key] = $func($value);
-        }
-    }
-
-    return $ret;
+    return array_map($func, $array, array_keys($array));
 }
 
 /**
- * Array isset (tests all given keys are set in given array).
- * @param  array     $array
- * @param  array|... $keys
- * @return ?bool
+ * Check whether all given keys are set in given array.
+ *
+ * @param  array         $array
+ * @param  int|string ...$keys
+ * @return bool
  * @since  4.0
  */
-function array_isset(array $array, ...$keys): ?bool
+function array_isset(array $array, int|string ...$keys): bool
 {
-    $keys = array_clean( // Eg: ($array, 'a', 'b' or ['a', 'b']).
-        isset($keys[0]) && is_array($keys[0]) ? $keys[0] : $keys
-    );
-
-    if (!$keys) {
-        trigger_error(sprintf('%s(): No keys given', __function__));
-        return null;
-    }
-
     foreach ($keys as $key) {
         if (!isset($array[$key])) {
             return false;
         }
     }
-
     return true;
 }
 
 /**
- * Array unset (drops all given keys from given array).
- * @param  array    &$array
- * @param  array|... $keys
- * @return ?array
+ * Drop all given keys from given array.
+ *
+ * @param  array         &$array
+ * @param  int|string  ...$keys
+ * @return array
  * @since  4.0
  */
-function array_unset(array &$array, ...$keys): ?array
+function array_unset(array &$array, int|string ...$keys): array
 {
-    $keys = array_clean( // Eg: ($array, 'a', 'b' or ['a', 'b']).
-        isset($keys[0]) && is_array($keys[0]) ? $keys[0] : $keys
-    );
-
-    if (!$keys) {
-        trigger_error(sprintf('%s(): No keys given', __function__));
-        return null;
-    }
-
     foreach ($keys as $key) {
         unset($array[$key]);
     }
-
     return $array;
 }
 
 /**
- * Array append.
+ * Check whether all given values are set in given array.
+ *
+ * @param  array    $array
+ * @param  any   ...$values
+ * @return bool
+ * @since  5.0
+ */
+function array_contains(array $array, ...$values): bool
+{
+    foreach ($values as $value) {
+        if (!in_array($value, $array, true)) {
+            return false;
+        }
+    }
+    return $array && $values;
+}
+
+/**
+ * Drop given values from given array if exist.
+ *
+ * @param  array    &$array
+ * @param  any   ...$values
+ * @return array
+ * @since  5.0
+ */
+function array_delete(array &$array, ...$values): array
+{
+    foreach ($values as $value) {
+        $key = array_search($value, $array, true);
+        if ($key !== false) {
+            unset($array[$key]);
+        }
+    }
+    return $array;
+}
+
+/**
+ * Append given values to an array, returning given array back.
+ *
  * @param  array &$array
  * @param  ...    $values
  * @return array
@@ -1129,7 +1736,8 @@ function array_append(array &$array, ...$values): array
 }
 
 /**
- * Array prepend.
+ * Prepend given values to an array, returning given array back.
+ *
  * @param  array &$array
  * @param  ...    $values
  * @return array
@@ -1142,7 +1750,8 @@ function array_prepend(array &$array, ...$values): array
 }
 
 /**
- * Array top (for the sake of array_pop()).
+ * Fun function, for the sake of array_pop().
+ *
  * @param  array &$array
  * @return any
  * @since  4.0
@@ -1153,7 +1762,8 @@ function array_top(array &$array)
 }
 
 /**
- * Array unpop (for the sake of array_unshift()).
+ * Fun function, for the sake of array_unshift().
+ *
  * @param  array &$array
  * @param  ...    $values
  * @return int
@@ -1165,7 +1775,8 @@ function array_unpop(array &$array, ...$values): int
 }
 
 /**
- * Array pad keys (ensures keys padding the given keys on array).
+ * Ensure keys padding given keys on an array with/without given pad value.
+ *
  * @param  array    $array
  * @param  array    $keys
  * @param  any|null $value
@@ -1174,18 +1785,41 @@ function array_unpop(array &$array, ...$values): int
  */
 function array_pad_keys(array $array, array $keys, $value = null): array
 {
-    return array_replace(array_fill_keys($keys, $value), $array);
+    foreach ($keys as $key) {
+        isset($array[$key]) || $array[$key] = $value;
+    }
+    return $array;
 }
 
 /**
- * Array convert keys (convert keys cases mapping by given separator).
+ * Map given array fields by given keys only.
+ *
+ * @param  array    $array
+ * @param  array    $keys
+ * @param  callable $func
+ * @return array
+ * @since  5.0
+ */
+function array_map_keys(array $array, array $keys, callable $func): array
+{
+    foreach ($keys as $key) {
+        $array[$key] = $func($array[$key] ?? null);
+    }
+    return $array;
+}
+
+/**
+ * Convert key cases mapping by given separator.
+ *
  * @param  array       $array
  * @param  int         $case
- * @param  string|null $sep
- * @return ?array
+ * @param  string|null $spliter
+ * @param  string|null $joiner
+ * @param  bool        $recursive
+ * @return array|null
  * @since  4.19
  */
-function array_convert_keys(array $array, int $case, string $spliter = null, string $joiner = null): ?array
+function array_convert_keys(array $array, int $case, string $spliter = null, string $joiner = null, bool $recursive = false): array|null
 {
     // Check valid cases.
     if (!in_array($case, [CASE_LOWER, CASE_UPPER, CASE_TITLE, CASE_DASH, CASE_SNAKE, CASE_CAMEL])) {
@@ -1206,14 +1840,45 @@ function array_convert_keys(array $array, int $case, string $spliter = null, str
 
     foreach ($array as $key => $value) {
         $key = convert_case($key, $case, $spliter, $joiner);
-        $ret[$key] = $value;
+        if ($recursive && is_array($value)) {
+            $value = array_convert_keys($value, $case, $spliter, $joiner, true);
+            $ret[$key] = $value;
+        } else {
+            $ret[$key] = $value;
+        }
     }
 
     return $ret;
 }
 
 /**
- * Array value exists (checks a value if exists with strict comparison).
+ * Change keys mapping by given function (@see https://wiki.php.net/rfc/array_change_keys).
+ *
+ * @param  array    $array
+ * @param  callable $func
+ * @param  bool     $recursive
+ * @return array
+ * @since  5.0
+ */
+function array_change_keys(array $array, callable $func, bool $recursive = false): array
+{
+    $ret = [];
+
+    foreach ($array as $key => $value) {
+        $key = $func((string) $key);
+        if ($recursive && is_array($value)) {
+            $ret[$key] = array_change_keys($value, $func, true);
+        } else {
+            $ret[$key] = $value;
+        }
+    }
+
+    return $ret;
+}
+
+/**
+ * Check a value if exists with/without strict comparison.
+ *
  * @param  any   $value
  * @param  array $array
  * @param  bool  $strict
@@ -1226,66 +1891,120 @@ function array_value_exists($value, array $array, bool $strict = true): bool
 }
 
 /**
- * Array columns (selects columns only by given column keys).
- * @param  array           $array
- * @param  array           $column_keys
- * @param  int|string|null $index_key
- * @param  bool            $use_column_keys
- * @return array
- * @since  4.0
+ * Fetch item(s) from an array by given path(s) with dot notation.
+ *
+ * @param  array                &$array
+ * @param  string|array<string>  $path
+ * @param  any|null              $default
+ * @param  bool                  $drop
+ * @return any|null
+ * @since  5.0
  */
-function array_columns(array $array, array $column_keys, $index_key = null, bool $use_column_keys = false): array
+function array_fetch(array &$array, string|array $path, $default = null, bool $drop = false)
 {
-    $ret = [];
-
-    foreach ($array as $i => $value) {
-        if (!is_array($value) && !is_object($value)) {
-            trigger_error(sprintf(
-                '%s(): Non-array/object value encountered at index %s', __function__, $i
-            ));
-            continue;
+    if (is_array($path)) {
+        $ret = [];
+        foreach ($path as $pat) {
+            $ret[] = array_fetch($array, (string) $pat, $default, $drop);
         }
+        return $ret;
+    }
 
-        foreach ($column_keys as $ki => $key) {
-            $columns = array_column($value, $key, $index_key);
-            if ($columns) {
-                foreach ($columns as $ci => $column) {
-                    $i = !$use_column_keys ? $ki : $key;
-                    if ($index_key === null || $index_key === '') {
-                        $ret[$i][] = $column;
-                    } else {
-                        $ret[$i][$ci] = $column;
-                    }
-                }
-            }
+    if (array_key_exists($path, $array)) {
+        $ret = $array[$path] ?? $default;
+        if ($drop) {
+            unset($array[$path]);
+        }
+        return $ret;
+    }
+
+    $keys = explode('.', $path);
+    $key  = array_shift($keys);
+
+    if (!$keys) {
+        $ret = $array[$key] ?? $default;
+        if ($drop) {
+            unset($array[$key]);
+        }
+        return $ret;
+    }
+
+    // Dig more..
+    if (is_array($array[$key] ?? null)) {
+        return array_fetch($array[$key], implode('.', $keys), $default, $drop);
+    }
+
+    return $default;
+}
+
+/**
+ * Select item(s) from an array by given key(s), optionally combining keys/values.
+ *
+ * @param  array                        &$array
+ * @param  int|string|array<int|string>  $key
+ * @param  any|null                      $default
+ * @param  bool                          $drop
+ * @param  bool                          $combine
+ * @return any|null
+ * @since  5.0
+ */
+function array_select(array &$array, int|string|array $key, $default = null, bool $drop = false, bool $combine = false)
+{
+    // A little bit faster comparing to array_fetch() & array_pick().
+    foreach ((array) $key as $ke) {
+        $ret[] = $array[$ke] ?? $default;
+        if ($drop) {
+            unset($array[$ke]);
         }
     }
 
-    return $ret;
+    if ($combine) {
+        return array_combine((array) $key, $ret);
+    }
+
+    return is_array($key) ? ($ret ?? null) : ($ret[0] ?? null);
 }
 
 /**
- * Array put.
- * @param  array  &$array
- * @param  array   $items
+ * Put given key,value item or item (key) with value into an array.
+ *
+ * @param  array   &$array
+ * @param  array    $item
+ * @param  any|null $value
  * @return array
- * @since  4.9, 4.18 Actual version.
+ * @since  4.18
  */
-function array_put(array &$array, array $items): array
+function array_put(array &$array, int|string|array $item, $value = null): array
 {
-    return Arrays::setAll($array, $items);
+    return is_array($item) ? Arrays::setAll($array, $item)
+                           : Arrays::set($array, $item, $value);
 }
 
 /**
- * Array pick.
+ * Drop an item from an array by given key or dotted path.
+ *
+ * @param  array                        &$array
+ * @param  int|string|array<int|string>  $key
+ * @return any|null
+ * @since  5.0
+ */
+function array_drop(array &$array, int|string|array $key): array
+{
+    array_pluck($array, $key);
+    return $array;
+}
+
+/**
+ * Pick an item from an array by given key or dotted path.
+ *
  * @param  array                        &$array
  * @param  int|string|array<int|string>  $key
  * @param  any|null                      $default
  * @param  bool                          $drop
  * @return any|null
- * @since  4.9, 4.13 Default added.
+ * @since  4.9, 4.13 Added default.
  */
-function array_pick(array &$array, $key, $default = null, bool $drop = false)
+function array_pick(array &$array, int|string|array $key, $default = null, bool $drop = false)
 {
     // Just got sick of "value=array[..] ?? .." stuffs.
     return is_array($key) ? Arrays::getAll($array, $key, $default, $drop)
@@ -1293,14 +2012,15 @@ function array_pick(array &$array, $key, $default = null, bool $drop = false)
 }
 
 /**
- * Array pluck.
+ * Pluck an item from an array by given key or dotted path.
+ *
  * @param  array                        &$array
  * @param  int|string|array<int|string>  $key
  * @param  any|null                      $default
  * @return any|null
- * @since  4.9, 4.13 Actual version.
+ * @since  4.13
  */
-function array_pluck(array &$array, $key, $default = null)
+function array_pluck(array &$array, int|string|array $key, $default = null)
 {
     // Just got sick of "if isset array[..]: value=array[..], unset(array[..])" stuffs.
     return is_array($key) ? Arrays::pullAll($array, $key, $default)
@@ -1308,7 +2028,59 @@ function array_pluck(array &$array, $key, $default = null)
 }
 
 /**
- * Array rand value.
+ * Choose a value that satisfies given callback.
+ *
+ * @param  array    $array
+ * @param  callable $func
+ * @return any|null
+ * @since  5.0
+ */
+function array_choose(array $array, callable $func)
+{
+    foreach ($array as $value) {
+        if ($func($value)) {
+            return $value;
+        }
+    }
+    return null;
+}
+
+/**
+ * Choose a value position that satisfies given callback.
+ *
+ * @param  array    $array
+ * @param  callable $func
+ * @return int|string|null
+ * @since  5.0
+ */
+function array_choose_key(array $array, callable $func)
+{
+    foreach ($array as $key => $value) {
+        if ($func($value)) {
+            return $key;
+        }
+    }
+    return null;
+}
+
+/**
+ * Bridge function to Arrays.flat().
+ *
+ * @param  array $array
+ * @param  bool  $use_keys
+ * @param  bool  $fix_keys
+ * @param  bool  $multi
+ * @return array
+ * @since  4.0
+ */
+function array_flat(array $array, bool $use_keys = false, bool $fix_keys = false, bool $multi = true): array
+{
+    return Arrays::flat($array, $use_keys, $fix_keys, $multi);
+}
+
+/**
+ * Get a/a few random item(s) from an array with/without given limit.
+ *
  * @param  array    &$array
  * @param  int       $limit
  * @param  any|null  $default
@@ -1323,24 +2095,26 @@ function array_rand_value(array &$array, int $limit = 1, $default = null, bool $
 }
 
 /**
- * Array average.
+ * Caculate average an array summing all items.
+ *
  * @param  array $array
- * @param  bool  $include_zeros
+ * @param  bool  $zeros
  * @return float
- * @since  4.5, 4.20 Renamed from array_avg().
+ * @since  4.5, 4.20 Derived from array_avg().
  */
-function array_average(array $array, bool $include_zeros = true): float
+function array_average(array $array, bool $zeros = true): float
 {
-    return Arrays::average($array);
+    return Arrays::average($array, $zeros);
 }
 
 /**
- * Array aggregate.
+ * Aggregate an array by given function.
+ *
  * @param  array      $array
  * @param  callable   $func
  * @param  array|null $carry
  * @return array
- * @since  4.14, 4.15 Renamed from array_agg().
+ * @since  4.14, 4.15 Derived from array_agg().
  */
 function array_aggregate(array $array, callable $func, array $carry = null): array
 {
@@ -1348,233 +2122,453 @@ function array_aggregate(array $array, callable $func, array $carry = null): arr
 }
 
 /**
- * File create (create a file with given path).
- * @param  string $file
- * @param  int    $mode
- * @return ?string
- * @since  4.0
+ * Perform a mathematical union on given array inputs.
+ *
+ * @param  array     $array1
+ * @param  array     $array2
+ * @param  array ... $others
+ * @return array
+ * @since  5.0
  */
-function file_create(string $file, int $mode = 0644): ?string
+function array_union(array $array1, array $array2, array ...$others): array
 {
-    return mkfile($file, $mode) ? $file : null;
+    return array_values(array_unique(array_merge($array1, $array2, ...$others)));
 }
 
 /**
- * File create temporary (alias of mkfiletemp()).
- * @since 4.0
+ * Get key of given value or return null when not found.
+ *
+ * @param  array array
+ * @param  any   $value
+ * @param  bool  strict
+ * @return int|string|null
+ * @since  5.0
  */
-function file_create_temporary(...$args)
+function array_key(array $array, $value, bool $strict = true): int|string|null
 {
-    return mkfiletemp(...$args);
+    $key = array_search($value, $array, $strict);
+
+    return ($key !== false) ? $key : null;
 }
 
 /**
- * File remove (alias of rmfile()).
- * @since 4.0
+ * Get first value of given array.
+ *
+ * @param  array $array
+ * @return any|null
+ * @since  5.0
  */
-function file_remove(...$args)
+function array_first(array $array)
 {
-    return rmfile(...$args);
+    $key = array_key_first($array);
+
+    return ($key !== null) ?  $array[$key] : null;
 }
 
 /**
- * File write (alias of file_put_contents()).
- * @since 4.0
+ * Get last value of given array.
+ *
+ * @param  array $array
+ * @return any|null
+ * @since  5.0
  */
-function file_write(...$args)
+function array_last(array $array)
 {
-    return file_put_contents(...$args) ?: null;
+    $key = array_key_last($array);
+
+    return ($key !== null) ?  $array[$key] : null;
 }
 
 /**
- * File read (alias of file_get_contents()).
- * @since 4.0
+ * Check whether given array is a list array.
+ *
+ * @param  any  $in
+ * @param  bool $allow_empty
+ * @return bool
+ * @since  5.0
  */
-function file_read(...$args)
+function is_list($in, bool $allow_empty = true): bool
 {
-    return file_get_contents(...$args) ?: null;
+    return $allow_empty ? is_array($in) && Arrays::isSet($in, true)
+                 : $in && is_array($in) && Arrays::isSet($in, true);
 }
 
 /**
- * File read buffer (alias of file_get_buffer_contents()).
- * @since 4.0
+ * Check whether given key exists on given array.
+ *
+ * @param  string $key
+ * @param  array  $array
+ * @return bool
+ * @since  5.0
  */
-function file_read_buffer(...$args)
+function is_array_key(int|string $key, array $array): bool
 {
-    return file_get_buffer_contents(...$args) ?: null;
+    return array_key_exists($key, $array);
 }
 
 /**
- * File set contents (sets a file contents).
- * @param  string $file
- * @param  string $contents
- * @param  int    $flags
- * @return ?int
- * @since  4.0
+ * Check whether given value exists on given array in strict comparison.
+ *
+ * @param  any   $value
+ * @param  array $array
+ * @return bool
+ * @since  5.0
  */
-function file_set_contents(string $file, string $contents, int $flags = 0): ?int
+function is_array_value($value, array $array): bool
 {
-    $ret = file_put_contents($file, $contents, $flags);
-
-    return ($ret !== false) ? $ret : null;
+    return array_value_exists($value, $array);
 }
 
 /**
- * File get buffer contents (loads & gets a file (rendered) buffer contents).
- * @param  string     $file
- * @param  array|null $file_data
- * @return ?string
- * @since  4.0
+ * Remove last error message with/without code.
+ *
+ * @param  int|null $code
+ * @return void
+ * @since  5.0
  */
-function file_get_buffer_contents(string $file, array $file_data = null): ?string
+function error_clear(int $code = null): void
 {
-    if (!is_file($file)) {
-        trigger_error(sprintf(
-            '%s(): No file exists such %s', __function__, $file
-        ));
+    if ($code && $code !== get_error('type')) {
+        return;
+    }
+
+    error_clear_last();
+}
+
+/**
+ * Get last error message with code, optionally formatted.
+ *
+ * @param  int|null $code
+ * @param  bool     $format
+ * @return string|null
+ * @since  4.17
+ */
+function error_message(int &$code = null, bool $format = false): string|null
+{
+    $error = error_get_last();
+    if (!$error) {
         return null;
     }
 
-    ob_start();
+    $code = $error['type'];
 
-    // Data, used in file.
-    $file_data && extract($file_data);
+    if ($format) {
+        $error['name'] = match ($error['type']) {
+            E_NOTICE,     E_USER_NOTICE     => 'NOTICE',
+            E_WARNING,    E_USER_WARNING    => 'WARNING',
+            E_DEPRECATED, E_USER_DEPRECATED => 'DEPRECATED',
+            default                         => 'ERROR'
+        };
 
-    // Simply include file.
-    include $file;
-
-    return ob_get_clean();
-}
-
-/**
- * File path (alias of get_real_path()).
- * @since 4.0
- */
-function file_path(...$args)
-{
-    return get_real_path(...$args);
-}
-
-/**
- * File name (gets a file name).
- * @param  string $file
- * @param  bool   $with_extension
- * @return ?string
- * @since  4.0
- */
-function file_name(string $file, bool $with_extension = true): ?string
-{
-    // Function basename() wants an explicit suffix to remove it from name,
-    // but using just a boolean here is more sexy..
-    $ret = basename($file);
-
-    if ($ret && !$with_extension && ($extension = file_extension($file))) {
-        $ret = substr($ret, 0, -strlen($extension));
+        return vsprintf('%s(%d): %s at %s:%s', array_select(
+            $error, ['name', 'type', 'message', 'file', 'line']
+        ));
     }
 
-    return $ret ?: null;
+    return $error['message'];
 }
 
 /**
- * File extension (gets a file extension).
- * @param  string $file
- * @param  bool   $with_dot
- * @return ?string
- * @since  4.0
+ * Get JSON last error message with code if any, instead "No error".
+ *
+ * @param  int|null $code
+ * @return string|null
+ * @since  4.17
  */
-function file_extension(string $file, bool $with_dot = true): ?string
+function json_error_message(int &$code = null): string|null
 {
-    // Function pathinfo() returns ".foo" for example "/some/path/.foo" and
-    // if $with_dot false then this function return ".", no baybe!
-    $ret = strrchr($file, '.');
+    return ($code = json_last_error()) ? json_last_error_msg() : null;
+}
 
-    if ($ret && !$with_dot) {
-        $ret = ltrim($ret, '.');
+/**
+ * Get PECL last error message with code if any, instead "No error".
+ *
+ * @param  int|null $code
+ * @return string|null
+ * @since  4.17
+ */
+function preg_error_message(int &$code = null): string|null
+{
+    return ($code = preg_last_error()) ? preg_last_error_msg() : null;
+}
+
+/**
+ * Generate an arbitrary unique identifier in given/default base.
+ *
+ * @param  int $length
+ * @param  int $base
+ * @return string|null
+ * @since  5.0
+ */
+function suid(int $length = 6, int $base = 62): string|null
+{
+    if ($length < 1) {
+        trigger_error(sprintf('%s(): Invalid length, min=14', __function__));
+        return null;
+    } elseif ($base < 2 || $base > 62) {
+        trigger_error(sprintf('%s(): Invalid base, min=10, max=62', __function__));
+        return null;
     }
 
-    return $ret ?: null;
+    $ret = '';
+    $max = $base - 1;
+
+    srand();
+    while ($length--) {
+        $ret .= ALPHABET[rand(0, $max)];
+    }
+
+    return $ret;
 }
 
 /**
- * File type (gets a file (mime) type).
- * @param  string $file
- * @return ?string
- * @since  4.0
+ * Generate a random UUID/GUID, optionally with current timestamp.
+ *
+ * @param  bool $dashed
+ * @param  bool $timed
+ * @param  bool $guid
+ * @return string
+ * @since  5.0
  */
-function file_type(string $file): ?string
+function uuid(bool $dashed = true, bool $timed = false, bool $guid = false): string
 {
-    $ret = null;
+    $bytes = !$timed ? random_bytes(16)               // Fully 16-random bytes.
+        : hex2bin(dechex(time())) . random_bytes(12); // Bin of time prefix & 12-random bytes.
 
-    if (is_file($file)) try {
-        $ret = mime_content_type($file);
-        if ($ret === false) try {
-            $exec = exec('file -i '. escapeshellarg($file));
-            if ($exec && preg_match('~: *([^/ ]+/[^; ]+)~', $exec, $match)) {
-                $ret = $match[1];
-                if ($ret == 'inode/directory') {
-                    $ret = 'directory';
-                }
-            }
-        } catch (Error $e) {}
-    } catch (Error $e) {}
+    // Add signs: 4 (version) & 8, 9, A, B, but GUID doesn't use them.
+    if (!$guid) {
+        $bytes[6] = chr(ord($bytes[6]) & 0x0f | 0x40);
+        $bytes[8] = chr(ord($bytes[8]) & 0x3f | 0x80);
+    }
 
-    // Try with extension.
-    if (!$ret) {
-        $extension = file_extension($file, false);
-        if ($extension) {
-            static $cache; // For some speed..
-            if (empty($cache[$extension = strtolower($extension)])) {
-                foreach (include 'statics/mime.php' as $type => $extensions) {
-                    if (in_array($extension, $extensions, true)) {
-                        $cache[$extension] = $ret = $type;
-                        break;
-                    }
-                }
-            }
+    $ret = uuid_format(bin2hex($bytes));
+
+    return $dashed ? $ret : str_replace('-', '', $ret);
+}
+
+/**
+ * Generate a random UUID/GUID hash, optionally with current timestamp.
+ *
+ * @param  int  $length
+ * @param  bool $format
+ * @param  bool $timed
+ * @param  bool $guid
+ * @return string|null
+ * @since  5.0
+ */
+function uuid_hash(int $length = 32, bool $format = false, bool $timed = false, bool $guid = false): string|null
+{
+    static $algos = [32 => 'md5', 40 => 'sha1', 64 => 'sha256', 16 => 'fnv1a64'];
+
+    $algo =@ $algos[$length];
+
+    if (!$algo) {
+        trigger_error(sprintf('%s(): Invalid length, valids are: 32,40,64,16', __function__));
+        return null;
+    }
+
+    $ret = hash($algo, uuid(false, $timed, $guid));
+
+    return !$format ? $ret : uuid_format($ret);
+}
+
+/**
+ * Format given input as UUID/GUID.
+ *
+ * @param  string $in
+ * @return string|null
+ * @since  5.0
+ */
+function uuid_format(string $in): string|null
+{
+    if (strlen($in) != 32) {
+        trigger_error(sprintf('%s(): Format for only 32-length UUIDs/GUIDs', __function__));
+        return null;
+    }
+
+    return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split($in, 4));
+}
+
+/**
+ * Convert a multi-byte string's first character to upper-case.
+ *
+ * @param  string      $in
+ * @param  string|null $encoding
+ * @param  bool        $tr
+ * @return string
+ * @since  5.0
+ */
+function mb_ucfirst(string $in, string $encoding = null, bool $tr = false): string
+{
+    $first = mb_substr($in, 0, 1, $encoding);
+    if ($tr && $first === 'i') {
+        $first = 'İ';
+    }
+
+    return mb_strtoupper($first, $encoding) . mb_substr($in, 1, null, $encoding);
+}
+
+/**
+ * Convert a multi-byte string's first character to lower-case.
+ *
+ * @param  string      $in
+ * @param  string|null $encoding
+ * @param  bool        $tr
+ * @return string
+ * @since  5.0
+ */
+function mb_lcfirst(string $in, string $encoding = null, bool $tr = false): string
+{
+    $first = mb_substr($in, 0, 1, $encoding);
+    if ($tr && $first === 'I') {
+        $first = 'ı';
+    }
+
+    return mb_strtolower($first, $encoding) . mb_substr($in, 1, null, $encoding);
+}
+
+/**
+ * Translate given input to slugified output.
+ *
+ * @param  string $in
+ * @param  string $preserve
+ * @param  string $replace
+ * @return string
+ * @since  5.0
+ */
+function slug(string $in, string $preserve = '', string $replace = '-'): string
+{
+    static $chars; $chars ??= require 'statics/slug-chars.php';
+
+    $preserve && $preserve = preg_quote($preserve, '~');
+    $replace  || $replace  = '-';
+
+    $out = preg_replace(['~[^\w'. $preserve . $replace .']+~', '~['. $replace .']+~'],
+        $replace, strtr($in, $chars));
+
+    return strtolower(trim($out, $replace));
+}
+
+/**
+ * Generate a random float, optionally with precision.
+ *
+ * @param  float|null $min
+ * @param  float|null $max
+ * @param  int        $precision
+ * @return float
+ * @since  5.0
+ */
+function random_float(float $min = null, float $max = null, int $precision = null): float
+{
+    return Numbers::randomFloat($min, $max, $precision);
+}
+
+/**
+ * Generate a random string, optionally puncted.
+ *
+ * @param  int  $length
+ * @param  bool $puncted
+ * @return string
+ * @since  5.0
+ */
+function random_string(int $length, bool $puncted = false): string
+{
+    return Strings::random($length, $puncted);
+}
+
+/**
+ * Check whether given input is a number.
+ *
+ * @param  any $in
+ * @return bool
+ * @since  5.0
+ */
+function is_number($in): bool
+{
+    return is_int($in) || is_float($in);
+}
+
+/**
+ * Check whether given input is a GdImage.
+ *
+ * @param  any $in
+ * @return bool
+ * @since  5.0
+ */
+function is_image($in): bool
+{
+    return $in && ($in instanceof GdImage);
+}
+
+/**
+ * Check whether given input is a stream.
+ *
+ * @param  any $in
+ * @return bool
+ * @since  5.0
+ */
+function is_stream($in): bool
+{
+    return $in && is_resource($in) && get_resource_type($in) == 'stream';
+}
+
+/**
+ * Check whether given input is type of other.
+ *
+ * @param  any    $in
+ * @param  string $type
+ * @return bool
+ * @since  5.0
+ */
+function is_type_of($in, string $type): bool
+{
+    return match ($type) {
+        'image'  => is_image($in),  'stream' => is_stream($in),
+        'number' => is_number($in), 'scalar' => is_scalar($in),
+        'array'  => is_array($in),  'object' => is_object($in),
+        default  => strtolower($type) == strtolower(get_type($in)) // All others.
+    };
+}
+
+/**
+ * Check whether given class method is callable (exists & public).
+ *
+ * @param  string|object $class
+ * @param  string        $method
+ * @return bool
+ * @since  5.0
+ */
+function is_callable_method(string|object $class, string $method): bool
+{
+    try {
+        return ($ref = new ReflectionClass($class))
+            && ($ref->hasMethod($method) && $ref->getMethod($method)->isPublic());
+    } catch (ReflectionException) {
+        return false;
+    }
+}
+
+/**
+ * Check empty state(s) of given input(s).
+ *
+ * @param  any     $in
+ * @param  any ... $ins
+ * @return bool
+ * @since  4.0 Added back, 5.0 Moved from sugars/is.
+ */
+function is_empty($in, ...$ins): bool
+{
+    $ins = [$in, ...$ins];
+
+    foreach ($ins as $in) {
+        $size = size($in);
+        if ($size !== null && !$size) {
+            return true;
+        }
+        if (empty($in)) {
+            return true;
         }
     }
 
-    return $ret ?: null;
-}
-
-/**
- * Error get last message.
- * @return ?string
- * @since  4.17
- */
-function error_get_last_message(): ?string
-{
-    return error_get_last()['message'] ?? null;
-}
-
-/**
- * Preg last error message.
- * @return ?string
- * @since  4.17
- */
-function preg_last_error_message(): ?string
-{
-    // @todo: use preg_last_error_msg() [Froq/5.0, PHP/8.0].
-    static $messages = [
-        PREG_NO_ERROR              => null,
-        PREG_INTERNAL_ERROR        => 'Internal PCRE error',
-        PREG_BACKTRACK_LIMIT_ERROR => 'Backtrack limit is exhausted',
-        PREG_RECURSION_LIMIT_ERROR => 'Recursion limit is exhausted',
-        PREG_BAD_UTF8_ERROR        => 'Bad UTF8 data',
-        PREG_BAD_UTF8_OFFSET_ERROR => 'Bad UTF8 offset',
-        PREG_JIT_STACKLIMIT_ERROR  => 'JIT stack limit exhausted',
-    ];
-
-    return $messages[preg_last_error()] ?? null;
-}
-
-/**
- * Json last error message.
- * @return ?string
- * @since  4.17
- */
-function json_last_error_message(): ?string
-{
-    // Check code first instead returning "No error" message.
-    return json_last_error() ? json_last_error_msg() : null;
+    return false;
 }

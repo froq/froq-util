@@ -1,103 +1,56 @@
 <?php
 /**
- * MIT License <https://opensource.org/licenses/mit>
- *
- * Copyright (c) 2015 Kerem Güneş
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is furnished
- * to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
+ * Copyright (c) 2015 · Kerem Güneş
+ * Apache License 2.0 · http://github.com/froq/froq-util
  */
 declare(strict_types=1);
 
 namespace froq\util;
 
-use froq\common\objects\StaticClass;
-use froq\common\exceptions\InvalidArgumentException;
+use froq\common\object\StaticClass;
 use Error, Reflection, ReflectionException, ReflectionClass, ReflectionProperty;
 
 /**
  * Objects.
+ *
  * @package froq\util
  * @object  froq\util\Objects
- * @author  Kerem Güneş <k-gun@mail.com>
+ * @author  Kerem Güneş
  * @since   4.0
  * @static
  */
 final class Objects extends StaticClass
 {
     /**
-     * Has constant.
-     * @param  string|object $class
-     * @param  string        $name
-     * @return ?bool
-     */
-    public static function hasConstant($class, string $name): ?bool
-    {
-        try {
-            return (new ReflectionClass($class))->hasConstant($name);
-        } catch (ReflectionException $e) {
-            return null;
-        }
-    }
-
-    /**
-     * Has property.
-     * @param  string|object $class
-     * @param  string        $name
-     * @return ?bool
-     */
-    public static function hasProperty($class, string $name): ?bool
-    {
-        try {
-            return (new ReflectionClass($class))->hasProperty($name);
-        } catch (ReflectionException $e) {
-            return null;
-        }
-    }
-
-    /**
      * Get reflection.
+     *
      * @param  string|object $class
-     * @return ?ReflectionClass
+     * @return ReflectionClass|null
      */
-    public static function getReflection($class): ?ReflectionClass
+    public static function getReflection(string|object $class): ReflectionClass|null
     {
         try {
             return new ReflectionClass($class);
-        } catch (ReflectionException $e) {
+        } catch (ReflectionException) {
             return null;
         }
     }
 
     /**
      * Get id.
+     *
      * @param  object $object
      * @param  bool   $withName
      * @return string
      */
     public static function getId(object $object, bool $withName = true): string
     {
-        return $withName ? get_class($object) .'#'. spl_object_id($object)
-                         : spl_object_id($object) .'';
+        return $withName ? $object::class .'#'. spl_object_id($object) : spl_object_id($object) .'';
     }
 
     /**
      * Get hash.
+     *
      * @param  object $object
      * @param  bool   $withName
      * @param  bool   $withRehash
@@ -109,11 +62,12 @@ final class Objects extends StaticClass
         if ($withRehash) {
             $hash = hash('crc32', $hash); // Pack "000..." stuff.
         }
-        return $withName ? get_class($object) .'#'. $hash : $hash;
+        return $withName ? $object::class .'#'. $hash : $hash;
     }
 
     /**
      * Get serialized hash.
+     *
      * @param  object      $object
      * @param  string|null $algo
      * @return string
@@ -126,76 +80,93 @@ final class Objects extends StaticClass
 
     /**
      * Get name.
+     *
      * @param  string|object $class
      * @return string
-     * @throws froq\common\exceptions\InvalidArgumentException
      */
-    public static function getName($class): string
+    public static function getName(string|object $class): string
     {
-        if (is_string($class)) return $class;
-        if (is_object($class)) return get_class($class);
-
-        throw new InvalidArgumentException('Invalid $class argument, string and object arguments '.
-            'accepted only, "%s" given', [gettype($class)]);
+        return is_string($class) ? $class : $class::class;
     }
 
     /**
      * Get short name.
+     *
      * @param  string|object $class
      * @return string
      */
-    public static function getShortName($class): string
+    public static function getShortName(string|object $class): string
     {
         $name = self::getName($class);
-        $pos = strrpos($name, '\\');
+        $spos = strrpos($name, '\\');
 
-        return substr($name, ($pos !== false) ? $pos + 1 : 0);
+        return substr($name, ($spos !== false) ? $spos + 1 : 0);
     }
 
     /**
      * Get namespace.
+     *
      * @param  string|object $class
      * @param  bool          $baseOnly
      * @return string
      */
-    public static function getNamespace($class, bool $baseOnly = false): string
+    public static function getNamespace(string|object $class, bool $baseOnly = false): string
     {
         $name = self::getName($class);
-        $pos = !$baseOnly ? strrpos($name, '\\') : strpos($name, '\\');
+        $spos = !$baseOnly ? strrpos($name, '\\') : strpos($name, '\\');
 
-        return substr($name, 0, ($pos !== false) ? $pos : 0);
+        return substr($name, 0, ($spos !== false) ? $spos : 0);
+    }
+
+    /**
+     * Has constant.
+     *
+     * @param  string|object $class
+     * @param  string        $name
+     * @return bool|null
+     */
+    public static function hasConstant(string|object $class, string $name): bool|null
+    {
+        try {
+            return (new ReflectionClass($class))->hasConstant($name);
+        } catch (ReflectionException) {
+            return null;
+        }
     }
 
     /**
      * Get constant.
+     *
      * @param  string|object $class
      * @param  string        $name
-     * @return ?array
+     * @return array|null
      */
-    public static function getConstant($class, string $name): ?array
+    public static function getConstant(string|object $class, string $name): array|null
     {
         return self::getConstants($class, true, $name)[$name] ?? null;
     }
 
     /**
      * Get constant value.
+     *
      * @param  string|object $class
      * @param  string        $name
      * @return any
      */
-    public static function getConstantValue($class, string $name)
+    public static function getConstantValue(string|object $class, string $name)
     {
         return self::getConstants($class, true, $name)[$name]['value'] ?? null;
     }
 
     /**
-     * Get constants registry.
+     * Get constants.
+     *
      * @param  string|object $class
      * @param  bool          $all
      * @param  string        $_name @internal
-     * @return ?array
+     * @return array|null
      */
-    public static function getConstants($class, bool $all = true, string $_name = null): ?array
+    public static function getConstants(string|object $class, bool $all = true, string $_name = null): array|null
     {
         $ref = self::getReflection($class);
         if (!$ref) {
@@ -249,11 +220,12 @@ final class Objects extends StaticClass
 
     /**
      * Get constant names.
+     *
      * @param  string|object $class
      * @param  bool          $all
-     * @return ?array
+     * @return array|null
      */
-    public static function getConstantNames($class, bool $all = true): ?array
+    public static function getConstantNames(string|object $class, bool $all = true): array|null
     {
         $ref = self::getReflection($class);
         if (!$ref) {
@@ -276,12 +248,13 @@ final class Objects extends StaticClass
 
     /**
      * Get constant values.
+     *
      * @param  string|object $class
      * @param  bool          $all
      * @param  bool          $withNames
-     * @return ?array
+     * @return array|null
      */
-    public static function getConstantValues($class, bool $all = true, bool $withNames = false): ?array
+    public static function getConstantValues(string|object $class, bool $all = true, bool $withNames = false): array|null
     {
         $ref = self::getReflection($class);
         if (!$ref) {
@@ -305,35 +278,54 @@ final class Objects extends StaticClass
     }
 
     /**
-     * Get property.
+     * Has property.
+     *
      * @param  string|object $class
      * @param  string        $name
-     * @return ?array
+     * @return bool|null
      */
-    public static function getProperty($class, string $name): ?array
+    public static function hasProperty(string|object $class, string $name): bool|null
+    {
+        try {
+            return (new ReflectionClass($class))->hasProperty($name);
+        } catch (ReflectionException) {
+            return null;
+        }
+    }
+
+    /**
+     * Get property.
+     *
+     * @param  string|object $class
+     * @param  string        $name
+     * @return array|null
+     */
+    public static function getProperty(string|object $class, string $name): array|null
     {
         return self::getProperties($class, true, $name)[$name] ?? null;
     }
 
     /**
      * Get property value.
+     *
      * @param  string|object $class
      * @param  string        $name
      * @return any
      */
-    public static function getPropertyValue($class, string $name)
+    public static function getPropertyValue(string|object $class, string $name)
     {
         return self::getProperties($class, true, $name)[$name]['value'] ?? null;
     }
 
     /**
-     * Get properties registry.
+     * Get properties.
+     *
      * @param  string|object $class
      * @param  bool          $all
      * @param  string        $_name @internal
-     * @return array
+     * @return array|null
      */
-    public static function getProperties($class, bool $all = true, string $_name = null): array
+    public static function getProperties(string|object $class, bool $all = true, string $_name = null): array|null
     {
         $ref = self::getReflection($class);
         if (!$ref) {
@@ -388,7 +380,7 @@ final class Objects extends StaticClass
                         $property->setAccessible(true);
                     }
                     $value = $property->getValue($class);
-                } catch (Error $e) {}
+                } catch (Error) {}
 
                 $initialized = $property->isInitialized($class);
             }
@@ -411,11 +403,12 @@ final class Objects extends StaticClass
 
     /**
      * Get property names.
+     *
      * @param  string|object $class
      * @param  bool          $all
-     * @return ?array
+     * @return array|null
      */
-    public static function getPropertyNames($class, bool $all = true): ?array
+    public static function getPropertyNames(string|object $class, bool $all = true): array|null
     {
         $ref = self::getReflection($class);
         if (!$ref) {
@@ -434,12 +427,13 @@ final class Objects extends StaticClass
 
     /**
      * Get property values.
+     *
      * @param  string|object $class
      * @param  bool          $all
      * @param  bool          $withNames
-     * @return ?array
+     * @return array|null
      */
-    public static function getPropertyValues($class, bool $all = true, bool $withNames = false): ?array
+    public static function getPropertyValues(string|object $class, bool $all = true, bool $withNames = false): array|null
     {
         $ref = self::getReflection($class);
         if (!$ref) {
@@ -462,11 +456,11 @@ final class Objects extends StaticClass
                 continue;
             }
 
-            if (is_null($value) && is_object($class)) {
+            if (is_object($class)) {
                 try {
                     $property->setAccessible(true);
                     $value = $property->getValue($class);
-                } catch (Error $e) {}
+                } catch (Error) {}
             }
 
             !$withNames ? $ret[] = $value
@@ -477,24 +471,43 @@ final class Objects extends StaticClass
     }
 
     /**
-     * Get method.
+     * Has method.
+     *
      * @param  string|object $class
      * @param  string        $name
-     * @return ?array
+     * @return bool|null
+     * @since  5.0
      */
-    public static function getMethod($class, string $name): ?array
+    public static function hasMethod(string|object $class, string $name): bool|null
+    {
+        try {
+            return (new ReflectionClass($class))->hasMethod($name);
+        } catch (ReflectionException) {
+            return null;
+        }
+    }
+
+    /**
+     * Get method.
+     *
+     * @param  string|object $class
+     * @param  string        $name
+     * @return array|null
+     */
+    public static function getMethod(string|object $class, string $name): array|null
     {
         return self::getMethods($class, true, $name)[$name] ?? null;
     }
 
     /**
      * Get methods.
+     *
      * @param  string|object $class
      * @param  bool          $all
      * @param  string        $_name @internal
-     * @return ?array
+     * @return array|null
      */
-    public static function getMethods($class, bool $all = true, string $_name = null): ?array
+    public static function getMethods(string|object $class, bool $all = true, string $_name = null): array|null
     {
         $ref = self::getReflection($class);
         if (!$ref) {
@@ -521,7 +534,7 @@ final class Objects extends StaticClass
             if ($method->hasReturnType()) {
                 $return = $method->getReturnType()->getName();
             } elseif ($doc = $method->getDocComment()) {
-                preg_match('~(?=@(returns?|alias(?:Of|For)?) *([^\s]+))~', $doc, $match);
+                preg_match('~(?=@(returns?|alias *(?:Of|To|For)?) *([^\s]+))~i', $doc, $match);
                 if ($match) {
                     $return = strpos($match[1], 'alias') > -1  // Alias stuff.
                         ? '@see '. $match[2] : $match[2];
@@ -559,7 +572,7 @@ final class Objects extends StaticClass
                         } elseif ($param->isDefaultValueConstant()) {
                             $parameter['value'] = $param->getDefaultValueConstantName();
                         }
-                    } catch (ReflectionException $e) {}
+                    } catch (ReflectionException) {}
 
                     $parameters[] = $parameter;
                 }
@@ -579,11 +592,12 @@ final class Objects extends StaticClass
 
     /**
      * Get method names.
+     *
      * @param  string|object $class
      * @param  bool          $all
-     * @return ?array
+     * @return array|null
      */
-    public static function getMethodNames($class, bool $all = true): ?array
+    public static function getMethodNames(string|object $class, bool $all = true): array|null
     {
         $ref = self::getReflection($class);
         if (!$ref) {
@@ -602,12 +616,13 @@ final class Objects extends StaticClass
 
     /**
      * Get parents.
+     *
      * @param  string|object $class
-     * @return ?array
+     * @return array|null
      */
-    public static function getParents($class): ?array
+    public static function getParents(string|object $class): array|null
     {
-        $ret =@ class_parents($class);
+        $ret = class_parents($class);
         if ($ret !== false) {
             $ret = array_keys($ret);
             return $ret;
@@ -617,15 +632,16 @@ final class Objects extends StaticClass
 
     /**
      * Get interfaces.
+     *
      * @param  string|object $class
-     * @return ?array
+     * @return array|null
      */
-    public static function getInterfaces($class): ?array
+    public static function getInterfaces(string|object $class): array|null
     {
-        $ret =@ class_implements($class);
+        $ret = class_implements($class);
         if ($ret !== false) {
             $ret = array_keys($ret);
-            $ret = array_reverse($ret); // Fix weird reverse order..
+            $ret = array_reverse($ret); // Fix weird reverse order.
             return $ret;
         }
         return null;
@@ -633,25 +649,25 @@ final class Objects extends StaticClass
 
     /**
      * Get traits.
+     *
      * @param  string|object $class
      * @param  bool          $all
-     * @return ?array
+     * @return array|null
      */
-    public static function getTraits($class, bool $all = true): ?array
+    public static function getTraits(string|object $class, bool $all = true): array|null
     {
-        $ret =@ class_uses($class);
+        $ret = class_uses($class);
         if ($ret !== false) {
             $ret = array_keys($ret);
             if ($all) {
-                $parents = self::getParents($class) ?? [];
-                foreach ($parents as $parent) {
-                    $ret = array_merge($ret, self::getTraits($parent) ?? []);
+                foreach ((array) self::getParents($class) as $parent) {
+                    $ret = array_merge($ret, (array) self::getTraits($parent));
                 }
 
                 // Really all..
                 if ($ret) {
                     foreach ($ret as $re) {
-                        $ret = array_merge($ret, self::getTraits($re) ?? []);
+                        $ret = array_merge($ret, (array) self::getTraits($re));
                     }
                     $ret = array_unique($ret);
                 }

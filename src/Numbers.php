@@ -1,38 +1,20 @@
 <?php
 /**
- * MIT License <https://opensource.org/licenses/mit>
- *
- * Copyright (c) 2015 Kerem Güneş
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is furnished
- * to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
+ * Copyright (c) 2015 · Kerem Güneş
+ * Apache License 2.0 · http://github.com/froq/froq-util
  */
 declare(strict_types=1);
 
 namespace froq\util;
 
-use froq\common\objects\StaticClass;
+use froq\common\object\StaticClass;
 
 /**
  * Numbers.
+ *
  * @package froq\util
  * @object  froq\util\Numbers
- * @author  Kerem Güneş <k-gun@mail.com>
+ * @author  Kerem Güneş
  * @since   1.0
  * @static
  */
@@ -40,24 +22,20 @@ final class Numbers extends StaticClass
 {
     /**
      * Convert.
+     *
      * @param  numeric  $in
      * @param  int|null $decimals
      * @return int|float|null
      * @since  4.0
      */
-    public static function convert($in, int $decimals = null)
+    public static function convert($in, int $decimals = null): int|float|null
     {
         if (is_numeric($in)) {
-            if (is_int($in) || is_float($in)) {
-                return $in;
-            }
-
             if ($decimals !== null) {
                 $in = number_format((float) $in, $decimals);
             }
 
-            return is_string($in) && strpos($in, '.') > -1
-                ? (float) $in : (int) $in;
+            return $in + 0;
         }
 
         return null; // Error, not a number.
@@ -65,18 +43,20 @@ final class Numbers extends StaticClass
 
     /**
      * Compare.
+     *
      * @param  numeric  $a
      * @param  numeric  $b
      * @param  int|null $precision
-     * @return ?int
+     * @return int|null
      */
-    public static function compare($a, $b, int $precision = null): ?int
+    public static function compare($a, $b, int $precision = null): int|null
     {
         $precision ??= 14;
 
         if (is_numeric($a) && is_numeric($b)) {
-            return round($a, $precision) <=> round($b, $precision);
+            return round((float) $a, $precision) <=> round((float) $b, $precision);
         }
+
         return null; // Error, non-number(s).
     }
 
@@ -85,9 +65,9 @@ final class Numbers extends StaticClass
      * @param  numeric  $a
      * @param  numeric  $b
      * @param  int|null $precision
-     * @return ?bool
+     * @return bool|null
      */
-    public static function equals($a, $b, int $precision = null): ?bool
+    public static function equals($a, $b, int $precision = null): bool|null
     {
         $precision ??= 14;
 
@@ -96,37 +76,41 @@ final class Numbers extends StaticClass
     }
 
     /**
-     * Is digit.
+     * Check whether given input is number.
+     *
      * @param  any $in
      * @return bool
      */
     public static function isNumber($in): bool
     {
-        return is_int($in) || is_float($in);
+        return is_number($in);
     }
 
     /**
-     * Is digit.
+     * Check whether given input is digit.
+     *
      * @param  any $in
      * @return bool
      */
     public static function isDigit($in): bool
     {
-        return is_numeric($in) && (is_int($in) || ctype_digit($in)) && ($in >= 0);
+        return is_numeric($in) && (is_int($in) || ctype_digit((string) $in)) && ($in >= 0);
     }
 
     /**
-     * Is id (useful for any (db) incremental id check).
+     * Check whether given input is an ID (useful for any (db) incremental id check).
+     *
      * @param  any $in
      * @return bool
      */
     public static function isId($in): bool
     {
-        return is_numeric($in) && (is_int($in) || ctype_digit($in)) && ($in >= 1);
+        return is_numeric($in) && (is_int($in) || ctype_digit((string) $in)) && ($in >= 1);
     }
 
     /**
-     * Is uint.
+     * Check whether given input is uint.
+     *
      * @param  any $in
      * @return bool
      */
@@ -136,7 +120,8 @@ final class Numbers extends StaticClass
     }
 
     /**
-     * Is ufloat.
+     * Check whether given input is ufloat.
+     *
      * @param  any $in
      * @return bool
      */
@@ -146,27 +131,29 @@ final class Numbers extends StaticClass
     }
 
     /**
-     * Is signed.
+     * Check whether given input is signed.
+     *
      * @param  any $in
      * @return bool
      */
     public static function isSigned($in): bool
     {
-        return (is_int($in) || is_float($in)) && ($in <= 0);
+        return is_number($in) && ($in < 0);
     }
 
     /**
-     * Is unsigned.
+     * Check whether given input is unsigned.
      * @param  any $in
      * @return bool
      */
     public static function isUnsigned($in): bool
     {
-        return (is_int($in) || is_float($in)) && ($in >= 0);
+        return is_number($in) && ($in >= 0);
     }
 
     /**
      * Random int.
+     *
      * @param  int|null $min
      * @param  int|null $max
      * @return int
@@ -174,14 +161,15 @@ final class Numbers extends StaticClass
      */
     public static function randomInt(int $min = null, int $max = null): int
     {
-        $min = $min ?? 0;
-        $max = $max ?? PHP_INT_MAX;
+        $min ??= 0;
+        $max ??= PHP_INT_MAX;
 
         return random_int($min, $max);
     }
 
     /**
      * Random float.
+     *
      * @param  float|null $min
      * @param  float|null $max
      * @param  int|null   $precision
@@ -190,8 +178,8 @@ final class Numbers extends StaticClass
      */
     public static function randomFloat(float $min = null, float $max = null, int $precision = null): float
     {
-        $min = $min ?? 0;
-        $max = $max ?? 1 + $min;
+        $min ??= 0;
+        $max ??= 1 + $min;
 
         $ret = lcg_value() * ($max - $min) + $min;
 

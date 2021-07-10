@@ -1,50 +1,46 @@
 <?php
 /**
- * MIT License <https://opensource.org/licenses/mit>
- *
- * Copyright (c) 2015 Kerem Güneş
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is furnished
- * to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
+ * Copyright (c) 2015 · Kerem Güneş
+ * Apache License 2.0 · http://github.com/froq/froq-util
  */
 declare(strict_types=1);
 
 namespace froq\util;
 
-use froq\common\objects\StaticClass;
+use froq\common\object\StaticClass;
+use ValueError, ArgumentCountError;
 
 /**
  * Arrays.
+ *
  * @package froq\util
  * @object  froq\util\Arrays
- * @author  Kerem Güneş <k-gun@mail.com>
+ * @author  Kerem Güneş
  * @since   1.0
  * @static
  */
 final class Arrays extends StaticClass
 {
     /**
-     * Is set.
+     * Check whether all keys are "int" in given array, or array is a list when strict.
+     *
      * @param  array $array
+     * @param  bool  $strict
      * @return bool
      */
-    public static function isSet(array $array): bool
+    public static function isSet(array $array, bool $strict = false): bool
     {
+        if ($strict) {
+            $ii = 0; // Expected (index increament).
+            foreach (array_keys($array) as $i) {
+                if ($i !== $ii) {
+                    return false;
+                }
+                $ii++;
+            }
+            return true;
+        }
+
         foreach (array_keys($array) as $key) {
             if (!is_int($key)) {
                 return false;
@@ -54,7 +50,8 @@ final class Arrays extends StaticClass
     }
 
     /**
-     * Is map.
+     * Check whether all keys are "string" in given array.
+     *
      * @param  array $array
      * @return bool
      */
@@ -69,13 +66,14 @@ final class Arrays extends StaticClass
     }
 
     /**
-     * Set (with dot notation support for sub-array paths).
+     * Put an item into given array, with dot notation support for sub-array paths.
+     *
      * @param  array      &$array
      * @param  int|string  $key
      * @param  any         $value
      * @return array
      */
-    public static function set(array &$array, $key, $value): array
+    public static function set(array &$array, int|string $key, $value): array
     {
         // Usage:
         // Arrays::set($array, 'a.b.c', 1) => ['a' => ['b' => ['c' => 1]]]
@@ -85,7 +83,7 @@ final class Arrays extends StaticClass
         } else {
             $key = (string) $key;
 
-            if (strpos($key, '.') === false) {
+            if (!str_contains($key, '.')) {
                 $array[$key] = $value;
             } else {
                 $keys = explode('.', trim($key, '.'));
@@ -112,7 +110,8 @@ final class Arrays extends StaticClass
     }
 
     /**
-     * Set all (with dot notation support for sub-array paths).
+     * Bridge method to set() for multiple items.
+     *
      * @param  array &$array
      * @param  array  $items
      * @return array
@@ -128,21 +127,22 @@ final class Arrays extends StaticClass
     }
 
     /**
-     * Get (with dot notation support for sub-array paths).
+     * Get an item form given array, with dot notation support for sub-array paths.
+     *
      * @param  array      &$array
      * @param  int|string  $key AKA path.
-     * @param  any|null    $valueDefault
+     * @param  any|null    $default
      * @param  bool        $drop
      * @return any|null
      */
-    public static function get(array &$array, $key, $valueDefault = null, bool $drop = false)
+    public static function get(array &$array, int|string $key, $default = null, bool $drop = false)
     {
         // Usage:
         // $array = ['a' => ['b' => ['c' => ['d' => 1, 'd.e' => '...']]]]
         // Arrays::get($array, 'a.b.c.d') => 1
         // Arrays::get($array, 'a.b.c.d.e') => '...'
 
-        $value = $valueDefault;
+        $value = $default;
         if (empty($array)) {
             return $value;
         }
@@ -155,7 +155,7 @@ final class Arrays extends StaticClass
         } else {
             $key = (string) $key;
 
-            if (strpos($key, '.') === false) {
+            if (!str_contains($key, '.')) {
                 $value = $array[$key] ?? $value;
                 if ($drop) { // Drop gotten item.
                     unset($array[$key]);
@@ -184,56 +184,60 @@ final class Arrays extends StaticClass
     }
 
     /**
-     * Get all (shortcuts like: list(..) = Arrays::getAll(..)).
+     * Bridge method to get() for multiple items. Useful in some times eg. list(..) = Arrays::getAll(..).
+     *
      * @param  array             &$array
      * @param  array<int|string>  $keys AKA paths.
-     * @param  any|null           $valueDefault
+     * @param  any|null           $default
      * @param  bool               $drop
      * @return array
      */
-    public static function getAll(array &$array, array $keys, $valueDefault = null, bool $drop = false): array
+    public static function getAll(array &$array, array $keys, $default = null, bool $drop = false): array
     {
         $values = [];
 
         foreach ($keys as $key) {
-            $values[] = self::get($array, $key, $valueDefault, $drop);
+            $values[] = self::get($array, $key, $default, $drop);
         }
 
         return $values;
     }
 
     /**
-     * Pull.
+     * Pull an item from given array by a key.
+     *
      * @param  array      &$array
      * @param  int|string  $key
-     * @param  any|null    $valueDefault
+     * @param  any|null    $default
      * @return any|null
      */
-    public static function pull(array &$array, $key, $valueDefault = null)
+    public static function pull(array &$array, int|string $key, $default = null)
     {
-        return self::get($array, $key, $valueDefault, true);
+        return self::get($array, $key, $default, true);
     }
 
     /**
-     * Pull all (shortcuts like: list(..) = Arrays::pullAll(..)).
+     * Bridge method to get() for multiple items. Useful in some times eg. list(..) = Arrays::pullAll(..).
+     *
      * @param  array             &$array
      * @param  array<int|string>  $keys
-     * @param  any|null           $valueDefault
+     * @param  any|null           $default
      * @return array
      */
-    public static function pullAll(array &$array, array $keys, $valueDefault = null): array
+    public static function pullAll(array &$array, array $keys, $default = null): array
     {
-        return self::getAll($array, $keys, $valueDefault, true);
+        return self::getAll($array, $keys, $default, true);
     }
 
     /**
-     * Remove.
+     * Remove an item from given array by a key.
+     *
      * @param  array      &$array
      * @param  int|string  $key
      * @return array
      * @since  4.0
      */
-    public static function remove(array &$array, $key): array
+    public static function remove(array &$array, int|string $key): array
     {
         self::pull($array, $key);
 
@@ -241,7 +245,8 @@ final class Arrays extends StaticClass
     }
 
     /**
-     * Remove all.
+     * Bridge method to remove() for multiple items.
+     *
      * @param  array             &$array
      * @param  array<int|string>  $keys
      * @return array
@@ -255,7 +260,8 @@ final class Arrays extends StaticClass
     }
 
     /**
-     * Get random.
+     * Get one/multi items from given array randomly.
+     *
      * @param  array  &$array
      * @param  int     $limit
      * @param  bool    $pack
@@ -269,7 +275,8 @@ final class Arrays extends StaticClass
     }
 
     /**
-     * Pull random.
+     * Pull one/multi items from given array randomly.
+     *
      * @param  array  &$array
      * @param  int     $limit
      * @param  bool    $pack
@@ -282,7 +289,8 @@ final class Arrays extends StaticClass
     }
 
     /**
-     * Remove random.
+     * Pull one/multi items from given array randomly.
+     *
      * @param  array  &$array
      * @param  int     $limit
      * @return any|null
@@ -296,26 +304,29 @@ final class Arrays extends StaticClass
     }
 
     /**
-     * Compose.
+     * Compose an array with given keys/values, unlike errorizing array_combine() when keys/values count
+     * not match.
+     *
      * @param  array    $keys
      * @param  array    $values
-     * @param  any|null $valuesDefault
+     * @param  any|null $default
      * @return array
      * @since  4.11
      */
-    public static function compose(array $keys, array $values, $valuesDefault = null): array
+    public static function compose(array $keys, array $values, $default = null): array
     {
         $ret = [];
 
         foreach ($keys as $i => $key) {
-            $ret[$key] = $values[$i] ?? $valuesDefault;
+            $ret[$key] = $values[$i] ?? $default;
         }
 
         return $ret;
     }
 
     /**
-     * Complete.
+     * Complete an array keys checking given other arrays to find non-null/non-null string value.
+     *
      * @param  bool     $nullStrings
      * @param  array    $keys
      * @param  array ...$arrays
@@ -341,7 +352,8 @@ final class Arrays extends StaticClass
     }
 
     /**
-     * Coalesce.
+     * Coalesce an array keys checking given other arrays to find non-null/non-null string value.
+     *
      * @param  bool     $nullStrings
      * @param  array ...$arrays
      * @return array
@@ -366,7 +378,23 @@ final class Arrays extends StaticClass
     }
 
     /**
-     * Test (like JavaScript Array.some()).
+     * Union.
+     *
+     * @param  array $array1
+     * @param  array $array2
+     * @return array
+     * @since  5.0
+     */
+    public static function union(array $array1, array $array2): array
+    {
+        return array_merge(array_intersect($array1, $array2),
+                           array_diff($array1, $array2),
+                           array_diff($array2, $array1));
+    }
+
+    /**
+     * Test, like JavaScript Array.some().
+     *
      * @param  array    $array
      * @param  callable $func
      * @return bool
@@ -382,7 +410,8 @@ final class Arrays extends StaticClass
     }
 
     /**
-     * Test all (like JavaScript Array.every()).
+     * Test all, like JavaScript Array.every().
+     *
      * @param  array    $array
      * @param  callable $func
      * @return bool
@@ -398,7 +427,8 @@ final class Arrays extends StaticClass
     }
 
     /**
-     * Find.
+     * Find first item that fulfills given test function.
+     *
      * @param  array    $array
      * @param  callable $func
      * @return any|null
@@ -406,7 +436,7 @@ final class Arrays extends StaticClass
      */
     public static function find(array $array, callable $func)
     {
-        $i = 0; $ret = null;
+        $ret = null; $i = 0;
 
         foreach ($array as $key => $value) {
             if ($func($value, $key, $i++)) {
@@ -419,7 +449,8 @@ final class Arrays extends StaticClass
     }
 
     /**
-     * Find all.
+     * Find all all items that fulfill given test function.
+     *
      * @param  array    $array
      * @param  callable $func
      * @param  bool     $useKeys
@@ -440,10 +471,11 @@ final class Arrays extends StaticClass
     }
 
     /**
-     * Random.
+     * Randomize given array, optionally returning as [key,value] pairs.
+     *
      * @param  array &$array
      * @param  int    $limit
-     * @param  bool   $pack Return as [key,value] pairs.
+     * @param  bool   $pack
      * @param  bool   $drop
      * @return any|null
      */
@@ -456,19 +488,19 @@ final class Arrays extends StaticClass
 
         // Prevent trivial corruption from limit errors, but notice.
         if ($limit < 1) {
-            $limit = 1;
-            trigger_error(sprintf(
+            throw new ValueError(sprintf(
                 '%s(): Minimum limit must be 1, %s given', $limit
             ));
         } elseif ($limit > $count) {
-            $limit = $count;
-            trigger_error(sprintf(
+            throw new ValueError(sprintf(
                 '%s(): Maximum limit must not be greater than %s, given limit %s is exceeding '.
                 'count of given array(%s)', __method__, $count, $limit, $count
             ));
         }
 
         $ret = [];
+
+        srand(); // Ensure a new seed (@see https://wiki.php.net/rfc/object_scope_prng).
 
         // Get & arrayify single keys (limit=1).
         $keys = (array) array_rand($array, $limit);
@@ -493,13 +525,16 @@ final class Arrays extends StaticClass
     }
 
     /**
-     * Shuffle.
+     * Shuffle given array, keeping keys as default.
+     *
      * @param  array &$array
      * @param  bool   $keepKeys
      * @return array
      */
     public static function shuffle(array &$array, bool $keepKeys = true): array
     {
+        srand(); // Ensure a new seed (@see https://wiki.php.net/rfc/object_scope_prng).
+
         if ($keepKeys) {
             $keys = array_keys($array);
             shuffle($keys);
@@ -522,7 +557,8 @@ final class Arrays extends StaticClass
     }
 
     /**
-     * Include.
+     * Filter given array including given keys.
+     *
      * @param  array             $array
      * @param  array<int|string> $keys
      * @return array
@@ -533,7 +569,8 @@ final class Arrays extends StaticClass
     }
 
     /**
-     * Exclude.
+     * Filter given array excluding given keys.
+     *
      * @param  array             $array
      * @param  array<int|string> $keys
      * @return array
@@ -544,20 +581,20 @@ final class Arrays extends StaticClass
     }
 
     /**
-     * Flatten.
+     * Flat given array.
+     *
      * @param  array $array
      * @param  bool  $useKeys
      * @param  bool  $fixKeys
-     * @param  bool  $oneDimension
+     * @param  bool  $multi
      * @return array
      * @since  4.0
      */
-    public static function flatten(array $array, bool $useKeys = false, bool $fixKeys = false,
-        bool $oneDimension = false): array
+    public static function flat(array $array, bool $useKeys = false, bool $fixKeys = false, bool $multi = true): array
     {
         $ret = [];
 
-        if (!$oneDimension) {
+        if ($multi) {
             $i = 0;
             // Seems short functions (=>) not work here [ref (&) issue].
             array_walk_recursive($array, function ($value, $key) use (&$ret, &$i, $useKeys, $fixKeys) {
@@ -574,29 +611,31 @@ final class Arrays extends StaticClass
     }
 
     /**
-     * Swap.
+     * Swap two keys on given array.
+     *
      * @param  array      &$array
      * @param  int|string  $oldKey
      * @param  int|string  $newKey
-     * @param  any|null    $newValueDefault
+     * @param  any|null    $default
      * @return array
      * @since  4.2
      */
-    public static function swap(array &$array, $oldKey, $newKey, $newValueDefault = null): array
+    public static function swap(array &$array, int|string $oldKey, int|string $newKey, $default = null): array
     {
         $newValue = self::pull($array, $oldKey);
 
         if ($newValue !== null) {
             self::set($array, $newKey, $newValue);
-        } elseif (func_num_args() === 4) { // Create directive.
-            self::set($array, $newKey, $newValueDefault);
+        } elseif (func_num_args() == 4) { // Create directive.
+            self::set($array, $newKey, $default);
         }
 
         return $array;
     }
 
     /**
-     * Sweep.
+     * Sweep given array filtering null, '' and [] values.
+     *
      * @param  array      &$array
      * @param  array|null  $ignoredKeys
      * @return array
@@ -605,9 +644,7 @@ final class Arrays extends StaticClass
     public static function sweep(array &$array, array $ignoredKeys = null): array
     {
         // Memoize test function.
-        static $test; $test ??= function ($value) {
-            return ($value !== null && $value !== '' && $value !== []);
-        };
+        static $test; $test ??= fn($v) => $v !== null && $v !== '' && $v !== [];
 
         if ($ignoredKeys == null) {
             $array = array_filter($array, $test);
@@ -623,54 +660,8 @@ final class Arrays extends StaticClass
     }
 
     /**
-     * Average.
-     * @param  array $array
-     * @param  bool  $includeZeros
-     * @return float
-     * @since  4.5
-     */
-    public static function average(array $array, bool $includeZeros = true): float
-    {
-        $array = array_filter($array, fn($v) => (
-            $includeZeros ? is_numeric($v) : is_numeric($v) && ($v > 0)
-        ));
-
-        return array_sum($array) / count($array);
-    }
-
-    /**
-     * Aggregate.
-     * @param  array      $array
-     * @param  callable   $func
-     * @param  array|null $carry
-     * @return array
-     * @since  4.14
-     */
-    public static function aggregate(array $array, callable $func, array $carry = null): array
-    {
-        $i = 0; $carry ??= [];
-
-        foreach ($array as $key => $value) {
-            // // Note: when "return" not used carry must be ref'ed (eg: (&$carry, $value, ..)).
-            // $ret = $func($carry, $value, $key, $i++, $array);
-
-            // @cancel: Return can always be an array..
-            // // When "return" used.
-            // if ($ret && is_array($ret)) {
-            //     $carry = $ret;
-            // }
-
-            // Note: carry must be ref'ed (eg: (&$carry, $value, ..)).
-            $func($carry, $value, $key, $i++, $array);
-
-            $carry = (array) $carry;
-        }
-
-        return $carry;
-    }
-
-    /**
-     * Default.
+     * Filte an array with default=null to ensure given keys.
+     *
      * @param  array    $array
      * @param  array    $keys
      * @param  bool     $useKeys
@@ -686,14 +677,15 @@ final class Arrays extends StaticClass
     }
 
     /**
-     * Index.
+     * Find index of given value.
+     *
      * @param  array $array
      * @param  any   $value
      * @param  bool  $strict
      * @return int|string|null
      * @since  4.0
      */
-    public static function index(array $array, $value, bool $strict = true)
+    public static function index(array $array, $value, bool $strict = true): int|string|null
     {
         $key = array_search($value, $array, $strict);
 
@@ -701,16 +693,17 @@ final class Arrays extends StaticClass
     }
 
     /**
-     * First.
+     * Get first item from given array.
+     *
      * @param  array    &$array
-     * @param  any|null  $valueDefault
+     * @param  any|null  $default
      * @param  bool      $drop
      * @return any|null
      */
-    public static function first(array &$array, $valueDefault = null, bool $drop = false)
+    public static function first(array &$array, $default = null, bool $drop = false)
     {
         $key   = array_key_first($array);
-        $value = $valueDefault;
+        $value = $default;
 
         if ($key !== null) {
             $value = $array[$key];
@@ -723,16 +716,17 @@ final class Arrays extends StaticClass
     }
 
     /**
-     * Last.
+     * Get last item from given array.
+     *
      * @param  array    &$array
-     * @param  any|null  $valueDefault
+     * @param  any|null  $default
      * @param  bool      $drop
      * @return any|null
      */
-    public static function last(array &$array, $valueDefault = null, bool $drop = false)
+    public static function last(array &$array, $default = null, bool $drop = false)
     {
         $key   = array_key_last($array);
-        $value = $valueDefault;
+        $value = $default;
 
         if ($key !== null) {
             $value = $array[$key];
@@ -745,12 +739,13 @@ final class Arrays extends StaticClass
     }
 
     /**
-     * Keys exists.
+     * Check whether given keys exist in given array.
+     *
      * @param  array             $array
      * @param  array<int|string> $keys
      * @return bool
      */
-    public static function keysExists(array $array, array $keys): bool
+    public static function keysExist(array $array, array $keys): bool
     {
         foreach ($keys as $key) {
             if (!array_key_exists($key, $array)) {
@@ -761,16 +756,17 @@ final class Arrays extends StaticClass
     }
 
     /**
-     * Values exists.
+     * Check whether given values exist given array.
+     *
      * @param  array $array
      * @param  array $values
      * @param  bool  $strict
      * @return bool
      */
-    public static function valuesExists(array $array, array $values, bool $strict = true): bool
+    public static function valuesExist(array $array, array $values, bool $strict = true): bool
     {
         foreach ($values as $value) {
-            if (!in_array($value, $array, $strict)) {
+            if (!array_value_exists($value, $array, $strict)) {
                 return false;
             }
         }
@@ -778,7 +774,8 @@ final class Arrays extends StaticClass
     }
 
     /**
-     * Search keys.
+     * Search given keys returning found values.
+     *
      * @param  array             $array
      * @param  array<int|string> $keys
      * @return array
@@ -795,7 +792,8 @@ final class Arrays extends StaticClass
     }
 
     /**
-     * Search values.
+     * Search values returning found keys.
+     *
      * @param  array $array
      * @param  array $values
      * @param  bool  $strict
@@ -813,7 +811,9 @@ final class Arrays extends StaticClass
     }
 
     /**
-     * Filter.
+     * Filter, unlike array_filter() using [value,key,i,array] notation for callablebut fallback to [value]
+     * notation when ArgumentCountError occurs.
+     *
      * @param  array         $array
      * @param  callable|null $func
      * @param  bool          $keepKeys
@@ -824,17 +824,25 @@ final class Arrays extends StaticClass
         // Set default tester.
         $func ??= fn($v) => $v !== null && $v !== '' && $v !== [];
 
+        if (func_num_args() == 1) {
+            return array_filter($array, $func);
+        }
+
         $ret = []; $i = 0;
 
-        foreach ($array as $key => $value) {
+        foreach ($array as $key => $value) try {
             $func($value, $key, $i++, $array) && $ret[$key] = $value;
+        } catch (ArgumentCountError) {
+            $func($value) && $ret[$key] = $value;
         }
 
         return $keepKeys ? $ret : array_values($ret);
     }
 
     /**
-     * Map.
+     * Map, unlike array_map() using [value,key,i,array] notation for callable but fallback to [value]
+     * notation when ArgumentCountError occurs.
+     *
      * @param  array    $array
      * @param  callable $func
      * @param  bool     $keepKeys
@@ -844,15 +852,19 @@ final class Arrays extends StaticClass
     {
         $ret = []; $i = 0;
 
-        foreach ($array as $key => $value) {
+        foreach ($array as $key => $value) try {
             $ret[$key] = $func($value, $key, $i++, $array);
+        } catch (ArgumentCountError) {
+            $ret[$key] = $func($value);
         }
 
         return $keepKeys ? $ret : array_values($ret);
     }
 
     /**
-     * Reduce.
+     * Reduce, unlike array_reduce() using [value,key,i,array] notation for callable but fallback to [value]
+     * notation when ArgumentCountError occurs.
+     *
      * @param  array    $array
      * @param  any      $carry
      * @param  callable $func
@@ -860,64 +872,135 @@ final class Arrays extends StaticClass
      */
     public static function reduce(array $array, $carry, callable $func)
     {
-        $i = 0; $ret = $carry;
+        $ret = $carry; $i = 0;
 
-        foreach ($array as $key => $value) {
+        foreach ($array as $key => $value) try {
             $ret = $func($ret, $value, $key, $i++, $array);
+        } catch (ArgumentCountError) {
+            $ret = $func($ret, $value);
         }
 
         return $ret;
     }
 
     /**
-     * Get int.
+     * Aggregate an array with given carry variable that must be ref'ed like `fn(&$carry, $value, ..) => ..`
+     * in given aggregate function.
+     *
+     * @param  array      $array
+     * @param  callable   $func
+     * @param  array|null $carry
+     * @return array
+     * @since  4.14
+     */
+    public static function aggregate(array $array, callable $func, array $carry = null): array
+    {
+        $carry ??= []; $i = 0;
+
+        foreach ($array as $key => $value) {
+            // @cancel: Return can always be an array..
+            // // Note: when "return" not used carry must be ref'ed (eg: (&$carry, $value, ..)).
+            // // $ret = $func($carry, $value, $key, $i++, $array);
+            // // When "return" used.
+            // // if ($ret && is_array($ret)) {
+            // //     $carry = $ret;
+            // // }
+
+            // Note: carry must be ref'ed (eg: (&$carry, $value, ..)).
+            $func($carry, $value, $key, $i++, $array);
+
+            $carry = (array) $carry;
+        }
+
+        return $carry;
+    }
+
+    /**
+     * Get average of values.
+     *
+     * @param  array $array
+     * @param  bool  $zeros
+     * @return float
+     * @since  4.5
+     */
+    public static function average(array $array, bool $zeros = true): float
+    {
+        $array = array_filter($array, fn($v) => $zeros ? is_numeric($v) : is_numeric($v) && $v > 0);
+
+        return fdiv(array_sum($array), count($array));
+    }
+
+    /**
+     * Get an item as given type.
+     *
      * @param  array      &$array
      * @param  int|string  $key
-     * @param  int|null    $valueDefault
+     * @param  string      $type
+     * @param  any|null    $default
+     * @param  bool        $drop
+     * @return any
+     */
+    public static function getAs(array &$array, int|string $key, string $type, $default = null, bool $drop = false)
+    {
+        $value = self::get($array, $key, $default, $drop);
+        settype($value, $type);
+
+        return $value;
+    }
+
+    /**
+     * Get an item as int.
+     *
+     * @param  array      &$array
+     * @param  int|string  $key
+     * @param  int|null    $default
      * @param  bool        $drop
      * @return int
      */
-    public static function getInt(array &$array, $key, int $valueDefault = null, bool $drop = false): int
+    public static function getInt(array &$array, int|string $key, int $default = null, bool $drop = false): int
     {
-        return (int) self::get($array, $key, $valueDefault, $drop);
+        return (int) self::get($array, $key, $default, $drop);
     }
 
     /**
-     * Get float.
+     * Get an item as float.
+     *
      * @param  array      &$array
      * @param  int|string  $key
-     * @param  float|null  $valueDefault
+     * @param  float|null  $default
      * @param  bool        $drop
      * @return float
      */
-    public static function getFloat(array &$array, $key, float $valueDefault = null, bool $drop = false): float
+    public static function getFloat(array &$array, int|string $key, float $default = null, bool $drop = false): float
     {
-        return (float) self::get($array, $key, $valueDefault, $drop);
+        return (float) self::get($array, $key, $default, $drop);
     }
 
     /**
-     * Get string.
+     * Get an item as string.
+     *
      * @param  array       &$array
      * @param  int|string   $key
-     * @param  string|null  $valueDefault
+     * @param  string|null  $default
      * @param  bool         $drop
      * @return string
      */
-    public static function getString(array &$array, $key, string $valueDefault = null, bool $drop = false): string
+    public static function getString(array &$array, int|string $key, string $default = null, bool $drop = false): string
     {
-        return (string) self::get($array, $key, $valueDefault, $drop);
+        return (string) self::get($array, $key, $default, $drop);
     }
 
     /**
-     * Get bool.
+     * Get an item as bool.
+     *
      * @param  array      &$array
      * @param  int|string  $key
-     * @param  bool|null   $valueDefault
+     * @param  bool|null   $default
      * @param  bool        $drop
      * @return bool
      */
-    public static function getBool(array &$array, $key, bool $valueDefault = null, bool $drop = false): bool
+    public static function getBool(array &$array, int|string $key, bool $default = null, bool $drop = false): bool
     {
-        return (bool) self::get($array, $key, $valueDefault, $drop);
+        return (bool) self::get($array, $key, $default, $drop);
     }
 }

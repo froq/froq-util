@@ -1,50 +1,44 @@
 <?php
 /**
- * MIT License <https://opensource.org/licenses/mit>
- *
- * Copyright (c) 2015 Kerem Güneş
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is furnished
- * to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
+ * Copyright (c) 2015 · Kerem Güneş
+ * Apache License 2.0 · http://github.com/froq/froq-util
  */
 declare(strict_types=1);
 
-use froq\App;
-use froq\http\{Http, Request, Response, request\Segments, response\Status};
 use froq\util\UtilException;
+use froq\http\{Http, Request, Response, request\Segments, response\Status};
+use froq\App;
 
 // Check dependencies (all others already come with froq\App).
 if (!class_exists(App::class, false)) {
-    throw new UtilException('Http sugars dependent to "froq" module that not found');
+    throw new UtilException('Http sugars dependent to `froq` module but not found');
 }
 
 /**
- * HTTP version.
+ * Get HTTP protocol.
+ *
  * @return string
+ * @since  5.0
+ */
+function http_protocol(): string
+{
+    return Http::protocol();
+}
+
+/**
+ * Get HTTP version.
+ *
+ * @return float
  * @since  4.0
  */
-function http_version(): string
+function http_version(): float
 {
     return Http::version();
 }
 
 /**
- * HTTP date.
+ * Make/get an HTTP date.
+ *
  * @param  int|null $time
  * @return string
  * @since  4.0
@@ -55,7 +49,8 @@ function http_date(int $time = null): string
 }
 
 /**
- * HTTP date verify.
+ * Verify an HTTP date.
+ *
  * @param  string $date
  * @return bool
  * @since  4.0
@@ -66,7 +61,8 @@ function http_date_verify(string $date): bool
 }
 
 /**
- * Request.
+ * Get app's request.
+ *
  * @return froq\http\Request
  */
 function request(): Request
@@ -75,20 +71,22 @@ function request(): Request
 }
 
 /**
- * Response.
+ * Get app's response, but also optionally set code, content, attributes, headers and cookies.
+ *
+ * @param  ... $args
  * @return froq\http\Response
  */
-function response(...$arguments): Response
+function response(...$args): Response
 {
     $response = app()->response();
 
-    if ($arguments) {
-        @ [$code, $content, $content_attributes, $headers, $cookies] = $arguments;
+    if ($args) {
+        @ [$code, $content, $attributes, $headers, $cookies] = $args;
 
         $code && $response->setStatus($code);
 
-        if (count($arguments) >= 3) {
-            $response->setBody($content, (array) $content_attributes);
+        if (count($args) >= 3) {
+            $response->setBody($content, (array) $attributes);
         }
 
         $headers && $response->setHeaders($headers);
@@ -99,180 +97,184 @@ function response(...$arguments): Response
 }
 
 /**
- * Status.
+ * Set or get HTTP status code using app's response.
+ *
  * @param  int|null $code
  * @return int|void
  */
 function status(int $code = null)
 {
-    $response = app()->response();
-
-    if ($code) {
-        $response->status($code);
-        return;
+    if ($code === null) {
+        return app()->response()->status()->getCode();
     }
 
-    return $response->status()->getCode();
+    app()->response()->status()->setCode($code);
 }
 
 /**
- * Is get.
+ * Check whether request method is "GET".
+ *
  * @return bool
  */
 function is_get(): bool
 {
-    return app()->request()->method()->isGet();
+    return app()->request()->isGet();
 }
 
 /**
- * Is post.
+ * Check whether request method is "POST".
+ *
  * @return bool
  */
 function is_post(): bool
 {
-    return app()->request()->method()->isPost();
+    return app()->request()->isPost();
 }
 
 /**
- * Is put.
+ * Check whether request method is "PUT".
+ *
  * @return bool
  */
 function is_put(): bool
 {
-    return app()->request()->method()->isPut();
+    return app()->request()->isPut();
 }
 
 /**
- * Is patch.
+ * Check whether request method is "PATCH".
+ *
  * @return bool
  * @since  4.0
  */
 function is_patch(): bool
 {
-    return app()->request()->method()->isPatch();
+    return app()->request()->isPatch();
 }
 
 /**
- * Is delete.
+ * Check whether request method is "DELETE".
+ *
  * @return bool
  */
 function is_delete(): bool
 {
-    return app()->request()->method()->isDelete();
+    return app()->request()->isDelete();
 }
 
 /**
- * Is ajax.
+ * Check whether request was made via "AJAX".
+ *
  * @return bool
  */
 function is_ajax(): bool
 {
-    return app()->request()->method()->isAjax();
+    return app()->request()->isAjax();
 }
 
 /**
- * Get.
+ * Get one/many "GET" param.
+ *
  * @param  string|array|null $name
- * @param  any|null          $value_default
+ * @param  any|null          $default
  * @return any|null
  */
-function get($name = null, $value_default = null)
+function get(string|array $name = null, $default = null)
 {
-    return app()->request()->get($name, $value_default);
+    return app()->request()->get($name, $default);
 }
 
 /**
- * Get has.
+ * Get one/many "GET" param existence.
+ *
  * @param  string|array $name
  * @return bool
  */
-function get_has($name): bool
+function get_has(string|array $name): bool
 {
     return app()->request()->hasGet($name);
 }
 
 /**
- * Post.
+ * Get one/many "POST" param.
+ *
  * @param  string|array|null $name
- * @param  any|null          $value_default
+ * @param  any|null          $default
  * @return any|null
  */
-function post($name = null, $value_default = null)
+function post(string|array $name = null, $default = null)
 {
-    return app()->request()->post($name, $value_default);
+    return app()->request()->post($name, $default);
 }
 
 /**
- * Post has.
+ * Get one/many "POST" param existence.
+ *
  * @param  string|array $name
  * @return bool
  */
-function post_has($name): bool
+function post_has(string|array $name): bool
 {
     return app()->request()->hasPost($name);
 }
 
 /**
- * Cookie.
+ * Get one/many "COOKIE" param.
+ *
  * @param  string|array|null $name
- * @param  any|null          $value_default
+ * @param  any|null          $default
  * @return any|null
  */
-function cookie($name = null, $value_default = null)
+function cookie(string|array $name = null, $default = null)
 {
-    return func_num_args() > 1 ? app()->request()->cookie($name, $value_default)
+    return func_num_args() > 1 ? app()->request()->cookie($name, $default)
                                : app()->request()->cookie($name);
 }
 
 /**
- * Cookie has.
+ * Get one/many "COOKIE" param existence.
+ *
  * @param  string|array $name
  * @return bool
  */
-function cookie_has($name): bool
+function cookie_has(string|array $name): bool
 {
     return app()->request()->hasCookie($name);
 }
 
 /**
- * Segment.
+ * Get a segment param.
+ *
  * @param  int|string $key
- * @param  any|null   $value_default
+ * @param  any|null   $default
  * @return any|null
  */
-function segment($key, $value_default = null)
+function segment(int|string $key, $default = null)
 {
-    $segments = app()->request()->uri()->segments();
-
-    return $segments ? $segments->get($key, $value_default) : $value_default;
+    return app()->request()->uri()->getSegment($key, $default);
 }
 
 /**
- * Segments.
+ * Get URI segments property or segment params.
+ *
  * @param  bool $list
- * @return ?froq\http\request\Segments|?array
+ * @return froq\http\request\Segments|array
  */
-function segments(bool $list = false)
+function segments(array $keys = null, $default = null): Segments|array
 {
-    $segments = app()->request()->uri()->segments();
-
-    if ($segments && $list) {
-        $segments = $segments->toList();
-    }
-
-    return $segments;
+    return app()->request()->uri()->getSegments($key, $default);
 }
 
 /**
- * Redirect.
+ * Redirect client to given location with/without given headers and cookies.
+ *
  * @param  string     $to
  * @param  int        $code
  * @param  array|null $headers
  * @param  array|null $cookies
  * @return void
  */
-function redirect(string $to, int $code = Status::FOUND,
-                  array $headers = null, array $cookies = null): void
+function redirect(string $to, int $code = Status::FOUND, array $headers = null, array $cookies = null): void
 {
     app()->response()->redirect($to, $code, $headers, $cookies);
 }

@@ -1,52 +1,33 @@
 <?php
 /**
- * MIT License <https://opensource.org/licenses/mit>
- *
- * Copyright (c) 2015 Kerem Güneş
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is furnished
- * to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
+ * Copyright (c) 2015 · Kerem Güneş
+ * Apache License 2.0 · http://github.com/froq/froq-util
  */
 declare(strict_types=1);
 
 use froq\util\Util;
 
 /**
- * Get url (gets current URL).
+ * Get current URL (from server environment).
  *
  * @param  string|null $url
- * @return ?string
+ * @return string|null
  * @since  4.0
  */
-function get_url(): ?string
+function get_url(): string|null
 {
     static $ret;
     return $ret ??= Util::getCurrentUrl();
 }
 
 /**
- * Get url scheme (gets scheme part from current or given URL).
+ * Get scheme part from current or given URL.
  *
  * @param  string|null $url
- * @return ?string
+ * @return string|null
  * @since  4.0
  */
-function get_url_scheme(string $url = null): ?string
+function get_url_scheme(string $url = null): string|null
 {
     $url = ''. (func_num_args() ? $url : get_url());
 
@@ -54,13 +35,13 @@ function get_url_scheme(string $url = null): ?string
 }
 
 /**
- * Get url host (gets host part from current or given URL).
+ * Get host part from current or given URL.
  *
  * @param  string|null $url
- * @return ?string
+ * @return string|null
  * @since  4.0
  */
-function get_url_host(string $url = null): ?string
+function get_url_host(string $url = null): string|null
 {
     $url = ''. (func_num_args() ? $url : get_url());
 
@@ -68,13 +49,13 @@ function get_url_host(string $url = null): ?string
 }
 
 /**
- * Get url port (gets port part from current or given URL).
+ * Get port part from current or given URL.
  *
  * @param  string|null $url
- * @return ?int
+ * @return int|null
  * @since  4.0
  */
-function get_url_port(string $url = null): ?int
+function get_url_port(string $url = null): int|null
 {
     $url = ''. (func_num_args() ? $url : get_url());
 
@@ -82,13 +63,13 @@ function get_url_port(string $url = null): ?int
 }
 
 /**
- * Get url path (gets path part from current or given URL).
+ * Get path part from current or given URL.
  *
  * @param  string|null $url
- * @return ?string
+ * @return string|null
  * @since  4.0
  */
-function get_url_path(string $url = null): ?string
+function get_url_path(string $url = null): string|null
 {
     $url = ''. (func_num_args() ? $url : get_url());
 
@@ -96,13 +77,13 @@ function get_url_path(string $url = null): ?string
 }
 
 /**
- * Get url query (gets query part from current or given URL).
+ * Get query part from current or given URL.
  *
  * @param  string|null $url
- * @return ?string
+ * @return string|null
  * @since  4.0
  */
-function get_url_query(string $url = null): ?string
+function get_url_query(string $url = null): string|null
 {
     $url = ''. (func_num_args() ? $url : get_url());
 
@@ -110,13 +91,13 @@ function get_url_query(string $url = null): ?string
 }
 
 /**
- * Get url fragment (gets fragment part from current or given URL).
+ * Get fragment part from current or given URL.
  *
  * @param  string|null $url
- * @return ?string
+ * @return string|null
  * @since  4.0
  */
-function get_url_fragment(string $url = null): ?string
+function get_url_fragment(string $url = null): string|null
 {
     $url = ''. (func_num_args() ? $url : get_url());
 
@@ -124,26 +105,26 @@ function get_url_fragment(string $url = null): ?string
 }
 
 /**
- * Get url segments (gets a segment by index from current or given URL).
+ * Get a segment by index from current or given URL.
  *
  * @param  string|null $url
- * @return ?string
+ * @return string|null
  * @since  4.0
  */
-function get_url_segment(int $i, string $url = null): ?string
+function get_url_segment(int $i, string $url = null): string|null
 {
     return (func_num_args() == 1) ? get_url_segments()[$i] ?? null
                                   : get_url_segments($url)[$i] ?? null;
 }
 
 /**
- * Get url segments (gets all segments from current or given URL).
+ * Get all segments from current or given URL.
  *
  * @param  string|null $url
- * @return ?array
+ * @return array|null
  * @since  4.0
  */
-function get_url_segments(string $url = null): ?array
+function get_url_segments(string $url = null): array|null
 {
     $path = func_num_args() ? get_url_path($url) : get_url_path();
     if (!$path) {

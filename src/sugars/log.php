@@ -1,40 +1,22 @@
 <?php
 /**
- * MIT License <https://opensource.org/licenses/mit>
- *
- * Copyright (c) 2015 Kerem Güneş
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is furnished
- * to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
+ * Copyright (c) 2015 · Kerem Güneş
+ * Apache License 2.0 · http://github.com/froq/froq-util
  */
 declare(strict_types=1);
 
-use froq\App;
-use froq\logger\Logger;
 use froq\util\UtilException;
+use froq\logger\Logger;
+use froq\App;
 
 // Check dependencies (all others already come with froq\App).
 if (!class_exists(App::class, false)) {
-    throw new UtilException('Logger sugars dependent to "froq" module that not found');
+    throw new UtilException('Logger sugars dependent to `froq` module but not found');
 }
 
 /**
- * Logger.
+ * Get app's logger.
+ *
  * @return froq\logger\Logger.
  */
 function logger(): Logger
@@ -43,51 +25,49 @@ function logger(): Logger
 }
 
 /**
- * Log any.
+ * Log an error message.
+ *
  * @param  string|Throwable $message
+ * @param  bool             $separate
  * @return bool
  */
-function log_any($message): bool
+function log_error(string|Throwable $message, bool $separate = true): bool
 {
-    return app()->logger()->log($message);
+    return app()->logger()->logError($message, $separate);
 }
 
 /**
- * Log error.
+ * Log a warning message.
+ *
  * @param  string|Throwable $message
+ * @param  bool             $separate
  * @return bool
  */
-function log_error($message): bool
+function log_warn(string|Throwable $message, bool $separate = true): bool
 {
-    return app()->logger()->logError($message);
+    return app()->logger()->logWarn($message, $separate);
 }
 
 /**
- * Log warn.
+ * Log an info message.
+ *
  * @param  string|Throwable $message
+ * @param  bool             $separate
  * @return bool
  */
-function log_warn($message): bool
+function log_info(string|Throwable $message, bool $separate = true): bool
 {
-    return app()->logger()->logWarn($message);
+    return app()->logger()->logInfo($message, $separate);
 }
 
 /**
- * Log info.
+ * Log a debug message.
+ *
  * @param  string|Throwable $message
+ * @param  bool             $separate
  * @return bool
  */
-function log_info($message): bool
+function log_debug(string|Throwable $message, bool $separate = true): bool
 {
-    return app()->logger()->logInfo($message);
-}
-
-/**
- * Log debug.
- * @param  string|Throwable $message
- * @return bool
- */
-function log_debug($message): bool
-{
-    return app()->logger()->logDebug($message);
+    return app()->logger()->logDebug($message, $separate);
 }

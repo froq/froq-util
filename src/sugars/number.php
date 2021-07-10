@@ -1,82 +1,56 @@
 <?php
 /**
- * MIT License <https://opensource.org/licenses/mit>
- *
- * Copyright (c) 2015 Kerem Güneş
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is furnished
- * to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
+ * Copyright (c) 2015 · Kerem Güneş
+ * Apache License 2.0 · http://github.com/froq/froq-util
  */
 declare(strict_types=1);
 
 use froq\util\Numbers;
 
 /**
- * Number.
+ * Make a number from given a numeric input.
+ *
  * @param  numeric  $in
  * @param  int|null $decimals
  * @return int|float|null
  * @since  3.0
  */
-function number($in, int $decimals = null)
+function number($in, int $decimals = null): int|float|null
 {
     return Numbers::convert($in, $decimals);
 }
 
 /**
- * Number compare.
+ * Compare two numbers.
+ *
  * @param  string|number $a
  * @param  string|number $b
  * @param  int|null      $precision
- * @return ?int
+ * @return int|null
  * @since  3.0
  */
-function number_compare($a, $b, int $precision = null): ?int
+function number_compare($a, $b, int $precision = null): int|null
 {
     return Numbers::compare($a, $b, $precision);
 }
 
 /**
- * Number equals.
+ * Check whether given numbers are equal.
+ *
  * @param  string|number $a
  * @param  string|number $b
  * @param  int|null      $precision
- * @return ?bool
+ * @return bool|null
  * @since  3.0
  */
-function number_equals($a, $b, int $precision = null): ?bool
+function number_equals($a, $b, int $precision = null): bool|null
 {
     return Numbers::equals($a, $b, $precision);
 }
 
 /**
- * Is number.
- * @param  any $in
- * @return bool
- * @since  3.0
- */
-function is_number($in): bool
-{
-    return Numbers::isNumber($in);
-}
-
-/**
- * Is digit.
+ * Check whether given input is digit.
+ *
  * @param  any $in
  * @return bool
  * @since  3.0
@@ -87,7 +61,8 @@ function is_digit($in): bool
 }
 
 /**
- * Is id (useful for any (db) incremental id checking).
+ * Check whether given input is an ID (useful for any (db) incremental id checking).
+ *
  * anyparam  number $in
  * @return bool
  * @since  3.0
@@ -98,7 +73,8 @@ function is_id($in): bool
 }
 
 /**
- * Is uint.
+ * Check whether given input is uint.
+ *
  * @param  any $in
  * @return bool
  * @since  3.0
@@ -109,7 +85,8 @@ function is_uint($in): bool
 }
 
 /**
- * Is ufloat.
+ * Check whether given input is ufloat.
+ *
  * @param  any $in
  * @return bool
  * @since  3.0
@@ -120,7 +97,8 @@ function is_ufloat($in): bool
 }
 
 /**
- * Is signed.
+ * Check whether given input is signed.
+ *
  * @param  any $in
  * @return bool
  * @since  3.0
@@ -131,7 +109,8 @@ function is_signed($in): bool
 }
 
 /**
- * Is unsigned.
+ * Check whether given input is unsigned.
+ *
  * @param  any $in
  * @return bool
  * @since  3.0

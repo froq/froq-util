@@ -1,18 +1,16 @@
 {
     "name": "froq/froq-util",
-    "homepage": "https://github.com/froq/froq-util",
+    "homepage": "http://github.com/froq/froq-util",
     "description": "Froq! Util.",
     "keywords": ["froq", "util"],
-    "license": "MIT",
-    "authors": [
-        {"name": "Kerem Güneş", "email": "k-gun@mail.com"}
-    ],
+    "license": "Apache-2.0",
+    "authors": [{"name": "Kerem Güneş"}],
     "require": {
-        "php": "^7.4",
-        "froq/froq-common": "^4.0"
+        "php": "^8.0",
+        "froq/froq-common": "^5.0"
     },
     "autoload": {
         "classmap": ["src/"],
-           "files": ["src/sugars-constant.php", "src/sugars.php"]
+           "files": ["src/sugars.php"]
     }
 }

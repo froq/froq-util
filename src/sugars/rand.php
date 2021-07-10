@@ -1,33 +1,15 @@
 <?php
 /**
- * MIT License <https://opensource.org/licenses/mit>
- *
- * Copyright (c) 2015 Kerem Güneş
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is furnished
- * to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
+ * Copyright (c) 2015 · Kerem Güneş
+ * Apache License 2.0 · http://github.com/froq/froq-util
  */
 declare(strict_types=1);
 
 use froq\util\Numbers;
 
 /**
- * Rand int.
+ * Get a random int, optionally with min/max directives.
+ *
  * @param  int|null $min
  * @param  int|null $max
  * @return int
@@ -38,7 +20,8 @@ function rand_int(int $min = null, int $max = null): int
 }
 
 /**
- * Rand float.
+ * Get a random float, optionally with min/max and precision directives.
+ *
  * @param  float|null $min
  * @param  float|null $max
  * @param  int|null   $precision
@@ -50,14 +33,17 @@ function rand_float(float $min = null, float $max = null, int $precision = null)
 }
 
 /**
- * Rand item.
+ * Get a random item from given array, filling ref'ed key with found key.
+ *
  * @param  array       $array
  * @param  int|string &$key
  * @return ?any
  * @since  4.1
  */
-function rand_item(array $array, &$key = null)
+function rand_item(array $array, int|string &$key = null)
 {
+    srand();
+
     $key = array_rand($array);
     if ($key === null) {
         return null;
@@ -67,15 +53,18 @@ function rand_item(array $array, &$key = null)
 }
 
 /**
- * Rand items.
+ * Get a random items from given array by given limit, filling ref'ed key with found key.
+ *
  * @param  array              $array
  * @param  int                $limit
  * @param  array<int|string> &$keys
- * @return ?array
+ * @return array|null
  * @since  4.1
  */
-function rand_items(array $array, int $limit, array &$keys = null): ?array
+function rand_items(array $array, int $limit, array &$keys = null): array|null
 {
+    srand();
+
     $ret = [];
     $len = count($array);
 
@@ -87,9 +76,9 @@ function rand_items(array $array, int $limit, array &$keys = null): ?array
 
         $ret[$key] = $array[$key];
         $retlen    = count($ret);
-    } while ($retlen < $len && $retlen < $limit);
+    } while ($retlen < $limit && $retlen < $len);
 
-    $keys = array_keys($ret) ?: null;
+    $keys = array_keys($ret);
 
     return $ret;
 }

@@ -1,48 +1,28 @@
 <?php
 /**
- * MIT License <https://opensource.org/licenses/mit>
- *
- * Copyright (c) 2015 Kerem Güneş
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is furnished
- * to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
+ * Copyright (c) 2015 · Kerem Güneş
+ * Apache License 2.0 · http://github.com/froq/froq-util
  */
 declare(strict_types=1);
 
-use froq\App;
-use froq\session\Session;
 use froq\util\UtilException;
+use froq\App;
 
 // Check dependencies (all others already come with froq\App).
 if (!class_exists(App::class, false)) {
-    throw new UtilException('Session sugars dependent to "froq" module that not found');
+    throw new UtilException('Session sugars dependent to `froq` module but not found');
 }
 
 /**
- * Session.
+ * Set/get a session variable or get session object.
+ *
  * @param  string|array|null $key
- * @param  any               $value
- * @return froq\session\Session|any
+ * @param  any|null          $value
+ * @return any|null|froq\session\Session
  */
-function session($key = null, $value = null)
+function session(string|array $key = null, $value = null)
 {
-    static $session;
-    $session ??= app()->session();
+    static $session; $session ??= app()->session();
 
     // Set/get.
     if ($session) {
@@ -56,9 +36,10 @@ function session($key = null, $value = null)
 }
 
 /**
- * Session flash.
+ * Set/get session flash.
+ *
  * @param  any|null $message
- * @return ?any
+ * @return any|null
  */
 function session_flash($message = null)
 {
@@ -75,71 +56,104 @@ function session_flash($message = null)
 }
 
 /**
- * Session array.
- * @return ?array
+ * Get session as array.
+ *
+ * @return array|null
  */
-function session_array(): ?array
+function session_array(): array|null
 {
-    return ($session = session()) ? $session->toArray() : null;
+    return session()?->toArray();
 }
 
 /**
- * Session has.
+ * Check whether session has an variable.
+ *
  * @param  string $key
- * @return ?bool
+ * @return bool|null
  */
-function session_has(string $key): ?bool
+function session_has(string $key): bool|null
 {
-    return ($session = session()) ? $session->has($key) : null;
+    return session()?->has($key);
 }
 
 /**
- * Session set.
+ * Set a session variable.
+ *
  * @param  string|array $key
  * @param  any|null     $value
- * @return ?bool
+ * @return bool|null
  */
-function session_set($key, $value = null): ?bool
+function session_set(string|array $key, $value = null): bool|null
 {
-    return ($session = session()) ? $session->set($key, $value) != null : null;
+    return session()?->set($key, $value) ? true : null;
 }
 
 /**
- * Session get.
+ * Get a session variable.
+ *
  * @param  string|array $key
  * @param  any|null     $value
  * @param  bool         $remove
- * @return ?any
+ * @return any|null
  */
-function session_get($key, $value_default = null, bool $remove = false)
+function session_get(string|array $key, $default = null, bool $remove = false)
 {
-    return ($session = session()) ? $session->get($key, $value_default, $remove) : null;
+    return session()?->get($key, $default, $remove);
 }
 
 /**
- * Session remove.
+ * Remove a session variable.
+ *
  * @param  string|array $key
- * @return ?bool
+ * @return bool|null
  */
-function session_remove($key): ?bool
+function session_remove(string|array $key): bool|null
 {
-    return ($session = session()) ? $session->remove($key) == null : null;
+    return session()?->remove($key);
 }
 
 /**
  * Start session.
- * @return ?bool
+ *
+ * @return bool|null
  */
-function start_session(): ?bool
+function start_session(): bool|null
 {
-    return ($session = session()) ? $session->start() : null;
+    return session()?->start();
 }
 
 /**
  * End session.
- * @return ?bool
+ *
+ * @return bool|null
  */
-function end_session(): ?bool
+function end_session(): bool|null
 {
-    return ($session = session()) ? $session->end() : null;
+    return session()?->end();
+}
+
+/**
+ * Generate a CSRF token for a form.
+ *
+ * @param  string $form
+ * @param  string $token
+ * @return bool|null
+ * @since  5.0
+ */
+function generate_csrf_token(string $form): string|null
+{
+    return session()?->generateCsrfToken($form);
+}
+
+/**
+ * Validate a CSRF token for a form.
+ *
+ * @param  string $form
+ * @param  string $token
+ * @return bool|null
+ * @since  5.0
+ */
+function validate_csrf_token(string $form, string $token): bool|null
+{
+    return session()?->validateCsrfToken($form, $token);
 }
