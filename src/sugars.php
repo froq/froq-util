@@ -249,7 +249,8 @@ function split(string $sep, string $in, int $limit = null, bool $pad = true, boo
             return array_map(fn($r) => join('', $r), array_chunk($ret, $limit));
         }
     } else {
-        $ret = $limit ? mb_split($sep, $in, $limit) : mb_split($sep, $in);
+        // Note: "[]" is special & used for charsets as separator (pattern), "." etc must be quoted also.
+        $ret = (array) ($limit ? mb_split($sep, $in, $limit) : mb_split($sep, $in));
         if (!$empty) { // When no empty fields wanted.
             $ret = array_filter($ret, 'strlen');
         }
