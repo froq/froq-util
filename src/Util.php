@@ -192,6 +192,7 @@ final /* fuckic static */ class Util extends StaticClass
     {
         $qa = [];
 
+        $qs = trim($qs);
         if ($qs == '') {
             return $qa;
         }
