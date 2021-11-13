@@ -1810,6 +1810,22 @@ function array_map_keys(array $array, array $keys, callable $func): array
 }
 
 /**
+ * Map recursively given array by given callback.
+ *
+ * @param  array    $array
+ * @param  callable $func
+ * @return array
+ * @since  5.1
+ */
+function array_map_recursive(array $array, callable $func): array
+{
+    foreach ($array as $key => $value) {
+        $array[$key] = is_array($value) ? array_map_recursive($value, $func) : $func($value);
+    }
+    return $array;
+}
+
+/**
  * Convert key cases mapping by given separator.
  *
  * @param  array       $array
