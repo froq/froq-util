@@ -264,15 +264,10 @@ final /* fuckic static */ class Util extends StaticClass
             }
         }
 
-        // Memoize: fix skipped NULL values by http_build_query().
-        static $filter; $filter ??= function ($data) use (&$filter) {
-            foreach ($data as $key => $value) {
-                $data[$key] = is_array($value) ? $filter($value) : strval($value);
-            }
-            return $data;
-        };
+        // Fix skipped NULL values by http_build_query().
+        $qa = array_map_recursive($qa, 'strval');
 
-        $qs = http_build_query($filter($qa));
+        $qs = http_build_query($qa);
 
         if ($decode) {
             $qs = urldecode($qs);
