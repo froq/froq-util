@@ -811,7 +811,7 @@ final class Arrays extends StaticClass
     }
 
     /**
-     * Filter, unlike array_filter() using [value,key,i,array] notation for callablebut fallback to [value]
+     * Filter, unlike array_filter() using [value,key,i,array] notation for callable but fallback to [value]
      * notation when ArgumentCountError occurs.
      *
      * @param  array         $array
