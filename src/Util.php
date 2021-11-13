@@ -283,4 +283,44 @@ final /* fuckic static */ class Util extends StaticClass
 
         return trim($qs);
     }
+
+    /**
+     * Make an array with given object.
+     *
+     * @param  object $data
+     * @return array
+     * @since  5.2
+     */
+    public static function makeArray(object $data): array
+    {
+        // Memoize maker function.
+        static $make; $make ??= function ($data) use (&$make) {
+            foreach ($data as $key => $value) {
+                $data->{$key} = is_object($value) ? $make($value) : $value;
+            }
+            return (array) $data;
+        };
+
+        return (array) $make($data);
+    }
+
+    /**
+     * Make an object with given array.
+     *
+     * @param  array $data
+     * @return object
+     * @since  5.2
+     */
+    public static function makeObject(array $data): object
+    {
+        // Memoize maker function.
+        static $make; $make ??= function ($data) use (&$make) {
+            foreach ($data as $key => $value) {
+                $data[$key] = is_array($value) ? $make($value) : $value;
+            }
+            return (object) $data;
+        };
+
+        return (object) $make($data);
+    }
 }
