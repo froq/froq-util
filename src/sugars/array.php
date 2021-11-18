@@ -409,12 +409,11 @@ function array_keys_exist(array $array, array $keys): bool
  *
  * @param  array $array
  * @param  any   $values
- * @param  bool  $strict
  * @return bool
  */
-function array_values_exist(array $array, array $values, bool $strict = true): bool
+function array_values_exist(array $array, array $values): bool
 {
-    return Arrays::valuesExist($array, $values, $strict);
+    return Arrays::valuesExist($array, $values);
 }
 
 /**

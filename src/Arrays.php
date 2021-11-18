@@ -687,9 +687,7 @@ final class Arrays extends StaticClass
      */
     public static function index(array $array, $value, bool $strict = true): int|string|null
     {
-        $key = array_search($value, $array, $strict);
-
-        return ($key !== false) ? $key : null;
+        return array_key($array, $value, $strict);
     }
 
     /**
@@ -747,30 +745,55 @@ final class Arrays extends StaticClass
      */
     public static function keysExist(array $array, array $keys): bool
     {
-        foreach ($keys as $key) {
-            if (!array_key_exists($key, $array)) {
-                return false;
-            }
-        }
-        return true;
+        return array_contains_keys($array, ...$keys);
     }
 
     /**
      * Check whether given values exist given array.
      *
-     * @param  array $array
-     * @param  array $values
-     * @param  bool  $strict
+     * @param  array      $array
+     * @param  array<any> $values
      * @return bool
      */
-    public static function valuesExist(array $array, array $values, bool $strict = true): bool
+    public static function valuesExist(array $array, array $values): bool
     {
-        foreach ($values as $value) {
-            if (!array_value_exists($value, $array, $strict)) {
-                return false;
+        return array_contains($array, ...$values);
+    }
+
+    /**
+     * Search given value returning value's hit count.
+     *
+     * @param  array  $array
+     * @param  any    $value
+     * @param  bool   $strict
+     * @return int
+     * @since  5.3
+     */
+    public static function search(array $array, $value, bool $strict = true): int
+    {
+        $count = 0;
+
+        foreach ($array as $currentValue) {
+            if ($strict ? ($currentValue === $value) : ($currentValue == $value)) {
+                $count++;
             }
         }
-        return true;
+
+        return $count;
+    }
+
+    /**
+     * Search given value's key (works as self.index()).
+     *
+     * @param  array  $array
+     * @param  any    $value
+     * @param  bool   $strict
+     * @return int|string|null
+     * @since  5.3
+     */
+    public static function searchKey(array $array, $value, bool $strict = true): int|string|null
+    {
+        return array_key($array, $value, $strict);
     }
 
     /**
@@ -788,6 +811,7 @@ final class Arrays extends StaticClass
                 $values[] = $array[$key];
             }
         }
+
         return $values ?? [];
     }
 
@@ -803,10 +827,11 @@ final class Arrays extends StaticClass
     public static function searchValues(array $array, array $values, bool $strict = true): array
     {
         foreach ($values as $value) {
-            if (($key = array_search($value, $array, $strict)) !== false) {
+            if (array_search_key($array, $value, $key, $strict)) {
                 $keys[] = $key;
             }
         }
+
         return $keys ?? [];
     }
 
@@ -928,6 +953,88 @@ final class Arrays extends StaticClass
         $array = array_filter($array, fn($v) => $zeros ? is_numeric($v) : is_numeric($v) && $v > 0);
 
         return fdiv(array_sum($array), count($array));
+    }
+
+    /**
+     * Apply a regular/callback sort on given array.
+     *
+     * @param  array         $array
+     * @param  callable|null $func
+     * @param  int           $flags
+     * @param  bool          $keepKeys
+     * @return array
+     * @since  5.3
+     */
+    public static function sort(array $array, callable $func = null, int $flags = 0, bool $keepKeys = true): array
+    {
+        if ($keepKeys) {
+            !$func ? asort($array, $flags) : uasort($array, $func);
+        } else {
+            !$func ? sort($array, $flags) : usort($array, $func);
+        }
+
+        return $array;
+    }
+
+    /**
+     * Apply a regular/callback key sort on given array.
+     *
+     * @param  array         $array
+     * @param  callable|null $func
+     * @param  int           $flags
+     * @return array
+     * @since  5.3
+     */
+    public static function sortKey(array $array, callable $func = null, int $flags = 0): array
+    {
+        !$func ? ksort($array, $flags) : uksort($array, $func);
+
+        return $array;
+    }
+
+    /**
+     * Apply a locale sort on given array.
+     *
+     * @param  array       $array
+     * @param  string|null $locale
+     * @param  bool        $keepKeys
+     * @return array
+     * @since  5.3 Moved from collection.Collection.
+     */
+    public static function sortLocale(array $array, string $locale = null, bool $keepKeys = true): array
+    {
+        if ($locale == null) { // Use current locale.
+            $keepKeys ? uasort($array, fn($a, $b) => strcoll($a, $b))
+                      : usort($array, fn($a, $b) => strcoll($a, $b));
+        } else {
+            // Get & cache.
+            static $default; $default ??= setlocale(LC_COLLATE, 0);
+
+            setlocale(LC_COLLATE, $locale);
+            $keepKeys ? uasort($array, fn($a, $b) => strcoll($a, $b))
+                      : usort($array, fn($a, $b) => strcoll($a, $b));
+
+            if ($default !== null) { // Restore.
+                setlocale(LC_COLLATE, $default);
+            }
+        }
+
+        return $array;
+    }
+
+    /**
+     * Apply a natural sort on given array.
+     *
+     * @param  array $array
+     * @param  bool  $icase
+     * @return array
+     * @since  5.3 Moved from collection.Collection.
+     */
+    public static function sortNatural(array $array, bool $icase = false): array
+    {
+        !$icase ? natsort($array) : natcasesort($array);
+
+        return $array;
     }
 
     /**

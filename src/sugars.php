@@ -1704,6 +1704,24 @@ function array_contains(array $array, ...$values): bool
 }
 
 /**
+ * Check whether all given keys are set in given array.
+ *
+ * @param  array         $array
+ * @param  int|string ...$keys
+ * @return bool
+ * @since  5.3
+ */
+function array_contains_keys(array $array, int|string ...$keys): bool
+{
+    foreach ($keys as $key) {
+        if (!array_key_exists($key, $array)) {
+            return false;
+        }
+    }
+    return $array && $keys;
+}
+
+/**
  * Drop given values from given array if exist.
  *
  * @param  array    &$array
@@ -1823,6 +1841,26 @@ function array_map_recursive(array $array, callable $func): array
         $array[$key] = is_array($value) ? array_map_recursive($value, $func) : $func($value);
     }
     return $array;
+}
+
+/**
+ * Search given value in given array returning a bool result & filling $key argument.
+ *
+ * @param  array        $array
+ * @param  any          $value
+ * @param  string|null &$key
+ * @param  bool         $strict
+ * @return bool
+ * @since  5.3
+ */
+function array_search_key(array $array, $value, int|string &$key = null, bool $strict = true): bool
+{
+    $result = array_search($value, $array, $strict);
+    if ($result !== false) {
+        $key = $result;
+        return true;
+    }
+    return false;
 }
 
 /**
