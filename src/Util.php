@@ -24,11 +24,13 @@ final /* fuckic static */ class Util extends StaticClass
     /**
      * Load sugar.
      *
-     * @param  string|array $name
+     * @param  string|array<string> $name
      * @return void
+     * @throws froq\util\UtilException
      */
     public static function loadSugar(string|array $name): void
     {
+        // Name list given.
         if (is_array($name)) {
             self::loadSugar($name);
             return;
@@ -44,7 +46,10 @@ final /* fuckic static */ class Util extends StaticClass
                     : pathinfo($file, PATHINFO_FILENAME)
             , $files);
 
-            throw new UtilException('Invalid sugar name %s, valids are: %s', [$name, join(', ', $names)]);
+            throw new UtilException(
+                'Invalid sugar name %s, valids are: %s',
+                [$name, join(', ', $names)]
+            );
         }
 
         include_once $file;
@@ -55,6 +60,7 @@ final /* fuckic static */ class Util extends StaticClass
      *
      * @param  array<string> $names
      * @return void
+     * @causes froq\util\UtilException
      */
     public static function loadSugars(array $names): void
     {
@@ -108,8 +114,8 @@ final /* fuckic static */ class Util extends StaticClass
             // Opera.
             'HTTP_X_OPERAMINI_PHONE_UA',
             // Vodafone.
-            'HTTP_X_DEVICE_USER_AGENT',  'HTTP_X_ORIGINAL_USER_AGENT', 'HTTP_X_SKYFIRE_PHONE',
-            'HTTP_X_BOLT_PHONE_UA',      'HTTP_DEVICE_STOCK_UA',       'HTTP_X_UCBROWSER_DEVICE_UA'
+            'HTTP_X_DEVICE_USER_AGENT', 'HTTP_X_ORIGINAL_USER_AGENT', 'HTTP_X_SKYFIRE_PHONE',
+            'HTTP_X_BOLT_PHONE_UA',     'HTTP_DEVICE_STOCK_UA',       'HTTP_X_UCBROWSER_DEVICE_UA'
         ];
 
         foreach ($names as $name) {
@@ -288,15 +294,16 @@ final /* fuckic static */ class Util extends StaticClass
      * Make an array with given object.
      *
      * @param  object $data
+     * @param  bool   $deep
      * @return array
      * @since  5.2
      */
-    public static function makeArray(object $data): array
+    public static function makeArray(object $data, bool $deep = true): array
     {
         // Memoize maker function.
-        static $make; $make ??= function ($data) use (&$make) {
+        static $make; $make ??= function ($data) use (&$make, $deep) {
             foreach ($data as $key => $value) {
-                $data->{$key} = is_object($value) ? $make($value) : $value;
+                $data->{$key} = ($deep && is_object($value)) ? $make($value) : $value;
             }
             return (array) $data;
         };
@@ -308,15 +315,16 @@ final /* fuckic static */ class Util extends StaticClass
      * Make an object with given array.
      *
      * @param  array $data
+     * @param  bool  $deep
      * @return object
      * @since  5.2
      */
-    public static function makeObject(array $data): object
+    public static function makeObject(array $data, bool $deep = true): object
     {
         // Memoize maker function.
-        static $make; $make ??= function ($data) use (&$make) {
+        static $make; $make ??= function ($data) use (&$make, $deep) {
             foreach ($data as $key => $value) {
-                $data[$key] = is_array($value) ? $make($value) : $value;
+                $data[$key] = ($deep && is_array($value)) ? $make($value) : $value;
             }
             return (object) $data;
         };
