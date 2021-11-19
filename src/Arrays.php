@@ -909,6 +909,19 @@ final class Arrays extends StaticClass
     }
 
     /**
+     * Reduce-right, same as reduce() but right-to-left direction.
+     *
+     * @param  array    $array
+     * @param  any      $carry
+     * @param  callable $func
+     * @return any
+     */
+    public static function reduceRight(array $array, $carry, callable $func)
+    {
+        return self::reduce(array_reverse($array, true), $carry, $func);
+    }
+
+    /**
      * Aggregate an array with given carry variable that must be ref'ed like `fn(&$carry, $value, ..) => ..`
      * in given aggregate function.
      *
