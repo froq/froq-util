@@ -2387,8 +2387,9 @@ function suid(int $length = 6, int $base = 62): string|null
  */
 function uuid(bool $dashed = true, bool $timed = false, bool $guid = false): string
 {
-    $bytes = !$timed ? random_bytes(16)               // Fully 16-random bytes.
-        : hex2bin(dechex(time())) . random_bytes(12); // Bin of time prefix & 12-random bytes.
+    $bytes = !$timed
+        ? random_bytes(16) // Fully 16-random bytes.
+        : hex2bin(dechex(time())) . random_bytes(12); // Time bin prefix & 12-random bytes.
 
     // Add signs: 4 (version) & 8, 9, A, B, but GUID doesn't use them.
     if (!$guid) {
@@ -2405,13 +2406,13 @@ function uuid(bool $dashed = true, bool $timed = false, bool $guid = false): str
  * Generate a random UUID/GUID hash, optionally with current timestamp.
  *
  * @param  int  $length
- * @param  bool $format
+ * @param  bool $dashed
  * @param  bool $timed
  * @param  bool $guid
  * @return string|null
  * @since  5.0
  */
-function uuid_hash(int $length = 32, bool $format = false, bool $timed = false, bool $guid = false): string|null
+function uuid_hash(int $length = 32, bool $dashed = false, bool $timed = false, bool $guid = false): string|null
 {
     static $algos = [32 => 'md5', 40 => 'sha1', 64 => 'sha256', 16 => 'fnv1a64'];
 
@@ -2424,7 +2425,7 @@ function uuid_hash(int $length = 32, bool $format = false, bool $timed = false, 
 
     $ret = hash($algo, uuid(false, $timed, $guid));
 
-    return !$format ? $ret : uuid_format($ret);
+    return !$dashed ? $ret : uuid_format($ret);
 }
 
 /**
