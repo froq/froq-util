@@ -1844,26 +1844,6 @@ function array_map_recursive(array $array, callable $func): array
 }
 
 /**
- * Search given value in given array returning a bool result & filling $key argument.
- *
- * @param  array        $array
- * @param  any          $value
- * @param  string|null &$key
- * @param  bool         $strict
- * @return bool
- * @since  5.3
- */
-function array_search_key(array $array, $value, int|string &$key = null, bool $strict = true): bool
-{
-    $result = array_search($value, $array, $strict);
-    if ($result !== false) {
-        $key = $result;
-        return true;
-    }
-    return false;
-}
-
-/**
  * Convert key cases mapping by given separator.
  *
  * @param  array       $array
@@ -2191,19 +2171,41 @@ function array_union(array $array1, array $array2, array ...$others): array
 }
 
 /**
- * Get key of given value or return null when not found.
+ * Get key of given value or return null if not found.
  *
  * @param  array array
  * @param  any   $value
- * @param  bool  strict
+ * @param  bool  $strict
+ * @param  bool  $last
  * @return int|string|null
  * @since  5.0
  */
-function array_key(array $array, $value, bool $strict = true): int|string|null
+function array_key(array $array, $value, bool $strict = true, bool $last = false): int|string|null
 {
+    // To find last hit.
+    $last && $array = array_reverse($array, true);
+
     $key = array_search($value, $array, $strict);
 
     return ($key !== false) ? $key : null;
+}
+
+/**
+ * Search given value in given array returning a bool result & filling $key argument.
+ *
+ * @param  array            $array
+ * @param  any              $value
+ * @param  int|string|null &$key
+ * @param  bool             $strict
+ * @param  bool             $last
+ * @return bool
+ * @since  5.3
+ */
+function array_search_key(array $array, $value, int|string &$key = null, bool $strict = true, bool $last = false): bool
+{
+    $key = array_key($array, $value, $strict, $last);
+
+    return ($key !== null);
 }
 
 /**

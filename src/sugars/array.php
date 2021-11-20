@@ -379,20 +379,6 @@ function array_default(array $array, array $keys, bool $use_keys = true, $defaul
 }
 
 /**
- * Bridge function to Arrays.index().
- *
- * @param  array $array
- * @param  any   $value
- * @param  bool  $strict
- * @return int|string|null
- * @since  4.0
- */
-function array_index(array $array, $value, bool $strict = true)
-{
-    return Arrays::index($array, $value, $strict);
-}
-
-/**
  * Bridge function to Arrays.keysExist().
  *
  * @param  array             $array

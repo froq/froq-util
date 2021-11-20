@@ -677,20 +677,6 @@ final class Arrays extends StaticClass
     }
 
     /**
-     * Find index of given value.
-     *
-     * @param  array $array
-     * @param  any   $value
-     * @param  bool  $strict
-     * @return int|string|null
-     * @since  4.0
-     */
-    public static function index(array $array, $value, bool $strict = true): int|string|null
-    {
-        return array_key($array, $value, $strict);
-    }
-
-    /**
      * Get first item from given array.
      *
      * @param  array    &$array
@@ -783,7 +769,7 @@ final class Arrays extends StaticClass
     }
 
     /**
-     * Search given value's key (works as self.index()).
+     * Search given value's key.
      *
      * @param  array  $array
      * @param  any    $value
@@ -794,6 +780,20 @@ final class Arrays extends StaticClass
     public static function searchKey(array $array, $value, bool $strict = true): int|string|null
     {
         return array_key($array, $value, $strict);
+    }
+
+    /**
+     * Search given value's last key.
+     *
+     * @param  array  $array
+     * @param  any    $value
+     * @param  bool   $strict
+     * @return int|string|null
+     * @since  5.5
+     */
+    public static function searchLastKey(array $array, $value, bool $strict = true): int|string|null
+    {
+        return array_key(array_reverse($array, true), $value, $strict);
     }
 
     /**
