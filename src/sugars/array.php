@@ -148,6 +148,35 @@ function array_pull_random(array &$array, int $limit = 1, bool $pack = false)
 }
 
 /**
+ * Bridge function to Arrays.add().
+ *
+ * @param  array      &$array
+ * @param  int|string  $key
+ * @param  mixed       $value
+ * @param  bool        $flat
+ * @return array
+ * @since  5.7
+ */
+function array_add(array &$array, int|string $key, mixed $value, bool $flat = true): array
+{
+    return Arrays::add($array, $key, $value, $flat);
+}
+
+/**
+ * Bridge function to Arrays.addAll().
+ *
+ * @param  array  &$array
+ * @param  array   $items
+ * @param  bool    $flat
+ * @return array
+ * @since  5.7
+ */
+function array_add_all(array &$array, array $items, bool $flat = true): array
+{
+    return Arrays::addAll($array, $items, $flat);
+}
+
+/**
  * Bridge function to Arrays.remove()/removeAll().
  *
  * @param  array                        &$array

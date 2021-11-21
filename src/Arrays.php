@@ -230,6 +230,45 @@ final class Arrays extends StaticClass
     }
 
     /**
+     * Add (append) an item to data array, flat if key already exists when $flat is true.
+     *
+     * @param  array      &$array
+     * @param  int|string  $key
+     * @param  mixed       $value
+     * @param  flat        $flat
+     * @return array
+     * @since  5.7
+     */
+    public static function add(array &$array, int|string $key, mixed $value, bool $flat = true): array
+    {
+        if ($flat && isset($array[$key])) {
+            $array[$key] = self::flat([$array[$key], $value]);
+        } else {
+            $array[$key] = $value;
+        }
+
+        return $array;
+    }
+
+    /**
+     * Bridge method to add() for multiple items.
+     *
+     * @param  array &$array
+     * @param  array  $items
+     * @param  bool   $flat
+     * @return array
+     * @since  5.7
+     */
+    public static function addAll(array &$array, array $items, bool $flat = true): array
+    {
+        foreach ($items as $key => $value) {
+            self::add($array, $key, $value, $flat);
+        }
+
+        return $array;
+    }
+
+    /**
      * Remove an item from given array by a key.
      *
      * @param  array      &$array
