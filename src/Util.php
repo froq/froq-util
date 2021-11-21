@@ -186,6 +186,48 @@ final /* fuckic static */ class Util extends StaticClass
     }
 
     /**
+     * Build query string.
+     *
+     * @param  array       $qa
+     * @param  bool        $decode
+     * @param  string|null $ignoredKeys
+     * @param  bool        $stripTags
+     * @param  bool        $normalizeArrays
+     * @return string
+     */
+    public static function buildQueryString(array $qa, bool $decode = false, string $ignoredKeys = null,
+        bool $stripTags = true, bool $normalizeArrays = true): string
+    {
+        if ($ignoredKeys != null) {
+            $ignoredKeys = explode(',', $ignoredKeys);
+            foreach (array_keys($qa) as $key) {
+                if (in_array($key, $ignoredKeys)) {
+                    unset($qa[$key]);
+                }
+            }
+        }
+
+        // Fix skipped NULL values by http_build_query().
+        $qa = array_map_recursive($qa, 'strval');
+
+        $qs = http_build_query($qa);
+
+        if ($decode) {
+            $qs = urldecode($qs);
+            // Fix such "=#foo" queries that not taken as parameter.
+            $qs = str_replace('=#', '=%23', $qs);
+        }
+        if ($stripTags && str_contains($qs, '%3C')) {
+            $qs = preg_replace('~%3C[\w]+(%2F)?%3E~ismU', '', $qs);
+        }
+        if ($normalizeArrays && str_contains($qs, '%5D=')) {
+            $qs = str_replace(['%5B', '%5D'], ['[', ']'], $qs);
+        }
+
+        return trim($qs);
+    }
+
+    /**
      * Parse query string (without changing dotted param keys).
      * https://github.com/php/php-src/blob/master/main/php_variables.c#L103
      *
@@ -246,48 +288,6 @@ final /* fuckic static */ class Util extends StaticClass
         }
 
         return $qa;
-    }
-
-    /**
-     * Build query string.
-     *
-     * @param  array       $qa
-     * @param  bool        $decode
-     * @param  string|null $ignoredKeys
-     * @param  bool        $stripTags
-     * @param  bool        $normalizeArrays
-     * @return string
-     */
-    public static function buildQueryString(array $qa, bool $decode = false, string $ignoredKeys = null,
-        bool $stripTags = true, bool $normalizeArrays = true): string
-    {
-        if ($ignoredKeys != null) {
-            $ignoredKeys = explode(',', $ignoredKeys);
-            foreach (array_keys($qa) as $key) {
-                if (in_array($key, $ignoredKeys)) {
-                    unset($qa[$key]);
-                }
-            }
-        }
-
-        // Fix skipped NULL values by http_build_query().
-        $qa = array_map_recursive($qa, 'strval');
-
-        $qs = http_build_query($qa);
-
-        if ($decode) {
-            $qs = urldecode($qs);
-            // Fix such "=#foo" queries that not taken as parameter.
-            $qs = str_replace('=#', '=%23', $qs);
-        }
-        if ($stripTags && str_contains($qs, '%3C')) {
-            $qs = preg_replace('~%3C[\w]+(%2F)?%3E~ismU', '', $qs);
-        }
-        if ($normalizeArrays && str_contains($qs, '%5D=')) {
-            $qs = str_replace(['%5B', '%5D'], ['[', ']'], $qs);
-        }
-
-        return trim($qs);
     }
 
     /**
