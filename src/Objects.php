@@ -47,7 +47,7 @@ final class Objects extends StaticClass
     {
         $id = spl_object_id($object);
 
-        return (string) ($withName ? $object::class .'#'. $id : $id);
+        return (string) ($withName ? self::getName($object) .'#'. $id : $id);
     }
 
     /**
@@ -65,7 +65,7 @@ final class Objects extends StaticClass
         // Pack "000..." stuff.
         $withRehash && $hash = hash('crc32', $hash);
 
-        return (string) ($withName ? $object::class .'#'. $hash : $hash);
+        return (string) ($withName ? self::getName($object) .'#'. $hash : $hash);
     }
 
     /**
@@ -87,7 +87,13 @@ final class Objects extends StaticClass
      */
     public static function getName(string|object $class): string
     {
-        return is_string($class) ? $class : $class::class;
+        $name = is_string($class) ? $class : $class::class;
+
+        if (str_contains($name, '@')) {
+            $name = preg_replace('~(.+)@anonymous\0*(.+)\:(.+)\$.*~i', '\1@anonymous@\2:\3', $name);
+        }
+
+        return $name;
     }
 
     /**
