@@ -45,7 +45,9 @@ final class Objects extends StaticClass
      */
     public static function getId(object $object, bool $withName = true): string
     {
-        return $withName ? $object::class .'#'. spl_object_id($object) : spl_object_id($object) .'';
+        $id = spl_object_id($object);
+
+        return (string) ($withName ? $object::class .'#'. $id : $id);
     }
 
     /**
@@ -56,26 +58,25 @@ final class Objects extends StaticClass
      * @param  bool   $withRehash
      * @return string
      */
-    public static function getHash(object $object, bool $withName = true, bool $withRehash = true): string
+    public static function getHash(object $object, bool $withName = true, bool $withRehash = false): string
     {
         $hash = spl_object_hash($object);
-        if ($withRehash) {
-            $hash = hash('crc32', $hash); // Pack "000..." stuff.
-        }
-        return $withName ? $object::class .'#'. $hash : $hash;
+
+        // Pack "000..." stuff.
+        $withRehash && $hash = hash('crc32', $hash);
+
+        return (string) ($withName ? $object::class .'#'. $hash : $hash);
     }
 
     /**
      * Get serialized hash.
      *
-     * @param  object      $object
-     * @param  string|null $algo
+     * @param  object $object
      * @return string
      */
-    public static function getSerializedHash(object $object, string $algo = null): string
+    public static function getSerializedHash(object $object): string
     {
-        return hash($algo ?: 'crc32', // For a unique hash, use id & hash.
-            spl_object_id($object) . spl_object_hash($object) . serialize($object));
+        return (string) hash('crc32', self::getHash($object) . serialize($object));
     }
 
     /**
