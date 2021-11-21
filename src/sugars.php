@@ -2630,3 +2630,27 @@ function is_empty($in, ...$ins): bool
 
     return false;
 }
+
+/**
+ * Check whether given input is true.
+ *
+ * @param  any $in
+ * @return bool
+ * @since  3.5, 5.6 Moved from sugars/is.
+ */
+function is_true($in): bool
+{
+    return ($in === true);
+}
+
+/**
+ * Check whether given input is false.
+ *
+ * @param  any $in
+ * @return bool
+ * @since  3.5, 5.6 Moved from sugars/is.
+ */
+function is_false($in): bool
+{
+    return ($in === false);
+}

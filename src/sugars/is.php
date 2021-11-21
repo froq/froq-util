@@ -97,30 +97,6 @@ function is_between($in, $min, $max): bool
 }
 
 /**
- * Check whether given input is true.
- *
- * @param  any $in
- * @return bool
- * @since  3.5
- */
-function is_true($in): bool
-{
-    return ($in === true);
-}
-
-/**
- * Check whether given input is false.
- *
- * @param  any $in
- * @return bool
- * @since  3.5
- */
-function is_false($in): bool
-{
-    return ($in === false);
-}
-
-/**
  * Check whether given input is nil (null).
  *
  * @param  any $in
