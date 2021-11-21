@@ -349,6 +349,13 @@ final class Objects extends StaticClass
             , [])
         , $ref->getDefaultProperties());
 
+        // Collect & merge some late-bind dynamic (weirdo) vars too.
+        if (is_object($class) && ($vars = get_object_vars($class))) {
+            $properties = array_merge($properties, array_filter(
+                $vars, fn($v) => !in_array($v, $properties)
+            ));
+        }
+
         foreach ($properties as $name => $value) {
             if ($_name && $_name != $name) {
                 continue;
