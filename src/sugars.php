@@ -5,10 +5,17 @@
  */
 declare(strict_types=1);
 
-use froq\util\{Arrays, Objects, Numbers, Strings};
+use froq\util\{Util, Arrays, Objects, Numbers, Strings};
 
 // Load constants.
 defined('nil') || require 'sugars-constant.php';
+
+/**
+ * Sugar loader.
+ */
+function sugar(string|array $name): void {
+    Util::loadSugar($name);
+}
 
 /**
  * Yes man..
