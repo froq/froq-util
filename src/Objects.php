@@ -212,13 +212,13 @@ final class Objects extends StaticClass
             // Sorry, but no method such getType()..
             preg_match('~\[ (?<visibility>\w+) (?<type>\w+) .+ \]~', $constant->__toString(), $match);
 
+            $className = self::getName($class);
+
             // Using name as key, since all names will be overridden internally in children.
             $ret[$constant->name] = [
-                'value'      => $constant->getValue(),
-                'type'       => $match['type'],
+                'value'      => $constant->getValue(), 'type'      => $match['type'],
+                'class'      => $className,            'interface' => $interface,
                 'visibility' => $match['visibility'],
-                'class'      => $class,
-                'interface'  => $interface
             ];
         }
 
@@ -366,9 +366,12 @@ final class Objects extends StaticClass
             $type = $nullable = $trait = null;
 
             if ($propertyType = $property->getType()) {
+                // Because type can be a class.
+                $type = self::getName(
                     // The fuck: https://www.php.net/manual/en/class.reflectiontype.php
-                $type = ($propertyType instanceof ReflectionUnionType)
-                      ? (string) $propertyType : $propertyType->getName();
+                    ($propertyType instanceof ReflectionUnionType)
+                      ? (string) $propertyType : $propertyType->getName()
+                );
                 $nullable = $propertyType->allowsNull();
             }
 
@@ -396,13 +399,14 @@ final class Objects extends StaticClass
 
             $nullable    ??= ($value === null);
             $initialized ??= ($value !== null);
+            $className     = self::getName($property->class);
 
             // Using name as key, since all names will be overridden internally in children.
             $ret[$property->name] = [
                 'value'       => $value,                'type'        => $type,
                 'nullable'    => $nullable ,            'visibility'  => $visibility,
                 'static'      => $property->isStatic(), 'initialized' => $initialized,
-                'class'       => $property->class,      'trait'       => $trait,
+                'class'       => $className,            'trait'       => $trait,
                 'modifiers'   => $modifiers
             ];
         }
@@ -535,13 +539,23 @@ final class Objects extends StaticClass
                 $method->isPrivate() ? 'private' : 'protected'
             );
 
-            $modifiers = ($mods = $property->getModifiers())
+            $modifiers = ($mods = $method->getModifiers())
                 ? join(' ', Reflection::getModifierNames($mods)) : null;
 
             $return = $trait = $parameters = null;
 
-            if ($method->hasReturnType()) {
-                $return = $method->getReturnType()->getName();
+            if ($returnType = $method->getReturnType()) {
+                // Because type can be a class.
+                $return = self::getName(
+                    // The fuck: https://www.php.net/manual/en/class.reflectiontype.php
+                    ($returnType instanceof ReflectionUnionType)
+                      ? (string) $returnType : $returnType->getName()
+                );
+
+                // Unify type display (?int => int|null).
+                if ($returnType->allowsNull() && !str_contains($return, '|null')) {
+                    $return = str_replace('?', '', $return) .'|null';
+                }
             } elseif ($doc = $method->getDocComment()) {
                 preg_match('~(?=@(returns?|alias *(?:Of|To|For)?) *([^\s]+))~i', $doc, $match);
                 if ($match) {
@@ -567,9 +581,21 @@ final class Objects extends StaticClass
                     ];
 
                     if ($paramType = $param->getType()) {
-                        $parameter['type'] = ($parameter['nullable'])
-                            ? '?'. $paramType->getName() : $paramType->getName();
+                        // Because type can be a class.
+                        $type = self::getName(
+                            // The fuck: https://www.php.net/manual/en/class.reflectiontype.php
+                            ($paramType instanceof ReflectionUnionType)
+                              ? (string) $paramType : $paramType->getName()
+                        );
+
+                        // Unify type display (?int => int|null).
+                        if ($parameter['nullable'] && !str_contains($type, '|null')) {
+                            $type = str_replace('?', '', $type) .'|null';
+                        }
+
+                        $parameter['type'] = $type;
                     }
+
                     if ($param->isVariadic()) {
                         $parameter['type'] = ($parameter['type'] != 'void')
                             ? $parameter['type'] .' ...' : '...';
@@ -587,11 +613,13 @@ final class Objects extends StaticClass
                 }
             }
 
+            $className = self::getName($method->class);
+
             // Using method name as key, since all names will be overridden internally in children.
             $ret[$method->name] = [
                 'visibility' => $visibility,         'return'     => $return,
-                'final'      => $method->isFinal(),  'static'     => $method->isStatic(),
-                'class'      => $method->class,      'trait'      => $trait,
+                'static'     => $method->isStatic(), 'final'      => $method->isFinal(),
+                'class'      => $className,          'trait'      => $trait,
                 'modifiers'  => $modifiers,          'parameters' => $parameters,
             ];
         }
