@@ -971,15 +971,24 @@ final class Arrays extends StaticClass
     /**
      * Apply a regular/callback sort on given array.
      *
-     * @param  array         $array
-     * @param  callable|null $func
-     * @param  int           $flags
-     * @param  bool          $keepKeys
+     * @param  array             $array
+     * @param  callable|int|null $func
+     * @param  int               $flags
+     * @param  bool              $keepKeys
      * @return array
      * @since  5.3
      */
-    public static function sort(array $array, callable $func = null, int $flags = 0, bool $keepKeys = true): array
+    public static function sort(array $array, callable|int $func = null, int $flags = 0, bool $keepKeys = true): array
     {
+        // As as shortcut for reversed (-1) sorts actually.
+        if (is_int($func)) {
+            $func = match ($func) {
+                -1      => fn($a, $b) => $a > $b ? -1 : 1,
+                 1      => fn($a, $b) => $a < $b ? -1 : 1,
+                default => throw new ValueError('Only 1 and -1 accepted')
+            };
+        }
+
         if ($keepKeys) {
             !$func ? asort($array, $flags) : uasort($array, $func);
         } else {
