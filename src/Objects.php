@@ -188,6 +188,8 @@ final class Objects extends StaticClass
                 continue;
             }
 
+            $modifiers = Reflection::getModifierNames($constant->getModifiers());
+
             $interface = null;
             $class     = $constant->getDeclaringClass()->getName();
 
@@ -210,7 +212,7 @@ final class Objects extends StaticClass
             // }
 
             // Sorry, but no method such getType()..
-            preg_match('~\[ (?<visibility>\w+) (?<type>\w+) .+ \]~', $constant->__toString(), $match);
+            preg_match('~\[ (?<visibility>\w+) (?<type>\w+) .+ \]~', (string) $constant, $match);
 
             $className = self::getName($class);
 
@@ -219,7 +221,7 @@ final class Objects extends StaticClass
                 'name'       => $constant->name,
                 'value'      => $constant->getValue(), 'type'      => $match['type'],
                 'class'      => $className,            'interface' => $interface,
-                'visibility' => $match['visibility'],
+                'visibility' => $match['visibility'],  'modifiers' => $modifiers,
             ];
         }
 
@@ -361,10 +363,8 @@ final class Objects extends StaticClass
                 $property->isPrivate() ? 'private' : 'protected'
             );
 
-            $modifiers = ($mods = $property->getModifiers())
-                ? join(' ', Reflection::getModifierNames($mods)) : null;
-
             $type = $nullable = $trait = null;
+            $modifiers = Reflection::getModifierNames($property->getModifiers());
 
             if ($propertyType = $property->getType()) {
                 // Because type can be a class.
@@ -415,7 +415,7 @@ final class Objects extends StaticClass
                 'nullable'    => $nullable ,            'visibility'  => $visibility,
                 'static'      => $property->isStatic(), 'initialized' => $initialized,
                 'class'       => $className,            'trait'       => $trait,
-                'modifiers'   => $modifiers
+                'modifiers'   => $modifiers,
             ];
         }
 
@@ -547,10 +547,8 @@ final class Objects extends StaticClass
                 $method->isPrivate() ? 'private' : 'protected'
             );
 
-            $modifiers = ($mods = $method->getModifiers())
-                ? join(' ', Reflection::getModifierNames($mods)) : null;
-
             $return = $trait = $parameters = null;
+            $modifiers = Reflection::getModifierNames($method->getModifiers());
 
             if ($returnType = $method->getReturnType()) {
                 // Because type can be a class.
