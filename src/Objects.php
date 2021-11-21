@@ -8,7 +8,7 @@ declare(strict_types=1);
 namespace froq\util;
 
 use froq\common\object\StaticClass;
-use Error, Reflection, ReflectionException, ReflectionClass, ReflectionProperty;
+use Error, Reflection, ReflectionException, ReflectionClass, ReflectionProperty, ReflectionUnionType;
 
 /**
  * Objects.
@@ -366,7 +366,9 @@ final class Objects extends StaticClass
             $type = $nullable = $trait = null;
 
             if ($propertyType = $property->getType()) {
-                $type = $propertyType->getName();
+                    // The fuck: https://www.php.net/manual/en/class.reflectiontype.php
+                $type = ($propertyType instanceof ReflectionUnionType)
+                      ? (string) $propertyType : $propertyType->getName();
                 $nullable = $propertyType->allowsNull();
             }
 
