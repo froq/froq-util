@@ -228,15 +228,17 @@ final /* fuckic static */ class Util extends StaticClass
     }
 
     /**
-     * Parse query string (without changing dotted param keys).
+     * Parse query string (without changing dotted param keys if dotted option is true).
      * https://github.com/php/php-src/blob/master/main/php_variables.c#L103
      *
      * @param  string      $qs
      * @param  bool        $encode
      * @param  string|null $ignoredKeys
+     * @param  bool        $dotted
      * @return array
      */
-    public static function parseQueryString(string $qs, bool $encode = false, string $ignoredKeys = null): array
+    public static function parseQueryString(string $qs, bool $encode = false, string $ignoredKeys = null,
+        bool $dotted = false): array
     {
         $qa = [];
 
@@ -246,7 +248,7 @@ final /* fuckic static */ class Util extends StaticClass
         }
 
         $hexed = false;
-        if (str_contains($qs, '.')) {
+        if ($dotted && str_contains($qs, '.')) {
             $hexed = true;
 
             // Normalize arrays.

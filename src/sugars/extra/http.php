@@ -26,12 +26,13 @@ function build_query_string(array $query, string $ignored_keys = null, bool $nor
  *
  * @param  string      $query
  * @param  string|null $ignored_keys
+ * @param  bool        $dotted
  * @return array
  * @since  4.0
  */
-function parse_query_string(string $query, string $ignored_keys = null): array
+function parse_query_string(string $query, string $ignored_keys = null, bool $dotted = false): array
 {
-    return Util::parseQueryString($query, false, $ignored_keys);
+    return Util::parseQueryString($query, false, $ignored_keys, $dotted);
 }
 
 /**
