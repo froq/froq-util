@@ -216,6 +216,7 @@ final class Objects extends StaticClass
 
             // Using name as key, since all names will be overridden internally in children.
             $ret[$constant->name] = [
+                'name'       => $constant->name,
                 'value'      => $constant->getValue(), 'type'      => $match['type'],
                 'class'      => $className,            'interface' => $interface,
                 'visibility' => $match['visibility'],
@@ -403,6 +404,7 @@ final class Objects extends StaticClass
 
             // Using name as key, since all names will be overridden internally in children.
             $ret[$property->name] = [
+                'name'        => $property->name,
                 'value'       => $value,                'type'        => $type,
                 'nullable'    => $nullable ,            'visibility'  => $visibility,
                 'static'      => $property->isStatic(), 'initialized' => $initialized,
@@ -617,6 +619,7 @@ final class Objects extends StaticClass
 
             // Using method name as key, since all names will be overridden internally in children.
             $ret[$method->name] = [
+                'name'       => $method->name,
                 'visibility' => $visibility,         'return'     => $return,
                 'static'     => $method->isStatic(), 'final'      => $method->isFinal(),
                 'class'      => $className,          'trait'      => $trait,
