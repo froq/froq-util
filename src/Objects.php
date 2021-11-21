@@ -373,6 +373,12 @@ final class Objects extends StaticClass
                     ($propertyType instanceof ReflectionUnionType)
                       ? (string) $propertyType : $propertyType->getName()
                 );
+
+                // Unify type display (?int => int|null).
+                if ($propertyType->allowsNull() && !str_contains($type, '|null')) {
+                    $type = str_replace('?', '', $type) .'|null';
+                }
+
                 $nullable = $propertyType->allowsNull();
             }
 
@@ -591,7 +597,7 @@ final class Objects extends StaticClass
                         );
 
                         // Unify type display (?int => int|null).
-                        if ($parameter['nullable'] && !str_contains($type, '|null')) {
+                        if ($param->allowsNull() && !str_contains($type, '|null')) {
                             $type = str_replace('?', '', $type) .'|null';
                         }
 
