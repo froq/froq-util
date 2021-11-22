@@ -875,6 +875,22 @@ final class Arrays extends StaticClass
     }
 
     /**
+     * Each wrapper for scoped function calls on given array or just for syntactic sugar.
+     *
+     * @param  array    $array
+     * @param  callable $func
+     * @return array
+     */
+    public static function each(array $array, callable $func): array
+    {
+        foreach ($array as $key => $value) {
+            $func($value, $key);
+        }
+
+        return $array;
+    }
+
+    /**
      * Filter, unlike array_filter() using [value,key,i,array] notation for callable but fallback to [value]
      * notation when ArgumentCountError occurs.
      *
