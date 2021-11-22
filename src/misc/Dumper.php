@@ -139,11 +139,11 @@ final class Dumper
      * Echo given input's dump.
      *
      * @param  mixed  $input
-     * @param  string $indentString
      * @param  bool   $exit
+     * @param  string $indentString
      * @return void
      */
-    public static function echo(mixed $input, string $indentString = "\t", bool $exit = false): void
+    public static function echo(mixed $input, bool $exit = false, string $indentString = "\t"): void
     {
         echo "", self::dump($input, 0, $indentString), "\n";
         $exit && exit(0);
@@ -153,11 +153,11 @@ final class Dumper
      * Echo given input's dump in `pre` tag.
      *
      * @param  mixed  $input
-     * @param  string $indentString
      * @param  bool   $exit
+     * @param  string $indentString
      * @return void
      */
-    public static function echoPre(mixed $input, string $indentString = "\t", bool $exit = false): void
+    public static function echoPre(mixed $input, bool $exit = false, string $indentString = "\t"): void
     {
         echo "<pre>", self::dump($input, 0, $indentString), "</pre>\n";
         $exit && exit(0);
