@@ -349,6 +349,29 @@ final class Objects extends StaticClass
             , [])
         , $ref->getDefaultProperties());
 
+        // Nope..
+        // $parent = $ref->getParentClass();
+        // $parentProperties = [];
+        // while ($parent) {
+        //     $parentProperties = array_replace(
+        //         array_reduce($parent->getProperties(),
+        //             fn($ps, $p) => array_merge($ps, [$p->name => null])
+        //         , [])
+        //     , $parent->getDefaultProperties());
+
+        //     $privates = array_aggregate($parent->getProperties(ReflectionProperty::IS_PRIVATE),
+        //         fn(&$r, $p) => $r[] = $p->name);
+        //     $parentProperties = array_filter($parentProperties,
+        //         fn($p) => !in_array($p, $privates), ARRAY_FILTER_USE_KEY);
+
+        //     foreach ($parentProperties as $name => $value) {
+        //         $properties[$name] = $value;
+        //     }
+
+        //     // Move next-up.
+        //     $parent = $parent->getParentClass();
+        // }
+
         // Collect & merge some late-bind dynamic (weirdo) vars too.
         if (is_object($class) && ($vars = get_object_vars($class))) {
             $properties = array_merge($properties, array_filter(
