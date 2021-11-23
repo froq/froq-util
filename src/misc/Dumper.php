@@ -84,14 +84,14 @@ final class Dumper
                         $output .= "\n";
                     }
                 } else {
-                    $recursion = self::checkRecursion($input);
-                    if ($recursion) {
-                        return $recursion;
-                    }
-
                     $output = sprintf('object(%s)#%d {', Objects::getName($input), spl_object_id($input)) . "\n";
 
                     foreach (Objects::getProperties($input) as $property) {
+                        $recursion = self::checkRecursion($input, $property['name']);
+                        if ($recursion) {
+                            return $recursion;
+                        }
+
                         $output .= str_repeat($indentString, $indent);
 
                         // Drop public & join.
@@ -167,9 +167,10 @@ final class Dumper
      * Check for recursions.
      *
      * @param  array|object &$input
+     * @param  string|null   $key
      * @return string|null
      */
-    private static function checkRecursion(array|object &$input): string|null
+    private static function checkRecursion(array|object &$input, string $key = null): string|null
     {
         if (is_array($input)) {
             static $inputKey = '**RECURSION';
@@ -191,12 +192,13 @@ final class Dumper
         } else {
             static $recursions = [];
 
-            $classId = Objects::getId($input);
-            if (isset($recursions[$classId])) {
+            $classId  = Objects::getId($input);
+            $classKey = $classId . $key;
+            if (isset($recursions[$classKey])) {
                 return '*RECURSION('. $classId .')';
             }
 
-            $recursions[$classId] = 1; // Tick.
+            $recursions[$classKey] = 1; // Tick.
         }
 
         return null;

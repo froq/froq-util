@@ -875,6 +875,43 @@ final class Arrays extends StaticClass
     }
 
     /**
+     * Get a diff from given arrays by their count.
+     *
+     * @param  array  $array1
+     * @param  array  $array2
+     * @param  bool   $associative
+     * @return array
+     * @since  5.10
+     */
+    public static function diff(array $array1, array $array2, bool $associative = false): array
+    {
+        [$count1, $count2] = [count($array1), count($array2)];
+
+        if (!$associative) {
+            return ($count1 > $count2) // Swaps for a proper diff calc.
+                 ? array_diff($array1, $array2) : array_diff($array2, $array1);
+        }
+
+        return ($count1 > $count2) // Swaps for a proper diff calc.
+             ? array_diff_assoc($array1, $array2) : array_diff_assoc($array2, $array1);
+    }
+
+    /**
+     * Get a diff from given arrays by their count.
+     *
+     * @param  array  $array1
+     * @param  array  $array2
+     * @param  bool   $associative
+     * @return array
+     * @since  5.10
+     */
+    public static function diffKey(array $array1, array $array2): array
+    {
+        return (count($array1) > count($array2)) // For Swaps a proper diff calc.
+             ? array_diff_key($array1, $array2) : array_diff_key($array2, $array1);
+    }
+
+    /**
      * Each wrapper for scoped function calls on given array or just for syntactic sugar.
      *
      * @param  array    $array
