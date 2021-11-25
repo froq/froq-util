@@ -301,13 +301,13 @@ function array_find(array $array, callable $func)
  *
  * @param  array    $array
  * @param  callable $func
- * @param  bool     $useKeys
+ * @param  bool     $use_keys
  * @return array
  * @since  4.10
  */
-function array_find_all(array $array, callable $func, bool $useKeys = false): array
+function array_find_all(array $array, callable $func, bool $use_keys = false): array
 {
-    return Arrays::findAll($array, $func, $useKeys);
+    return Arrays::findAll($array, $func, $use_keys);
 }
 
 /**
