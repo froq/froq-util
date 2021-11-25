@@ -832,7 +832,7 @@ final class Arrays extends StaticClass
      */
     public static function searchLastKey(array $array, $value, bool $strict = true): int|string|null
     {
-        return array_key(array_reverse($array, true), $value, $strict);
+        return array_key($array, $value, $strict, last: true);
     }
 
     /**
