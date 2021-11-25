@@ -1014,6 +1014,21 @@ final class Arrays extends StaticClass
     }
 
     /**
+     * Apply given function to each element of given array with key/value notation as default.
+     *
+     * @param  array    $array
+     * @param  callable $func
+     * @param  bool     $useKeys
+     * @param  bool     $swapKeys
+     * @return array
+     * @since  5.11
+     */
+    public static function apply(array $array, callable $func, bool $useKeys = true, bool $swapKeys = false): array
+    {
+        return array_apply($array, $func, $useKeys, $swapKeys);
+    }
+
+    /**
      * Aggregate an array with given carry variable that must be ref'ed like `fn(&$carry, $value, ..) => ..`
      * in given aggregate function.
      *

@@ -1645,16 +1645,24 @@ function array_clean(array $array): array
 }
 
 /**
- * Apply given function to each element of given array with key/value notation.
+ * Apply given function to each element of given array with key/value notation as default.
  *
  * @param  array    $array
  * @param  callable $func
+ * @param  bool     $use_keys
+ * @param  bool     $swap_keys
  * @return array
  * @since  4.0
  */
-function array_apply(array $array, callable $func): array
+function array_apply(array $array, callable $func, bool $use_keys = true, bool $swap_keys = false): array
 {
-    return array_map($func, $array, array_keys($array));
+    // With key/value notation.
+    if ($swap_keys) {
+        return array_map($func, array_keys($array), $array);
+    }
+
+    return $use_keys ? array_map($func, $array, array_keys($array))
+                     : array_map($func, $array);
 }
 
 /**
