@@ -818,7 +818,7 @@ final class Arrays extends StaticClass
      */
     public static function searchKey(array $array, $value, bool $strict = true): int|string|null
     {
-        return array_key($array, $value, $strict);
+        return array_search_key($array, $value, $strict);
     }
 
     /**
@@ -832,7 +832,7 @@ final class Arrays extends StaticClass
      */
     public static function searchLastKey(array $array, $value, bool $strict = true): int|string|null
     {
-        return array_key($array, $value, $strict, last: true);
+        return array_search_key($array, $value, $strict, last: true);
     }
 
     /**
@@ -866,8 +866,10 @@ final class Arrays extends StaticClass
     public static function searchValues(array $array, array $values, bool $strict = true): array
     {
         foreach ($values as $value) {
-            if (array_search_key($array, $value, $key, $strict)) {
-                $keys[] = $key;
+            foreach (array_keys($array) as $key) {
+                if ($strict ? $array[$key] === $value : $array[$key] == $value) {
+                    $keys[] = $key;
+                }
             }
         }
 

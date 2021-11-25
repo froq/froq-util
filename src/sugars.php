@@ -1926,17 +1926,38 @@ function array_change_keys(array $array, callable $func, bool $recursive = false
 }
 
 /**
- * Check a value if exists with/without strict comparison.
+ * Get key of given value or return null if not found, with/without last (key) option.
  *
+ * @param  array array
  * @param  any   $value
- * @param  array $array
  * @param  bool  $strict
+ * @param  bool  $last
+ * @return int|string|null
+ * @since  5.0
+ */
+function array_search_key(array $array, $value, bool $strict = true, bool $last = false): int|string|null
+{
+    $key = !$last ? array_search($value, $array, $strict)
+                  : array_search($value, array_reverse($array, true), $strict);
+
+    return ($key !== false) ? $key : null;
+}
+
+/**
+ * Check a value if exists with/without strict comparison, filling found key as ref-arg.
+ *
+ * @param  any         $value
+ * @param  array       $array
+ * @param  bool        $strict
+ * @param  int|string &$key
  * @return bool
  * @since  4.0
  */
-function array_value_exists($value, array $array, bool $strict = true): bool
+function array_value_exists($value, array $array, bool $strict = true, int|string &$key = null): bool
 {
-    return in_array($value, $array, $strict);
+    $key = array_search_key($array, $value, $strict);
+
+    return ($key !== null);
 }
 
 /**
@@ -2185,44 +2206,6 @@ function array_union(array $array1, array $array2, array ...$others): array
 }
 
 /**
- * Get key of given value or return null if not found.
- *
- * @param  array array
- * @param  any   $value
- * @param  bool  $strict
- * @param  bool  $last
- * @return int|string|null
- * @since  5.0
- */
-function array_key(array $array, $value, bool $strict = true, bool $last = false): int|string|null
-{
-    // To find last hit.
-    $last && $array = array_reverse($array, true);
-
-    $key = array_search($value, $array, $strict);
-
-    return ($key !== false) ? $key : null;
-}
-
-/**
- * Search given value in given array returning a bool result & filling $key argument.
- *
- * @param  array            $array
- * @param  any              $value
- * @param  int|string|null &$key
- * @param  bool             $strict
- * @param  bool             $last
- * @return bool
- * @since  5.3
- */
-function array_search_key(array $array, $value, int|string &$key = null, bool $strict = true, bool $last = false): bool
-{
-    $key = array_key($array, $value, $strict, $last);
-
-    return ($key !== null);
-}
-
-/**
  * Get first value of given array.
  *
  * @param  array $array
@@ -2267,27 +2250,28 @@ function is_list($in, bool $allow_empty = true): bool
 /**
  * Check whether given key exists on given array.
  *
- * @param  string $key
  * @param  array  $array
+ * @param  string $key
  * @return bool
  * @since  5.0
  */
-function is_array_key(int|string $key, array $array): bool
+function is_array_key(array $array, int|string $key): bool
 {
     return array_key_exists($key, $array);
 }
 
 /**
- * Check whether given value exists on given array in strict comparison.
+ * Check whether given value exists on given array in strict comparison, filling found key as ref-arg.
  *
- * @param  any   $value
- * @param  array $array
+ * @param  array       $array
+ * @param  any         $value
+ * @param  int|string &$key
  * @return bool
  * @since  5.0
  */
-function is_array_value($value, array $array): bool
+function is_array_value(array $array, $value, int|string &$key = null): bool
 {
-    return array_value_exists($value, $array);
+    return array_value_exists($value, $array, key: $key);
 }
 
 /**
