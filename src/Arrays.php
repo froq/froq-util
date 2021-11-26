@@ -1169,6 +1169,44 @@ final class Arrays extends StaticClass
     }
 
     /**
+     * Count each value occurrences with strict mode as default.
+     *
+     * @param  array $array
+     * @param  bool  $strict
+     * @param  bool  $addKeys
+     * @return array
+     * @since  5.13
+     */
+    public static function countValues(array $array, bool $strict = true, bool $addKeys = false): array
+    {
+        static $findIndex; // Memoized.
+        $findIndex ??= function ($value) use (&$result, $strict) {
+            foreach ($result as $i => $item) {
+                if ($strict ? $value === $item['value'] : $value == $item['value']) {
+                    return $i;
+                }
+            }
+            return -1;
+        };
+
+        $result = [];
+
+        foreach ($array as $key => $value) {
+            $index = $findIndex($value);
+            if ($index == -1) {
+                $tmp = ['value' => $value, 'count' => 1];
+                $addKeys && ($tmp['keys'] = [$key]);
+                $result[] = $tmp;
+            } else {
+                $result[$index]['count'] += 1;
+                $addKeys && ($result[$index]['keys'][] = $key);
+            }
+        }
+
+        return $result;
+    }
+
+    /**
      * Get an item as given type.
      *
      * @param  array      &$array
