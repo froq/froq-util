@@ -2505,6 +2505,20 @@ function slug(string $in, string $preserve = '', string $replace = '-'): string
 }
 
 /**
+ * Generate a random number.
+ *
+ * @param  int|float|null $min
+ * @param  int|float|null $max
+ * @param  int|null       $precision
+ * @return int|float
+ * @since  5.14
+ */
+function random(int|float $min = null, int|float $max = null, int $precision = null): int|float
+{
+    return Numbers::random($min, $max, $precision);
+}
+
+/**
  * Generate a random float, optionally with precision.
  *
  * @param  float|null $min

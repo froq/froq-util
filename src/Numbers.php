@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace froq\util;
 
+use froq\util\UtilException;
 use froq\common\object\StaticClass;
 
 /**
@@ -44,35 +45,28 @@ final class Numbers extends StaticClass
     /**
      * Compare.
      *
-     * @param  numeric  $a
-     * @param  numeric  $b
-     * @param  int|null $precision
-     * @return int|null
+     * @param  int|float $a
+     * @param  int|float $b
+     * @param  int|null  $precision
+     * @return int
      */
-    public static function compare($a, $b, int $precision = null): int|null
+    public static function compare(int|float $a, int|float $b, int $precision = null): int
     {
         $precision ??= 14;
 
-        if (is_numeric($a) && is_numeric($b)) {
-            return round((float) $a, $precision) <=> round((float) $b, $precision);
-        }
-
-        return null; // Error, non-number(s).
+        return round((float) $a, $precision) <=> round((float) $b, $precision);
     }
 
     /**
      * Equals.
-     * @param  numeric  $a
-     * @param  numeric  $b
-     * @param  int|null $precision
-     * @return bool|null
+     * @param  int|float $a
+     * @param  int|float $b
+     * @param  int|null  $precision
+     * @return bool
      */
-    public static function equals($a, $b, int $precision = null): bool|null
+    public static function equals(int|float $a, int|float $b, int $precision = null): bool
     {
-        $precision ??= 14;
-
-        return ($ret = self::compare($a, $b, $precision)) === null ? null // Error, non-number(s).
-             : ($ret === 0);
+        return self::compare($a, $b, $precision) === 0;
     }
 
     /**
@@ -152,6 +146,47 @@ final class Numbers extends StaticClass
     }
 
     /**
+     * Random.
+     *
+     * @param  int|float|null $min
+     * @param  int|float|null $max
+     * @param  int|null       $precision
+     * @return int|float
+     * @since  5.14
+     * @throws froq\util\UtilException
+     */
+    public static function random(int|float $min = null, int|float $max = null, int $precision = null): int|float
+    {
+        $min ??= 0;
+        $max ??= PHP_INT_MAX;
+
+        if ($min === $max) {
+            return $min;
+        } elseif ($min > $max) {
+            // Nope, not like rand()..
+            // [$min, $max] = [$max, $min];
+
+            throw new UtilException('Min value must be less than max value');
+        }
+
+        if (is_int($min) && is_int($max)) {
+            // Interestingly ~50% slower (in some/what cases)..
+            $ret = random_int($min, $max);
+
+            // Nope..
+            // srand();
+            // $ret = rand() % ($max - $min) + $min;
+        } else {
+            $ret = lcg_value() * ($max - $min) + $min;
+            if ($precision !== null) {
+                $ret = round($ret, $precision);
+            }
+        }
+
+        return $ret;
+    }
+
+    /**
      * Random int.
      *
      * @param  int|null $min
@@ -161,10 +196,7 @@ final class Numbers extends StaticClass
      */
     public static function randomInt(int $min = null, int $max = null): int
     {
-        $min ??= 0;
-        $max ??= PHP_INT_MAX;
-
-        return random_int($min, $max);
+        return self::random($min, $max ?? PHP_INT_MAX);
     }
 
     /**
@@ -178,16 +210,6 @@ final class Numbers extends StaticClass
      */
     public static function randomFloat(float $min = null, float $max = null, int $precision = null): float
     {
-        $min ??= 0;
-        $max ??= 1 + $min;
-
-        $ret = lcg_value() * ($max - $min) + $min;
-
-        if ($precision !== null) {
-            $ret = round($ret, $precision);
-        }
-
-        return $ret;
+        return self::random($min, $max ?? $min + 1.0, $precision);
     }
-
 }
