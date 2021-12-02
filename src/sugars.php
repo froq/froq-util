@@ -2436,7 +2436,7 @@ function uuid_hash(int $length = 32, bool $dashed = false, bool $timed = false, 
  */
 function uuid_format(string $in): string|null
 {
-    if (strlen($in) != 32) {
+    if (strlen($in) != 32 || !ctype_xdigit($in)) {
         trigger_error(sprintf('%s(): Format for only 32-length UUIDs/GUIDs', __function__));
         return null;
     }
