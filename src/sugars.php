@@ -129,19 +129,18 @@ function each(array $array, callable $func): void
 }
 
 /**
- * Get size/count/length of given input.
+ * Get size (count/length) of given input.
  *
- * @param  any $in
- * @return int|null
+ * @param  string|array|object $in
+ * @return int
  * @since  3.0, 5.0 Moved from froq/fun.
  */
-function size($in): int|null
+function size(string|array|object $in): int
 {
     return match (true) {
         is_string($in)    => mb_strlen($in),
         is_countable($in) => count($in),
-        is_object($in)    => count(get_object_vars($in)),
-        default           => null // No valid input.
+        is_object($in)    => count(get_object_vars($in))
     };
 }
 
