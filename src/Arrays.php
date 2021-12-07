@@ -1074,7 +1074,7 @@ final class Arrays extends StaticClass
     {
         $array = array_filter($array, fn($v) => $zeros ? is_numeric($v) : is_numeric($v) && $v > 0);
 
-        return fdiv(array_sum($array), count($array));
+        return $array ? fdiv(array_sum($array), count($array)) : 0;
     }
 
     /**
