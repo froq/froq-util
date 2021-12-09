@@ -242,11 +242,11 @@ function strip(string $in, string $chars = null): string
  * @param  string   $in
  * @param  int|null $limit
  * @param  bool     $pad
- * @param  bool     $empty
+ * @param  bool     $blanks
  * @return array
  * @since  5.0 Moved from froq/fun.
  */
-function split(string $sep, string $in, int $limit = null, bool $pad = true, bool $empty = false): array
+function split(string $sep, string $in, int $limit = null, bool $pad = true, bool $blanks = false): array
 {
     if ($sep === '') {
         $ret = (array) preg_split('~~u', $in, -1, 1);
@@ -256,7 +256,7 @@ function split(string $sep, string $in, int $limit = null, bool $pad = true, boo
     } else {
         // Note: "[]" is special & used for charsets as separator (pattern), "." etc must be quoted also.
         $ret = (array) ($limit ? mb_split($sep, $in, $limit) : mb_split($sep, $in));
-        if (!$empty) { // When no empty fields wanted.
+        if (!$blanks) { // When no blank fields wanted.
             $ret = array_filter($ret, 'strlen');
         }
     }
