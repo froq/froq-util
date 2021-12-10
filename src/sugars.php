@@ -343,7 +343,21 @@ function grep_all(string $in, string $pattern, bool $uniform = false): array|nul
 }
 
 /**
- * Cut a string with given length.
+ * Sub a string with given start/length in unicode manner.
+ *
+ * @param  string $str
+ * @param  int    $start
+ * @param  int    $length
+ * @return string
+ * @since  4.0
+ */
+function strsub(string $str, int $start, int $length = null): string
+{
+    return mb_substr($str, $start, $length);
+}
+
+/**
+ * Cut a string with given length in unicode manner.
  *
  * @param  string $str
  * @param  int    $length
