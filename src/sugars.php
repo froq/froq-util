@@ -2642,21 +2642,51 @@ function is_type_of($in, string $type): bool
 }
 
 /**
+ * Check whether given class property is exists (@syntactic).
+ *
+ * @param  string|object $class
+ * @param  string        $property
+ * @param  bool          $static
+ * @return bool
+ * @since  5.18
+ */
+function is_property(string|object $class, string $property, bool $static = false): bool
+{
+    return property_exists($class, $property) ? (
+        !$static ? true : (new ReflectionProperty($class, $property))->isStatic()
+    ) : false;
+}
+
+/**
+ * Check whether given class method is exists (@syntactic).
+ *
+ * @param  string|object $class
+ * @param  string        $method
+ * @param  bool          $static
+ * @return bool
+ * @since  5.18
+ */
+function is_method(string|object $class, string $method, bool $static = false): bool
+{
+    return method_exists($class, $method) ? (
+        !$static ? true : (new ReflectionMethod($class, $method))->isStatic()
+    ) : false;
+}
+
+/**
  * Check whether given class method is callable (exists & public).
  *
  * @param  string|object $class
  * @param  string        $method
+ * @param  bool          $static
  * @return bool
  * @since  5.0
  */
-function is_callable_method(string|object $class, string $method): bool
+function is_callable_method(string|object $class, string $method, bool $static = false): bool
 {
-    try {
-        return ($ref = new ReflectionClass($class))
-            && ($ref->hasMethod($method) && $ref->getMethod($method)->isPublic());
-    } catch (ReflectionException) {
-        return false;
-    }
+    return method_exists($class, $method) && ($ref = new ReflectionMethod($class, $method)) ? (
+        !$static ? $ref->isPublic() : $ref->isPublic() && $ref->isStatic()
+    ) : false;
 }
 
 /**
