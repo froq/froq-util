@@ -2497,14 +2497,14 @@ function mb_lcfirst(string $in, bool $tr = false): string
 /**
  * Get a character by given index in Unicode style.
  *
- * @param  string $str
+ * @param  string $in
  * @param  int    $index
  * @return string|null
  * @since  5.17
  */
-function char_at(string $str, int $index): string|null
+function char_at(string $in, int $index): string|null
 {
-    $char = mb_substr($str, $index, 1);
+    $char = mb_substr($in, $index, 1);
 
     return ($char != '') ? $char : null;
 }
@@ -2512,14 +2512,14 @@ function char_at(string $str, int $index): string|null
 /**
  * Get a character code by given index in Unicode style.
  *
- * @param  string $str
+ * @param  string $in
  * @param  int    $index
  * @return int|null
  * @since  5.17
  */
-function char_code_at(string $str, int $index): int|null
+function char_code_at(string $in, int $index): int|null
 {
-    $char = mb_substr($str, $index, 1);
+    $char = mb_substr($in, $index, 1);
 
     return ($char != '') ? mb_ord($char) : null;
 }
