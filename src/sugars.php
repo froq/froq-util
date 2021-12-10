@@ -2461,39 +2461,37 @@ function uuid_format(string $in): string|null
 /**
  * Convert a multi-byte string's first character to upper-case.
  *
- * @param  string      $in
- * @param  string|null $encoding
- * @param  bool        $tr
+ * @param  string $in
+ * @param  bool   $tr
  * @return string
  * @since  5.0
  */
-function mb_ucfirst(string $in, string $encoding = null, bool $tr = false): string
+function mb_ucfirst(string $in, bool $tr = false): string
 {
-    $first = mb_substr($in, 0, 1, $encoding);
+    $first = mb_substr($in, 0, 1);
     if ($tr && $first === 'i') {
         $first = 'İ';
     }
 
-    return mb_strtoupper($first, $encoding) . mb_substr($in, 1, null, $encoding);
+    return mb_strtoupper($first) . mb_substr($in, 1);
 }
 
 /**
  * Convert a multi-byte string's first character to lower-case.
  *
- * @param  string      $in
- * @param  string|null $encoding
- * @param  bool        $tr
+ * @param  string $in
+ * @param  bool   $tr
  * @return string
  * @since  5.0
  */
-function mb_lcfirst(string $in, string $encoding = null, bool $tr = false): string
+function mb_lcfirst(string $in, bool $tr = false): string
 {
-    $first = mb_substr($in, 0, 1, $encoding);
+    $first = mb_substr($in, 0, 1);
     if ($tr && $first === 'I') {
         $first = 'ı';
     }
 
-    return mb_strtolower($first, $encoding) . mb_substr($in, 1, null, $encoding);
+    return mb_strtolower($first) . mb_substr($in, 1);
 }
 
 /**
