@@ -2642,51 +2642,72 @@ function is_type_of($in, string $type): bool
 }
 
 /**
- * Check whether given class property is exists (@syntactic).
+ * Check whether given class property is exists.
  *
- * @param  string|object $class
- * @param  string        $property
- * @param  bool          $static
+ * @param  string|object   $class
+ * @param  string          $property
+ * @param  bool            $static
+ * @param  Reflector|null &$ref
  * @return bool
  * @since  5.18
  */
-function is_property(string|object $class, string $property, bool $static = false): bool
+function is_property(string|object $class, string $property, bool $static = false, Reflector &$ref = null): bool
 {
-    return property_exists($class, $property) ? (
-        !$static ? true : (new ReflectionProperty($class, $property))->isStatic()
-    ) : false;
+    if (property_exists($class, $property)) {
+        // If checking static or requiring ref.
+        if ($static || func_num_args() == 4) {
+            $ref = new ReflectionProperty($class, $property);
+            if ($static) {
+                return $ref->isStatic();
+            }
+        }
+        return true;
+    }
+    return false;
 }
 
 /**
- * Check whether given class method is exists (@syntactic).
+ * Check whether given class method is exists.
  *
- * @param  string|object $class
- * @param  string        $method
- * @param  bool          $static
+ * @param  string|object   $class
+ * @param  string          $method
+ * @param  bool            $static
+ * @param  Reflector|null &$ref
  * @return bool
  * @since  5.18
  */
-function is_method(string|object $class, string $method, bool $static = false): bool
+function is_method(string|object $class, string $method, bool $static = false, Reflector &$ref = null): bool
 {
-    return method_exists($class, $method) ? (
-        !$static ? true : (new ReflectionMethod($class, $method))->isStatic()
-    ) : false;
+    if (method_exists($class, $method)) {
+        // If checking static or requiring ref.
+        if ($static || func_num_args() == 4) {
+            $ref = new ReflectionMethod($class, $method);
+            if ($static) {
+                return $ref->isStatic();
+            }
+        }
+        return true;
+    }
+    return false;
 }
 
 /**
  * Check whether given class method is callable (exists & public).
  *
- * @param  string|object $class
- * @param  string        $method
- * @param  bool          $static
+ * @param  string|object   $class
+ * @param  string          $method
+ * @param  bool            $static
+ * @param  Reflector|null &$ref
  * @return bool
  * @since  5.0
  */
-function is_callable_method(string|object $class, string $method, bool $static = false): bool
+function is_callable_method(string|object $class, string $method, bool $static = false, Reflector &$ref = null): bool
 {
-    return method_exists($class, $method) && ($ref = new ReflectionMethod($class, $method)) ? (
-        !$static ? $ref->isPublic() : $ref->isPublic() && $ref->isStatic()
-    ) : false;
+    if (method_exists($class, $method)) {
+        $ref = new ReflectionMethod($class, $method);
+        return $static ? $ref->isPublic() && $ref->isStatic() : $ref->isPublic();
+    }
+    return false;
 }
 
 /**
