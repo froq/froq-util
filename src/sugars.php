@@ -2495,6 +2495,36 @@ function mb_lcfirst(string $in, bool $tr = false): string
 }
 
 /**
+ * Get a character by given index in Unicode style.
+ *
+ * @param  string $str
+ * @param  int    $index
+ * @return string|null
+ * @since  5.17
+ */
+function char_at(string $str, int $index): string|null
+{
+    $char = mb_substr($str, $index, 1);
+
+    return ($char != '') ? $char : null;
+}
+
+/**
+ * Get a character code by given index in Unicode style.
+ *
+ * @param  string $str
+ * @param  int    $index
+ * @return int|null
+ * @since  5.17
+ */
+function char_code_at(string $str, int $index): int|null
+{
+    $char = mb_substr($str, $index, 1);
+
+    return ($char != '') ? mb_ord($char) : null;
+}
+
+/**
  * Translate given input to slugified output.
  *
  * @param  string $in
