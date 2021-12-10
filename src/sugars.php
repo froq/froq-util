@@ -2669,14 +2669,12 @@ function is_callable_method(string|object $class, string $method): bool
  */
 function is_empty($in, ...$ins): bool
 {
-    $ins = [$in, ...$ins];
-
-    foreach ($ins as $in) {
-        $size = size($in);
-        if ($size !== null && !$size) {
+    foreach ([$in, ...$ins] as $in) {
+        if (empty($in)) {
             return true;
         }
-        if (empty($in)) {
+        if ((is_string($in) || is_array($in) || is_object($in))
+            && !size($in)) {
             return true;
         }
     }
