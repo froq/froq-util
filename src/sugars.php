@@ -345,9 +345,9 @@ function grep_all(string $in, string $pattern, bool $uniform = false): array|nul
 /**
  * Sub a string with given start/length in unicode manner.
  *
- * @param  string $str
- * @param  int    $start
- * @param  int    $length
+ * @param  string   $str
+ * @param  int      $start
+ * @param  int|null $length
  * @return string
  * @since  4.0
  */
