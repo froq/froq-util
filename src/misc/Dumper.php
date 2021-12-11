@@ -108,9 +108,15 @@ final class Dumper
                             $propertyInfo ? ' ['. join(':', $propertyInfo) .']' : ''
                         ));
 
-                        if ($property['initialized'] == false) {
-                            $output .= '*UNINITIALIZED';
-                        } elseif ($property['value'] === null) {
+                        if (is_false($property['initialized'])) {
+                            // Cannot get the (default) value when unset() applied on the property.
+                            $ref = new \ReflectionProperty($property['class'], $property['name']);
+                            if ($ref->hasDefaultValue()) {
+                                $output .= self::dump($ref->getDefaultValue(), $indent, $indentString);
+                            } else {
+                                $output .= '*UNINITIALIZED';
+                            }
+                        } elseif (is_null($property['value'])) {
                             $output .= '*NULL';
                         } else {
                             $output .= self::dump($property['value'], $indent, $indentString);
