@@ -2247,6 +2247,22 @@ function array_last(array $array)
 }
 
 /**
+ * Get given array stuff as entries.
+ *
+ * @param  array $array
+ * @return array
+ * @since  5.19
+ */
+function array_entries(array $array): array
+{
+    foreach ($array as $key => $value) {
+        $ret[] = [$key, $value];
+    }
+
+    return $ret ?? [];
+}
+
+/**
  * Check whether given array is a list array.
  *
  * @param  any  $in
