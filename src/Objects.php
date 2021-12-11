@@ -8,7 +8,7 @@ declare(strict_types=1);
 namespace froq\util;
 
 use froq\common\object\StaticClass;
-use Error, Reflection, ReflectionException, ReflectionClass, ReflectionProperty, ReflectionUnionType;
+use Error, Reflection, ReflectionException, ReflectionClass, ReflectionProperty;
 
 /**
  * Objects.
@@ -134,11 +134,7 @@ final class Objects extends StaticClass
      */
     public static function hasConstant(string|object $class, string $name): bool|null
     {
-        try {
-            return (new ReflectionClass($class))->hasConstant($name);
-        } catch (ReflectionException) {
-            return null;
-        }
+        return self::getReflection($class)?->hasConstant($name);
     }
 
     /**
@@ -180,6 +176,7 @@ final class Objects extends StaticClass
             return null;
         }
 
+        $ret = [];
         foreach ($ref->getReflectionConstants() as $constant) {
             if ($_name && $_name != $constant->name) {
                 continue;
@@ -225,7 +222,7 @@ final class Objects extends StaticClass
             ];
         }
 
-        return $ret ?? [];
+        return $ret;
     }
 
     /**
@@ -246,6 +243,7 @@ final class Objects extends StaticClass
             // Seems doesn't matter constant visibility for getConstants().
             $ret = array_keys($ref->getConstants());
         } else {
+            $ret = [];
             foreach ($ref->getReflectionConstants() as $constant) {
                 if ($constant->isPublic()) {
                     $ret[] = $constant->name;
@@ -253,7 +251,7 @@ final class Objects extends StaticClass
             }
         }
 
-        return $ret ?? [];
+        return $ret;
     }
 
     /**
@@ -276,6 +274,7 @@ final class Objects extends StaticClass
             $ret = !$withNames ? array_values($ref->getConstants())
                                : $ref->getConstants();
         } else {
+            $ret = [];
             foreach ($ref->getReflectionConstants() as $constant) {
                 if ($constant->isPublic()) {
                     !$withNames ? $ret[] = $constant->getValue()
@@ -284,7 +283,7 @@ final class Objects extends StaticClass
             }
         }
 
-        return $ret ?? [];
+        return $ret;
     }
 
     /**
@@ -296,11 +295,7 @@ final class Objects extends StaticClass
      */
     public static function hasProperty(string|object $class, string $name): bool|null
     {
-        try {
-            return (new ReflectionClass($class))->hasProperty($name);
-        } catch (ReflectionException) {
-            return null;
-        }
+        return self::getReflection($class)?->hasProperty($name);
     }
 
     /**
@@ -342,12 +337,12 @@ final class Objects extends StaticClass
             return null;
         }
 
-        // Collect & merge with values (ReflectionProperty gives null for non-initialized classes).
-        $properties = array_replace(
-            array_reduce($ref->getProperties(),
-                fn($ps, $p) => array_merge($ps, [$p->name => null])
-            , [])
-        , $ref->getDefaultProperties());
+        // // Collect & merge with values (ReflectionProperty gives null for non-initialized classes).
+        // $properties = array_replace(
+        //     array_reduce($ref->getProperties(),
+        //         fn($ps, $p) => array_merge($ps, [$p->name => null])
+        //     , [])
+        // , $ref->getDefaultProperties());
 
         // Nope..
         // $parent = $ref->getParentClass();
@@ -372,23 +367,34 @@ final class Objects extends StaticClass
         //     $parent = $parent->getParentClass();
         // }
 
-        // Collect & merge some late-bind dynamic (weirdo) vars too.
-        if (is_object($class) && ($vars = get_object_vars($class))) {
-            $properties = array_merge($properties, array_filter(
-                $vars, fn($v) => !in_array($v, $properties)
-            ));
-        }
+        // // Collect & merge some late-bind dynamic (weirdo) vars too.
+        // if (is_object($class) && ($vars = get_object_vars($class))) {
+        //     $properties = array_merge($properties, array_filter(
+        //         $vars, fn($v) => !in_array($v, $properties)
+        //     ));
+        // }
 
-        foreach ($properties as $name => $value) {
+        $ret = [];
+        foreach ((array) self::getPropertyValues($class, $all, true) as $name => $value) {
             $name = (string) $name;
             if ($_name && $_name != $name) {
                 continue;
             }
 
-            $property = new ReflectionProperty($class, $name);
-            if (!$all && !$property->isPublic()) {
+            // Dynamic properties.
+            if (!$ref->hasProperty($name)) {
+                $ret[$name] = [
+                    'name'        => $name,
+                    'value'       => $value,                'type'        => null,
+                    'nullable'    => null,                  'visibility'  => 'public',
+                    'static'      => false,                 'initialized' => true,
+                    'class'       => self::getName($class), 'trait'       => null,
+                    'modifiers'   => ['public'],            'dynamic'     => true
+                ];
                 continue;
             }
+
+            $property = $ref->getProperty($name);
 
             $visibility = $property->isPublic() ? 'public' : (
                 $property->isPrivate() ? 'private' : 'protected'
@@ -401,8 +407,8 @@ final class Objects extends StaticClass
                 // Because type can be a class.
                 $type = self::getName(
                     // The fuck: https://www.php.net/manual/en/class.reflectiontype.php
-                    ($propertyType instanceof ReflectionUnionType)
-                      ? (string) $propertyType : $propertyType->getName()
+                    ($propertyType instanceof \ReflectionUnionType)
+                        ? (string) $propertyType : $propertyType->getName()
                 );
 
                 // Unify type display (?int => int|null).
@@ -416,7 +422,7 @@ final class Objects extends StaticClass
             if ($traits = self::getTraits($property->class)) {
                 foreach ($traits as $traitName) {
                     if (property_exists($traitName, $property->name)) {
-                        // No break, cos searching the real 'define'r but not 'use'r trait.
+                        // No break, searching the real definer but not user trait.
                         $trait = $traitName;
                     }
                 }
@@ -443,14 +449,14 @@ final class Objects extends StaticClass
             $ret[$property->name] = [
                 'name'        => $property->name,
                 'value'       => $value,                'type'        => $type,
-                'nullable'    => $nullable ,            'visibility'  => $visibility,
+                'nullable'    => $nullable,             'visibility'  => $visibility,
                 'static'      => $property->isStatic(), 'initialized' => $initialized,
                 'class'       => $className,            'trait'       => $trait,
-                'modifiers'   => $modifiers,
+                'modifiers'   => $modifiers,            'dynamic'     => false,
             ];
         }
 
-        return $ret ?? [];
+        return $ret;
     }
 
     /**
@@ -470,11 +476,19 @@ final class Objects extends StaticClass
         // Shorter: -1 is all, 1 public & public static only.
         $filter = $all ? -1 : 1;
 
+        $ret = [];
         foreach ($ref->getProperties($filter) as $property) {
             $ret[] = $property->name;
         }
 
-        return $ret ?? [];
+        // Collect & merge some late-bind dynamic (weirdo) vars too.
+        if (is_object($class) && ($vars = get_object_vars($class))) {
+            $ret = array_merge($ret, array_filter(
+                array_keys($vars), fn($v) => !in_array($v, $ret)
+            ));
+        }
+
+        return $ret;
     }
 
     /**
@@ -492,35 +506,57 @@ final class Objects extends StaticClass
             return null;
         }
 
-        // Collect & merge with values (ReflectionProperty gives null for non-initialized classes).
-        $properties = array_merge(
-            array_reduce($ref->getProperties(),
-                fn($ps, $p) => array_merge($ps, [$p->name => null])
-            , [])
-        , $ref->getDefaultProperties());
-
-        // Used "getDefaultProperties" and "ReflectionProperty", since can not get default value
-        // for string $class arguments, and also for all other stuffs like: "Typed property $foo
-        // must not be accessed before initialization"..
-        foreach ($properties as $name => $value) {
+        $ret = [];
+        foreach ((array) self::getPropertyNames($class, $all) as $name) {
             $name = (string) $name;
-            $property = new ReflectionProperty($class, $name);
-            if (!$all && !$property->isPublic()) {
-                continue;
+            $value = null;
+
+            if ($ref->hasProperty($name)) {
+                $property = $ref->getProperty($name);
+                if (is_object($class)) {
+                    try {
+                        $property->setAccessible(true);
+                        $value = $property->getValue($class);
+                    } catch (Error) {}
+                }
+            }
+            // Dynamic properties.
+            elseif (isset($class->$name)) {
+                $value = $class->$name;
             }
 
-            if (is_object($class)) {
-                try {
-                    $property->setAccessible(true);
-                    $value = $property->getValue($class);
-                } catch (Error) {}
-            }
-
-            !$withNames ? $ret[] = $value
-                        : $ret[$name] = $value;
+            !$withNames ? $ret[] = $value : $ret[$name] = $value;
         }
 
-        return $ret ?? [];
+        // // Collect & merge with values (ReflectionProperty gives null for non-initialized classes).
+        // $properties = array_merge(
+        //     array_reduce($ref->getProperties(),
+        //         fn($ps, $p) => array_merge($ps, [$p->name => null])
+        //     , [])
+        // , $ref->getDefaultProperties());
+
+        // // Used "getDefaultProperties" and "ReflectionProperty", since can not get default value
+        // // for string $class arguments, and also for all other stuffs like: "Typed property $foo
+        // // must not be accessed before initialization"..
+        // foreach ($properties as $name => $value) {
+        //     $name = (string) $name;
+        //     $property = $ref->getProperty($name);
+        //     if (!$all && !$property->isPublic()) {
+        //         continue;
+        //     }
+
+        //     if (is_object($class)) {
+        //         try {
+        //             $property->setAccessible(true);
+        //             $value = $property->getValue($class);
+        //         } catch (Error) {}
+        //     }
+
+        //     !$withNames ? $ret[] = $value
+        //                 : $ret[$name] = $value;
+        // }
+
+        return $ret;
     }
 
     /**
@@ -533,11 +569,7 @@ final class Objects extends StaticClass
      */
     public static function hasMethod(string|object $class, string $name): bool|null
     {
-        try {
-            return (new ReflectionClass($class))->hasMethod($name);
-        } catch (ReflectionException) {
-            return null;
-        }
+        return self::getReflection($class)?->hasMethod($name);
     }
 
     /**
@@ -570,6 +602,7 @@ final class Objects extends StaticClass
         // Shorter: -1 is all, 1 public & public static only.
         $filter = $all ? -1 : 1;
 
+        $ret = [];
         foreach ($ref->getMethods($filter) as $method) {
             if ($_name && $_name != $method->name) {
                 continue;
@@ -586,8 +619,8 @@ final class Objects extends StaticClass
                 // Because type can be a class.
                 $return = self::getName(
                     // The fuck: https://www.php.net/manual/en/class.reflectiontype.php
-                    ($returnType instanceof ReflectionUnionType)
-                      ? (string) $returnType : $returnType->getName()
+                    ($returnType instanceof \ReflectionUnionType)
+                        ? (string) $returnType : $returnType->getName()
                 );
 
                 // Unify type display (?int => int|null).
@@ -622,8 +655,8 @@ final class Objects extends StaticClass
                         // Because type can be a class.
                         $type = self::getName(
                             // The fuck: https://www.php.net/manual/en/class.reflectiontype.php
-                            ($paramType instanceof ReflectionUnionType)
-                              ? (string) $paramType : $paramType->getName()
+                            ($paramType instanceof \ReflectionUnionType)
+                                ? (string) $paramType : $paramType->getName()
                         );
 
                         // Unify type display (?int => int|null).
@@ -663,7 +696,7 @@ final class Objects extends StaticClass
             ];
         }
 
-        return $ret ?? [];
+        return $ret;
     }
 
     /**
@@ -683,11 +716,12 @@ final class Objects extends StaticClass
         // Shorter: -1 is all, 1 public & public static only.
         $filter = $all ? -1 : 1;
 
+        $ret = [];
         foreach ($ref->getMethods($filter) as $method) {
             $ret[] = $method->name;
         }
 
-        return $ret ?? [];
+        return $ret;
     }
 
     /**
