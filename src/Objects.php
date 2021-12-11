@@ -429,11 +429,10 @@ final class Objects extends StaticClass
             }
 
             if (is_object($class)) {
-                // Try, cos "Typed property $foo must not be accessed before initialization".
+                // Try, cos "Typed property .. must not be accessed before initialization".
                 try {
-                    // For getValue() and others below.
                     $property->setAccessible(true);
-                    $value = $property->getValue($class);
+                    @ $value = $property->getValue($class);
                 } catch (Error) {}
 
                 $initialized = $property->isInitialized($class);
@@ -515,7 +514,7 @@ final class Objects extends StaticClass
                     try {
                         $property = $ref->getProperty($name);
                         $property->setAccessible(true);
-                        $value = $property->getValue($class);
+                        @ $value = $property->getValue($class);
                     } catch (Error) {}
                 }
                 // Dynamic properties.
