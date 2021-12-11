@@ -380,6 +380,7 @@ final class Objects extends StaticClass
         }
 
         foreach ($properties as $name => $value) {
+            $name = (string) $name;
             if ($_name && $_name != $name) {
                 continue;
             }
@@ -502,6 +503,7 @@ final class Objects extends StaticClass
         // for string $class arguments, and also for all other stuffs like: "Typed property $foo
         // must not be accessed before initialization"..
         foreach ($properties as $name => $value) {
+            $name = (string) $name;
             $property = new ReflectionProperty($class, $name);
             if (!$all && !$property->isPublic()) {
                 continue;
