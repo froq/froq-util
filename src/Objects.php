@@ -367,7 +367,7 @@ final class Objects extends StaticClass
         //     $parent = $parent->getParentClass();
         // }
 
-        // // Collect & merge some late-bind dynamic (weirdo) vars too.
+        // // Collect & merge some late-bind dynamic vars too.
         // if (is_object($class) && ($vars = get_object_vars($class))) {
         //     $properties = array_merge($properties, array_filter(
         //         $vars, fn($v) => !in_array($v, $properties)
@@ -432,9 +432,7 @@ final class Objects extends StaticClass
                 // Try, cos "Typed property $foo must not be accessed before initialization".
                 try {
                     // For getValue() and others below.
-                    if ($visibility != 'public') {
-                        $property->setAccessible(true);
-                    }
+                    $property->setAccessible(true);
                     $value = $property->getValue($class);
                 } catch (Error) {}
 
@@ -481,7 +479,7 @@ final class Objects extends StaticClass
             $ret[] = $property->name;
         }
 
-        // Collect & merge some late-bind dynamic (weirdo) vars too.
+        // Collect & merge some late-bind dynamic vars too.
         if (is_object($class) && ($vars = get_object_vars($class))) {
             $ret = array_merge($ret, array_filter(
                 array_keys($vars), fn($v) => !in_array($v, $ret)
@@ -507,54 +505,44 @@ final class Objects extends StaticClass
         }
 
         $ret = [];
-        foreach ((array) self::getPropertyNames($class, $all) as $name) {
-            $name = (string) $name;
-            $value = null;
 
-            if ($ref->hasProperty($name)) {
-                $property = $ref->getProperty($name);
-                if (is_object($class)) {
+        if (is_object($class)) {
+            foreach ((array) self::getPropertyNames($class, $all) as $name) {
+                $name = (string) $name;
+                $value = null;
+
+                if ($ref->hasProperty($name)) {
                     try {
+                        $property = $ref->getProperty($name);
                         $property->setAccessible(true);
                         $value = $property->getValue($class);
                     } catch (Error) {}
                 }
-            }
-            // Dynamic properties.
-            elseif (isset($class->$name)) {
-                $value = $class->$name;
-            }
+                // Dynamic properties.
+                elseif (isset($class->$name)) {
+                    $value = $class->$name;
+                }
 
-            !$withNames ? $ret[] = $value : $ret[$name] = $value;
+                !$withNames ? $ret[] = $value : $ret[$name] = $value;
+            }
+        } else {
+            // Collect & merge with values (ReflectionProperty gives null for non-initialized classes).
+            $properties = array_merge(
+                array_reduce($ref->getProperties(),
+                    fn($ps, $p) => array_merge($ps, [$p->name => null])
+                , [])
+            , $ref->getDefaultProperties());
+
+            foreach ($properties as $name => $value) {
+                $property = $ref->getProperty((string) $name);
+                if (!$all && !$property->isPublic()) {
+                    continue;
+                }
+
+                !$withNames ? $ret[] = $value
+                            : $ret[$name] = $value;
+            }
         }
-
-        // // Collect & merge with values (ReflectionProperty gives null for non-initialized classes).
-        // $properties = array_merge(
-        //     array_reduce($ref->getProperties(),
-        //         fn($ps, $p) => array_merge($ps, [$p->name => null])
-        //     , [])
-        // , $ref->getDefaultProperties());
-
-        // // Used "getDefaultProperties" and "ReflectionProperty", since can not get default value
-        // // for string $class arguments, and also for all other stuffs like: "Typed property $foo
-        // // must not be accessed before initialization"..
-        // foreach ($properties as $name => $value) {
-        //     $name = (string) $name;
-        //     $property = $ref->getProperty($name);
-        //     if (!$all && !$property->isPublic()) {
-        //         continue;
-        //     }
-
-        //     if (is_object($class)) {
-        //         try {
-        //             $property->setAccessible(true);
-        //             $value = $property->getValue($class);
-        //         } catch (Error) {}
-        //     }
-
-        //     !$withNames ? $ret[] = $value
-        //                 : $ret[$name] = $value;
-        // }
 
         return $ret;
     }
