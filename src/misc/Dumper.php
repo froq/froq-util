@@ -84,9 +84,12 @@ final class Dumper
                         $output .= "\n";
                     }
                 } else {
-                    $output = sprintf('object(%s)#%d {', Objects::getName($input), spl_object_id($input)) . "\n";
+                    $properties = Objects::getProperties($input);
+                    $id = Objects::getId($input);
 
-                    foreach (Objects::getProperties($input) as $property) {
+                    $output = sprintf('object(%d) %s {', count($properties), $id) . "\n";
+
+                    foreach ($properties as $property) {
                         $recursion = self::checkRecursion($input, $property['name']);
                         if ($recursion) {
                             return $recursion;
@@ -198,14 +201,13 @@ final class Dumper
         } else {
             static $recursions = [];
 
-            $classId   = Objects::getId($input);
-            $classKey  = $classId . $propertyName;
-            $classHash = Objects::getSerializedHash($input);
-            if (isset($recursions[$classKey]) && $recursions[$classKey] === $classHash) {
-                return '*RECURSION('. $classId .')';
+            $id  = Objects::getId($input);
+            $key = $id . $propertyName;
+            if (isset($recursions[$key]) && $recursions[$key] === $input) {
+                return '*RECURSION('. $id .')';
             }
 
-            $recursions[$classKey] = $classHash; // Tick.
+            $recursions[$key] = $input; // Tick.
         }
 
         return null;
