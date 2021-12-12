@@ -599,7 +599,7 @@ final class Objects extends StaticClass
                 $method->isPrivate() ? 'private' : 'protected'
             );
 
-            $return = $trait = $parameters = null;
+            $return = $trait = null; $parameters = [];
             $modifiers = Reflection::getModifierNames($method->getModifiers());
 
             if ($returnType = $method->getReturnType()) {
@@ -633,9 +633,10 @@ final class Objects extends StaticClass
 
             if ($params = $method->getParameters()) {
                 foreach ($params as $param) {
+                    $type = 'void';
                     $parameter = [
                         'name' => $param->name, 'value'    => 'void',
-                        'type' => 'void',       'nullable' => $param->allowsNull()
+                        'type' => $type,        'nullable' => $param->allowsNull()
                     ];
 
                     if ($paramType = $param->getType()) {
@@ -647,7 +648,9 @@ final class Objects extends StaticClass
                         );
 
                         // Unify type display (?int => int|null).
-                        if ($param->allowsNull() && !str_contains($type, '|null')) {
+                        if ($parameter['nullable']
+                            && $parameter['type'] != 'void'
+                            && !str_contains($type, '|null')) {
                             $type = str_replace('?', '', $type) .'|null';
                         }
 
