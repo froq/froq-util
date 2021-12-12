@@ -8,7 +8,7 @@ declare(strict_types=1);
 namespace froq\util;
 
 use froq\common\object\StaticClass;
-use ValueError, ArgumentCountError;
+use Closure, ValueError, ArgumentCountError;
 
 /**
  * Arrays.
@@ -699,14 +699,13 @@ final class Arrays extends StaticClass
      */
     public static function sweep(array &$array, array $ignoredKeys = null): array
     {
-        // Memoize test function.
-        static $test; $test ??= fn($v) => $v !== null && $v !== '' && $v !== [];
+        $tester = self::getFilterTester();
 
         if ($ignoredKeys == null) {
-            $array = array_filter($array, $test);
+            $array = array_filter($array, $tester);
         } else {
             foreach ($array as $key => $value) {
-                if (!in_array($key, $ignoredKeys, true) && !$test($value)) {
+                if (!in_array($key, $ignoredKeys, true) && !$tester($value)) {
                     unset($array[$key]);
                 }
             }
@@ -957,11 +956,8 @@ final class Arrays extends StaticClass
      */
     public static function filter(array $array, callable $func = null, bool $keepKeys = true): array
     {
-        // Set default tester.
-        static $test; $test ??= fn($v) => $v !== null && $v !== '' && $v !== [];
-
         if ($func == null) {
-            return array_filter($array, $test);
+            return array_filter($array, self::getFilterTester());
         }
 
         $ret = []; $i = 0;
@@ -1295,5 +1291,15 @@ final class Arrays extends StaticClass
     public static function getBool(array &$array, int|string $key, bool $default = null, bool $drop = false): bool
     {
         return (bool) self::get($array, $key, $default, $drop);
+    }
+
+    /** Internals. */
+
+    private static Closure $filterTester;
+    private static function getFilterTester(): Closure
+    {
+        return self::$filterTester ??= (
+            fn($v) => $v !== null && $v !== '' && $v !== []
+        );
     }
 }
