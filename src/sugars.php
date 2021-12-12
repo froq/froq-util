@@ -70,11 +70,16 @@ function upper(string $in): string { return mb_strtoupper($in); }
 function lower(string $in): string { return mb_strtolower($in); }
 
 /**
- * Quick array & object.
+ * Quick array & object (with "x:1, y:2" support).
  * @since 5.21
  */
 function qa(...$args): array
 {
+    // When arguments are named.
+    if (!is_list($args)) {
+        return $args;
+    }
+
     $map = [];
     for ($i = 1, $argc = count($args) + 1; $i < $argc; $i += 2) {
         $map[$args[$i - 1]] = $args[$i];
