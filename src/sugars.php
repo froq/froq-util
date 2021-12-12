@@ -97,8 +97,7 @@ function qo(...$args): object
  */
 function filter(array $array, callable $func = null, bool $keep_keys = true): array
 {
-    return (func_num_args() == 1) ? Arrays::filter($array)
-                                  : Arrays::filter($array, $func, $keep_keys);
+    return Arrays::filter($array, $func, $keep_keys);
 }
 
 /**

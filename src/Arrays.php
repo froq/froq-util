@@ -958,10 +958,10 @@ final class Arrays extends StaticClass
     public static function filter(array $array, callable $func = null, bool $keepKeys = true): array
     {
         // Set default tester.
-        $func ??= fn($v) => $v !== null && $v !== '' && $v !== [];
+        static $test; $test ??= fn($v) => $v !== null && $v !== '' && $v !== [];
 
-        if (func_num_args() == 1) {
-            return array_filter($array, $func);
+        if ($func == null) {
+            return array_filter($array, $test);
         }
 
         $ret = []; $i = 0;
