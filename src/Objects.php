@@ -633,10 +633,9 @@ final class Objects extends StaticClass
 
             if ($params = $method->getParameters()) {
                 foreach ($params as $param) {
-                    $type = 'void';
                     $parameter = [
                         'name' => $param->name, 'value'    => 'void',
-                        'type' => $type,        'nullable' => $param->allowsNull()
+                        'type' => 'void',       'nullable' => $param->allowsNull()
                     ];
 
                     if ($paramType = $param->getType()) {
@@ -648,9 +647,7 @@ final class Objects extends StaticClass
                         );
 
                         // Unify type display (?int => int|null).
-                        if ($parameter['nullable']
-                            && $parameter['type'] != 'void'
-                            && !str_contains($type, '|null')) {
+                        if ($parameter['nullable'] && !str_contains($type, '|null')) {
                             $type = str_replace('?', '', $type) .'|null';
                         }
 
