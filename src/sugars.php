@@ -2604,6 +2604,57 @@ function random_string(int $length, bool $puncted = false): string
 }
 
 /**
+ * Set a var on an object.
+ *
+ * @param  object     $object
+ * @param  int|string $var
+ * @param  mixed      $value
+ * @param  bool       $easy
+ * @return void
+ * @since  5.20
+ */
+function set_object_var(object $object, int|string $var, mixed $value, bool $easy = true): void
+{
+    if ($easy || !property_exists($object, $var)) {
+        $object->$var = $value;
+        return;
+    }
+
+    $ref = new ReflectionProperty($object, (string) $var);
+    $ref->setAccessible(true); // @todo Remove in 6.0 (PHP/8.1).
+    $ref->setValue($object, $value);
+}
+
+/**
+ * Get a var from an object.
+ *
+ * @param  object     $object
+ * @param  int|string $var
+ * @param  mixed|null $default
+ * @param  bool       $easy
+ * @return mixed
+ * @since  5.20
+ */
+function get_object_var(object $object, int|string $var, mixed $default = null, bool $easy = true): mixed
+{
+    if ($easy) {
+        return $object->$var ?? $default;
+    }
+
+    $ref = new ReflectionProperty($object, (string) $var);
+    $ref->setAccessible(true); // @todo Remove in 6.0 (PHP/8.1).
+
+    @ $value = $ref->getValue($object);
+
+    // Cannot get the (default) value when unset() applied on the property.
+    if ($value === null && $ref->hasDefaultValue()) {
+        $value = $ref->getDefaultValue();
+    }
+
+    return $value ?? $default;
+}
+
+/**
  * Check whether given input is a number.
  *
  * @param  any $in
