@@ -70,6 +70,23 @@ function upper(string $in): string { return mb_strtoupper($in); }
 function lower(string $in): string { return mb_strtolower($in); }
 
 /**
+ * Quick array & object.
+ * @since 5.21
+ */
+function qa(...$args): array
+{
+    $map = [];
+    for ($i = 1, $argc = count($args) + 1; $i < $argc; $i += 2) {
+        $map[$args[$i - 1]] = $args[$i];
+    }
+    return $map;
+}
+function qo(...$args): object
+{
+    return (object) qa(...$args);
+}
+
+/**
  * Filter an array with value/key notation.
  *
  * @param  array         $array
