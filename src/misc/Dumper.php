@@ -173,10 +173,10 @@ final class Dumper
      * Check for recursions.
      *
      * @param  array|object &$input
-     * @param  string|null   $key
+     * @param  string|null   $propertyName
      * @return string|null
      */
-    private static function checkRecursion(array|object &$input, string $key = null): string|null
+    private static function checkRecursion(array|object &$input, string $propertyName = null): string|null
     {
         if (is_array($input)) {
             static $inputKey = '**RECURSION';
@@ -198,13 +198,14 @@ final class Dumper
         } else {
             static $recursions = [];
 
-            $classId  = Objects::getId($input);
-            $classKey = $classId . $key;
-            if (isset($recursions[$classKey])) {
+            $classId   = Objects::getId($input);
+            $classKey  = $classId . $propertyName;
+            $classHash = Objects::getSerializedHash($input);
+            if (isset($recursions[$classKey]) && $recursions[$classKey] === $classHash) {
                 return '*RECURSION('. $classId .')';
             }
 
-            $recursions[$classKey] = 1; // Tick.
+            $recursions[$classKey] = $classHash; // Tick.
         }
 
         return null;
