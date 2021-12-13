@@ -27,11 +27,11 @@ final class Dumper
      * Note: Be careful while dumping recursions with arrays.
      *
      * @param  mixed  $input
-     * @param  int    $indent
-     * @param  string $indentString
+     * @param  string $tab  Indent.
+     * @param  int    $tabs Indent count. @internal
      * @return string
      */
-    public static function dump(mixed $input, int $indent = 0, string $indentString = "\t"): string
+    public static function dump(mixed $input, string $tab = '  ', int $tabs = 0): string
     {
         $type = gettype($input);
 
@@ -54,7 +54,7 @@ final class Dumper
 
             case 'array':
             case 'object':
-                $indent += 1;
+                $tabs += 1;
 
                 if ($type == 'array') {
                     $output = sprintf('array(%d) {', count($input)) . "\n";
@@ -77,9 +77,9 @@ final class Dumper
                         //     $space = str_repeat(' ', $spaceGap);
                         // }
 
-                        $output .= str_repeat($indentString, $indent);
+                        $output .= str_repeat($tab, $tabs);
                         $output .= $key . $space .' => '. (
-                            $recursion ?: self::dump($value, $indent, $indentString)
+                            $recursion ?: self::dump($value, $tab, $tabs)
                         );
                         $output .= "\n";
                     }
@@ -87,7 +87,7 @@ final class Dumper
                     $properties = Objects::getProperties($input);
                     $id = Objects::getId($input);
 
-                    $output = sprintf('object(%d) %s {', count($properties), $id) . "\n";
+                    $output = sprintf('object(%d) %s<#%s> {', count($properties), ...split('#', $id)) . "\n";
 
                     foreach ($properties as $property) {
                         $recursion = self::checkRecursion($input, $property['name']);
@@ -95,7 +95,7 @@ final class Dumper
                             return $recursion;
                         }
 
-                        $output .= str_repeat($indentString, $indent);
+                        $output .= str_repeat($tab, $tabs);
 
                         // Drop public & join.
                         $property['modifiers'] = join('|', array_delete(
@@ -115,23 +115,23 @@ final class Dumper
                             // Cannot get the (default) value when unset() applied on the property.
                             $ref = new \ReflectionProperty($property['class'], $property['name']);
                             if ($ref->hasDefaultValue()) {
-                                $output .= self::dump($ref->getDefaultValue(), $indent, $indentString);
+                                $output .= self::dump($ref->getDefaultValue(), $tab, $tabs);
                             } else {
                                 $output .= '*UNINITIALIZED';
                             }
                         } elseif (is_null($property['value'])) {
                             $output .= '*NULL';
                         } else {
-                            $output .= self::dump($property['value'], $indent, $indentString);
+                            $output .= self::dump($property['value'], $tab, $tabs);
                         }
 
                         $output .= "\n";
                     }
                 }
 
-                $indent -= 1;
+                $tabs -= 1;
 
-                $output .= str_repeat($indentString, $indent);
+                $output .= str_repeat($tab, $tabs);
                 $output .= '}';
 
                 return $output;
@@ -149,12 +149,12 @@ final class Dumper
      *
      * @param  mixed  $input
      * @param  bool   $exit
-     * @param  string $indentString
+     * @param  string $tab
      * @return void
      */
-    public static function echo(mixed $input, bool $exit = false, string $indentString = "\t"): void
+    public static function echo(mixed $input, bool $exit = false, string $tab = '  '): void
     {
-        echo "", self::dump($input, 0, $indentString), "\n";
+        echo "", self::dump($input, $tab), "\n";
         $exit && exit(0);
     }
 
@@ -163,12 +163,12 @@ final class Dumper
      *
      * @param  mixed  $input
      * @param  bool   $exit
-     * @param  string $indentString
+     * @param  string $tab
      * @return void
      */
-    public static function echoPre(mixed $input, bool $exit = false, string $indentString = "\t"): void
+    public static function echoPre(mixed $input, bool $exit = false, string $tab = '  '): void
     {
-        echo "<pre>", self::dump($input, 0, $indentString), "</pre>\n";
+        echo "<pre>", self::dump($input, $tab), "</pre>\n";
         $exit && exit(0);
     }
 
