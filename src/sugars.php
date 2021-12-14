@@ -81,8 +81,10 @@ function qa(...$args): array
     }
 
     $map = [];
-    for ($i = 1, $argc = count($args) + 1; $i < $argc; $i += 2) {
-        $map[$args[$i - 1]] = $args[$i];
+    if ($argc = count($args)) {
+        for ($i = 1; $i < $argc + 1; $i += 2) {
+            $map[$args[$i - 1]] = $args[$i];
+        }
     }
     return $map;
 }
