@@ -47,13 +47,19 @@ final class Dumper
                 return 'float: '. $input;
 
             case 'string':
-                return 'string('. strlen($input) .'): "'. $input .'"';
+                return 'string('. mb_strlen($input) .'): "'. $input .'"';
 
             case 'boolean':
                 return 'bool: '. ($input ? 'true' : 'false');
 
             case 'array':
             case 'object':
+                if ($input == null()) {
+                    return '*NULL';
+                } elseif ($input == void()) {
+                    return '*VOID';
+                }
+
                 $tabs += 1;
 
                 if ($type == 'array') {

@@ -6,6 +6,12 @@
 declare(strict_types=1);
 
 /**
+ * For type-check purposes for null/void(undefined) refs.
+ */
+function null() { return new class{}; }
+function void() { return new class{}; }
+
+/**
  * Nil/nils (null/null string).
  * @const null
  * @since 4.0
