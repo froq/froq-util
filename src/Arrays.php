@@ -688,27 +688,6 @@ final class Arrays extends StaticClass
     }
 
     /**
-     * Merge given array with given items.
-     *
-     * @param  array    $array
-     * @param  mixed ...$items
-     * @return array
-     * @since  5.15
-     */
-    public static function merge(array $array, mixed ...$items): array
-    {
-        if (self::isList($items)) {
-            $items = array_values($items);
-        }
-
-        // For named param calls: array_values().
-        return array_merge($array, $items);
-
-        // This will drop given int keys in items.
-        // return array_merge($array, ...array_map(fn($value) => (array) $value, $items));
-    }
-
-    /**
      * Swap two keys on given array.
      *
      * @param  array      &$array
