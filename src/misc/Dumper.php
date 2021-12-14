@@ -57,7 +57,9 @@ final class Dumper
                 $tabs += 1;
 
                 if ($type == 'array') {
-                    $output = sprintf('array(%d) {', count($input)) . "\n";
+                    $arrayType = $input ? (is_list($input) ? 'list' : 'map') : '';
+
+                    $output = sprintf('array(%d) <%s> {', count($input), $arrayType) . "\n";
 
                     // // For space gaps.
                     // $maxKeyLen = max(array_map(
@@ -85,9 +87,9 @@ final class Dumper
                     }
                 } else {
                     $properties = Objects::getProperties($input);
-                    $id = Objects::getId($input);
+                    [$objectType, $objectId] = split('#', Objects::getId($input));
 
-                    $output = sprintf('object(%d) %s<#%s> {', count($properties), ...split('#', $id)) . "\n";
+                    $output = sprintf('object(%d) <%s>#%s {', count($properties), $objectType, $objectId) . "\n";
 
                     foreach ($properties as $property) {
                         $recursion = self::checkRecursion($input, $property['name']);
