@@ -8,29 +8,6 @@ declare(strict_types=1);
 use froq\util\Arrays;
 
 /**
- * Check whether all keys are "int" in given array, or array is a list when strict.
- *
- * @param  array $array
- * @param  bool  $strict
- * @return bool
- */
-function is_set_array(array $array, bool $strict = false): bool
-{
-    return Arrays::isSet($array, $strict);
-}
-
-/**
- * Check whether all keys are "string" in given array.
- *
- * @param  array $array
- * @return bool
- */
-function is_map_array(array $array): bool
-{
-    return Arrays::isMap($array);
-}
-
-/**
  * Bridge function to Arrays.set()/setAll().
  *
  * @param  array                        &$array

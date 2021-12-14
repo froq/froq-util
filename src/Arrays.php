@@ -22,13 +22,13 @@ use Closure, ValueError, ArgumentCountError;
 final class Arrays extends StaticClass
 {
     /**
-     * Check whether all keys are "int" in given array, or array is a list when strict.
+     * Check whether all keys are "int" in given array, or given array is a list when strict.
      *
      * @param  array $array
      * @param  bool  $strict
      * @return bool
      */
-    public static function isSet(array $array, bool $strict = false): bool
+    public static function isList(array $array, bool $strict = false): bool
     {
         if ($strict) {
             $ii = 0; // Expected (index increament).
@@ -61,6 +61,25 @@ final class Arrays extends StaticClass
             if (!is_string($key)) {
                 return false;
             }
+        }
+        return true;
+    }
+
+    /**
+     * Check whether all values are "unique" in given array.
+     *
+     * @param  array $array
+     * @param  bool  $strict
+     * @return bool
+     */
+    public static function isSet(array $array, bool $strict = true): bool
+    {
+        $search = array_shift($array);
+        foreach ($array as $value) {
+            if ($strict ? ($search === $value) : ($search == $value)) {
+                return false;
+            }
+            $search = $value;
         }
         return true;
     }
@@ -429,6 +448,25 @@ final class Arrays extends StaticClass
         return array_merge(array_intersect($array1, $array2),
                            array_diff($array1, $array2),
                            array_diff($array2, $array1));
+    }
+
+    /**
+     * Get "really" unique items (since array_unique() comparison is weird (eg: try [1,'1'])).
+     *
+     * @param  array  $array
+     * @param  bool   $strict
+     * @param  bool   $keepKeys
+     * @return 5.22
+     */
+    public static function unique(array $array, bool $strict = true, bool $keepKeys = true): array
+    {
+        $ret = [];
+
+        foreach ($array as $key => $value) {
+            in_array($value, $ret, $strict) || ($ret[$key] = $value);
+        }
+
+        return $keepKeys ? $ret : array_values($ret);
     }
 
     /**

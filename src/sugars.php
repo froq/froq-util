@@ -2284,17 +2284,67 @@ function array_entries(array $array): array
 }
 
 /**
+ * Like array_unshift() but taking key/value pairs.
+ *
+ * @param  array      &$array
+ * @param  int|string  $key
+ * @param  mixed       $value
+ * @return array
+ * @since  5.22
+ */
+function array_unshift_key(array &$array, int|string $key, mixed $value): array
+{
+    $array = [$key => $value] + $array;
+    return $array;
+}
+
+/**
+ * Like array_shift() but returning key/value pairs.
+ *
+ * @param  array      &$array
+ * @param  int|string  $key
+ * @param  mixed       $value
+ * @return array|null
+ * @since  5.22
+ */
+function array_shift_key(array &$array): array|null
+{
+    $key = array_key_first($array);
+    if ($key !== null) {
+        return [$key, array_shift($array)];
+    }
+    return null;
+}
+
+/**
+ * Like array_pop() but returning key/value pairs.
+ *
+ * @param  array      &$array
+ * @param  int|string  $key
+ * @param  mixed       $value
+ * @return array|null
+ * @since  5.22
+ */
+function array_pop_key(array &$array): array|null
+{
+    $key = array_key_last($array);
+    if ($key !== null) {
+        return [$key, array_pop($array)];
+    }
+    return null;
+}
+
+/**
  * Check whether given array is a list array.
  *
  * @param  any  $in
- * @param  bool $allow_empty
+ * @param  bool $strict
  * @return bool
  * @since  5.0
  */
-function is_list($in, bool $allow_empty = true): bool
+function is_list($in, bool $strict = true): bool
 {
-    return $allow_empty ? is_array($in) && Arrays::isSet($in, true)
-                 : $in && is_array($in) && Arrays::isSet($in, true);
+    return is_array($in) && Arrays::isList($in, $strict);
 }
 
 /**
