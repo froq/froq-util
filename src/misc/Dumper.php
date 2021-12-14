@@ -91,6 +91,25 @@ final class Dumper
 
                     $output = sprintf('object(%d) <%s>#%s {', count($properties), $objectType, $objectId) . "\n";
 
+                    // Handle spacial cases for debug info.
+                    if (method_exists($input, '__debugInfo')) {
+                        $properties = $input->__debugInfo();
+                        if (is_array($properties)) {
+                            $properties = self::dump($properties, $tab, $tabs - 1);
+
+                            // Drop "array(1) <..> {..}" parts.
+                            $properties = slice(split("\n", $properties), 1, -1);
+
+                            // Append back properties.
+                            $output .= join("\n", $properties) . "\n";
+
+                            $output .= str_repeat($tab, $tabs - 1);
+                            $output .= '}';
+
+                            return $output;
+                        }
+                    }
+
                     foreach ($properties as $property) {
                         $recursion = self::checkRecursion($input, $property['name']);
                         if ($recursion) {
