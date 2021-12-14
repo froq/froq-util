@@ -697,8 +697,12 @@ final class Arrays extends StaticClass
      */
     public static function merge(array $array, mixed ...$items): array
     {
+        if (self::isList($items)) {
+            $items = array_values($items);
+        }
+
         // For named param calls: array_values().
-        return array_merge($array, array_values($items));
+        return array_merge($array, $items);
 
         // This will drop given int keys in items.
         // return array_merge($array, ...array_map(fn($value) => (array) $value, $items));
