@@ -599,7 +599,7 @@ final class Objects extends StaticClass
                 $method->isPrivate() ? 'private' : 'protected'
             );
 
-            $return = $trait = null; $parameters = [];
+            $return = 'void'; $trait = null; $parameters = [];
             $modifiers = Reflection::getModifierNames($method->getModifiers());
 
             if ($returnType = $method->getReturnType()) {
@@ -625,7 +625,7 @@ final class Objects extends StaticClass
             if ($traits = self::getTraits($method->class)) {
                 foreach ($traits as $traitName) {
                     if (method_exists($traitName, $method->name)) {
-                        // No break, cos searching the real 'define'r but not 'use'r trait.
+                        // No break, searching the real define'r but not use'r trait.
                         $trait = $traitName;
                     }
                 }
@@ -634,8 +634,8 @@ final class Objects extends StaticClass
             if ($params = $method->getParameters()) {
                 foreach ($params as $param) {
                     $parameter = [
-                        'name' => $param->name, 'value'    => 'void',
-                        'type' => 'void',       'nullable' => $param->allowsNull()
+                        'name' => $param->name, 'value'    => null,
+                        'type' => null,         'nullable' => $param->allowsNull()
                     ];
 
                     if ($paramType = $param->getType()) {
@@ -655,7 +655,7 @@ final class Objects extends StaticClass
                     }
 
                     if ($param->isVariadic()) {
-                        $parameter['type'] = ($parameter['type'] != 'void')
+                        $parameter['type'] = ($parameter['type'] != null)
                             ? $parameter['type'] .' ...' : '...';
                     }
 
