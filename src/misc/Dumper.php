@@ -97,7 +97,7 @@ final class Dumper
                         if (is_array($properties)) {
                             $properties = self::dump($properties, $tab, $tabs - 1);
 
-                            // Drop "array(1) <..> {..}" parts.
+                            // Drop "array(1) <..> {" and "}" parts.
                             $properties = slice(split("\n", $properties), 1, -1);
 
                             // Append back properties.
