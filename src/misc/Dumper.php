@@ -41,13 +41,13 @@ final class Dumper
 
             case 'double':
                 // Append ".0" for single vals (eg: 1.0).
-                if (strlen((string) $input) == 1) {
+                if (!strsrc((string) $input, '.')) {
                     $input .= '.0';
                 }
                 return 'float: '. $input;
 
             case 'string':
-                return 'string('. mb_strlen($input) .'): "'. $input .'"';
+                return 'string('. size($input) .'): "'. $input .'"';
 
             case 'boolean':
                 return 'bool: '. ($input ? 'true' : 'false');
