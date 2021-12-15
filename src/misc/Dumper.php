@@ -226,7 +226,7 @@ final class Dumper
             // Drop recursion tick.
             unset($input[$inputKey]);
         } else {
-            static $recursions = [];
+            static $recursions;
 
             $id  = Objects::getId($input);
             $key = $id . $propertyName;
@@ -235,6 +235,16 @@ final class Dumper
             }
 
             $recursions[$key] = $input; // Tick.
+
+            static $lastCallTrace;
+
+            // Reset for each different call.
+            $trace = debug_backtrace()[1];
+            if (isset($lastCallTrace) && $lastCallTrace !== $trace) {
+                $recursions = [];
+            }
+
+            $lastCallTrace = $trace;
         }
 
         return null;
