@@ -8,7 +8,7 @@ declare(strict_types=1);
 use froq\util\{Util, Arrays, Objects, Numbers, Strings};
 
 // Load constants.
-defined('nil') || require 'sugars-constant.php';
+require_once 'sugars-const.php';
 
 /**
  * Sugar loader.
