@@ -436,18 +436,25 @@ final class Arrays extends StaticClass
     }
 
     /**
-     * Union.
+     * Union all given arrays returning unique'd array.
      *
-     * @param  array $array1
-     * @param  array $array2
+     * @param  array    $array1
+     * @param  array    $array2
+     * @param  array ...$others
      * @return array
      * @since  5.0
      */
-    public static function union(array $array1, array $array2): array
+    public static function union(array $array1, array $array2, array ...$others): array
     {
-        return array_merge(array_intersect($array1, $array2),
-                           array_diff($array1, $array2),
-                           array_diff($array2, $array1));
+        $ret = [];
+
+        foreach (array_merge($array1, $array2, ...$others) as $key => $value) {
+            in_array($value, $ret, true) || (
+                is_int($key) ? $ret[] = $value : $ret[$key] = $value
+            );
+        }
+
+        return $ret;
     }
 
     /**
@@ -455,18 +462,19 @@ final class Arrays extends StaticClass
      *
      * @param  array  $array
      * @param  bool   $strict
-     * @param  bool   $keepKeys
      * @return 5.22
      */
-    public static function unique(array $array, bool $strict = true, bool $keepKeys = true): array
+    public static function unique(array $array, bool $strict = true): array
     {
         $ret = [];
 
         foreach ($array as $key => $value) {
-            in_array($value, $ret, $strict) || ($ret[$key] = $value);
+            in_array($value, $ret, $strict) || (
+                is_int($key) ? $ret[] = $value : $ret[$key] = $value
+            );
         }
 
-        return $keepKeys ? $ret : array_values($ret);
+        return $ret;
     }
 
     /**
