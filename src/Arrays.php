@@ -604,15 +604,17 @@ final class Arrays extends StaticClass
     /**
      * Shuffle given array, keeping keys as default.
      *
-     * @param  array &$array
-     * @param  bool   $keepKeys
+     * @param  array $array
+     * @param  bool  $assoc
      * @return array
      */
-    public static function shuffle(array &$array, bool $keepKeys = true): array
+    public static function shuffle(array $array, bool $assoc = false): array
     {
         srand(); // Ensure a new seed (@see https://wiki.php.net/rfc/object_scope_prng).
 
-        if ($keepKeys) {
+        if (!$assoc) {
+            shuffle($array);
+        } else {
             $keys = array_keys($array);
             shuffle($keys);
 
@@ -626,8 +628,6 @@ final class Arrays extends StaticClass
             // uasort($array, function () {
             //     return rand(-1, 1);
             // });
-        } else {
-            shuffle($array);
         }
 
         return $array;
@@ -918,15 +918,15 @@ final class Arrays extends StaticClass
      *
      * @param  array  $array1
      * @param  array  $array2
-     * @param  bool   $associative
+     * @param  bool   $assoc
      * @return array
      * @since  5.10
      */
-    public static function diff(array $array1, array $array2, bool $associative = false): array
+    public static function diff(array $array1, array $array2, bool $assoc = false): array
     {
         [$count1, $count2] = [count($array1), count($array2)];
 
-        if (!$associative) {
+        if (!$assoc) {
             return ($count1 > $count2) // Swaps for a proper diff calc.
                  ? array_diff($array1, $array2) : array_diff($array2, $array1);
         }
@@ -940,7 +940,6 @@ final class Arrays extends StaticClass
      *
      * @param  array  $array1
      * @param  array  $array2
-     * @param  bool   $associative
      * @return array
      * @since  5.10
      */
