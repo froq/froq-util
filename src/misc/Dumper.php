@@ -92,29 +92,35 @@ final class Dumper
                         $output .= "\n";
                     }
                 } else {
-                    $properties = Objects::getProperties($input);
                     [$objectType, $objectId] = split('#', Objects::getId($input));
-
-                    $output = sprintf('object(%d) <%s>#%s {', count($properties), $objectType, $objectId) . "\n";
 
                     // Handle spacial cases for debug info.
                     if (method_exists($input, '__debugInfo')) {
-                        $properties = $input->__debugInfo();
-                        if (is_array($properties)) {
-                            $properties = self::dump($properties, $tab, $tabs - 1);
+                        $info = $input->__debugInfo();
+                        if (is_array($info)) {
+                            $output = sprintf('object(%d) <%s>#%s {', count($info), $objectType, $objectId) . "\n";
 
-                            // Drop "array(1) <..> {" and "}" parts.
-                            $properties = slice(split("\n", $properties), 1, -1);
+                            if ($info) {
+                                $info = self::dump($info, $tab, $tabs - 1);
 
-                            // Append back properties.
-                            $output .= join("\n", $properties) . "\n";
+                                // Drop "array(1) <..> {" and "}" parts.
+                                $info = slice(split("\n", $info), 1, -1);
 
-                            $output .= str_repeat($tab, $tabs - 1);
+                                // Append back properties.
+                                $output .= join("\n", $info) . "\n";
+
+                                $output .= str_repeat($tab, $tabs - 1);
+                            }
+
                             $output .= '}';
 
                             return $output;
                         }
                     }
+
+                    $properties = Objects::getProperties($input);
+
+                    $output = sprintf('object(%d) <%s>#%s {', count($properties), $objectType, $objectId) . "\n";
 
                     foreach ($properties as $property) {
                         $recursion = self::checkRecursion($input, $property['name']);
