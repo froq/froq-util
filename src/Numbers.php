@@ -24,19 +24,19 @@ final class Numbers extends StaticClass
     /**
      * Convert.
      *
-     * @param  numeric  $in
+     * @param  numeric  $input
      * @param  int|null $decimals
      * @return int|float|null
      * @since  4.0
      */
-    public static function convert($in, int $decimals = null): int|float|null
+    public static function convert($input, int $decimals = null): int|float|null
     {
-        if (is_numeric($in)) {
+        if (is_numeric($input)) {
             if ($decimals !== null) {
-                $in = number_format((float) $in, $decimals);
+                $input = number_format((float) $input, $decimals);
             }
 
-            return $in + 0;
+            return ($input + 0);
         }
 
         return null; // Error, not a number.
@@ -45,104 +45,106 @@ final class Numbers extends StaticClass
     /**
      * Compare.
      *
-     * @param  int|float $a
-     * @param  int|float $b
+     * @param  int|float $number1
+     * @param  int|float $number2
      * @param  int|null  $precision
      * @return int
      */
-    public static function compare(int|float $a, int|float $b, int $precision = null): int
+    public static function compare(int|float $number1, int|float $number2, int $precision = null): int
     {
         $precision ??= 14;
 
-        return round((float) $a, $precision) <=> round((float) $b, $precision);
+        return round((float) $number1, $precision) <=> round((float) $number2, $precision);
     }
 
     /**
      * Equals.
-     * @param  int|float $a
-     * @param  int|float $b
+     * @param  int|float $number1
+     * @param  int|float $number2
      * @param  int|null  $precision
      * @return bool
      */
-    public static function equals(int|float $a, int|float $b, int $precision = null): bool
+    public static function equals(int|float $number1, int|float $number2, int $precision = null): bool
     {
-        return self::compare($a, $b, $precision) === 0;
+        return self::compare($number1, $number2, $precision) === 0;
     }
 
     /**
      * Check whether given input is number.
      *
-     * @param  any $in
+     * @param  any $input
      * @return bool
      */
-    public static function isNumber($in): bool
+    public static function isNumber($input): bool
     {
-        return is_number($in);
+        return is_number($input);
     }
 
     /**
      * Check whether given input is digit.
      *
-     * @param  any $in
+     * @param  any $input
      * @return bool
      */
-    public static function isDigit($in): bool
+    public static function isDigit($input): bool
     {
-        return is_numeric($in) && (is_int($in) || ctype_digit((string) $in)) && ($in >= 0);
+        return is_numeric($input) && ($input >= 0)
+            && (is_int($input) || ctype_digit((string) $input));
     }
 
     /**
      * Check whether given input is an ID (useful for any (db) incremental id check).
      *
-     * @param  any $in
+     * @param  any $input
      * @return bool
      */
-    public static function isId($in): bool
+    public static function isId($input): bool
     {
-        return is_numeric($in) && (is_int($in) || ctype_digit((string) $in)) && ($in >= 1);
+        return is_numeric($input) && ($input >= 1)
+            && (is_int($input) || ctype_digit((string) $input));
     }
 
     /**
      * Check whether given input is uint.
      *
-     * @param  any $in
+     * @param  any $input
      * @return bool
      */
-    public static function isUInt($in): bool
+    public static function isUInt($input): bool
     {
-        return is_int($in) && ($in >= 0);
+        return is_int($input) && ($input >= 0);
     }
 
     /**
      * Check whether given input is ufloat.
      *
-     * @param  any $in
+     * @param  any $input
      * @return bool
      */
-    public static function isUFloat($in): bool
+    public static function isUFloat($input): bool
     {
-        return is_float($in) && ($in >= 0);
+        return is_float($input) && ($input >= 0);
     }
 
     /**
      * Check whether given input is signed.
      *
-     * @param  any $in
+     * @param  any $input
      * @return bool
      */
-    public static function isSigned($in): bool
+    public static function isSigned($input): bool
     {
-        return is_number($in) && ($in < 0);
+        return is_number($input) && ($input < 0);
     }
 
     /**
      * Check whether given input is unsigned.
-     * @param  any $in
+     * @param  any $input
      * @return bool
      */
-    public static function isUnsigned($in): bool
+    public static function isUnsigned($input): bool
     {
-        return is_number($in) && ($in >= 0);
+        return is_number($input) && ($input >= 0);
     }
 
     /**

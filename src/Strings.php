@@ -24,27 +24,27 @@ final class Strings extends StaticClass
     /**
      * Compare two strings.
      *
-     * @param  string $in1
-     * @param  string $in2
+     * @param  string $string1
+     * @param  string $string2
      * @return int
      */
-    public static function compare(string $in1, string $in2): int
+    public static function compare(string string1, string $string2): int
     {
         // Old stuff, same with "<=>" operator.
-        // return ($in1 > $in2) - ($in1 < $in2);
+        // return ($string1 > $string2) - ($string1 < $string2);
 
-        return $in1 <=> $in2;
+        return ($string1 <=> $string2);
     }
 
     /**
      * Compare two strings by a locale.
      *
-     * @param  string $in1
-     * @param  string $in2
+     * @param  string $string1
+     * @param  string $string2
      * @param  string $locale
      * @return int
      */
-    public static function compareLocale(string $in1, string $in2, string $locale): int
+    public static function compareLocale(string $string1, string $string2, string $locale): int
     {
         static $currentLocale;
         $currentLocale ??= setlocale(LC_COLLATE, 0);
@@ -54,7 +54,7 @@ final class Strings extends StaticClass
             setlocale(LC_COLLATE, $locale);
         }
 
-        $result = strcoll($in1, $in2);
+        $result = strcoll($string1, $string2);
 
         // Restore (if needed).
         if ($locale !== $currentLocale && $currentLocale !== null) {
@@ -67,28 +67,28 @@ final class Strings extends StaticClass
     /**
      * Check whether given input contains given search.
      *
-     * @param  string $in
-     * @param  string $src
+     * @param  string $string
+     * @param  string $search
      * @param  bool   $icase
      * @return bool
      */
-    public static function contains(string $in, string $src, bool $icase = false): bool
+    public static function contains(string $string, string $search, bool $icase = false): bool
     {
-        return (!$icase ? mb_strpos($in, $src) : mb_stripos($in, $src)) !== false;
+        return (!$icase ? mb_strpos($string, $search) : mb_stripos($string, $search)) !== false;
     }
 
     /**
      * Check whether given input contains any of given searches.
      *
-     * @param  string        $in
-     * @param  array<string> $srcs
+     * @param  string        $string
+     * @param  array<string> $searches
      * @param  bool          $icase
      * @return bool
      */
-    public static function containsAny(string $in, array $srcs, bool $icase = false): bool
+    public static function containsAny(string $string, array $searches, bool $icase = false): bool
     {
-        foreach ($srcs as $src) {
-            if (self::contains($in, $src, $icase)) {
+        foreach ($searches as $search) {
+            if (self::contains($string, $search, $icase)) {
                 return true;
             }
         }
@@ -98,15 +98,15 @@ final class Strings extends StaticClass
     /**
      * Check whether given input contains all given search.
      *
-     * @param  string        $in
-     * @param  array<string> $srcs
+     * @param  string        $string
+     * @param  array<string> $searches
      * @param  bool          $icase
      * @return bool
      */
-    public static function containsAll(string $in, array $srcs, bool $icase = false): bool
+    public static function containsAll(string $string, array $searches, bool $icase = false): bool
     {
-        foreach ($srcs as $src) {
-            if (!self::contains($in, $src, $icase)) {
+        foreach ($searches as $search) {
+            if (!self::contains($string, $search, $icase)) {
                 return false;
             }
         }
@@ -116,22 +116,22 @@ final class Strings extends StaticClass
     /**
      * Check whether given input starts with given search.
      *
-     * @param  string $in
-     * @param  string $src
+     * @param  string $string
+     * @param  string $search
      * @param  bool   $icase
      * @param  bool   $mbyte
      * @return bool
      */
-    public static function startsWith(string $in, string $src, bool $icase = false, bool $mbyte = false): bool
+    public static function startsWith(string $string, string $search, bool $icase = false, bool $mbyte = false): bool
     {
-        if ($in !== '') {
+        if ($string !== '') {
             if ($icase && $mbyte) {
                 // Double, cos for eg: Turkish characters issues (ı => I, İ => i).
-                $in = mb_convert_case(mb_convert_case($in, MB_CASE_UPPER_SIMPLE), MB_CASE_LOWER_SIMPLE);
-                $src = mb_convert_case(mb_convert_case($src, MB_CASE_UPPER_SIMPLE), MB_CASE_LOWER_SIMPLE);
+                $string = mb_convert_case(mb_convert_case($string, MB_CASE_UPPER_SIMPLE), MB_CASE_LOWER_SIMPLE);
+                $search = mb_convert_case(mb_convert_case($search, MB_CASE_UPPER_SIMPLE), MB_CASE_LOWER_SIMPLE);
             }
 
-            return substr_compare($in, $src, 0, strlen($src), $icase) === 0;
+            return substr_compare($string, $search, 0, strlen($search), $icase) === 0;
         }
 
         return false;
@@ -140,17 +140,17 @@ final class Strings extends StaticClass
     /**
      * Check whether given input starts with any of given searches.
      *
-     * @param  string        $in
-     * @param  array<string> $srcs
+     * @param  string        $string
+     * @param  array<string> $searches
      * @param  bool          $icase
      * @param  bool          $mbyte
      * @return bool
      * @since  4.0
      */
-    public static function startsWithAny(string $in, array $srcs, bool $icase = false, bool $mbyte = false): bool
+    public static function startsWithAny(string $string, array $searches, bool $icase = false, bool $mbyte = false): bool
     {
-        foreach ($srcs as $src) {
-            if (self::startsWith($in, (string) $src, $icase, $mbyte)) {
+        foreach ($searches as $search) {
+            if (self::startsWith($string, (string) $search, $icase, $mbyte)) {
                 return true;
             }
         }
@@ -160,22 +160,22 @@ final class Strings extends StaticClass
     /**
      * Check whether given input ends with given search.
      *
-     * @param  string $in
-     * @param  string $src
+     * @param  string $string
+     * @param  string $search
      * @param  bool   $icase
      * @param  bool   $mbyte
      * @return bool
      */
-    public static function endsWith(string $in, string $src, bool $icase = false, bool $mbyte = false): bool
+    public static function endsWith(string $string, string $search, bool $icase = false, bool $mbyte = false): bool
     {
-        if ($in !== '') {
+        if ($string !== '') {
             if ($icase && $mbyte) {
                 // Double, cos for eg: Turkish characters issues (ı => I, İ => i).
-                $in = mb_convert_case(mb_convert_case($in, MB_CASE_UPPER_SIMPLE), MB_CASE_LOWER_SIMPLE);
-                $src = mb_convert_case(mb_convert_case($src, MB_CASE_UPPER_SIMPLE), MB_CASE_LOWER_SIMPLE);
+                $string = mb_convert_case(mb_convert_case($string, MB_CASE_UPPER_SIMPLE), MB_CASE_LOWER_SIMPLE);
+                $search = mb_convert_case(mb_convert_case($search, MB_CASE_UPPER_SIMPLE), MB_CASE_LOWER_SIMPLE);
             }
 
-            return substr_compare($in, $src, -strlen($src), null, $icase) === 0;
+            return substr_compare($string, $search, -strlen($search), null, $icase) === 0;
         }
 
         return false;
@@ -184,17 +184,17 @@ final class Strings extends StaticClass
     /**
      * Check whether given input ends with any of given searches.
      *
-     * @param  string        $in
-     * @param  array<string> $srcs
+     * @param  string        $string
+     * @param  array<string> $searches
      * @param  bool          $icase
      * @param  bool          $mbyte
      * @return bool
      * @since  4.0
      */
-    public static function endsWithAny(string $in, array $srcs, bool $icase = false, bool $mbyte = false): bool
+    public static function endsWithAny(string $string, array $searches, bool $icase = false, bool $mbyte = false): bool
     {
-        foreach ($srcs as $src) {
-            if (self::endsWith($in, (string) $src, $icase, $mbyte)) {
+        foreach ($searches as $search) {
+            if (self::endsWith($string, (string) $search, $icase, $mbyte)) {
                 return true;
             }
         }
@@ -204,52 +204,52 @@ final class Strings extends StaticClass
     /**
      * Check whether given input encoding is UTF.
      *
-     * @param  string $in
+     * @param  string $string
      * @param  int     $bits
      * @return bool
      * @since  4.0
      */
-    public static function isUtf(string $in, int $bits = 8): bool
+    public static function isUtf(string $string, int $bits = 8): bool
     {
         // 0x00 - 0x10FFFF @link https://en.wikipedia.org/wiki/Code_point
-        return ($in && mb_check_encoding($in, 'UTF-'. $bits));
+        return ($string && mb_check_encoding($string, 'UTF-'. $bits));
     }
 
     /**
      * Check whether given input encoding is ASCII.
      *
-     * @param  string $in
+     * @param  string $string
      * @return bool
      * @since  4.0
      */
-    public static function isAscii(string $in): bool
+    public static function isAscii(string $string): bool
     {
         // 0x00 - 0x7F (or extended 0xFF) @link https://en.wikipedia.org/wiki/Code_point
-        return ($in && mb_check_encoding($in, 'ASCII'));
+        return ($string && mb_check_encoding($string, 'ASCII'));
     }
 
     /**
      * Check whether given input contains binary.
      *
-     * @param  string $in
+     * @param  string $string
      * @return bool
      * @since  4.0
      */
-    public static function isBinary(string $in): bool
+    public static function isBinary(string $string): bool
     {
-        return ($in && ($in = str_replace(["\t", "\n", "\r"], '', $in)) && !ctype_print($in));
+        return ($string && ($string = str_replace(["\t", "\n", "\r"], '', $string)) && !ctype_print($string));
     }
 
     /**
      * Check whether given input is base64-ed.
      *
-     * @param  string $in
+     * @param  string $string
      * @return bool
      * @since  4.0
      */
-    public static function isBase64(string $in): bool
+    public static function isBase64(string $string): bool
     {
-        return ($in && !strcmp($in, ''. base64_encode(''. base64_decode($in, true))));
+        return ($string && !strcmp($string, ''. base64_encode(''. base64_decode($string, true))));
     }
 
     /**

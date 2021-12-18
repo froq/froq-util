@@ -24,13 +24,13 @@ final class Objects extends StaticClass
     /**
      * Get reflection.
      *
-     * @param  string|object $class
+     * @param  object|string $object
      * @return ReflectionClass|null
      */
-    public static function getReflection(string|object $class): ReflectionClass|null
+    public static function getReflection(object|string $object): ReflectionClass|null
     {
         try {
-            return new ReflectionClass($class);
+            return new ReflectionClass($object);
         } catch (ReflectionException) {
             return null;
         }
@@ -82,15 +82,19 @@ final class Objects extends StaticClass
     /**
      * Get name.
      *
-     * @param  string|object $class
+     * @param  object|string $object
      * @return string
      */
-    public static function getName(string|object $class): string
+    public static function getName(object|string $object): string
     {
-        $name = is_string($class) ? $class : $class::class;
+        $name = is_object($object) ? $object::class : $object;
 
         if (str_contains($name, '@')) {
-            $name = preg_replace('~(.+)@anonymous\0*(.+)\:(.+)\$.*~i', '\1@anonymous@\2:\3', $name);
+            $name = preg_replace(
+                '~(.+)@anonymous\0*(.+)\:(.+)\$.*~i',
+                '\1@anonymous@\2:\3',
+                $name
+            );
         }
 
         return $name;
@@ -99,12 +103,12 @@ final class Objects extends StaticClass
     /**
      * Get short name.
      *
-     * @param  string|object $class
+     * @param  object|string $object
      * @return string
      */
-    public static function getShortName(string|object $class): string
+    public static function getShortName(object|string $object): string
     {
-        $name = self::getName($class);
+        $name = self::getName($object);
         $spos = strrpos($name, '\\');
 
         return substr($name, ($spos !== false) ? $spos + 1 : 0);
@@ -113,13 +117,13 @@ final class Objects extends StaticClass
     /**
      * Get namespace.
      *
-     * @param  string|object $class
+     * @param  object|string $object
      * @param  bool          $baseOnly
      * @return string
      */
-    public static function getNamespace(string|object $class, bool $baseOnly = false): string
+    public static function getNamespace(object|string $object, bool $baseOnly = false): string
     {
-        $name = self::getName($class);
+        $name = self::getName($object);
         $spos = !$baseOnly ? strrpos($name, '\\') : strpos($name, '\\');
 
         return substr($name, 0, ($spos !== false) ? $spos : 0);
@@ -128,50 +132,50 @@ final class Objects extends StaticClass
     /**
      * Has constant.
      *
-     * @param  string|object $class
+     * @param  object|string $object
      * @param  string        $name
      * @return bool|null
      */
-    public static function hasConstant(string|object $class, string $name): bool|null
+    public static function hasConstant(object|string $object, string $name): bool|null
     {
-        return self::getReflection($class)?->hasConstant($name);
+        return self::getReflection($object)?->hasConstant($name);
     }
 
     /**
      * Get constant.
      *
-     * @param  string|object $class
+     * @param  object|string $object
      * @param  string        $name
      * @return array|null
      */
-    public static function getConstant(string|object $class, string $name): array|null
+    public static function getConstant(object|string $object, string $name): array|null
     {
-        return self::getConstants($class, true, $name)[$name] ?? null;
+        return self::getConstants($object, true, $name)[$name] ?? null;
     }
 
     /**
      * Get constant value.
      *
-     * @param  string|object $class
+     * @param  object|string $object
      * @param  string        $name
      * @return any
      */
-    public static function getConstantValue(string|object $class, string $name)
+    public static function getConstantValue(object|string $object, string $name)
     {
-        return self::getConstants($class, true, $name)[$name]['value'] ?? null;
+        return self::getConstants($object, true, $name)[$name]['value'] ?? null;
     }
 
     /**
      * Get constants.
      *
-     * @param  string|object $class
+     * @param  object|string $object
      * @param  bool          $all
      * @param  string        $_name @internal
      * @return array|null
      */
-    public static function getConstants(string|object $class, bool $all = true, string $_name = null): array|null
+    public static function getConstants(object|string $object, bool $all = true, string $_name = null): array|null
     {
-        $ref = self::getReflection($class);
+        $ref = self::getReflection($object);
         if (!$ref) {
             return null;
         }
@@ -186,9 +190,8 @@ final class Objects extends StaticClass
             }
 
             $modifiers = Reflection::getModifierNames($constant->getModifiers());
-
             $interface = null;
-            $class     = $constant->getDeclaringClass()->getName();
+            $class     = $constant->getDeclaringClass()->name;
 
             // Simply interface check for real definer.
             if (interface_exists($class, false)) {
@@ -228,13 +231,13 @@ final class Objects extends StaticClass
     /**
      * Get constant names.
      *
-     * @param  string|object $class
+     * @param  object|string $object
      * @param  bool          $all
      * @return array|null
      */
-    public static function getConstantNames(string|object $class, bool $all = true): array|null
+    public static function getConstantNames(object|string $object, bool $all = true): array|null
     {
-        $ref = self::getReflection($class);
+        $ref = self::getReflection($object);
         if (!$ref) {
             return null;
         }
@@ -257,14 +260,14 @@ final class Objects extends StaticClass
     /**
      * Get constant values.
      *
-     * @param  string|object $class
+     * @param  object|string $object
      * @param  bool          $all
      * @param  bool          $withNames
      * @return array|null
      */
-    public static function getConstantValues(string|object $class, bool $all = true, bool $withNames = false): array|null
+    public static function getConstantValues(object|string $object, bool $all = true, bool $withNames = false): array|null
     {
-        $ref = self::getReflection($class);
+        $ref = self::getReflection($object);
         if (!$ref) {
             return null;
         }
@@ -289,50 +292,51 @@ final class Objects extends StaticClass
     /**
      * Has property.
      *
-     * @param  string|object $class
+     * @param  object|string $object
      * @param  string        $name
      * @return bool|null
      */
-    public static function hasProperty(string|object $class, string $name): bool|null
+    public static function hasProperty(object|string $object, string $name): bool|null
     {
-        return self::getReflection($class)?->hasProperty($name);
+        return self::getReflection($object)?->hasProperty($name)
+            || self::getProperty($object, $name) !== null; // Dynamic property.
     }
 
     /**
      * Get property.
      *
-     * @param  string|object $class
+     * @param  object|string $object
      * @param  string        $name
      * @return array|null
      */
-    public static function getProperty(string|object $class, string $name): array|null
+    public static function getProperty(object|string $object, string $name): array|null
     {
-        return self::getProperties($class, true, $name)[$name] ?? null;
+        return self::getProperties($object, true, $name)[$name] ?? null;
     }
 
     /**
      * Get property value.
      *
-     * @param  string|object $class
+     * @param  object|string $object
      * @param  string        $name
      * @return any
      */
-    public static function getPropertyValue(string|object $class, string $name)
+    public static function getPropertyValue(object|string $object, string $name)
     {
-        return self::getProperties($class, true, $name)[$name]['value'] ?? null;
+        return self::getProperties($object, true, $name)[$name]['value'] ?? null;
     }
 
     /**
      * Get properties.
      *
-     * @param  string|object $class
+     * @param  object|string $object
      * @param  bool          $all
      * @param  string        $_name @internal
      * @return array|null
      */
-    public static function getProperties(string|object $class, bool $all = true, string $_name = null): array|null
+    public static function getProperties(object|string $object, bool $all = true, string $_name = null): array|null
     {
-        $ref = self::getReflection($class);
+        $ref = self::getReflection($object);
         if (!$ref) {
             return null;
         }
@@ -368,14 +372,14 @@ final class Objects extends StaticClass
         // }
 
         // // Collect & merge some late-bind dynamic vars too.
-        // if (is_object($class) && ($vars = get_object_vars($class))) {
+        // if (is_object($object) && ($vars = get_object_vars($object))) {
         //     $properties = array_merge($properties, array_filter(
         //         $vars, fn($v) => !in_array($v, $properties)
         //     ));
         // }
 
         $ret = [];
-        foreach ((array) self::getPropertyValues($class, $all, true) as $name => $value) {
+        foreach ((array) self::getPropertyValues($object, $all, true) as $name => $value) {
             $name = (string) $name;
             if ($_name && $_name != $name) {
                 continue;
@@ -385,11 +389,11 @@ final class Objects extends StaticClass
             if (!$ref->hasProperty($name)) {
                 $ret[$name] = [
                     'name'        => $name,
-                    'value'       => $value,                'type'        => null,
-                    'nullable'    => null,                  'visibility'  => 'public',
-                    'static'      => false,                 'initialized' => true,
-                    'class'       => self::getName($class), 'trait'       => null,
-                    'modifiers'   => ['public'],            'dynamic'     => true
+                    'value'       => $value,                 'type'        => get_type($value),
+                    'nullable'    => null,                   'visibility'  => 'public',
+                    'static'      => false,                  'initialized' => true,
+                    'class'       => self::getName($object), 'trait'       => null,
+                    'modifiers'   => ['public'],             'dynamic'     => true
                 ];
                 continue;
             }
@@ -428,14 +432,14 @@ final class Objects extends StaticClass
                 }
             }
 
-            if (is_object($class)) {
+            if (is_object($object)) {
                 // Try, cos "Typed property .. must not be accessed before initialization".
                 try {
                     $property->setAccessible(true);
-                    @ $value = $property->getValue($class);
+                    @ $value = $property->getValue($object);
                 } catch (Error) {}
 
-                $initialized = $property->isInitialized($class);
+                $initialized = $property->isInitialized($object);
             }
 
             $nullable    ??= ($value === null);
@@ -459,13 +463,13 @@ final class Objects extends StaticClass
     /**
      * Get property names.
      *
-     * @param  string|object $class
+     * @param  object|string $object
      * @param  bool          $all
      * @return array|null
      */
-    public static function getPropertyNames(string|object $class, bool $all = true): array|null
+    public static function getPropertyNames(object|string $object, bool $all = true): array|null
     {
-        $ref = self::getReflection($class);
+        $ref = self::getReflection($object);
         if (!$ref) {
             return null;
         }
@@ -479,7 +483,7 @@ final class Objects extends StaticClass
         }
 
         // Collect & merge some late-bind dynamic vars too.
-        if (is_object($class) && ($vars = get_object_vars($class))) {
+        if (is_object($object) && ($vars = get_object_vars($object))) {
             $ret = array_merge($ret, array_filter(
                 array_keys($vars), fn($v) => !in_array($v, $ret)
             ));
@@ -491,22 +495,22 @@ final class Objects extends StaticClass
     /**
      * Get property values.
      *
-     * @param  string|object $class
+     * @param  object|string $object
      * @param  bool          $all
      * @param  bool          $withNames
      * @return array|null
      */
-    public static function getPropertyValues(string|object $class, bool $all = true, bool $withNames = false): array|null
+    public static function getPropertyValues(object|string $object, bool $all = true, bool $withNames = false): array|null
     {
-        $ref = self::getReflection($class);
+        $ref = self::getReflection($object);
         if (!$ref) {
             return null;
         }
 
         $ret = [];
 
-        if (is_object($class)) {
-            foreach ((array) self::getPropertyNames($class, $all) as $name) {
+        if (is_object($object)) {
+            foreach ((array) self::getPropertyNames($object, $all) as $name) {
                 $name = (string) $name;
                 $value = null;
 
@@ -514,12 +518,12 @@ final class Objects extends StaticClass
                     try {
                         $property = $ref->getProperty($name);
                         $property->setAccessible(true);
-                        @ $value = $property->getValue($class);
+                        @ $value = $property->getValue($object);
                     } catch (Error) {}
                 }
                 // Dynamic properties.
-                elseif (isset($class->$name)) {
-                    $value = $class->$name;
+                elseif (isset($object->$name)) {
+                    $value = $object->$name;
                 }
 
                 !$withNames ? $ret[] = $value : $ret[$name] = $value;
@@ -549,39 +553,39 @@ final class Objects extends StaticClass
     /**
      * Has method.
      *
-     * @param  string|object $class
+     * @param  object|string $object
      * @param  string        $name
      * @return bool|null
      * @since  5.0
      */
-    public static function hasMethod(string|object $class, string $name): bool|null
+    public static function hasMethod(object|string $object, string $name): bool|null
     {
-        return self::getReflection($class)?->hasMethod($name);
+        return self::getReflection($object)?->hasMethod($name);
     }
 
     /**
      * Get method.
      *
-     * @param  string|object $class
+     * @param  object|string $object
      * @param  string        $name
      * @return array|null
      */
-    public static function getMethod(string|object $class, string $name): array|null
+    public static function getMethod(object|string $object, string $name): array|null
     {
-        return self::getMethods($class, true, $name)[$name] ?? null;
+        return self::getMethods($object, true, $name)[$name] ?? null;
     }
 
     /**
      * Get methods.
      *
-     * @param  string|object $class
+     * @param  object|string $object
      * @param  bool          $all
      * @param  string        $_name @internal
      * @return array|null
      */
-    public static function getMethods(string|object $class, bool $all = true, string $_name = null): array|null
+    public static function getMethods(object|string $object, bool $all = true, string $_name = null): array|null
     {
-        $ref = self::getReflection($class);
+        $ref = self::getReflection($object);
         if (!$ref) {
             return null;
         }
@@ -689,13 +693,13 @@ final class Objects extends StaticClass
     /**
      * Get method names.
      *
-     * @param  string|object $class
+     * @param  object|string $object
      * @param  bool          $all
      * @return array|null
      */
-    public static function getMethodNames(string|object $class, bool $all = true): array|null
+    public static function getMethodNames(object|string $object, bool $all = true): array|null
     {
-        $ref = self::getReflection($class);
+        $ref = self::getReflection($object);
         if (!$ref) {
             return null;
         }
@@ -714,12 +718,12 @@ final class Objects extends StaticClass
     /**
      * Get parents.
      *
-     * @param  string|object $class
+     * @param  object|string $object
      * @return array|null
      */
-    public static function getParents(string|object $class): array|null
+    public static function getParents(object|string $object): array|null
     {
-        $ret = class_parents($class);
+        $ret = class_parents($object);
         if ($ret !== false) {
             $ret = array_keys($ret);
             return $ret;
@@ -730,12 +734,12 @@ final class Objects extends StaticClass
     /**
      * Get interfaces.
      *
-     * @param  string|object $class
+     * @param  object|string $object
      * @return array|null
      */
-    public static function getInterfaces(string|object $class): array|null
+    public static function getInterfaces(object|string $object): array|null
     {
-        $ret = class_implements($class);
+        $ret = class_implements($object);
         if ($ret !== false) {
             $ret = array_keys($ret);
             $ret = array_reverse($ret); // Fix weird reverse order.
@@ -747,17 +751,17 @@ final class Objects extends StaticClass
     /**
      * Get traits.
      *
-     * @param  string|object $class
+     * @param  object|string $object
      * @param  bool          $all
      * @return array|null
      */
-    public static function getTraits(string|object $class, bool $all = true): array|null
+    public static function getTraits(object|string $object, bool $all = true): array|null
     {
-        $ret = class_uses($class);
+        $ret = class_uses($object);
         if ($ret !== false) {
             $ret = array_keys($ret);
             if ($all) {
-                foreach ((array) self::getParents($class) as $parent) {
+                foreach ((array) self::getParents($object) as $parent) {
                     $ret = array_merge($ret, (array) self::getTraits($parent));
                 }
 
