@@ -63,9 +63,12 @@ final class Dumper
                 $tabs += 1;
 
                 if ($type == 'array') {
-                    $arrayType = $input ? (is_list($input) ? 'list' : 'map') : '';
-
-                    $output = sprintf('array(%d) <%s> {', count($input), $arrayType) . "\n";
+                    $type = $input ? (is_list($input) ? 'list' : 'map') : '?';
+                    $count = count($input);
+                    $output = format('array(%d) <%s> {', $count, $type);
+                    if ($count) {
+                        $output .= "\n";
+                    }
 
                     // // For space gaps.
                     // $maxKeyLen = max(array_map(
@@ -107,7 +110,11 @@ final class Dumper
                             return $key;
                         });
 
-                        $output = sprintf('object(%d) <%s>#%s {', count($info), $objectType, $objectId) . "\n";
+                        $count = count($info);
+                        $output = format('object(%d) <%s>#%s {', $count, $objectType, $objectId);
+                        if ($count) {
+                            $output .= "\n";
+                        }
 
                         if ($info) {
                             $info = self::dump($info, $tab, $tabs - 1);
@@ -127,8 +134,11 @@ final class Dumper
                     }
 
                     $properties = Objects::getProperties($input);
-
-                    $output = sprintf('object(%d) <%s>#%s {', count($properties), $objectType, $objectId) . "\n";
+                    $count = count($properties);
+                    $output = format('object(%d) <%s>#%s {', $count, $objectType, $objectId);
+                    if ($count) {
+                        $output .= "\n";
+                    }
 
                     foreach ($properties as $property) {
                         $recursion = self::checkRecursion($input, $property['name']);
@@ -148,7 +158,7 @@ final class Dumper
                             $property['type'],
                         ]);
 
-                        $output .= sprintf('%s%s => ', $property['name'], (
+                        $output .= format('%s%s => ', $property['name'], (
                             $propertyInfo ? ' ['. join(':', $propertyInfo) .']' : ''
                         ));
 
@@ -172,14 +182,16 @@ final class Dumper
 
                 $tabs -= 1;
 
-                $output .= str_repeat($tab, $tabs);
+                if ($count) {
+                    $output .= str_repeat($tab, $tabs);
+                }
                 $output .= '}';
 
                 return $output;
 
             case 'resource':
             case 'resource (closed)':
-                return get_debug_type($input) .' #'. get_resource_id($input);
+                return get_type($input) .' #'. get_resource_id($input);
         }
 
         return $type;
