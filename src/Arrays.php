@@ -1257,19 +1257,24 @@ final class Arrays extends StaticClass
      */
     public static function sortLocale(array $array, string $locale = null, bool $keepKeys = true): array
     {
-        if ($locale == null) { // Use current locale.
-            $keepKeys ? uasort($array, fn($a, $b) => strcoll($a, $b))
-                      : usort($array, fn($a, $b) => strcoll($a, $b));
+        // Use current locale.
+        if ($locale == null) {
+            $keepKeys ? uasort($array, 'strcoll') : usort($array, 'strcoll');
         } else {
             // Get & cache.
-            static $default; $default ??= setlocale(LC_COLLATE, 0);
+            static $currentLocale;
+            $currentLocale ??= setlocale(LC_COLLATE, 0);
 
-            setlocale(LC_COLLATE, $locale);
-            $keepKeys ? uasort($array, fn($a, $b) => strcoll($a, $b))
-                      : usort($array, fn($a, $b) => strcoll($a, $b));
+            // Should change?
+            if ($locale !== $currentLocale) {
+                setlocale(LC_COLLATE, $locale);
+            }
 
-            if ($default !== null) { // Restore.
-                setlocale(LC_COLLATE, $default);
+            $keepKeys ? uasort($array, 'strcoll') : usort($array, 'strcoll');
+
+            // Restore (if needed).
+            if ($locale !== $currentLocale && $currentLocale !== null) {
+                setlocale(LC_COLLATE, $currentLocale);
             }
         }
 

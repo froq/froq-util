@@ -30,7 +30,10 @@ final class Strings extends StaticClass
      */
     public static function compare(string $in1, string $in2): int
     {
-       return ($in1 > $in2) - ($in1 < $in2);
+        // Old stuff, same with "<=>" operator.
+        // return ($in1 > $in2) - ($in1 < $in2);
+
+        return $in1 <=> $in2;
     }
 
     /**
@@ -43,13 +46,19 @@ final class Strings extends StaticClass
      */
     public static function compareLocale(string $in1, string $in2, string $locale): int
     {
-        static $default; $default ??= setlocale(LC_COLLATE, 0);
+        static $currentLocale;
+        $currentLocale ??= setlocale(LC_COLLATE, 0);
 
-        setlocale(LC_COLLATE, $locale);
+        // Should change?
+        if ($locale !== $currentLocale) {
+            setlocale(LC_COLLATE, $locale);
+        }
+
         $result = strcoll($in1, $in2);
 
-        if ($default !== null) {
-            setlocale(LC_COLLATE, $default); // Restore locale.
+        // Restore (if needed).
+        if ($locale !== $currentLocale && $currentLocale !== null) {
+            setlocale(LC_COLLATE, $currentLocale);
         }
 
         return $result;
