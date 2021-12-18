@@ -120,7 +120,7 @@ final class Random
         $chars = '';
 
         while (strlen($chars) < $length) {
-            $chars .= ALPHABET[$this->nextInt(61)];
+            $chars .= BASE62_ALPHABET[$this->nextInt(61)];
         }
 
         return $chars;

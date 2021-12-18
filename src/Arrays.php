@@ -436,7 +436,7 @@ final class Arrays extends StaticClass
     }
 
     /**
-     * Union all given arrays returning unique'd array.
+     * Union all given arrays returning unique'd array with strict comparison.
      *
      * @param  array    $array1
      * @param  array    $array2
@@ -458,13 +458,14 @@ final class Arrays extends StaticClass
     }
 
     /**
-     * Get "really" unique items (since array_unique() comparison is weird (eg: try [1,'1'])).
+     * Get "really" unique items with strict comparison as default since array_unique()
+     * comparison non-strict (eg: try [1,'1'])).
      *
-     * @param  array  $array
-     * @param  bool   $strict
-     * @return 5.22
+     * @param  array $array
+     * @param  bool  $strict
+     * @return 5.22, 5.25 Renamed as unique() => dedupe().
      */
-    public static function unique(array $array, bool $strict = true): array
+    public static function dedupe(array $array, bool $strict = true): array
     {
         $ret = [];
 
@@ -472,6 +473,102 @@ final class Arrays extends StaticClass
             in_array($value, $ret, $strict) || (
                 is_int($key) ? $ret[] = $value : $ret[$key] = $value
             );
+        }
+
+        return $ret;
+    }
+
+    /**
+     * Get mutual values in given arrays like array_intersect() but with strict comparison.
+     *
+     * @param  array $array1
+     * @param  array $array2
+     * @return array
+     * @since  5.25
+     */
+    public static function mutual(array $array1, array $array2): array
+    {
+        $ret = [];
+
+        // Swap bigger/smaller.
+        [$array1, $array2] = count($array1) > count($array2)
+            ? [$array1, $array2] : [$array2, $array1];
+
+        foreach ($array1 as $key => $value) {
+            in_array($value, $array2, true) && (
+                is_int($key) ? $ret[] = $value : $ret[$key] = $value
+            );
+        }
+
+        return $ret;
+    }
+
+    /**
+     * Get non-mutual values in given arrays like array_diff() but with strict comparison.
+     *
+     * @param  array $array1
+     * @param  array $array2
+     * @return array
+     * @since  5.25
+     */
+    public static function unmutual(array $array1, array $array2): array
+    {
+        $ret = [];
+
+        // Swap bigger/smaller.
+        [$array1, $array2] = count($array1) > count($array2)
+            ? [$array1, $array2] : [$array2, $array1];
+
+        foreach ($array1 as $key => $value) {
+            !in_array($value, $array2, true) && (
+                is_int($key) ? $ret[] = $value : $ret[$key] = $value
+            );
+        }
+
+        return $ret;
+    }
+
+    /**
+     * Get distinct (repeating) values in given arrays with strict comparison.
+     *
+     * @param  array    $array
+     * @param  array ...$arrays
+     * @return array
+     * @since  5.25
+     */
+    public static function distinct(array $array, array ...$arrays): array
+    {
+        $ret = [];
+
+        $items = self::countValues(array_merge($array, ...$arrays), true, true);
+        foreach ($items as $item) {
+            if ($item['count'] == 1) {
+                $key = end($item['keys']);
+                is_int($key) ? $ret[] = $item['value'] : $ret[$key] = $item['value'];
+            }
+        }
+
+        return $ret;
+    }
+
+    /**
+     * Get undistinct (non-repeating) values in given arrays with strict comparison.
+     *
+     * @param  array    $array
+     * @param  array ...$arrays
+     * @return array
+     * @since  5.25
+     */
+    public static function undistinct(array $array, array ...$arrays): array
+    {
+        $ret = [];
+
+        $items = self::countValues(array_merge($array, ...$arrays), true, true);
+        foreach ($items as $item) {
+            if ($item['count'] > 1) {
+                $key = end($item['keys']);
+                is_int($key) ? $ret[] = $item['value'] : $ret[$key] = $item['value'];
+            }
         }
 
         return $ret;
@@ -881,44 +978,18 @@ final class Arrays extends StaticClass
     }
 
     /**
-     * Search given keys returning found values.
-     *
-     * @param  array             $array
-     * @param  array<int|string> $keys
-     * @return array
-     * @since  4.0
-     */
-    public static function searchKeys(array $array, array $keys): array
-    {
-        foreach ($keys as $key) {
-            if (array_key_exists($key, $array)) {
-                $values[] = $array[$key];
-            }
-        }
-
-        return $values ?? [];
-    }
-
-    /**
-     * Search values returning found keys.
+     * Search given values returning found their keys.
      *
      * @param  array $array
      * @param  array $values
      * @param  bool  $strict
-     * @return array
+     * @param  bool  $reverse
+     * @return array|null
      * @since  4.0
      */
-    public static function searchValues(array $array, array $values, bool $strict = true): array
+    public static function searchKeys(array $array, array $values, bool $strict = true, bool $reverse = false): array|null
     {
-        foreach ($values as $value) {
-            foreach (array_keys($array) as $key) {
-                if ($strict ? $array[$key] === $value : $array[$key] == $value) {
-                    $keys[] = $key;
-                }
-            }
-        }
-
-        return $keys ?? [];
+        return array_search_keys($array, $values, $strict, $reverse);
     }
 
     /**
@@ -953,7 +1024,7 @@ final class Arrays extends StaticClass
      */
     public static function diffKey(array $array1, array $array2): array
     {
-        return (count($array1) > count($array2)) // For Swaps a proper diff calc.
+        return (count($array1) > count($array2)) // Swaps for a proper diff calc.
              ? array_diff_key($array1, $array2) : array_diff_key($array2, $array1);
     }
 
@@ -1005,10 +1076,11 @@ final class Arrays extends StaticClass
      *
      * @param  array    $array
      * @param  callable $func
+     * @param  bool     $recursive
      * @param  bool     $keepKeys
      * @return array
      */
-    public static function map(array $array, callable $func, bool $keepKeys = true): array
+    public static function map(array $array, callable $func, bool $recursive = false, bool $keepKeys = true): array
     {
         $ret = []; $i = 0;
 
@@ -1022,8 +1094,20 @@ final class Arrays extends StaticClass
     }
 
     /**
-     * Reduce, unlike array_reduce() using [value,key,i,array] notation for callable but fallback to [value]
-     * notation when ArgumentCountError occurs.
+     * Map keys.
+     *
+     * @param  array    $array
+     * @param  callable $func
+     * @param  bool     $recursive
+     * @return array
+     */
+    public static function mapKeys(array $array, callable $func, bool $recursive = false): array
+    {
+        return array_map_keys($array, $func, $recursive);
+    }
+
+    /**
+     * Reduce, unlike array_reduce() using [value,key,i,array] notation for callable.
      *
      * @param  array    $array
      * @param  any      $carry
@@ -1034,10 +1118,8 @@ final class Arrays extends StaticClass
     {
         $ret = $carry; $i = 0;
 
-        foreach ($array as $key => $value) try {
+        foreach ($array as $key => $value) {
             $ret = $func($ret, $value, $key, $i++, $array);
-        } catch (ArgumentCountError) {
-            $ret = $func($ret, $value);
         }
 
         return $ret;
@@ -1220,8 +1302,8 @@ final class Arrays extends StaticClass
      */
     public static function countValues(array $array, bool $strict = true, bool $addKeys = false): array
     {
-        static $findIndex; // Memoized.
-        $findIndex ??= function ($value) use (&$result, $strict) {
+        // No memoize, cos' corrupting the result.
+        $find ??= function ($value) use (&$result, $strict) {
             foreach ($result as $i => $item) {
                 if ($strict ? $value === $item['value'] : $value == $item['value']) {
                     return $i;
@@ -1233,14 +1315,14 @@ final class Arrays extends StaticClass
         $result = [];
 
         foreach ($array as $key => $value) {
-            $index = $findIndex($value);
-            if ($index == -1) {
+            $i = $find($value);
+            if ($i == -1) {
                 $tmp = ['value' => $value, 'count' => 1];
-                $addKeys && ($tmp['keys'] = [$key]);
+                $addKeys && $tmp['keys'] = [$key];
                 $result[] = $tmp;
             } else {
-                $result[$index]['count'] += 1;
-                $addKeys && ($result[$index]['keys'][] = $key);
+                $result[$i]['count'] += 1;
+                $addKeys && $result[$i]['keys'][] = $key;
             }
         }
 

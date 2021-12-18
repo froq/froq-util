@@ -257,7 +257,7 @@ final class Strings extends StaticClass
             throw new UtilException('Invalid length value `%s`, length must be minimun 1', $length);
         }
 
-        $chars = ALPHABET;
+        $chars = BASE62_ALPHABET;
         if ($puncted) { // Add punctuation chars.
             $chars .= '!^+%&/\(){}[]<>=*?-_|$#.:,;';
         }

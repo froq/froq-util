@@ -235,6 +235,58 @@ function array_coalesce(bool $null_strings, array ...$arrays): array
 }
 
 /**
+ * Bridge function to Arrays.mutual().
+ *
+ * @param  array $array1
+ * @param  array $array2
+ * @return array
+ * @since  5.25
+ */
+function array_mutual(array $array1, array $array2): array
+{
+    return Arrays::mutual($array1, $array2);
+}
+
+/**
+ * Bridge function to Arrays.unmutual().
+ *
+ * @param  array $array1
+ * @param  array $array2
+ * @return array
+ * @since  5.25
+ */
+function array_unmutual(array $array1, array $array2): array
+{
+    return Arrays::unmutual($array1, $array2);
+}
+
+/**
+ * Bridge function to Arrays.distinct().
+ *
+ * @param  array    $array
+ * @param  array ...$arrays
+ * @return array
+ * @since  5.25
+ */
+function array_distinct(array $array, array ...$arrays): array
+{
+    return Arrays::distinct($array, $arrays);
+}
+
+/**
+ * Bridge function to Arrays.undistinct().
+ *
+ * @param  array    $array
+ * @param  array ...$arrays
+ * @return array
+ * @since  5.25
+ */
+function array_undistinct(array $array, array ...$arrays): array
+{
+    return Arrays::undistinct($array, $arrays);
+}
+
+/**
  * Bridge function to Arrays.test().
  *
  * @param  array    $array
@@ -300,19 +352,6 @@ function array_find_all(array $array, callable $func, bool $use_keys = false): a
 function array_random(array &$array, int $limit = 1, bool $pack = false, bool $drop = false)
 {
     return Arrays::random($array, $limit, $pack, $drop);
-}
-
-/**
- * Bridge function to Arrays.shuffle().
- *
- * @param  array &$array
- * @param  bool   $keep_keys
- * @return array
- * @since  4.0
- */
-function array_shuffle(array &$array, bool $keep_keys = true): array
-{
-    return Arrays::shuffle($array, $keep_keys);
 }
 
 /**
@@ -406,31 +445,4 @@ function array_keys_exist(array $array, array $keys): bool
 function array_values_exist(array $array, array $values): bool
 {
     return Arrays::valuesExist($array, $values);
-}
-
-/**
- * Bridge function to Arrays.searchKeys().
- *
- * @param  array             $array
- * @param  array<int|string> $keys
- * @return array
- * @since  4.0
- */
-function array_search_keys(array $array, array $keys): array
-{
-    return Arrays::searchKeys($array, $keys);
-}
-
-/**
- * Bridge function to Arrays.searchValues().
- *
- * @param  array $array
- * @param  array $values
- * @param  bool  $strict
- * @return array
- * @since  4.0
- */
-function array_search_values(array $array, array $values, bool $strict = true): array
-{
-    return Arrays::searchValues($array, $values, $strict);
 }

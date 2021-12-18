@@ -8,32 +8,15 @@ declare(strict_types=1);
 /**
  * For type-check purposes for null/void(undefined) refs.
  */
-function null() { return new class{}; }
-function void() { return new class{}; }
+final class __null {} function null() { return new __null; }
+final class __void {} function void() { return new __void; }
 
 /**
  * Nil/nils (null/null string).
  * @const null
  * @since 4.0
  */
-const nil  = null,
-      nils = '';
-
-/**
- * Yes/no (true/false booleans).
- * @const bool
- * @since 4.0
- */
-const yes = true,
-      no  = false;
-
-/**
- * Dirsep/patsep (directory/path separators).
- * @const null
- * @since 4.0
- */
-const __dirsep = DIRECTORY_SEPARATOR,
-      __patsep = PATH_SEPARATOR;
+const nil = null, nils = '';
 
 /**
  * Cases (0/1 already defined as CASSE_LOWER/CASE_UPPER).
@@ -44,7 +27,7 @@ const CASE_TITLE = 2, CASE_DASH  = 3,
       CASE_SNAKE = 4, CASE_CAMEL = 5;
 
 /**
- * Alphabet (Base-62).
+ * Base-62 alphabet.
  * @since 5.0
  */
-const ALPHABET = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+const BASE62_ALPHABET = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';

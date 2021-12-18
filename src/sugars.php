@@ -7,8 +7,9 @@ declare(strict_types=1);
 
 use froq\util\{Util, Arrays, Objects, Numbers, Strings};
 
-// Load constants.
+// Load consts & classes.
 require_once 'sugars-const.php';
+require_once 'sugars-class.php';
 
 /**
  * Sugar loader.
@@ -116,9 +117,9 @@ function filter(array $array, callable $func = null, bool $keep_keys = true): ar
  * @return array
  * @since  3.0, 5.0 Moved from common.inits.
  */
-function map(array $array, callable $func, bool $keep_keys = true): array
+function map(array $array, callable $func, bool $recursive = false, bool $keep_keys = true): array
 {
-    return Arrays::map($array, $func, $keep_keys);
+    return Arrays::map($array, $func, $recursive, $keep_keys);
 }
 
 /**
@@ -523,7 +524,7 @@ function convert_base(int|string $in, int|string $from, int|string $to): string|
     }
 
     // Using base62 chars.
-    static $chars = ALPHABET;
+    $chars = BASE62_ALPHABET;
 
     if (is_int($from)) {
         if ($from < 2 || $from > 62) {
@@ -582,12 +583,12 @@ function convert_base(int|string $in, int|string $from, int|string $to): string|
  *
  * @param  string      $in
  * @param  int         $case
- * @param  string|null $spliter
- * @param  string|null $joiner
+ * @param  string|null $exploder
+ * @param  string|null $imploder
  * @return string|null
  * @since  4.26
  */
-function convert_case(string $in, int $case, string $spliter = null, string $joiner = null): string|null
+function convert_case(string $in, int $case, string $exploder = null, string $imploder = null): string|null
 {
     // Check valid cases.
     if (!in_array($case, [CASE_LOWER, CASE_UPPER, CASE_TITLE, CASE_DASH, CASE_SNAKE, CASE_CAMEL])) {
@@ -602,21 +603,19 @@ function convert_case(string $in, int $case, string $spliter = null, string $joi
     }
 
     // Set default split char.
-    $spliter = ($spliter !== null && $spliter !== '') ? $spliter : ' ';
+    $exploder = ($exploder !== null && $exploder !== '') ? $exploder : ' ';
 
     return match ($case) {
-        CASE_DASH  => implode('-', explode($spliter, mb_strtolower($in))),
-        CASE_SNAKE => implode('_', explode($spliter, mb_strtolower($in))),
-        CASE_TITLE => implode($joiner ?? $spliter, array_map(
+        CASE_DASH  => implode('-', explode($exploder, mb_strtolower($in))),
+        CASE_SNAKE => implode('_', explode($exploder, mb_strtolower($in))),
+        CASE_TITLE => implode($imploder ?? $exploder, array_map(
             fn($s) => mb_ucfirst(trim($s)),
-            explode($spliter, mb_strtolower($in))
+            explode($exploder, mb_strtolower($in))
         )),
-        CASE_CAMEL => lcfirst(
-            implode($joiner ?? '', array_map(
-                fn($s) => mb_ucfirst(trim($s)),
-                explode($spliter, mb_strtolower($in))
-            ))
-        ),
+        CASE_CAMEL => mb_lcfirst(implode('', array_map(
+            fn($s) => mb_ucfirst(trim($s)),
+            explode($exploder, mb_strtolower($in))
+        ))),
     };
 }
 
@@ -843,13 +842,12 @@ function get_request_id(): string
 /**
  * Get real path of given path.
  *
- * @param  string $path
- * @param  bool   $check
- * @param  bool   $check_file
+ * @param  string            $path
+ * @param  string||bool|null $check
  * @return string|null
  * @since  4.0
  */
-function get_real_path(string $path, bool $check = false, bool $check_file = false): string|null
+function get_real_path(string $path, string|bool $check = null): string|null
 {
     $path = trim($path);
     if (!$path) {
@@ -859,15 +857,15 @@ function get_real_path(string $path, bool $check = false, bool $check_file = fal
         return $rpath;
     }
 
+    $ret = '';
+    $sep = DIRECTORY_SEPARATOR;
+
     // Make path "foo" => "./foo" so prevent invalid returns.
-    if (!strsrc($path, __dirsep)) {
-        $path = '.' . __dirsep . $path;
+    if (!strsrc($path, $sep)) {
+        $path = '.' . $sep . $path;
     }
 
-    $ret = '';
-    $exp = explode(__dirsep, $path);
-
-    foreach ($exp as $i => $cur) {
+    foreach (explode($sep, $path) as $i => $cur) {
         $cur = trim($cur);
         if ($i == 0) {
             if ($cur == '~') { // Home path (eg: ~/Desktop).
@@ -900,12 +898,12 @@ function get_real_path(string $path, bool $check = false, bool $check_file = fal
             continue;
         }
 
-        $ret .= __dirsep . $cur; // Append current.
+        $ret .= $sep . $cur; // Append current.
     }
 
     // Validate file/directory or file only existence.
     if ($check) {
-        $ok = $check_file ? is_file($path) : file_exists($ret);
+        $ok = ($check == 'file') ? is_file($path) : file_exists($ret);
         $ok || $ret = null;
     }
 
@@ -1010,7 +1008,7 @@ function tmp(): string
 function tmpdir(string $prefix = null, int $mode = 0755): string|null
 {
     // Prefix may becomes subdir here.
-    $dir = tmp() . __dirsep . ($prefix ?? 'froq-') . suid();
+    $dir = tmp() . DIRECTORY_SEPARATOR . ($prefix ?? 'froq-') . suid();
 
     return mkdir($dir, $mode, true) ? $dir : null;
 }
@@ -1026,7 +1024,7 @@ function tmpdir(string $prefix = null, int $mode = 0755): string|null
 function tmpnam(string $prefix = null, int $mode = 0644): string|null
 {
     // Prefix may becomes subdir here.
-    $nam = tmp() . __dirsep . ($prefix ?? 'froq-') . suid();
+    $nam = tmp() . DIRECTORY_SEPARATOR . ($prefix ?? 'froq-') . suid();
 
     return mkfile($nam, $mode, true) ? $nam : null;
 }
@@ -1460,7 +1458,7 @@ function file_path(...$args)
 function file_name(string $file, bool $with_ext = false): string|null
 {
     // A directory is not a file.
-    if (substr($file, -1) === __dirsep) {
+    if (substr($file, -1) == DIRECTORY_SEPARATOR) {
         return null;
     }
 
@@ -1692,13 +1690,15 @@ function array_clean(array $array): array
  */
 function array_apply(array $array, callable $func, bool $use_keys = true, bool $swap_keys = false): array
 {
-    // With key/value notation.
-    if ($swap_keys) {
-        return array_map($func, array_keys($array), $array);
+    // With value/key notation.
+    if ($use_keys) {
+        // With key/value notation.
+        if ($swap_keys) {
+            return array_map($func, array_keys($array), $array);
+        }
+        return array_map($func, $array, array_keys($array));
     }
-
-    return $use_keys ? array_map($func, $array, array_keys($array))
-                     : array_map($func, $array);
+    return array_map($func, $array);
 }
 
 /**
@@ -1844,24 +1844,7 @@ function array_unpop(array &$array, ...$values): int
 }
 
 /**
- * Ensure keys padding given keys on an array with/without given pad value.
- *
- * @param  array    $array
- * @param  array    $keys
- * @param  any|null $value
- * @return array
- * @since  4.0
- */
-function array_pad_keys(array $array, array $keys, $value = null): array
-{
-    foreach ($keys as $key) {
-        isset($array[$key]) || $array[$key] = $value;
-    }
-    return $array;
-}
-
-/**
- * Map given array fields by given keys only.
+ * Map an array fields by given keys only.
  *
  * @param  array    $array
  * @param  array    $keys
@@ -1869,27 +1852,74 @@ function array_pad_keys(array $array, array $keys, $value = null): array
  * @return array
  * @since  5.0
  */
-function array_map_keys(array $array, array $keys, callable $func): array
+function array_map_only(array $array, array $keys, callable $func): array
 {
     foreach ($keys as $key) {
-        $array[$key] = $func($array[$key] ?? null);
+        if (array_key_exists($key, $array)) {
+            $array[$key] = $func($array[$key]);
+        }
     }
+
     return $array;
 }
 
 /**
- * Map recursively given array by given callback.
+ * Map recursively an array by a callback.
  *
  * @param  array    $array
  * @param  callable $func
+ * @param  bool     $use_keys
  * @return array
  * @since  5.1
  */
-function array_map_recursive(array $array, callable $func): array
+function array_map_recursive(array $array, callable $func, bool $use_keys = true): array
 {
     foreach ($array as $key => $value) {
-        $array[$key] = is_array($value) ? array_map_recursive($value, $func) : $func($value);
+        $array[$key] = is_array($value) ? array_map_recursive($value, $func, $use_keys)
+            : ($use_keys ? $func($value, $key) : $func($value));
     }
+
+    return $array;
+}
+
+/**
+ * Map an array keys (@see https://wiki.php.net/rfc/array_change_keys).
+ *
+ * @param  array    $array
+ * @param  callable $func
+ * @param  bool     $recursive
+ * @return array
+ * @since  5.0
+ */
+function array_map_keys(array $array, callable $func, bool $recursive = false): array
+{
+    $ret = [];
+    foreach ($array as $key => $value) {
+        $key = $func($key);
+        $ret[$key] = ($recursive && is_array($value)) ? array_map_keys($value, $func, true)
+            : $value;
+    }
+
+    return $ret;
+}
+
+/**
+ * Ensure an array keys.
+ *
+ * @param  array    $array
+ * @param  array    $keys
+ * @param  any|null $value
+ * @param  string   $check
+ * @return array
+ * @since  4.0
+ */
+function array_pad_keys(array $array, array $keys, $value = null, string $check = 'isset'): array
+{
+    foreach ($keys as $key) {
+        $ok = ($check == 'isset') ? isset($array[$key]) : array_key_exists($key, $array);
+        $ok || $array[$key] = $value;
+    }
+
     return $array;
 }
 
@@ -1898,67 +1928,17 @@ function array_map_recursive(array $array, callable $func): array
  *
  * @param  array       $array
  * @param  int         $case
- * @param  string|null $spliter
- * @param  string|null $joiner
+ * @param  string|null $exploder
+ * @param  string|null $imploder
  * @param  bool        $recursive
  * @return array|null
  * @since  4.19
  */
-function array_convert_keys(array $array, int $case, string $spliter = null, string $joiner = null, bool $recursive = false): array|null
+function array_convert_keys(array $array, int $case, string $exploder = null, string $imploder = null, bool $recursive = false): array|null
 {
-    // Check valid cases.
-    if (!in_array($case, [CASE_LOWER, CASE_UPPER, CASE_TITLE, CASE_DASH, CASE_SNAKE, CASE_CAMEL])) {
-        trigger_error(sprintf('%s(): Invalid case %s, use a case from 0..5 range', __function__, $case));
-        return null;
-    }
-
-    if ($case == CASE_LOWER || $case == CASE_UPPER) {
-        return array_change_key_case($array, $case);
-    }
-
-    if (!$spliter) {
-        trigger_error(sprintf('%s(): No separator given', __function__, $case));
-        return null;
-    }
-
-    $ret = [];
-
-    foreach ($array as $key => $value) {
-        $key = convert_case($key, $case, $spliter, $joiner);
-        if ($recursive && is_array($value)) {
-            $value = array_convert_keys($value, $case, $spliter, $joiner, recursive: true);
-            $ret[$key] = $value;
-        } else {
-            $ret[$key] = $value;
-        }
-    }
-
-    return $ret;
-}
-
-/**
- * Change keys mapping by given function (@see https://wiki.php.net/rfc/array_change_keys).
- *
- * @param  array    $array
- * @param  callable $func
- * @param  bool     $recursive
- * @return array
- * @since  5.0
- */
-function array_change_keys(array $array, callable $func, bool $recursive = false): array
-{
-    $ret = [];
-
-    foreach ($array as $key => $value) {
-        $key = $func((string) $key);
-        if ($recursive && is_array($value)) {
-            $ret[$key] = array_change_keys($value, $func, recursive: true);
-        } else {
-            $ret[$key] = $value;
-        }
-    }
-
-    return $ret;
+    return array_map_keys($array, fn($key) => (
+        convert_case((string) $key, $case, $exploder, $imploder)
+    ), $recursive);
 }
 
 /**
@@ -1977,6 +1957,34 @@ function array_search_key(array $array, $value, bool $strict = true, bool $last 
                   : array_search($value, array_reverse($array, true), $strict);
 
     return ($key !== false) ? $key : null;
+}
+
+/**
+ * Search given values with/without strict comparison, returning found their keys.
+ *
+ * @param  array  $array
+ * @param  array  $values
+ * @param  bool   $strict
+ * @param  bool   $reverse
+ * @return array|null
+ * @since  4.0, 5.25 moved from sugars/array.
+ */
+function array_search_keys(array $array, array $values, bool $strict = true, bool $reverse = false): array|null
+{
+    $ret = [];
+
+    $keys = array_keys($array);
+    foreach ($values as $key => $value) {
+        foreach ($keys as $key) {
+            if ($strict ? $array[$key] === $value : $array[$key] == $value) {
+                $ret[] = $key;
+            }
+        }
+    }
+
+    $reverse && $ret = array_reverse($ret);
+
+    return $ret ?: null;
 }
 
 /**
@@ -2228,17 +2236,43 @@ function array_aggregate(array $array, callable $func, array $carry = null): arr
 }
 
 /**
- * Perform a mathematical union on given array inputs.
+ * Shuffle an array maintaining keys if assoc true.
  *
- * @param  array     $array1
- * @param  array     $array2
- * @param  array ... $others
+ * @param  array $array
+ * @param  bool  $assoc
+ * @return array
+ * @since  4.0, 5.25 Moved from sugar/array.
+ */
+function array_shuffle(array $array, bool $assoc = false): array
+{
+    return Arrays::shuffle($array, $assoc);
+}
+
+/**
+ * Merge all given array with strict uniqueness.
+ *
+ * @param  array    $array1
+ * @param  array    $array2
+ * @param  array ...$others
  * @return array
  * @since  5.0
  */
 function array_union(array $array1, array $array2, array ...$others): array
 {
-    return array_values(array_unique(array_merge($array1, $array2, ...$others)));
+    return Arrays::union($array1, $array2, ...$others);
+}
+
+/**
+ * Deduplicate repeating values with strict comparison as default.
+ *
+ * @param  array $array
+ * @param  bool  $strict
+ * @return array
+ * @since  5.25
+ */
+function array_dedupe(array $array, bool $strict = true): array
+{
+    return Arrays::dedupe($array, $strict);
 }
 
 /**
@@ -2250,9 +2284,7 @@ function array_union(array $array1, array $array2, array ...$others): array
  */
 function array_first(array $array)
 {
-    $key = array_key_first($array);
-
-    return ($key !== null) ?  $array[$key] : null;
+    return $array[array_key_first($array)] ?? null;
 }
 
 /**
@@ -2264,9 +2296,7 @@ function array_first(array $array)
  */
 function array_last(array $array)
 {
-    $key = array_key_last($array);
-
-    return ($key !== null) ?  $array[$key] : null;
+    return $array[array_key_last($array)] ?? null;
 }
 
 /**
@@ -2472,7 +2502,7 @@ function suid(int $length = 6, int $base = 62): string|null
 
     srand();
     while ($length--) {
-        $ret .= ALPHABET[rand(0, $max)];
+        $ret .= BASE62_ALPHABET[rand(0, $max)];
     }
 
     return $ret;
@@ -2674,6 +2704,34 @@ function random_float(float $min = null, float $max = null, int $precision = nul
 function random_string(int $length, bool $puncted = false): string
 {
     return Strings::random($length, $puncted);
+}
+
+/**
+ * Get an object id.
+ *
+ * @param  object $object
+ * @param  bool   $with_name
+ * @return string
+ * @since  5.25
+ */
+function get_object_id(object $object, bool $with_name = true): string
+{
+    return Objects::getId($object, $with_name);
+}
+
+/**
+ * Get an object hash.
+ *
+ * @param  object $object
+ * @param  bool   $with_name
+ * @param  bool   $rehash
+ * @param  bool   $serialize
+ * @return string
+ * @since  5.25
+ */
+function get_object_hash(object $object, bool $with_name = true, bool $rehash = false, bool $serialize = false): string
+{
+    return !$serialize ? Objects::getHash($object, $with_name, $rehash) : Objects::getSerializedHash($object);
 }
 
 /**
