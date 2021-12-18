@@ -97,25 +97,33 @@ final class Dumper
                     // Handle spacial cases for debug info.
                     if (method_exists($input, '__debugInfo')) {
                         $info = $input->__debugInfo();
-                        if (is_array($info)) {
-                            $output = sprintf('object(%d) <%s>#%s {', count($info), $objectType, $objectId) . "\n";
 
-                            if ($info) {
-                                $info = self::dump($info, $tab, $tabs - 1);
-
-                                // Drop "array(1) <..> {" and "}" parts.
-                                $info = slice(split("\n", $info), 1, -1);
-
-                                // Append back properties.
-                                $output .= join("\n", $info) . "\n";
-
-                                $output .= str_repeat($tab, $tabs - 1);
+                        // In case: "[\0ArrayObject\0storage] => ..".
+                        $info = array_map_keys($info, function ($key) {
+                            if (strsrc((string) $key, "\0")) {
+                                $key = array_last(split("\0", $key));
+                                $key = $key .' [private]';
                             }
+                            return $key;
+                        });
 
-                            $output .= '}';
+                        $output = sprintf('object(%d) <%s>#%s {', count($info), $objectType, $objectId) . "\n";
 
-                            return $output;
+                        if ($info) {
+                            $info = self::dump($info, $tab, $tabs - 1);
+
+                            // Drop "array(1) <..> {" and "}" parts.
+                            $info = slice(split("\n", $info), 1, -1);
+
+                            // Append back properties.
+                            $output .= join("\n", $info) . "\n";
+
+                            $output .= str_repeat($tab, $tabs - 1);
                         }
+
+                        $output .= '}';
+
+                        return $output;
                     }
 
                     $properties = Objects::getProperties($input);
