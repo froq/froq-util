@@ -653,12 +653,13 @@ function class_extends(string $class1, string $class2, bool $parent_only = false
  *
  * @param  string|object $class
  * @param  bool          $short
+ * @param  bool          $clean
  * @return string
  * @since  5.0
  */
-function get_class_name(string|object $class, bool $short = false): string
+function get_class_name(string|object $class, bool $short = false, bool $clean = false): string
 {
-    return !$short ? Objects::getName($class) : Objects::getShortName($class);
+    return !$short ? Objects::getName($class, $clean) : Objects::getShortName($class, $clean);
 }
 
 /**
