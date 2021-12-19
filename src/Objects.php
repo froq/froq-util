@@ -89,13 +89,17 @@ final class Objects extends StaticClass
     {
         $name = is_object($object) ? $object::class : $object;
 
-        if (str_contains($name, '@')) {
-            $name = preg_replace(
-                '~(.+)@anonymous\0*(.+)\:(.+)\$.*~i',
-                '\1@anonymous@\2:\3',
-                $name
-            );
-        }
+        // Anons.
+        $name = str_replace("\0", "", $name);
+
+        // @cancel
+        // if (str_contains($name, '@')) {
+        //     $name = preg_replace(
+        //         '~(.+)@anonymous\0*(.+)\:(.+)\$.*~i',
+        //         '\1@anonymous@\2:\3',
+        //         $name
+        //     );
+        // }
 
         return $name;
     }
