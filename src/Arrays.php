@@ -1029,6 +1029,44 @@ final class Arrays extends StaticClass
     }
 
     /**
+     * Count each value occurrences with strict mode as default.
+     *
+     * @param  array $array
+     * @param  bool  $strict
+     * @param  bool  $addKeys
+     * @return array
+     * @since  5.13
+     */
+    public static function countValues(array $array, bool $strict = true, bool $addKeys = false): array
+    {
+        // @note: No memoize, cos' corrupting the result.
+        $find = function ($value) use (&$result, $strict) {
+            foreach ($result as $i => $item) {
+                if ($strict ? $value === $item['value'] : $value == $item['value']) {
+                    return $i;
+                }
+            }
+            return -1;
+        };
+
+        $result = [];
+
+        foreach ($array as $key => $value) {
+            $i = $find($value);
+            if ($i == -1) {
+                $tmp = ['value' => $value, 'count' => 1];
+                $addKeys && $tmp['keys'] = [$key];
+                $result[] = $tmp;
+            } else {
+                $result[$i]['count'] += 1;
+                $addKeys && $result[$i]['keys'][] = $key;
+            }
+        }
+
+        return $result;
+    }
+
+    /**
      * Each wrapper for scoped function calls on given array or just for syntactic sugar.
      *
      * @param  array    $array
@@ -1195,7 +1233,9 @@ final class Arrays extends StaticClass
      */
     public static function average(array $array, bool $zeros = true): float
     {
-        $array = array_filter($array, fn($v) => $zeros ? is_numeric($v) : is_numeric($v) && $v > 0);
+        $array = array_filter($array, fn($v) => (
+            $zeros ? is_numeric($v) : is_numeric($v) && ($v > 0)
+        ));
 
         return $array ? fdiv(array_sum($array), count($array)) : 0.0;
     }
@@ -1206,11 +1246,11 @@ final class Arrays extends StaticClass
      * @param  array             $array
      * @param  callable|int|null $func
      * @param  int               $flags
-     * @param  bool              $keepKeys
+     * @param  bool              $assoc
      * @return array
      * @since  5.3
      */
-    public static function sort(array $array, callable|int $func = null, int $flags = 0, bool $keepKeys = true): array
+    public static function sort(array $array, callable|int $func = null, int $flags = 0, bool $assoc = false): array
     {
         // As as shortcut for reversed (-1) sorts actually.
         if (is_int($func)) {
@@ -1221,10 +1261,12 @@ final class Arrays extends StaticClass
             };
         }
 
-        if ($keepKeys) {
-            !$func ? asort($array, $flags) : uasort($array, $func);
+        if ($assoc) {
+            $func ? uasort($array, $func)
+                  : asort($array, $flags);
         } else {
-            !$func ? sort($array, $flags) : usort($array, $func);
+            $func ? usort($array, $func)
+                  : sort($array, $flags);
         }
 
         return $array;
@@ -1241,7 +1283,8 @@ final class Arrays extends StaticClass
      */
     public static function sortKey(array $array, callable $func = null, int $flags = 0): array
     {
-        !$func ? ksort($array, $flags) : uksort($array, $func);
+        $func ? uksort($array, $func)
+              : ksort($array, $flags);
 
         return $array;
     }
@@ -1251,15 +1294,16 @@ final class Arrays extends StaticClass
      *
      * @param  array       $array
      * @param  string|null $locale
-     * @param  bool        $keepKeys
+     * @param  bool        $assoc
      * @return array
      * @since  5.3 Moved from collection.Collection.
      */
-    public static function sortLocale(array $array, string $locale = null, bool $keepKeys = true): array
+    public static function sortLocale(array $array, string $locale = null, bool $assoc = false): array
     {
         // Use current locale.
         if ($locale == null) {
-            $keepKeys ? uasort($array, 'strcoll') : usort($array, 'strcoll');
+            $assoc ? uasort($array, 'strcoll')
+                   : usort($array, 'strcoll');
         } else {
             // Get & cache.
             static $currentLocale;
@@ -1270,7 +1314,8 @@ final class Arrays extends StaticClass
                 setlocale(LC_COLLATE, $locale);
             }
 
-            $keepKeys ? uasort($array, 'strcoll') : usort($array, 'strcoll');
+            $assoc ? uasort($array, 'strcoll')
+                   : usort($array, 'strcoll');
 
             // Restore (if needed).
             if ($locale !== $currentLocale && $currentLocale !== null) {
@@ -1291,47 +1336,10 @@ final class Arrays extends StaticClass
      */
     public static function sortNatural(array $array, bool $icase = false): array
     {
-        !$icase ? natsort($array) : natcasesort($array);
+        $icase ? natcasesort($array)
+               : natsort($array);
 
         return $array;
-    }
-
-    /**
-     * Count each value occurrences with strict mode as default.
-     *
-     * @param  array $array
-     * @param  bool  $strict
-     * @param  bool  $addKeys
-     * @return array
-     * @since  5.13
-     */
-    public static function countValues(array $array, bool $strict = true, bool $addKeys = false): array
-    {
-        // No memoize, cos' corrupting the result.
-        $find ??= function ($value) use (&$result, $strict) {
-            foreach ($result as $i => $item) {
-                if ($strict ? $value === $item['value'] : $value == $item['value']) {
-                    return $i;
-                }
-            }
-            return -1;
-        };
-
-        $result = [];
-
-        foreach ($array as $key => $value) {
-            $i = $find($value);
-            if ($i == -1) {
-                $tmp = ['value' => $value, 'count' => 1];
-                $addKeys && $tmp['keys'] = [$key];
-                $result[] = $tmp;
-            } else {
-                $result[$i]['count'] += 1;
-                $addKeys && $result[$i]['keys'][] = $key;
-            }
-        }
-
-        return $result;
     }
 
     /**
