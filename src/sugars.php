@@ -482,6 +482,20 @@ function str_has_suffix(string $str, string $src, bool $icase = false): bool
 }
 
 /**
+ * Compare two string input by given or current locale.
+ *
+ * @param  string      $str1
+ * @param  string      $str2
+ * @param  string|null $locale
+ * @return int
+ * @since  5.26
+ */
+function str_compare(string $str1, string $str2, string $locale = null): int
+{
+    return Strings::compareLocale($str1, $str2, ($locale ?? getlocale(LC_COLLATE)));
+}
+
+/**
  * Randomize given string, return sub-part of when length given.
  *
  * @param  string   $str
@@ -687,6 +701,38 @@ function get_class_properties(string|object $class, bool $with_names = true, boo
     }
 
     return Objects::getPropertyValues($class, ($all ?? !$scope_check), $with_names);
+}
+
+/**
+ * Get a constant name.
+ *
+ * @param  mixed  $value
+ * @param  string $name_prefix
+ * @return string|null
+ * @since  5.26
+ */
+function get_constant_name(mixed $value = null, string $name_prefix): string|null
+{
+    if ($name_prefix == '') {
+        trigger_error(sprintf('%s(): Empty name prefix given', __function__));
+        return null;
+    }
+
+    return array_first(array_filter(array_keys(get_defined_constants(), $value, true),
+        fn($name) => str_starts_with($name, $name_prefix)));
+}
+
+/**
+ * Get a constant value.
+ *
+ * @param  string     $name
+ * @param  mixed|null $default
+ * @return mixed|null
+ * @since  5.26
+ */
+function get_constant_value(string $name, mixed $default = null): mixed
+{
+    return defined($name) ? constant($name) : $default;
 }
 
 /**
@@ -1630,6 +1676,39 @@ function strtoitime(string $format, string|int $time = null): int
     }
 
     return strtotime($format, $time) - $time;
+}
+
+/**
+ * Get current locale info.
+ *
+ * @param  int               $category
+ * @param  string|array|null $default
+ * @param  bool              $array
+ * @return string|array|null
+ * @since  5.26
+ */
+function getlocale(int $category = LC_ALL, string|array $default = null, bool $array = false): string|array|null
+{
+    $ret = $tmp = setlocale($category, 0);
+    if ($ret === false) {
+        $ret = $default;
+    }
+
+    if ($tmp !== false && $array) {
+        $tmp = [];
+        if (strsrc($ret, ';')) {
+            foreach (split(';', $ret) as $re) {
+                [$name, $value] = split('=', $re, 2);
+                $tmp[] = [$name, get_constant_value($name), 'value' => $value];
+            }
+        } else {
+            $tmp = [$name = get_constant_name($category, 'LC_'),
+                    $name ? $category : null, 'value' => $ret];
+        }
+        $ret = $tmp;
+    }
+
+    return $ret;
 }
 
 /**

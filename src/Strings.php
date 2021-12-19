@@ -28,7 +28,7 @@ final class Strings extends StaticClass
      * @param  string $string2
      * @return int
      */
-    public static function compare(string string1, string $string2): int
+    public static function compare(string $string1, string $string2): int
     {
         // Old stuff, same with "<=>" operator.
         // return ($string1 > $string2) - ($string1 < $string2);
@@ -47,7 +47,7 @@ final class Strings extends StaticClass
     public static function compareLocale(string $string1, string $string2, string $locale): int
     {
         static $currentLocale;
-        $currentLocale ??= setlocale(LC_COLLATE, 0);
+        $currentLocale ??= getlocale(LC_COLLATE);
 
         // Should change?
         if ($locale !== $currentLocale) {

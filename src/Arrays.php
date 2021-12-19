@@ -1263,7 +1263,7 @@ final class Arrays extends StaticClass
         } else {
             // Get & cache.
             static $currentLocale;
-            $currentLocale ??= setlocale(LC_COLLATE, 0);
+            $currentLocale ??= getlocale(LC_COLLATE);
 
             // Should change?
             if ($locale !== $currentLocale) {
