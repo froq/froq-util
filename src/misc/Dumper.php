@@ -55,9 +55,9 @@ final class Dumper
             case 'array':
             case 'object':
                 if ($input == null()) {
-                    return '*NULL';
+                    return '**NULL';
                 } elseif ($input == void()) {
-                    return '*VOID';
+                    return '**VOID';
                 }
 
                 $tabs += 1;
