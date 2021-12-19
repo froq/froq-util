@@ -389,7 +389,7 @@ final class Objects extends StaticClass
             if (!$ref->hasProperty($name)) {
                 $ret[$name] = [
                     'name'        => $name,
-                    'value'       => $value,                 'type'        => get_type($value),
+                    'value'       => $value,                 'type'        => null,
                     'nullable'    => null,                   'visibility'  => 'public',
                     'static'      => false,                  'initialized' => true,
                     'class'       => self::getName($object), 'trait'       => null,
