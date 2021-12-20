@@ -81,13 +81,13 @@ function qa(...$args): array
         return $args;
     }
 
-    $map = [];
+    $ret = [];
     if ($argc = count($args)) {
         for ($i = 1; $i < $argc + 1; $i += 2) {
-            $map[$args[$i - 1]] = $args[$i];
+            $ret[$args[$i - 1]] = $args[$i];
         }
     }
-    return $map;
+    return $ret;
 }
 function qo(...$args): object
 {
@@ -2445,7 +2445,7 @@ function array_pop_key(array &$array): array|null
 }
 
 /**
- * Really got sick of "passed by reference" error.
+ * Really got sick of "pass by reference" error.
  *
  * @param  array $array
  * @param  bool  $reset
@@ -2460,7 +2460,7 @@ function first(array $array, bool $reset = false): mixed
 }
 
 /**
- * Really got sick of "passed by reference" error.
+ * Really got sick of "pass by reference" error.
  *
  * @param  array $array
  * @param  bool  $reset
@@ -2762,7 +2762,8 @@ function char_code_at(string $in, int $index): int|null
  */
 function slug(string $in, string $preserve = '', string $replace = '-'): string
 {
-    static $chars; $chars ??= require 'statics/slug-chars.php';
+    static $chars;
+    $chars ??= require 'statics/slug-chars.php';
 
     $preserve && $preserve = preg_quote($preserve, '~');
     $replace  || $replace  = '-';
