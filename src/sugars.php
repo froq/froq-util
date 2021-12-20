@@ -2331,13 +2331,13 @@ function array_shuffle(array $array, bool $assoc = false): array
  *
  * @param  array    $array1
  * @param  array    $array2
- * @param  array ...$others
+ * @param  array ...$arrays
  * @return array
  * @since  5.0
  */
-function array_union(array $array1, array $array2, array ...$others): array
+function array_union(array $array1, array $array2, array ...$arrays): array
 {
-    return Arrays::union($array1, $array2, ...$others);
+    return Arrays::union($array1, $array2, ...$arrays);
 }
 
 /**

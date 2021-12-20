@@ -457,15 +457,15 @@ final class Arrays extends StaticClass
      *
      * @param  array    $array1
      * @param  array    $array2
-     * @param  array ...$others
+     * @param  array ...$arrays
      * @return array
      * @since  5.0
      */
-    public static function union(array $array1, array $array2, array ...$others): array
+    public static function union(array $array1, array $array2, array ...$arrays): array
     {
         $ret = [];
 
-        foreach (array_merge($array1, $array2, ...$others) as $key => $value) {
+        foreach (array_merge($array1, $array2, ...$arrays) as $key => $value) {
             in_array($value, $ret, true) || (
                 is_int($key) ? $ret[] = $value : $ret[$key] = $value
             );
