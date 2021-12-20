@@ -2445,6 +2445,36 @@ function array_pop_key(array &$array): array|null
 }
 
 /**
+ * Really got sick of "passed by reference" error.
+ *
+ * @param  array $array
+ * @param  bool  $reset
+ * @return mixed
+ * @since  5.29
+ */
+function first(array $array, bool $reset = false): mixed
+{
+    $reset && reset($array);
+
+    return current($array);
+}
+
+/**
+ * Really got sick of "passed by reference" error.
+ *
+ * @param  array $array
+ * @param  bool  $reset
+ * @return mixed
+ * @since  5.29
+ */
+function last(array $array, bool $reset = false): mixed
+{
+    $reset && reset($array);
+
+    return end($array);
+}
+
+/**
  * Check whether given array is a list array.
  *
  * @param  any  $in
@@ -2864,29 +2894,54 @@ function get_object_var(object $object, int|string $var, mixed $default = null, 
 }
 
 /**
- * Check whether an argument given in call silently, so func_get_arg() causes errors.
+ * Check whether an argument was given in call silently (so func_get_arg() causes errors).
  *
- * @param  int $position
- * @return nool
+ * @param  int|string $arg
+ * @return bool
  * @since  5.28
  */
-function func_has_arg(int $position): bool
+function func_has_arg(int|string $arg): bool
 {
-    $trace = debug_backtrace(0, 2)[1];
+    $trace = last(debug_backtrace(0));
 
-    return !empty($trace['args']) && array_key_exists($position, $trace['args']);
+    // Name check.
+    if (is_string($arg)) {
+        if (!empty($trace['args'])) {
+            $ref = !empty($trace['class'])
+                ? new ReflectionCallable([$trace['class'], $trace['function']])
+                : new ReflectionCallable($trace['function']);
+
+            return array_key_exists($ref->getParameter($arg)?->getPosition(), $trace['args']);
+        }
+
+        return false;
+    }
+
+    // Count & position check.
+    return !empty($trace['args']) && array_key_exists($arg, $trace['args']);
 }
 
 /**
- * Check whether any arguments given in call.
+ * Check whether any arguments was given in call.
  *
- * @return nool
+ * @param  int|string ...$args
+ * @return bool
  * @since  5.28
  */
-function func_has_args(): bool
+function func_has_args(int|string ...$args): bool
 {
-    $trace = debug_backtrace(0, 2)[1];
+    if ($args) {
+        foreach ($args as $arg) {
+            if (!func_has_arg($arg)) {
+                return false;
+            }
+        }
+        return true;
+    }
 
+    $trace = last(debug_backtrace(0));
+
+    // Count check.
     return !empty($trace['args']);
 }
 
@@ -3010,28 +3065,6 @@ function is_callable_method(string|object $class, string $method, bool $static =
         $ref = new ReflectionMethod($class, $method);
         return $static ? $ref->isPublic() && $ref->isStatic() : $ref->isPublic();
     }
-    return false;
-}
-
-/**
- * Check whether a param given in called method/function.
- *
- * @param  string $name
- * @return bool
- * @since  5.27
- */
-function is_param_given(string $name): bool
-{
-    $trace = debug_backtrace(0, 2)[1];
-
-    if (!empty($trace['args'])) {
-        $ref = !empty($trace['class'])
-            ? new ReflectionCallable([$trace['class'], $trace['function']])
-            : new ReflectionCallable($trace['function']);
-
-        return array_key_exists((string) $ref->getParameter($name)?->getPosition(), $trace['args']);
-    }
-
     return false;
 }
 
