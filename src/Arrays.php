@@ -436,7 +436,24 @@ final class Arrays extends StaticClass
     }
 
     /**
-     * Union all given arrays returning unique'd array with strict comparison.
+     * Merge all given item(s).
+     *
+     * @param  array    $array
+     * @param  mixed    $item
+     * @param  mixed ...$items
+     * @return array
+     * @since  5.30
+     */
+    public static function concat(array $array, mixed $item, mixed ...$items): array
+    {
+        // Unify all item(s) as array.
+        [$item, $items] = [(array) $item, array_map(fn($item) => (array) $item, $items)];
+
+        return array_merge($array, $item, ...$items);
+    }
+
+    /**
+     * Merge all given array(s) returning a unique'd array with strict comparison.
      *
      * @param  array    $array1
      * @param  array    $array2

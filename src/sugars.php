@@ -2327,7 +2327,7 @@ function array_shuffle(array $array, bool $assoc = false): array
 }
 
 /**
- * Merge all given array with strict uniqueness.
+ * Merge all given array(s) with strict uniqueness.
  *
  * @param  array    $array1
  * @param  array    $array2
@@ -2338,6 +2338,20 @@ function array_shuffle(array $array, bool $assoc = false): array
 function array_union(array $array1, array $array2, array ...$others): array
 {
     return Arrays::union($array1, $array2, ...$others);
+}
+
+/**
+ * Merge all given item(s) with given array with strict uniqueness.
+ *
+ * @param  array    $array
+ * @param  mixed    $item
+ * @param  mixed ...$items
+ * @return array
+ * @since  5.30
+ */
+function array_concat(array $array, mixed $item, mixed ...$items): array
+{
+    return Arrays::concat($array, $item, ...$items);
 }
 
 /**
