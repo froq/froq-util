@@ -2991,6 +2991,7 @@ function is_callable_method(string|object $class, string $method, bool $static =
  *
  * @param  string $name
  * @return bool
+ * @since  5.27
  */
 function is_param_given(string $name): bool
 {
