@@ -2864,6 +2864,33 @@ function get_object_var(object $object, int|string $var, mixed $default = null, 
 }
 
 /**
+ * Check whether an argument given in call silently, so func_get_arg() causes errors.
+ *
+ * @param  int $position
+ * @return nool
+ * @since  5.28
+ */
+function func_has_arg(int $position): bool
+{
+    $trace = debug_backtrace(0, 2)[1];
+
+    return !empty($trace['args']) && array_key_exists($position, $trace['args']);
+}
+
+/**
+ * Check whether any arguments given in call.
+ *
+ * @return nool
+ * @since  5.28
+ */
+function func_has_args(): bool
+{
+    $trace = debug_backtrace(0, 2)[1];
+
+    return !empty($trace['args']);
+}
+
+/**
  * Check whether given input is a number.
  *
  * @param  any $in
