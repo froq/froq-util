@@ -249,10 +249,22 @@ final class Dumper
                 }
             }
 
-            // Drop recursion tick.
+            // Untick.
             unset($input[$inputKey]);
         } else {
-            static $recursions;
+            static $recursions = [];
+            static $lastTracePack, $lastTracePath;
+
+            // Reset for each different call.
+            $trace = debug_backtrace();
+            [$first, $last] = [current($trace), end($trace)];
+            [$tracePack, $tracePath] = [$first, ($last['file'] . $last['line'])];
+
+            // Check ticks & clear recursions.
+            if (($lastTracePack || $lastTracePath) &&
+                ($lastTracePack != $tracePack || $lastTracePath != $tracePath)) {
+                $recursions = [];
+            }
 
             $id  = Objects::getId($input);
             $key = $id . $propertyName;
@@ -260,17 +272,16 @@ final class Dumper
                 return '*RECURSION('. $id .')';
             }
 
-            $recursions[$key] = $input; // Tick.
+            // Ticks.
+            $recursions[$key] = $input;
+            $lastTracePack = $tracePack;
+            $lastTracePath = $tracePath;
 
-            static $lastCallTrace;
-
-            // Reset for each different call.
-            $trace = debug_backtrace()[1];
-            if (isset($lastCallTrace) && $lastCallTrace !== $trace) {
-                $recursions = [];
-            }
-
-            $lastCallTrace = $trace;
+            // @nope
+            // json_encode($trace[1]['args']);
+            // if (($error = json_error_message()) && strsrc($error, 'recursion', icase: true)) {
+            //     return '*RECURSION('. $id .')';
+            // }
         }
 
         return null;
