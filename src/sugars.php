@@ -2327,20 +2327,6 @@ function array_shuffle(array $array, bool $assoc = false): array
 }
 
 /**
- * Merge all given array(s) with strict uniqueness.
- *
- * @param  array    $array1
- * @param  array    $array2
- * @param  array ...$arrays
- * @return array
- * @since  5.0
- */
-function array_union(array $array1, array $array2, array ...$arrays): array
-{
-    return Arrays::union($array1, $array2, ...$arrays);
-}
-
-/**
  * Merge all given item(s) with given array with strict uniqueness.
  *
  * @param  array    $array
@@ -2352,6 +2338,20 @@ function array_union(array $array1, array $array2, array ...$arrays): array
 function array_concat(array $array, mixed $item, mixed ...$items): array
 {
     return Arrays::concat($array, $item, ...$items);
+}
+
+/**
+ * Merge all given array(s) with strict uniqueness.
+ *
+ * @param  array    $array1
+ * @param  array    $array2
+ * @param  array ...$arrays
+ * @return array
+ * @since  5.0
+ */
+function array_union(array $array1, array $array2, array ...$arrays): array
+{
+    return Arrays::union($array1, $array2, ...$arrays);
 }
 
 /**
