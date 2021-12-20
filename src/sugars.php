@@ -1019,12 +1019,10 @@ function get_trace(int $options = null, int $limit = null, int $index = null, st
         if (isset($cur['file'], $cur['line'])) {
             $cur['callPath'] = $cur['file'] . ':' . $cur['line'];
         }
-
         if (isset($cur['class'])) {
             $cur['method']     = $cur['function'];
-            $cur['methodType'] = ($cur['type']  == '::') ? 'static' : 'this';
+            $cur['methodType'] = ($cur['type']  == '::') ? 'static' : 'non-static';
         }
-
         if (isset($trace[$i + 1]['function'])) {
             $cur['caller'] = $trace[$i + 1]['function'];
         }
@@ -2985,6 +2983,27 @@ function is_callable_method(string|object $class, string $method, bool $static =
         $ref = new ReflectionMethod($class, $method);
         return $static ? $ref->isPublic() && $ref->isStatic() : $ref->isPublic();
     }
+    return false;
+}
+
+/**
+ * Check whether a param given in called method/function.
+ *
+ * @param  string $name
+ * @return bool
+ */
+function is_param_given(string $name): bool
+{
+    $trace = debug_backtrace(0, 2)[1];
+
+    if (!empty($trace['args'])) {
+        $ref = !empty($trace['class'])
+            ? new ReflectionCallable([$trace['class'], $trace['function']])
+            : new ReflectionCallable($trace['function']);
+
+        return array_key_exists((string) $ref->getParameter($name)?->getPosition(), $trace['args']);
+    }
+
     return false;
 }
 

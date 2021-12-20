@@ -12,18 +12,6 @@ use froq\common\interface\{Arrayable, Jsonable, Listable, Collectable, Iteratabl
 use froq\common\trait\{DataCountTrait, DataEmptyTrait, DataIteratorTrait, DataToArrayTrait, DataToJsonTrait};
 
 /**
- * Key Error.
- *
- * An error class for invalid keys (which is missing internally).
- *
- * @package froq\util
- * @object  KeyError
- * @author  Kerem Güneş
- * @since   5.25
- */
-class KeyError extends Error {}
-
-/**
  * Map.
  *
  * A map class just like JavaScript's map but "a bit" extended.
@@ -671,3 +659,7 @@ class Set implements Iterator, ArrayAccess, Countable, Arrayable, Jsonable, List
         }
     }
 }
+
+// Add other basic classes.
+require_once 'sugars-class/error.php';
+require_once 'sugars-class/reflection.php';
