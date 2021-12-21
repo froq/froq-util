@@ -41,7 +41,7 @@ final class Dumper
 
             case 'double':
                 // Append ".0" for single vals (eg: 1.0).
-                if (!strsrc((string) $input, '.')) {
+                if (!is_nan($input) && !is_infinite($input) && !strsrc(strval($input), '.')) {
                     $input .= '.0';
                 }
                 return 'float: '. $input;
