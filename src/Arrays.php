@@ -1088,15 +1088,14 @@ final class Arrays extends StaticClass
      *
      * @param  array    $array
      * @param  callable $func
-     * @return array
+     * @return void
      */
-    public static function each(array $array, callable $func): array
+    public static function each(array $array, callable $func): void
     {
+        $i = 0;
         foreach ($array as $key => $value) {
-            $func($value, $key);
+            $func($value, $key, $i++, $array);
         }
-
-        return $array;
     }
 
     /**
@@ -1140,9 +1139,13 @@ final class Arrays extends StaticClass
         $ret = []; $i = 0;
 
         foreach ($array as $key => $value) try {
-            $ret[$key] = $func($value, $key, $i++, $array);
+            $ret[$key] = ($recursive && is_array($value))
+                ? self::map($array, $func, true, $keepKeys)
+                : $func($value, $key, $i++, $array);
         } catch (ArgumentCountError) {
-            $ret[$key] = $func($value);
+            $ret[$key] = ($recursive && is_array($value))
+                ? self::map($array, $func, true, $keepKeys)
+                : $func($value);
         }
 
         return $keepKeys ? $ret : array_values($ret);

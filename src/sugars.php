@@ -147,9 +147,7 @@ function reduce(array $array, $carry, callable $func)
  */
 function each(array $array, callable $func): void
 {
-    foreach ($array as $key => $value) {
-        $func($value, $key);
-    }
+    Arrays::each($array, $func);
 }
 
 /**
@@ -179,7 +177,7 @@ function size(string|array|object $in): int
 function concat(array|string $in, ...$ins): array|string
 {
     return match (true) {
-        is_array($in)  => array_append($in, ...$ins),
+        is_array($in)  => array_concat($in, ...$ins),
         is_string($in) => $in . join('', $ins)
     };
 }
@@ -1768,14 +1766,12 @@ function array_clean(array $array): array
  */
 function array_apply(array $array, callable $func, bool $use_keys = true, bool $swap_keys = false): array
 {
-    // With value/key notation.
     if ($use_keys) {
-        // With key/value notation.
-        if ($swap_keys) {
-            return array_map($func, array_keys($array), $array);
-        }
-        return array_map($func, $array, array_keys($array));
+        return $swap_keys
+             ? array_map($func, array_keys($array), $array)  // With key/value notation.
+             : array_map($func, $array, array_keys($array)); // With value/key notation.
     }
+
     return array_map($func, $array);
 }
 
