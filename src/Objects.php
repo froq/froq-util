@@ -8,7 +8,7 @@ declare(strict_types=1);
 namespace froq\util;
 
 use froq\common\object\StaticClass;
-use Error, Reflection, ReflectionException, ReflectionClass, ReflectionProperty;
+use Error, Reflection, ReflectionException, ReflectionObject, ReflectionClass, ReflectionProperty;
 
 /**
  * Objects.
@@ -25,12 +25,14 @@ final class Objects extends StaticClass
      * Get reflection.
      *
      * @param  object|string $object
-     * @return ReflectionClass|null
+     * @return ReflectionObject|ReflectionClass|null
      */
-    public static function getReflection(object|string $object): ReflectionClass|null
+    public static function getReflection(object|string $object): ReflectionObject|ReflectionClass|null
     {
         try {
-            return new ReflectionClass($object);
+            return is_object($object)
+                 ? new ReflectionObject($object)
+                 : new ReflectionClass($object);
         } catch (ReflectionException) {
             return null;
         }
