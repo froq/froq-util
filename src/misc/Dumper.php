@@ -36,6 +36,8 @@ final class Dumper
         $type = gettype($input);
 
         switch ($type) {
+            case 'NULL';
+                return '*NULL';
             case 'integer':
                 return 'int: '. $input;
 
@@ -95,7 +97,28 @@ final class Dumper
                         $output .= "\n";
                     }
                 } else {
+                    static $prep; $prep ??= function ($dump) {
+                        $dump = slice(split("\n", $dump), 1, -1); // Drop "array(1) <..> {" and "}" parts.
+                        $dump = join("\n", $dump); // Join back properties/elements.
+                        return $dump;
+                    };
+
                     [$objectType, $objectId] = split('#', Objects::getId($input));
+
+                    // Handle special objects.
+                    if ($input instanceof \SplFixedArray) {
+                        $output = format('object(%d) <%s>#%s {', $input->count(), $objectType, $objectId);
+
+                        if ($input->count()) {
+                            $dump = self::dump($input->toArray(), $tab, $tabs - 1);
+                            $output .= "\n". $prep($dump) ."\n";
+                            $output .= str_repeat($tab, $tabs - 1);
+                        }
+
+                        $output .= '}';
+
+                        return $output;
+                    }
 
                     // Handle spacial cases for debug info.
                     if (method_exists($input, '__debugInfo')) {
@@ -112,19 +135,10 @@ final class Dumper
 
                         $count = count($info);
                         $output = format('object(%d) <%s>#%s {', $count, $objectType, $objectId);
-                        if ($count) {
-                            $output .= "\n";
-                        }
 
                         if ($info) {
-                            $info = self::dump($info, $tab, $tabs - 1);
-
-                            // Drop "array(1) <..> {" and "}" parts.
-                            $info = slice(split("\n", $info), 1, -1);
-
-                            // Append back properties.
-                            $output .= join("\n", $info) . "\n";
-
+                            $dump = self::dump($info, $tab, $tabs - 1);
+                            $output .= "\n". $prep($dump) ."\n";
                             $output .= str_repeat($tab, $tabs - 1);
                         }
 
