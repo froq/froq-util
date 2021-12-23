@@ -45,7 +45,7 @@ function array_set_all(array &$array, array $items): array
  * @return any|null
  * @since  3.0
  */
-function array_get(array $array, int|string|array $key, $default = null, bool $drop = false)
+function array_get(array &$array, int|string|array $key, $default = null, bool $drop = false)
 {
     return is_array($key) ? Arrays::getAll($array, $key, $default, $drop)
                           : Arrays::get($array, $key, $default, $drop);
@@ -61,7 +61,7 @@ function array_get(array $array, int|string|array $key, $default = null, bool $d
  * @return array
  * @since  3.0
  */
-function array_get_all(array $array, array $keys, $default = null, bool $drop = false): array
+function array_get_all(array &$array, array $keys, $default = null, bool $drop = false): array
 {
     return Arrays::getAll($array, $keys, $default, $drop);
 }
