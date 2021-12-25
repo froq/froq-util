@@ -99,7 +99,7 @@ final class Dumper
                 } else {
                     static $prep; $prep ??= function ($dump) {
                         $dump = slice(split("\n", $dump), 1, -1); // Drop "array(1) <..> {" and "}" parts.
-                        $dump = join("\n", $dump); // Join back properties/elements.
+                        $dump = join("\n", $dump); // Join back elements/properties.
                         return $dump;
                     };
 
