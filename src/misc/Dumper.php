@@ -42,17 +42,22 @@ final class Dumper
                 return 'int: '. $input;
 
             case 'double':
-                // Append ".0" for single vals (eg: 1.0).
-                if (!is_nan($input) && !is_infinite($input) && !strsrc(strval($input), '.')) {
-                    $input .= '.0';
+                // Check decimals for appending 0 to 1.0 (as expected).
+                $decimals = 1;
+                if ($remainds = strstr((string) $input, '.')) {
+                    $decimals = strlen($remainds) - 1;
                 }
-                return 'float: '. $input;
+
+                return 'float: '. format_number($input, $decimals);
 
             case 'string':
-                return 'string('. size($input) .'): "'. $input .'"';
+                // Add multibyte length (as expected).
+                $length = mb_strlen($input);
+
+                return 'string('. $length .') "'. $input .'"';
 
             case 'boolean':
-                return 'bool: '. ($input ? 'true' : 'false');
+                return 'bool: '. format_bool($input);
 
             case 'array':
             case 'object':
@@ -176,18 +181,28 @@ final class Dumper
                             $propertyInfo ? ' ['. join(':', $propertyInfo) .']' : ''
                         ));
 
+                        // To get value, this reflection must come from Objects call.
+                        $ref = $property['reflection'];
                         if (is_false($property['initialized'])) {
-                            // Cannot get the (default) value when unset() applied on the property.
-                            $ref = new \ReflectionProperty($property['class'], $property['name']);
                             if ($ref->hasDefaultValue()) {
                                 $output .= self::dump($ref->getDefaultValue(), $tab, $tabs);
                             } else {
                                 $output .= '*UNINITIALIZED';
                             }
-                        } elseif (is_null($property['value'])) {
-                            $output .= '*NULL';
                         } else {
-                            $output .= self::dump($property['value'], $tab, $tabs);
+                            $value = $ref->getValue();
+                            if (is_null($value)) {
+                                $output .= '*NULL';
+                            } elseif (
+                                is_object($value)
+                                && is_class_of($value, 'DOMNode') // Danger & safe.
+                                && !is_class_of($value, 'DOMImplementation', /* 'DOMProcessingInstruction', ... */
+                            )) {
+                                // Problematic...
+                                $output .= format('<%s>#%s { ... }', ...split('#', get_object_id($value)));
+                            } else {
+                                $output .= self::dump($value, $tab, $tabs);
+                            }
                         }
 
                         $output .= "\n";
@@ -273,6 +288,7 @@ final class Dumper
             $trace = debug_backtrace();
             [$first, $last] = [current($trace), end($trace)];
             [$tracePack, $tracePath] = [$first, ($last['file'] . $last['line'])];
+            unset($trace);
 
             // Check ticks & clear recursions.
             if (($lastTracePack || $lastTracePath) &&

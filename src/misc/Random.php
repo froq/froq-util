@@ -94,7 +94,7 @@ final class Random
      * @param  int $precision
      * @return float
      */
-    public function nextFloat(int $precision = 14): float
+    public function nextFloat(int $precision = NUMBER_PRECISION): float
     {
         return round($this->next(24) / (float) (1 << 24), $precision);
     }

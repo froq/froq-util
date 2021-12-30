@@ -27,6 +27,12 @@ const CASE_TITLE = 2, CASE_DASH  = 3,
       CASE_SNAKE = 4, CASE_CAMEL = 5;
 
 /**
+ * Number precision.
+ * @since 5.31
+ */
+const NUMBER_PRECISION = 14;
+
+/**
  * Base-62 alphabet.
  * @since 5.0
  */

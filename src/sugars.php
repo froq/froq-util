@@ -8,8 +8,8 @@ declare(strict_types=1);
 use froq\util\{Util, Arrays, Objects, Numbers, Strings};
 
 // Load consts & classes.
-require_once 'sugars-const.php';
-require_once 'sugars-class.php';
+require 'sugars-const.php';
+require 'sugars-class.php';
 
 /**
  * Sugar loader.
@@ -47,14 +47,6 @@ function fetch(array &$array, ...$args) { return array_fetch($array, ...$args); 
 function select(array &$array, ...$args) { return array_select($array, ...$args); }
 
 /**
- * Format for sprintf(),vsprintf().
- */
-function format(string $in, $arg, ...$args): string {
-    $in = str_replace('%q', "'%s'", $in); // Convert special format (quoted string).
-    return is_array($arg) ? vsprintf($in, $arg) : sprintf($in, $arg, ...$args);
-}
-
-/**
  * The ever most wanted functions (finally come with 8.0, but without case option).
  * @alias of str_has(),str_has_prefix(),str_has_suffix()
  * @since 4.0
@@ -72,7 +64,6 @@ function lower(string $in): string { return mb_strtolower($in); }
 
 /**
  * Quick array & object (with "x:1, y:2" support).
- * @since 5.21
  */
 function qa(...$args): array
 {
@@ -167,36 +158,18 @@ function size(string|array|object $in): int
 }
 
 /**
- * Concat an array or string.
- *
- * @param  array|string    $in
- * @param  array|string ...$ins
- * @return array|string
- * @since  4.0, 5.0 Moved from froq/fun.
- */
-function concat(array|string $in, ...$ins): array|string
-{
-    return match (true) {
-        is_array($in)  => array_concat($in, ...$ins),
-        is_string($in) => $in . join('', $ins)
-    };
-}
-
-/**
  * Pad an array or string.
  *
  * @param  array|string $in
  * @param  int          $length
- * @param  any|null     $pad
+ * @param  mixed|null   $pad
  * @return array|string
  * @since  5.0
  */
-function pad(array|string $in, int $length, $pad = null): array|string
+function pad(array|string $in, int $length, mixed $pad = null): array|string
 {
-    return match (true) {
-        is_array($in)  => array_pad($in, $length, $pad),
-        is_string($in) => str_pad($in, $length, strval($pad ?? ' '))
-    };
+    return is_array($in) ? array_pad($in, $length, $pad)
+         : str_pad($in, $length, pad_string: strval($pad ?? ' '));
 }
 
 /**
@@ -210,10 +183,22 @@ function pad(array|string $in, int $length, $pad = null): array|string
  */
 function chunk(array|string $in, int $length, bool $keep_keys = false): array
 {
-    return match (true) {
-        is_array($in)  => array_chunk($in, $length, $keep_keys),
-        is_string($in) => str_split($in, $length)
-    };
+    return is_array($in) ? array_chunk($in, $length, $keep_keys)
+         : str_chunk($in, $length, join: false);
+}
+
+/**
+ * Concat an array or string.
+ *
+ * @param  array|string    $in
+ * @param  mixed        ...$ins
+ * @return array|string
+ * @since  4.0, 5.0 Moved from froq/fun.
+ */
+function concat(array|string $in, mixed ...$ins): array|string
+{
+    return is_array($in) ? array_concat($in, ...$ins)
+         : str_concat($in, ...$ins);
 }
 
 /**
@@ -228,10 +213,8 @@ function chunk(array|string $in, int $length, bool $keep_keys = false): array
  */
 function slice(array|string $in, int $start, int $end = null, bool $keep_keys = false): array|string
 {
-    return match (true) {
-        is_array($in)  => array_slice($in, $start, $end, $keep_keys),
-        is_string($in) => mb_substr($in, $start, $end)
-    };
+    return is_array($in) ? array_slice($in, $start, $end, $keep_keys)
+         : mb_substr($in, $start, $end);
 }
 
 /**
@@ -263,12 +246,12 @@ function strip(string $in, string $chars = null): string
  * @param  string   $sep
  * @param  string   $in
  * @param  int|null $limit
+ * @param  bool     $flags
  * @param  bool     $pad
- * @param  bool     $blanks
  * @return array
  * @since  5.0 Moved from froq/fun.
  */
-function split(string $sep, string $in, int $limit = null, bool $pad = true, bool $blanks = false): array
+function split(string $sep, string $in, int $limit = null, int $flags = null, bool $pad = true): array
 {
     if ($sep === '') {
         $ret = (array) preg_split('~~u', $in, -1, 1);
@@ -277,10 +260,16 @@ function split(string $sep, string $in, int $limit = null, bool $pad = true, boo
         }
     } else {
         // Note: "[]" is special & used for charsets as separator (pattern), "." etc must be quoted also.
-        $ret = (array) ($limit ? mb_split($sep, $in, $limit) : mb_split($sep, $in));
-        if (!$blanks) { // When no blank fields wanted.
-            $ret = array_filter($ret, 'strlen');
-        }
+        // $ret = (array) ($limit ? mb_split($sep, $in, $limit) : mb_split($sep, $in));
+        // if (!$blanks) { // When no blank fields wanted.
+        //     $ret = array_filter($ret, 'strlen');
+        // }
+
+        // Escape null bytes (in case).
+        $sep = str_replace("\0", "\\0", $sep);
+
+        // Note: "~" must be escaped, no control here.
+        $ret = preg_split('~'. $sep .'~u', $in, ($limit ?? -1), ($flags ?? PREG_SPLIT_NO_EMPTY));
     }
 
     // Plus: prevent 'undefined index ..' error.
@@ -309,12 +298,18 @@ function unsplit(string $sep, array $in): string
  *
  * @param  string $in
  * @param  string $pattern
- * @return string|null
+ * @param  bool   $named
+ * @return string|array|null
  * @since  3.0, 5.0 Moved from froq/fun.
  */
-function grep(string $in, string $pattern): string|null
+function grep(string $in, string $pattern, bool $named = false): string|array|null
 {
     preg_match($pattern, $in, $match, PREG_UNMATCHED_AS_NULL);
+
+    // For named capturing groups.
+    if ($named && $match) {
+        return array_filter($match, fn($k) => is_string($k), 2);
+    }
 
     return $match[1] ?? null;
 }
@@ -324,11 +319,12 @@ function grep(string $in, string $pattern): string|null
  *
  * @param  string $in
  * @param  string $pattern
+ * @param  bool   $named
  * @param  bool   $uniform
  * @return array<string|null>|null
  * @since  3.15, 5.0 Moved from froq/fun.
  */
-function grep_all(string $in, string $pattern, bool $uniform = false): array|null
+function grep_all(string $in, string $pattern, bool $named = false, bool $uniform = false): array|null
 {
     preg_match_all($pattern, $in, $matches, PREG_UNMATCHED_AS_NULL);
 
@@ -356,6 +352,11 @@ function grep_all(string $in, string $pattern, bool $uniform = false): array|nul
 
             // Maintain keys (so reset to 0-N).
             $ret = array_slice($ret, 0);
+        }
+
+        // For named capturing groups.
+        if ($named && $ret) {
+            return array_filter($ret, fn($k) => is_string($k), 2);
         }
 
         return $ret;
@@ -520,6 +521,36 @@ function str_rand(string $str, int $length = null): string|null
 }
 
 /**
+ * Chunk given string properly in unicode style.
+ *
+ * @param  string $str
+ * @param  int    $length
+ * @param  string $separator
+ * @param  bool   $join
+ * @return string|array
+ * @since  5.31
+ */
+function str_chunk(string $str, int $length = 76, string $separator = "\r\n", bool $join = true): string|array
+{
+    $ret = array_chunk(preg_split('~~u', $str, -1, 1), $length);
+    return $join ? array_reduce($ret,
+        fn($ret, $part) => $ret .= join('', $part) . $separator) : $ret;
+}
+
+/**
+ * Concat given string with others.
+ *
+ * @param  string                     $str
+ * @param  string|int|float|bool|null $items
+ * @return string
+ * @since  5.31
+ */
+function str_concat(string $str, string|int|float|bool|null ...$items): string
+{
+    return $str . join('', $items);
+}
+
+/**
  * Convert base (original source: http://stackoverflow.com/a/4668620/362780).
  *
  * @param  int|string $in    Digits to convert.
@@ -643,7 +674,22 @@ function convert_case(string $in, int $case, string $exploder = null, string $im
 function class_extends(string $class1, string $class2, bool $parent_only = false): bool
 {
     return !$parent_only ? is_subclass_of($class1, $class2)
-         : ($parents = class_parents($class1)) && (current($parents) === $class2);
+         : is_subclass_of($class1, $class2) && current(class_parents($class1)) == $class2;
+}
+
+/**
+ * Check whether interface 1 extends interface 2.
+ *
+ * @param  string $interface1
+ * @param  string $interface2
+ * @param  bool   $parent_only
+ * @return bool
+ * @since  5.31
+ */
+function interface_extends(string $interface1, string $interface2, bool $parent_only = false): bool
+{
+    return !$parent_only ? is_subclass_of($interface1, $interface2)
+         : is_subclass_of($interface1, $interface2) && current(class_implements($interface1)) == $interface2;
 }
 
 /**
@@ -1026,7 +1072,7 @@ function get_trace(int $options = null, int $limit = null, int $index = null, st
         }
     }
 
-    return is_null($index) ? $trace : $trace[$index][$field] ?? $trace[$index] ?? null;
+    return is_null($index) ? $trace : ($trace[$index][$field] ?? $trace[$index] ?? null);
 }
 
 /**
@@ -1865,6 +1911,22 @@ function array_delete(array &$array, ...$values): array
 }
 
 /**
+ * Drop given values from given array if exist.
+ *
+ * @param  array      &$array
+ * @param  int|string  $keys
+ * @return array
+ * @since  5.31
+ */
+function array_delete_keys(array &$array, int|string ...$keys): array
+{
+    foreach ($keys as $key) {
+        unset($array[$key]);
+    }
+    return $array;
+}
+
+/**
  * Append given values to an array, returning given array back.
  *
  * @param  array &$array
@@ -2040,17 +2102,17 @@ function array_search_key(array $array, $value, bool $strict = true, bool $last 
  * @param  array  $values
  * @param  bool   $strict
  * @param  bool   $reverse
- * @return array|null
+ * @return array<int|string|null>
  * @since  4.0, 5.25 moved from sugars/array.
  */
-function array_search_keys(array $array, array $values, bool $strict = true, bool $reverse = false): array|null
+function array_search_keys(array $array, array $values, bool $strict = true, bool $reverse = false): array
 {
     $ret = [];
 
     $keys = array_keys($array);
     foreach ($values as $key => $value) {
         foreach ($keys as $key) {
-            if ($strict ? $array[$key] === $value : $array[$key] == $value) {
+            if ($strict ? ($array[$key] === $value) : ($array[$key] == $value)) {
                 $ret[] = $key;
             }
         }
@@ -2058,7 +2120,7 @@ function array_search_keys(array $array, array $values, bool $strict = true, boo
 
     $reverse && $ret = array_reverse($ret);
 
-    return $ret ?: null;
+    return $ret;
 }
 
 /**
@@ -2216,39 +2278,60 @@ function array_pluck(array &$array, int|string|array $key, $default = null)
 }
 
 /**
- * Choose a value that satisfies given callback.
+ * Find first item that satisfies given test function.
  *
  * @param  array    $array
  * @param  callable $func
- * @return any|null
- * @since  5.0
+ * @param  bool     $reverse
+ * @return mixed|null
+ * @since  5.0, 5.31
  */
-function array_choose(array $array, callable $func)
+function array_find(array $array, callable $func, bool $reverse = false): mixed
 {
-    foreach ($array as $value) {
-        if ($func($value)) {
-            return $value;
-        }
-    }
-    return null;
+    return Arrays::find($array, $func, $reverse);
 }
 
 /**
- * Choose a value position that satisfies given callback.
+ * Find all items that satisfy given test function.
  *
  * @param  array    $array
  * @param  callable $func
+ * @param  bool     $reverse
+ * @param  bool     $use_keys
+ * @return array<mixed|null>
+ * @since  5.31
+ */
+function array_find_all(array $array, callable $func, bool $reverse = false, bool $use_keys = false): array
+{
+    return Arrays::findAll($array, $func, $reverse, $use_keys);
+}
+
+/**
+ * Find first item key that satisfies given test function.
+ *
+ * @param  array    $array
+ * @param  callable $func
+ * @param  bool     $reverse
  * @return int|string|null
  * @since  5.0
  */
-function array_choose_key(array $array, callable $func)
+function array_find_key(array $array, callable $func, bool $reverse = false): int|string|null
 {
-    foreach ($array as $key => $value) {
-        if ($func($value)) {
-            return $key;
-        }
-    }
-    return null;
+    return Arrays::findKey($array, $func, $reverse);
+}
+
+/**
+ * Find all keys that satisfy given test function.
+ *
+ * @param  array    $array
+ * @param  callable $func
+ * @param  bool     $reverse
+ * @return array<int|string|null>
+ * @since  5.31
+ */
+function array_find_keys(array $array, callable $func, bool $reverse = false): array
+{
+    return Arrays::findKeys($array, $func, $reverse);
 }
 
 /**
@@ -2279,7 +2362,7 @@ function array_flat(array $array, bool $use_keys = false, bool $fix_keys = false
 function array_rand_value(array &$array, int $limit = 1, $default = null, bool $drop = false)
 {
     // Just got sick of "value = array[array_rand(array)]" stuffs.
-    return Arrays::getRandom($array, $limit, false, $drop) ?? $default;
+    return Arrays::getRandom($array, $limit, drop: $drop) ?? $default;
 }
 
 /**
@@ -2364,6 +2447,29 @@ function array_dedupe(array $array, bool $strict = true): array
 }
 
 /**
+ * Create a groupped result from given array (@see https://wiki.php.net/rfc/array_column_results_grouping).
+ *
+ * @param  array  $array
+ * @param  string $field
+ * @return array
+ * @since  5.31
+ */
+function array_group(array $array, int|string $field): array
+{
+    $ret = [];
+
+    foreach ($array as $row) {
+        $row = (array) $row;
+        if (array_key_exists($field, $row)) {
+            $key = $row[$field];
+            $ret[$key][] = $row;
+        }
+    }
+
+    return $ret;
+}
+
+/**
  * Get first value of given array.
  *
  * @param  array $array
@@ -2404,7 +2510,46 @@ function array_entries(array $array): array
 }
 
 /**
- * Like array_unshift() but taking key/value pairs.
+ * Like array_push() but taking key/value arguments.
+ *
+ * @param  array      &$array
+ * @param  int|string  $key
+ * @param  mixed       $value
+ * @param  bool        $drop
+ * @return array
+ * @since  5.22
+ */
+function array_push_entry(array &$array, int|string $key, mixed $value, bool $drop = true): array
+{
+    // Drop old key (in case).
+    if ($drop) {
+        unset($array[$key]);
+    }
+
+    $array[$key] = $value;
+    return $array;
+}
+
+/**
+ * Like array_pop() but returning key/value pairs.
+ *
+ * @param  array      &$array
+ * @param  int|string  $key
+ * @param  mixed       $value
+ * @return array|null
+ * @since  5.22
+ */
+function array_pop_entry(array &$array): array|null
+{
+    $key = array_key_last($array);
+    if ($key !== null) {
+        return [$key, array_pop($array)];
+    }
+    return null;
+}
+
+/**
+ * Like array_unshift() but taking key/value arguments.
  *
  * @param  array      &$array
  * @param  int|string  $key
@@ -2412,7 +2557,7 @@ function array_entries(array $array): array
  * @return array
  * @since  5.22
  */
-function array_unshift_key(array &$array, int|string $key, mixed $value): array
+function array_unshift_entry(array &$array, int|string $key, mixed $value): array
 {
     $array = [$key => $value] + $array;
     return $array;
@@ -2427,29 +2572,11 @@ function array_unshift_key(array &$array, int|string $key, mixed $value): array
  * @return array|null
  * @since  5.22
  */
-function array_shift_key(array &$array): array|null
+function array_shift_entry(array &$array): array|null
 {
     $key = array_key_first($array);
     if ($key !== null) {
         return [$key, array_shift($array)];
-    }
-    return null;
-}
-
-/**
- * Like array_pop() but returning key/value pairs.
- *
- * @param  array      &$array
- * @param  int|string  $key
- * @param  mixed       $value
- * @return array|null
- * @since  5.22
- */
-function array_pop_key(array &$array): array|null
-{
-    $key = array_key_last($array);
-    if ($key !== null) {
-        return [$key, array_pop($array)];
     }
     return null;
 }
@@ -2466,7 +2593,7 @@ function first(array $array, bool $reset = false): mixed
 {
     $reset && reset($array);
 
-    return current($array);
+    return $array ? current($array) : null; // No falses.
 }
 
 /**
@@ -2481,47 +2608,7 @@ function last(array $array, bool $reset = false): mixed
 {
     $reset && reset($array);
 
-    return end($array);
-}
-
-/**
- * Check whether given array is a list array.
- *
- * @param  any  $in
- * @param  bool $strict
- * @return bool
- * @since  5.0
- */
-function is_list($in, bool $strict = true): bool
-{
-    return is_array($in) && Arrays::isList($in, $strict);
-}
-
-/**
- * Check whether given key exists on given array.
- *
- * @param  array  $array
- * @param  string $key
- * @return bool
- * @since  5.0
- */
-function is_array_key(array $array, int|string $key): bool
-{
-    return array_key_exists($key, $array);
-}
-
-/**
- * Check whether given value exists on given array in strict comparison, filling found key as ref-arg.
- *
- * @param  array       $array
- * @param  any         $value
- * @param  int|string &$key
- * @return bool
- * @since  5.0
- */
-function is_array_value(array $array, $value, int|string &$key = null): bool
-{
-    return array_value_exists($value, $array, key: $key);
+    return $array ? end($array) : null; // No falses.
 }
 
 /**
@@ -2592,9 +2679,21 @@ function json_error_message(int &$code = null): string|null
  * @return string|null
  * @since  4.17
  */
-function preg_error_message(int &$code = null): string|null
+function preg_error_message(string $call = null, int &$code = null): string|null
 {
-    return ($code = preg_last_error()) ? preg_last_error_msg() : null;
+    if ($call == null) {
+        return ($code = preg_last_error()) ? preg_last_error_msg() : null;
+    }
+
+    $error_message = error_message($error_code);
+    if ($error_message) {
+        $message = grep($error_message, "~{$call}\(\):\s+(.+)~");
+        if ($message) {
+            $code = $error_code;
+            return $message;
+        }
+    }
+    return null;
 }
 
 /**
@@ -2693,6 +2792,80 @@ function uuid_format(string $in): string|null
     }
 
     return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split($in, 4));
+}
+
+/**
+ * Format for sprintf().
+ *
+ * @param  string   $format
+ * @param  mixed    $arg
+ * @param  mixed ...$args
+ * @return string
+ */
+function format(string $format, mixed $arg, mixed ...$args): string
+{
+    $args = [$arg, ...$args];
+
+    // Convert special formats (quoted string).
+    $format = str_replace('%q', "'%s'", $format);
+
+    // Convert bools.
+    if (str_contains($format, '%b')) {
+        $format = str_replace('%b', '%s', $format);
+        $args = array_apply($args, fn($arg) => is_bool($arg) ? format_bool($arg) : $arg);
+    }
+
+    return sprintf($format, ...$args);
+}
+
+/**
+ * Format an input as bool (yes).
+ *
+ * @param  bool $input
+ * @return string
+ * @since  5.31
+ */
+function format_bool(bool $input): string
+{
+    return $input ? 'true' : 'false';
+}
+
+/**
+ * Format an input as number (properly).
+ *
+ * @param  int|float|string $input
+ * @param  int|null         $decimals
+ * @param  string|null      $dsep
+ * @param  string|null      $tsep
+ * @return string|null
+ * @since  5.31
+ */
+function format_number(int|float|string $input, int|null $decimals = 0, string|null $dsep = '.', string|null $tsep = ','): string|null
+{
+    if (is_string($input)) {
+        if (!is_numeric($input)) {
+            trigger_error(sprintf('%s(): Invalid non-numeric input', __function__));
+            return null;
+        }
+
+        $input = 0 + $input;
+    }
+
+    // Prevent number corruption.
+    if ($decimals && $decimals > NUMBER_PRECISION) {
+        $decimals = NUMBER_PRECISION;
+    }
+
+    $ret = number_format($input, (int) $decimals, $dsep, $tsep);
+
+    // Append ".0" for 1.0 & upper NAN/INF.
+    if (!$decimals && !is_int($input) && strlen($ret) == 1) {
+        $ret .= '.0';
+    } elseif ($ret == 'inf' || $ret == 'nan') {
+        $ret = strtoupper($ret);
+    }
+
+    return $ret;
 }
 
 /**
@@ -2913,7 +3086,7 @@ function get_object_var(object $object, int|string $var, mixed $default = null, 
  */
 function func_has_arg(int|string $arg): bool
 {
-    $trace = last(debug_backtrace(0));
+    $trace = debug_backtrace(0)[1];
 
     // Name check.
     if (is_string($arg)) {
@@ -2950,10 +3123,23 @@ function func_has_args(int|string ...$args): bool
         return true;
     }
 
-    $trace = last(debug_backtrace(0));
+    $trace = debug_backtrace(0)[1];
 
     // Count check.
     return !empty($trace['args']);
+}
+
+/**
+ * Check whether given array is a list array.
+ *
+ * @param  any  $in
+ * @param  bool $strict
+ * @return bool
+ * @since  5.0
+ */
+function is_list($in, bool $strict = true): bool
+{
+    return is_array($in) && Arrays::isList($in, $strict);
 }
 
 /**
@@ -2993,69 +3179,63 @@ function is_stream($in): bool
 }
 
 /**
- * Check whether given input is type of other.
+ * Check whether given input is any type of given types.
  *
- * @param  any    $in
- * @param  string $type
+ * @param  any       $in
+ * @param  string ...$types
  * @return bool
  * @since  5.0
  */
-function is_type_of($in, string $type): bool
+function is_type_of($in, string ...$types): bool
 {
-    return match ($type) {
-        'image'  => is_image($in),  'stream' => is_stream($in),
-        'number' => is_number($in), 'scalar' => is_scalar($in),
-        'array'  => is_array($in),  'object' => is_object($in),
-        default  => strtolower($type) == strtolower(get_type($in)) // All others.
-    };
-}
-
-/**
- * Check whether given class property is exists.
- *
- * @param  string|object   $class
- * @param  string          $property
- * @param  bool            $static
- * @param  Reflector|null &$ref
- * @return bool
- * @since  5.18
- */
-function is_property(string|object $class, string $property, bool $static = false, Reflector &$ref = null): bool
-{
-    if (property_exists($class, $property)) {
-        // If checking static or requiring ref.
-        if ($static || func_num_args() == 4) {
-            $ref = new ReflectionProperty($class, $property);
-            if ($static) {
-                return $ref->isStatic();
-            }
+    foreach ($types as $type) {
+        if (match ($type) {
+            'image'  => is_image($in),  'stream' => is_stream($in),
+            'number' => is_number($in), 'scalar' => is_scalar($in),
+            'array'  => is_array($in),  'object' => is_object($in),
+            default  => strtolower(get_type($in)) == strtolower($type) // All others.
+        }) {
+            return true;
         }
-        return true;
     }
     return false;
 }
 
 /**
- * Check whether given class method is exists.
+ * Check whether given search value equals to any of given values with strict comparison.
  *
- * @param  string|object   $class
- * @param  string          $method
- * @param  bool            $static
- * @param  Reflector|null &$ref
+ * @param  mixed    $value
+ * @param  mixed ...$values
  * @return bool
- * @since  5.18
+ * @since  5.31
  */
-function is_method(string|object $class, string $method, bool $static = false, Reflector &$ref = null): bool
+function is_equal_of(mixed $value, mixed ...$values): bool
 {
-    if (method_exists($class, $method)) {
-        // If checking static or requiring ref.
-        if ($static || func_num_args() == 4) {
-            $ref = new ReflectionMethod($class, $method);
-            if ($static) {
-                return $ref->isStatic();
-            }
+    $search_value = $value;
+    foreach ($values as $value) {
+        if ($search_value === $value) {
+            return true;
         }
-        return true;
+    }
+    return false;
+}
+
+/**
+ * Check whether given class is any type of given class(es).
+ *
+ * @param  object|string    $class
+ * @param  object|string ...$classes
+ * @return bool
+ * @since  5.31
+ */
+function is_class_of(string|object $class, string|object ...$classes): bool
+{
+    $class1 = is_object($class) ? $class::class : $class;
+    foreach ($classes as $class2) {
+        $class2 = is_object($class2) ? $class2::class : $class2;
+        if (is_a($class1, $class2, true)) {
+            return true;
+        }
     }
     return false;
 }

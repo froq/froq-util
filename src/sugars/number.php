@@ -10,112 +10,112 @@ use froq\util\Numbers;
 /**
  * Make a number from given a numeric input.
  *
- * @param  numeric  $in
- * @param  int|null $decimals
- * @return int|float|null
+ * @param  int|float|string $input
+ * @param  int|null         $decimals
+ * @return int|float
  * @since  3.0
  */
-function number($in, int $decimals = null): int|float|null
+function number(int|float|string $input, int $decimals = null): int|float
 {
-    return Numbers::convert($in, $decimals);
+    return Numbers::convert($input, $decimals);
 }
 
 /**
  * Compare two numbers.
  *
- * @param  string|number $a
- * @param  string|number $b
- * @param  int|null      $precision
+ * @param  int|float $number1
+ * @param  int|float $number2
+ * @param  int|null  $precision
  * @return int|null
  * @since  3.0
  */
-function number_compare($a, $b, int $precision = null): int|null
+function number_compare(int|float $number1, int|float $number2, int $precision = null): int|null
 {
-    return Numbers::compare($a, $b, $precision);
+    return Numbers::compare($number1, $number2, $precision);
 }
 
 /**
  * Check whether given numbers are equal.
  *
- * @param  string|number $a
- * @param  string|number $b
- * @param  int|null      $precision
+ * @param  int|float $number1
+ * @param  int|float $number2
+ * @param  int|null  $precision
  * @return bool|null
  * @since  3.0
  */
-function number_equals($a, $b, int $precision = null): bool|null
+function number_equals(int|float $number1, int|float $number2, int $precision = null): bool|null
 {
-    return Numbers::equals($a, $b, $precision);
+    return Numbers::equals($number1, $number2, $precision);
 }
 
 /**
  * Check whether given input is digit.
  *
- * @param  any $in
+ * @param  any $input
  * @return bool
  * @since  3.0
  */
-function is_digit($in): bool
+function is_digit($input): bool
 {
-    return Numbers::isDigit($in);
+    return Numbers::isDigit($input);
 }
 
 /**
  * Check whether given input is an ID (useful for any (db) incremental id checking).
  *
- * anyparam  number $in
+ * anyparam  number $input
  * @return bool
  * @since  3.0
  */
-function is_id($in): bool
+function is_id($input): bool
 {
-    return Numbers::isId($in);
+    return Numbers::isId($input);
 }
 
 /**
  * Check whether given input is uint.
  *
- * @param  any $in
+ * @param  any $input
  * @return bool
  * @since  3.0
  */
-function is_uint($in): bool
+function is_uint($input): bool
 {
-    return Numbers::isUInt($in);
+    return Numbers::isUInt($input);
 }
 
 /**
  * Check whether given input is ufloat.
  *
- * @param  any $in
+ * @param  any $input
  * @return bool
  * @since  3.0
  */
-function is_ufloat($in): bool
+function is_ufloat($input): bool
 {
-    return Numbers::isUFloat($in);
+    return Numbers::isUFloat($input);
 }
 
 /**
  * Check whether given input is signed.
  *
- * @param  any $in
+ * @param  any $input
  * @return bool
  * @since  3.0
  */
-function is_signed($in): bool
+function is_signed($input): bool
 {
-    return Numbers::isSigned($in);
+    return Numbers::isSigned($input);
 }
 
 /**
  * Check whether given input is unsigned.
  *
- * @param  any $in
+ * @param  any $input
  * @return bool
  * @since  3.0
  */
-function is_unsigned($in): bool
+function is_unsigned($input): bool
 {
-    return Numbers::isUnsigned($in);
+    return Numbers::isUnsigned($input);
 }

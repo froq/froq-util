@@ -313,33 +313,6 @@ function array_test_all(array $array, callable $func): bool
 }
 
 /**
- * Bridge function to Arrays.find().
- *
- * @param  array    $array
- * @param  callable $func
- * @return any|null
- * @since  4.10
- */
-function array_find(array $array, callable $func)
-{
-    return Arrays::find($array, $func);
-}
-
-/**
- * Bridge function to Arrays.findAll().
- *
- * @param  array    $array
- * @param  callable $func
- * @param  bool     $use_keys
- * @return array
- * @since  4.10
- */
-function array_find_all(array $array, callable $func, bool $use_keys = false): array
-{
-    return Arrays::findAll($array, $func, $use_keys);
-}
-
-/**
  * Bridge function to Arrays.random().
  *
  * @param  array &$array

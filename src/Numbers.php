@@ -21,25 +21,25 @@ use froq\common\object\StaticClass;
  */
 final class Numbers extends StaticClass
 {
+    /** Constants. */
+    public const PRECISION  = NUMBER_PRECISION,
+                 EPSILON    = PHP_FLOAT_EPSILON,
+                 MAX_INT    = PHP_FLOAT_INT,
+                 MAX_FLOAT  = PHP_FLOAT_MAX;
+
     /**
      * Convert.
      *
-     * @param  numeric  $input
-     * @param  int|null $decimals
-     * @return int|float|null
+     * @param  int|float|string $input
+     * @param  int|null         $decimals
+     * @return int|float
      * @since  4.0
      */
-    public static function convert($input, int $decimals = null): int|float|null
+    public static function convert(int|float|string $input, int $decimals = null): int|float
     {
-        if (is_numeric($input)) {
-            if ($decimals !== null) {
-                $input = number_format((float) $input, $decimals);
-            }
+        $input =@ format_number($input, $decimals);
 
-            return ($input + 0);
-        }
-
-        return null; // Error, not a number.
+        return ($input !== null) ? ($input + 0) : NAN; // Invalid, not a number.
     }
 
     /**
@@ -52,7 +52,7 @@ final class Numbers extends StaticClass
      */
     public static function compare(int|float $number1, int|float $number2, int $precision = null): int
     {
-        $precision ??= 14;
+        $precision ??= self::PRECISION;
 
         return round((float) $number1, $precision) <=> round((float) $number2, $precision);
     }
@@ -160,7 +160,7 @@ final class Numbers extends StaticClass
     public static function random(int|float $min = null, int|float $max = null, int $precision = null): int|float
     {
         $min ??= 0;
-        $max ??= PHP_INT_MAX;
+        $max ??= self::MAX_INT;
 
         if ($min === $max) {
             return $min;
@@ -198,7 +198,7 @@ final class Numbers extends StaticClass
      */
     public static function randomInt(int $min = null, int $max = null): int
     {
-        return self::random($min, $max ?? PHP_INT_MAX);
+        return self::random($min, $max ?? self::MAX_INT);
     }
 
     /**

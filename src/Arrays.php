@@ -28,7 +28,7 @@ final class Arrays extends StaticClass
      * @param  bool  $strict
      * @return bool
      */
-    public static function isList(array $array, bool $strict = false): bool
+    public static function isList(array $array, bool $strict = true): bool
     {
         if ($strict) {
             $ii = 0; // Expected (index increament).
@@ -626,46 +626,89 @@ final class Arrays extends StaticClass
     }
 
     /**
-     * Find first item that fulfills given test function.
+     * Find first item that satisfies given test function.
      *
      * @param  array    $array
      * @param  callable $func
-     * @return any|null
+     * @param  bool     $reverse
+     * @return mixed|null
      * @since  4.10
      */
-    public static function find(array $array, callable $func)
+    public static function find(array $array, callable $func, bool $reverse = false): mixed
     {
-        $ret = null; $i = 0;
+        $reverse && ($array = array_reverse($array));
 
         foreach ($array as $key => $value) {
-            if ($func($value, $key, $i++)) {
-                $ret = $value;
-                break;
+            if ($func($value, $key)) {
+                return $value;
             }
         }
+        return null;
+    }
 
+    /**
+     * Find all items that satisfy given test function.
+     *
+     * @param  array    $array
+     * @param  callable $func
+     * @param  bool     $reverse
+     * @param  bool     $useKeys
+     * @return array<mixed|null>
+     * @since  4.10
+     */
+    public static function findAll(array $array, callable $func, bool $reverse = false, bool $useKeys = true): array
+    {
+        $reverse && ($array = array_reverse($array));
+
+        $ret = [];
+        foreach ($array as $key => $value) {
+            if ($func($value, $key)) {
+                $useKeys ? $ret[$key] = $value : $ret[] = $value;
+            }
+        }
         return $ret;
     }
 
     /**
-     * Find all all items that fulfill given test function.
+     * Find first item key that satisfies given test function.
      *
      * @param  array    $array
      * @param  callable $func
-     * @param  bool     $useKeys
-     * @return array
-     * @since  4.10
+     * @param  bool     $reverse
+     * @return int|string|null
+     * @since  5.31
      */
-    public static function findAll(array $array, callable $func, bool $useKeys = false): array
+    public static function findKey(array $array, callable $func, bool $reverse = false): int|string|null
     {
-        $ret = []; $i = 0;
+        $reverse && ($array = array_reverse($array));
 
         foreach ($array as $key => $value) {
-            if ($func($value, $key, $i++)) {
-                !$useKeys ? $ret[] = $value : $ret[$key] = $value;
+            if ($func($value, $key)) {
+                return $key;
             }
         }
+        return null;
+    }
 
+    /**
+     * Find all keys that satisfy given test function.
+     *
+     * @param  array    $array
+     * @param  callable $func
+     * @param  bool     $reverse
+     * @return array<int|string|null>
+     * @since  5.31
+     */
+    public static function findKeys(array $array, callable $func, bool $reverse = false): array
+    {
+        $reverse && ($array = array_reverse($array));
+
+        $ret = [];
+        foreach ($array as $key => $value) {
+            if ($func($value, $key)) {
+                $ret[] = $key;
+            }
+        }
         return $ret;
     }
 
@@ -833,16 +876,17 @@ final class Arrays extends StaticClass
     }
 
     /**
-     * Sweep given array filtering null, '' and [] values.
+     * Clean given array filtering null, '' and [] values.
      *
      * @param  array      &$array
      * @param  array|null  $ignoredKeys
+     * @param  bool        $keepKeys
      * @return array
      * @since  4.0
      */
-    public static function sweep(array &$array, array $ignoredKeys = null): array
+    public static function clean(array &$array, array $ignoredKeys = null, bool $keepKeys = true): array
     {
-        $tester = self::getFilterTester();
+        $tester = self::getFilterFunction();
 
         if ($ignoredKeys == null) {
             $array = array_filter($array, $tester);
@@ -854,7 +898,7 @@ final class Arrays extends StaticClass
             }
         }
 
-        return $array;
+        return $keepKeys ? $array : array_values($array);
     }
 
     /**
@@ -877,47 +921,23 @@ final class Arrays extends StaticClass
     /**
      * Get first item from given array.
      *
-     * @param  array    &$array
-     * @param  any|null  $default
-     * @param  bool      $drop
+     * @param  array $array
      * @return any|null
      */
-    public static function first(array &$array, $default = null, bool $drop = false)
+    public static function first(array $array)
     {
-        $key   = array_key_first($array);
-        $value = $default;
-
-        if ($key !== null) {
-            $value = $array[$key];
-            if ($drop) {
-                unset($array[$key]);
-            }
-        }
-
-        return $value;
+        return array_first($array);
     }
 
     /**
      * Get last item from given array.
      *
-     * @param  array    &$array
-     * @param  any|null  $default
-     * @param  bool      $drop
+     * @param  array $array
      * @return any|null
      */
-    public static function last(array &$array, $default = null, bool $drop = false)
+    public static function last(array $array)
     {
-        $key   = array_key_last($array);
-        $value = $default;
-
-        if ($key !== null) {
-            $value = $array[$key];
-            if ($drop) {
-                unset($array[$key]);
-            }
-        }
-
-        return $value;
+        return array_last($array);
     }
 
     /**
@@ -1001,10 +1021,10 @@ final class Arrays extends StaticClass
      * @param  array $values
      * @param  bool  $strict
      * @param  bool  $reverse
-     * @return array|null
+     * @return array<int|string|null>
      * @since  4.0
      */
-    public static function searchKeys(array $array, array $values, bool $strict = true, bool $reverse = false): array|null
+    public static function searchKeys(array $array, array $values, bool $strict = true, bool $reverse = false): array
     {
         return array_search_keys($array, $values, $strict, $reverse);
     }
@@ -1110,15 +1130,15 @@ final class Arrays extends StaticClass
     public static function filter(array $array, callable $func = null, bool $keepKeys = true): array
     {
         if ($func == null) {
-            return array_filter($array, self::getFilterTester());
-        }
+            $ret = array_filter($array, self::getFilterFunction());
+        } else {
+            $ret = [];
 
-        $ret = []; $i = 0;
-
-        foreach ($array as $key => $value) try {
-            $func($value, $key, $i++, $array) && $ret[$key] = $value;
-        } catch (ArgumentCountError) {
-            $func($value) && $ret[$key] = $value;
+            foreach ($array as $key => $value) try {
+                $func($value, $key, $array) && $ret[$key] = $value;
+            } catch (ArgumentCountError) {
+                $func($value) && $ret[$key] = $value;
+            }
         }
 
         return $keepKeys ? $ret : array_values($ret);
@@ -1136,12 +1156,12 @@ final class Arrays extends StaticClass
      */
     public static function map(array $array, callable $func, bool $recursive = false, bool $keepKeys = true): array
     {
-        $ret = []; $i = 0;
+        $ret = [];
 
         foreach ($array as $key => $value) try {
             $ret[$key] = ($recursive && is_array($value))
                 ? self::map($array, $func, true, $keepKeys)
-                : $func($value, $key, $i++, $array);
+                : $func($value, $key, $array);
         } catch (ArgumentCountError) {
             $ret[$key] = ($recursive && is_array($value))
                 ? self::map($array, $func, true, $keepKeys)
@@ -1174,10 +1194,10 @@ final class Arrays extends StaticClass
      */
     public static function reduce(array $array, $carry, callable $func)
     {
-        $ret = $carry; $i = 0;
+        $ret = $carry;
 
         foreach ($array as $key => $value) {
-            $ret = $func($ret, $value, $key, $i++, $array);
+            $ret = $func($ret, $value, $key, $array);
         }
 
         return $ret;
@@ -1223,19 +1243,19 @@ final class Arrays extends StaticClass
      */
     public static function aggregate(array $array, callable $func, array $carry = null): array
     {
-        $carry ??= []; $i = 0;
+        $carry ??= [];
 
         foreach ($array as $key => $value) {
             // @cancel: Return can always be an array..
             // // Note: when "return" not used carry must be ref'ed (eg: (&$carry, $value, ..)).
-            // // $ret = $func($carry, $value, $key, $i++, $array);
+            // // $ret = $func($carry, $value, $key, $array);
             // // When "return" used.
             // // if ($ret && is_array($ret)) {
             // //     $carry = $ret;
             // // }
 
             // Note: carry must be ref'ed (eg: (&$carry, $value, ..)).
-            $func($carry, $value, $key, $i++, $array);
+            $func($carry, $value, $key, $array);
 
             $carry = (array) $carry;
         }
@@ -1266,20 +1286,14 @@ final class Arrays extends StaticClass
      * @param  array             $array
      * @param  callable|int|null $func
      * @param  int               $flags
-     * @param  bool              $assoc
+     * @param  bool|null         $assoc
      * @return array
      * @since  5.3
      */
-    public static function sort(array $array, callable|int $func = null, int $flags = 0, bool $assoc = false): array
+    public static function sort(array $array, callable|int $func = null, int $flags = 0, bool $assoc = null): array
     {
-        // As as shortcut for reversed (-1) sorts actually.
-        if (is_int($func)) {
-            $func = match ($func) {
-                -1      => fn($a, $b) => $a > $b ? -1 : 1,
-                 1      => fn($a, $b) => $a < $b ? -1 : 1,
-                default => throw new ValueError('Only 1 and -1 accepted')
-            };
-        }
+        $func = self::getSortFunction($func);
+        $assoc ??= !!$array;
 
         if ($assoc) {
             $func ? uasort($array, $func)
@@ -1295,14 +1309,16 @@ final class Arrays extends StaticClass
     /**
      * Apply a regular/callback key sort on given array.
      *
-     * @param  array         $array
-     * @param  callable|null $func
-     * @param  int           $flags
+     * @param  array             $array
+     * @param  callable|int|null $func
+     * @param  int               $flags
      * @return array
      * @since  5.3
      */
-    public static function sortKey(array $array, callable $func = null, int $flags = 0): array
+    public static function sortKey(array $array, callable|int $func = null, int $flags = 0): array
     {
+        $func = self::getSortFunction($func);
+
         $func ? uksort($array, $func)
               : ksort($array, $flags);
 
@@ -1314,12 +1330,14 @@ final class Arrays extends StaticClass
      *
      * @param  array       $array
      * @param  string|null $locale
-     * @param  bool        $assoc
+     * @param  bool|null   $assoc
      * @return array
      * @since  5.3 Moved from collection.Collection.
      */
-    public static function sortLocale(array $array, string $locale = null, bool $assoc = false): array
+    public static function sortLocale(array $array, string $locale = null, bool $assoc = null): array
     {
+        $assoc ??= !!$array;
+
         // Use current locale.
         if ($locale == null) {
             $assoc ? uasort($array, 'strcoll')
@@ -1438,11 +1456,25 @@ final class Arrays extends StaticClass
 
     /** Internals. */
 
-    private static Closure $filterTester;
-    private static function getFilterTester(): Closure
+    private static function getFilterFunction(): Closure
     {
-        return self::$filterTester ??= (
+        static $filterTester;
+
+        return $filterTester ??= (
             fn($v) => $v !== null && $v !== '' && $v !== []
         );
+    }
+    private static function getSortFunction(int|callable|null $func): callable|null
+    {
+        // As as shortcut for reversed (-1) sorts actually.
+        if (is_int($func)) {
+            $func = match ($func) {
+                -1      => fn($a, $b) => $a > $b ? -1 : 1,
+                 1      => fn($a, $b) => $a < $b ? -1 : 1,
+                default => throw new ValueError('Only 1 and -1 accepted')
+            };
+        }
+
+        return $func;
     }
 }
