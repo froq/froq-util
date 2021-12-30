@@ -748,7 +748,7 @@ class ReflectionPropertyExtended extends ReflectionProperty
     public function isInitialized(object $object = null): bool
     {
         return $this->callOverridingMethod('isInitialized', [], fn() => (
-            $this->getValue($object) !== null
+            $this->isDynamic() || $this->getValue($object) !== null
         ));
     }
 
