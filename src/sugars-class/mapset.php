@@ -920,3 +920,8 @@ class Dict extends Map
         return is_object($key) ? get_object_id($key) : strval($key);
     }
 }
+
+/** Functions. */
+function xmap(...$args): Map { return new Map(...$args); }
+function xset(...$args): Set { return new Set(...$args); }
+function xdict(...$args): Dict { return new Dict(...$args); }
