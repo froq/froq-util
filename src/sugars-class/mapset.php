@@ -35,12 +35,18 @@ class Map implements Iterator, ArrayAccess, Countable, Arrayable, Jsonable, List
     /**
      * Constructor.
      *
-     * @param iterable|null $data
+     * @param iterable|int|null $data
      */
-    public function __construct(iterable $data = null)
+    public function __construct(iterable|int $data = null)
     {
-        if ($data) foreach ($data as $key => $value) {
-            $this->set($key, $value);
+        if ($data) {
+            if (is_iterable($data)) {
+                foreach ($data as $key => $value) {
+                    $this->set($key, $value);
+                }
+            } else {
+                $this->data = array_fill(0, $data, null);
+            }
         }
     }
 
@@ -390,12 +396,18 @@ class Set implements Iterator, ArrayAccess, Countable, Arrayable, Jsonable, List
     /**
      * Constructor.
      *
-     * @param iterable|null $data
+     * @param iterable|int|null $data
      */
-    public function __construct(iterable $data = null)
+    public function __construct(iterable|int $data = null)
     {
-        if ($data) foreach ($data as $value) {
-            $this->add($value);
+        if ($data) {
+            if (is_iterable($data)) {
+                foreach ($data as $value) {
+                    $this->add($value);
+                }
+            } else {
+                $this->data = array_fill(0, $data, null);
+            }
         }
     }
 
