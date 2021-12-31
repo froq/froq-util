@@ -51,8 +51,8 @@ trait MapSetTrait
             }
         }
 
-        // When size given (override).
-        $size && ($this->data = array_fill(0, $size, null));
+        // When size given.
+        $size && ($this->data = array_pad($this->data, $size, null));
     }
 
     /** @magic __debugInfo() */
@@ -165,6 +165,31 @@ trait MapSetTrait
     public function popLeft()
     {
         return $this->shift();
+    }
+
+    /**
+     * Slice data items.
+     *
+     * @param  int      $start
+     * @param  int|null $end
+     * @return static
+     */
+    public function slice(int $start, int $end = null): static
+    {
+        $data = slice($this->data, $start, $end, keep_keys: ($this instanceof Map));
+
+        return new static($data);
+    }
+
+    /**
+     * Join data items.
+     *
+     * @param  string $separator
+     * @return string
+     */
+    public function join(string $separator): string
+    {
+        return join($separator, $this->data);
     }
 
     /**
