@@ -10,7 +10,7 @@ use froq\collection\iterator\{ArrayIterator, ReverseArrayIterator};
 use froq\collection\trait\{EachTrait, SortTrait, FilterTrait, MapTrait, ReduceTrait, FindTrait,
     MinMaxTrait, FirstLastTrait};
 use froq\common\interface\{Arrayable, Jsonable, Listable, Collectable, Iteratable, IteratableReverse};
-use froq\common\trait\{DataCountTrait, DataEmptyTrait, DataIteratorTrait, DataToArrayTrait, DataToJsonTrait};
+use froq\common\trait\{DataCountTrait, DataEmptyTrait, DataIteratorTrait, DataToListTrait, DataToArrayTrait, DataToJsonTrait};
 
 /**
  * Map/Set trait.
@@ -27,7 +27,7 @@ trait MapSetTrait
 {
     /** Traits. */
     use EachTrait, SortTrait, FilterTrait, MapTrait, ReduceTrait, FindTrait, MinMaxTrait, FirstLastTrait,
-        DataCountTrait, DataEmptyTrait, DataIteratorTrait, DataToArrayTrait, DataToJsonTrait;
+        DataCountTrait, DataEmptyTrait, DataIteratorTrait, DataToListTrait, DataToArrayTrait, DataToJsonTrait;
 
     /** Data holder. */
     protected array $data = [];
@@ -250,12 +250,6 @@ trait MapSetTrait
         }
 
         return $this;
-    }
-
-    /** @inheritDoc froq\common\interface\Listable */
-    public function toList(): array
-    {
-        return $this->values();
     }
 
     /** @inheritDoc froq\common\interface\Collectable */
