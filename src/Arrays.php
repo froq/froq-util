@@ -949,7 +949,7 @@ final class Arrays extends StaticClass
      */
     public static function keysExist(array $array, array $keys): bool
     {
-        return array_contains_keys($array, ...$keys);
+        return array_contains_key($array, ...$keys);
     }
 
     /**

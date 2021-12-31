@@ -89,6 +89,11 @@ final class Dumper
                             $recursion = self::checkRecursion($value);
                         }
 
+                        // Fix null/none keys.
+                        if ($key === '') {
+                            $key = "''";
+                        }
+
                         $space = '';
                         // $spaceGap = $maxKeyLen - strlen((string) $key);
                         // if ($spaceGap > 0) {

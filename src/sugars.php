@@ -1856,14 +1856,14 @@ function array_unset(array &$array, int|string ...$keys): array
 }
 
 /**
- * Check whether all given values are set in given array.
+ * Check whether given value(s) are set in given array.
  *
  * @param  array    $array
- * @param  any   ...$values
+ * @param  mixed ...$values
  * @return bool
  * @since  5.0
  */
-function array_contains(array $array, ...$values): bool
+function array_contains(array $array, mixed ...$values): bool
 {
     foreach ($values as $value) {
         if (!in_array($value, $array, true)) {
@@ -1874,14 +1874,14 @@ function array_contains(array $array, ...$values): bool
 }
 
 /**
- * Check whether all given keys are set in given array.
+ * Check whether given key(s) are set in given array.
  *
  * @param  array         $array
  * @param  int|string ...$keys
  * @return bool
  * @since  5.3
  */
-function array_contains_keys(array $array, int|string ...$keys): bool
+function array_contains_key(array $array, int|string ...$keys): bool
 {
     foreach ($keys as $key) {
         if (!array_key_exists($key, $array)) {
@@ -1892,14 +1892,14 @@ function array_contains_keys(array $array, int|string ...$keys): bool
 }
 
 /**
- * Drop given values from given array if exist.
+ * Drop given value(s) from given array if exist.
  *
  * @param  array    &$array
- * @param  any   ...$values
+ * @param  mixed ...$values
  * @return array
  * @since  5.0
  */
-function array_delete(array &$array, ...$values): array
+function array_delete(array &$array, mixed ...$values): array
 {
     foreach ($values as $value) {
         $key = array_search($value, $array, true);
@@ -1911,14 +1911,14 @@ function array_delete(array &$array, ...$values): array
 }
 
 /**
- * Drop given values from given array if exist.
+ * Drop given key(s) from given array if exist.
  *
  * @param  array      &$array
  * @param  int|string  $keys
  * @return array
  * @since  5.31
  */
-function array_delete_keys(array &$array, int|string ...$keys): array
+function array_delete_key(array &$array, int|string ...$keys): array
 {
     foreach ($keys as $key) {
         unset($array[$key]);
@@ -2515,36 +2515,34 @@ function array_entries(array $array): array
  * @param  array      &$array
  * @param  int|string  $key
  * @param  mixed       $value
- * @param  bool        $drop
  * @return array
  * @since  5.22
  */
-function array_push_entry(array &$array, int|string $key, mixed $value, bool $drop = true): array
+function array_push_entry(array &$array, int|string $key, mixed $value): array
 {
     // Drop old key (in case).
-    if ($drop) {
-        unset($array[$key]);
-    }
+    unset($array[$key]);
 
     $array[$key] = $value;
+
     return $array;
 }
 
 /**
  * Like array_pop() but returning key/value pairs.
  *
- * @param  array      &$array
- * @param  int|string  $key
- * @param  mixed       $value
+ * @param  array &$array
  * @return array|null
  * @since  5.22
  */
 function array_pop_entry(array &$array): array|null
 {
     $key = array_key_last($array);
+
     if ($key !== null) {
         return [$key, array_pop($array)];
     }
+
     return null;
 }
 
@@ -2560,25 +2558,44 @@ function array_pop_entry(array &$array): array|null
 function array_unshift_entry(array &$array, int|string $key, mixed $value): array
 {
     $array = [$key => $value] + $array;
+
     return $array;
 }
 
 /**
  * Like array_shift() but returning key/value pairs.
  *
- * @param  array      &$array
- * @param  int|string  $key
- * @param  mixed       $value
+ * @param  array &$array
  * @return array|null
  * @since  5.22
  */
 function array_shift_entry(array &$array): array|null
 {
     $key = array_key_first($array);
+
     if ($key !== null) {
-        return [$key, array_shift($array)];
+        if (is_list($array)) {
+            return [$key, array_shift($array)];
+        }
+        // Keep assoc keys (do not modify).
+        return [$key, array_select($array, $key, drop: true)];
     }
+
     return null;
+}
+
+/**
+ * Get current value of given array (for the sake of current())
+ * or given key's value if exists.
+ *
+ * @param  array           $array
+ * @param  int|string|null $key
+ * @return mixed
+ * @since  5.35
+ */
+function value(array $array, int|string $key = null): mixed
+{
+    return ($key === null) ? current($array) : ($array[$key] ?? null);
 }
 
 /**

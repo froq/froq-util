@@ -13,17 +13,17 @@ use froq\common\interface\{Arrayable, Jsonable, Listable, Collectable, Iteratabl
 use froq\common\trait\{DataCountTrait, DataEmptyTrait, DataIteratorTrait, DataToArrayTrait, DataToJsonTrait};
 
 /**
- * Map.
+ * Map/Set trait.
  *
- * A map class just like JavaScript's map but "a bit" extended.
+ * A trait used by Map/Set classes.
  *
  * @package froq\util
- * @object  Map
+ * @object  MapSetTrait
  * @author  Kerem Güneş
- * @since   5.25
+ * @since   5.35
+ * @@internal
  */
-class Map implements Iterator, ArrayAccess, Countable, Arrayable, Jsonable, Listable, Collectable,
-    Iteratable, IteratableReverse
+trait MapSetTrait
 {
     /** Traits. */
     use EachTrait, SortTrait, FilterTrait, MapTrait, ReduceTrait, FindTrait, MinMaxTrait, FirstLastTrait,
@@ -42,15 +42,16 @@ class Map implements Iterator, ArrayAccess, Countable, Arrayable, Jsonable, List
     {
         if ($data) {
             if (is_iterable($data)) {
+                $map = ($this instanceof Map);
                 foreach ($data as $key => $value) {
-                    $this->set($key, $value);
+                    $map ? $this->set($key, $value) : $this->add($value);
                 }
             } elseif (is_int($data)) {
                 $size = $data;
             }
         }
 
-        // When size given, override.
+        // When size given (override).
         $size && ($this->data = array_fill(0, $size, null));
     }
 
@@ -59,6 +60,234 @@ class Map implements Iterator, ArrayAccess, Countable, Arrayable, Jsonable, List
     {
         return $this->data;
     }
+
+    /**
+     * Get data keys.
+     *
+     * @return array.
+     */
+    public function keys(): array
+    {
+        return ($this instanceof Map)
+             ? array_map(fn($k) => strval($k), array_keys($this->data))
+             : array_keys($this->data);
+    }
+
+    /**
+     * Get data values.
+     *
+     * @return array.
+     */
+    public function values(): array
+    {
+        return array_values($this->data);
+    }
+
+    /**
+     * Get data entries.
+     *
+     * @return array.
+     */
+    public function entries(): array
+    {
+        return ($this instanceof Map)
+             ? array_map(fn($e) => [strval($e[0]), $e[1]], array_entries($this->data))
+             : array_keys($this->data);
+    }
+
+    /**
+     * Prepend given value to data.
+     *
+     * @param  mixed      $value
+     * @param  int|string $key   For Map's only.
+     * @return self
+     */
+    public function unshift(mixed $value, int|string $key = null): self
+    {
+        if ($this instanceof Set) {
+            array_value_exists($value, $this->data)
+                || array_unshift($this->data, $value);
+        } else {
+            $key ??= count($this->data); // Weird, yes.
+            array_unshift_entry($this->data, $key, $value);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Append given value to data.
+     *
+     * @param  mixed $value
+     * @return self
+     */
+    public function push(mixed $value): self
+    {
+        if ($this instanceof Set) {
+            array_value_exists($value, $this->data)
+                || array_push($this->data, $value);
+        } else {
+            array_push($this->data, $value);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Shift an item from data.
+     *
+     * @return mixed
+     */
+    public function shift(): mixed
+    {
+        return ($this instanceof Set)
+             ? array_shift($this->data)
+             : array_shift_entry($this->data)[1] ?? null;
+    }
+
+    /**
+     * Pop an item from data.
+     *
+     * @return mixed
+     */
+    public function pop(): mixed
+    {
+        return array_pop($this->data);
+    }
+
+    /** @aliasOf unshift() */
+    public function pushLeft(...$args)
+    {
+        return $this->unshift(...$args);
+    }
+
+    /** @aliasOf shift() */
+    public function popLeft()
+    {
+        return $this->shift();
+    }
+
+    /**
+     * Clear map/set.
+     *
+     * @return void
+     */
+    public function clear(): void
+    {
+        $this->empty();
+    }
+
+    /**
+     * Get map/set size.
+     *
+     * @return int
+     */
+    public function size(): int
+    {
+        return $this->count();
+    }
+
+    /**
+     * Get map/set data copy as a new static instance.
+     *
+     * @return static
+     */
+    public function copy(): static
+    {
+        return new static($this->data);
+    }
+
+    /**
+     * Copy map/set data to other map/set.
+     *
+     * @param  self (static) $that
+     * @return static
+     */
+    public function copyTo(self $that): static
+    {
+        foreach ($this->data as $key => $value) {
+            $that->set($key, $value);
+        }
+
+        return $that;
+    }
+
+    /**
+     * Copy map/set data from other map/set data.
+     *
+     * @param  self (static) $that
+     * @return static
+     */
+    public function copyFrom(self $that): static
+    {
+        foreach ($that->data as $key => $value) {
+            $this->set($key, $value);
+        }
+
+        return $this;
+    }
+
+    /** @inheritDoc froq\common\interface\Listable */
+    public function toList(): array
+    {
+        return $this->values();
+    }
+
+    /** @inheritDoc froq\common\interface\Collectable */
+    public function toCollection(): CollectionInterface
+    {
+        return new Collection($this->data);
+    }
+
+    /** @inheritDoc Iteratable */
+    public function getIterator(): iterable
+    {
+        return new ArrayIterator($this->data);
+    }
+
+    /** @inheritDoc IteratableReverse */
+    public function getReverseIterator(): iterable
+    {
+        return new ReverseArrayIterator($this->data);
+    }
+
+    /**
+     * Static constructor with data.
+     *
+     * @param  iterable $data
+     * @return static
+     */
+    public static function from(iterable $data): static
+    {
+        return new static($data);
+    }
+
+    /**
+     * Static constructor with items.
+     *
+     * @param  mixed ...$items
+     * @return static
+     */
+    public static function of(mixed ...$items): static
+    {
+        return new static($items);
+    }
+}
+
+/**
+ * Map.
+ *
+ * A map class just like JavaScript's map but "a bit" extended.
+ *
+ * @package froq\util
+ * @object  Map
+ * @author  Kerem Güneş
+ * @since   5.25
+ */
+class Map implements Iterator, ArrayAccess, Countable, Arrayable, Jsonable, Listable, Collectable,
+    Iteratable, IteratableReverse
+{
+    use MapSetTrait;
 
     /**
      * Set a key with given value.
@@ -159,56 +388,6 @@ class Map implements Iterator, ArrayAccess, Countable, Arrayable, Jsonable, List
     }
 
     /**
-     * Get keys.
-     *
-     * @return array.
-     */
-    public function keys(): array
-    {
-        return array_map(fn($k) => strval($k), array_keys($this->data));
-    }
-
-    /**
-     * Get values.
-     *
-     * @return array.
-     */
-    public function values(): array
-    {
-        return array_values($this->data);
-    }
-
-    /**
-     * Get entries.
-     *
-     * @return array.
-     */
-    public function entries(): array
-    {
-        return array_map(fn($e) => [strval($e[0]), $e[1]], array_entries($this->data));
-    }
-
-    /**
-     * Clear map.
-     *
-     * @return void
-     */
-    public function clear(): void
-    {
-        $this->empty();
-    }
-
-    /**
-     * Get map size.
-     *
-     * @return int
-     */
-    public function size(): int
-    {
-        return $this->count();
-    }
-
-    /**
      * Run a callback for each item.
      *
      * @param  callable $func
@@ -245,70 +424,6 @@ class Map implements Iterator, ArrayAccess, Countable, Arrayable, Jsonable, List
             && ($key = $this->prepareKey($key)) !== null; // Just for string cast.
     }
 
-    /**
-     * Get map data copy as a new static instance.
-     *
-     * @return static
-     */
-    public function copy(): static
-    {
-        return new static($this->data);
-    }
-
-    /**
-     * Copy map data to other map.
-     *
-     * @param  self (static) $that
-     * @return static
-     */
-    public function copyTo(self $that): static
-    {
-        foreach ($this->data as $key => $value) {
-            $that->set($key, $value);
-        }
-
-        return $that;
-    }
-
-    /**
-     * Copy map data from other map data.
-     *
-     * @param  self (static) $that
-     * @return static
-     */
-    public function copyFrom(self $that): static
-    {
-        foreach ($that->data as $key => $value) {
-            $this->set($key, $value);
-        }
-
-        return $this;
-    }
-
-    /** @inheritDoc froq\common\interface\Listable */
-    public function toList(): array
-    {
-        return $this->values();
-    }
-
-    /** @inheritDoc froq\common\interface\Collectable */
-    public function toCollection(): CollectionInterface
-    {
-        return new Collection($this->data);
-    }
-
-    /** @inheritDoc Iteratable */
-    public function getIterator(): iterable
-    {
-        return new ArrayIterator($this->data);
-    }
-
-    /** @inheritDoc IteratableReverse */
-    public function getReverseIterator(): iterable
-    {
-        return new ReverseArrayIterator($this->data);
-    }
-
     /** @inheritDoc ArrayAccess */
     public function offsetExists(mixed $key): bool
     {
@@ -331,28 +446,6 @@ class Map implements Iterator, ArrayAccess, Countable, Arrayable, Jsonable, List
     public function offsetUnset(mixed $key): void
     {
         $this->remove($key);
-    }
-
-    /**
-     * Static constructor.
-     *
-     * @param  iterable $data
-     * @return static
-     */
-    public static function from(iterable $data): static
-    {
-        return new static($data);
-    }
-
-    /**
-     * Static constructor.
-     *
-     * @param  mixed ...$items
-     * @return static
-     */
-    public static function of(mixed ...$items): static
-    {
-        return new static($items);
     }
 
     /**
@@ -390,40 +483,7 @@ class Map implements Iterator, ArrayAccess, Countable, Arrayable, Jsonable, List
 class Set implements Iterator, ArrayAccess, Countable, Arrayable, Jsonable, Listable, Collectable,
     Iteratable, IteratableReverse
 {
-    /** Traits. */
-    use EachTrait, SortTrait, FilterTrait, MapTrait, ReduceTrait, FindTrait, MinMaxTrait, FirstLastTrait,
-        DataCountTrait, DataEmptyTrait, DataIteratorTrait, DataToArrayTrait, DataToJsonTrait;
-
-    /** Data holder. */
-    protected array $data = [];
-
-    /**
-     * Constructor.
-     *
-     * @param iterable|int|null $data
-     * @param int|null          $size
-     */
-    public function __construct(iterable|int $data = null, int $size = null)
-    {
-        if ($data) {
-            if (is_iterable($data)) {
-                foreach ($data as $value) {
-                    $this->add($value);
-                }
-            } elseif (is_int($data)) {
-                $size = $data;
-            }
-        }
-
-        // When size given, override.
-        $size && ($this->data = array_fill(0, $size, null));
-    }
-
-    /** @magic __debugInfo() */
-    public function __debugInfo(): array
-    {
-        return $this->data;
-    }
+    use MapSetTrait;
 
     /**
      * Add a value.
@@ -557,56 +617,6 @@ class Set implements Iterator, ArrayAccess, Countable, Arrayable, Jsonable, List
     }
 
     /**
-     * Get keys.
-     *
-     * @return array
-     */
-    public function keys(): array
-    {
-        return array_keys($this->data);
-    }
-
-    /**
-     * Get values.
-     *
-     * @return array
-     */
-    public function values(): array
-    {
-        return array_values($this->data);
-    }
-
-    /**
-     * Get entries.
-     *
-     * @return array
-     */
-    public function entries(): array
-    {
-        return array_entries($this->data);
-    }
-
-    /**
-     * Clear set.
-     *
-     * @return void
-     */
-    public function clear(): void
-    {
-        $this->empty();
-    }
-
-    /**
-     * Get set size.
-     *
-     * @return int
-     */
-    public function size(): int
-    {
-        return $this->count();
-    }
-
-    /**
      * Run a callback for each item.
      *
      * @param  callable $func
@@ -642,70 +652,6 @@ class Set implements Iterator, ArrayAccess, Countable, Arrayable, Jsonable, List
         return array_key_exists($index, $this->data);
     }
 
-    /**
-     * Get set data copy as a new static instance.
-     *
-     * @return static
-     */
-    public function copy(): static
-    {
-        return new static($this->data);
-    }
-
-    /**
-     * Copy map data to other map.
-     *
-     * @param  self (static) $that
-     * @return static
-     */
-    public function copyTo(self $that): static
-    {
-        foreach ($this->data as $key => $value) {
-            $that->set($key, $value);
-        }
-
-        return $that;
-    }
-
-    /**
-     * Copy map data from other map data.
-     *
-     * @param  self (static) $that
-     * @return static
-     */
-    public function copyFrom(self $that): static
-    {
-        foreach ($that->data as $key => $value) {
-            $this->set($key, $value);
-        }
-
-        return $this;
-    }
-
-    /** @inheritDoc froq\common\interface\Listable */
-    public function toList(): array
-    {
-        return $this->values();
-    }
-
-    /** @inheritDoc froq\common\interface\Collectable */
-    public function toCollection(): CollectionInterface
-    {
-        return new Collection($this->data);
-    }
-
-    /** @inheritDoc Iteratable */
-    public function getIterator(): iterable
-    {
-        return new ArrayIterator($this->data);
-    }
-
-    /** @inheritDoc IteratableReverse */
-    public function getReverseIterator(): iterable
-    {
-        return new ReverseArrayIterator($this->data);
-    }
-
     /** @inheritDoc ArrayAccess */
     public function offsetExists(mixed $index): bool
     {
@@ -731,28 +677,6 @@ class Set implements Iterator, ArrayAccess, Countable, Arrayable, Jsonable, List
     public function offsetUnset(mixed $index): void
     {
         $this->removeIndex($index);
-    }
-
-    /**
-     * Static constructor.
-     *
-     * @param  iterable $data
-     * @return static
-     */
-    public static function from(iterable $data): static
-    {
-        return new static($data);
-    }
-
-    /**
-     * Static constructor.
-     *
-     * @param  mixed ...$items
-     * @return static
-     */
-    public static function of(mixed ...$items): static
-    {
-        return new static($items);
     }
 
     /**
@@ -811,7 +735,7 @@ class Dict extends Map
      */
     public function push(mixed $value): self
     {
-        $this->offsetSet(null, $value);
+        array_push($this->data, $value);
 
         return $this;
     }
@@ -888,18 +812,6 @@ class Dict extends Map
     }
 
     /** @override */
-    public function keys(): array
-    {
-        return array_keys($this->data);
-    }
-
-    /** @override */
-    public function entries(): array
-    {
-        return array_entries($this->data);
-    }
-
-    /** @override */
     public function hasValue(mixed $value, int|string &$key = null): bool
     {
         return array_value_exists($value, $this->data, key: $key);
@@ -908,9 +820,7 @@ class Dict extends Map
     /** @override */
     public function offsetSet(mixed $key, mixed $value): void
     {
-        $key = $this->prepareKey($key);
-
-        $this->set($key, $value);
+        $this->push($value);
     }
 
     /** @override */
