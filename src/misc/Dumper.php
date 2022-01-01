@@ -136,9 +136,10 @@ final class Dumper
 
                         // In case: "[\0ArrayObject\0storage] => ..".
                         $info = array_map_keys($info, function ($key) {
-                            if (strsrc((string) $key, "\0")) {
+                            $name = strval($key);
+                            if (strsrc($name, "\0")) {
                                 $key = array_last(split("\0", $key));
-                                $key = $key .' [private]';
+                                $key = $key .' '. (strsrc($name, '*') ? '[protected]' : '[private]');
                             }
                             return $key;
                         });
