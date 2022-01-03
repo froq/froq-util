@@ -2590,41 +2590,38 @@ function array_shift_entry(array &$array): array|null
  *
  * @param  array           $array
  * @param  int|string|null $key
+ * @param  mixed|null      $default
  * @return mixed
  * @since  5.35
  */
-function value(array $array, int|string $key = null): mixed
+function value(array $array, int|string $key = null, mixed $default = null): mixed
 {
-    return ($key === null) ? current($array) : ($array[$key] ?? null);
+    return ($key === null)
+         ? (first($array) ?? $default)
+         : ($array[$key]  ?? $default);
 }
 
 /**
  * Really got sick of "pass by reference" error.
  *
  * @param  array $array
- * @param  bool  $reset
  * @return mixed
  * @since  5.29
  */
-function first(array $array, bool $reset = false): mixed
+function first(array $array): mixed
 {
-    $reset && reset($array);
-
-    return $array ? current($array) : null; // No falses.
+    return $array ? reset($array) : null; // No falses.
 }
 
 /**
  * Really got sick of "pass by reference" error.
  *
  * @param  array $array
- * @param  bool  $reset
  * @return mixed
  * @since  5.29
  */
-function last(array $array, bool $reset = false): mixed
+function last(array $array): mixed
 {
-    $reset && reset($array);
-
     return $array ? end($array) : null; // No falses.
 }
 
