@@ -1221,14 +1221,14 @@ final class Arrays extends StaticClass
      *
      * @param  array    $array
      * @param  callable $func
-     * @param  bool     $useKeys
      * @param  bool     $swapKeys
+     * @param  bool     $recursive
      * @return array
      * @since  5.11
      */
-    public static function apply(array $array, callable $func, bool $useKeys = true, bool $swapKeys = false): array
+    public static function apply(array $array, callable $func, bool $swapKeys = false, bool $recursive = false): array
     {
-        return array_apply($array, $func, $useKeys, $swapKeys);
+        return array_apply($array, $func, $swapKeys, $recursive);
     }
 
     /**
