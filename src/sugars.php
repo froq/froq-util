@@ -1801,27 +1801,6 @@ function array_clean(array $array): array
 }
 
 /**
- * Apply given function to each element of given array with key/value notation as default.
- *
- * @param  array    $array
- * @param  callable $func
- * @param  bool     $use_keys
- * @param  bool     $swap_keys
- * @return array
- * @since  4.0
- */
-function array_apply(array $array, callable $func, bool $use_keys = true, bool $swap_keys = false): array
-{
-    if ($use_keys) {
-        return $swap_keys
-             ? array_map($func, array_keys($array), $array)  // With key/value notation.
-             : array_map($func, $array, array_keys($array)); // With value/key notation.
-    }
-
-    return array_map($func, $array);
-}
-
-/**
  * Check whether all given keys are set in given array.
  *
  * @param  array         $array
@@ -1980,6 +1959,42 @@ function array_unpop(array &$array, ...$values): int
 }
 
 /**
+ * Apply given function to each element of given array with key/value notation as default.
+ *
+ * @param  array    $array
+ * @param  callable $func
+ * @param  bool     $swap_keys
+ * @param  bool     $recursive
+ * @return array
+ * @since  4.0
+ */
+function array_apply(array $array, callable $func, bool $swap_keys = false, bool $recursive = false): array
+{
+    foreach ($array as $key => $value) {
+        $array[$key] = ($recursive && is_array($value))
+            ? array_apply($value, $func, $swap_keys, true)
+            : ($swap_keys ? $func($key, $value)   // With key/value notation.
+                          : $func($value, $key)); // With value/key notation.
+    }
+
+    return $array;
+}
+
+/**
+ * Recursive version of array_apply().
+ *
+ * @param  array    $array
+ * @param  callable $func
+ * @param  bool     $swap_keys
+ * @return array
+ * @since  5.37
+ */
+function array_apply_recursive(array $array, callable $func, bool $swap_keys = false): array
+{
+    return array_apply($array, $func, $swap_keys, true);
+}
+
+/**
  * Map an array fields by given keys only.
  *
  * @param  array    $array
@@ -2000,19 +2015,18 @@ function array_map_only(array $array, array $keys, callable $func): array
 }
 
 /**
- * Map recursively an array by a callback.
+ * Recursive version of array_map().
  *
- * @param  array    $array
  * @param  callable $func
- * @param  bool     $use_keys
+ * @param  array    $array
  * @return array
  * @since  5.1
  */
-function array_map_recursive(array $array, callable $func, bool $use_keys = true): array
+function array_map_recursive(callable $func, array $array): array
 {
     foreach ($array as $key => $value) {
-        $array[$key] = is_array($value) ? array_map_recursive($value, $func, $use_keys)
-            : ($use_keys ? $func($value, $key) : $func($value));
+        $array[$key] = is_array($value) ? array_map_recursive($func, $value)
+            : $func($value);
     }
 
     return $array;
@@ -2826,7 +2840,7 @@ function format(string $format, mixed $arg, mixed ...$args): string
     // Convert bools.
     if (str_contains($format, '%b')) {
         $format = str_replace('%b', '%s', $format);
-        $args = array_apply($args, fn($arg) => is_bool($arg) ? format_bool($arg) : $arg);
+        $args = array_map(fn($arg) => is_bool($arg) ? format_bool($arg) : $arg, $args);
     }
 
     return sprintf($format, ...$args);
