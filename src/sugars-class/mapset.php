@@ -68,9 +68,9 @@ trait MapSetTrait
      */
     public function keys(): array
     {
-        return ($this instanceof Map)
-             ? array_map(fn($k) => strval($k), array_keys($this->data))
-             : array_keys($this->data);
+        return ($this instanceof Set)
+             ? array_keys($this->data)
+             : array_map(fn($k) => strval($k), array_keys($this->data));
     }
 
     /**
@@ -90,25 +90,25 @@ trait MapSetTrait
      */
     public function entries(): array
     {
-        return ($this instanceof Map)
-             ? array_map(fn($e) => [strval($e[0]), $e[1]], array_entries($this->data))
-             : array_keys($this->data);
+        return ($this instanceof Set)
+             ? array_entries($this->data)
+             : array_map(fn($e) => [strval($e[0]), $e[1]], array_entries($this->data));
     }
 
     /**
      * Prepend given value to data.
      *
-     * @param  mixed      $value
-     * @param  int|string $key   For Map's only.
+     * @param  mixed                  $value
+     * @param  int|string|object|null $key   For Map's only.
      * @return self
      */
-    public function unshift(mixed $value, int|string $key = null): self
+    public function unshift(mixed $value, int|string|object $key = null): self
     {
         if ($this instanceof Set) {
             array_value_exists($value, $this->data)
                 || array_unshift($this->data, $value);
         } else {
-            $key ??= count($this->data); // Weird, yes.
+            $key = $this->prepareKey($key ?? $this->count());
             array_unshift_entry($this->data, $key, $value);
         }
 
@@ -118,16 +118,18 @@ trait MapSetTrait
     /**
      * Append given value to data.
      *
-     * @param  mixed $value
+     * @param  mixed                  $value
+     * @param  int|string|object|null $key   For Map's only.
      * @return self
      */
-    public function push(mixed $value): self
+    public function push(mixed $value, int|string|object $key = null): self
     {
         if ($this instanceof Set) {
             array_value_exists($value, $this->data)
                 || array_push($this->data, $value);
         } else {
-            array_push($this->data, $value);
+            $key = $this->prepareKey($key ?? $this->count());
+            array_push_entry($this->data, $key, $value);
         }
 
         return $this;
@@ -165,31 +167,6 @@ trait MapSetTrait
     public function popLeft()
     {
         return $this->shift();
-    }
-
-    /**
-     * Slice data items.
-     *
-     * @param  int      $start
-     * @param  int|null $end
-     * @return static
-     */
-    public function slice(int $start, int $end = null): static
-    {
-        $data = slice($this->data, $start, $end, keep_keys: ($this instanceof Map));
-
-        return new static($data);
-    }
-
-    /**
-     * Join data items.
-     *
-     * @param  string $separator
-     * @return string
-     */
-    public function join(string $separator): string
-    {
-        return join($separator, $this->data);
     }
 
     /**
@@ -351,7 +328,9 @@ class Map implements Iterator, ArrayAccess, Countable, Arrayable, Jsonable, List
 
         if ($this->has($key)) {
             // Assign value ref.
-            $value = $this->data[$key];
+            if (func_num_args() == 2) {
+                $value = $this->data[$key];
+            }
 
             unset($this->data[$key]);
 
@@ -370,8 +349,6 @@ class Map implements Iterator, ArrayAccess, Countable, Arrayable, Jsonable, List
      */
     public function removeValue(mixed $value, string &$key = null): bool
     {
-        $key = $this->prepareKey($key);
-
         if ($this->hasValue($value, $key)) {
             unset($this->data[$key]);
 
@@ -389,10 +366,10 @@ class Map implements Iterator, ArrayAccess, Countable, Arrayable, Jsonable, List
      * @param  string|null &$key
      * @return bool
      */
-    public function replace(mixed $oldValue, mixed $newValue, int &$key = null): bool
+    public function replace(mixed $oldValue, mixed $newValue, string &$key = null): bool
     {
-        if ($this->removeValue($oldValue, $key)) {
-            $this->set($key, $newValue);
+        if ($this->hasValue($oldValue, $key)) {
+            $this->data[$key] = $newValue;
 
             return true;
         }
@@ -440,7 +417,7 @@ class Map implements Iterator, ArrayAccess, Countable, Arrayable, Jsonable, List
     public function hasValue(mixed $value, string &$key = null): bool
     {
         return array_value_exists($value, $this->data, key: $key)
-            && ($key = $this->prepareKey($key)) !== null; // Just for string cast.
+            && ($key = strval($key)) !== null; // Just for string cast.
     }
 
     /** @inheritDoc ArrayAccess */
@@ -452,6 +429,9 @@ class Map implements Iterator, ArrayAccess, Countable, Arrayable, Jsonable, List
     /** @inheritDoc ArrayAccess */
     public function offsetSet(mixed $key, mixed $value): void
     {
+        // For calls like `items[] = item`.
+        $key ??= $this->count();
+
         $this->set($key, $value);
     }
 
@@ -476,11 +456,6 @@ class Map implements Iterator, ArrayAccess, Countable, Arrayable, Jsonable, List
      */
     protected function prepareKey(int|string|object $key): string
     {
-        // Dict has own prepareKey() method.
-        if ($this instanceof Dict) {
-            return $key;
-        }
-
         if (is_string($key) && $key == '') {
             throw new KeyError('Empty key given');
         }
@@ -528,7 +503,7 @@ class Set implements Iterator, ArrayAccess, Countable, Arrayable, Jsonable, List
      */
     public function set(int $index, mixed $value): self
     {
-        $this->checkIndex($index);
+        $this->indexCheck($index);
 
         if (!$this->has($value)) {
             $count = $this->count();
@@ -553,7 +528,7 @@ class Set implements Iterator, ArrayAccess, Countable, Arrayable, Jsonable, List
      */
     public function get(int $index, mixed $default = null): mixed
     {
-        $this->checkIndex($index);
+        $this->indexCheck($index);
 
         return $this->hasIndex($index) ? $this->data[$index] : $default;
     }
@@ -592,7 +567,7 @@ class Set implements Iterator, ArrayAccess, Countable, Arrayable, Jsonable, List
      */
     public function removeIndex(int $index, mixed &$value = null): bool
     {
-        $this->checkIndex($index);
+        $this->indexCheck($index);
 
         if ($this->hasIndex($index)) {
             $count = $this->count();
@@ -725,7 +700,7 @@ class Set implements Iterator, ArrayAccess, Countable, Arrayable, Jsonable, List
      * @return void
      * @throws KeyError
      */
-    private function checkIndex(mixed $index): void
+    private function indexCheck(mixed $index): void
     {
         if (!is_int($index) || $index < 0) {
             throw new KeyError('Index must be int & greater than -1');
@@ -747,19 +722,6 @@ class Set implements Iterator, ArrayAccess, Countable, Arrayable, Jsonable, List
 class Dict extends Map
 {
     /**
-     * Push an item by given value.
-     *
-     * @param  mixed $value
-     * @return self
-     */
-    public function push(mixed $value): self
-    {
-        array_push($this->data, $value);
-
-        return $this;
-    }
-
-    /**
      * Push an item by given key/value, dropping old key if exists.
      *
      * @param  int|string|object $key
@@ -768,22 +730,7 @@ class Dict extends Map
      */
     public function pushKey(int|string|object $key, mixed $value): self
     {
-        array_push_entry($this->data, $this->prepareKey($key), $value);
-
-        return $this;
-    }
-
-    /**
-     * Pop last item.
-     *
-     * @return mixed|null
-     */
-    public function pop(): mixed
-    {
-        if ($entry = $this->popItem()) {
-            return $entry[1];
-        }
-        return null;
+        return $this->push($value, $key);
     }
 
     /**
@@ -794,10 +741,7 @@ class Dict extends Map
      */
     public function popKey(int|string|object $key): mixed
     {
-        if ($this->remove($key, $value)) {
-            return $value;
-        }
-        return null;
+        return $this->remove($key, $value) ? $value : null;
     }
 
     /**
@@ -807,7 +751,9 @@ class Dict extends Map
      */
     public function popItem(): array|null
     {
-        return array_pop_entry($this->data);
+        $item = array_pop_entry($this->data);
+        $item && ($item[0] = strval($item[0]));
+        return $item;
     }
 
     /**
@@ -820,41 +766,6 @@ class Dict extends Map
     public static function fromKeys(array $keys, mixed $value = null): static
     {
         return new static(array_fill_keys($keys, $value));
-    }
-
-    /** @override */
-    public function forEach(callable $func): void
-    {
-        foreach ($this->data as $key => $value) {
-            $func($value, $key, $this);
-        }
-    }
-
-    /** @override */
-    public function hasValue(mixed $value, int|string &$key = null): bool
-    {
-        return array_value_exists($value, $this->data, key: $key);
-    }
-
-    /** @override */
-    public function offsetSet(mixed $key, mixed $value): void
-    {
-        $this->push($value);
-    }
-
-    /** @override */
-    protected function prepareKey(int|string|object|null $key): string
-    {
-        if (is_string($key) && $key == '') {
-            throw new KeyError('Empty key given');
-        }
-
-        // Get next key for "dict[] = .." calls.
-        if (is_null($key)) {
-            return (string) $this->count();
-        }
-
-        return is_object($key) ? get_object_id($key) : strval($key);
     }
 }
 
