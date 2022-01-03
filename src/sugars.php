@@ -2420,6 +2420,20 @@ function array_shuffle(array $array, bool $assoc = false): array
 }
 
 /**
+ * Compose an array with given keys/values, unlike errorizing array_combine().
+ *
+ * @param  array<int|string> $keys
+ * @param  array             $values
+ * @param  mixed|null        $default
+ * @return array
+ * @since  4.11, 5.38 Moved from sugars/array.
+ */
+function array_compose(array $keys, array $values, mixed $default = null): array
+{
+    return Arrays::compose($keys, $values, $default);
+}
+
+/**
  * Merge all given item(s) with given array with strict uniqueness.
  *
  * @param  array    $array

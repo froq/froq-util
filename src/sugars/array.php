@@ -194,20 +194,6 @@ function array_remove_random(array &$array, int $limit = 1): array
 }
 
 /**
- * Bridge function to Arrays.compose().
- *
- * @param  array<int|string> $keys
- * @param  array             $values
- * @param  any|null          $default
- * @return array
- * @since  4.11
- */
-function array_compose(array $keys, array $values, $default = null): array
-{
-    return Arrays::compose($keys, $values, $default);
-}
-
-/**
  * Bridge function to Arrays.complete().
  *
  * @param  bool     $null_strings
