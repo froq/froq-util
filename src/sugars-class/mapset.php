@@ -286,6 +286,19 @@ class Map implements Iterator, ArrayAccess, Countable, Arrayable, Jsonable, List
     use MapSetTrait;
 
     /**
+     * Add a value.
+     *
+     * @param  mixed $value
+     * @return self
+     */
+    public function add(mixed $value): self
+    {
+        $this->data[] = $value;
+
+        return $this;
+    }
+
+    /**
      * Set a key with given value.
      *
      * @param  int|string|object $key
