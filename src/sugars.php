@@ -1995,26 +1995,6 @@ function array_apply_recursive(array $array, callable $func, bool $swap_keys = f
 }
 
 /**
- * Map an array fields by given keys only.
- *
- * @param  array    $array
- * @param  array    $keys
- * @param  callable $func
- * @return array
- * @since  5.0
- */
-function array_map_only(array $array, array $keys, callable $func): array
-{
-    foreach ($keys as $key) {
-        if (array_key_exists($key, $array)) {
-            $array[$key] = $func($array[$key]);
-        }
-    }
-
-    return $array;
-}
-
-/**
  * Recursive version of array_map().
  *
  * @param  callable $func
