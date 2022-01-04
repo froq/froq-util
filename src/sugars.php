@@ -1995,6 +1995,26 @@ function array_apply_recursive(array $array, callable $func, bool $swap_keys = f
 }
 
 /**
+ * Recursive version of array_filter().
+ *
+ * @param  array         $array
+ * @param  callable|null $func
+ * @param  int           $mode
+ * @return array
+ * @since  5.40
+ */
+function array_filter_recursive(array $array, callable $func = null, int $mode = 0): array
+{
+    foreach ($array as $key => $value) {
+        if (is_array($value)) {
+            $array[$key] = array_filter_recursive($value, $func, $mode);
+        }
+    }
+
+    return array_filter($array, $func, $mode);
+}
+
+/**
  * Recursive version of array_map().
  *
  * @param  callable $func
