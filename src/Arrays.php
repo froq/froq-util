@@ -1092,31 +1092,20 @@ final class Arrays extends StaticClass
      */
     public static function countValues(array $array, bool $strict = true, bool $addKeys = false): array
     {
-        // @note: No memoize, cos' corrupting the result.
-        $find = function ($value) use (&$result, $strict) {
-            foreach ($result as $i => $item) {
-                if ($strict ? $value === $item['value'] : $value == $item['value']) {
-                    return $i;
-                }
-            }
-            return -1;
-        };
+        $ret = [];
 
-        $result = [];
+        // Reduce O(n) stuff below.
+        $values = array_dedupe($array);
 
-        foreach ($array as $key => $value) {
-            $i = $find($value);
-            if ($i == -1) {
-                $tmp = ['value' => $value, 'count' => 1];
-                $addKeys && $tmp['keys'] = [$key];
-                $result[] = $tmp;
-            } else {
-                $result[$i]['count'] += 1;
-                $addKeys && $result[$i]['keys'][] = $key;
-            }
+        foreach ($values as $value) {
+            $keys = array_keys($array, $value, $strict);
+
+            $ret[] = $addKeys
+                ? ['count' => count($keys), 'value' => $value, 'keys' => $keys]
+                : ['count' => count($keys), 'value' => $value];
         }
 
-        return $result;
+        return $ret;
     }
 
     /**
