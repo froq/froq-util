@@ -170,6 +170,29 @@ trait MapSetTrait
     }
 
     /**
+     * Check whether data contains given value.
+     *
+     * @param  mixed $value
+     * @param  bool  $strict
+     * @return bool
+     */
+    public function contains(mixed $value, bool $strict = true): bool
+    {
+        return array_value_exists($value, $this->data, $strict);
+    }
+
+    /**
+     * Check whether data contains given key.
+     *
+     * @param  int|string $key
+     * @return bool
+     */
+    public function containsKey(int|string $key): bool
+    {
+        return array_key_exists($key, $this->data);
+    }
+
+    /**
      * Clear map/set.
      *
      * @return void
