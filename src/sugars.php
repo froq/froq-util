@@ -2654,6 +2654,21 @@ function last(array $array): mixed
 }
 
 /**
+ * Sort an array without modifying input array.
+ *
+ * @param  array              $array
+ * @param  callable|int|null  $func
+ * @param  int                $flags
+ * @param  bool|null          $assoc
+ * @return array
+ * @since  5.41
+ */
+function sorted(array $array, callable|int $func = null, int $flags = 0, bool $assoc = null): array
+{
+    return Arrays::sort($array, $func, $flags, $assoc);
+}
+
+/**
  * Remove last error message with/without code.
  *
  * @param  int|null $code
@@ -3038,6 +3053,40 @@ function random_float(float $min = null, float $max = null, int $precision = nul
 function random_string(int $length, bool $puncted = false): string
 {
     return Strings::random($length, $puncted);
+}
+
+/**
+ * Generate a random range by given length.
+ *
+ * @param  int            $length
+ * @param  int|float|null $min
+ * @param  int|float|null $max
+ * @param  int|null       $precision
+ * @return array|null
+ * @since  5.41
+ */
+function random_range(int $length, int|float $min = null, int|float $max = null, int $precision = null): array|null
+{
+    $ret = [];
+
+    if ($length < 0) {
+        trigger_error(sprintf('%s(): Negative length given', __function__));
+        return null;
+    }
+
+    while ($length) {
+        $item = Numbers::random($min, $max, $precision);
+
+        // Provide unique-ness.
+        while (in_array($item, $ret, true)) {
+            $item = Numbers::random($min, $max, $precision);
+        }
+
+        $ret[] = $item;
+        $length--;
+    }
+
+    return $ret;
 }
 
 /**

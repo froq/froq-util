@@ -50,6 +50,22 @@ final class Arrays extends StaticClass
     }
 
     /**
+     * Check whether given array is an associative array.
+     *
+     * @param  array $array
+     * @return bool
+     */
+    public static function isAssoc(array $array): bool
+    {
+        foreach (array_keys($array) as $key) {
+            if (is_string($key) || $key < 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Check whether all keys are "string" in given array.
      *
      * @param  array $array
@@ -1293,7 +1309,7 @@ final class Arrays extends StaticClass
     public static function sort(array $array, callable|int $func = null, int $flags = 0, bool $assoc = null): array
     {
         $func = self::getSortFunction($func);
-        $assoc ??= !!$array;
+        $assoc ??= self::isAssoc($array);
 
         if ($assoc) {
             $func ? uasort($array, $func)
@@ -1336,7 +1352,7 @@ final class Arrays extends StaticClass
      */
     public static function sortLocale(array $array, string $locale = null, bool $assoc = null): array
     {
-        $assoc ??= !!$array;
+        $assoc ??= self::isAssoc($array);
 
         // Use current locale.
         if ($locale == null) {

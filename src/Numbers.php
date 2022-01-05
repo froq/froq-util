@@ -159,6 +159,9 @@ final class Numbers extends StaticClass
      */
     public static function random(int|float $min = null, int|float $max = null, int $precision = null): int|float
     {
+        // For floats.
+        $maxOrig = $max;
+
         $min ??= 0;
         $max ??= self::MAX_INT;
 
@@ -173,12 +176,13 @@ final class Numbers extends StaticClass
 
         if (is_int($min) && is_int($max)) {
             // Interestingly ~50% slower (in some/what cases)..
-            $ret = random_int($min, $max);
+            // $ret = random_int($min, $max);
 
             // Nope..
-            // srand();
-            // $ret = rand() % ($max - $min) + $min;
+            srand();
+            $ret = rand() % ($max - $min) + $min;
         } else {
+            $max = $maxOrig ?? ($min + 1.0);
             $ret = lcg_value() * ($max - $min) + $min;
             if ($precision !== null) {
                 $ret = round($ret, $precision);
@@ -212,6 +216,6 @@ final class Numbers extends StaticClass
      */
     public static function randomFloat(float $min = null, float $max = null, int $precision = null): float
     {
-        return self::random($min, $max ?? $min + 1.0, $precision);
+        return self::random($min, $max ?? ($min + 1.0), $precision);
     }
 }
