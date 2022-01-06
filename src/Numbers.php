@@ -178,9 +178,10 @@ final class Numbers extends StaticClass
             // Interestingly ~50% slower (in some/what cases)..
             // $ret = random_int($min, $max);
 
-            // Nope..
             srand();
-            $ret = rand() % ($max - $min) + $min;
+            $ret = ($min == 0 && $max == 1)
+                 ? rand(0, 1)                     // Just in case.
+                 : rand() % ($max - $min) + $min; // Prevent big numbers.
         } else {
             $max = $maxOrig ?? ($min + 1.0);
             $ret = lcg_value() * ($max - $min) + $min;
