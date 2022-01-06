@@ -3062,10 +3062,11 @@ function random_string(int $length, bool $puncted = false): string
  * @param  int|float|null $min
  * @param  int|float|null $max
  * @param  int|null       $precision
+ * @param  bool           $unique
  * @return array|null
  * @since  5.41
  */
-function random_range(int $length, int|float $min = null, int|float $max = null, int $precision = null): array|null
+function random_range(int $length, int|float $min = null, int|float $max = null, int $precision = null, bool $unique = true): array|null
 {
     $ret = [];
 
@@ -3078,7 +3079,7 @@ function random_range(int $length, int|float $min = null, int|float $max = null,
         $item = Numbers::random($min, $max, $precision);
 
         // Provide unique-ness.
-        while (in_array($item, $ret, true)) {
+        while ($unique && in_array($item, $ret, true)) {
             $item = Numbers::random($min, $max, $precision);
         }
 
