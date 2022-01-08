@@ -256,7 +256,7 @@ function split(string $sep, string $in, int $limit = null, int $flags = null, bo
     if ($sep === '') {
         $ret = (array) preg_split('~~u', $in, -1, 1);
         if (!$pad && $limit) { // Like str_split(), but with Unicode.
-            return array_map(fn($r) => join('', $r), array_chunk($ret, $limit));
+            return array_map(fn($r) => join($r), array_chunk($ret, $limit));
         }
     } else {
         // Note: "[]" is special & used for charsets as separator (pattern), "." etc must be quoted also.
@@ -515,9 +515,12 @@ function str_rand(string $str, int $length = null): string|null
         return null;
     }
 
-    srand(); // Ensure a new seed (@see https://wiki.php.net/rfc/object_scope_prng).
+    $tmp = preg_split('~~u', $str, -1, 1);
 
-    return !$length ? str_shuffle($str) : mb_substr(str_shuffle($str), 0, $length);
+    srand(); // Ensure a new seed (@see https://wiki.php.net/rfc/object_scope_prng).
+    shuffle($tmp);
+
+    return !$length ? join($tmp) : join(array_slice($tmp, 0, $length));
 }
 
 /**
@@ -533,8 +536,10 @@ function str_rand(string $str, int $length = null): string|null
 function str_chunk(string $str, int $length = 76, string $separator = "\r\n", bool $join = true): string|array
 {
     $ret = array_chunk(preg_split('~~u', $str, -1, 1), $length);
-    return $join ? array_reduce($ret,
-        fn($ret, $part) => $ret .= join('', $part) . $separator) : $ret;
+
+    return $join ? array_reduce(
+        $ret, fn($ret, $part) => $ret .= join($part) . $separator
+    ) : $ret;
 }
 
 /**
@@ -547,7 +552,7 @@ function str_chunk(string $str, int $length = 76, string $separator = "\r\n", bo
  */
 function str_concat(string $str, string|int|float|bool|null ...$items): string
 {
-    return $str . join('', $items);
+    return $str . join($items);
 }
 
 /**
