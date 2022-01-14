@@ -2825,9 +2825,7 @@ function uuid(bool $dashed = true, bool $timed = false, bool $guid = false): str
  */
 function uuid_hash(int $length = 32, bool $dashed = false, bool $timed = false, bool $guid = false): string|null
 {
-    static $algos = [32 => 'md5', 40 => 'sha1', 64 => 'sha256', 16 => 'fnv1a64'];
-
-    $algo =@ $algos[$length];
+    $algo =@ [32 => 'md5', 40 => 'sha1', 64 => 'sha256', 16 => 'fnv1a64'][$length];
 
     if (!$algo) {
         trigger_error(sprintf('%s(): Invalid length, valids are: 32,40,64,16', __function__));
