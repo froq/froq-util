@@ -293,14 +293,14 @@ final /* fuckic static */ class Util extends StaticClass
     }
 
     /**
-     * Make an array with given object.
+     * Make an array with given data input.
      *
-     * @param  object $data
-     * @param  bool   $deep
+     * @param  array|object|null $data
+     * @param  bool              $deep
      * @return array
      * @since  5.2
      */
-    public static function makeArray(object $data, bool $deep = true): array
+    public static function makeArray(array|object|null $data, bool $deep = true): array
     {
         // Memoize maker function.
         static $make; $make ??= function ($data) use (&$make, $deep) {
@@ -314,14 +314,14 @@ final /* fuckic static */ class Util extends StaticClass
     }
 
     /**
-     * Make an object with given array.
+     * Make an object with given data input.
      *
-     * @param  array $data
-     * @param  bool  $deep
+     * @param  array|object|null $data
+     * @param  bool              $deep
      * @return object
      * @since  5.2
      */
-    public static function makeObject(array $data, bool $deep = true): object
+    public static function makeObject(array|object|null $data, bool $deep = true): object
     {
         // Memoize maker function.
         static $make; $make ??= function ($data) use (&$make, $deep) {
