@@ -115,6 +115,11 @@ final class Dumper
 
                     [$objectType, $objectId] = split('#', Objects::getId($input));
 
+                    // I really hate this thing.
+                    if ($objectType == 'stdClass') {
+                        $objectType = 'object';
+                    }
+
                     // Handle special objects.
                     if ($input instanceof \SplFixedArray) {
                         $output = format('object(%d) <%s>#%s {', $input->count(), $objectType, $objectId);
