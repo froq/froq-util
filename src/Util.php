@@ -305,7 +305,12 @@ final /* fuckic static */ class Util extends StaticClass
         // Memoize maker function.
         static $make; $make ??= function ($data) use (&$make, $deep) {
             foreach ($data as $key => $value) {
-                $data->{$key} = ($deep && is_object($value)) ? $make($value) : $value;
+                $value = ($deep && is_object($value)) ? $make($value) : $value;
+                if (is_array($data)) {
+                    $data[$key] = $value;
+                } else {
+                    $data->$key = $value;
+                }
             }
             return (array) $data;
         };
@@ -326,7 +331,12 @@ final /* fuckic static */ class Util extends StaticClass
         // Memoize maker function.
         static $make; $make ??= function ($data) use (&$make, $deep) {
             foreach ($data as $key => $value) {
-                $data[$key] = ($deep && is_array($value)) ? $make($value) : $value;
+                $value = ($deep && is_array($value)) ? $make($value) : $value;
+                if (is_array($data)) {
+                    $data[$key] = $value;
+                } else {
+                    $data->$key = $value;
+                }
             }
             return (object) $data;
         };
