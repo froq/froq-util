@@ -341,9 +341,9 @@ trait ReflectionClassTrait
                 array_push($inames, 'flags', 'dllist');
             }
         }
-        // DOM stuff, yes..
         else {
             $thisClass = $this->reference;
+            // DOM stuff, yes..
             if (is_class_of($thisClass, 'DOMNode')) {
                 $tmp1 = [];
                 array_append($tmp1, 'nodeName', 'nodeValue', 'nodeType', 'parentNode', 'childNodes', 'firstChild',
@@ -389,6 +389,12 @@ trait ReflectionClassTrait
                 array_push($inames, 'length');
             } elseif (is_class_of($thisClass, 'DOMXPath')) {
                 array_push($inames, 'document');
+            }
+            // Date/Time stuff.
+            elseif (is_class_of($thisClass, 'DateTime', 'DateTimeImmutable')) {
+                array_push($inames, 'date', 'timezone', 'timezone_type');
+            } elseif (is_class_of($thisClass, 'DateTimeZone')) {
+                array_push($inames, 'timezone', 'timezone_type');
             }
         }
 
@@ -546,10 +552,10 @@ class ReflectionPropertyExtended extends ReflectionProperty
     public function traits(): Set
     {
         return Set::from($this->getDeclaringClass()->getTraits())
-            ->filter(fn($ref) =>
+            ->filter(fn($ref) => (
                 $ref->hasProperty($this->reference->name) &&
                 $ref->getProperty($this->reference->name)->class == $ref->name
-            );
+            ));
     }
 
     /**
@@ -907,6 +913,16 @@ class ReflectionPropertyExtended extends ReflectionProperty
                 $value = ['preserveWhiteSpace' => true, 'strictErrorChecking' => true, 'validateOnParse' => false][$name] ?? null;
                 $found = isset($value);
             }
+            // Date/Time stuff.
+            elseif (!$default && is_class_of($object, 'DateTime', 'DateTimeImmutable', 'DateTimeZone')) {
+                // Sorry...
+                $export = var_export($object, true); $exportArray = [];
+                eval('$exportArray = ['. grep($export, '~array\((.+?)\)~s') .'];');
+                if (isset($exportArray[$name])) {
+                    $value = $exportArray[$name];
+                    $found = true;
+                }
+            }
         }
 
         return [$value, $found];
@@ -936,6 +952,12 @@ class ReflectionPropertyExtended extends ReflectionProperty
             $ret = ['flags', 'isCorrupted', 'heap'];
         } elseif (is_equal_of($class, 'SplDoublyLinkedList', 'SplStack', 'SplQueue')) {
             $ret = ['flags', 'dllist'];
+        }
+        // Date/Time stuff.
+        elseif (is_class_of($class, 'DateTime', 'DateTimeImmutable')) {
+            $ret = ['date', 'timezone', 'timezone_type'];
+        } elseif (is_class_of($class, 'DateTimeZone')) {
+            $ret = ['timezone', 'timezone_type'];
         }
 
         return $ret;
@@ -1061,6 +1083,12 @@ class ReflectionPropertyExtended extends ReflectionProperty
             $types[] = ['int' => ['length!']];
         } elseif (is_class_of($class, 'DOMXPath')) {
             $types[] = ['DOMDocument' => ['document']];
+        }
+        // Date/Time stuff.
+        elseif (is_class_of($class, 'DateTime', 'DateTimeImmutable')) {
+            $types[] = ['string' => ['date!', 'timezone!'], 'int' => ['timezone_type!']];
+        } elseif (is_class_of($class, 'DateTimeZone')) {
+            $types[] = ['string' => ['timezone!'], 'int' => ['timezone_type!']];
         }
 
         // Search in types.
@@ -1343,10 +1371,10 @@ trait ReflectionCallableTrait
     public function interfaces(): Set
     {
         return Set::from($this->getDeclaringClass()->getInterfaces())
-            ->filter(fn($ref) =>
+            ->filter(fn($ref) => (
                 $ref->hasMethod($this->name) &&
                 $ref->getMethod($this->name)->class == $ref->name
-            );
+            ));
     }
 
     /**
@@ -1389,10 +1417,10 @@ trait ReflectionCallableTrait
     public function traits(): Set
     {
         return Set::from($this->getDeclaringClass()->getTraits())
-            ->filter(fn($ref) =>
+            ->filter(fn($ref) => (
                 $ref->hasMethod($this->name) &&
                 $ref->getMethod($this->name)->class == $ref->name
-            );
+            ));
     }
 
     /**
