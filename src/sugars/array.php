@@ -405,3 +405,17 @@ function array_values_exist(array $array, array $values): bool
 {
     return Arrays::valuesExist($array, $values);
 }
+
+/**
+ * Bridge function to Arrays.options().
+ *
+ * @param  array|null $options
+ * @param  array|null $options_default
+ * @param  bool       $recursive
+ * @return array
+ * @since  5.44
+ */
+function array_options(array|null $options, array|null $options_default = null, bool $recursive = false): array
+{
+    return Arrays::options($options, $options_default, $recursive);
+}
