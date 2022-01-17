@@ -1641,7 +1641,8 @@ function file_extension(string $file, bool $with_dot = false, bool $lower = true
  */
 function udate(int|float|string $when = null, string $where = null): DateTime
 {
-    $when ??= ''; $where ??= date_default_timezone_get();
+    $when  ??= '';
+    $where ??= Util::getDefaultTimezone();
 
     switch (get_type($when)) {
         case 'int': // Eg: 1603339284
