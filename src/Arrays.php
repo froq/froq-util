@@ -989,7 +989,7 @@ final class Arrays extends StaticClass
      * @return array
      * @since  5.44
      */
-    public static function options(array|null $options, array|null $optionsDefault = null, bool $recursive = false): array
+    public static function options(array|null $options, array|null $optionsDefault = null, bool $recursive = true): array
     {
         return $recursive ? array_merge_recursive((array) $optionsDefault, (array) $options)
                           : array_merge((array) $optionsDefault, (array) $options);

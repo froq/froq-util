@@ -415,7 +415,7 @@ function array_values_exist(array $array, array $values): bool
  * @return array
  * @since  5.44
  */
-function array_options(array|null $options, array|null $options_default = null, bool $recursive = false): array
+function array_options(array|null $options, array|null $options_default = null, bool $recursive = true): array
 {
     return Arrays::options($options, $options_default, $recursive);
 }
