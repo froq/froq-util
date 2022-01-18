@@ -2065,14 +2065,14 @@ function array_map_keys(array $array, callable $func, bool $recursive = false): 
  * @param  array    $array
  * @param  array    $keys
  * @param  any|null $value
- * @param  string   $check
+ * @param  bool     $isset
  * @return array
  * @since  4.0
  */
-function array_pad_keys(array $array, array $keys, $value = null, string $check = 'isset'): array
+function array_pad_keys(array $array, array $keys, $value = null, bool $isset = false): array
 {
     foreach ($keys as $key) {
-        $ok = ($check == 'isset') ? isset($array[$key]) : array_key_exists($key, $array);
+        $ok = $isset ? isset($array[$key]) : array_key_exists($key, $array);
         $ok || $array[$key] = $value;
     }
 
