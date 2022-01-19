@@ -1552,7 +1552,7 @@ function file_path(...$args)
 function file_name(string $file, bool $with_ext = false): string|null
 {
     // A directory is not a file.
-    if (substr($file, -1) == DIRECTORY_SEPARATOR) {
+    if (strsfx($file, DIRECTORY_SEPARATOR)) {
         return null;
     }
 
