@@ -8,7 +8,7 @@ declare(strict_types=1);
 namespace froq\util;
 
 use froq\util\UtilException;
-use froq\common\object\StaticClass;
+use StaticClass;
 
 /**
  * Util.

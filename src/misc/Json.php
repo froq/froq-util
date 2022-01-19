@@ -7,7 +7,7 @@ declare(strict_types=1);
 
 namespace froq\util\misc;
 
-use froq\common\object\StaticClass;
+use StaticClass;
 
 /**
  * Json.
