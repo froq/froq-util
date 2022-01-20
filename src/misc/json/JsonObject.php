@@ -5,9 +5,8 @@
  */
 declare(strict_types=1);
 
-namespace froq\util\misc;
+namespace froq\util\misc\json;
 
-use froq\util\{UtilException, Objects, misc\Json};
 use froq\common\interface\{Arrayable, Jsonable};
 use JsonSerializable, ArrayAccess;
 
@@ -16,8 +15,8 @@ use JsonSerializable, ArrayAccess;
  *
  * Represents a dynamic entity which is mapped as JSON object including some utility methods.
  *
- * @package froq\util\misc
- * @object  froq\util\misc\JsonObject
+ * @package froq\util\misc\json
+ * @object  froq\util\misc\json\JsonObject
  * @author  Kerem Güneş
  * @since   5.0
  */
@@ -57,7 +56,7 @@ class JsonObject implements Arrayable, Jsonable, JsonSerializable, ArrayAccess
     public function __destruct()
     {
         // Must drop from cache stack to free the memo.
-        unset(self::$__JSON_OBJECT_CACHE[Objects::getId($this)]);
+        unset(self::$__JSON_OBJECT_CACHE[get_object_id($this)]);
     }
 
     /**
@@ -197,7 +196,7 @@ class JsonObject implements Arrayable, Jsonable, JsonSerializable, ArrayAccess
      */
     private function arrayify(): array
     {
-        return self::$__JSON_OBJECT_CACHE[Objects::getId($this)] ??= $this->toArray();
+        return self::$__JSON_OBJECT_CACHE[get_object_id($this)] ??= $this->toArray();
     }
 
     /**

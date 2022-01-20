@@ -5,7 +5,7 @@
  */
 declare(strict_types=1);
 
-namespace froq\util\misc;
+namespace froq\util\misc\json;
 
 use StaticClass;
 
@@ -14,8 +14,8 @@ use StaticClass;
  *
  * Represents a static entity which builds/parses JSON strings safely.
  *
- * @package froq\util\misc
- * @object  froq\util\misc\Json
+ * @package froq\util\misc\json
+ * @object  froq\util\misc\json\Json
  * @author  Kerem Güneş
  * @since   5.0
  */
