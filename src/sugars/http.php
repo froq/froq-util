@@ -39,11 +39,11 @@ function http_version(): float
 /**
  * Make/get an HTTP date.
  *
- * @param  int|null $time
+ * @param  int|string|null $time
  * @return string
  * @since  4.0
  */
-function http_date(int $time = null): string
+function http_date(int|string $time = null): string
 {
     return Http::date($time);
 }
