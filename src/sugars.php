@@ -3271,7 +3271,7 @@ function is_image($in): bool
  */
 function is_stream($in): bool
 {
-    return $in && is_resource($in) && get_resource_type($in) == 'stream';
+    return $in && (is_resource($in) && get_resource_type($in) == 'stream');
 }
 
 /**
