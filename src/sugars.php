@@ -1043,19 +1043,23 @@ function get_path_info(string $path, string|int $component = null): string|array
         return null;
     }
 
-    $ret = ['path' => $path] + array_map(fn($v) => strlen($v) ? $v : null, $info);
+    $ret = [
+        'path' => $path,
+        'type' => realpath($path) ? filetype($path) : null,
+        ...array_map(fn($v) => strlen($v) ? $v : null, $info)
+    ];
 
     $ret['filename']  = file_name($path, false);
     $ret['extension'] = file_extension($path, false);
 
-    if ($component) {
+    if ($component !== null) {
         if (is_string($component)) {
             $ret = $ret[$component] ?? null;
         } else {
             $ret = match ($component) {
                 PATHINFO_DIRNAME  => $ret['dirname'],  PATHINFO_BASENAME  => $ret['basename'],
                 PATHINFO_FILENAME => $ret['filename'], PATHINFO_EXTENSION => $ret['extension'],
-                default           => $ret, // All.
+                PATHINFO_TYPE     => $ret['type'],     default            => $ret, // All.
             };
         }
     }

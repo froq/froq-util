@@ -27,6 +27,12 @@ const CASE_TITLE = 2, CASE_DASH  = 3,
       CASE_SNAKE = 4, CASE_CAMEL = 5;
 
 /**
+ * Path info.
+ * @since 6.0
+ */
+const PATHINFO_TYPE = 0;
+
+/**
  * Number precision.
  * @since 5.31
  */
