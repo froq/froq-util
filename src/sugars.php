@@ -1102,7 +1102,7 @@ function tmp(): string
 function tmpdir(string $prefix = null, int $mode = 0755): string|null
 {
     // Prefix may becomes subdir here.
-    $dir = tmp() . DIRECTORY_SEPARATOR . ($prefix ?? 'froq-') . suid();
+    $dir = tmp() . DIRECTORY_SEPARATOR . $prefix . suid();
 
     return mkdir($dir, $mode, true) ? $dir : null;
 }
@@ -1118,7 +1118,7 @@ function tmpdir(string $prefix = null, int $mode = 0755): string|null
 function tmpnam(string $prefix = null, int $mode = 0644): string|null
 {
     // Prefix may becomes subdir here.
-    $nam = tmp() . DIRECTORY_SEPARATOR . ($prefix ?? 'froq-') . suid();
+    $nam = tmp() . DIRECTORY_SEPARATOR . $prefix . suid() . '.tmp';
 
     return mkfile($nam, $mode, true) ? $nam : null;
 }
@@ -1132,11 +1132,12 @@ function tmpnam(string $prefix = null, int $mode = 0644): string|null
  */
 function is_tmpdir(string $dir): bool
 {
-    return is_dir($dir) && strpfx($dir, tmp());
+    return is_dir($dir)
+        && str_starts_with($dir, tmp());
 }
 
 /**
- * Check whether given file is in temporary directory.
+ * Check whether given file is in temporary directory and created by tmpnam().
  *
  * @param  string $nam
  * @return bool
@@ -1144,7 +1145,9 @@ function is_tmpdir(string $dir): bool
  */
 function is_tmpnam(string $nam): bool
 {
-    return is_file($nam) && strpfx($nam, tmp());
+    return is_file($nam)
+        && str_starts_with($nam, tmp())
+        && str_ends_with($nam, '.tmp');
 }
 
 /**
@@ -1277,7 +1280,7 @@ function mkfiletemp(string $prefix = null, int $mode = 0644, bool $froq = false)
 function rmfiletemp(string $file): bool|null
 {
     if (!is_tmpnam($file)) {
-        trigger_error(sprintf('%s(): Cannot remove a file which is outside of %s directory',
+        trigger_error(sprintf('%s(): Cannot remove a file that is outside of %s directory or non-existent',
             __function__, tmp()));
         return null;
     }
@@ -1475,7 +1478,7 @@ function file_read_output(string $file, array $file_data = null): string|null
     if (!is_file($file)) {
         trigger_error(sprintf('%s(): No file exists such %s', __function__, $file));
         return null;
-    } elseif (!strsfx($file, '.php')) {
+    } elseif (!str_ends_with($file, '.php')) {
         trigger_error(sprintf('%s(): Cannot include non-PHP file such %s', __function__, $file));
         return null;
     }
@@ -1552,7 +1555,7 @@ function file_path(...$args)
 function file_name(string $file, bool $with_ext = false): string|null
 {
     // A directory is not a file.
-    if (strsfx($file, DIRECTORY_SEPARATOR)) {
+    if (str_ends_with($file, DIRECTORY_SEPARATOR)) {
         return null;
     }
 
