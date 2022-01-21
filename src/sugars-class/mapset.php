@@ -282,6 +282,22 @@ trait MapSetTrait
     }
 
     /**
+     * Static constructor for string with regular split pattern.
+     *
+     * @param string   $string
+     * @param string   $pattern
+     * @param int|null $limit
+     * @param int|null $flags
+     * @param bool     $pad
+     * @since 6.0
+     */
+    public static function fromSplit(string $string, string $pattern, int $limit = null, int $flags = null,
+        bool $pad = true)
+    {
+        return new static(split($pattern, $string, $limit, $flags, $pad));
+    }
+
+    /**
      * Static constructor with items.
      *
      * @param  mixed ...$items
