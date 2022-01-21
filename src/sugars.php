@@ -945,8 +945,7 @@ function get_request_id(): string
  */
 function get_real_path(string $path, string|bool $check = null): string|null
 {
-    $path = trim($path);
-    if (!$path) {
+    if (trim($path) == '') {
         return null;
     }
     if ($rpath = realpath($path)) {
@@ -955,20 +954,20 @@ function get_real_path(string $path, string|bool $check = null): string|null
 
     $ret = '';
     $sep = DIRECTORY_SEPARATOR;
+    $win = DIRECTORY_SEPARATOR == '\\';
 
     // Make path "foo" => "./foo" so prevent invalid returns.
-    if (!strsrc($path, $sep)) {
+    if (!str_contains($path, $sep) || ($win && substr($path, 1, 2) != ':\\')) {
         $path = '.' . $sep . $path;
     }
 
     foreach (explode($sep, $path) as $i => $cur) {
-        $cur = trim($cur);
         if ($i == 0) {
             if ($cur == '~') { // Home path (eg: ~/Desktop).
                 $ret = getenv('HOME') ?: '';
                 continue;
             } elseif ($cur == '.' || $cur == '..') {
-                if (!$ret) {
+                if ($ret == '') {
                     $file = getcwd(); // Fallback.
 
                     foreach (debug_backtrace(0) as $trace) {
@@ -982,25 +981,45 @@ function get_real_path(string $path, string|bool $check = null): string|null
                     }
 
                     $ret  = ($cur == '.') ? dirname($file) : dirname(dirname($file));
-                } // Else pass.
+                }
                 continue;
             }
         }
 
-        if ($cur == '.' || !$cur) {
+        if ($cur == '' || $cur == '.') {
             continue;
         } elseif ($cur == '..') {
-            $ret = dirname($ret); // Jump upper.
+            $ret = dirname($ret); // Up.
             continue;
         }
 
-        $ret .= $sep . $cur; // Append current.
+        // Prepend separator current.
+        $ret .= $sep . $cur;
     }
 
     // Validate file/directory or file only existence.
     if ($check) {
-        $ok = ($check == 'file') ? is_file($path) : file_exists($ret);
+        $ok = ($check == 'file') ? is_file($ret) : file_exists($ret);
         $ok || $ret = null;
+    }
+
+    // Normalize.
+    if ($ret) {
+        // Drop repeatings.
+        $ret = preg_replace(
+            '~(['. preg_quote(PATH_SEPARATOR . DIRECTORY_SEPARATOR) .'])\1+~',
+            '\1', $ret
+        );
+
+        // Drop ending slashes.
+        if ($ret != PATH_SEPARATOR && $ret != DIRECTORY_SEPARATOR) {
+            $ret = chop($ret, PATH_SEPARATOR . DIRECTORY_SEPARATOR);
+        }
+
+        // Fix leading slash for win
+        if ($win && $ret[0] == $sep) {
+            $ret = substr($ret, 1);
+        }
     }
 
     return $ret;
@@ -1748,7 +1767,7 @@ function getlocale(int $category = LC_ALL, string|array $default = null, bool $a
 
     if ($tmp !== false && $array) {
         $tmp = [];
-        if (strsrc($ret, ';')) {
+        if (str_contains($ret, ';')) {
             foreach (split(';', $ret) as $re) {
                 [$name, $value] = split('=', $re, 2);
                 $tmp[] = [$name, get_constant_value($name), 'value' => $value];
