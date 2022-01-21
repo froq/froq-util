@@ -1055,7 +1055,7 @@ function get_path_info(string $path, string|int $component = null): string|array
             $ret = match ($component) {
                 PATHINFO_DIRNAME  => $ret['dirname'],  PATHINFO_BASENAME  => $ret['basename'],
                 PATHINFO_FILENAME => $ret['filename'], PATHINFO_EXTENSION => $ret['extension'],
-                default           => null,
+                default           => $ret, // All.
             };
         }
     }
