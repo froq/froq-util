@@ -3352,9 +3352,9 @@ function is_equal_of(mixed $value, mixed ...$values): bool
  */
 function is_class_of(string|object $class, string|object ...$classes): bool
 {
-    $class1 = is_object($class) ? $class::class : $class;
+    $class1 = get_class_name($class);
     foreach ($classes as $class2) {
-        $class2 = is_object($class2) ? $class2::class : $class2;
+        $class2 = get_class_name($class2);
         if (is_a($class1, $class2, true)) {
             return true;
         }
