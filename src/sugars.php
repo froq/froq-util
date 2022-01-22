@@ -1192,17 +1192,17 @@ function mkfile(string $file, int $mode = 0644, bool $tmp = false): bool
     $file = get_real_path($file);
 
     if (is_dir($file)) {
-        trigger_error(sprintf('%s(): Cannot create file %s, it is a directory', __function__, $file));
+        trigger_error(sprintf('%s(): Cannot make file %s, it is a directory', __function__, $file));
         return false;
     } elseif (is_file($file)) {
-        trigger_error(sprintf('%s(): Cannot create file %s, it is already exist', __function__, $file));
+        trigger_error(sprintf('%s(): Cannot make file %s, it is already exist', __function__, $file));
         return false;
     }
 
     // Ensure directory.
     $dir = dirname($file);
-    if (!is_dir($dir) && !mkdir($dir, 0755, true)) {
-        trigger_error(sprintf('%s(): Cannot create file directory %s', __function__, $dir));
+    if (!is_dir($dir) && !@mkdir($dir, 0755, true)) {
+        trigger_error(sprintf('%s(): Cannot make file directory %s [%s]', __function__, $dir, error_message()));
         return false;
     }
 
