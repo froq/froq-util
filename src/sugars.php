@@ -791,21 +791,20 @@ function get_constant_value(string $name, mixed $default = null): mixed
  * @param  string|object $class
  * @param  string        $name
  * @param  bool          $scope_check
- * @return bool|null
+ * @return bool
  * @since  4.0
  */
-function constant_exists(string|object $class, string $name, bool $scope_check = true): bool|null
+function constant_exists(string|object $class, string $name, bool $scope_check = true): bool
 {
     if ($scope_check) {
         $caller_class = debug_backtrace(2, 2)[1]['class'] ?? null;
         if ($caller_class) {
-            return ($caller_class === Objects::getName($class))
-                && Objects::hasConstant($class, $name);
+            return ($caller_class === Objects::getName($class)) && Objects::hasConstant($class, $name);
         }
         return defined(Objects::getName($class) .'::'. $name);
     }
 
-    return Objects::hasConstant($class, $name);
+    return (bool) Objects::hasConstant($class, $name);
 }
 
 /**
@@ -938,8 +937,8 @@ function get_request_id(): string
 /**
  * Get real path of given path.
  *
- * @param  string            $path
- * @param  string||bool|null $check
+ * @param  string           $path
+ * @param  string|bool|null $check
  * @return string|null
  * @since  4.0
  */
@@ -1156,7 +1155,8 @@ function tmpnam(string $prefix = null, int $mode = 0644): string|null
 function is_tmpdir(string $dir): bool
 {
     return is_dir($dir)
-        && str_starts_with($dir, tmp());
+        && str_starts_with($dir, tmp())
+        && realpath($dir) !== tmp();
 }
 
 /**
@@ -1176,18 +1176,18 @@ function is_tmpnam(string $nam): bool
 /**
  * Create a file with given file path.
  *
- * @param  string  $file
- * @param  int     $mode
- * @param  bool    $tmp @internal
- * @return bool|null
+ * @param  string $file
+ * @param  int    $mode
+ * @param  bool   $tmp @internal
+ * @return bool
  * @since  4.0
  */
-function mkfile(string $file, int $mode = 0644, bool $tmp = false): bool|null
+function mkfile(string $file, int $mode = 0644, bool $tmp = false): bool
 {
     $file = trim($file);
     if (!$file) {
         trigger_error(sprintf('%s(): No file given', __function__));
-        return null;
+        return false;
     }
 
     // Some speed for internal tmp calls.
@@ -1196,10 +1196,10 @@ function mkfile(string $file, int $mode = 0644, bool $tmp = false): bool|null
 
         if (is_dir($file)) {
             trigger_error(sprintf('%s(): Cannot create %s, it is a directory', __function__, $file));
-            return null;
+            return false;
         } elseif (is_file($file)) {
             trigger_error(sprintf('%s(): Cannot create %s, it is already exist', __function__, $file));
-            return null;
+            return false;
         }
     }
 
@@ -1213,22 +1213,22 @@ function mkfile(string $file, int $mode = 0644, bool $tmp = false): bool|null
  * Remove a file.
  *
  * @param  string $file
- * @return bool|null
+ * @return bool
  * @since  4.0
  */
-function rmfile(string $file): bool|null
+function rmfile(string $file): bool
 {
     $file = trim($file);
     if (!$file) {
         trigger_error(sprintf('%s(): No file given', __function__));
-        return null;
+        return false;
     }
 
     $file = get_real_path($file);
 
     if (is_dir($file)) {
         trigger_error(sprintf('%s(): Cannot remove %s, it is a directory', __function__, $file));
-        return null;
+        return false;
     }
 
     return is_file($file) && unlink($file);
@@ -1255,15 +1255,15 @@ function mkdirtemp(string $prefix = null, int $mode = 0755, bool $froq = false):
  * Remove a folder from system temporary directory.
  *
  * @param  string $dir
- * @return bool|null
+ * @return bool
  * @since  4.0
  */
-function rmdirtemp(string $dir): bool|null
+function rmdirtemp(string $dir): bool
 {
     if (!is_tmpdir($dir)) {
         trigger_error(sprintf('%s(): Cannot remove a directory which is outside of %s directory',
             __function__, tmp()));
-        return null;
+        return false;
     }
 
     // Clean inside but not recursive.
@@ -1297,15 +1297,15 @@ function mkfiletemp(string $prefix = null, int $mode = 0644, bool $froq = false)
  * Remove a file from in temporary directory.
  *
  * @param  string $file
- * @return bool|null
+ * @return bool
  * @since  4.0
  */
-function rmfiletemp(string $file): bool|null
+function rmfiletemp(string $file): bool
 {
     if (!is_tmpnam($file)) {
         trigger_error(sprintf('%s(): Cannot remove a file that is outside of %s directory or non-existent',
             __function__, tmp()));
-        return null;
+        return false;
     }
 
     return is_file($file) && unlink($file);
