@@ -1192,10 +1192,10 @@ function mkfile(string $file, int $mode = 0644, bool $tmp = false): bool
     $file = get_real_path($file);
 
     if (is_dir($file)) {
-        trigger_error(sprintf('%s(): Cannot make file %s, it is a directory', __function__, $file));
+        trigger_error(sprintf('%s(): Cannot make file %s, it\'s a directory', __function__, $file));
         return false;
     } elseif (is_file($file)) {
-        trigger_error(sprintf('%s(): Cannot make file %s, it is already exist', __function__, $file));
+        trigger_error(sprintf('%s(): Cannot make file %s, it\'s already exist', __function__, $file));
         return false;
     }
 
@@ -1226,7 +1226,7 @@ function rmfile(string $file): bool
     $file = get_real_path($file);
 
     if (is_dir($file)) {
-        trigger_error(sprintf('%s(): Cannot remove %s, it is a directory', __function__, $file));
+        trigger_error(sprintf('%s(): Cannot remove %s, it\'s a directory', __function__, $file));
         return false;
     }
 
