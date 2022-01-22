@@ -1184,27 +1184,27 @@ function is_tmpnam(string $nam): bool
  */
 function mkfile(string $file, int $mode = 0644, bool $tmp = false): bool
 {
-    $file = trim($file);
-    if (!$file) {
+    if (trim($file) == '') {
         trigger_error(sprintf('%s(): No file given', __function__));
         return false;
     }
 
-    // Some speed for internal tmp calls.
-    if (!$tmp) {
-        $file = get_real_path($file);
+    $file = get_real_path($file);
 
-        if (is_dir($file)) {
-            trigger_error(sprintf('%s(): Cannot create %s, it is a directory', __function__, $file));
-            return false;
-        } elseif (is_file($file)) {
-            trigger_error(sprintf('%s(): Cannot create %s, it is already exist', __function__, $file));
-            return false;
-        }
+    if (is_dir($file)) {
+        trigger_error(sprintf('%s(): Cannot create file %s, it is a directory', __function__, $file));
+        return false;
+    } elseif (is_file($file)) {
+        trigger_error(sprintf('%s(): Cannot create file %s, it is already exist', __function__, $file));
+        return false;
     }
 
     // Ensure directory.
-    is_dir(dirname($file)) || mkdir(dirname($file), 0755, true);
+    $dir = dirname($file);
+    if (!is_dir($dir) && !mkdir($dir, 0755, true)) {
+        trigger_error(sprintf('%s(): Cannot create file directory %s', __function__, $dir));
+        return false;
+    }
 
     return touch($file) && chmod($file, $mode);
 }
@@ -1218,8 +1218,7 @@ function mkfile(string $file, int $mode = 0644, bool $tmp = false): bool
  */
 function rmfile(string $file): bool
 {
-    $file = trim($file);
-    if (!$file) {
+    if (trim($file) == '') {
         trigger_error(sprintf('%s(): No file given', __function__));
         return false;
     }
