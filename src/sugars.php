@@ -1140,7 +1140,7 @@ function tmpdir(string $prefix = null, int $mode = 0755): string|null
 function tmpnam(string $prefix = null, int $mode = 0644): string|null
 {
     // Prefix may becomes subdir here.
-    $nam = tmp() . DIRECTORY_SEPARATOR . $prefix . suid() . '.tmp';
+    $nam = tmp() . DIRECTORY_SEPARATOR . $prefix . suid();
 
     return mkfile($nam, $mode, true) ? $nam : null;
 }
@@ -1155,7 +1155,7 @@ function tmpnam(string $prefix = null, int $mode = 0644): string|null
 function is_tmpdir(string $dir): bool
 {
     return is_dir($dir)
-        && str_starts_with($dir, tmp())
+        && str_starts_with($dir, tmp() . DIRECTORY_SEPARATOR)
         && realpath($dir) !== tmp();
 }
 
@@ -1169,8 +1169,7 @@ function is_tmpdir(string $dir): bool
 function is_tmpnam(string $nam): bool
 {
     return is_file($nam)
-        && str_starts_with($nam, tmp())
-        && str_ends_with($nam, '.tmp');
+        && str_starts_with($nam, tmp() . DIRECTORY_SEPARATOR);
 }
 
 /**
