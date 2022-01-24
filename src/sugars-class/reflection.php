@@ -982,12 +982,16 @@ class ReflectionPropertyExtended extends ReflectionProperty
     /** @override */
     public function getModifiers(): int
     {
-        return $this->callOverridingMethod('getModifiers', [], function ($ms = 0) {
-            $this->isPublic() && $ms |= ReflectionProperty::IS_PUBLIC;
-            $this->isPrivate() && $ms |= ReflectionProperty::IS_PRIVATE;
-            $this->isProtected() && $ms |= ReflectionProperty::IS_PROTECTED;
-            $this->isStatic() && $ms |= ReflectionProperty::IS_STATIC;
-            return $ms;
+        return $this->callOverridingMethod('getModifiers', [], function () {
+            $modifiers = 0;
+
+            $this->isPublic()    && $modifiers |= ReflectionProperty::IS_PUBLIC;
+            $this->isPrivate()   && $modifiers |= ReflectionProperty::IS_PRIVATE;
+            $this->isProtected() && $modifiers |= ReflectionProperty::IS_PROTECTED;
+            $this->isStatic()    && $modifiers |= ReflectionProperty::IS_STATIC;
+            $this->isReadOnly()  && $modifiers |= ReflectionProperty::IS_READONLY;
+
+            return $modifiers;
         });
     }
 
@@ -1044,7 +1048,7 @@ class ReflectionPropertyExtended extends ReflectionProperty
     /** @override */
     public function isReadOnly(): bool
     {
-        return $this->callOverridingMethod('isStatic', [], fn() => !!$this->resolveReadOnly());
+        return $this->callOverridingMethod('isReadOnly', [], fn() => !!$this->resolveReadOnly());
     }
 
     /**
