@@ -234,8 +234,7 @@ class ReflectionParameterExtended extends ReflectionParameter
         }
     }
 
-    /** @override */
-    #[ReturnTypeWillChange]
+    /** @override */ #[ReturnTypeWillChange]
     public function getType(): ReflectionTypeExtended|null
     {
         if ($type = parent::getType()) {
@@ -325,8 +324,7 @@ trait ReflectionClassTrait
         return get_class_name($this->reference);
     }
 
-    /** @override */
-    #[ReturnTypeWillChange]
+    /** @override */ #[ReturnTypeWillChange]
     public function getMethod(string $name): ReflectionMethodExtended|null
     {
         return parent::hasMethod($name) && ($method = parent::getMethod($name))
@@ -352,8 +350,7 @@ trait ReflectionClassTrait
         return array_map(fn($ref) => $ref->name, parent::getMethods($filter));
     }
 
-    /** @aliasOf getParent() @override */
-    #[ReturnTypeWillChange]
+    /** @aliasOf getParent() @override */ #[ReturnTypeWillChange]
     public function getParentClass(): ReflectionClassExtended|null
     {
         return $this->getParent();
@@ -488,8 +485,7 @@ trait ReflectionClassTrait
             ->has($name);
     }
 
-    /** @override */
-    #[ReturnTypeWillChange]
+    /** @override */ #[ReturnTypeWillChange]
     public function getProperty(string $name): ReflectionPropertyExtended|null
     {
         if (is_object($this->reference)
@@ -848,7 +844,6 @@ class ReflectionPropertyExtended extends ReflectionProperty
         if (is_object($object)) {
             // Handle "Internal error: Failed to retrieve the reflection object" and others.
             try {
-                parent::setAccessible(true);
                 parent::setValue($object, $value);
             } catch (Throwable) {
                 $name = $this->reference->name;
@@ -883,8 +878,7 @@ class ReflectionPropertyExtended extends ReflectionProperty
         if (is_object($object)) {
             // Handle "Internal error: Failed to retrieve the reflection object" and others.
             try {
-                parent::setAccessible(true);
-                $value = parent::getValue($object);
+                @ $value = parent::getValue($object);
             } catch (Throwable) {
                 $name = $this->reference->name;
 
@@ -940,8 +934,7 @@ class ReflectionPropertyExtended extends ReflectionProperty
         return $this->getType() != null;
     }
 
-    /** @override */
-    #[ReturnTypeWillChange]
+    /** @override */ #[ReturnTypeWillChange]
     public function getType(): ReflectionTypeExtended|null
     {
         return ($res = $this->resolveType()) ? new ReflectionTypeExtended(...$res) : null;
@@ -972,8 +965,7 @@ class ReflectionPropertyExtended extends ReflectionProperty
         return $this->callOverridingMethod('getAttributes', [$name, $flags], []);
     }
 
-    /** @override */
-    #[ReturnTypeWillChange]
+    /** @override */ #[ReturnTypeWillChange]
     public function getDocComment(): string|null
     {
         return $this->callOverridingMethod('getDocComment', [], null);

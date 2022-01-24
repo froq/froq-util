@@ -3164,7 +3164,6 @@ function set_object_var(object $object, int|string $var, mixed $value, bool $eas
     }
 
     $ref = new ReflectionProperty($object, (string) $var);
-    $ref->setAccessible(true); // @todo Remove in 6.0 (PHP/8.1).
     $ref->setValue($object, $value);
 }
 
@@ -3185,7 +3184,6 @@ function get_object_var(object $object, int|string $var, mixed $default = null, 
     }
 
     $ref = new ReflectionProperty($object, (string) $var);
-    $ref->setAccessible(true); // @todo Remove in 6.0 (PHP/8.1).
 
     @ $value = $ref->getValue($object);
 
