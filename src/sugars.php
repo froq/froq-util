@@ -2884,34 +2884,38 @@ function uuid_format(string $in): string|null
  * Format for sprintf().
  *
  * @param  string   $format
- * @param  mixed    $arg
- * @param  mixed ...$args
+ * @param  mixed    $input
+ * @param  mixed ...$inputs
  * @return string
  */
-function format(string $format, mixed $arg, mixed ...$args): string
+function format(string $format, mixed $input, mixed ...$inputs): string
 {
-    $args = [$arg, ...$args];
+    $params = [$input, ...$inputs];
 
-    // Convert special formats (quoted string).
-    $format = str_replace('%q', "'%s'", $format);
+    // Convert special formats (quoted string, int).
+    $format = str_replace(['%q', '%i'], ["'%s'", '%d'], $format);
 
-    // Convert bools.
+    // Convert bools as proper bools (not 1|0).
     if (str_contains($format, '%b')) {
-        $format = str_replace('%b', '%s', $format);
-        $args = array_map(fn($arg) => is_bool($arg) ? format_bool($arg) : $arg, $args);
+        foreach (grep_all($format, '~(%[a-z])~') as $i => $op) {
+            if ($op == '%b') {
+                $format = substr_replace($format, '%s', strpos($format, '%b'), 2);
+                $params[$i] = format_bool($params[$i]);
+            }
+        }
     }
 
-    return sprintf($format, ...$args);
+    return vsprintf($format, $params);
 }
 
 /**
  * Format an input as bool (yes).
  *
- * @param  bool $input
+ * @param  bool|int $input
  * @return string
  * @since  5.31
  */
-function format_bool(bool $input): string
+function format_bool(bool|int $input): string
 {
     return $input ? 'true' : 'false';
 }
