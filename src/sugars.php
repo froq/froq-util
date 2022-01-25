@@ -2720,10 +2720,11 @@ function error_clear(int $code = null): void
  *
  * @param  int|null $code
  * @param  bool     $format
+ * @param  bool     $extract
  * @return string|null
  * @since  4.17
  */
-function error_message(int &$code = null, bool $format = false): string|null
+function error_message(int &$code = null, bool $format = false, bool $extract = false): string|null
 {
     $error = error_get_last();
     if (!$error) {
@@ -2732,6 +2733,7 @@ function error_message(int &$code = null, bool $format = false): string|null
 
     $code = $error['type'];
 
+    // Format with name.
     if ($format) {
         $error['name'] = match ($error['type']) {
             E_NOTICE,     E_USER_NOTICE     => 'NOTICE',
@@ -2743,6 +2745,10 @@ function error_message(int &$code = null, bool $format = false): string|null
         return vsprintf('%s(%d): %s at %s:%s', array_select(
             $error, ['name', 'type', 'message', 'file', 'line']
         ));
+    }
+    // Extract message only.
+    elseif ($extract) {
+        return substr($error['message'], strpos($error['message'], '):') + 3);
     }
 
     return $error['message'];
