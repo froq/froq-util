@@ -7,8 +7,8 @@ declare(strict_types=1);
 
 namespace froq\util;
 
-use StaticClass, ReflectionObjectExtended, ReflectionClassExtended;
-use Reflection, ReflectionException;
+use Reflection, ReflectionException,
+    ReflectionObjectExtended, ReflectionClassExtended;
 
 /**
  * Objects.
@@ -19,7 +19,7 @@ use Reflection, ReflectionException;
  * @since   4.0
  * @static
  */
-final class Objects extends StaticClass
+final class Objects extends \StaticClass
 {
     /**
      * Get reflection.

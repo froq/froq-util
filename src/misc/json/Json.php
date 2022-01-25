@@ -7,8 +7,6 @@ declare(strict_types=1);
 
 namespace froq\util\misc\json;
 
-use StaticClass;
-
 /**
  * Json.
  *
@@ -19,7 +17,7 @@ use StaticClass;
  * @author  Kerem Güneş
  * @since   5.0
  */
-class Json extends StaticClass
+class Json extends \StaticClass
 {
     /** Types. */
     public const ARRAY = 1, OBJECT = 2;

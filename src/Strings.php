@@ -8,7 +8,6 @@ declare(strict_types=1);
 namespace froq\util;
 
 use froq\util\UtilException;
-use StaticClass;
 
 /**
  * Strings.
@@ -19,7 +18,7 @@ use StaticClass;
  * @since   1.0
  * @static
  */
-final class Strings extends StaticClass
+final class Strings extends \StaticClass
 {
     /**
      * Compare two strings.

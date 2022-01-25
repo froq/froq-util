@@ -7,8 +7,6 @@ declare(strict_types=1);
 
 namespace froq\util;
 
-use froq\util\UtilException;
-use StaticClass;
 
 /**
  * Util.
@@ -19,7 +17,7 @@ use StaticClass;
  * @since   1.0
  * @static
  */
-final /* fuckic static */ class Util extends StaticClass
+final /* fuckic static */ class Util extends \StaticClass
 {
     /**
      * Load sugar.

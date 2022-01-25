@@ -7,7 +7,6 @@ declare(strict_types=1);
 
 namespace froq\util;
 
-use StaticClass;
 use Closure, ValueError, ArgumentCountError;
 
 /**
@@ -19,7 +18,7 @@ use Closure, ValueError, ArgumentCountError;
  * @since   1.0
  * @static
  */
-final class Arrays extends StaticClass
+final class Arrays extends \StaticClass
 {
     /**
      * Check whether all keys are "int" in given array, or given array is a list when strict.
