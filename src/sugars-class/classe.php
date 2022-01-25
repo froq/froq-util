@@ -8,16 +8,16 @@ declare(strict_types=1);
 use froq\util\Objects;
 
 /**
- * Classee.
+ * Classe.
  *
  * A class for playing with classes OOP-way.
  *
  * @package froq\util
- * @object  Classee
+ * @object  Classe
  * @author  Kerem Güneş
  * @since   6.0
  */
-final class Classee
+final class Classe
 {
     /** @var string */
     public readonly string $class;
