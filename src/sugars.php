@@ -680,7 +680,7 @@ function convert_case(string $in, int $case, string $exploder = null, string $im
 function class_extends(string $class1, string $class2, bool $parent_only = false): bool
 {
     return !$parent_only ? is_subclass_of($class1, $class2)
-         : is_subclass_of($class1, $class2) && current(class_parents($class1)) == $class2;
+         : is_subclass_of($class1, $class2) && current(class_parents($class1)) === $class2;
 }
 
 /**
@@ -695,7 +695,7 @@ function class_extends(string $class1, string $class2, bool $parent_only = false
 function interface_extends(string $interface1, string $interface2, bool $parent_only = false): bool
 {
     return !$parent_only ? is_subclass_of($interface1, $interface2)
-         : is_subclass_of($interface1, $interface2) && current(class_implements($interface1)) == $interface2;
+         : is_subclass_of($interface1, $interface2) && current(class_implements($interface1)) === $interface2;
 }
 
 /**
@@ -3308,11 +3308,11 @@ function is_stream($in): bool
 function is_type_of($in, string ...$types): bool
 {
     foreach ($types as $type) {
+        $type = strtolower($type);
         if (match ($type) {
-            'image'  => is_image($in),  'stream' => is_stream($in),
-            'number' => is_number($in), 'scalar' => is_scalar($in),
-            'array'  => is_array($in),  'object' => is_object($in),
-            default  => strtolower(get_type($in)) == strtolower($type) // All others.
+            'list'  => is_list($in),  'number' => is_number($in),
+            'image' => is_image($in), 'stream' => is_stream($in),
+            default => strtolower(get_type($in)) === $type // All others.
         }) {
             return true;
         }
