@@ -6,6 +6,7 @@
 declare(strict_types=1);
 
 use froq\util\{Util, Arrays, Objects, Numbers, Strings};
+use froq\util\misc\System;
 
 // Load consts & classes.
 require 'sugars-const.php';
@@ -1666,7 +1667,7 @@ function file_extension(string $file, bool $with_dot = false, bool $lower = true
 function udate(int|float|string $when = null, string $where = null): DateTime
 {
     $when  ??= '';
-    $where ??= Util::getDefaultTimezone();
+    $where ??= System::defaultTimezone();
 
     switch (get_type($when)) {
         case 'int': // Eg: 1603339284

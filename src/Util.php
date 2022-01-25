@@ -186,26 +186,6 @@ final /* fuckic static */ class Util extends StaticClass
     }
 
     /**
-     * Get (system) temporary directory.
-     *
-     * @return string
-     */
-    public static function getTemporaryDirectory(): string
-    {
-        return sys_get_temp_dir() ?: '/tmp';
-    }
-
-    /**
-     * Get (system) default timezone.
-     *
-     * @return string
-     */
-    public static function getDefaultTimezone(): string
-    {
-        return date_default_timezone_get() ?: 'UTC';
-    }
-
-    /**
      * Build query string.
      *
      * @param  array       $qa
