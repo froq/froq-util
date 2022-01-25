@@ -7,8 +7,6 @@ declare(strict_types=1);
 
 namespace froq\util\misc;
 
-use froq\util\UtilException;
-
 /**
  * Runner.
  *
@@ -38,7 +36,7 @@ final class Runner
     public function __construct(int $limit = 1000, bool $simple = false)
     {
         if ($limit < 1) {
-            throw new UtilException('Min limit is 1, ' . $limit . ' given');
+            throw new \ValueError('Min limit is 1, ' . $limit . ' given');
         }
 
         $this->limit  = $limit;

@@ -7,8 +7,6 @@ declare(strict_types=1);
 
 namespace froq\util\misc;
 
-use froq\util\UtilException;
-
 /**
  * Random.
  *
@@ -61,8 +59,8 @@ final class Random
      */
     public function nextInt(int $bound = PHP_INT_MAX): int
     {
-        if ($bound <= 0) {
-            throw new UtilException('Bound must be greater than 0');
+        if ($bound < 1) {
+            throw new \ValueError('Min bound is 1, ' . $bound . ' given');
         }
 
         // i.e. bound is a power of 2.

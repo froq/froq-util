@@ -18,7 +18,6 @@ namespace froq\util\misc;
  */
 final class System extends \StaticClass
 {
-
     /**
      * Set an INI directive.
      *
