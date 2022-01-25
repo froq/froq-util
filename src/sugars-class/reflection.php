@@ -315,13 +315,7 @@ trait ReflectionClassTrait
     /** @magic __debugInfo() */
     public function __debugInfo(): array
     {
-        return ['name' => $this->getName()];
-    }
-
-    /** @override */
-    public function getName(): string
-    {
-        return get_class_name($this->reference);
+        return ['name' => $this->name];
     }
 
     /** @override */ #[ReturnTypeWillChange]
