@@ -968,19 +968,19 @@ function get_real_path(string $path, string|bool $check = null): string|null
                 continue;
             } elseif ($cur == '.' || $cur == '..') {
                 if ($ret == '') {
-                    $file = getcwd(); // Fallback.
+                    // @cancel
+                    // $file = getcwd(); // Fallback.
+                    // foreach (debug_backtrace(0) as $trace) {
+                    //     // Search until finding the right path argument (sadly seems no way else
+                    //     // for that when call stack is chaining from a function to another function).
+                    //     if (empty($trace['args'][0]) || $trace['args'][0] != $path) {
+                    //         break;
+                    //     }
+                    //     $file = $trace['file'];
+                    // }
 
-                    foreach (debug_backtrace(0) as $trace) {
-                        // Search until finding the right path argument (sadly seems no way else
-                        // for that when call stack is chaining from a function to another function).
-                        if (empty($trace['args'][0]) || $trace['args'][0] != $path) {
-                            break;
-                        }
-
-                        $file = $trace['file'];
-                    }
-
-                    $ret  = ($cur == '.') ? dirname($file) : dirname(dirname($file));
+                    $tmp = getcwd() . $sep . basename($path);
+                    $ret = ($cur == '.') ? dirname($tmp) : dirname(dirname($tmp));
                 }
                 continue;
             }
