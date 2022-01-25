@@ -14,7 +14,7 @@ declare(strict_types=1);
  * @package froq\util
  * @object  StaticClass
  * @author  Kerem Güneş
- * @since   4.0, 6.0 Moved from "froq\common\object" stuff.
+ * @since   4.0, 6.0
  * @note    Not abstract'ed, letting the error in constructor.
  */
 class StaticClass
@@ -30,7 +30,7 @@ class StaticClass
  * @package froq\util
  * @object  StaticClassTrait
  * @author  Kerem Güneş
- * @since   4.3, 6.0 Moved from "froq\common\object" stuff.
+ * @since   4.3, 6.0
  */
 trait StaticClassTrait
 {
