@@ -322,7 +322,7 @@ final class Classe
         return $this->uses($trait);
     }
 
-    /** @aliasOf init */
+    /** @aliasOf init() */
     public function new(mixed ...$args): object
     {
         return $this->init(...$args);
