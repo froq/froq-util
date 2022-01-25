@@ -1,6 +1,6 @@
 <?php
 // Load class files.
-require 'sugars-class/attribute.php';
+require 'sugars-class/assert.php';
 require 'sugars-class/classe.php';
 require 'sugars-class/error.php';
 require 'sugars-class/mapset.php';
