@@ -3310,9 +3310,14 @@ function is_type_of($in, string ...$types): bool
     foreach ($types as $type) {
         $type = strtolower($type);
         if (match ($type) {
-            'list'  => is_list($in),  'number' => is_number($in),
-            'image' => is_image($in), 'stream' => is_stream($in),
-            default => strtolower(get_type($in)) === $type // All others.
+            'list'     => is_list($in),     'number'   => is_number($in),
+            'image'    => is_image($in),    'stream'   => is_stream($in),
+            'iterable' => is_iterable($in), 'callable' => is_callable($in),
+            'scalar'   => is_scalar($in),   'mixed'    => true,
+            // @note Required for objects/all below.
+            'object'   => is_object($in),
+            // All others.
+            default    => strtolower(get_type($in)) === $type
         }) {
             return true;
         }
