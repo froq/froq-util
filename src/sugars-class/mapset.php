@@ -324,6 +324,30 @@ class Map implements Iterator, ArrayAccess, Countable, Arrayable, Jsonable, List
 {
     use MapSetTrait;
 
+    /** @magic __set() */
+    public function __set(int|string|object $key, mixed $value): void
+    {
+        $this->set($key, $value);
+    }
+
+    /** @magic __get() */
+    public function __get(int|string|object $key): mixed
+    {
+        return $this->get($key);
+    }
+
+    /** @magic __isset() */
+    public function __isset(int|string|object $key): bool
+    {
+        return $this->has($key);
+    }
+
+    /** @magic __unset() */
+    public function __unset(int|string|object $key): void
+    {
+        $this->remove($key);
+    }
+
     /**
      * Add a value.
      *
