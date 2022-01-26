@@ -1132,7 +1132,7 @@ final class Arrays extends \StaticClass
      */
     public static function lowerKeys(array $array, bool $recursive = false): array
     {
-        return array_upper_keys($array, $recursive);
+        return array_lower_keys($array, $recursive);
     }
 
     /**
@@ -1145,7 +1145,7 @@ final class Arrays extends \StaticClass
      */
     public static function upperKeys(array $array, bool $recursive = false): array
     {
-        return array_lower_keys($array, $recursive);
+        return array_upper_keys($array, $recursive);
     }
 
     /**
