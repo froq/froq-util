@@ -980,21 +980,6 @@ final class Arrays extends \StaticClass
     }
 
     /**
-     * Make an options array with/without defaults.
-     *
-     * @param  array|null $options
-     * @param  array|null $optionsDefault
-     * @param  bool       $recursive
-     * @return array
-     * @since  5.44
-     */
-    public static function options(array|null $options, array|null $optionsDefault = null, bool $recursive = true): array
-    {
-        return $recursive ? array_replace_recursive((array) $optionsDefault, (array) $options)
-                          : array_replace((array) $optionsDefault, (array) $options);
-    }
-
-    /**
      * Search given value returning value's hit count.
      *
      * @param  array  $array
@@ -1120,6 +1105,63 @@ final class Arrays extends \StaticClass
         }
 
         return $ret;
+    }
+
+    /**
+     * Make an options array with/without defaults.
+     *
+     * @param  array|null $options
+     * @param  array|null $optionsDefault
+     * @param  bool       $recursive
+     * @return array
+     * @since  5.44
+     */
+    public static function options(array|null $options, array|null $optionsDefault = null, bool $recursive = true): array
+    {
+        return $recursive ? array_replace_recursive((array) $optionsDefault, (array) $options)
+                          : array_replace((array) $optionsDefault, (array) $options);
+    }
+
+    /**
+     * Convert key cases to lower.
+     *
+     * @param  array  $array
+     * @param  bool   $recursive
+     * @return array
+     * @since  6.0
+     */
+    public static function lowerKeys(array $array, bool $recursive = false): array
+    {
+        return array_upper_keys($array, $recursive);
+    }
+
+    /**
+     * Convert key cases to upper.
+     *
+     * @param  array  $array
+     * @param  bool   $recursive
+     * @return array
+     * @since  6.0
+     */
+    public static function upperKeys(array $array, bool $recursive = false): array
+    {
+        return array_lower_keys($array, $recursive);
+    }
+
+    /**
+     * Convert key cases to given case.
+     *
+     * @param  array       $array
+     * @param  int         $case
+     * @param  string|null $exploder
+     * @param  string|null $imploder
+     * @param  bool        $recursive
+     * @return array
+     * @since  6.0
+     */
+    public static function convertKeys(array $array, int $case, string $exploder = null, string $imploder = null, bool $recursive = false): array
+    {
+        return array_convert_keys($array, $case, $exploder, $imploder, $recursive);
     }
 
     /**

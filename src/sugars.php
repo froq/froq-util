@@ -2105,21 +2105,45 @@ function array_pad_keys(array $array, array $keys, $value = null, bool $isset = 
 }
 
 /**
- * Convert key cases mapping by given separator.
+ * Convert key cases to lower.
+ *
+ * @param  array  $array
+ * @param  bool   $recursive
+ * @return array
+ * @since  6.0
+ */
+function array_lower_keys(array $array, bool $recursive = false): array
+{
+    return array_map_keys($array, fn($key) => mb_strtolower((string) $key), $recursive);
+}
+
+/**
+ * Convert key cases to upper.
+ *
+ * @param  array  $array
+ * @param  bool   $recursive
+ * @return array
+ * @since  6.0
+ */
+function array_upper_keys(array $array, bool $recursive = false): array
+{
+    return array_map_keys($array, fn($key) => mb_strtoupper((string) $key), $recursive);
+}
+
+/**
+ * Convert key cases to given case.
  *
  * @param  array       $array
  * @param  int         $case
  * @param  string|null $exploder
  * @param  string|null $imploder
  * @param  bool        $recursive
- * @return array|null
+ * @return array
  * @since  4.19
  */
-function array_convert_keys(array $array, int $case, string $exploder = null, string $imploder = null, bool $recursive = false): array|null
+function array_convert_keys(array $array, int $case, string $exploder = null, string $imploder = null, bool $recursive = false): array
 {
-    return array_map_keys($array, fn($key) => (
-        convert_case((string) $key, $case, $exploder, $imploder)
-    ), $recursive);
+    return array_map_keys($array, fn($key) => convert_case((string) $key, $case, $exploder, $imploder), $recursive);
 }
 
 /**
