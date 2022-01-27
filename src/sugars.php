@@ -478,7 +478,7 @@ function str_has_prefix(string $str, string $src, bool $icase = false): bool
  */
 function str_has_suffix(string $str, string $src, bool $icase = false): bool
 {
-    return !$icase ? str_ends_with($str, $src) : mb_strripos($str, $src) === (mb_strlen($str) - mb_strlen($src));
+    return !$icase ? str_ends_with($str, $src) : mb_strripos($str, $src) === mb_strlen($str) - mb_strlen($src);
 }
 
 /**
