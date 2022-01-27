@@ -3193,6 +3193,7 @@ function get_object_hash(object $object, bool $with_name = true, bool $rehash = 
  */
 function set_object_var(object $object, int|string $var, mixed $value, bool $easy = true): void
 {
+    // Yes property_exists(), cus of reflection exception for non-exists props.
     if ($easy || !property_exists($object, $var)) {
         $object->$var = $value;
         return;
@@ -3214,6 +3215,7 @@ function set_object_var(object $object, int|string $var, mixed $value, bool $eas
  */
 function get_object_var(object $object, int|string $var, mixed $default = null, bool $easy = true): mixed
 {
+    // No property_exists() cus of scopes.
     if ($easy) {
         return $object->$var ?? $default;
     }
