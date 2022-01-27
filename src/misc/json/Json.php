@@ -144,23 +144,12 @@ class Json extends \StaticClass
     }
 
     /**
-     * Check whether given input is a valid JSON string.
+     * Check whether given input is a JSON struct.
      *
      * @param  ?string $in
      * @return bool
      */
-    public static function isValid(?string $in): bool
-    {
-        return isset($in[0]);
-    }
-
-    /**
-     * Check whether given input is a valid JSON struct.
-     *
-     * @param  ?string $in
-     * @return bool
-     */
-    public static function isValidStruct(?string $in): bool
+    public static function isStruct(?string $in): bool
     {
         return isset($in[0], $in[-1]) && (
             ($in[0] . $in[-1]) === '[]' || ($in[0] . $in[-1]) === '{}'
