@@ -20,10 +20,10 @@ use froq\util\Objects;
 final class Classe
 {
     /** @var string */
-    public readonly string $class;
+    public readonly string $name;
 
     // /** @var string */
-    // public readonly string|null $classAlias;
+    // public readonly string|null $nameAlias;
 
     /** @var bool */
     private readonly bool $exists;
@@ -31,38 +31,38 @@ final class Classe
     /**
      * Constructor.
      *
-     * @param string $class
+     * @param string $name
      */
-    public function __construct(string $class)
+    public function __construct(string $name)
     {
-        $this->class = $class;
+        $this->name = $name;
 
         // Help for autoloader & shortcut tick.
-        $this->exists = class_exists($class, true);
+        $this->exists = class_exists($name, true);
 
         // Nope.. (use isAliasName() & getRealName()).
         // if ($this->exists) {
-        //     $ref = new ReflectionClass($class);
-        //     $this->class = ($class !== $ref->name) ? $ref->name : $class;
-        //     $this->classAlias = $class;
+        //     $ref = new ReflectionClass($name);
+        //     $this->name = ($name !== $ref->name) ? $ref->name : $name;
+        //     $this->nameAlias = $name;
         // } else {
-        //     $this->class = $class;
-        //     $this->classAlias = null;
+        //     $this->name = $name;
+        //     $this->nameAlias = null;
         // }
     }
 
     /** @magic __toString() */
     public function __toString(): string
     {
-        return $this->class;
+        return $this->name;
     }
 
     /** @magic __debugInfo() */
     public function __debugInfo(): array
     {
         return [
-            'class' => $this->class,
-            // 'classAlias' => $this->classAlias
+            'name' => $this->name,
+            // 'nameAlias' => $this->nameAlias
         ];
     }
 
@@ -73,7 +73,7 @@ final class Classe
      */
     public function getName(): string
     {
-        return $this->class;
+        return $this->name;
     }
 
     /**
@@ -83,7 +83,7 @@ final class Classe
      */
     public function getShortName(): string
     {
-        return Objects::getShortName($this->class);
+        return Objects::getShortName($this->name);
     }
 
     /**
@@ -93,7 +93,7 @@ final class Classe
      */
     public function getRealName(): string
     {
-        return Objects::getRealName($this->class);
+        return Objects::getRealName($this->name);
     }
 
     /**
@@ -114,7 +114,7 @@ final class Classe
      */
     public function existsConstant(string $name): bool
     {
-        return $this->exists && constant_exists($this->class, $name);
+        return $this->exists && constant_exists($this->name, $name);
     }
 
     /**
@@ -125,7 +125,7 @@ final class Classe
      */
     public function existsProperty(string $name): bool
     {
-        return $this->exists && property_exists($this->class, $name);
+        return $this->exists && property_exists($this->name, $name);
     }
 
     /**
@@ -136,7 +136,7 @@ final class Classe
      */
     public function existsMethod(string $name): bool
     {
-        return $this->exists && method_exists($this->class, $name);
+        return $this->exists && method_exists($this->name, $name);
     }
 
     /** @aliasOf existsConstant() */
@@ -166,13 +166,13 @@ final class Classe
      */
     public function extends(string $parent, bool $parentOnly = false): bool
     {
-        return $this->exists && class_extends($this->class, $parent, $parentOnly);
+        return $this->exists && class_extends($this->name, $parent, $parentOnly);
     }
 
     /**
      * Implements state checker.
      *
-     * @param  string $class
+     * @param  string $interface
      * @return bool
      */
     public function implements(string $interface): bool
@@ -198,7 +198,7 @@ final class Classe
      */
     public function getVars(): array|null
     {
-        return $this->exists ? get_class_vars($this->class) : null;
+        return $this->exists ? get_class_vars($this->name) : null;
     }
 
     /**
@@ -208,7 +208,7 @@ final class Classe
      */
     public function getConstants(): array|null
     {
-        return $this->exists ? get_class_constants($this->class) : null;
+        return $this->exists ? get_class_constants($this->name) : null;
     }
 
     /**
@@ -218,7 +218,7 @@ final class Classe
      */
     public function getProperties(): array|null
     {
-        return $this->exists ? get_class_properties($this->class) : null;
+        return $this->exists ? get_class_properties($this->name) : null;
     }
 
     /**
@@ -228,7 +228,7 @@ final class Classe
      */
     public function getMethods(): array|null
     {
-        return $this->exists ? get_class_methods($this->class) : null;
+        return $this->exists ? get_class_methods($this->name) : null;
     }
 
     /**
@@ -238,7 +238,7 @@ final class Classe
      */
     public function getParent(): string|null
     {
-        return $this->exists ? get_parent_class($this->class) : null;
+        return $this->exists ? get_parent_class($this->name) : null;
     }
 
     /**
@@ -248,7 +248,7 @@ final class Classe
      */
     public function getParents(): array|null
     {
-        return $this->exists ? Objects::getParents($this->class) : null;
+        return $this->exists ? Objects::getParents($this->name) : null;
     }
 
     /**
@@ -258,7 +258,7 @@ final class Classe
      */
     public function getInterfaces(): array|null
     {
-        return $this->exists ? Objects::getInterfaces($this->class) : null;
+        return $this->exists ? Objects::getInterfaces($this->name) : null;
     }
 
     /**
@@ -268,7 +268,7 @@ final class Classe
      */
     public function getTraits(): array|null
     {
-        return $this->exists ? Objects::getTraits($this->class) : null;
+        return $this->exists ? Objects::getTraits($this->name) : null;
     }
 
     /**
@@ -279,7 +279,7 @@ final class Classe
     public function isValidName(): bool
     {
         // Not for anonyms.
-        return preg_test('~^[a-z][a-z0-9\\\]+$~i', $this->class);
+        return preg_test('~^[a-z][a-z0-9\\\]+$~i', $this->name);
     }
 
     /**
@@ -289,7 +289,7 @@ final class Classe
      */
     public function isAliasName(): bool
     {
-        return $this->class !== $this->reflect()?->name;
+        return $this->name !== $this->reflect()?->name;
     }
 
     /**
@@ -300,7 +300,7 @@ final class Classe
      */
     public function isTypeOf(string $class): bool
     {
-        return $this->class === $class;
+        return $this->name === $class;
     }
 
     /**
@@ -312,7 +312,7 @@ final class Classe
      */
     public function isClassOf(string $class, string ...$classes): bool
     {
-        return is_class_of($this->class, $class, ...$classes);
+        return is_class_of($this->name, $class, ...$classes);
     }
 
     /** @aliasOf extends() */
@@ -354,7 +354,7 @@ final class Classe
      */
     public function init(mixed ...$args): object
     {
-        return new $this->class(...$args);
+        return new $this->name(...$args);
     }
 
     /**
@@ -367,8 +367,8 @@ final class Classe
     {
         try {
             return !$extended
-                 ? new ReflectionClass($this->class)
-                 : new ReflectionClassExtended($this->class);
+                 ? new ReflectionClass($this->name)
+                 : new ReflectionClassExtended($this->name);
         } catch (ReflectionException) {
             return null;
         }
