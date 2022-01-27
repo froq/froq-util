@@ -3215,7 +3215,7 @@ function set_object_var(object $object, int|string $var, mixed $value, bool $eas
  */
 function get_object_var(object $object, int|string $var, mixed $default = null, bool $easy = true): mixed
 {
-    // No property_exists() cus of scopes.
+    // No property_exists() cus of scope errors.
     if ($easy) {
         return $object->$var ?? $default;
     }
