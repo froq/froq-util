@@ -107,6 +107,24 @@ final class Classe
         return $autoload ? class_exists($this->class, $autoload) : $this->exists;
     }
 
+    /** @aliasOf hasConstant() */
+    public function existsConstant(string $name): bool
+    {
+        return $this->hasConstant($name);
+    }
+
+    /** @aliasOf hasProperty() */
+    public function existsProperty(string $name): bool
+    {
+        return $this->hasProperty($name);
+    }
+
+    /** @aliasOf hasMethod() */
+    public function existsMethod(string $name): bool
+    {
+        return $this->hasMethod($name);
+    }
+
     /**
      * Extends state checker.
      *
