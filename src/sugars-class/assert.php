@@ -13,7 +13,7 @@ use froq\common\{Error, Exception};
  * As assert(ion) class with some utility methods.
  *
  * @package froq\util
- * @class   Assert
+ * @object  Assert
  * @author  Kerem Güneş
  * @since   6.0
  */
@@ -242,7 +242,7 @@ final class Assert
  * Assert Exception.
  *
  * @package froq\util
- * @class   AssertException
+ * @object  AssertException
  * @author  Kerem Güneş
  * @since   6.0
  */

@@ -16,3 +16,15 @@ declare(strict_types=1);
  * @since   5.25
  */
 class KeyError extends Error {}
+
+/**
+ * Json Error.
+ *
+ * An error class for for JSONs (which is missing internally, suppose).
+ *
+ * @package froq\util
+ * @object  KeyError
+ * @author  Kerem Güneş
+ * @since   6.0
+ */
+class JsonError extends Error {}
