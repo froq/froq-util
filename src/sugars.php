@@ -811,12 +811,12 @@ function constant_exists(string|object $class, string $name, bool $scope_check =
 /**
  * Get type with/without scalars option.
  *
- * @param  any  $var
- * @param  bool $scalars
+ * @param  mixed $var
+ * @param  bool  $scalars
  * @return string
  * @since  4.0
  */
-function get_type($var, bool $scalars = false): string
+function get_type(mixed $var, bool $scalars = false): string
 {
     if ($scalars && is_scalar($var)) {
         return 'scalar';
@@ -3287,73 +3287,73 @@ function func_has_args(int|string ...$args): bool
 /**
  * Check whether given array is a list array.
  *
- * @param  any  $in
- * @param  bool $strict
+ * @param  mixed $var
+ * @param  bool  $strict
  * @return bool
  * @since  5.0
  */
-function is_list($in, bool $strict = true): bool
+function is_list(mixed $var): bool
 {
-    return is_array($in) && Arrays::isList($in, $strict);
+    return is_array($var) && Arrays::isList($var);
 }
 
 /**
  * Check whether given input is a number.
  *
- * @param  any $in
+ * @param  mixed $var
  * @return bool
  * @since  5.0
  */
-function is_number($in): bool
+function is_number(mixed $var): bool
 {
-    return is_int($in) || is_float($in);
+    return is_int($var) || is_float($var);
 }
 
 /**
  * Check whether given input is a GdImage.
  *
- * @param  any $in
+ * @param  mixed $var
  * @return bool
  * @since  5.0
  */
-function is_image($in): bool
+function is_image(mixed $var): bool
 {
-    return $in && ($in instanceof GdImage);
+    return $var && ($var instanceof GdImage);
 }
 
 /**
  * Check whether given input is a stream.
  *
- * @param  any $in
+ * @param  mixed $var
  * @return bool
  * @since  5.0
  */
-function is_stream($in): bool
+function is_stream(mixed $var): bool
 {
-    return $in && (is_resource($in) && get_resource_type($in) == 'stream');
+    return $var && (is_resource($var) && get_resource_type($var) == 'stream');
 }
 
 /**
  * Check whether given input is any type of given types.
  *
- * @param  any       $in
+ * @param  mixed     $var
  * @param  string ...$types
  * @return bool
  * @since  5.0
  */
-function is_type_of($in, string ...$types): bool
+function is_type_of(mixed $var, string ...$types): bool
 {
     foreach ($types as $type) {
         $type = strtolower($type);
         if (match ($type) {
-            'list'     => is_list($in),     'number'   => is_number($in),
-            'image'    => is_image($in),    'stream'   => is_stream($in),
-            'iterable' => is_iterable($in), 'callable' => is_callable($in),
-            'scalar'   => is_scalar($in),   'mixed'    => true,
+            'list'     => is_list($var),     'number'   => is_number($var),
+            'image'    => is_image($var),    'stream'   => is_stream($var),
+            'iterable' => is_iterable($var), 'callable' => is_callable($var),
+            'scalar'   => is_scalar($var),   'mixed'    => true,
             // @note Required for objects/all below.
-            'object'   => is_object($in),
+            'object'   => is_object($var),
             // All others.
-            default    => strtolower(get_type($in)) === $type
+            default    => strtolower(get_type($var)) === $type
         }) {
             return true;
         }
@@ -3422,19 +3422,19 @@ function is_callable_method(string|object $class, string $method, bool $static =
 /**
  * Check empty state(s) of given input(s).
  *
- * @param  any     $in
- * @param  any ... $ins
+ * @param  mixed    $var
+ * @param  mixed ...$vars
  * @return bool
  * @since  4.0 Added back, 5.0 Moved from sugars/is.
  */
-function is_empty($in, ...$ins): bool
+function is_empty(mixed $var, mixed ...$vars): bool
 {
-    foreach ([$in, ...$ins] as $in) {
-        if (empty($in)) {
+    foreach ([$var, ...$vars] as $var) {
+        if (empty($var)) {
             return true;
         }
-        if ((is_string($in) || is_array($in) || is_object($in))
-            && !size($in)) {
+        if ((is_string($var) || is_array($var) || is_object($var))
+            && !size($var)) {
             return true;
         }
     }
@@ -3445,23 +3445,23 @@ function is_empty($in, ...$ins): bool
 /**
  * Check whether given input is true.
  *
- * @param  any $in
+ * @param  mixed $var
  * @return bool
  * @since  3.5, 5.6 Moved from sugars/is.
  */
-function is_true($in): bool
+function is_true(mixed $var): bool
 {
-    return ($in === true);
+    return ($var === true);
 }
 
 /**
  * Check whether given input is false.
  *
- * @param  any $in
+ * @param  mixed $var
  * @return bool
  * @since  3.5, 5.6 Moved from sugars/is.
  */
-function is_false($in): bool
+function is_false(mixed $var): bool
 {
-    return ($in === false);
+    return ($var === false);
 }
