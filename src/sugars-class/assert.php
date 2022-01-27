@@ -127,7 +127,7 @@ final class Assert
      * @param  bool                                     $assertion
      * @param  array<string,Throwable>|string|Throwable $message
      * @return never
-     * @throws {Throwable|AssertException}
+     * @throws Throwable|AssertException
      */
     public static function throw(bool $assertion, array|string|Throwable $message): never
     {
@@ -142,7 +142,7 @@ final class Assert
      * @param  bool                                          $assertion
      * @param  array<string,Throwable>|string|Throwable|null $message
      * @return bool
-     * @throws {Throwable|AssertException}
+     * @throws Throwable|AssertException
      */
     public static function check(bool $assertion, array|string|Throwable $message = null): bool
     {
@@ -160,7 +160,7 @@ final class Assert
      * @param  string                                        $type
      * @param  array<string,Throwable>|string|Throwable|null $message
      * @return bool
-     * @causes {Throwable|AssertException}
+     * @causes Throwable|AssertException
      */
     public static function checkType(mixed $input, string $type, array|string|Throwable $message = null): bool
     {
@@ -178,7 +178,7 @@ final class Assert
      * @param  string                                        $class
      * @param  array<string,Throwable>|string|Throwable|null $message
      * @return bool
-     * @causes {Throwable|AssertException}
+     * @causes Throwable|AssertException
      */
     public static function checkClass(mixed $input, string $class, array|string|Throwable $message = null): bool
     {
@@ -194,7 +194,7 @@ final class Assert
      * @param  string                                        $class
      * @param  array<string,Throwable>|string|Throwable|null $message
      * @return bool
-     * @causes {Throwable|AssertException}
+     * @causes Throwable|AssertException
      */
     public static function checkInstance(mixed $input, string|object $class, array|string|Throwable $message = null): bool
     {
@@ -210,7 +210,7 @@ final class Assert
      * @param  string                                        $pattern
      * @param  array<string,Throwable>|string|Throwable|null $message
      * @return bool
-     * @causes {Throwable|AssertException}
+     * @causes Throwable|AssertException
      */
     public static function checkRegExp(string $input, string $pattern, array|string|Throwable $message = null): bool
     {
