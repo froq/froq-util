@@ -99,30 +99,62 @@ final class Classe
     /**
      * Exists state checker.
      *
-     * @param  bool $autoload
      * @return bool
      */
-    public function exists(bool $autoload = false): bool
+    public function exists(): bool
     {
-        return $autoload ? class_exists($this->class, $autoload) : $this->exists;
+        return $this->exists;
     }
 
-    /** @aliasOf hasConstant() */
+    /**
+     * Constant existence checker.
+     *
+     * @param  string $name
+     * @return bool
+     */
     public function existsConstant(string $name): bool
     {
-        return $this->hasConstant($name);
+        return $this->exists && constant_exists($this->class, $name);
     }
 
-    /** @aliasOf hasProperty() */
+    /**
+     * Property existence checker.
+     *
+     * @param  string $name
+     * @return bool
+     */
     public function existsProperty(string $name): bool
     {
-        return $this->hasProperty($name);
+        return $this->exists && property_exists($this->class, $name);
     }
 
-    /** @aliasOf hasMethod() */
+    /**
+     * Method existence checker.
+     *
+     * @param  string $name
+     * @return bool
+     */
     public function existsMethod(string $name): bool
     {
-        return $this->hasMethod($name);
+        return $this->exists && method_exists($this->class, $name);
+    }
+
+    /** @aliasOf existsConstant() */
+    public function hasConstant(string $name): bool
+    {
+        return $this->existsConstant($name);
+    }
+
+    /** @aliasOf existsProperty() */
+    public function hasProperty(string $name): bool
+    {
+        return $this->existsProperty($name);
+    }
+
+    /** @aliasOf existsMethod() */
+    public function hasMethod(string $name): bool
+    {
+        return $this->existsMethod($name);
     }
 
     /**
@@ -157,39 +189,6 @@ final class Classe
     public function uses(string $trait): bool
     {
         return $this->exists && in_array($trait, (array) $this->getTraits());
-    }
-
-    /**
-     * Constant existence checker.
-     *
-     * @param  string $name
-     * @return bool
-     */
-    public function hasConstant(string $name): bool
-    {
-        return $this->exists && constant_exists($this->class, $name);
-    }
-
-    /**
-     * Property existence checker.
-     *
-     * @param  string $name
-     * @return bool
-     */
-    public function hasProperty(string $name): bool
-    {
-        return $this->exists && property_exists($this->class, $name);
-    }
-
-    /**
-     * Method existence checker.
-     *
-     * @param  string $name
-     * @return bool
-     */
-    public function hasMethod(string $name): bool
-    {
-        return $this->exists && method_exists($this->class, $name);
     }
 
     /**
