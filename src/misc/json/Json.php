@@ -20,12 +20,12 @@ namespace froq\util\misc\json;
 class Json extends \StaticClass
 {
     /** Types. */
-    public const ARRAY = 1, OBJECT = 2;
+    public final const ARRAY = 1, OBJECT = 2;
 
     /** Build flags. */
-    public const FLAGS = JSON_UNESCAPED_UNICODE
-                       | JSON_UNESCAPED_SLASHES
-                       | JSON_PRESERVE_ZERO_FRACTION;
+    public final const FLAGS = JSON_UNESCAPED_UNICODE
+                             | JSON_UNESCAPED_SLASHES
+                             | JSON_PRESERVE_ZERO_FRACTION;
 
     /**
      * Build a JSON string.
@@ -49,8 +49,8 @@ class Json extends \StaticClass
             }
         }
 
-        $flags  = abs((int) $flags);
-        $flags |= self::FLAGS; // Add defaults.
+        // Add defaults.
+        $flags |= self::FLAGS;
 
         $out = json_encode($data, flags: $flags);
 
