@@ -450,7 +450,7 @@ trait ReflectionClassTrait
      */
     public function getTrait(string $name): ReflectionTrait|null
     {
-        return $this->traits()->has($name)? new ReflectionTrait($name) : null;
+        return $this->traits()->has($name) ? new ReflectionTrait($name) : null;
     }
 
     /** @override */
@@ -464,6 +464,48 @@ trait ReflectionClassTrait
     public function getTraitNames(): array
     {
         return $this->traits()->toArray();
+    }
+
+    /**
+     * Set of attributes.
+     *
+     * @return Set
+     */
+    public function attributes(): Set
+    {
+        return Set::from($this->getAttributes());
+    }
+
+    /**
+     * Has attribute.
+     *
+     * @param  string $name
+     * @return bool
+     */
+    public function hasAttribute(string $name): bool
+    {
+        return $this->getAttribute($name) != null;
+    }
+
+    /**
+     * Get attribute.
+     *
+     * @param  string $name
+     * @return ReflectionAttribute|null
+     */
+    public function getAttribute(string $name): ReflectionAttribute|null
+    {
+        return $this->attributes()->find(fn($ref) => $ref->getName() == $name);
+    }
+
+    /**
+     * Get attribute names.
+     *
+     * @return array
+     */
+    public function getAttributeNames(): array
+    {
+        return $this->attributes()->map(fn($ref) => $ref->getName())->toArray();
     }
 
     /** @override */
@@ -825,6 +867,48 @@ class ReflectionPropertyExtended extends ReflectionProperty
         return $this->traits()->map(fn($ref) => $ref->name)->toArray();
     }
 
+    /**
+     * Set of attributes.
+     *
+     * @return Set
+     */
+    public function attributes(): Set
+    {
+        return Set::from($this->getAttributes());
+    }
+
+    /**
+     * Has attribute.
+     *
+     * @param  string $name
+     * @return bool
+     */
+    public function hasAttribute(string $name): bool
+    {
+        return $this->getAttribute($name) != null;
+    }
+
+    /**
+     * Get attribute.
+     *
+     * @param  string $name
+     * @return ReflectionAttribute|null
+     */
+    public function getAttribute(string $name): ReflectionAttribute|null
+    {
+        return $this->attributes()->find(fn($ref) => $ref->getName() == $name);
+    }
+
+    /**
+     * Get attribute names.
+     *
+     * @return array
+     */
+    public function getAttributeNames(): array
+    {
+        return $this->attributes()->map(fn($ref) => $ref->getName())->toArray();
+    }
+
     /** @override */
     public function setValue(mixed $object = null, mixed $value = null): void
     {
@@ -954,18 +1038,6 @@ class ReflectionPropertyExtended extends ReflectionProperty
     }
 
     /** @override */
-    public function getAttributes(string $name = null, int $flags = 0): array
-    {
-        return $this->callOverridingMethod('getAttributes', [$name, $flags], []);
-    }
-
-    /** @override */ #[ReturnTypeWillChange]
-    public function getDocComment(): string|null
-    {
-        return $this->callOverridingMethod('getDocComment', [], null);
-    }
-
-    /** @override */
     public function getModifiers(): int
     {
         return $this->callOverridingMethod('getModifiers', [], function () {
@@ -979,6 +1051,18 @@ class ReflectionPropertyExtended extends ReflectionProperty
 
             return $modifiers;
         });
+    }
+
+    /** @override */ #[ReturnTypeWillChange]
+    public function getDocComment(): string|null
+    {
+        return $this->callOverridingMethod('getDocComment', [], null);
+    }
+
+    /** @override */
+    public function getAttributes(string $name = null, int $flags = 0): array
+    {
+        return $this->callOverridingMethod('getAttributes', [$name, $flags], []);
     }
 
     /** @override */
@@ -1690,6 +1774,48 @@ trait ReflectionCallableTrait
     public function getTraitNames(): array
     {
         return $this->traits()->map(fn($ref) => $ref->name)->toArray();
+    }
+
+    /**
+     * Set of attributes.
+     *
+     * @return Set
+     */
+    public function attributes(): Set
+    {
+        return Set::from($this->getAttributes());
+    }
+
+    /**
+     * Has attribute.
+     *
+     * @param  string $name
+     * @return bool
+     */
+    public function hasAttribute(string $name): bool
+    {
+        return $this->getAttribute($name) != null;
+    }
+
+    /**
+     * Get attribute.
+     *
+     * @param  string $name
+     * @return ReflectionAttribute|null
+     */
+    public function getAttribute(string $name): ReflectionAttribute|null
+    {
+        return $this->attributes()->find(fn($ref) => $ref->getName() == $name);
+    }
+
+    /**
+     * Get attribute names.
+     *
+     * @return array
+     */
+    public function getAttributeNames(): array
+    {
+        return $this->attributes()->map(fn($ref) => $ref->getName())->toArray();
     }
 
     /**
