@@ -538,9 +538,7 @@ function str_chunk(string $str, int $length = 76, string $separator = "\r\n", bo
 {
     $ret = array_chunk(preg_split('~~u', $str, -1, 1), $length);
 
-    return $join ? array_reduce(
-        $ret, fn($ret, $part) => $ret .= join($part) . $separator
-    ) : $ret;
+    return $join ? array_reduce($ret, fn($ret, $part) => $ret .= join($part) . $separator) : $ret;
 }
 
 /**
