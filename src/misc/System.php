@@ -97,22 +97,20 @@ final class System extends \StaticClass
      *
      * @param  string     $option
      * @param  mixed|null $default
-     * @param  bool       $serverLookup
+     * @param  bool       $server
      * @return mixed|null
      */
-    public static function envGet(string $option, mixed $default = null, bool $serverLookup = true): mixed
+    public static function envGet(string $option, mixed $default = null, bool $server = true): mixed
     {
         $value = $_ENV[$option] ?? null;
 
         if ($value === null) {
             // Try with server global.
-            if ($serverLookup) {
-                $value = $_SERVER[$option] ?? null;
-            }
+            $server && $value = $_SERVER[$option] ?? null;
 
             if ($value === null) {
-                // Try with getenv() (ini variable order issue).
-                if (($value = getenv($option)) === false) {
+                $value = getenv($option);
+                if ($value === false) {
                     $value = null;
                 }
             }
