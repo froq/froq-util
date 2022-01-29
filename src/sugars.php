@@ -42,14 +42,14 @@ function pluck(array &$array, int|string $key, &$value = null): bool {
 
 /**
  * Fetch/select.
- * @alias of array_fetch(),array_select()
+ * @aliasOf array_fetch(),array_select()
  */
 function fetch(array &$array, ...$args) { return array_fetch($array, ...$args); }
 function select(array &$array, ...$args) { return array_select($array, ...$args); }
 
 /**
  * The ever most wanted functions (finally come with 8.0, but without case option).
- * @alias of str_has(),str_has_prefix(),str_has_suffix()
+ * @aliasOf str_has(),str_has_prefix(),str_has_suffix()
  * @since 4.0
  */
 function strsrc(...$args) { return str_has(...$args);         } // Search.
@@ -58,7 +58,7 @@ function strsfx(...$args) { return str_has_suffix(...$args);  } // Search suffix
 
 /**
  * Loving shorter stuffs?
- * @since  3.0, 5.0 Moved from froq/fun.
+ * @since  3.0, 5.0
  */
 function upper(string $in): string { return mb_strtoupper($in); }
 function lower(string $in): string { return mb_strtolower($in); }
@@ -87,13 +87,20 @@ function qo(...$args): object
 }
 
 /**
+ * Type getter.
+ * @since 6.0
+ * @aliasOf get_type()
+ */
+function type(...$args) { return get_type(...$args); }
+
+/**
  * Filter an array with value/key notation.
  *
  * @param  array         $array
  * @param  callable|null $func
  * @param  bool          $keep_keys
  * @return array
- * @since  3.0, 5.0 Moved from common.inits.
+ * @since  3.0, 5.0
  */
 function filter(array $array, callable $func = null, bool $keep_keys = true): array
 {
@@ -107,7 +114,7 @@ function filter(array $array, callable $func = null, bool $keep_keys = true): ar
  * @param  callable $func
  * @param  bool     $keep_keys
  * @return array
- * @since  3.0, 5.0 Moved from common.inits.
+ * @since  3.0, 5.0
  */
 function map(array $array, callable $func, bool $recursive = false, bool $keep_keys = true): array
 {
@@ -121,7 +128,7 @@ function map(array $array, callable $func, bool $recursive = false, bool $keep_k
  * @param  any      $carry
  * @param  callable $func
  * @return any
- * @since  4.0, 5.0 Moved from common.inits.
+ * @since  4.0, 5.0
  */
 function reduce(array $array, $carry, callable $func)
 {
@@ -147,7 +154,7 @@ function each(array $array, callable $func): void
  *
  * @param  string|array|object $in
  * @return int
- * @since  3.0, 5.0 Moved from froq/fun.
+ * @since  3.0, 5.0
  */
 function size(string|array|object $in): int
 {
@@ -194,7 +201,7 @@ function chunk(array|string $in, int $length, bool $keep_keys = false): array
  * @param  array|string    $in
  * @param  mixed        ...$ins
  * @return array|string
- * @since  4.0, 5.0 Moved from froq/fun.
+ * @since  4.0, 5.0
  */
 function concat(array|string $in, mixed ...$ins): array|string
 {
@@ -210,7 +217,7 @@ function concat(array|string $in, mixed ...$ins): array|string
  * @param  int|null     $end
  * @param  bool         $keep_keys
  * @return array|string
- * @since  3.0, 4.0 Added back, 5.0 Moved from froq/fun.
+ * @since  3.0, 4.0, 5.0
  */
 function slice(array|string $in, int $start, int $end = null, bool $keep_keys = false): array|string
 {
@@ -224,7 +231,7 @@ function slice(array|string $in, int $start, int $end = null, bool $keep_keys = 
  * @param  string      $in
  * @param  string|null $chars
  * @return string
- * @since  3.0, 5.0 Moved from froq/fun.
+ * @since  3.0, 5.0
  */
 function strip(string $in, string $chars = null): string
 {
@@ -250,7 +257,7 @@ function strip(string $in, string $chars = null): string
  * @param  bool     $flags
  * @param  bool     $pad
  * @return array
- * @since  5.0 Moved from froq/fun.
+ * @since  5.0
  */
 function split(string $sep, string $in, int $limit = null, int $flags = null, bool $pad = true): array
 {
@@ -287,7 +294,7 @@ function split(string $sep, string $in, int $limit = null, int $flags = null, bo
  * @param  string $sep
  * @param  array  $in
  * @return string
- * @since  3.0, 5.0 Moved from froq/fun.
+ * @since  3.0, 5.0
  */
 function unsplit(string $sep, array $in): string
 {
@@ -301,7 +308,7 @@ function unsplit(string $sep, array $in): string
  * @param  string $pattern
  * @param  bool   $named
  * @return string|array|null
- * @since  3.0, 5.0 Moved from froq/fun.
+ * @since  3.0, 5.0
  */
 function grep(string $in, string $pattern, bool $named = false): string|array|null
 {
@@ -323,7 +330,7 @@ function grep(string $in, string $pattern, bool $named = false): string|array|nu
  * @param  bool   $named
  * @param  bool   $uniform
  * @return array<string|null>|null
- * @since  3.15, 5.0 Moved from froq/fun.
+ * @since  3.15, 5.0
  */
 function grep_all(string $in, string $pattern, bool $named = false, bool $uniform = false): array|null
 {
@@ -767,7 +774,7 @@ function get_constant_name(mixed $value = null, string $name_prefix): string|nul
         return null;
     }
 
-    return array_first(array_filter(array_keys(get_defined_constants(), $value, true),
+    return first(array_filter(array_keys(get_defined_constants(), $value, true),
         fn($name) => str_starts_with($name, $name_prefix)));
 }
 
@@ -1311,7 +1318,7 @@ function rmfiletemp(string $file): bool
 /**
  * Read all contents a file handle without modifing seek offset.
  *
- * @alias of file_read_stream()
+ * @aliasOf file_read_stream()
  * @since 5.0
  */
 function freadall(&$fp): string|null
@@ -1322,7 +1329,7 @@ function freadall(&$fp): string|null
 /**
  * Reset a file handle contents & set seek position to top.
  *
- * @alias of stream_set_contents()
+ * @aliasOf stream_set_contents()
  * @since 4.0
  */
 function freset(&$fp, string $contents): int|null
@@ -1427,7 +1434,7 @@ function file_create(string $file, int $mode = 0644, bool $tmp = false): string|
 /**
  * Create a temporary file.
  *
- * @alias of mkfiletemp()
+ * @aliasOf mkfiletemp()
  * @since 4.0
  */
 function file_create_temp(...$args)
@@ -1438,7 +1445,7 @@ function file_create_temp(...$args)
 /**
  * Remove a file.
  *
- * @alias of rmfile()
+ * @aliasOf rmfile()
  * @since 4.0
  */
 function file_remove(...$args)
@@ -1449,7 +1456,7 @@ function file_remove(...$args)
 /**
  * Write a file contents.
  *
- * @alias of file_put_contents()
+ * @aliasOf file_put_contents()
  * @since 4.0
  */
 function file_write(...$args)
@@ -1556,7 +1563,7 @@ function filemime(...$args) { return file_mime(...$args); }
 /**
  * Get a file path.
  *
- * @alias of get_real_path()
+ * @aliasOf get_real_path()
  * @since 4.0
  */
 function file_path(...$args)
@@ -2170,7 +2177,7 @@ function array_search_key(array $array, $value, bool $strict = true, bool $last 
  * @param  bool   $strict
  * @param  bool   $reverse
  * @return array<int|string|null>
- * @since  4.0, 5.25 moved from sugars/array.
+ * @since  4.0, 5.25
  */
 function array_search_keys(array $array, array $values, bool $strict = true, bool $reverse = false): array
 {
@@ -2465,7 +2472,7 @@ function array_aggregate(array $array, callable $func, array $carry = null): arr
  * @param  array $array
  * @param  bool  $assoc
  * @return array
- * @since  4.0, 5.25 Moved from sugar/array.
+ * @since  4.0, 5.25
  */
 function array_shuffle(array $array, bool $assoc = false): array
 {
@@ -2479,7 +2486,7 @@ function array_shuffle(array $array, bool $assoc = false): array
  * @param  array             $values
  * @param  mixed|null        $default
  * @return array
- * @since  4.11, 5.38 Moved from sugars/array.
+ * @since  4.11, 5.38
  */
 function array_compose(array $keys, array $values, mixed $default = null): array
 {
@@ -3469,7 +3476,7 @@ function is_callable_method(string|object $class, string $method, bool $static =
  * @param  mixed    $var
  * @param  mixed ...$vars
  * @return bool
- * @since  4.0 Added back, 5.0 Moved from sugars/is.
+ * @since  4.0, 5.0
  */
 function is_empty(mixed $var, mixed ...$vars): bool
 {
@@ -3491,7 +3498,7 @@ function is_empty(mixed $var, mixed ...$vars): bool
  *
  * @param  mixed $var
  * @return bool
- * @since  3.5, 5.6 Moved from sugars/is.
+ * @since  3.5, 5.6
  */
 function is_true(mixed $var): bool
 {
@@ -3503,7 +3510,7 @@ function is_true(mixed $var): bool
  *
  * @param  mixed $var
  * @return bool
- * @since  3.5, 5.6 Moved from sugars/is.
+ * @since  3.5, 5.6
  */
 function is_false(mixed $var): bool
 {
