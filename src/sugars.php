@@ -2666,6 +2666,47 @@ function array_shift_entry(array &$array): array|null
 }
 
 /**
+ * Compact given keys with given vars.
+ *
+ * @param  int|string|array    $keys
+ * @param  mixed            ...$vars
+ * @return array
+ * @since  6.0
+ */
+function array_compact(int|string|array $keys, mixed ...$vars): array
+{
+    $ret = [];
+
+    foreach ((array) $keys as $i => $key) {
+        $ret[$key] = $vars[$i] ?? null;
+    }
+
+    return $ret;
+}
+
+/**
+ * Extract given keys to given vars with refs.
+ *
+ * @param  int|string|array     $keys
+ * @param  mixed            &...$vars
+ * @return int
+ * @since  6.0
+ */
+function array_extract(array $array, int|string|array $keys, mixed &...$vars): int
+{
+    $ret = 0;
+
+    foreach ((array) $keys as $i => $key) {
+        if (isset($array[$key])) {
+            $vars[$i] = $array[$key];
+            $ret++;
+        }
+    }
+
+    return $ret;
+}
+
+/**
  * Get current value of given array (for the sake of current())
  * or given key's value if exists.
  *

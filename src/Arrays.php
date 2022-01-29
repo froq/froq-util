@@ -1165,6 +1165,32 @@ final class Arrays extends \StaticClass
     }
 
     /**
+     * Compact given keys with given vars.
+     *
+     * @param  int|string|array    $keys
+     * @param  mixed            ...$vars
+     * @return array
+     * @since  6.0
+     */
+    public static function compact(int|string|array $keys, mixed ...$vars): array
+    {
+        return array_compact($keys, ...$vars);
+    }
+
+    /**
+     * Extract given keys to given vars with refs.
+     *
+     * @param  int|string|array     $keys
+     * @param  mixed            &...$vars
+     * @return int
+     * @since  6.0
+     */
+    public static function extract(array $array, int|string|array $keys, mixed &...$vars): int
+    {
+        return array_extract($array, $keys, ...$vars);
+    }
+
+    /**
      * Each wrapper for scoped function calls on given array or just for syntactic sugar.
      *
      * @param  array    $array
