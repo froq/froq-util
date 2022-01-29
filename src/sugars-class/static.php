@@ -11,11 +11,12 @@ declare(strict_types=1);
  * Represents an uninitializable static class that forbid initializations of the extender classes.
  * We wish it was part of PHP but not (@see http://wiki.php.net/rfc/static-classes).
  *
+ * Note: not abstract'ed, letting the error in constructor.
+ *
  * @package froq\util
  * @object  StaticClass
  * @author  Kerem Güneş
  * @since   4.0, 6.0
- * @note    Not abstract'ed, letting the error in constructor.
  */
 class StaticClass
 {
