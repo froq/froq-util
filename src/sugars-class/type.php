@@ -6,16 +6,16 @@
 declare(strict_types=1);
 
 /**
- * X-Type.
+ * Type.
  *
  * A class for playing with types OOP-way.
  *
  * @package froq\util
- * @object  XType
+ * @object  Type
  * @author  Kerem Güneş
  * @since   6.0
  */
-final class XType
+final class Type
 {
     /** @var string */
     public readonly string $name;
