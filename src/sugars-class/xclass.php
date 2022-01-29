@@ -350,7 +350,7 @@ final class XClass
      *
      * @param  mixed ...$args
      * @return object
-     * @causes {Error|Exception}
+     * @causes Error|Exception
      */
     public function init(mixed ...$args): object
     {
