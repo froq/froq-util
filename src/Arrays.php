@@ -30,14 +30,7 @@ final class Arrays extends \StaticClass
     public static function isList(array $array, bool $strict = true): bool
     {
         if ($strict) {
-            $ii = 0; // Expected (index increament).
-            foreach (array_keys($array) as $i) {
-                if ($i !== $ii) {
-                    return false;
-                }
-                $ii++;
-            }
-            return true;
+            return array_is_list($array);
         }
 
         foreach (array_keys($array) as $key) {

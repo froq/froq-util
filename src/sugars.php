@@ -3333,7 +3333,7 @@ function func_has_args(int|string ...$args): bool
  */
 function is_list(mixed $var): bool
 {
-    return is_array($var) && Arrays::isList($var);
+    return is_array($var) && array_is_list($var);
 }
 
 /**
