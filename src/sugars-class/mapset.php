@@ -844,8 +844,3 @@ class Dict extends Map
         return new static(array_fill_keys($keys, $value));
     }
 }
-
-/** Functions. */
-function xmap(...$args): Map { return new Map(...$args); }
-function xset(...$args): Set { return new Set(...$args); }
-function xdict(...$args): Dict { return new Dict(...$args); }
