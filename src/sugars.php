@@ -2832,19 +2832,20 @@ function json_error_message(int &$code = null): string|null
 /**
  * Get PECL last error message with code if any, instead "No error".
  *
- * @param  int|null $code
+ * @param  int|null    $code
+ * @param  string|null $func
  * @return string|null
  * @since  4.17
  */
-function preg_error_message(string $call = null, int &$code = null): string|null
+function preg_error_message(string $func = null, int &$code = null): string|null
 {
-    if ($call == null) {
+    if ($func === null) {
         return ($code = preg_last_error()) ? preg_last_error_msg() : null;
     }
 
     $error_message = error_message($error_code);
     if ($error_message) {
-        $message = grep($error_message, "~{$call}\(\):\s+(.+)~");
+        $message = grep($error_message, '~'. $func .'\(\):\s+(.+)~');
         if ($message) {
             $code = $error_code;
             return $message;
