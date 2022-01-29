@@ -2784,10 +2784,11 @@ function error_clear(int $code = null): void
  * @param  int|null $code
  * @param  bool     $format
  * @param  bool     $extract
+ * @param  bool     $clear
  * @return string|null
  * @since  4.17
  */
-function error_message(int &$code = null, bool $format = false, bool $extract = false): string|null
+function error_message(int &$code = null, bool $format = false, bool $extract = false, bool $clear = false): string|null
 {
     $error = error_get_last();
     if (!$error) {
@@ -2795,6 +2796,7 @@ function error_message(int &$code = null, bool $format = false, bool $extract = 
     }
 
     $code = $error['type'];
+    $clear && error_clear($code);
 
     // Format with name.
     if ($format) {
@@ -2834,23 +2836,25 @@ function json_error_message(int &$code = null): string|null
  *
  * @param  int|null    $code
  * @param  string|null $func
+ * @param  bool        $clear
  * @return string|null
  * @since  4.17
  */
-function preg_error_message(string $func = null, int &$code = null): string|null
+function preg_error_message(string $func = null, int &$code = null, bool $clear = false): string|null
 {
     if ($func === null) {
         return ($code = preg_last_error()) ? preg_last_error_msg() : null;
     }
 
-    $error_message = error_message($error_code);
-    if ($error_message) {
-        $message = grep($error_message, '~'. $func .'\(\):\s+(.+)~');
+    $error_message = error_message($error_code, clear: $clear);
+    if ($error_message && str_contains($error_message, $func ?: 'preg_')) {
+        $message = grep($error_message, '~\(\):\s+(.+)~');
         if ($message) {
             $code = $error_code;
             return $message;
         }
     }
+
     return null;
 }
 
