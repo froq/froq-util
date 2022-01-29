@@ -1,7 +1,7 @@
 <?php
 // Load top class files.
-require 'sugars-class/error.php';
-require 'sugars-class/static.php';
+require 'sugars-class/_error.php';
+require 'sugars-class/_static.php';
 
 // Load class files.
 require 'sugars-class/assert.php';
