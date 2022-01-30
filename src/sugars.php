@@ -2971,13 +2971,13 @@ function uuid_format(string $in): string|null
  * Format for sprintf().
  *
  * @param  string   $format
- * @param  mixed    $input
- * @param  mixed ...$inputs
+ * @param  mixed    $in
+ * @param  mixed ...$ins
  * @return string
  */
-function format(string $format, mixed $input, mixed ...$inputs): string
+function format(string $format, mixed $in, mixed ...$ins): string
 {
-    $params = [$input, ...$inputs];
+    $params = [$in, ...$ins];
 
     // Convert special formats (quoted string, int).
     $format = str_replace(['%q', '%i'], ["'%s'", '%d'], $format);
@@ -2998,45 +2998,45 @@ function format(string $format, mixed $input, mixed ...$inputs): string
 /**
  * Format an input as bool (yes).
  *
- * @param  bool|int $input
+ * @param  bool|int $in
  * @return string
  * @since  5.31
  */
-function format_bool(bool|int $input): string
+function format_bool(bool|int $in): string
 {
-    return $input ? 'true' : 'false';
+    return $in ? 'true' : 'false';
 }
 
 /**
  * Format an input as number (properly).
  *
- * @param  int|float|string $input
- * @param  int|null         $decimals
+ * @param  int|float|string $in
+ * @param  int|null         $decs
  * @param  string|null      $dsep
  * @param  string|null      $tsep
  * @return string|null
  * @since  5.31
  */
-function format_number(int|float|string $input, int|null $decimals = 0, string|null $dsep = '.', string|null $tsep = ','): string|null
+function format_number(int|float|string $in, int|null $decs = 0, string $dsep = null, string $tsep = null): string|null
 {
-    if (is_string($input)) {
-        if (!is_numeric($input)) {
+    if (is_string($in)) {
+        if (!is_numeric($in)) {
             trigger_error(sprintf('%s(): Invalid non-numeric input', __function__));
             return null;
         }
 
-        $input = 0 + $input;
+        $in += 0;
     }
 
     // Prevent number corruption.
-    if ($decimals && $decimals > NUMBER_PRECISION) {
-        $decimals = NUMBER_PRECISION;
+    if ($decs > NUMBER_PRECISION) {
+        $decs = NUMBER_PRECISION;
     }
 
-    $ret = number_format($input, (int) $decimals, $dsep, $tsep);
+    $ret = number_format($in, (int) $decs, $dsep, $tsep);
 
     // Append ".0" for 1.0 & upper NAN/INF.
-    if (!$decimals && !is_int($input) && strlen($ret) == 1) {
+    if (!$decs && !is_int($in) && strlen($ret) == 1) {
         $ret .= '.0';
     } elseif ($ret == 'inf' || $ret == 'nan') {
         $ret = strtoupper($ret);
