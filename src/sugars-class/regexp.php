@@ -214,6 +214,41 @@ final class RegExp
     }
 
     /**
+     * Preform a remove.
+     *
+     * @param  string|array  $input
+     * @param  int           $limit
+     * @param  int|null     &$count
+     * @return string|array|null
+     */
+    public function remove(string|array $input, int $limit = -1, int &$count = null): string|array|null
+    {
+        if (is_string($input)) {
+            $ret = preg_remove($this->pattern, $input, $limit, $count);
+
+            if ($ret === null) {
+                $this->processError();
+            }
+
+            return $ret;
+        }
+
+        $rets = null;
+
+        foreach ($input as $input) {
+            $ret = preg_remove($this->pattern, $input, $limit, $count);
+
+            if ($ret === null) {
+                $this->processError();
+            } else {
+                $rets[] = $ret;
+            }
+        }
+
+        return $rets;
+    }
+
+    /**
      * Perform a split.
      *
      * @param  string      $input
