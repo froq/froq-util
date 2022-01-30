@@ -25,14 +25,28 @@ final class Strings extends \StaticClass
      *
      * @param  string $string1
      * @param  string $string2
+     * @param  bool   $icase
+     * @param  int    $length
+     * @param  string $encoding
      * @return int
      */
-    public static function compare(string $string1, string $string2): int
+    public static function compare(string $string1, string $string2, bool $icase = false, int $length = null,
+        string $encoding = null): int
     {
         // Old stuff, same with "<=>" operator.
         // return ($string1 > $string2) - ($string1 < $string2);
+        // return $string1 <=> $string2;
 
-        return ($string1 <=> $string2);
+        if ($icase) {
+            $ret = ($length !== null)
+                 ? strncasecmp(mb_strtolower($string1, $encoding), mb_strtolower($string2, $encoding), $length)
+                 : strcasecmp(mb_strtolower($string1, $encoding), mb_strtolower($string2, $encoding));
+        } else {
+            $ret = ($length !== null) ? strncmp($string1, $string2, $length) : strcmp($string1, $string2);
+        }
+
+        // Uniform result as 0, 1 or -1.
+        return ($ret == 0) ? 0 : ($ret >= 1 ? 1 : -1);
     }
 
     /**
@@ -53,14 +67,15 @@ final class Strings extends \StaticClass
             setlocale(LC_COLLATE, $locale);
         }
 
-        $result = strcoll($string1, $string2);
+        $ret = strcoll($string1, $string2);
 
         // Restore (if needed).
         if ($locale !== $currentLocale && $currentLocale !== null) {
             setlocale(LC_COLLATE, $currentLocale);
         }
 
-        return $result;
+        // Uniform result as 0, 1 or -1.
+        return ($ret == 0) ? 0 : ($ret >= 1 ? 1 : -1);
     }
 
     /**
