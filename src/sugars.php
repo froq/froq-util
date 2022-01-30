@@ -860,7 +860,7 @@ function get_error(string $field = null)
  */
 function get_uniqid(int $length = 14, int $base = 16, bool $hrtime = false, bool $upper = false): string|null
 {
-    if ($length < 14) {
+    if ($length < 14  && $base < 17) {
         trigger_error(sprintf('%s(): Invalid length, min=14', __function__));
         return null;
     }
@@ -908,7 +908,7 @@ function get_uniqid(int $length = 14, int $base = 16, bool $hrtime = false, bool
  */
 function get_random_uniqid(int $length = 14, int $base = 16, bool $upper = false): string|null
 {
-    if ($length < 14) {
+    if ($base < 17 && $length < 14) {
         trigger_error(sprintf('%s(): Invalid length, min=14', __function__));
         return null;
     }
@@ -920,7 +920,7 @@ function get_random_uniqid(int $length = 14, int $base = 16, bool $upper = false
     $ret = '';
 
     while (strlen($ret) < $length) {
-        $id = bin2hex(random_bytes(3));
+        $id = bin2hex(random_bytes(4));
 
         // Convert non-hex ids.
         $ret .= ($base == 16) ? $id : convert_base($id, 16, $base);
@@ -2882,10 +2882,10 @@ function preg_error_message(string $func = null, int &$code = null, bool $clear 
 function suid(int $length = 6, int $base = 62): string|null
 {
     if ($length < 1) {
-        trigger_error(sprintf('%s(): Invalid length, min=14', __function__));
+        trigger_error(sprintf('%s(): Invalid length, min=1', __function__));
         return null;
     } elseif ($base < 2 || $base > 62) {
-        trigger_error(sprintf('%s(): Invalid base, min=10, max=62', __function__));
+        trigger_error(sprintf('%s(): Invalid base, min=2, max=62', __function__));
         return null;
     }
 
@@ -2911,8 +2911,7 @@ function suid(int $length = 6, int $base = 62): string|null
  */
 function uuid(bool $dashed = true, bool $timed = false, bool $guid = false): string
 {
-    $bytes = !$timed
-        ? random_bytes(16) // Fully 16-random bytes.
+    $bytes = !$timed ? random_bytes(16) // Full 16-random bytes.
         : hex2bin(dechex(time())) . random_bytes(12); // Time bin prefix & 12-random bytes.
 
     // Add signs: 4 (version) & 8, 9, A, B, but GUID doesn't use them.
@@ -2938,7 +2937,7 @@ function uuid(bool $dashed = true, bool $timed = false, bool $guid = false): str
  */
 function uuid_hash(int $length = 32, bool $dashed = false, bool $timed = false, bool $guid = false): string|null
 {
-    $algo =@ [32 => 'md5', 40 => 'sha1', 64 => 'sha256', 16 => 'fnv1a64'][$length];
+    $algo = [32 => 'md5', 40 => 'sha1', 64 => 'sha256', 16 => 'fnv1a64'][$length] ?? null;
 
     if (!$algo) {
         trigger_error(sprintf('%s(): Invalid length, valids are: 32,40,64,16', __function__));
