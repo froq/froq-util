@@ -59,12 +59,9 @@ final class RegExp
      * @param  string      $source
      * @param  string|null $modifiers
      * @param  bool        $throw
-     * @throws RegExpError
      */
     public function __construct(string $source, string $modifiers = null, bool $throw = false)
     {
-        ($source === '') && throw new RegExpError('Empty source');
-
         $this->source    = $source;
         $this->modifiers = $modifiers;
         $this->pattern   = $this->preparePattern($source, $modifiers);
@@ -219,13 +216,19 @@ final class RegExp
     /**
      * Perform a split.
      *
-     * @param  string $input
-     * @param  int    $limit
-     * @param  int    $flags
+     * @param  string      $input
+     * @param  int         $limit
+     * @param  int         $flags
+     * @param  string|null $class
      * @return array|null
+     * @throws RegExpError
      */
-    public function split(string $input, int $limit = -1, int $flags = 0): array|null
+    public function split(string $input, int $limit = -1, int $flags = 0, string $class = null): array|object|null
     {
+        if ($class && !class_exists($class)) {
+            throw new RegExpError('Invalid class '. $class);
+        }
+
         $ret = preg_split($this->pattern, $input, $limit, $flags);
 
         if ($ret === false) {
@@ -233,7 +236,7 @@ final class RegExp
             $ret = null;
         }
 
-        return $ret;
+        return $class ? new $class($ret) : $ret;
     }
 
     /**
@@ -244,19 +247,10 @@ final class RegExp
      * @param  int    $limit
      * @param  int    $flags
      * @return object|null
-     * @throws RegExpError
      */
     public function splitTo(string $input, string $class = 'Map', int $limit = -1, int $flags = 0): object|null
     {
-        class_exists($class) || throw new RegExpError('Invalid class');
-
-        $ret = $this->split($input, $limit, $flags);
-
-        if (!$this->error) {
-            return new $class($ret);
-        }
-
-        return null;
+        return $this->split($input, $limit, $flags, $class);
     }
 
     /**
@@ -324,6 +318,33 @@ final class RegExp
     public static function escape(string $input, string $delimiter = null): string
     {
         return preg_quote($input, $delimiter);
+    }
+
+    /**
+     * Create an instance using given pattern.
+     *
+     * @param  string $pattern
+     * @param  bool   $throw
+     * @return static
+     * @throws RegExpError
+     */
+    public static function fromPattern(string $pattern, bool $throw = false): static
+    {
+        $delimiter = $pattern[0] ?? '';
+        if (!$delimiter) {
+            throw new RegExpError('No beginning delimiter');
+        }
+
+        $pos = strrpos($pattern, $delimiter, 1);
+        if (!$pos) {
+            throw new RegExpError('No ending delimiter');
+        }
+
+        return new static(
+            source: substr($pattern, 1, $pos - 1),
+            modifiers: substr($pattern, $pos + 1),
+            throw: $throw
+        );
     }
 
     /**
