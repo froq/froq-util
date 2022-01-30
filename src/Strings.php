@@ -280,4 +280,61 @@ final class Strings extends \StaticClass
 
         return $ret;
     }
+
+    /**
+     * Unicode ord (@source https://stackoverflow.com/a/7153133/362780).
+     *
+     * @param  string $chr
+     * @return int|null
+     * @since  6.0
+     */
+    public static function ord(string $chr): int|null
+    {
+        $ord0 = ord($chr[0]);
+        if ($ord0 >= 0 && $ord0 <= 127) {
+            return $ord0;
+        }
+
+        $ord1 = ord($chr[1]);
+        if ($ord0 >= 192 && $ord0 <= 223)  {
+            return ($ord0 - 192) * 64 + ($ord1 - 128);
+        }
+
+        $ord2 = ord($chr[2]);
+        if ($ord0 >= 224 && $ord0 <= 239) {
+            return ($ord0 - 224) * 4096 + ($ord1 - 128) * 64 + ($ord2 - 128);
+        }
+
+        $ord3 = ord($chr[3]);
+        if ($ord0 >= 240 && $ord0 <= 247) {
+            return ($ord0 - 240) * 262144 + ($ord1 - 128) * 4096 + ($ord2 - 128) * 64 + ($ord3 - 128);
+        }
+
+        return null;
+    }
+
+    /**
+     * Unicode chr (@source https://stackoverflow.com/a/7153133/362780).
+     *
+     * @param  int $ord
+     * @return string|null
+     * @since  6.0
+     */
+    public static function chr(int $ord): string|null
+    {
+        if ($ord <= 127) {
+            return chr($ord);
+        }
+        if ($ord <= 2047) {
+            return chr(($ord >> 6) + 192) . chr(($ord & 63) + 128);
+        }
+        if ($ord <= 65535) {
+            return chr(($ord >> 12) + 224) . chr((($ord >> 6) & 63) + 128) . chr(($ord & 63) + 128);
+        }
+        if ($ord <= 2097151) {
+            return chr(($ord >> 18) + 240) . chr((($ord >> 12) & 63) + 128) . chr((($ord >> 6) & 63) + 128) . chr(($ord & 63) + 128);
+        }
+
+        return null;
+    }
 }
