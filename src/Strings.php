@@ -262,7 +262,10 @@ final class Strings extends \StaticClass
     public static function random(int $length, bool $puncted = false): string
     {
         if ($length < 1) {
-            throw new UtilException('Invalid length value `%s`, length must be minimun 1', $length);
+            throw new UtilException(
+                'Invalid length value `%s`, length must be minimun 1',
+                $length
+            );
         }
 
         $chars = BASE62_ALPHABET;
@@ -279,6 +282,50 @@ final class Strings extends \StaticClass
         }
 
         return $ret;
+    }
+
+    /**
+     * Unicode pad (@source https://www.php.net/manual/en/function.str-pad.php#111147).
+     *
+     * @param  string      $string
+     * @param  int         $padLength
+     * @param  string      $padString
+     * @param  int         $padType
+     * @param  string|null $encoding
+     * @return string
+     * @throws froq\util\UtilException
+     */
+    public static function pad(string $string, int $padLength, string $padString = ' ', int $padType = 0, string $encoding = null): string
+    {
+        $stringLength    = mb_strlen($string, $encoding);
+        $padStringLength = mb_strlen($padString, $encoding);
+
+        if (!$stringLength && ($padType == STR_PAD_RIGHT || $padType == STR_PAD_LEFT)) {
+            $stringLength = 1; // @debug
+        }
+        if (!$padLength || !$padStringLength || $padLength <= $stringLength) {
+            return $string;
+        }
+
+        $return = '';
+        $repeat = ~~ceil($stringLength - $padStringLength + $padLength);
+        if ($padType == STR_PAD_RIGHT) {
+            $return = $string . str_repeat($padString, $repeat);
+            $return = mb_substr($return, 0, $padLength, $encoding);
+        } elseif ($padType == STR_PAD_LEFT) {
+            $return = str_repeat($padString, $repeat) . $string;
+            $return = mb_substr($return, -$padLength, null, $encoding);
+        } elseif ($padType == STR_PAD_BOTH) {
+            $length = ($padLength - $stringLength) / 2;
+            $repeat = ~~ceil($length / $padStringLength);
+            $return = mb_substr(str_repeat($padString, $repeat), 0, ~~floor($length), $encoding)
+                    . $string
+                    . mb_substr(str_repeat($padString, $repeat), 0, ~~ceil($length), $encoding);
+        } else {
+            throw new UtilException('Invalid pad type ' . $padType);
+        }
+
+        return $return;
     }
 
     /**
