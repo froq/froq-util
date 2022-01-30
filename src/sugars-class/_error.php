@@ -44,7 +44,7 @@ class KeyError extends Error
 /**
  * Json Error.
  *
- * An error class for for JSONs (which is missing internally, suppose).
+ * An error class for JSONs (which is missing internally, suppose).
  *
  * @package froq\util
  * @object  JsonError
@@ -59,14 +59,29 @@ class JsonError extends Error
 /**
  * RegExp Error.
  *
- * An error class for for RegExp (which is missing internally, suppose).
+ * An error class for RegExp (which is missing internally, suppose).
  *
  * @package froq\util
- * @object  RegExpErrorError
+ * @object  RegExpError
  * @author  Kerem Güneş
  * @since   6.0
  */
 class RegExpError extends Error
+{
+    use ErrorTrait;
+}
+
+/**
+ * Range Error.
+ *
+ * An error class for some range stuff.
+ *
+ * @package froq\util
+ * @object  RangeError
+ * @author  Kerem Güneş
+ * @since   6.0
+ */
+class RangeError extends Error
 {
     use ErrorTrait;
 }
