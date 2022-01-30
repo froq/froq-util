@@ -489,17 +489,23 @@ function str_has_suffix(string $str, string $src, bool $icase = false): bool
 }
 
 /**
- * Compare two string input by given or current locale.
+ * Compare two string inputs.
  *
  * @param  string      $str1
  * @param  string      $str2
+ * @param  bool        $icase
+ * @param  int|null    $length
  * @param  string|null $locale
+ * @param  string|null $encoding
  * @return int
  * @since  5.26
  */
-function str_compare(string $str1, string $str2, string $locale = null): int
+function str_compare(string $str1, string $str2, bool $icase = false, int $length = null, string $locale = null, string $encoding = null): int
 {
-    return Strings::compareLocale($str1, $str2, ($locale ?? getlocale(LC_COLLATE)));
+    if ($locale !== null) {
+        return Strings::compareLocale($str1, $str2, $locale ?? getlocale(LC_COLLATE));
+    }
+    return Strings::compare($str1, $str2, $icase, $length, $encoding);
 }
 
 /**
@@ -552,13 +558,13 @@ function str_chunk(string $str, int $length = 76, string $separator = "\r\n", bo
  * Concat given string with others.
  *
  * @param  string                     $str
- * @param  string|int|float|bool|null $items
+ * @param  string|int|float|bool|null $strs
  * @return string
  * @since  5.31
  */
-function str_concat(string $str, string|int|float|bool|null ...$items): string
+function str_concat(string $str, string|int|float|bool|null ...$strs): string
 {
-    return $str . join($items);
+    return $str . join($strs);
 }
 
 /**
