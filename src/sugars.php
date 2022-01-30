@@ -3042,50 +3042,57 @@ function format_number(int|float|string $input, int|null $decimals = 0, string|n
 /**
  * Convert a multi-byte string's first character to upper-case.
  *
- * @param  string $in
- * @param  bool   $tr
+ * @param  string      $in
+ * @param  bool        $tr
+ * @param  string|null $encoding
  * @return string
  * @since  5.0
  */
-function mb_ucfirst(string $in, bool $tr = false): string
+function mb_ucfirst(string $in, bool $tr = false, string $encoding = null): string
 {
-    $first = mb_substr($in, 0, 1);
-    if ($tr && $first === 'i') {
+    $first = mb_substr($in, 0, 1, $encoding);
+    if ($tr && $first == 'i') {
         $first = 'İ';
     }
 
-    return mb_strtoupper($first) . mb_substr($in, 1);
+    return mb_strtoupper($first, $encoding) . mb_substr($in, 1, null, $encoding);
 }
 
 /**
  * Convert a multi-byte string's first character to lower-case.
  *
- * @param  string $in
- * @param  bool   $tr
+ * @param  string      $in
+ * @param  bool        $tr
+ * @param  string|null $encoding
  * @return string
  * @since  5.0
  */
-function mb_lcfirst(string $in, bool $tr = false): string
+function mb_lcfirst(string $in, bool $tr = false, string $encoding = null): string
 {
-    $first = mb_substr($in, 0, 1);
-    if ($tr && $first === 'I') {
+    $first = mb_substr($in, 0, 1, $encoding);
+    if ($tr && $first == 'I') {
         $first = 'ı';
     }
 
-    return mb_strtolower($first) . mb_substr($in, 1);
+    return mb_strtolower($first, $encoding) . mb_substr($in, 1, null, $encoding);
 }
 
 /**
  * Get a character by given index in Unicode style.
  *
- * @param  string $in
- * @param  int    $index
+ * @param  string      $in
+ * @param  int         $index
+ * @param  string|null $encoding
  * @return string|null
  * @since  5.17
  */
-function char_at(string $in, int $index): string|null
+function char_at(string $in, int $index, string $encoding = null): string|null
 {
-    $char = mb_substr($in, $index, 1);
+    if ($index < 0 || $index >= mb_strlen($in, $encoding)) {
+        return null;
+    }
+
+    $char = mb_substr($in, $index, 1, $encoding);
 
     return ($char != '') ? $char : null;
 }
@@ -3093,16 +3100,21 @@ function char_at(string $in, int $index): string|null
 /**
  * Get a character code by given index in Unicode style.
  *
- * @param  string $in
- * @param  int    $index
+ * @param  string      $in
+ * @param  int         $index
+ * @param  string|null $encoding
  * @return int|null
  * @since  5.17
  */
-function char_code_at(string $in, int $index): int|null
+function char_code_at(string $in, int $index, string $encoding = null): int|null
 {
-    $char = mb_substr($in, $index, 1);
+    if ($index < 0 || $index >= mb_strlen($in, $encoding)) {
+        return null;
+    }
 
-    return ($char != '') ? mb_ord($char) : null;
+    $char = mb_substr($in, $index, 1, $encoding);
+
+    return ($char != '') ? mb_ord($char, $encoding) : null;
 }
 
 /**
