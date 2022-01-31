@@ -17,6 +17,9 @@ declare(strict_types=1);
  */
 final class RegExp
 {
+    /** @const string */
+    public const DELIMITER = '~';
+
     /** @const int */
     public const PATTERN_ORDER        = PREG_PATTERN_ORDER,
                  SET_ORDER            = PREG_SET_ORDER,
@@ -344,7 +347,8 @@ final class RegExp
     }
 
     /**
-     * Escape special regular expression characters.
+     * Escape pattern with/without modifiers.
+     * Note: Sould not be used with prepare().
      *
      * @param  string      $input
      * @param  string|null $delimiter
@@ -352,7 +356,50 @@ final class RegExp
      */
     public static function escape(string $input, string $delimiter = null): string
     {
-        return preg_quote($input, $delimiter);
+        $input = preg_quote($input, $delimiter);
+
+        $chars = "\r\n\t\v\f\0";
+        $delim = self::DELIMITER;
+
+        if (!$delimiter || !str_contains($delimiter, $delim)) {
+            $chars .= $delim;
+        }
+
+        // Prevent double escape.
+        if (!str_contains($input, '\\' . $delim)) {
+            $chars .= $delim;
+        }
+
+        if (strpbrk($input, $chars) !== false) {
+            $input = addcslashes($input, $chars);
+        }
+
+        return $input;
+    }
+
+    /**
+     * Prepare source as pattern with/without modifiers.
+     * Note: Sould not be used with escape().
+     *
+     * @param  string      $source
+     * @param  string|null $modifiers
+     * @return string
+     */
+    public static function prepare(string $source, string|null $modifiers = null): string
+    {
+        $chars = "\r\n\t\v\f\0";
+        $delim = self::DELIMITER;
+
+        // Prevent double escape.
+        if (!str_contains($source, '\\' . $delim)) {
+            $chars .= $delim;
+        }
+
+        if (strpbrk($source, $chars) !== false) {
+            $source = addcslashes($source, $chars);
+        }
+
+        return $delim . $source . $delim . $modifiers;
     }
 
     /**
@@ -387,7 +434,7 @@ final class RegExp
      */
     private function preparePattern(string $source, string|null $modifiers): string
     {
-        return '~' . addcslashes($source, "~\r\n\t\v\0") . '~' . $modifiers;
+        return self::prepare($source, $modifiers);
     }
 
     /**
