@@ -285,7 +285,7 @@ final class RegExp
     }
 
     /**
-     * Find possible matches.
+     * Find possible matches (@see sugars.grep()).
      *
      * @param  string      $input
      * @param  bool        $named
@@ -306,7 +306,7 @@ final class RegExp
     }
 
     /**
-     * Find all possible matches.
+     * Find all possible matches (@see sugars.grep_all()).
      *
      * @param  string      $input
      * @param  bool        $named
