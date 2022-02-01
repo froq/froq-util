@@ -152,16 +152,17 @@ function each(array $array, callable $func): void
 /**
  * Get size (count/length) of given input.
  *
- * @param  string|array|object $in
+ * @param  string|array|object|null $in
  * @return int
  * @since  3.0, 5.0
  */
-function size(string|array|object $in): int
+function size(string|array|object|null $in): int
 {
     return match (true) {
         is_string($in)    => mb_strlen($in),
         is_countable($in) => count($in),
-        is_object($in)    => count(get_object_vars($in))
+        is_object($in)    => count(get_object_vars($in)),
+        default           => 0
     };
 }
 
@@ -249,40 +250,42 @@ function strip(string $in, string $chars = null): string
 }
 
 /**
- * Split a string, with Unicode style.
+ * Split a string, with unicode style.
  *
- * @param  string   $sep
- * @param  string   $in
- * @param  int|null $limit
- * @param  bool     $flags
- * @param  bool     $pad
+ * @param  string            $sep
+ * @param  string            $in
+ * @param  int|null          $limit
+ * @param  int|null          $flags
+ * @param  RegExpError|null &$error
  * @return array
  * @since  5.0
  */
-function split(string $sep, string $in, int $limit = null, int $flags = null, bool $pad = true): array
+function split(string $sep, string $in, int $limit = null, int $flags = null, RegExpError &$error = null): array
 {
-    if ($sep === '') {
-        $ret = (array) preg_split('~~u', $in, -1, 1);
-        if (!$pad && $limit) { // Like str_split(), but with Unicode.
-            return array_map(fn($r) => join($r), array_chunk($ret, $limit));
+    if ($sep == '') {
+        $ret = preg_split('~~u', $in, -1, PREG_SPLIT_NO_EMPTY) ?: [];
+
+        // Mind limit option.
+        if ($limit && $limit != -1) {
+            $res = array_slice($ret, $limit - 1); // Rest.
+            $ret = array_slice($ret, 0, $limit - 1);
+            $res && $ret[] = join($res);
         }
     } else {
-        // Note: "[]" is special & used for charsets as separator (pattern), "." etc must be quoted also.
-        // $ret = (array) ($limit ? mb_split($sep, $in, $limit) : mb_split($sep, $in));
-        // if (!$blanks) { // When no blank fields wanted.
-        //     $ret = array_filter($ret, 'strlen');
-        // }
+        // Escape null bytes & delimiter.
+        $sep = str_replace(["\0", '~'], ['\0', '\~'], $sep);
 
-        // Escape null bytes (in case).
-        $sep = str_replace("\0", "\\0", $sep);
-
-        // Note: "~" must be escaped, no control here.
-        $ret = preg_split('~'. $sep .'~u', $in, ($limit ?? -1), ($flags ?? PREG_SPLIT_NO_EMPTY));
+        $ret = preg_split('~'. $sep .'~u', $in, ($limit ?? -1), ($flags |= PREG_SPLIT_NO_EMPTY)) ?: [];
     }
 
     // Plus: prevent 'undefined index ..' error.
-    if ($pad && $limit && $limit != count($ret)) {
+    if ($limit && $limit != -1 && $limit != count($ret)) {
         $ret = array_pad($ret, $limit, null);
+    }
+
+    // Fill error message if requested.
+    if (func_num_args() == 5 && ($message = preg_error_message($code, 'preg_split', true))) {
+        $error = new RegExpError($message, $code);
     }
 
     return $ret;
@@ -513,28 +516,23 @@ function str_compare(string $str1, string $str2, bool $icase = false, int $lengt
  *
  * @param  string   $str
  * @param  int|null $length
- * @return string|null
+ * @return string
  * @since  4.9
  */
-function str_rand(string $str, int $length = null): string|null
+function str_rand(string $str, int $length = null): string
 {
     if ($str == '') {
-        trigger_error(sprintf('%s(): Empty string given', __function__));
-        return null;
+        return '';
     }
 
-    $str_length = mb_strlen($str);
-    if ($length && ($length < 1 || $length > $str_length)) {
-        trigger_error(sprintf('%s(): Length must be between 1-%s or null', __function__, $str_length));
-        return null;
-    }
+    $tmp = mb_str_split($str, 1);
 
-    $tmp = preg_split('~~u', $str, -1, 1);
+    // Ensure a new seed (@see https://wiki.php.net/rfc/object_scope_prng).
+    srand();
 
-    srand(); // Ensure a new seed (@see https://wiki.php.net/rfc/object_scope_prng).
     shuffle($tmp);
 
-    return !$length ? join($tmp) : join(array_slice($tmp, 0, $length));
+    return !$length ? join($tmp) : join(array_slice($tmp, 0, abs($length)));
 }
 
 /**
@@ -549,7 +547,7 @@ function str_rand(string $str, int $length = null): string|null
  */
 function str_chunk(string $str, int $length = 76, string $separator = "\r\n", bool $join = true): string|array
 {
-    $ret = array_chunk(preg_split('~~u', $str, -1, 1), $length);
+    $ret = array_chunk(mb_str_split($str), abs($length));
 
     return $join ? array_reduce($ret, fn($ret, $part) => $ret .= join($part) . $separator) : $ret;
 }
@@ -565,6 +563,44 @@ function str_chunk(string $str, int $length = 76, string $separator = "\r\n", bo
 function str_concat(string $str, string|int|float|bool|null ...$strs): string
 {
     return $str . join($strs);
+}
+
+/**
+ * Escape given string, unlike addcslashes() don't convert all.
+ *
+ * @param  string $str
+ * @param  array  $chars
+ * @return string
+ * @since  6.0
+ */
+function str_escape(string $str, string|array $chars): string
+{
+    if ($str == '' || $chars == '') {
+        return $str;
+    }
+
+    if (is_string($chars)) {
+        $chars = mb_str_split($chars);
+    }
+
+    $repls = [];
+    foreach ($chars as $char) {
+        if ($char == '' || !is_string($char)) {
+            continue;
+        }
+
+        // Null stuff.
+        if ($char == "\0") {
+            $repls["\0"] = '\0';
+            continue;
+        }
+
+        // Since addcslashes() converts chars to numbers, use for specials only.
+        // ASCII Table: https://www.rapidtables.com/code/text/ascii-table.html
+        $repls[$char] = ord($char) <= 32 ? addcslashes($char, $char) : '\\' . $char;
+    }
+
+    return str_replace(array_keys($repls), array_values($repls), $str);
 }
 
 /**
@@ -2853,15 +2889,18 @@ function json_error_message(int &$code = null): string|null
  * @return string|null
  * @since  4.17
  */
-function preg_error_message(string $func = null, int &$code = null, bool $clear = false): string|null
+function preg_error_message(int &$code = null, string $func = null, bool $clear = false): string|null
 {
     if ($func === null) {
         return ($code = preg_last_error()) ? preg_last_error_msg() : null;
     }
 
-    $error_message = error_message($error_code, clear: $clear);
-    if ($error_message && str_contains($error_message, $func ?: 'preg_')) {
-        $message = grep($error_message, '~\(\):\s+(.+)~');
+    // Somehow code disappears when error_get_last() called.
+    $error_code    = preg_last_error();
+    $error_message = error_message(clear: $clear);
+
+    if ($error_message && strsrc($error_message, $func ?: 'preg_')) {
+        $message = strsub($error_message, strpos($error_message, '):') + 3);
         if ($message) {
             $code = $error_code;
             return $message;
