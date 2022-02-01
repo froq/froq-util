@@ -267,11 +267,18 @@ final class RegExp
             throw new RegExpError('Invalid class '. $class);
         }
 
-        $ret = preg_split($this->pattern, $input, $limit, $flags);
+        $ret = preg_split($this->pattern, $input, $limit, flags: (
+            $flags |= PREG_SPLIT_NO_EMPTY // Always..
+        ));
 
         if ($ret === false) {
             $this->processError();
             $ret = null;
+        }
+
+        // Plus: prevent 'undefined index ..' error.
+        if ($limit && $limit != -1 && $limit != count((array) $ret)) {
+            $ret = array_pad((array) $ret, $limit, null);
         }
 
         return $class ? new $class($ret) : $ret;
