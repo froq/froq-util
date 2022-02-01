@@ -3067,8 +3067,8 @@ function format_number(int|float|string $in, int|null $decs = 0, string $dsep = 
     }
 
     // Prevent number corruption.
-    if ($decs > NUMBER_PRECISION) {
-        $decs = NUMBER_PRECISION;
+    if ($decs > PRECISION) {
+        $decs = PRECISION;
     }
 
     $ret = number_format($in, (int) $decs, $dsep, $tsep);

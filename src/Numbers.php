@@ -21,7 +21,7 @@ use froq\util\UtilException;
 final class Numbers extends \StaticClass
 {
     /** Constants. */
-    public const PRECISION  = NUMBER_PRECISION,
+    public const PRECISION  = PRECISION,
                  EPSILON    = PHP_FLOAT_EPSILON,
                  MAX_INT    = PHP_INT_MAX,
                  MAX_FLOAT  = PHP_FLOAT_MAX;

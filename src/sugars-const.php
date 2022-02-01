@@ -19,6 +19,20 @@ final class __void {} function void() { return new __void; }
 const nil = null, nils = '';
 
 /**
+ * MB encoding.
+ * @since 6.0
+ */
+const ENCODING = 'UTF-8';
+
+
+/**
+ * Number precision.
+ * @since 5.31
+ */
+const PRECISION = 14;
+
+
+/**
  * Cases (0/1 already defined as CASSE_LOWER/CASE_UPPER).
  * @const string
  * @since 4.19
@@ -31,12 +45,6 @@ const CASE_TITLE = 2, CASE_DASH  = 3,
  * @since 6.0
  */
 const PATHINFO_TYPE = 0;
-
-/**
- * Number precision.
- * @since 5.31
- */
-const NUMBER_PRECISION = 14;
 
 /**
  * Base-62 alphabet.
