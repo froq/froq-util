@@ -2993,8 +2993,9 @@ function format(string $format, mixed $in, mixed ...$ins): string
     // Convert special formats (quoted string, int).
     $format = str_replace(['%q', '%i'], ["'%s'", '%d'], $format);
 
-    // Convert bools as proper bools (not 1|0).
+    // Convert bools as proper bools (not 0/1).
     if (str_contains($format, '%b')) {
+        // Must find all for a proper param index re-set.
         foreach (grep_all($format, '~(%[a-z])~') as $i => $op) {
             if ($op == '%b') {
                 $format = substr_replace($format, '%s', strpos($format, '%b'), 2);
