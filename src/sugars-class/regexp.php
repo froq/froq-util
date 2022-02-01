@@ -217,7 +217,7 @@ final class RegExp
         }
 
         // Plus: prevent 'undefined index ..' error.
-        if ($limit && $limit != -1 && $limit != count((array) $ret)) {
+        if ($limit > 0 && $limit > count((array) $ret)) {
             $ret = array_pad((array) $ret, $limit, null);
         }
 
