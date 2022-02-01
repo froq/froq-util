@@ -134,41 +134,43 @@ final class RegExp
     /**
      * Perform a match.
      *
-     * @param  string $input
-     * @param  int    $flags
-     * @param  int    $offset
-     * @return array|null
+     * @param  string      $input
+     * @param  int         $flags
+     * @param  int         $offset
+     * @param  string|null $class
+     * @return iterable|null
      */
-    public function match(string $input, int $flags = 0, int $offset = 0): array|null
+    public function match(string $input, int $flags = 0, int $offset = 0, string $class = null): iterable|null
     {
-        $ret = preg_match($this->pattern, $input, $match, $flags, $offset);
+        $res = preg_match($this->pattern, $input, $ret, $flags, $offset);
 
-        if ($ret === false) {
+        if ($res === false) {
             $this->processError();
-            $match = null;
+            $ret = null;
         }
 
-        return $match;
+        return $class ? new $class((array) $ret) : $ret;
     }
 
     /**
      * Perform a match-all.
      *
-     * @param  string $input
-     * @param  int    $flags
-     * @param  int    $offset
-     * @return array|null
+     * @param  string      $input
+     * @param  int         $flags
+     * @param  int         $offset
+     * @param  string|null $class
+     * @return iterable|null
      */
-    public function matchAll(string $input, int $flags = 0, int $offset = 0): array|null
+    public function matchAll(string $input, int $flags = 0, int $offset = 0, string $class = null): iterable|null
     {
-        $ret = preg_match_all($this->pattern, $input, $match, $flags, $offset);
+        $res = preg_match_all($this->pattern, $input, $ret, $flags, $offset);
 
-        if ($ret === false) {
+        if ($res === false) {
             $this->processError();
-            $match = null;
+            $ret = null;
         }
 
-        return $match;
+        return $class ? new $class((array) $ret) : $ret;
     }
 
     /**
@@ -258,15 +260,10 @@ final class RegExp
      * @param  int         $limit
      * @param  int         $flags
      * @param  string|null $class
-     * @return array|null
-     * @throws RegExpError
+     * @return iterable|null
      */
-    public function split(string $input, int $limit = -1, int $flags = 0, string $class = null): array|object|null
+    public function split(string $input, int $limit = -1, int $flags = 0, string $class = null): iterable|null
     {
-        if ($class && !class_exists($class)) {
-            throw new RegExpError('Invalid class '. $class);
-        }
-
         $ret = preg_split($this->pattern, $input, $limit, flags: (
             $flags |= PREG_SPLIT_NO_EMPTY // Always..
         ));
@@ -281,7 +278,7 @@ final class RegExp
             $ret = array_pad((array) $ret, $limit, null);
         }
 
-        return $class ? new $class($ret) : $ret;
+        return $class ? new $class((array) $ret) : $ret;
     }
 
     /**
@@ -291,9 +288,9 @@ final class RegExp
      * @param  string $class
      * @param  int    $limit
      * @param  int    $flags
-     * @return object|null
+     * @return iterable|null
      */
-    public function splitTo(string $input, string $class = 'Map', int $limit = -1, int $flags = 0): object|null
+    public function splitTo(string $input, string $class = 'Map', int $limit = -1, int $flags = 0): iterable|null
     {
         return $this->split($input, $limit, $flags, $class);
     }
@@ -328,11 +325,12 @@ final class RegExp
     /**
      * Find possible matches.
      *
-     * @param  string $input
-     * @param  bool   $named
-     * @return string|array|null
+     * @param  string      $input
+     * @param  bool        $named
+     * @param  string|null $class
+     * @return string|iterable|null
      */
-    public function grep(string $input, bool $named = false): string|array|null
+    public function grep(string $input, bool $named = false, string $class = null): string|iterable|null
     {
         $ret = grep($input, $this->pattern, $named);
 
@@ -340,18 +338,19 @@ final class RegExp
             $this->processError();
         }
 
-        return $ret;
+        return $class ? new $class((array) $ret) : $ret;
     }
 
     /**
      * Find all possible matches.
      *
-     * @param  string $input
-     * @param  bool   $named
-     * @param  bool   $uniform
-     * @return array|null
+     * @param  string      $input
+     * @param  bool        $named
+     * @param  bool        $uniform
+     * @param  string|null $class
+     * @return iterable|null
      */
-    public function grepAll(string $input, bool $named = false, bool $uniform = false): array|null
+    public function grepAll(string $input, bool $named = false, bool $uniform = false, string $class = null): iterable|null
     {
         $ret = grep_all($input, $this->pattern, $named, $uniform);
 
@@ -359,7 +358,7 @@ final class RegExp
             $this->processError();
         }
 
-        return $ret;
+        return $class ? new $class((array) $ret) : $ret;
     }
 
     /**
