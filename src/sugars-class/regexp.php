@@ -428,6 +428,19 @@ final class RegExp
     }
 
     /**
+     * Create an instance using given source/modifiers.
+     *
+     * @param  string      $source
+     * @param  string|null $modifiers
+     * @param  bool        $throw
+     * @return static
+     */
+    public static function from(string $source, string $modifiers = null, bool $throw = false): static
+    {
+        return new static($source, $modifiers, $throw);
+    }
+
+    /**
      * Create an instance using given pattern.
      *
      * @param  string $pattern
