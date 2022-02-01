@@ -122,13 +122,13 @@ final class RegExp
      */
     public function test(string $input): bool
     {
-        $ret = preg_test($this->pattern, $input);
+        $ret = preg_match($this->pattern, $input);
 
-        if (!$ret) {
+        if ($ret === false) {
             $this->processError();
         }
 
-        return $ret;
+        return (bool) $ret;
     }
 
     /**
