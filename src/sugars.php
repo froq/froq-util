@@ -271,7 +271,7 @@ function split(string $sep, string $in, int $limit = null, int $flags = null, Re
         $ret = preg_split('~~u', $in, -1, PREG_SPLIT_NO_EMPTY) ?: [];
 
         // Mind limit option.
-        if ($limit && $limit != -1) {
+        if ($limit && $limit > 0) {
             $res = array_slice($ret, $limit - 1); // Rest.
             $ret = array_slice($ret, 0, $limit - 1);
             $res && $ret[] = join($res);
@@ -284,7 +284,7 @@ function split(string $sep, string $in, int $limit = null, int $flags = null, Re
     }
 
     // Plus: prevent 'undefined index ..' error.
-    if ($limit && $limit != -1 && $limit != count($ret)) {
+    if ($limit && $limit > 0 && $limit > count($ret)) {
         $ret = array_pad($ret, $limit, null);
     }
 
