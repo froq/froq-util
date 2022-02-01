@@ -555,8 +555,8 @@ function str_chunk(string $str, int $length = 76, string $separator = "\r\n", bo
 /**
  * Concat given string with others.
  *
- * @param  string                     $str
- * @param  string|int|float|bool|null $strs
+ * @param  string $str
+ * @param  mixed  $strs
  * @return string
  * @since  5.31
  */
