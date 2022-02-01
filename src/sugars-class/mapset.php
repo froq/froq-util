@@ -288,13 +288,11 @@ trait MapSetTrait
      * @param string   $pattern
      * @param int|null $limit
      * @param int|null $flags
-     * @param bool     $pad
      * @since 6.0
      */
-    public static function fromSplit(string $string, string $pattern, int $limit = null, int $flags = null,
-        bool $pad = true)
+    public static function fromSplit(string $string, string $pattern, int $limit = null, int $flags = null)
     {
-        return new static(split($pattern, $string, $limit, $flags, $pad));
+        return new static(split($pattern, $string, $limit, $flags));
     }
 
     /**
