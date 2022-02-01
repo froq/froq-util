@@ -9,7 +9,7 @@ declare(strict_types=1);
  * Encode HTML characters on given input.
  *
  * @param  string $in
- * @param  bool    $simple
+ * @param  bool   $simple
  * @return string
  */
 function html_encode(string $in, bool $simple = false): string
@@ -23,7 +23,7 @@ function html_encode(string $in, bool $simple = false): string
  * Decode HTML characters on given input.
  *
  * @param  string $in
- * @param  bool    $simple
+ * @param  bool   $simple
  * @return string
  */
 function html_decode(string $in, bool $simple = false): string
@@ -36,41 +36,44 @@ function html_decode(string $in, bool $simple = false): string
 /**
  * Strip HTML characters on given input.
  *
- * @param  string $in
- * @param  string $allowed_tags
- * @param  bool    $decode
+ * @param  string            $in
+ * @param  string|array|null $allowed
+ * @param  bool              $decode
  * @return string
  */
-function html_strip(string $in, string $allowed_tags = '', bool $decode = false): string
+function html_strip(string $in, string|array $allowed = null, bool $decode = false): string
 {
     $decode && $in = html_decode($in, true);
 
-    if ($allowed_tags != '') {
-        $allowed_tags = explode(',', $allowed_tags);
+    if ($allowed && is_string($allowed)) {
+        $allowed = split('\s*,\s*', $allowed);
+        $allowed = array_map(fn($tag) => trim($tag, '<>'), $allowed);
     }
 
-    return strip_tags($in, $allowed_tags);
+    return strip_tags($in, $allowed);
 }
 
 /**
  * Remove HTML characters on given input.
  *
- * @param  string $in
- * @param  string $allowed_tags
- * @param  bool    $decode
+ * @param  string            $in
+ * @param  string|array|null $allowed
+ * @param  bool              $decode
  * @return string
  */
-function html_remove(string $in, string $allowed_tags = '', bool $decode = false): string
+function html_remove(string $in, string|array $allowed = null, bool $decode = false): string
 {
     $decode && $in = html_decode($in, true);
 
-    if ($allowed_tags != '') {
-        $pattern = '~<(?!(?:'. str_replace(',', '|', $allowed_tags) .')\b)(\w+)\b[^>]*/?>(?:.*?</\1>)?~is';
+    if ($allowed && is_string($allowed)) {
+        $allowed = split('\s*,\s*', $allowed);
+        $allowed = array_map(fn($tag) => trim($tag, '<>'), $allowed);
+        $pattern = '~<(?!(?:'. join('|', $allowed) .')\b)(\w+)\b[^>]*/?>(?:.*?</\1>)?~isu';
     } else {
-        $pattern = '~<(\w+)\b[^>]*/?>(?:.*?</\1>)?~is';
+        $pattern = '~<(\w+)\b[^>]*/?>(?:.*?</\1>)?~isu';
     }
 
-    return preg_replace($pattern, '', $in);
+    return preg_remove($pattern, $in);
 }
 
 /**
@@ -93,10 +96,10 @@ function html_attributes(array $in): string
 /**
  * Make options string with given [name=>value] notated array.
  *
- * @param  array        $in
- * @param  any          $current
- * @param  bool         $strict
- * @param  string|array $extra
+ * @param  array             $in
+ * @param  any               $current
+ * @param  bool              $strict
+ * @param  string|array|null $extra
  * @return string
  */
 function html_options(array $in, $current = null, bool $strict = false, string|array $extra = null): string
