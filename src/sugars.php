@@ -2999,7 +2999,9 @@ function format(string $format, mixed $in, mixed ...$ins): string
         foreach (grep_all($format, '~(%[a-z])~') as $i => $op) {
             if ($op == '%b') {
                 $format = substr_replace($format, '%s', strpos($format, '%b'), 2);
-                $params[$i] = format_bool($params[$i]);
+                if (array_key_exists($i, $params)) {
+                    $params[$i] = format_bool($params[$i]);
+                }
             }
         }
     }
