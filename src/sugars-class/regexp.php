@@ -115,69 +115,6 @@ final class RegExp
     }
 
     /**
-     * Perform a test.
-     *
-     * @param  string $input
-     * @return bool
-     */
-    public function test(string $input): bool
-    {
-        $ret = preg_match($this->pattern, $input);
-
-        if ($ret === false) {
-            $this->processError();
-        }
-
-        return (bool) $ret;
-    }
-
-    /**
-     * Perform a match.
-     *
-     * @param  string      $input
-     * @param  int         $flags
-     * @param  int         $offset
-     * @param  string|null $class
-     * @return iterable|null
-     */
-    public function match(string $input, int $flags = 0, int $offset = 0, string $class = null): iterable|null
-    {
-        $this->classCheck($class);
-
-        $res = preg_match($this->pattern, $input, $ret, $flags, $offset);
-
-        if ($res === false) {
-            $this->processError();
-            $ret = null;
-        }
-
-        return $class ? new $class((array) $ret) : $ret;
-    }
-
-    /**
-     * Perform a match-all.
-     *
-     * @param  string      $input
-     * @param  int         $flags
-     * @param  int         $offset
-     * @param  string|null $class
-     * @return iterable|null
-     */
-    public function matchAll(string $input, int $flags = 0, int $offset = 0, string $class = null): iterable|null
-    {
-        $this->classCheck($class);
-
-        $res = preg_match_all($this->pattern, $input, $ret, $flags, $offset);
-
-        if ($res === false) {
-            $this->processError();
-            $ret = null;
-        }
-
-        return $class ? new $class((array) $ret) : $ret;
-    }
-
-    /**
      * Perform a search & replace.
      *
      * @param  string|array  $input
@@ -302,30 +239,49 @@ final class RegExp
     }
 
     /**
-     * Perform a search (like JavaScript search).
+     * Perform a match.
      *
-     * @param  string $input
-     * @param  bool   $unicode
-     * @return int
+     * @param  string      $input
+     * @param  int         $flags
+     * @param  int         $offset
+     * @param  string|null $class
+     * @return iterable|null
      */
-    public function search(string $input, bool $unicode = true): int
+    public function match(string $input, int $flags = 0, int $offset = 0, string $class = null): iterable|null
     {
-        $ret = preg_match($this->pattern, $input, $match, PREG_OFFSET_CAPTURE);
+        $this->classCheck($class);
 
-        if ($ret === false) {
+        $res = preg_match($this->pattern, $input, $ret, $flags, $offset);
+
+        if ($res === false) {
             $this->processError();
+            $ret = null;
         }
 
-        if ($ret && isset($match[0][1])) {
-            $offset = $match[0][1];
+        return $class ? new $class((array) $ret) : $ret;
+    }
 
-            /** @thanks http://php.net/preg_match#106804 */
-            $unicode && $offset = strlen(utf8_decode(substr($input, 0, $offset)));
+    /**
+     * Perform a match-all.
+     *
+     * @param  string      $input
+     * @param  int         $flags
+     * @param  int         $offset
+     * @param  string|null $class
+     * @return iterable|null
+     */
+    public function matchAll(string $input, int $flags = 0, int $offset = 0, string $class = null): iterable|null
+    {
+        $this->classCheck($class);
 
-            return $offset;
+        $res = preg_match_all($this->pattern, $input, $ret, $flags, $offset);
+
+        if ($res === false) {
+            $this->processError();
+            $ret = null;
         }
 
-        return -1;
+        return $class ? new $class((array) $ret) : $ret;
     }
 
     /**
@@ -369,6 +325,50 @@ final class RegExp
         }
 
         return $class ? new $class((array) $ret) : $ret;
+    }
+
+    /**
+     * Perform a test.
+     *
+     * @param  string $input
+     * @return bool
+     */
+    public function test(string $input): bool
+    {
+        $ret = preg_match($this->pattern, $input);
+
+        if ($ret === false) {
+            $this->processError();
+        }
+
+        return (bool) $ret;
+    }
+
+    /**
+     * Perform a search (like JavaScript search).
+     *
+     * @param  string $input
+     * @param  bool   $unicode
+     * @return int
+     */
+    public function search(string $input, bool $unicode = true): int
+    {
+        $ret = preg_match($this->pattern, $input, $match, PREG_OFFSET_CAPTURE);
+
+        if ($ret === false) {
+            $this->processError();
+        }
+
+        if ($ret && isset($match[0][1])) {
+            $offset = $match[0][1];
+
+            /** @thanks http://php.net/preg_match#106804 */
+            $unicode && $offset = strlen(utf8_decode(substr($input, 0, $offset)));
+
+            return $offset;
+        }
+
+        return -1;
     }
 
     /**
