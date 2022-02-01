@@ -560,8 +560,14 @@ function str_chunk(string $str, int $length = 76, string $separator = "\r\n", bo
  * @return string
  * @since  5.31
  */
-function str_concat(string $str, string|int|float|bool|null ...$strs): string
+function str_concat(string $str, mixed ...$strs): string
 {
+    if (!$strs) {
+        return $str;
+    }
+
+    $strs = array_map('strval', $strs);
+
     return $str . join($strs);
 }
 
