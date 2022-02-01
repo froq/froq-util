@@ -193,13 +193,24 @@ trait MapSetTrait
     }
 
     /**
+     * Join items.
+     *
+     * @param  string $glue
+     * @return string
+     */
+    public function join(string $glue = ''): string
+    {
+        return join($glue, $this->data);
+    }
+
+    /**
      * Clear map/set.
      *
-     * @return void
+     * @return self
      */
-    public function clear(): void
+    public function clear(): self
     {
-        $this->empty();
+        return $this->empty();
     }
 
     /**
