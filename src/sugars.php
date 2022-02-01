@@ -3149,19 +3149,19 @@ function mb_strrev(string $str, string $encoding = null): string
 /**
  * Get a character by given index in Unicode style.
  *
- * @param  string      $in
+ * @param  string      $str
  * @param  int         $index
  * @param  string|null $encoding
  * @return string|null
  * @since  5.17
  */
-function char_at(string $in, int $index, string $encoding = null): string|null
+function char_at(string $str, int $index, string $encoding = null): string|null
 {
-    if ($index < 0 || $index >= mb_strlen($in, $encoding)) {
+    if ($index < 0 || $index >= mb_strlen($str, $encoding)) {
         return null;
     }
 
-    $char = mb_substr($in, $index, 1, $encoding);
+    $char = mb_substr($str, $index, 1, $encoding);
 
     return ($char != '') ? $char : null;
 }
@@ -3169,19 +3169,19 @@ function char_at(string $in, int $index, string $encoding = null): string|null
 /**
  * Get a character code by given index in Unicode style.
  *
- * @param  string      $in
+ * @param  string      $str
  * @param  int         $index
  * @param  string|null $encoding
  * @return int|null
  * @since  5.17
  */
-function char_code_at(string $in, int $index, string $encoding = null): int|null
+function char_code_at(string $str, int $index, string $encoding = null): int|null
 {
-    if ($index < 0 || $index >= mb_strlen($in, $encoding)) {
+    if ($index < 0 || $index >= mb_strlen($str, $encoding)) {
         return null;
     }
 
-    $char = mb_substr($in, $index, 1, $encoding);
+    $char = mb_substr($str, $index, 1, $encoding);
 
     return ($char != '') ? mb_ord($char, $encoding) : null;
 }
