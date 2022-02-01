@@ -158,6 +158,11 @@ function each(array $array, callable $func): void
  */
 function size(mixed $in): int
 {
+    // Speed up, a bit..
+    if ($in === null || $in === '' || $in === []) {
+        return 0;
+    }
+
     return match (true) {
         is_string($in)    => mb_strlen($in),
         is_countable($in) => count($in),
