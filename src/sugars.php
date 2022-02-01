@@ -533,9 +533,7 @@ function str_rand(string $str, int $length = null): string
     $tmp = mb_str_split($str, 1);
 
     // Ensure a new seed (@see https://wiki.php.net/rfc/object_scope_prng).
-    srand();
-
-    shuffle($tmp);
+    srand(); shuffle($tmp);
 
     return !$length ? join($tmp) : join(array_slice($tmp, 0, abs($length)));
 }
