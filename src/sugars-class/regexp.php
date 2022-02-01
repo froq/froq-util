@@ -225,7 +225,7 @@ final class RegExp
     }
 
     /**
-     * Perform a split for given array-like class.
+     * Perform a split for given iterable class.
      *
      * @param  string $input
      * @param  string $class
