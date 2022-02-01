@@ -410,7 +410,7 @@ final class RegExp
      * @param  string|null $modifiers
      * @return string
      */
-    public static function prepare(string $source, string|null $modifiers = null): string
+    public static function prepare(string $source, string $modifiers = null): string
     {
         $chars = "\r\n\t\v\f\0";
         $delim = self::DELIMITER;
