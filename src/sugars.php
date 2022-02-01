@@ -2991,7 +2991,7 @@ function format(string $format, mixed $in, mixed ...$ins): string
     $params = [$in, ...$ins];
 
     // Convert special formats (quoted string, int).
-    $format = str_replace(['%q', '%i'], ["'%s'", '%d'], $format);
+    $format = str_replace(['%q', '%Q', '%i'], ["'%s'", '"%s"', '%d'], $format);
 
     // Convert bools as proper bools (not 0/1).
     if (str_contains($format, '%b')) {
