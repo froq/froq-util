@@ -421,12 +421,12 @@ final class RegExp
     {
         $delimiter = $pattern[0] ?? '';
         if (!$delimiter) {
-            throw new RegExpError('No beginning delimiter');
+            throw new RegExpError('No begin delimiter');
         }
 
         $pos = strrpos($pattern, $delimiter, 1);
         if (!$pos) {
-            throw new RegExpError('No ending delimiter');
+            throw new RegExpError('No end delimiter ' . $delimiter);
         }
 
         return new static(
@@ -449,10 +449,7 @@ final class RegExp
      */
     private function processError(string $func = ''): void
     {
-        // Somehow this code disappears when error_get_last() called.
-        $code = preg_last_error();
-
-        if ($message = preg_error_message($func, clear: true)) {
+        if ($message = preg_error_message($code, $func, true)) {
             $this->error = new RegExpError($message, $code);
             $this->errorCode = $code;
             if ($this->throw) {
