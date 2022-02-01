@@ -142,6 +142,8 @@ final class RegExp
      */
     public function match(string $input, int $flags = 0, int $offset = 0, string $class = null): iterable|null
     {
+        $this->classCheck($class);
+
         $res = preg_match($this->pattern, $input, $ret, $flags, $offset);
 
         if ($res === false) {
@@ -163,6 +165,8 @@ final class RegExp
      */
     public function matchAll(string $input, int $flags = 0, int $offset = 0, string $class = null): iterable|null
     {
+        $this->classCheck($class);
+
         $res = preg_match_all($this->pattern, $input, $ret, $flags, $offset);
 
         if ($res === false) {
@@ -264,6 +268,8 @@ final class RegExp
      */
     public function split(string $input, int $limit = -1, int $flags = 0, string $class = null): iterable|null
     {
+        $this->classCheck($class);
+
         $ret = preg_split($this->pattern, $input, $limit, flags: (
             $flags |= PREG_SPLIT_NO_EMPTY // Always..
         ));
@@ -332,6 +338,8 @@ final class RegExp
      */
     public function grep(string $input, bool $named = false, string $class = null): string|iterable|null
     {
+        $this->classCheck($class);
+
         $ret = grep($input, $this->pattern, $named);
 
         if ($ret === null) {
@@ -352,6 +360,8 @@ final class RegExp
      */
     public function grepAll(string $input, bool $named = false, bool $uniform = false, string $class = null): iterable|null
     {
+        $this->classCheck($class);
+
         $ret = grep_all($input, $this->pattern, $named, $uniform);
 
         if ($ret === null) {
@@ -462,6 +472,24 @@ final class RegExp
             $this->errorCode = $code;
             if ($this->throw) {
                 throw $this->error;
+            }
+        }
+    }
+
+    /**
+     * Class check for valid/exists/iterable classes.
+     */
+    private function classCheck(string|null $class): void
+    {
+        if ($class !== null) {
+            if ($class === '') {
+                throw new RegExpError('Empty class given');
+            }
+            if (!class_exists($class)) {
+                throw new RegExpError('No class exists such "' . $class . '"');
+            }
+            if (!class_extends($class, 'Traversable')) {
+                throw new RegExpError('Class "' . $class . '" must be an iterable');
             }
         }
     }
