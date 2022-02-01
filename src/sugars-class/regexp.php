@@ -296,7 +296,7 @@ final class RegExp
      * @param  int    $flags
      * @return iterable|null
      */
-    public function splitTo(string $input, string $class = 'Map', int $limit = -1, int $flags = 0): iterable|null
+    public function splitTo(string $input, string $class, int $limit = -1, int $flags = 0): iterable|null
     {
         return $this->split($input, $limit, $flags, $class);
     }
