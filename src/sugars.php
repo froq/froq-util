@@ -579,8 +579,8 @@ function str_concat(string $str, mixed ...$strs): string
 /**
  * Escape given string, unlike addcslashes() don't convert all.
  *
- * @param  string       $str
- * @param  string|array $chars
+ * @param  string            $str
+ * @param  string|array|null $chars
  * @return string
  * @since  6.0
  */
