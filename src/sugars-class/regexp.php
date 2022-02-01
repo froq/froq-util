@@ -299,21 +299,30 @@ final class RegExp
     }
 
     /**
-     * Perform a search (like JavaScript search, but null on failure).
+     * Perform a search (like JavaScript search).
      *
-     * @param  string    $input
-     * @param  bool|null $unicode
-     * @return int|null
+     * @param  string  $input
+     * @param  bool    $unicode
+     * @return int
      */
-    public function search(string $input, bool $unicode = null): int|null
+    public function search(string $input, bool $unicode = true): int
     {
-        $unicode ??= $this->modifiers && str_contains($this->modifiers, 'u');
-        $function  = $unicode ? mb_strpos(...) : strpos(...);
+        $ret = preg_match($this->pattern, $input, $match, PREG_OFFSET_CAPTURE);
 
-        if (($pos = $function($input, $this->source)) !== false) {
-            return $pos;
+        if ($ret === false) {
+            $this->processError();
         }
-        return null;
+
+        if ($ret && isset($match[0][1])) {
+            $offset = $match[0][1];
+
+            /** @thanks http://php.net/preg_match#106804 */
+            $unicode && $offset = strlen(utf8_decode(substr($input, 0, $offset)));
+
+            return $offset;
+        }
+
+        return -1;
     }
 
     /**
