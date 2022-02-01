@@ -301,8 +301,8 @@ final class RegExp
     /**
      * Perform a search (like JavaScript search).
      *
-     * @param  string  $input
-     * @param  bool    $unicode
+     * @param  string $input
+     * @param  bool   $unicode
      * @return int
      */
     public function search(string $input, bool $unicode = true): int
