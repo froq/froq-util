@@ -1621,7 +1621,7 @@ trait ReflectionCallableTrait
     public function __construct(string|callable|array|object $callable, string $name = null)
     {
         // When "Foo.bar" or "Foo::bar" given.
-        if (is_string($callable) && strpbrk($callable, '.:')) {
+        if (is_string($callable) && strpbrk($callable, '.:') !== false) {
             $callable = preg_split(
                 '~(.+?)(?:[.:]+)(\w+)$~', $callable,
                 limit: 2, flags: PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE
