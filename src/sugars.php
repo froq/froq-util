@@ -152,11 +152,11 @@ function each(array $array, callable $func): void
 /**
  * Get size (count/length) of given input.
  *
- * @param  string|array|object|null $in
+ * @param  mixed<string|countable|object|null> $in
  * @return int
  * @since  3.0, 5.0
  */
-function size(string|array|object|null $in): int
+function size(mixed $in): int
 {
     return match (true) {
         is_string($in)    => mb_strlen($in),
@@ -574,13 +574,16 @@ function str_concat(string $str, mixed ...$strs): string
 /**
  * Escape given string, unlike addcslashes() don't convert all.
  *
- * @param  string $str
- * @param  array  $chars
+ * @param  string       $str
+ * @param  string|array $chars
  * @return string
  * @since  6.0
  */
-function str_escape(string $str, string|array $chars): string
+function str_escape(string $str, string|array $chars = null): string
 {
+    // Escape whole string.
+    $chars = size($chars) ? $chars : $str;
+
     if ($str == '' || $chars == '') {
         return $str;
     }
@@ -3571,8 +3574,9 @@ function is_empty(mixed $var, mixed ...$vars): bool
         if (empty($var)) {
             return true;
         }
-        if ((is_string($var) || is_array($var) || is_object($var))
-            && !size($var)) {
+
+        $sizeable = is_string($var) || is_countable($var) || is_object($var);
+        if ($sizeable && !size($var)) {
             return true;
         }
     }
