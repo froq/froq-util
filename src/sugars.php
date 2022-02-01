@@ -3086,39 +3086,64 @@ function format_number(int|float|string $in, int|null $decs = 0, string $dsep = 
 /**
  * Convert a multi-byte string's first character to upper-case.
  *
- * @param  string      $in
+ * @param  string      $str
  * @param  bool        $tr
  * @param  string|null $encoding
  * @return string
  * @since  5.0
  */
-function mb_ucfirst(string $in, bool $tr = false, string $encoding = null): string
+function mb_ucfirst(string $str, bool $tr = false, string $encoding = null): string
 {
-    $first = mb_substr($in, 0, 1, $encoding);
+    if ($str == '') {
+        return $str;
+    }
+
+    $first = mb_substr($str, 0, 1, $encoding);
     if ($tr && $first == 'i') {
         $first = 'İ';
     }
 
-    return mb_strtoupper($first, $encoding) . mb_substr($in, 1, null, $encoding);
+    return mb_strtoupper($first, $encoding) . mb_substr($str, 1, null, $encoding);
 }
 
 /**
  * Convert a multi-byte string's first character to lower-case.
  *
- * @param  string      $in
+ * @param  string      $str
  * @param  bool        $tr
  * @param  string|null $encoding
  * @return string
  * @since  5.0
  */
-function mb_lcfirst(string $in, bool $tr = false, string $encoding = null): string
+function mb_lcfirst(string $str, bool $tr = false, string $encoding = null): string
 {
-    $first = mb_substr($in, 0, 1, $encoding);
+    if ($str == '') {
+        return $str;
+    }
+
+    $first = mb_substr($str, 0, 1, $encoding);
     if ($tr && $first == 'I') {
         $first = 'ı';
     }
 
-    return mb_strtolower($first, $encoding) . mb_substr($in, 1, null, $encoding);
+    return mb_strtolower($first, $encoding) . mb_substr($str, 1, null, $encoding);
+}
+
+/**
+ * Reverse a multi-byte string.
+ *
+ * @param  string      $str
+ * @param  string|null $encoding
+ * @return string
+ * @since  6.0
+ */
+function mb_strrev(string $str, string $encoding = null): string
+{
+    if ($str == '') {
+        return $str;
+    }
+
+    return join(array_reverse(mb_str_split($str, 1, $encoding)));
 }
 
 /**
