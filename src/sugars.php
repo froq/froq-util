@@ -577,47 +577,6 @@ function str_concat(string $str, mixed ...$strs): string
 }
 
 /**
- * Escape given string, unlike addcslashes() don't convert all.
- *
- * @param  string            $str
- * @param  string|array|null $chars
- * @return string
- * @since  6.0
- */
-function str_escape(string $str, string|array $chars = null): string
-{
-    // Escape whole string.
-    $chars = size($chars) ? $chars : $str;
-
-    if ($str == '' || $chars == '') {
-        return $str;
-    }
-
-    if (is_string($chars)) {
-        $chars = mb_str_split($chars);
-    }
-
-    $repls = [];
-    foreach ($chars as $char) {
-        if ($char == '' || !is_string($char)) {
-            continue;
-        }
-
-        // Null stuff.
-        if ($char == "\0") {
-            $repls["\0"] = '\0';
-            continue;
-        }
-
-        // Since addcslashes() converts chars to numbers, use for specials only.
-        // ASCII Table: https://www.rapidtables.com/code/text/ascii-table.html
-        $repls[$char] = ord($char) <= 32 ? addcslashes($char, $char) : '\\' . $char;
-    }
-
-    return str_replace(array_keys($repls), array_values($repls), $str);
-}
-
-/**
  * Convert base (original source: http://stackoverflow.com/a/4668620/362780).
  *
  * @param  int|string $in    Digits to convert.
