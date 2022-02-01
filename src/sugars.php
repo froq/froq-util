@@ -358,7 +358,7 @@ function grep_all(string $in, string $pattern, bool $named = false, bool $unifor
             if ($uniform) {
                 foreach ($ret as $i => &$re) {
                     if (is_array($re)) {
-                        $re = array_filter($re, 'strlen');
+                        $re = array_filter($re, fn($r) => isset($r) && strlen($r));
                         if (count($re) == 1) {
                             $re = current($re);
                         }
