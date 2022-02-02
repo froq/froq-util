@@ -183,7 +183,7 @@ function size(mixed $in): int
 function pad(array|string $in, int $length, mixed $pad = null): array|string
 {
     return is_array($in) ? array_pad($in, $length, $pad)
-         : str_pad($in, $length, pad_string: strval($pad ?? ' '));
+         : str_pad($in, $length, strval($pad ?? ' '));
 }
 
 /**
@@ -229,6 +229,29 @@ function slice(array|string $in, int $start, int $end = null, bool $keep_keys = 
 {
     return is_array($in) ? array_slice($in, $start, $end, $keep_keys)
          : mb_substr($in, $start, $end);
+}
+
+/**
+ * Splice an array or string.
+ *
+ * @param  array|string       $in
+ * @param  int                $start
+ * @param  int|null           $end
+ * @param  array|string|null  $replace
+ * @param  array|string|null &$replaced
+ * @return array|string
+ * @since  6.0
+ */
+function splice(array|string $in, int $start, int $end = null, array|string $replace = null, array|string &$replaced = null): array|string
+{
+    $split  = is_array($in) ? $in : mb_str_split($in);
+    $splice = array_splice($split, $start, $end, (array) $replace);
+
+    if ($splice) {
+        $replaced = is_array($in) ? $splice : join($splice);
+    }
+
+    return is_array($in) ? $split : join($split);
 }
 
 /**
