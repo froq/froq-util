@@ -539,7 +539,11 @@ final class XString implements IteratorAggregate, JsonSerializable, ArrayAccess
      */
     public function wrap(string $start, string $end = null): self
     {
-        $this->data = $start . $this->data . ($end ?? $start);
+        if ($end === null || $end === '') {
+            $end = $start;
+        }
+
+        $this->data = $start . $this->data . $end;
 
         return $this;
     }
