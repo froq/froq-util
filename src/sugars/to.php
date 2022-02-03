@@ -16,8 +16,8 @@ function to_array(array|object $in, bool $deep = true): array
 {
     if ($in && is_object($in)) {
         $out = (array) (
-            ($in instanceof Traversable) ? iterator_to_array($in) : (
-                method_exists($in, 'toArray') ? $in->toArray() : (
+            is_iterator($in) ? iterator_to_array($in) : (
+                is_callable([$in, 'toArray']) ? $in->toArray() : (
                     get_object_vars($in)
                 )
             )
@@ -47,8 +47,8 @@ function to_object(array|object $in, bool $deep = true): object
 {
     if ($in && is_object($in)) {
         $out = (object) (
-            ($in instanceof Traversable) ? iterator_to_array($in) : (
-                method_exists($in, 'toArray') ? $in->toArray() : (
+            is_iterator($in) ? iterator_to_array($in) : (
+                is_callable([$in, 'toArray']) ? $in->toArray() : (
                     get_object_vars($in)
                 )
             )

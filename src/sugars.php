@@ -3451,6 +3451,18 @@ function is_number(mixed $var): bool
 }
 
 /**
+ * Check whether given input is an iterator.
+ *
+ * @param  mixed $var
+ * @return bool
+ * @since  6.0
+ */
+function is_iterator(mixed $var): bool
+{
+    return $var && ($var instanceof Traversable);
+}
+
+/**
  * Check whether given input is a GdImage.
  *
  * @param  mixed $var
@@ -3471,7 +3483,7 @@ function is_image(mixed $var): bool
  */
 function is_stream(mixed $var): bool
 {
-    return $var && (is_resource($var) && get_resource_type($var) == 'stream');
+    return $var && is_resource($var) && get_resource_type($var) == 'stream';
 }
 
 /**
@@ -3489,8 +3501,9 @@ function is_type_of(mixed $var, string ...$types): bool
         if (match ($type) {
             'list'     => is_list($var),     'number'   => is_number($var),
             'image'    => is_image($var),    'stream'   => is_stream($var),
+            'iterator' => is_iterator($var), 'scalar'   => is_scalar($var),
             'iterable' => is_iterable($var), 'callable' => is_callable($var),
-            'scalar'   => is_scalar($var),   'mixed'    => true,
+            'any'      => true,              'mixed'    => true,
             // @note Required for objects/all below.
             'object'   => is_object($var),
             // All others.
