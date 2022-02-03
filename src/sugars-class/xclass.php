@@ -17,7 +17,7 @@ use froq\util\Objects;
  * @author  Kerem Güneş
  * @since   6.0
  */
-final class XClass
+class XClass
 {
     /** @var string */
     public readonly string $name;
