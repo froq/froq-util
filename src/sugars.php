@@ -3300,14 +3300,14 @@ function get_object_id(object $object, bool $with_name = true): string
  *
  * @param  object $object
  * @param  bool   $with_name
- * @param  bool   $rehash
- * @param  bool   $serialize
+ * @param  bool   $with_rehash
+ * @param  bool   $serialized
  * @return string
  * @since  5.25
  */
-function get_object_hash(object $object, bool $with_name = true, bool $rehash = false, bool $serialize = false): string
+function get_object_hash(object $object, bool $with_name = true, bool $with_rehash = false, bool $serialized = false): string
 {
-    return !$serialize ? Objects::getHash($object, $with_name, $rehash) : Objects::getSerializedHash($object);
+    return !$serialized ? Objects::getHash($object, $with_name, $with_rehash) : Objects::getSerializedHash($object);
 }
 
 /**

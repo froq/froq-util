@@ -57,15 +57,15 @@ final class Objects extends \StaticClass
      *
      * @param  object $object
      * @param  bool   $withName
-     * @param  bool   $rehash
+     * @param  bool   $withRehash
      * @return string
      */
-    public static function getHash(object $object, bool $withName = true, bool $rehash = false): string
+    public static function getHash(object $object, bool $withName = true, bool $withRehash = false): string
     {
         $hash = spl_object_hash($object);
 
         // Pack "000..." stuff.
-        $rehash && $hash = hash('crc32', $hash);
+        $withRehash && $hash = hash('crc32', $hash);
 
         return (string) ($withName ? self::getName($object) .'#'. $hash : $hash);
     }
