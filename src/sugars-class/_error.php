@@ -44,7 +44,7 @@ class KeyError extends Error
 /**
  * Json Error.
  *
- * An error class for JSONs (which is missing internally, suppose).
+ * An error class for JSON stuff (which is missing internally, suppose).
  *
  * @package froq\util
  * @object  JsonError
@@ -52,6 +52,21 @@ class KeyError extends Error
  * @since   6.0
  */
 class JsonError extends Error
+{
+    use ErrorTrait;
+}
+
+/**
+ * Readonly Error.
+ *
+ * An error class for readonly stuff (which is missing internally, suppose).
+ *
+ * @package froq\util
+ * @object  ReadonlyError
+ * @author  Kerem Güneş
+ * @since   6.0
+ */
+class ReadonlyError extends Error
 {
     use ErrorTrait;
 }
