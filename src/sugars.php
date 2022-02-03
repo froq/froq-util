@@ -291,7 +291,11 @@ function strip(string $in, string $chars = null): string
 function split(string $sep, string $in, int $limit = null, int $flags = null, RegExpError &$error = null): array
 {
     if ($sep == '') {
-        $ret = preg_split('~~u', $in, -1, PREG_SPLIT_NO_EMPTY) ?: [];
+        $ret = preg_split(
+            '~~u', $in,
+            limit: -1,
+            flags: PREG_SPLIT_NO_EMPTY
+        ) ?: [];
 
         // Mind limit option.
         if ($limit && $limit > 0) {
@@ -300,10 +304,17 @@ function split(string $sep, string $in, int $limit = null, int $flags = null, Re
             $res && $ret[] = join($res);
         }
     } else {
-        // Escape null bytes & delimiter.
+        // Escape null bytes & delimiter & slash typos.
         $sep = str_replace(["\0", '~'], ['\0', '\~'], $sep);
+        if ($sep == '\\') {
+            $sep .= '\\';
+        }
 
-        $ret = preg_split('~'. $sep .'~u', $in, ($limit ?? -1), ($flags |= PREG_SPLIT_NO_EMPTY)) ?: [];
+        $ret = preg_split(
+            '~'. $sep .'~u', $in,
+            limit: ($limit ?? -1),
+            flags: ($flags |= PREG_SPLIT_NO_EMPTY)
+        ) ?: [];
     }
 
     // Plus: prevent 'undefined index ..' error.
@@ -312,8 +323,9 @@ function split(string $sep, string $in, int $limit = null, int $flags = null, Re
     }
 
     // Fill error message if requested.
-    if (func_num_args() == 5 && ($message = preg_error_message($code, 'preg_split', true))) {
-        $error = new RegExpError($message, $code);
+    if (func_num_args() == 5) {
+        $message = preg_error_message($code, 'preg_split', true);
+        $message && $error = new RegExpError($message, $code);
     }
 
     return $ret;
