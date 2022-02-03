@@ -151,7 +151,7 @@ final class Objects extends \StaticClass
         $name = self::getName($object);
         $spos = !$baseOnly ? strrpos($name, '\\') : strpos($name, '\\');
 
-        return substr($name, 0, ($spos !== false) ? $spos : 0);
+        return substr($name, 0, ($spos !== false ? $spos : 0));
     }
 
     /**
