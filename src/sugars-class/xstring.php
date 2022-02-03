@@ -17,7 +17,7 @@ use froq\util\Strings;
  * @author  Kerem Güneş
  * @since   6.0
  */
-final class XString implements IteratorAggregate, JsonSerializable, ArrayAccess
+class XString implements IteratorAggregate, JsonSerializable, ArrayAccess
 {
     /** @var string */
     private string $data;
