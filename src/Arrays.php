@@ -474,9 +474,7 @@ final class Arrays extends \StaticClass
         $ret = [];
 
         foreach (array_merge($array1, $array2, ...$arrays) as $key => $value) {
-            in_array($value, $ret, true) || (
-                is_int($key) ? $ret[] = $value : $ret[$key] = $value
-            );
+            in_array($value, $ret, true) || $ret[$key] = $value;
         }
 
         return $ret;
@@ -495,9 +493,7 @@ final class Arrays extends \StaticClass
         $ret = [];
 
         foreach ($array as $key => $value) {
-            in_array($value, $ret, $strict) || (
-                is_int($key) ? $ret[] = $value : $ret[$key] = $value
-            );
+            in_array($value, $ret, $strict) || $ret[$key] = $value;
         }
 
         return $ret;
@@ -520,9 +516,7 @@ final class Arrays extends \StaticClass
             ? [$array1, $array2] : [$array2, $array1];
 
         foreach ($array1 as $key => $value) {
-            in_array($value, $array2, true) && (
-                is_int($key) ? $ret[] = $value : $ret[$key] = $value
-            );
+            in_array($value, $array2, true) && $ret[$key] = $value;
         }
 
         return $ret;
@@ -545,9 +539,7 @@ final class Arrays extends \StaticClass
             ? [$array1, $array2] : [$array2, $array1];
 
         foreach ($array1 as $key => $value) {
-            !in_array($value, $array2, true) && (
-                is_int($key) ? $ret[] = $value : $ret[$key] = $value
-            );
+            in_array($value, $array2, true) || $ret[$key] = $value;
         }
 
         return $ret;
@@ -569,7 +561,7 @@ final class Arrays extends \StaticClass
         foreach ($items as $item) {
             if ($item['count'] == 1) {
                 $key = end($item['keys']);
-                is_int($key) ? $ret[] = $item['value'] : $ret[$key] = $item['value'];
+                $ret[$key] = $item['value'];
             }
         }
 
@@ -592,7 +584,7 @@ final class Arrays extends \StaticClass
         foreach ($items as $item) {
             if ($item['count'] > 1) {
                 $key = end($item['keys']);
-                is_int($key) ? $ret[] = $item['value'] : $ret[$key] = $item['value'];
+                $ret[$key] = $item['value'];
             }
         }
 
