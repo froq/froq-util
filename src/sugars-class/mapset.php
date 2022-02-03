@@ -108,6 +108,9 @@ trait MapSetTrait
             array_value_exists($value, $this->data)
                 || array_unshift($this->data, $value);
         } else {
+            if ($key !== null) {
+                $this->keyCheck($key);
+            }
             $key = $this->prepareKey($key ?? $this->count());
             array_unshift_entry($this->data, $key, $value);
         }
@@ -128,6 +131,9 @@ trait MapSetTrait
             array_value_exists($value, $this->data)
                 || array_push($this->data, $value);
         } else {
+            if ($key !== null) {
+                $this->keyCheck($key);
+            }
             $key = $this->prepareKey($key ?? $this->count());
             array_push_entry($this->data, $key, $value);
         }
@@ -379,6 +385,8 @@ class Map implements Iterator, ArrayAccess, Countable, Arrayable, Jsonable, List
      */
     public function set(int|string|object $key, mixed $value): self
     {
+        $this->keyCheck($key);
+
         $key = $this->prepareKey($key);
 
         $this->data[$key] = $value;
@@ -395,6 +403,8 @@ class Map implements Iterator, ArrayAccess, Countable, Arrayable, Jsonable, List
      */
     public function get(int|string|object $key, mixed $default = null): mixed
     {
+        $this->keyCheck($key);
+
         $key = $this->prepareKey($key);
 
         return $this->data[$key] ?? $default;
@@ -409,6 +419,8 @@ class Map implements Iterator, ArrayAccess, Countable, Arrayable, Jsonable, List
      */
     public function remove(int|string|object $key, mixed &$value = null): bool
     {
+        $this->keyCheck($key);
+
         $key = $this->prepareKey($key);
 
         if ($this->has($key)) {
@@ -537,15 +549,24 @@ class Map implements Iterator, ArrayAccess, Countable, Arrayable, Jsonable, List
      *
      * @param  int|string|object $key
      * @return string
-     * @throws KeyError
      */
     protected function prepareKey(int|string|object $key): string
+    {
+        return is_object($key) ? get_object_id($key) : strval($key);
+    }
+
+    /**
+     * Check key validity.
+     *
+     * @param  mixed $key
+     * @return void
+     * @throws KeyError
+     */
+    protected function keyCheck(mixed $key): void
     {
         if (is_string($key) && $key == '') {
             throw new KeyError('Empty key given');
         }
-
-        return is_object($key) ? get_object_id($key) : strval($key);
     }
 }
 
@@ -785,7 +806,7 @@ class Set implements Iterator, ArrayAccess, Countable, Arrayable, Jsonable, List
      * @return void
      * @throws KeyError
      */
-    private function indexCheck(mixed $index): void
+    protected function indexCheck(mixed $index): void
     {
         if (!is_int($index) || $index < 0) {
             throw new KeyError('Index must be int & greater than -1');
