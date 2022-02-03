@@ -22,12 +22,12 @@ use Reflection, ReflectionException,
 final class Objects extends \StaticClass
 {
     /**
-     * Get reflection.
+     * Reflect.
      *
      * @param  object|string $object
      * @return ReflectionObjectExtended|ReflectionClassExtended|null
      */
-    public static function getReflection(object|string $object): ReflectionObjectExtended|ReflectionClassExtended|null
+    public static function reflect(object|string $object): ReflectionObjectExtended|ReflectionClassExtended|null
     {
         try {
             return is_object($object)
@@ -131,7 +131,7 @@ final class Objects extends \StaticClass
      */
     public static function getRealName(string $class): string
     {
-        $ref = self::getReflection($class);
+        $ref = self::reflect($class);
         if ($ref && $ref->name != $class) {
             return $ref->name;
         }
@@ -163,7 +163,7 @@ final class Objects extends \StaticClass
      */
     public static function hasConstant(object|string $object, string $name): bool|null
     {
-        return self::getReflection($object)?->hasConstant($name);
+        return self::reflect($object)?->hasConstant($name);
     }
 
     /**
@@ -200,7 +200,7 @@ final class Objects extends \StaticClass
      */
     public static function getConstants(object|string $object, bool $all = true, string $_name = null): array|null
     {
-        $ref = self::getReflection($object);
+        $ref = self::reflect($object);
         if (!$ref) {
             return null;
         }
@@ -263,7 +263,7 @@ final class Objects extends \StaticClass
      */
     public static function getConstantNames(object|string $object, bool $all = true): array|null
     {
-        $ref = self::getReflection($object);
+        $ref = self::reflect($object);
         if (!$ref) {
             return null;
         }
@@ -293,7 +293,7 @@ final class Objects extends \StaticClass
      */
     public static function getConstantValues(object|string $object, bool $all = true, bool $withNames = false): array|null
     {
-        $ref = self::getReflection($object);
+        $ref = self::reflect($object);
         if (!$ref) {
             return null;
         }
@@ -324,7 +324,7 @@ final class Objects extends \StaticClass
      */
     public static function hasProperty(object|string $object, string $name): bool|null
     {
-        return self::getReflection($object)?->hasProperty($name);
+        return self::reflect($object)?->hasProperty($name);
     }
 
     /**
@@ -348,7 +348,7 @@ final class Objects extends \StaticClass
      */
     public static function getPropertyValue(object|string $object, string $name)
     {
-        return self::getReflection($object)?->getProperty($name)?->getValue($object);
+        return self::reflect($object)?->getProperty($name)?->getValue($object);
     }
 
     /**
@@ -361,7 +361,7 @@ final class Objects extends \StaticClass
      */
     public static function getProperties(object|string $object, bool $all = true, string $_name = null): array|null
     {
-        $ref = self::getReflection($object);
+        $ref = self::reflect($object);
         if (!$ref) {
             return null;
         }
@@ -423,7 +423,7 @@ final class Objects extends \StaticClass
      */
     public static function getPropertyNames(object|string $object, bool $all = true): array|null
     {
-        $ref = self::getReflection($object);
+        $ref = self::reflect($object);
         if (!$ref) {
             return null;
         }
@@ -444,7 +444,7 @@ final class Objects extends \StaticClass
      */
     public static function getPropertyValues(object|string $object, bool $all = true, bool $assoc = false): array|null
     {
-        $ref = self::getReflection($object);
+        $ref = self::reflect($object);
         if (!$ref) {
             return null;
         }
@@ -465,7 +465,7 @@ final class Objects extends \StaticClass
      */
     public static function hasMethod(object|string $object, string $name): bool|null
     {
-        return self::getReflection($object)?->hasMethod($name);
+        return self::reflect($object)?->hasMethod($name);
     }
 
     /**
@@ -490,7 +490,7 @@ final class Objects extends \StaticClass
      */
     public static function getMethods(object|string $object, bool $all = true, string $_name = null): array|null
     {
-        $ref = self::getReflection($object);
+        $ref = self::reflect($object);
         if (!$ref) {
             return null;
         }
@@ -565,7 +565,7 @@ final class Objects extends \StaticClass
      */
     public static function getMethodNames(object|string $object, bool $all = true): array|null
     {
-        $ref = self::getReflection($object);
+        $ref = self::reflect($object);
         if (!$ref) {
             return null;
         }
