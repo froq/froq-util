@@ -31,14 +31,18 @@ final class XClass
     /**
      * Constructor.
      *
-     * @param string $name
+     * @param string|object $class
      */
-    public function __construct(string $name)
+    public function __construct(string|object $class)
     {
-        $this->name = $name;
-
-        // Help for autoloader & shortcut tick.
-        $this->exists = class_exists($name, true);
+        if (is_string($class)) {
+            $this->name   = $class;
+            // Help for autoloader & shortcut for methods.
+            $this->exists = class_exists($class, true);
+        } else {
+            $this->name   = $class::class;
+            $this->exists = true;
+        }
 
         // Nope.. (use isAliasName() & getRealName()).
         // if ($this->exists) {
