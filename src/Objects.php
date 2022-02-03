@@ -119,7 +119,7 @@ final class Objects extends \StaticClass
         $name = self::getName($object, $clean);
         $spos = strrpos($name, '\\');
 
-        return substr($name, ($spos !== false) ? $spos + 1 : 0);
+        return substr($name, ($spos > 0 ? $spos + 1 : 0));
     }
 
     /**
@@ -149,9 +149,9 @@ final class Objects extends \StaticClass
     public static function getNamespace(object|string $object, bool $baseOnly = false): string
     {
         $name = self::getName($object);
-        $spos = !$baseOnly ? strrpos($name, '\\') : strpos($name, '\\');
+        $spos = $baseOnly ? strpos($name, '\\') : strrpos($name, '\\');
 
-        return substr($name, 0, ($spos !== false ? $spos : 0));
+        return substr($name, 0, ($spos > 0 ? $spos : 0));
     }
 
     /**
