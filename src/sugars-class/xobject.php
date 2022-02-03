@@ -46,7 +46,40 @@ class XObject extends XClass
     }
 
     /**
-     * Is instance of.
+     * Get id.
+     *
+     * @param  bool $withName
+     * @return string
+     */
+    public function getId(bool $withName = true): string
+    {
+        return Objects::getId($this->object, $withName);
+    }
+
+    /**
+     * Get hash.
+     *
+     * @param  bool $withName
+     * @param  bool $withRehash
+     * @return string
+     */
+    public function getHash(bool $withName = true, bool $withRehash = false): string
+    {
+        return Objects::getHash($this->object, $withName, $withRehash);
+    }
+
+    /**
+     * Get serialized hash.
+     *
+     * @return string
+     */
+    public function getSerializedHash(): string
+    {
+        return Objects::getSerializedHash($this->object);
+    }
+
+    /**
+     * Instance-of checker.
      *
      * @param  object|string $object
      * @return bool
@@ -57,14 +90,25 @@ class XObject extends XClass
     }
 
     /**
-     * Is equal to.
+     * Equal-of checker.
      *
      * @param  object $object
      * @param  bool   $strict
      * @return bool
      */
-    public function isEqualTo(object $object, bool $strict = true): bool
+    public function isEqualOf(object $object, bool $strict = true): bool
     {
-        return $strict ? ($this->object === $object) : ($this->object == $object);
+        return ($strict ? $this->object === $object : $this->object == $object);
+    }
+
+    /**
+     * Equal-hash-of checker.
+     *
+     * @param  object $object
+     * @return bool
+     */
+    public function isEqualHashOf(object $object): bool
+    {
+        return Objects::getSerializedHash($this->object) == Objects::getSerializedHash($object);
     }
 }

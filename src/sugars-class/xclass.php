@@ -101,6 +101,17 @@ class XClass
     }
 
     /**
+     * Get namespace.
+     *
+     * @param  bool $baseOnly
+     * @return string
+     */
+    public function getNamespace(bool $baseOnly = false): string
+    {
+        return Objects::getNamespace($this, $baseOnly);
+    }
+
+    /**
      * Exists state checker.
      *
      * @return bool
@@ -294,17 +305,6 @@ class XClass
     public function isAliasName(): bool
     {
         return $this->name !== $this->reflect()?->name;
-    }
-
-    /**
-     * Type checker.
-     *
-     * @param  string $class
-     * @return bool
-     */
-    public function isTypeOf(string $class): bool
-    {
-        return $this->name === $class;
     }
 
     /**
