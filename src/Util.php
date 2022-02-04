@@ -303,27 +303,29 @@ final /* fuckic static */ class Util extends \StaticClass
     {
         // Memoize maker function.
         static $make; $make ??= function ($data) use (&$make, $deep) {
-            if ($data instanceof \Traversable) {
-                if ($data instanceof \Generator) {
-                    // Prevent "Cannot rewind a generator that was already run" error.
-                    $data = (new \froq\collection\iterator\GeneratorIterator($data))->toArray();
-                } else {
-                    // Rewind for keys after iteration.
-                    $temp = iterator_to_array($data);
-                    $data->rewind();
-                    $data = $temp;
-                    unset($temp);
-                }
-            }
-
-            if ($deep) {
-                $array = is_array($data);
-                foreach ($data as $key => $value) {
-                    $value = is_array($value) || is_object($value) ? $make($value) : $value;
-                    if ($array) {
-                        $data[$key] = $value;
+            if ($data) {
+                if ($data instanceof \Traversable) {
+                    if ($data instanceof \Generator) {
+                        // Prevent "Cannot rewind a generator that was already run" error.
+                        $data = (new \froq\collection\iterator\GeneratorIterator($data))->toArray();
                     } else {
-                        $data->$key = $value;
+                        // Rewind for keys after iteration.
+                        $temp = iterator_to_array($data);
+                        $data->rewind();
+                        $data = $temp;
+                        unset($temp);
+                    }
+                }
+
+                if ($deep) {
+                    $array = is_array($data);
+                    foreach ($data as $key => $value) {
+                        $value = is_array($value) || is_object($value) ? $make($value) : $value;
+                        if ($array) {
+                            $data[$key] = $value;
+                        } else {
+                            $data->$key = $value;
+                        }
                     }
                 }
             }
@@ -347,27 +349,29 @@ final /* fuckic static */ class Util extends \StaticClass
     {
         // Memoize maker function.
         static $make; $make ??= function ($data) use (&$make, $deep) {
-            if ($data instanceof \Traversable) {
-                if ($data instanceof \Generator) {
-                    // Prevent "Cannot rewind a generator that was already run" error.
-                    $data = (new \froq\collection\iterator\GeneratorIterator($data))->toArray();
-                } else {
-                    // Rewind for keys after iteration.
-                    $temp = iterator_to_array($data);
-                    $data->rewind();
-                    $data = $temp;
-                    unset($temp);
-                }
-            }
-
-            if ($deep) {
-                $array = is_array($data);
-                foreach ($data as $key => $value) {
-                    $value = is_array($value) || is_object($value) ? $make($value) : $value;
-                    if ($array) {
-                        $data[$key] = $value;
+            if ($data) {
+                if ($data instanceof \Traversable) {
+                    if ($data instanceof \Generator) {
+                        // Prevent "Cannot rewind a generator that was already run" error.
+                        $data = (new \froq\collection\iterator\GeneratorIterator($data))->toArray();
                     } else {
-                        $data->$key = $value;
+                        // Rewind for keys after iteration.
+                        $temp = iterator_to_array($data);
+                        $data->rewind();
+                        $data = $temp;
+                        unset($temp);
+                    }
+                }
+
+                if ($deep) {
+                    $array = is_array($data);
+                    foreach ($data as $key => $value) {
+                        $value = is_array($value) || is_object($value) ? $make($value) : $value;
+                        if ($array) {
+                            $data[$key] = $value;
+                        } else {
+                            $data->$key = $value;
+                        }
                     }
                 }
             }
@@ -375,6 +379,6 @@ final /* fuckic static */ class Util extends \StaticClass
             return (object) $data;
         };
 
-        return (object) $make($data);
+        return $make($data);
     }
 }
