@@ -20,6 +20,9 @@ final class RegExp
     /** @const string */
     public const DELIMITER = '~';
 
+    /** @const array<string> */
+    public const MODIFIERS = ['i', 'm', 's', 'u', 'x', 'A', 'D', 'S', 'U', 'J', 'X'];
+
     /** @const int */
     public const PATTERN_ORDER        = PREG_PATTERN_ORDER,
                  SET_ORDER            = PREG_SET_ORDER,
@@ -62,9 +65,17 @@ final class RegExp
      * @param  string      $source
      * @param  string|null $modifiers
      * @param  bool        $throw
+     * @throws RegExpError
      */
     public function __construct(string $source, string $modifiers = null, bool $throw = false)
     {
+        if ($throw && strval($modifiers) !== '') {
+            $modifiers = self::prepareModifiers($modifiers, $invalids);
+            if (!$modifiers) {
+                throw new RegExpError('Invalid modifiers `' . $invalids . '`');
+            }
+        }
+
         $this->source    = $source;
         $this->modifiers = $modifiers;
         $this->pattern   = $this->preparePattern($source, $modifiers);
@@ -425,6 +436,26 @@ final class RegExp
         }
 
         return $delim . $source . $delim . $modifiers;
+    }
+
+    /**
+     * Prepare modifiers.
+     * Valids: imsuxADSUJX (@see http://php.net/manual/en/reference.pcre.pattern.modifiers.php).
+     *
+     * @param  string       $modifiers
+     * @param  string|null &$invalids
+     * @return string|null
+     */
+    public static function prepareModifiers(string $modifiers, string &$invalids = null): string|null
+    {
+        $mods = array_unique(split('', $modifiers));
+        $diff = array_diff($mods, self::MODIFIERS);
+
+        if ($diff) {
+            $invalids = join($diff);
+            return null;
+        }
+        return join($mods);
     }
 
     /**
