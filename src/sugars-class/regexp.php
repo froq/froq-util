@@ -8,7 +8,7 @@ declare(strict_types=1);
 /**
  * RegExp.
  *
- * A class for playing with regular expression stuff OOP-way.
+ * A class for playing with regular expression stuff in OOP-way.
  *
  * @package froq\util
  * @object  RegExp
@@ -126,7 +126,7 @@ final class RegExp
     public function filter(string|array $input, string|array $replace, int $limit = -1, int &$count = null,
         ): string|array|null
     {
-        $ret = preg_filter($this->pattern, $replace, $input, $limit, $count);
+        $ret =@ preg_filter($this->pattern, $replace, $input, $limit, $count);
 
         if ($ret === null) {
             $this->processError();
@@ -148,9 +148,9 @@ final class RegExp
     public function replace(string|array $input, string|array|callable $replace, int $limit = -1, int &$count = null,
         int $flags = 0): string|array|null
     {
-        $ret = is_callable($replace)
-             ? preg_replace_callback($this->pattern, $replace, $input, $limit, $count, $flags)
-             : preg_replace($this->pattern, $replace, $input, $limit, $count);
+        $ret =@ is_callable($replace)
+            ? preg_replace_callback($this->pattern, $replace, $input, $limit, $count, $flags)
+            : preg_replace($this->pattern, $replace, $input, $limit, $count);
 
         if ($ret === null) {
             $this->processError();
@@ -170,7 +170,7 @@ final class RegExp
     public function remove(string|array $input, int $limit = -1, int &$count = null): string|array|null
     {
         if (is_string($input)) {
-            $ret = preg_remove($this->pattern, $input, $limit, $count);
+            $ret =@ preg_remove($this->pattern, $input, $limit, $count);
 
             if ($ret === null) {
                 $this->processError();
@@ -182,7 +182,7 @@ final class RegExp
         $rets = null;
 
         foreach ($input as $input) {
-            $ret = preg_remove($this->pattern, $input, $limit, $count);
+            $ret =@ preg_remove($this->pattern, $input, $limit, $count);
 
             if ($ret === null) {
                 $this->processError();
@@ -207,7 +207,7 @@ final class RegExp
     {
         $this->classCheck($class);
 
-        $ret = preg_split($this->pattern, $input, $limit, flags: (
+        $ret =@ preg_split($this->pattern, $input, $limit, flags: (
             $flags |= PREG_SPLIT_NO_EMPTY // Always..
         ));
 
@@ -251,7 +251,7 @@ final class RegExp
     {
         $this->classCheck($class);
 
-        $res = preg_match($this->pattern, $input, $ret, $flags, $offset);
+        $res =@ preg_match($this->pattern, $input, $ret, $flags, $offset);
 
         if ($res === false) {
             $this->processError();
@@ -274,7 +274,7 @@ final class RegExp
     {
         $this->classCheck($class);
 
-        $res = preg_match_all($this->pattern, $input, $ret, $flags, $offset);
+        $res =@ preg_match_all($this->pattern, $input, $ret, $flags, $offset);
 
         if ($res === false) {
             $this->processError();
@@ -335,7 +335,7 @@ final class RegExp
      */
     public function test(string $input): bool
     {
-        $ret = preg_match($this->pattern, $input);
+        $ret =@ preg_match($this->pattern, $input);
 
         if ($ret === false) {
             $this->processError();
@@ -353,7 +353,7 @@ final class RegExp
      */
     public function search(string $input, bool $unicode = true): int
     {
-        $ret = preg_match($this->pattern, $input, $match, PREG_OFFSET_CAPTURE);
+        $ret =@ preg_match($this->pattern, $input, $match, PREG_OFFSET_CAPTURE);
 
         if ($ret === false) {
             $this->processError();
