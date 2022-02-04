@@ -1875,6 +1875,17 @@ trait ReflectionCallableTrait
     }
 
     /**
+     * Get parameters count.
+     *
+     * @return int
+     */
+    public function getParametersCount(): int
+    {
+        return $this->collectParameters()
+            ->count();
+    }
+
+    /**
      * Get parameter names.
      *
      * @return array
