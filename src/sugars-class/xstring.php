@@ -792,11 +792,11 @@ class XString implements IteratorAggregate, JsonSerializable, ArrayAccess
 
         foreach ($search as $data) {
             $data = (string) $data;
-            if (!str_has($this->data, $data, $icase)) {
-                return false;
+            if (str_has($this->data, $data, $icase)) {
+                return true;
             }
         }
-        return true;
+        return false;
     }
 
     /**
@@ -812,11 +812,11 @@ class XString implements IteratorAggregate, JsonSerializable, ArrayAccess
 
         foreach ($search as $data) {
             $data = (string) $data;
-            if (!str_has_prefix($this->data, $data, $icase)) {
-                return false;
+            if (str_has_prefix($this->data, $data, $icase)) {
+                return true;
             }
         }
-        return true;
+        return false;
     }
 
     /**
@@ -832,11 +832,11 @@ class XString implements IteratorAggregate, JsonSerializable, ArrayAccess
 
         foreach ($search as $data) {
             $data = (string) $data;
-            if (!str_has_suffix($this->data, $data, $icase)) {
-                return false;
+            if (str_has_suffix($this->data, $data, $icase)) {
+                return true;
             }
         }
-        return true;
+        return false;
     }
 
     /**
