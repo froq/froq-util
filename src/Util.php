@@ -292,6 +292,7 @@ final /* fuckic static */ class Util extends \StaticClass
 
     /**
      * Make an array with given data input.
+     * Note: must be used for arrays/iterables and stdClass or public var'ed objects.
      *
      * @param  array|object|null $data
      * @param  bool              $deep
@@ -302,22 +303,40 @@ final /* fuckic static */ class Util extends \StaticClass
     {
         // Memoize maker function.
         static $make; $make ??= function ($data) use (&$make, $deep) {
-            foreach ($data as $key => $value) {
-                $value = ($deep && is_object($value)) ? $make($value) : $value;
-                if (is_array($data)) {
-                    $data[$key] = $value;
+            if ($data instanceof \Traversable) {
+                if ($data instanceof \Generator) {
+                    // Prevent "Cannot rewind a generator that was already run" error.
+                    $data = (new \froq\collection\iterator\GeneratorIterator($data))->toArray();
                 } else {
-                    $data->$key = $value;
+                    // Rewind for keys after iteration.
+                    $temp = iterator_to_array($data);
+                    $data->rewind();
+                    $data = $temp;
+                    unset($temp);
                 }
             }
+
+            if ($deep) {
+                $array = is_array($data);
+                foreach ($data as $key => $value) {
+                    $value = is_array($value) || is_object($value) ? $make($value) : $value;
+                    if ($array) {
+                        $data[$key] = $value;
+                    } else {
+                        $data->$key = $value;
+                    }
+                }
+            }
+
             return (array) $data;
         };
 
-        return (array) $make($data);
+        return $make($data);
     }
 
     /**
      * Make an object with given data input.
+     * Note: must be used for arrays/iterables and stdClass or public var'ed objects.
      *
      * @param  array|object|null $data
      * @param  bool              $deep
@@ -328,14 +347,31 @@ final /* fuckic static */ class Util extends \StaticClass
     {
         // Memoize maker function.
         static $make; $make ??= function ($data) use (&$make, $deep) {
-            foreach ($data as $key => $value) {
-                $value = ($deep && is_array($value)) ? $make($value) : $value;
-                if (is_array($data)) {
-                    $data[$key] = $value;
+            if ($data instanceof \Traversable) {
+                if ($data instanceof \Generator) {
+                    // Prevent "Cannot rewind a generator that was already run" error.
+                    $data = (new \froq\collection\iterator\GeneratorIterator($data))->toArray();
                 } else {
-                    $data->$key = $value;
+                    // Rewind for keys after iteration.
+                    $temp = iterator_to_array($data);
+                    $data->rewind();
+                    $data = $temp;
+                    unset($temp);
                 }
             }
+
+            if ($deep) {
+                $array = is_array($data);
+                foreach ($data as $key => $value) {
+                    $value = is_array($value) || is_object($value) ? $make($value) : $value;
+                    if ($array) {
+                        $data[$key] = $value;
+                    } else {
+                        $data->$key = $value;
+                    }
+                }
+            }
+
             return (object) $data;
         };
 
