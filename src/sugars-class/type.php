@@ -8,7 +8,7 @@ declare(strict_types=1);
 /**
  * Type.
  *
- * A class for playing with types OOP-way.
+ * A class for playing with types in OOP-way.
  *
  * @package froq\util
  * @object  Type
@@ -34,13 +34,13 @@ final class Type
         $this->var  = $var;
     }
 
-    /** @magic __toString() */
+    /** @magic */
     public function __toString(): string
     {
         return $this->name;
     }
 
-    /** @magic __debugInfo() */
+    /** @magic */
     public function __debugInfo(): array
     {
         return ['name' => $this->name];
@@ -210,6 +210,16 @@ final class Type
     }
 
     /**
+     * Iterator check.
+     *
+     * @return bool
+     */
+    public function isIterator(): bool
+    {
+        return is_iterator($this->var);
+    }
+
+    /**
      * Stream check.
      *
      * @return bool
@@ -217,6 +227,56 @@ final class Type
     public function isStream(): bool
     {
         return is_stream($this->var);
+    }
+
+    /**
+     * Plain object check.
+     *
+     * @return bool
+     */
+    public function isPlainObject(): bool
+    {
+        return ($this->var instanceof stdClass);
+    }
+
+    /**
+     * Array-like check.
+     *
+     * @return bool
+     */
+    public function isArrayLike(): bool
+    {
+        return is_array($this->var) || ($this->var instanceof stdClass);
+    }
+
+    /**
+     * Iterable-like check.
+     *
+     * @return bool
+     */
+    public function isIterableLike(): bool
+    {
+        return is_iterable($this->var) || ($this->var instanceof stdClass);
+    }
+
+    /**
+     * RegExp check.
+     *
+     * @return bool
+     */
+    public function isRegExp(): bool
+    {
+        if ($this->var instanceof RegExp) {
+            return true;
+        }
+
+        try {
+            return is_string($this->var)
+                && ($pattern = RegExp::fromPattern($this->var, throw: true))
+                && ($pattern->match('') !== null);
+        } catch (RegExpError) {
+            return false;
+        }
     }
 
     /**
