@@ -307,7 +307,8 @@ final /* fuckic static */ class Util extends \StaticClass
                 if ($data instanceof \Traversable) {
                     if ($data instanceof \Generator) {
                         // Prevent "Cannot rewind a generator that was already run" error.
-                        $data = (new \froq\collection\iterator\GeneratorIterator($data))->toArray();
+                        $data = (new \froq\collection\iterator\GeneratorIterator($data))
+                            ->toArray();
                     } else {
                         // Rewind for keys after iteration.
                         $temp = iterator_to_array($data);
@@ -353,7 +354,8 @@ final /* fuckic static */ class Util extends \StaticClass
                 if ($data instanceof \Traversable) {
                     if ($data instanceof \Generator) {
                         // Prevent "Cannot rewind a generator that was already run" error.
-                        $data = (new \froq\collection\iterator\GeneratorIterator($data))->toArray();
+                        $data = (new \froq\collection\iterator\GeneratorIterator($data))
+                            ->toArray();
                     } else {
                         // Rewind for keys after iteration.
                         $temp = iterator_to_array($data);
