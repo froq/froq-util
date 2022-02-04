@@ -1623,22 +1623,23 @@ trait ReflectionCallableTrait
         // When "Foo.bar" or "Foo::bar" given.
         if (is_string($callable) && strpbrk($callable, '.:') !== false) {
             $callable = preg_split(
-                '~(.+?)(?:[.:]+)(\w+)$~', $callable,
-                limit: 2, flags: PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE
+                '~(.+?)(?:[.:]+)(\w+)$~', $callable, limit: 2,
+                flags: PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE
             );
-        } elseif ($name != null && (is_string($callable) || is_object($callable))) {
+        } elseif ($name !== null && (is_string($callable) || is_object($callable))) {
             $callable = [$callable, $name];
         }
 
         $this->reference = qo(
             callable: $callable,
-            reflection: is_array($callable)
-                ? new ReflectionMethod(...$callable) : new ReflectionFunction($callable),
+            reflection: is_array($callable) ? new ReflectionMethod(...$callable)
+                : new ReflectionFunction($callable),
         );
 
         // Call super constructor.
-        if (!($this instanceof ReflectionCallable)) {
-            is_array($callable) ? parent::__construct(...$callable) : parent::__construct($callable);
+        if (!$this instanceof ReflectionCallable) {
+            is_array($callable) ? parent::__construct(...$callable)
+                : parent::__construct($callable);
         }
     }
 
