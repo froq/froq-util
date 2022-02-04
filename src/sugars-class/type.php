@@ -296,6 +296,9 @@ final class Type
      */
     public function isClassOf(string ...$classes): bool
     {
+        if (!is_object($this->var)) {
+            return false;
+        }
         return is_class_of($this->var, ...$classes);
     }
 }
