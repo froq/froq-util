@@ -10,7 +10,7 @@ use froq\util\Objects;
 /**
  * X-Class.
  *
- * A class for playing with classes OOP-way.
+ * A class for playing with classes in OOP-way.
  *
  * @package froq\util
  * @object  XClass
