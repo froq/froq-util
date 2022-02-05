@@ -1156,7 +1156,7 @@ class ReflectionPropertyExtended extends ReflectionProperty
         ));
 
         // @cancel
-        // // Original reflection class needed here.
+        // Original reflection class needed here.
         // $ref = new ReflectionClass($this->reference->owner->name);
         // if ($ref->hasProperty($name)) {
         //     return false;
