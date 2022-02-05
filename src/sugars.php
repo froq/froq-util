@@ -1864,12 +1864,12 @@ function preg_test(string $pattern, string $subject): bool
 function preg_remove(string|array $pattern, string|array $subject, int $limit = null, int &$count = null): string|array|null
 {
     if (is_string($pattern)) {
-        $replacement = '';
+        $replace = '';
     } else {
-        $replacement = array_fill(0, count($pattern), '');
+        $replace = array_fill(0, count($pattern), '');
     }
 
-    return preg_replace($pattern, $replacement, $subject, $limit ?? -1, $count);
+    return preg_replace($pattern, $replace, $subject, $limit ?? -1, $count);
 }
 
 /**
