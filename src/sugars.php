@@ -1873,15 +1873,32 @@ function preg_remove(string|array $pattern, string|array $subject, int $limit = 
 }
 
 /**
- * Clean given array filtering non-empty values.
+ * Clean given array filtering null, "" and [] values.
  *
- * @param  array $array
+ * @param  array      $array
+ * @param  bool       $keep_keys
+ * @param  array|null $ignored_keys
  * @return array
  * @since  4.0
  */
-function array_clean(array $array): array
+function array_clean(array $array, bool $keep_keys = true, array $ignored_keys = null): array
 {
-    return array_filter($array, fn($v) => $v !== null && $v !== '' && $v !== []);
+    return Arrays::clean($array, $keep_keys, $ignored_keys);
+}
+
+/**
+ * Clear given array filtering given values.
+ *
+ * @param  array      $array
+ * @param  array      $values
+ * @param  bool       $keep_keys
+ * @param  array|null $ignored_keys
+ * @return array
+ * @since  6.0
+ */
+function array_clear(array $array, array $values, bool $keep_keys = true, array $ignored_keys = null): array
+{
+    return Arrays::clear($array, $values, $keep_keys, $ignored_keys);
 }
 
 /**

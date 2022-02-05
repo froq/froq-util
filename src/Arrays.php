@@ -7,7 +7,7 @@ declare(strict_types=1);
 
 namespace froq\util;
 
-use Closure, ValueError, ArgumentCountError;
+use ValueError, ArgumentCountError;
 
 /**
  * Arrays.
@@ -719,9 +719,9 @@ final class Arrays extends \StaticClass
      * @param  int    $limit
      * @param  bool   $pack
      * @param  bool   $drop
-     * @return any|null
+     * @return mixed|null
      */
-    public static function random(array &$array, int $limit = 1, bool $pack = false, bool $drop = false)
+    public static function random(array &$array, int $limit = 1, bool $pack = false, bool $drop = false): mixed
     {
         $count = count($array);
         if ($count == 0) {
@@ -764,6 +764,29 @@ final class Arrays extends \StaticClass
         }
 
         return $ret;
+    }
+
+    /**
+     * Swap two keys on given array.
+     *
+     * @param  array      &$array
+     * @param  int|string  $oldKey
+     * @param  int|string  $newKey
+     * @param  mixed|null  $default
+     * @return array
+     * @since  4.2
+     */
+    public static function swap(array &$array, int|string $oldKey, int|string $newKey, mixed $default = null): array
+    {
+        $newValue = self::pull($array, $oldKey);
+
+        if ($newValue !== null) {
+            self::set($array, $newKey, $newValue);
+        } elseif (func_num_args() == 4) { // Create directive.
+            self::set($array, $newKey, $default);
+        }
+
+        return $array;
     }
 
     /**
@@ -853,69 +876,75 @@ final class Arrays extends \StaticClass
     }
 
     /**
-     * Swap two keys on given array.
+     * Clean given array filtering null, "" and [] values.
      *
-     * @param  array      &$array
-     * @param  int|string  $oldKey
-     * @param  int|string  $newKey
-     * @param  any|null    $default
-     * @return array
-     * @since  4.2
-     */
-    public static function swap(array &$array, int|string $oldKey, int|string $newKey, $default = null): array
-    {
-        $newValue = self::pull($array, $oldKey);
-
-        if ($newValue !== null) {
-            self::set($array, $newKey, $newValue);
-        } elseif (func_num_args() == 4) { // Create directive.
-            self::set($array, $newKey, $default);
-        }
-
-        return $array;
-    }
-
-    /**
-     * Clean given array filtering null, '' and [] values.
-     *
-     * @param  array      &$array
-     * @param  array|null  $ignoredKeys
-     * @param  bool        $keepKeys
+     * @param  array      $array
+     * @param  bool       $keepKeys
+     * @param  array|null $ignoredKeys
      * @return array
      * @since  4.0
      */
-    public static function clean(array &$array, array $ignoredKeys = null, bool $keepKeys = true): array
+    public static function clean(array $array, bool $keepKeys = true, array $ignoredKeys = null): array
     {
-        $tester = self::getFilterFunction();
+        $func = self::getFilterFunction();
 
-        if ($ignoredKeys == null) {
-            $array = array_filter($array, $tester);
+        if (!$ignoredKeys) {
+            $ret = array_filter($array, $func);
         } else {
-            foreach ($array as $key => $value) {
-                if (!in_array($key, $ignoredKeys, true) && !$tester($value)) {
-                    unset($array[$key]);
-                }
-            }
+            $ret = array_filter($array, fn($value, $key) => (
+                in_array($key, $ignoredKeys, true) || $func($value)
+            ), 1);
         }
 
-        return $keepKeys ? $array : array_values($array);
+        $keepKeys || $ret = array_values($ret);
+
+        return $ret;
     }
 
     /**
-     * Filte an array with default=null to ensure given keys.
+     * Clear given array filtering given values.
      *
-     * @param  array    $array
-     * @param  array    $keys
-     * @param  bool     $useKeys
-     * @param  any|null $default
+     * @param  array      $array
+     * @param  array      $values
+     * @param  bool       $keepKeys
+     * @param  array|null $ignoredKeys
+     * @return array
+     * @since  6.0
+     */
+    public static function clear(array $array, array $values, bool $keepKeys = true, array $ignoredKeys = null): array
+    {
+        $func = self::getFilterFunction($values);
+
+        if (!$ignoredKeys) {
+            $ret = array_filter($array, $func);
+        } else {
+            $ret = array_filter($array, fn($value, $key) => (
+                in_array($key, $ignoredKeys, true) || $func($value)
+            ), 1);
+        }
+
+        $keepKeys || $ret = array_values($ret);
+
+        return $ret;
+    }
+
+    /**
+     * Filter an array with default to ensure given keys.
+     *
+     * @param  array      $array
+     * @param  array      $keys
+     * @param  bool       $useKeys
+     * @param  mixed|null $default
      * @return array
      * @since  4.0
      */
-    public static function default(array $array, array $keys, bool $useKeys = true, $default = null): array
+    public static function default(array $array, array $keys, bool $useKeys = true, mixed $default = null): array
     {
-        $default = array_replace(array_fill_keys($keys, $default), $array);
+        $ret = array_replace(array_fill_keys($keys, $default), $array);
 
-        return $useKeys ? $default : array_values($default);
+        $useKeys || $ret = array_values($ret);
+
+        return $ret;
     }
 
     /**
@@ -1201,11 +1230,10 @@ final class Arrays extends \StaticClass
      */
     public static function filter(array $array, callable $func = null, bool $keepKeys = true): array
     {
-        if ($func == null) {
+        if (!$func) {
             $ret = array_filter($array, self::getFilterFunction());
         } else {
             $ret = [];
-
             foreach ($array as $key => $value) try {
                 $func($value, $key, $array) && $ret[$key] = $value;
             } catch (ArgumentCountError) {
@@ -1213,7 +1241,9 @@ final class Arrays extends \StaticClass
             }
         }
 
-        return $keepKeys ? $ret : array_values($ret);
+        $keepKeys || $ret = array_values($ret);
+
+        return $ret;
     }
 
     /**
@@ -1240,7 +1270,9 @@ final class Arrays extends \StaticClass
                 : $func($value);
         }
 
-        return $keepKeys ? $ret : array_values($ret);
+        $keepKeys || $ret = array_values($ret);
+
+        return $ret;
     }
 
     /**
@@ -1526,16 +1558,20 @@ final class Arrays extends \StaticClass
         return (bool) self::get($array, $key, $default, $drop);
     }
 
-    /** Internals. */
-
-    private static function getFilterFunction(): Closure
+    /**
+     * Default filter function.
+     */
+    private static function getFilterFunction(array $values = null): callable
     {
-        static $filterTester;
+        // Default filter values.
+        $values ??= [null, '', []];
 
-        return $filterTester ??= (
-            fn($v) => $v !== null && $v !== '' && $v !== []
-        );
+        return fn($value) => !in_array($value, $values, true);
     }
+
+    /**
+     * Sort function preparer.
+     */
     private static function getSortFunction(int|callable|null $func): callable|null
     {
         // As as shortcut for reversed (-1) sorts actually.

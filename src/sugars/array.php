@@ -305,12 +305,27 @@ function array_test_all(array $array, callable $func): bool
  * @param  int    $limit
  * @param  bool   $pack Return as [key,value] pairs.
  * @param  bool   $drop
- * @return any|null
+ * @return mixed|null
  * @since  4.0
  */
-function array_random(array &$array, int $limit = 1, bool $pack = false, bool $drop = false)
+function array_random(array &$array, int $limit = 1, bool $pack = false, bool $drop = false): mixed
 {
     return Arrays::random($array, $limit, $pack, $drop);
+}
+
+/**
+ * Bridge function to Arrays.swap().
+ *
+ * @param  array      &$array
+ * @param  int|string  $old_key
+ * @param  int|string  $new_key
+ * @param  mixed|null  $default
+ * @return array
+ * @since  4.2
+ */
+function array_swap(array &$array, int|string $old_key, int|string $new_key, mixed $default = null): array
+{
+    return Arrays::swap($array, $old_key, $new_key, $default);
 }
 
 /**
@@ -337,34 +352,6 @@ function array_include(array $array, array $keys): array
 function array_exclude(array $array, array $keys): array
 {
     return Arrays::exclude($array, $keys);
-}
-
-/**
- * Bridge function to Arrays.swap().
- *
- * @param  array      &$array
- * @param  int|string  $old_key
- * @param  int|string  $new_key
- * @param  any|null    $default
- * @return array
- * @since  4.2
- */
-function array_swap(array &$array, int|string $old_key, int|string $new_key, $default = null): array
-{
-    return Arrays::swap($array, $old_key, $new_key, $default);
-}
-
-/**
- * Bridge function to Arrays.sweep().
- *
- * @param  array      &$array
- * @param  array|null  $ignored_keys
- * @return array
- * @since  4.0
- */
-function array_sweep(array &$array, array $ignored_keys = null): array
-{
-    return Arrays::sweep($array, $ignored_keys);
 }
 
 /**
