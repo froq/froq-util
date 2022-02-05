@@ -1351,12 +1351,12 @@ final class Arrays extends \StaticClass
 
         foreach ($array as $key => $value) {
             // @cancel: Return can always be an array.
-            // // Note: when "return" not used carry must be ref'ed (eg: (&$carry, $value, ..)).
-            // // $ret = $func($carry, $value, $key, $array);
-            // // When "return" used.
-            // // if ($ret && is_array($ret)) {
-            // //     $carry = $ret;
-            // // }
+            // Note: when "return" not used carry must be ref'ed (eg: (&$carry, $value, ..)).
+            // $ret = $func($carry, $value, $key, $array);
+            // When "return" used.
+            // if ($ret && is_array($ret)) {
+            //     $carry = $ret;
+            // }
 
             // Note: carry must be ref'ed (eg: (&$carry, $value, ..)).
             $func($carry, $value, $key, $array);
