@@ -467,13 +467,13 @@ trait ReflectionClassTrait
     }
 
     /**
-     * Set of attributes.
+     * Map of attributes.
      *
-     * @return Set
+     * @return Map
      */
-    public function attributes(): Set
+    public function attributes(): Map
     {
-        return Set::from($this->getAttributes());
+        return Map::from($this->getAttributes());
     }
 
     /**
@@ -760,15 +760,21 @@ class ReflectionPropertyExtended extends ReflectionProperty
             return parent::__toString();
         } catch (Throwable) {
             $tmp = ['Property ['];
+
             if ($this->isDynamic()) {
                 $tmp[] = '<dynamic>';
+            } elseif ($this->isInternal()) {
+                $tmp[] = '<internal>';
             }
+
             $tmp[] = join(' ', $this->getModifierNames());
             if ($type = $this->getType()) {
                 $tmp[] = $type;
             }
+
             $tmp[] = '$'. $this->getName();
             $tmp[] = ']';
+
             return join(' ', $tmp);
         }
     }
@@ -868,13 +874,13 @@ class ReflectionPropertyExtended extends ReflectionProperty
     }
 
     /**
-     * Set of attributes.
+     * Map of attributes.
      *
-     * @return Set
+     * @return Map
      */
-    public function attributes(): Set
+    public function attributes(): Map
     {
-        return Set::from($this->getAttributes());
+        return Map::from($this->getAttributes());
     }
 
     /**
@@ -956,7 +962,7 @@ class ReflectionPropertyExtended extends ReflectionProperty
         if (is_object($object)) {
             // Handle "Internal error: Failed to retrieve the reflection object" and others.
             try {
-                @ $value = parent::getValue($object);
+                $value =@ parent::getValue($object);
             } catch (Throwable) {
                 $name = $this->reference->name;
 
@@ -1145,13 +1151,18 @@ class ReflectionPropertyExtended extends ReflectionProperty
             return false;
         }
 
-        // Original reflection class needed here.
-        $ref = new ReflectionClass($this->reference->owner->name);
-        if ($ref->hasProperty($name)) {
-            return false;
-        }
+        return !in_array($name, array_keys(
+            get_class_vars(get_class_name($class))
+        ));
 
-        return !in_array($name, $this->getDomInternals());
+        // @cancel
+        // // Original reflection class needed here.
+        // $ref = new ReflectionClass($this->reference->owner->name);
+        // if ($ref->hasProperty($name)) {
+        //     return false;
+        // }
+
+        // return !in_array($name, $this->getDomInternals());
     }
 
     /** @override */
@@ -1778,13 +1789,13 @@ trait ReflectionCallableTrait
     }
 
     /**
-     * Set of attributes.
+     * Map of attributes.
      *
-     * @return Set
+     * @return Map
      */
-    public function attributes(): Set
+    public function attributes(): Map
     {
-        return Set::from($this->getAttributes());
+        return Map::from($this->getAttributes());
     }
 
     /**
