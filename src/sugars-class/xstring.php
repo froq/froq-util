@@ -66,9 +66,6 @@ class XString implements IteratorAggregate, JsonSerializable, ArrayAccess
         return $this->encoding;
     }
 
-    /** @aliasOf length() */
-    public function len() { return $this->length(); }
-
     /**
      * Length.
      *
@@ -77,6 +74,14 @@ class XString implements IteratorAggregate, JsonSerializable, ArrayAccess
     public function length(): int
     {
         return mb_strlen($this->data, $this->encoding);
+    }
+
+    /**
+     * @aliasOf length()
+     */
+    public function len()
+    {
+        return $this->length();
     }
 
     /**
@@ -118,12 +123,6 @@ class XString implements IteratorAggregate, JsonSerializable, ArrayAccess
         return $this;
     }
 
-    /** @aliasOf substr() */
-    public function sub(...$args) { return $this->substr(...$args); }
-
-    /** @aliasOf substr() */
-    public function substring(...$args) { return $this->substr(...$args); }
-
     /**
      * Substr.
      *
@@ -136,6 +135,22 @@ class XString implements IteratorAggregate, JsonSerializable, ArrayAccess
         $this->data = mb_substr($this->data, $start, $length, $this->encoding);
 
         return $this;
+    }
+
+    /**
+     * @aliasOf substr()
+     */
+    public function sub(...$args)
+    {
+        return $this->substr(...$args);
+    }
+
+    /**
+     * @aliasOf substr()
+     */
+    public function substring(...$args)
+    {
+        return $this->substr(...$args);
     }
 
     /**
