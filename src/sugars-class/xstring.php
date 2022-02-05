@@ -185,7 +185,7 @@ class XString implements IteratorAggregate, JsonSerializable, ArrayAccess
 
         $this->data = join($data);
 
-        // Buggy.. @cancel
+        // @cancel: Buggy.
         // $length ??= $this->length();
         // if ($start < 0) {
         //     $start += $this->length();
@@ -193,7 +193,6 @@ class XString implements IteratorAggregate, JsonSerializable, ArrayAccess
         //         $start = 0;
         //     }
         // }
-
         // $this->data = $this->slice(0, $start, false)
         //             . $replace
         //             . $this->slice($start + $length, null, false);
