@@ -420,6 +420,8 @@ class XString implements IteratorAggregate, JsonSerializable, ArrayAccess
     {
         if ($search instanceof RegExp) {
             $this->data = $search->replace($this->data, $replace, $limit, $count);
+        } elseif (is_string($search) && is_callable($replace)) {
+            $this->data = RegExp::fromPattern($search)->replace($this->data, $replace, $limit, $count);
         } else {
             $this->data = $icase ? str_ireplace($search, $replace, $this->data, $count)
                                  : str_replace($search, $replace, $this->data, $count);
@@ -893,7 +895,6 @@ class XString implements IteratorAggregate, JsonSerializable, ArrayAccess
         if (is_string($pattern)) {
             $pattern = new RegExp($pattern, 'u');
         }
-        pre($pattern."");
 
         return $pattern->split($this->data, $limit, $flags, $class);
     }
