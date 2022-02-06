@@ -592,7 +592,7 @@ final class RegExp implements Stringable
                     $flagsSum |= $flag;
                 } else {
                     throw new RegExpError(sprintf(
-                        'Invalid flag type `%s` [valids: string, int]',
+                        'Invalid flag type `%s` [valids: string,int]',
                         type($flag)
                     ));
                 }
