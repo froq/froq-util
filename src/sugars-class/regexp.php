@@ -185,6 +185,22 @@ final class RegExp implements Stringable
     }
 
     /**
+     * Perform a search & replace, passing RegExpMatch as callable argument.
+     *
+     * @param  string|array  $input
+     * @param  callable      $replace
+     * @param  int           $limit
+     * @param  int|null     &$count
+     * @param  array|int     $flags
+     * @return string|array|null
+     */
+    public function replaceMatch(string|array $input, callable $replace, int $limit = -1, int &$count = null,
+        int|array $flags = 0): string|array|null
+    {
+        return $this->replace($input, $replace, $limit, $count, $flags, RegExpMatch::class);
+    }
+
+    /**
      * Preform a remove.
      *
      * @param  string|array  $input
