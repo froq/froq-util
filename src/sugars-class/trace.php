@@ -15,7 +15,7 @@ declare(strict_types=1);
  * @author  Kerem Güneş
  * @since   6.0
  */
-final class Trace implements Countable, IteratorAggregate, ArrayAccess
+final class Trace implements Stringable, Countable, IteratorAggregate, ArrayAccess
 {
     /** @var array */
     public readonly array $stack;
@@ -32,6 +32,20 @@ final class Trace implements Countable, IteratorAggregate, ArrayAccess
         $stack ??= get_trace($options, $limit);
 
         $this->stack = $stack;
+    }
+
+    /** @magic */
+    public function __toString(): string
+    {
+        $ret = []; $entry = null;
+        foreach ($this->getIterator() as $entry) {
+            $ret[] = format('#%s %s', $entry->index, $entry->call());
+        }
+
+        // Dunno what does this actually..
+        $ret[] = format('#%s {main}', $entry?->index + 1);
+
+        return join("\n", $ret);
     }
 
     /** @magic */
@@ -185,14 +199,19 @@ final class TraceEntry implements ArrayAccess
     /** @var array */
     public readonly array $data;
 
+    /** @var int|null */
+    public readonly int|null $index;
+
     /**
      * Constructor.
      *
-     * @param array $data
+     * @param array    $data
+     * @param int|null $index
      */
     public function __construct(array $data)
     {
-        $this->data = $data;
+        $this->data  = $data;
+        $this->index = $data['#'];
     }
 
     /** @magic */
@@ -374,6 +393,11 @@ final class TraceEntry implements ArrayAccess
         if ($full) {
             [$class, $function, $type] = $this->getFields(['class', 'function', 'type']);
             if ($class) {
+                // Simple modification for Trace struct.
+                if ($class == 'Trace' && $function == '__construct') {
+                    $class = 'new Trace'; $function = $type = '';
+                }
+
                 $ret .= ' => '. $class . $type . $function .'()';
             } else {
                 $ret .= ' => '. $function .'()';
