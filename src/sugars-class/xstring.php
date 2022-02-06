@@ -17,13 +17,13 @@ use froq\util\Strings;
  * @author  Kerem Güneş
  * @since   6.0
  */
-class XString implements IteratorAggregate, JsonSerializable, ArrayAccess
+class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayAccess
 {
     /** @var string */
-    private string $data;
+    protected string $data;
 
     /** @var string|null */
-    private string|null $encoding = 'UTF-8';
+    protected string|null $encoding = 'UTF-8';
 
     /**
      * Constructor.
@@ -124,13 +124,13 @@ class XString implements IteratorAggregate, JsonSerializable, ArrayAccess
     }
 
     /**
-     * Substr.
+     * Sub-string for self.
      *
      * @param  int      $start
      * @param  int|null $length
      * @return self
      */
-    public function substr(int $start, int $length = null): self
+    public function sub(int $start, int $length = null): self
     {
         $this->data = mb_substr($this->data, $start, $length, $this->encoding);
 
@@ -138,19 +138,41 @@ class XString implements IteratorAggregate, JsonSerializable, ArrayAccess
     }
 
     /**
-     * @aliasOf substr()
+     * Sub-string for return.
+     *
+     * @param  int      $start
+     * @param  int|null $length
+     * @return string
      */
-    public function sub(...$args)
+    public function substr(int $start, int $length = null): string
     {
-        return $this->substr(...$args);
+        return mb_substr($this->data, $start, $length, $this->encoding);
     }
 
     /**
-     * @aliasOf substr()
+     * Cut-string for self.
+     *
+     * @param  int      $start
+     * @param  int|null $length
+     * @return self
      */
-    public function substring(...$args)
+    public function cut(int $start, int $length = null): self
     {
-        return $this->substr(...$args);
+        $this->data = mb_strcut($this->data, $start, $length, $this->encoding);
+
+        return $this;
+    }
+
+    /**
+     * Cut-string for return.
+     *
+     * @param  int      $start
+     * @param  int|null $length
+     * @return string
+     */
+    public function cutstr(int $start, int $length = null): string
+    {
+        return mb_strcut($this->data, $start, $length, $this->encoding);
     }
 
     /**
@@ -165,7 +187,7 @@ class XString implements IteratorAggregate, JsonSerializable, ArrayAccess
     {
         $ret = mb_substr($this->data, $start, $length, $this->encoding);
 
-        return $init ? new static($ret) : $ret;
+        return $init ? new static($ret, $this->encoding) : $ret;
     }
 
     /**
@@ -193,46 +215,60 @@ class XString implements IteratorAggregate, JsonSerializable, ArrayAccess
         //         $start = 0;
         //     }
         // }
-        // $this->data = $this->slice(0, $start, false)
-        //             . $replace
-        //             . $this->slice($start + $length, null, false);
+        // $this->data = $this->substr(0, $start)
+        //     . $replace . $this->substr($start + $length);
 
         return $this;
     }
 
     /**
-     * Char-at, like Javascript's charAt().
+     * Char, like substr() for single characters but returns null if index is exceeded.
+     *
+     * @param  int $index
+     * @return string|null
+     */
+    public function char(int $index): string|null
+    {
+        // Exceeding nagetive indexes must return "", like positives.
+        if ($index < 0 && -$index > $this->length()) {
+            return null;
+        }
+
+        $char = mb_substr($this->data, $index, 1, $this->encoding);
+
+        return ($char !== '') ? $char : null;
+    }
+
+    /**
+     * Char-at, like Javascript's charAt() but accepts negative indexes.
      *
      * @param  int $index
      * @return string|null
      */
     public function charAt(int $index): string|null
     {
-        if ($index < 0 || $index >= $this->length()) {
+        $char = $this->char($index);
+        if ($char === null) {
             return null;
         }
 
-        return $this->slice($index, 1, false);
+        return $char;
     }
 
     /**
-     * Char code-at, like Javascript's charCodeAt().
+     * Char code-at, like Javascript's charCodeAt() but accepts negative indexes.
      *
      * @param  int $index
      * @return int|null
      */
     public function charCodeAt(int $index): int|null
     {
-        if ($index < 0 || $index >= $this->length()) {
+        $char = $this->char($index);
+        if ($char === null) {
             return null;
         }
 
-        $chr = $this->slice($index, 1, false);
-        if ($chr === '') {
-            return null;
-        }
-
-        return Strings::ord($chr);
+        return Strings::ord($char);
     }
 
     /**
@@ -244,18 +280,15 @@ class XString implements IteratorAggregate, JsonSerializable, ArrayAccess
      */
     public function codePointAt(int $index, bool $hex = false): int|string|null
     {
-        $length = $this->length();
-        if ($index < 0 || $index >= $length) {
-            return null;
-        }
-
         /** @thanks https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/codePointAt#polyfill */
         $point = null;
         $first = $this->charCodeAt($index);
-        if ($first >= 0xD800 && $first <= 0xDBFF && $length > $index + 1) {
-            $second = $this->charCodeAt($index + 1);
-            if ($second >= 0xDC00 && $second <= 0xDFFF) {
-                $point = ($first - 0xD800) * 0x400 + $second - 0xDC00 + 0x10000;
+        if ($first !== null) {
+            if ($first >= 0xD800 && $first <= 0xDBFF && $this->length() > $index + 1) {
+                $second = $this->charCodeAt($index + 1);
+                if ($second >= 0xDC00 && $second <= 0xDFFF) {
+                    $point = ($first - 0xD800) * 0x400 + $second - 0xDC00 + 0x10000;
+                }
             }
         }
 
@@ -360,12 +393,13 @@ class XString implements IteratorAggregate, JsonSerializable, ArrayAccess
             case MB_CASE_UPPER:
             case MB_CASE_UPPER_SIMPLE:
                 if ($index !== null) {
-                    $char = $this->charAt($index);
+                    $char = $this->char($index);
                     if ($char !== null) {
                         $char = new self($char, $this->encoding);
                         $char->case($case, null, $tr);
-                        return $this->splice($index, 1, $char->data);
+                        $this->splice($index, 1, $char->data);
                     }
+                    return $this;
                 }
 
                 $tr && $this->replace(['ı', 'i'], ['I', 'İ']);
@@ -373,12 +407,13 @@ class XString implements IteratorAggregate, JsonSerializable, ArrayAccess
             case MB_CASE_LOWER:
             case MB_CASE_LOWER_SIMPLE:
                 if ($index !== null) {
-                    $char = $this->charAt($index);
+                    $char = $this->char($index);
                     if ($char !== null) {
                         $char = new self($char, $this->encoding);
                         $char->case($case, null, $tr);
-                        return $this->splice($index, 1, $char->data);
+                        $this->splice($index, 1, $char->data);
                     }
+                    return $this;
                 }
 
                 $tr && $this->replace(['I', 'İ'], ['ı', 'i']);
@@ -386,7 +421,7 @@ class XString implements IteratorAggregate, JsonSerializable, ArrayAccess
             case MB_CASE_TITLE:
             case MB_CASE_TITLE_SIMPLE:
                 if ($tr) for ($i = 0, $il = $this->length(); $i < $il; $i++) {
-                    $char = $this->charAt($i);
+                    $char = $this->char($i);
                     if ($char === 'i') {
                         $this->splice($i, 1, 'İ');
                     }
@@ -452,6 +487,22 @@ class XString implements IteratorAggregate, JsonSerializable, ArrayAccess
         }
 
         return $this;
+    }
+
+    /**
+     * Replace-match, for RegExpMatch as callable argument.
+     *
+     * @param  string|RegExp $search
+     * @param  callable      $replace
+     * @param  int           $limit
+     * @param  int|null     &$count
+     * @param  array|int     $flags
+     * @return self
+     */
+    public function replaceMatch(string|RegExp $search, callable $replace, int $limit = -1, int &$count = null,
+        int|array $flags = 0): self
+    {
+        return $this->replace($search, $replace, false, $limit, $count, $flags, RegExpMatch::class);
     }
 
     /**
@@ -1185,7 +1236,7 @@ class XString implements IteratorAggregate, JsonSerializable, ArrayAccess
             }
         }
 
-        return new static($data);
+        return new static($data, $this->encoding);
     }
 
     /**
@@ -1201,7 +1252,7 @@ class XString implements IteratorAggregate, JsonSerializable, ArrayAccess
         $data = $icase ? mb_stristr($this->data, $search, $before, $this->encoding)
                        : mb_strstr($this->data, $search, $before, $this->encoding);
 
-        return new static((string) $data);
+        return new static((string) $data, $this->encoding);
     }
 
     /**
@@ -1217,7 +1268,7 @@ class XString implements IteratorAggregate, JsonSerializable, ArrayAccess
         $data = $icase ? mb_strrichr($this->data, $search, $before, $this->encoding)
                        : mb_strrchr($this->data, $search, $before, $this->encoding);
 
-        return new static((string) $data);
+        return new static((string) $data, $this->encoding);
     }
 
     /**
@@ -1571,7 +1622,7 @@ class XString implements IteratorAggregate, JsonSerializable, ArrayAccess
     public function getIterator(): iterable
     {
         for ($i = 0, $il = $this->length(); $i < $il; $i++) {
-            yield $i => $this->charAt($i);
+            yield $i => $this->char($i);
         }
     }
 
@@ -1584,17 +1635,17 @@ class XString implements IteratorAggregate, JsonSerializable, ArrayAccess
     /** @inheritDoc ArrayAccess */
     public function offsetExists(mixed $offset): bool
     {
-        is_int($offset) || throw new Error('Non-integer offset');
+        is_int($offset) || throw new Error('Non-integer offset ' . $offset);
 
-        return $this->slice($offset, 1, false) !== '';
+        return $this->char($offset) !== null;
     }
 
     /** @inheritDoc ArrayAccess */
     public function offsetGet(mixed $offset): string|null
     {
-        is_int($offset) || throw new Error('Non-integer offset');
+        is_int($offset) || throw new Error('Non-integer offset ' . $offset);
 
-        return $this->slice($offset, 1, false);
+        return $this->char($offset);
     }
 
     /** @inheritDoc ArrayAccess */
@@ -1678,7 +1729,7 @@ class XString implements IteratorAggregate, JsonSerializable, ArrayAccess
 }
 
 /**
- * Function of XString.
+ * XString initializer.
  *
  * @param string      $data
  * @param string|null $encoding
