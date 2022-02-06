@@ -40,7 +40,7 @@ class XString implements IteratorAggregate, JsonSerializable, ArrayAccess
         }
     }
 
-    /** @magic __toString() */
+    /** @magic */
     public function __toString(): string
     {
         return $this->data;
@@ -314,52 +314,73 @@ class XString implements IteratorAggregate, JsonSerializable, ArrayAccess
     /**
      * Upper (case).
      *
-     * @param  bool $tr
+     * @param  int|null $index N-index stuff (kinda ucfirst/lcfirst).
+     * @param  bool     $tr    Turkish stuff.
      * @return self
      */
-    public function upper(bool $tr = false): self
+    public function upper(int $index = null, bool $tr = false): self
     {
-        return $this->case(MB_CASE_UPPER_SIMPLE, $tr);
+        return $this->case(MB_CASE_UPPER_SIMPLE, $index, $tr);
     }
 
     /**
      * Lower (case).
      *
-     * @param  bool $tr
+     * @param  int|null $index N-index stuff (kinda ucfirst/lcfirst).
+     * @param  bool     $tr    Turkish stuff.
      * @return self
      */
-    public function lower(bool $tr = false): self
+    public function lower(int $index = null, bool $tr = false): self
     {
-        return $this->case(MB_CASE_LOWER_SIMPLE, $tr);
+        return $this->case(MB_CASE_LOWER_SIMPLE, $index, $tr);
     }
 
     /**
      * Title (case).
      *
-     * @param  bool $tr
+     * @param  bool $tr Turkish stuff.
      * @return self
      */
     public function title(bool $tr = false): self
     {
-        return $this->case(MB_CASE_TITLE_SIMPLE, $tr);
+        return $this->case(MB_CASE_TITLE_SIMPLE, null, $tr);
     }
 
     /**
      * Case converter.
      *
-     * @param  int  $case
-     * @param  bool $tr
+     * @param  int      $case
+     * @param  int|null $index N-index stuff (kinda ucfirst/lcfirst, for upper/lower only).
+     * @param  bool     $tr    Turkish stuff.
      * @return self
      */
-    public function case(int $case, bool $tr = false): self
+    public function case(int $case, int $index = null, bool $tr = false): self
     {
         switch ($case) {
             case MB_CASE_UPPER:
             case MB_CASE_UPPER_SIMPLE:
+                if ($index !== null) {
+                    $char = $this->charAt($index);
+                    if ($char !== null) {
+                        $char = new self($char, $this->encoding);
+                        $char->case($case, null, $tr);
+                        return $this->splice($index, 1, $char->data);
+                    }
+                }
+
                 $tr && $this->replace(['ı', 'i'], ['I', 'İ']);
                 break;
             case MB_CASE_LOWER:
             case MB_CASE_LOWER_SIMPLE:
+                if ($index !== null) {
+                    $char = $this->charAt($index);
+                    if ($char !== null) {
+                        $char = new self($char, $this->encoding);
+                        $char->case($case, null, $tr);
+                        return $this->splice($index, 1, $char->data);
+                    }
+                }
+
                 $tr && $this->replace(['I', 'İ'], ['ı', 'i']);
                 break;
             case MB_CASE_TITLE:
