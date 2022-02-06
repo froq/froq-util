@@ -15,7 +15,7 @@ declare(strict_types=1);
  * @author  Kerem Güneş
  * @since   6.0
  */
-final class RegExp
+final class RegExp implements Stringable
 {
     /** @const string */
     public const DELIMITER = '~';
@@ -82,7 +82,7 @@ final class RegExp
         $this->throw     = $throw; // False is silent mode.
     }
 
-    /** @magic __toString() */
+    /** @magic */
     public function __toString(): string
     {
         return $this->pattern;

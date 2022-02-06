@@ -15,7 +15,7 @@ declare(strict_types=1);
  * @author  Kerem Güneş
  * @since   6.0
  */
-final class Type
+final class Type implements Stringable
 {
     /** @var string */
     public readonly string $name;

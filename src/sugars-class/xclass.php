@@ -17,7 +17,7 @@ use froq\util\Objects;
  * @author  Kerem Güneş
  * @since   6.0
  */
-class XClass
+class XClass implements Stringable
 {
     /** @var string */
     public readonly string $name;
