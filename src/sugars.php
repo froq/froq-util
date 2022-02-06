@@ -2984,10 +2984,11 @@ function suid(int $length = 6, int $base = 62): string|null
  * @param  bool $dashed
  * @param  bool $timed
  * @param  bool $guid
+ * @param  bool $upper
  * @return string
  * @since  5.0
  */
-function uuid(bool $dashed = true, bool $timed = false, bool $guid = false): string
+function uuid(bool $dashed = true, bool $timed = false, bool $guid = false, bool $upper = false): string
 {
     $bytes = !$timed ? random_bytes(16)               // Full 16-random bytes.
         : hex2bin(dechex(time())) . random_bytes(12); // Time bin prefix & 12-random bytes.
@@ -2999,7 +3000,9 @@ function uuid(bool $dashed = true, bool $timed = false, bool $guid = false): str
     }
 
     $ret = uuid_format(bin2hex($bytes));
+
     $dashed || $ret = str_replace('-', '', $ret);
+    $upper  && $ret = strtoupper($ret);
 
     return $ret;
 }
@@ -3011,10 +3014,11 @@ function uuid(bool $dashed = true, bool $timed = false, bool $guid = false): str
  * @param  bool $format
  * @param  bool $timed
  * @param  bool $guid
+ * @param  bool $upper
  * @return string|null
  * @since  5.0
  */
-function uuid_hash(int $length = 32, bool $format = false, bool $timed = false, bool $guid = false): string|null
+function uuid_hash(int $length = 32, bool $format = false, bool $timed = false, bool $guid = false, bool $upper = false): string|null
 {
     $algo = [32 => 'md5', 40 => 'sha1', 64 => 'sha256', 16 => 'fnv1a64'][$length] ?? null;
 
@@ -3024,7 +3028,9 @@ function uuid_hash(int $length = 32, bool $format = false, bool $timed = false, 
     }
 
     $ret = hash($algo, uuid(true, $timed, $guid));
+
     $format && $ret = uuid_format($ret);
+    $upper  && $ret = strtoupper($ret);
 
     return $ret;
 }
