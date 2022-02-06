@@ -153,14 +153,28 @@ final class RegExp
      * @param  string|array|callable  $replace
      * @param  int                    $limit
      * @param  int|null              &$count
-     * @param  int                    $flags
+     * @param  int|array              $flags
+     * @param  string|null            $class
      * @return string|array|null
      */
     public function replace(string|array $input, string|array|callable $replace, int $limit = -1, int &$count = null,
-        int $flags = 0): string|array|null
+        int|array $flags = 0, string $class = null): string|array|null
     {
-        $ret =@ is_callable($replace)
-            ? preg_replace_callback($this->pattern, $replace, $input, $limit, $count, $flags)
+        $this->classCheck($class);
+        $this->flagsCheck($flags);
+
+        $callback = is_callable($replace);
+
+        // @cancel: Param $class added.
+        // Append Map instance as second argument to given callback. @todo: Use XArray().
+        // $callback && $replace = fn($match) => $replace($match, new $class($match));
+
+        // Send class instance as match argument when a class given.
+        if ($callback && $class) {
+            $replace = fn($match) => $replace(new $class($match));
+        }
+
+        $ret =@ $callback ? preg_replace_callback($this->pattern, $replace, $input, $limit, $count, $flags)
             : preg_replace($this->pattern, $replace, $input, $limit, $count);
 
         if ($ret === null) {
@@ -227,7 +241,7 @@ final class RegExp
             $ret = null;
         }
 
-        // Plus: prevent 'undefined index ..' error.
+        // Plus: prevent "undefined index .." error.
         if ($limit > 0 && $limit > count((array) $ret)) {
             $ret = array_pad((array) $ret, $limit, null);
         }
@@ -530,11 +544,77 @@ final class RegExp
                 throw new RegExpError('Empty class given');
             }
             if (!class_exists($class)) {
-                throw new RegExpError('No class exists such "' . $class . '"');
+                throw new RegExpError('No class exists such `' . $class . '`');
             }
             if (!class_extends($class, 'Traversable')) {
-                throw new RegExpError('Class "' . $class . '" must be an iterable');
+                throw new RegExpError('Class `' . $class . '` must be an iterable');
             }
         }
+    }
+
+    /**
+     * Flags check for array flags.
+     */
+    private function flagsCheck(int|array|null &$flags): void
+    {
+        if ($flags && is_array($flags)) {
+            $flagsSum = 0;
+
+            foreach ($flags as $flag) {
+                $constant = 'RegExp::' . strtoupper((string) $flag);
+                if (!defined($constant)) {
+                    throw new RegExpError('No constant exists such `$constant`');
+                }
+
+                $flagsSum |= constant($constant);
+            }
+
+            $flags = $flagsSum;
+        }
+    }
+}
+
+/**
+ * RegExp Match.
+ *
+ * A class for match stuff of RegExp class.
+ * @todo: Use XArray().
+ *
+ * @package froq\util
+ * @object  RegExpMatch
+ * @author  Kerem Güneş
+ * @since   6.0
+ */
+class RegExpMatch extends Map
+{
+    /**
+     * Constructor.
+     *
+     * @param array $data
+     */
+    public function __construct(array $data)
+    {
+        $this->data = $data;
+    }
+
+    /**
+     * Clean filtering "", null fields.
+     *
+     * @return self
+     */
+    public function clean(): self
+    {
+        return $this->filter(fn($v) => !equals($v, "", null));
+    }
+
+    /**
+     * Clear filtering given search.
+     *
+     * @param  mixed ...$search
+     * @return self
+     */
+    public function clear(mixed ...$search): self
+    {
+        return $this->filter(fn($v) => !equals($v, ...$search));
     }
 }

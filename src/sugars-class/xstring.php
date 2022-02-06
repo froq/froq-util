@@ -435,14 +435,17 @@ class XString implements IteratorAggregate, JsonSerializable, ArrayAccess
      * @param  bool                   $icase
      * @param  int                    $limit
      * @param  int|null              &$count
+     * @param  int                    $flags
+     * @param  string|null            $class
      * @return int
      */
-    public function replace(string|array|RegExp $search, string|array|callable $replace, bool $icase = false, int $limit = -1, int &$count = null): self
+    public function replace(string|array|RegExp $search, string|array|callable $replace, bool $icase = false,
+        int $limit = -1, int &$count = null, int|array $flags = 0, string $class = null): self
     {
         if ($search instanceof RegExp) {
-            $this->data = $search->replace($this->data, $replace, $limit, $count);
+            $this->data = $search->replace($this->data, $replace, $limit, $count, $flags, $class);
         } elseif (is_string($search) && is_callable($replace)) {
-            $this->data = RegExp::fromPattern($search)->replace($this->data, $replace, $limit, $count);
+            $this->data = RegExp::fromPattern($search)->replace($this->data, $replace, $limit, $count, $flags, $class);
         } else {
             $this->data = $icase ? str_ireplace($search, $replace, $this->data, $count)
                                  : str_replace($search, $replace, $this->data, $count);
