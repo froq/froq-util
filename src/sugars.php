@@ -1136,28 +1136,40 @@ function get_path_info(string $path, string|int $component = null): string|array
  */
 function get_trace(int $options = null, int $limit = null, int $index = null, string $field = null)
 {
-    $trace = debug_backtrace($options ?? 0, $limit ? $limit + 1 : 0);
-    array_shift($trace); // Drop self.
+    $stack = debug_backtrace($options ?? 0, $limit ? $limit + 1 : 0);
+    array_shift($stack); // Drop self.
 
-    foreach ($trace as $i => &$cur) {
-        $cur += [
+    foreach ($stack as $i => $trace) {
+        $trace = [
+            // Index.
+            '#' => $i,
+            // For "[internal function]", "{closure}" stuff.
+            'file' => $trace['file'] ?? null,
+            'line' => $trace['line'] ?? null,
+        ] + $trace + [
+            // Additions.
             'caller' => null,
-            'callee' => $cur['function'] ?? null,
+            'callee' => $trace['function'] ?? null,
         ];
 
-        if (isset($cur['file'], $cur['line'])) {
-            $cur['callPath'] = $cur['file'] . ':' . $cur['line'];
+        if (isset($trace['file'], $trace['line'])) {
+            $trace['callPath'] = $trace['file'] . ':' . $trace['line'];
+        } else {
+            $trace['callPath'] = '[internal function]:';
         }
-        if (isset($cur['class'])) {
-            $cur['method']     = $cur['function'];
-            $cur['methodType'] = ($cur['type']  == '::') ? 'static' : 'non-static';
+
+        if (isset($trace['class'])) {
+            $trace['method']     = $trace['function'];
+            $trace['methodType'] = ($trace['type']  == '::') ? 'static' : 'non-static';
         }
-        if (isset($trace[$i + 1]['function'])) {
-            $cur['caller'] = $trace[$i + 1]['function'];
+        if (isset($stack[$i + 1]['function'])) {
+            $trace['caller'] = $stack[$i + 1]['function'];
         }
+
+        $stack[$i] = $trace;
     }
 
-    return is_null($index) ? $trace : ($trace[$index][$field] ?? $trace[$index] ?? null);
+    return is_null($index) ? $stack : ($stack[$index][$field] ?? $stack[$index] ?? null);
 }
 
 /**
