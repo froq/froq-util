@@ -55,7 +55,7 @@ trait MapSetTrait
         $size && ($this->data = array_pad($this->data, $size, null));
     }
 
-    /** @magic __debugInfo() */
+    /** @magic */
     public function __debugInfo(): array
     {
         return $this->data;
@@ -340,25 +340,25 @@ class Map implements Iterator, ArrayAccess, Countable, Arrayable, Jsonable, List
 {
     use MapSetTrait;
 
-    /** @magic __set() */
+    /** @magic */
     public function __set(int|string|object $key, mixed $value): void
     {
         $this->set($key, $value);
     }
 
-    /** @magic __get() */
+    /** @magic */
     public function __get(int|string|object $key): mixed
     {
         return $this->get($key);
     }
 
-    /** @magic __isset() */
+    /** @magic */
     public function __isset(int|string|object $key): bool
     {
         return $this->has($key);
     }
 
-    /** @magic __unset() */
+    /** @magic */
     public function __unset(int|string|object $key): void
     {
         $this->remove($key);
