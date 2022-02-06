@@ -1161,7 +1161,6 @@ class ReflectionPropertyExtended extends ReflectionProperty
         // if ($ref->hasProperty($name)) {
         //     return false;
         // }
-
         // return !in_array($name, $this->getDomInternals());
     }
 
