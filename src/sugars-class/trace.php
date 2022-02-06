@@ -180,7 +180,7 @@ final class Trace implements Countable, IteratorAggregate, ArrayAccess
  * @since   6.0
  * @internal
  */
-class TraceEntry implements ArrayAccess
+final class TraceEntry implements ArrayAccess
 {
     /** @var array */
     public readonly array $data;
