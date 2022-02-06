@@ -273,9 +273,9 @@ final class RegExp implements Stringable
      * @param  string    $class
      * @param  int       $limit
      * @param  int|array $flags
-     * @return iterable|null
+     * @return iterable
      */
-    public function splitTo(string $input, string $class, int $limit = -1, int|array $flags = 0): iterable|null
+    public function splitTo(string $input, string $class, int $limit = -1, int|array $flags = 0): iterable
     {
         return $this->split($input, $limit, $flags, $class);
     }
