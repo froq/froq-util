@@ -435,7 +435,7 @@ class XString implements IteratorAggregate, JsonSerializable, ArrayAccess
      * @param  bool                   $icase
      * @param  int                    $limit
      * @param  int|null              &$count
-     * @param  int                    $flags
+     * @param  int|array              $flags
      * @param  string|null            $class
      * @return int
      */
@@ -910,11 +910,11 @@ class XString implements IteratorAggregate, JsonSerializable, ArrayAccess
      *
      * @param  string|RegExp $pattern
      * @param  int           $limit
-     * @param  int           $flags
+     * @param  int|array     $flags
      * @param  string|null   $class
      * @return iterable|null
      */
-    public function split(string|RegExp $pattern, int $limit = -1, int $flags = 0, string $class = null): iterable|null
+    public function split(string|RegExp $pattern, int $limit = -1, int|array $flags = 0, string $class = null): iterable|null
     {
         if (is_string($pattern)) {
             $pattern = new RegExp($pattern, 'u');
@@ -929,10 +929,10 @@ class XString implements IteratorAggregate, JsonSerializable, ArrayAccess
      * @param  string|RegExp $pattern
      * @param  string        $class
      * @param  int           $limit
-     * @param  int           $flags
+     * @param  int|array     $flags
      * @return iterable|null
      */
-    public function splitTo(string|RegExp $pattern, string $class, int $limit = -1, int $flags = 0): iterable|null
+    public function splitTo(string|RegExp $pattern, string $class, int $limit = -1, int|array $flags = 0): iterable|null
     {
         return $this->split($pattern, $limit, $flags, $class);
     }
@@ -941,12 +941,12 @@ class XString implements IteratorAggregate, JsonSerializable, ArrayAccess
      * Match possibles.
      *
      * @param  string|RegExp $pattern
-     * @param  int           $flags
+     * @param  int|array     $flags
      * @param  int           $offset
      * @param  string|null   $class
      * @return iterable|null
      */
-    public function match(string|RegExp $pattern, int $flags = 0, int $offset = 0, string $class = null): iterable|null
+    public function match(string|RegExp $pattern, int|array $flags = 0, int $offset = 0, string $class = null): iterable|null
     {
         if (is_string($pattern)) {
             $pattern = new RegExp($pattern, 'u');
@@ -959,12 +959,12 @@ class XString implements IteratorAggregate, JsonSerializable, ArrayAccess
      * Match all possibles.
      *
      * @param  string|RegExp $pattern
-     * @param  int           $flags
+     * @param  int|array     $flags
      * @param  int           $offset
      * @param  string|null   $class
      * @return iterable|null
      */
-    public function matchAll(string|RegExp $pattern, int $flags = 0, int $offset = 0, string $class = null): iterable|null
+    public function matchAll(string|RegExp $pattern, int|array $flags = 0, int $offset = 0, string $class = null): iterable|null
     {
         if (is_string($pattern)) {
             $pattern = new RegExp($pattern, 'u');

@@ -224,13 +224,14 @@ final class RegExp
      *
      * @param  string      $input
      * @param  int         $limit
-     * @param  int         $flags
+     * @param  int|array   $flags
      * @param  string|null $class
      * @return iterable|null
      */
-    public function split(string $input, int $limit = -1, int $flags = 0, string $class = null): iterable|null
+    public function split(string $input, int $limit = -1, int|array $flags = 0, string $class = null): iterable|null
     {
         $this->classCheck($class);
+        $this->flagsCheck($flags);
 
         $ret =@ preg_split($this->pattern, $input, $limit, flags: (
             $flags |= PREG_SPLIT_NO_EMPTY // Always..
@@ -252,13 +253,13 @@ final class RegExp
     /**
      * Perform a split for given iterable class.
      *
-     * @param  string $input
-     * @param  string $class
-     * @param  int    $limit
-     * @param  int    $flags
+     * @param  string    $input
+     * @param  string    $class
+     * @param  int       $limit
+     * @param  int|array $flags
      * @return iterable|null
      */
-    public function splitTo(string $input, string $class, int $limit = -1, int $flags = 0): iterable|null
+    public function splitTo(string $input, string $class, int $limit = -1, int|array $flags = 0): iterable|null
     {
         return $this->split($input, $limit, $flags, $class);
     }
@@ -267,14 +268,15 @@ final class RegExp
      * Perform a match.
      *
      * @param  string      $input
-     * @param  int         $flags
+     * @param  int|array   $flags
      * @param  int         $offset
      * @param  string|null $class
      * @return iterable|null
      */
-    public function match(string $input, int $flags = 0, int $offset = 0, string $class = null): iterable|null
+    public function match(string $input, int|array $flags = 0, int $offset = 0, string $class = null): iterable|null
     {
         $this->classCheck($class);
+        $this->flagsCheck($flags);
 
         $res =@ preg_match($this->pattern, $input, $ret, $flags, $offset);
 
@@ -290,14 +292,15 @@ final class RegExp
      * Perform a match-all.
      *
      * @param  string      $input
-     * @param  int         $flags
+     * @param  int|array   $flags
      * @param  int         $offset
      * @param  string|null $class
      * @return iterable|null
      */
-    public function matchAll(string $input, int $flags = 0, int $offset = 0, string $class = null): iterable|null
+    public function matchAll(string $input, int|array $flags = 0, int $offset = 0, string $class = null): iterable|null
     {
         $this->classCheck($class);
+        $this->flagsCheck($flags);
 
         $res =@ preg_match_all($this->pattern, $input, $ret, $flags, $offset);
 
@@ -553,7 +556,7 @@ final class RegExp
     }
 
     /**
-     * Flags check for array flags.
+     * Flags check for array flags, to calculate when string[] given.
      */
     private function flagsCheck(int|array|null &$flags): void
     {
@@ -561,14 +564,25 @@ final class RegExp
             $flagsSum = 0;
 
             foreach ($flags as $flag) {
-                $constant = 'RegExp::' . strtoupper((string) $flag);
-                if (!defined($constant)) {
-                    throw new RegExpError('No constant exists such `$constant`');
-                }
+                if (is_string($flag)) {
+                    $constant = 'RegExp::' . strtoupper($flag);
+                    defined($constant) || throw new RegExpError(sprintf(
+                        'No constant exists such `%s`',
+                        $constant
+                    ));
 
-                $flagsSum |= constant($constant);
+                    $flagsSum |= constant($constant);
+                } elseif (is_int($flag)) {
+                    $flagsSum |= $flag;
+                } else {
+                    throw new RegExpError(sprintf(
+                        'Invalid flag type `%s` [valids: string, int]',
+                        type($flag)
+                    ))
+                }
             }
 
+            // Update.
             $flags = $flagsSum;
         }
     }
