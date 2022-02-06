@@ -1564,7 +1564,7 @@ final class Arrays extends \StaticClass
     private static function getFilterFunction(array $values = null): callable
     {
         // Default filter values.
-        $values ??= [null, '', []];
+        $values ??= [null, "", []];
 
         return fn($value) => !in_array($value, $values, true);
     }
