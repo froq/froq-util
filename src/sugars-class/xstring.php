@@ -957,6 +957,22 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     }
 
     /**
+     * As a shortcut to split() for Map instances.
+     */
+    public function splitsMap(int $length = 1): iterable
+    {
+        return $this->splits($length, Map::class);
+    }
+
+    /**
+     * As a shortcut to splits() for Set instances.
+     */
+    public function splitsSet(int $length = 1): iterable
+    {
+        return $this->splits($length, Set::class);
+    }
+
+    /**
      * RegExp split.
      *
      * @param  string|RegExp $pattern
@@ -981,11 +997,27 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
      * @param  string        $class
      * @param  int           $limit
      * @param  int|array     $flags
-     * @return iterable|null
+     * @return iterable
      */
-    public function splitTo(string|RegExp $pattern, string $class, int $limit = -1, int|array $flags = 0): iterable|null
+    public function splitTo(string|RegExp $pattern, string $class, int $limit = -1, int|array $flags = 0): iterable
     {
         return $this->split($pattern, $limit, $flags, $class);
+    }
+
+    /**
+     * As a shortcut to split() for Map instances.
+     */
+    public function splitMap(string|RegExp $pattern, int $limit = -1, int|array $flags = 0): iterable
+    {
+        return $this->split($pattern, $limit, $flags, Map::class);
+    }
+
+    /**
+     * As a shortcut to split() for Set instances.
+     */
+    public function splitSet(string|RegExp $pattern, int $limit = -1, int|array $flags = 0): iterable
+    {
+        return $this->split($pattern, $limit, $flags, Set::class);
     }
 
     /**
