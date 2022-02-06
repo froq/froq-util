@@ -578,7 +578,7 @@ final class RegExp
                     throw new RegExpError(sprintf(
                         'Invalid flag type `%s` [valids: string, int]',
                         type($flag)
-                    ))
+                    ));
                 }
             }
 
