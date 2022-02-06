@@ -1676,3 +1676,14 @@ class XString implements IteratorAggregate, JsonSerializable, ArrayAccess
         return new static($data);
     }
 }
+
+/**
+ * Function of XString.
+ *
+ * @param string      $data
+ * @param string|null $encoding
+ */
+function xstring(string $data = '', string|null $encoding = ''): XString
+{
+    return new XString($data, $encoding);
+}
