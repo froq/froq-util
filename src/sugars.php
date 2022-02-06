@@ -3187,7 +3187,7 @@ function mb_strrev(string $str, string $encoding = null): string
  */
 function char_at(string $str, int $index, string $encoding = null): string|null
 {
-    if ($index < 0 || $index >= mb_strlen($str, $encoding)) {
+    if ($index < 0 && -$index > mb_strlen($str, $encoding)) {
         return null;
     }
 
@@ -3207,7 +3207,7 @@ function char_at(string $str, int $index, string $encoding = null): string|null
  */
 function char_code_at(string $str, int $index, string $encoding = null): int|null
 {
-    if ($index < 0 || $index >= mb_strlen($str, $encoding)) {
+    if ($index < 0 && -$index > mb_strlen($str, $encoding)) {
         return null;
     }
 
