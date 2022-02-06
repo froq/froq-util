@@ -343,12 +343,6 @@ class XClass
         return $this->uses($trait);
     }
 
-    /** @aliasOf init() */
-    public function new(mixed ...$args): object
-    {
-        return $this->init(...$args);
-    }
-
     /**
      * Create a new instance this class.
      *
