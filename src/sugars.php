@@ -845,20 +845,24 @@ function get_constant_value(string $name, mixed $default = null): mixed
  * @param  string|object $class
  * @param  string        $name
  * @param  bool          $scope_check
+ * @param  bool          $upper
  * @return bool
  * @since  4.0
  */
-function constant_exists(string|object $class, string $name, bool $scope_check = true): bool
+function constant_exists(string|object $class, string $name, bool $scope_check = true, bool $upper = false): bool
 {
+    $class = Objects::getName($class);
+    $upper && $name = strtoupper($name);
+
     if ($scope_check) {
         $caller_class = debug_backtrace(2, 2)[1]['class'] ?? null;
         if ($caller_class) {
-            return ($caller_class === Objects::getName($class)) && Objects::hasConstant($class, $name);
+            return ($caller_class === $class) && Objects::hasConstant($class, $name);
         }
-        return defined(Objects::getName($class) .'::'. $name);
+        return defined($class .'::'. $name);
     }
 
-    return (bool) Objects::hasConstant($class, $name);
+    return defined($class .'::'. $name) || Objects::hasConstant($class, $name);
 }
 
 /**
