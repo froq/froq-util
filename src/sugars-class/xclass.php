@@ -55,13 +55,13 @@ class XClass
         // }
     }
 
-    /** @magic __toString() */
+    /** @magic */
     public function __toString(): string
     {
         return $this->name;
     }
 
-    /** @magic __debugInfo() */
+    /** @magic */
     public function __debugInfo(): array
     {
         return [
