@@ -211,6 +211,21 @@ trait MapSetTrait
     }
 
     /**
+     * Merge given data with self data.
+     *
+     * @param  iterable $data
+     * @return self
+     */
+    public function merge(iterable $data): self
+    {
+        foreach ($data as $key => $value) {
+            $this->set($key, $value);
+        }
+
+        return $this;
+    }
+
+    /**
      * Clear map/set.
      *
      * @return self
