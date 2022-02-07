@@ -60,7 +60,7 @@ function build_cookie(string $name, string|null $value, array $options = null): 
 
     $ret = rawurlencode($name) . '=';
 
-    if ($value === null || $value === '' || $expires < 0) {
+    if ($value === '' || $value === null || $expires < 0) {
         $ret .= sprintf('n/a; Expires=%s; Max-Age=0', gmdate('D, d M Y H:i:s \G\M\T', 0));
     } else {
         $ret .= rawurlencode($value);
