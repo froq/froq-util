@@ -3537,6 +3537,11 @@ function is_stream(mixed $var): bool
  */
 function is_type_of(mixed $var, string ...$types): bool
 {
+    // Multiple at once.
+    if ($types && str_contains($types[0], '|')) {
+        $types = explode('|', $types[0]);
+    }
+
     foreach ($types as $type) {
         $type = strtolower($type);
         if (match ($type) {
