@@ -51,15 +51,14 @@ function build_cookie(string $name, string|null $value, array $options = null): 
         return null;
     }
 
-    static $optionsDefault; $optionsDefault ??= array_fill_keys(
-        ['expires', 'path', 'domain', 'secure', 'httponly', 'samesite'], null);
-
-    $cookie = ['name' => $name, 'value' => $value] + array_merge($optionsDefault, array_map(
-        'strtolower', ($options ?? [])));
+    $cookie = ['name' => $name, 'value' => $value] + array_replace(
+        array_pad_keys([], ['expires', 'path', 'domain', 'secure', 'httponly', 'samesite']),
+        array_map_keys($options ?? [], 'strtolower')
+    );
 
     extract($cookie);
 
-    $ret = rawurlencode($name) .'=';
+    $ret = rawurlencode($name) . '=';
 
     if ($value === null || $value === '' || $expires < 0) {
         $ret .= sprintf('n/a; Expires=%s; Max-Age=0', gmdate('D, d M Y H:i:s \G\M\T', 0));
@@ -73,11 +72,11 @@ function build_cookie(string $name, string|null $value, array $options = null): 
         }
     }
 
-    $path     && $ret .= '; Path='. $path;
-    $domain   && $ret .= '; Domain='. $domain;
+    $path     && $ret .= '; Path=' . $path;
+    $domain   && $ret .= '; Domain=' . $domain;
     $secure   && $ret .= '; Secure';
     $httponly && $ret .= '; HttpOnly';
-    $samesite && $ret .= '; SameSite='. $samesite;
+    $samesite && $ret .= '; SameSite=' . $samesite;
 
     return $ret;
 }
