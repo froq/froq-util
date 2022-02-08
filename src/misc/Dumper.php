@@ -24,7 +24,7 @@ final class Dumper
 {
     /**
      * Dump given input.
-     * Note: Be careful while dumping recursions with arrays.
+     * Note: Be careful while dumping recursions with arrays/objects.
      *
      * @param  mixed  $input
      * @param  string $tab  Indent.
@@ -42,22 +42,16 @@ final class Dumper
                 return 'int: '. $input;
 
             case 'double':
-                // Check decimals for appending 0 to 1.0 (as expected).
-                $decimals = 1;
-                if ($remainds = strstr((string) $input, '.')) {
-                    $decimals = strlen($remainds) - 1;
-                }
+                return 'float: '. var_export($input, true);
 
-                return 'float: '. format_number($input, $decimals);
+            case 'boolean':
+                return 'bool: '. var_export($input, true);
 
             case 'string':
                 // Add multibyte length (as expected).
                 $length = mb_strlen($input);
 
                 return 'string('. $length .') "'. $input .'"';
-
-            case 'boolean':
-                return 'bool: '. format_bool($input);
 
             case 'array':
             case 'object':
