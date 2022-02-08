@@ -34,7 +34,7 @@ final class System extends \StaticClass
             if ($remainds = strstr((string) $value, '.')) {
                 $decimals = strlen($remainds) - 1;
             }
-            $value = number_format($value, $decimals);
+            $value = number_format($value, $decimals, '.', '');
         }
 
 
@@ -86,7 +86,7 @@ final class System extends \StaticClass
             if ($remainds = strstr((string) $value, '.')) {
                 $decimals = strlen($remainds) - 1;
             }
-            $value = number_format($value, $decimals);
+            $value = number_format($value, $decimals, '.', '');
         }
 
         return putenv($option .'='. $value);
