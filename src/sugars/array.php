@@ -196,28 +196,28 @@ function array_remove_random(array &$array, int $limit = 1): array
 /**
  * Bridge function to Arrays.complete().
  *
- * @param  bool     $null_strings
+ * @param  bool     $blanks
  * @param  array    $keys
  * @param  array ...$arrays
  * @return array
  * @since  4.14
  */
-function array_complete(bool $null_strings, array $keys, array ...$arrays): array
+function array_complete(bool $blanks, array $keys, array ...$arrays): array
 {
-    return Arrays::complete($null_strings, $keys, ...$arrays);
+    return Arrays::complete($blanks, $keys, ...$arrays);
 }
 
 /**
  * Bridge function to Arrays.coalesce().
  *
- * @param  bool     $null_strings
+ * @param  bool     $blanks
  * @param  array ...$arrays
  * @return array
  * @since  4.14
  */
-function array_coalesce(bool $null_strings, array ...$arrays): array
+function array_coalesce(bool $blanks, array ...$arrays): array
 {
-    return Arrays::coalesce($null_strings, ...$arrays);
+    return Arrays::coalesce($blanks, ...$arrays);
 }
 
 /**

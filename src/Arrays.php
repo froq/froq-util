@@ -393,22 +393,22 @@ final class Arrays extends \StaticClass
     /**
      * Complete an array keys checking given other arrays to find non-null/non-null string value.
      *
-     * @param  bool     $nullStrings
+     * @param  bool     $blanks
      * @param  array    $keys
      * @param  array ...$arrays
      * @return array
      * @since  4.14
      */
-    public static function complete(bool $nullStrings, array $keys, array ...$arrays): array
+    public static function complete(bool $blanks, array $keys, array ...$arrays): array
     {
         $ret = [];
 
         foreach ($keys as $key) {
             foreach ($arrays as $array) {
-                $test = $nullStrings ? !isset($ret[$key]) || $ret[$key] === ''
-                                     : !isset($ret[$key]);
-
-                if ($test) { // Try array.key, ret.key (current) or set null (not ret.key ??= ..).
+                $test = $blanks ? !isset($ret[$key]) || ($ret[$key] === '')
+                                : !isset($ret[$key]);
+                // Try array.key, ret.key (current) or set null (not ret.key ??= ..).
+                if ($test) {
                     $ret[$key] = $array[$key] ?? $ret[$key] ?? null;
                 }
             }
@@ -420,21 +420,21 @@ final class Arrays extends \StaticClass
     /**
      * Coalesce an array keys checking given other arrays to find non-null/non-null string value.
      *
-     * @param  bool     $nullStrings
+     * @param  bool     $blanks
      * @param  array ...$arrays
      * @return array
      * @since  4.14
      */
-    public static function coalesce(bool $nullStrings, array ...$arrays): array
+    public static function coalesce(bool $blanks, array ...$arrays): array
     {
         $ret = [];
 
         foreach ($arrays as $array) {
             foreach ($array as $key => $value) {
-                $test = $nullStrings ? !isset($ret[$key]) || $ret[$key] === ''
-                                     : !isset($ret[$key]);
-
-                if ($test) { // Try value, ret.key (current) or set null (not ret.key ??= ..).
+                $test = $blanks ? !isset($ret[$key]) || ($ret[$key] === '')
+                                : !isset($ret[$key]);
+                // Try value, ret.key (current) or set null (not ret.key ??= ..).
+                if ($test) {
                     $ret[$key] = $value ?? $ret[$key] ?? null;
                 }
             }
