@@ -57,7 +57,7 @@ function strpfx(...$args) { return str_has_prefix(...$args);  } // Search prefix
 function strsfx(...$args) { return str_has_suffix(...$args);  } // Search suffix.
 
 /**
- * Loving shorter stuffs?
+ * Loving shorter stuff?
  * @since  3.0, 5.0
  */
 function upper(string $in): string { return mb_strtoupper($in); }
@@ -2411,7 +2411,7 @@ function array_drop(array &$array, int|string|array $key): array
  */
 function array_pick(array &$array, int|string|array $key, $default = null, bool $drop = false)
 {
-    // Just got sick of "value=array[..] ?? .." stuffs.
+    // Just got sick of "value=array[..] ?? .." stuff.
     return is_array($key) ? Arrays::getAll($array, $key, $default, $drop)
                           : Arrays::get($array, $key, $default, $drop);
 }
@@ -2427,7 +2427,7 @@ function array_pick(array &$array, int|string|array $key, $default = null, bool 
  */
 function array_pluck(array &$array, int|string|array $key, $default = null)
 {
-    // Just got sick of "if isset array[..]: value=array[..], unset(array[..])" stuffs.
+    // Just got sick of "if isset array[..]: value=array[..], unset(array[..])" stuff.
     return is_array($key) ? Arrays::pullAll($array, $key, $default)
                           : Arrays::pull($array, $key, $default);
 }
@@ -2516,7 +2516,7 @@ function array_flat(array $array, bool $use_keys = false, bool $fix_keys = false
  */
 function array_rand_value(array &$array, int $limit = 1, $default = null, bool $drop = false)
 {
-    // Just got sick of "value = array[array_rand(array)]" stuffs.
+    // Just got sick of "value = array[array_rand(array)]" stuff.
     return Arrays::getRandom($array, $limit, drop: $drop) ?? $default;
 }
 
