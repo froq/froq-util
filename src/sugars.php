@@ -2784,6 +2784,11 @@ function array_extract(array $array, int|string|array $keys, mixed &...$vars): i
 {
     $ret = 0;
 
+    // Extract all keys.
+    if ($keys === '*') {
+        $keys = array_keys($array);
+    }
+
     foreach ((array) $keys as $i => $key) {
         if (isset($array[$key])) {
             $vars[$i] = $array[$key];
