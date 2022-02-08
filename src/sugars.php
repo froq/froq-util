@@ -3524,7 +3524,7 @@ function is_image(mixed $var): bool
  */
 function is_stream(mixed $var): bool
 {
-    return $var && is_resource($var) && get_resource_type($var) == 'stream';
+    return $var && is_resource($var) && get_resource_type($var) === 'stream';
 }
 
 /**
@@ -3545,13 +3545,19 @@ function is_type_of(mixed $var, string ...$types): bool
     foreach ($types as $type) {
         $type = strtolower($type);
         if (match ($type) {
-            'list'     => is_list($var),     'number'   => is_number($var),
-            'image'    => is_image($var),    'stream'   => is_stream($var),
-            'iterator' => is_iterator($var), 'scalar'   => is_scalar($var),
-            'iterable' => is_iterable($var), 'callable' => is_callable($var),
-            'any'      => true,              'mixed'    => true,
-            // @note Required for objects/all below.
+            // Required for objects & below).
             'object'   => is_object($var),
+
+            // Sugar stuff.
+            'list'     => is_list($var),     'number'    => is_number($var),
+            'image'    => is_image($var),    'stream'    => is_stream($var),
+            'iterator' => is_iterator($var),
+
+            // Internal stuff.
+            'iterable' => is_iterable($var), 'callable'  => is_callable($var),
+            'resource' => is_resource($var), 'countable' => is_countable($var),
+            'scalar'   => is_scalar($var),   'numeric'   => is_numeric($var),
+
             // All others.
             default    => strtolower(get_type($var)) === $type
         }) {
