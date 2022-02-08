@@ -1766,7 +1766,7 @@ function utime(bool $string = false): float|string
 {
     $time = microtime(true);
 
-    return $string ? sprintf('%.6F', $time): $time;
+    return !$string ? $time : sprintf('%.6F', $time);
 }
 
 /**
