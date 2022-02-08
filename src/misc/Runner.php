@@ -10,7 +10,7 @@ namespace froq\util\misc;
 /**
  * Runner.
  *
- * Represents a profiler class entity that provides a profiling interface via `run()` method printing
+ * A class that provides a profiling interface via `run()` method printing
  * speed & memory peeks.
  *
  * @package froq\util\misc

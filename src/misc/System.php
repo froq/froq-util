@@ -10,6 +10,8 @@ namespace froq\util\misc;
 /**
  * System.
  *
+ * A static class for system related stuff.
+ *
  * @package froq\util\misc
  * @object  froq\util\misc\System
  * @author  Kerem Güneş

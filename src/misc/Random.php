@@ -10,8 +10,9 @@ namespace froq\util\misc;
 /**
  * Random.
  *
- * Represents a RNG class entity that generates pseudorandom numbers. This class is highly inspired by java.util.Random
- * class using its some same implementations (@see https://docs.oracle.com/javase/8/docs/api/java/util/Random.html).
+ * A RNG class that generates pseudorandom numbers. This class is highly
+ * inspired by java.util.Random class using its some same implementations.
+ * @see https://docs.oracle.com/javase/8/docs/api/java/util/Random.html
  *
  * @package froq\util\misc
  * @object  froq\util\misc\Random
@@ -44,7 +45,7 @@ final class Random
      */
     public function seed(int $seed = null): int
     {
-        if ($seed != null) {
+        if ($seed) {
             $this->seed = ($seed ^ 0x5DEECE66D) & ((1 << 48) - 1);
         }
 
@@ -60,7 +61,7 @@ final class Random
     public function nextInt(int $bound = PHP_INT_MAX): int
     {
         if ($bound < 1) {
-            throw new \ValueError('Min bound is 1, ' . $bound . ' given');
+            throw new \ValueError("Min bound is 1, {$bound} given");
         }
 
         // i.e. bound is a power of 2.
@@ -164,7 +165,7 @@ final class Random
      */
     private function next(int $bits): int
     {
-        $this->seed = (($this->seed * 0x5DEECE66D) + 0xB) & ((1 << 48) - 1);
+        $this->seed = (0xB + (int) ($this->seed * 0x5DEECE66D)) & ((1 << 48) - 1);
 
         return (int) ($this->seed >> (48 - $bits));
     }

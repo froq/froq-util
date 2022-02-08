@@ -12,7 +12,7 @@ use froq\util\Objects;
 /**
  * Dumper.
  *
- * Represents a dumper class that provides a dumping interface via `dump()` method or printing
+ * A static class that provides a dumping interface via `dump()` method or printing
  * options via `echo()` or `echoPre()` methods.
  *
  * @package froq\util\misc
