@@ -208,7 +208,7 @@ final /* fuckic static */ class Util extends \StaticClass
         // Fix skipped nulls by http_build_query().
         $qa = array_map_recursive('strval', $qa);
 
-        $qs = http_build_query($qa);
+        $qs = http_build_query($qa, encoding_type: PHP_QUERY_RFC3986);
 
         if ($decode) {
             $qs = urldecode($qs);
@@ -216,7 +216,7 @@ final /* fuckic static */ class Util extends \StaticClass
             $qs = str_replace('=#', '=%23', $qs);
         }
         if ($stripTags && str_contains($qs, '%3C')) {
-            $qs = preg_replace('~%3C[\w]+(%2F)?%3E~ismU', '', $qs);
+            $qs = preg_replace('~%3C(\w+)\b(?!%3E)*(%2F)?%3E(.*?%3C%2F\1%3E)?~isu', '', $qs);
         }
         if ($normalizeArrays && str_contains($qs, '%5D=')) {
             $qs = str_replace(['%5B', '%5D'], ['[', ']'], $qs);
