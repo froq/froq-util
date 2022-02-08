@@ -164,9 +164,8 @@ final class Assert
      */
     public static function checkType(mixed $input, string $type, array|string|Throwable $message = null): bool
     {
-        $assertion = is_type_of($input, ...(
-            split('\|', $type) // Eg: int or int|float.
-        ));
+        // Eg: "int" or "int|float".
+        $assertion = is_type_of($input, $type);
 
         return self::check($assertion, $message);
     }
@@ -182,7 +181,7 @@ final class Assert
      */
     public static function checkClass(mixed $input, string $class, array|string|Throwable $message = null): bool
     {
-        $assertion = is_type_of($input, 'object', 'string') && is_class_of($input, $class);
+        $assertion = is_type_of($input, 'object|string') && is_class_of($input, $class);
 
         return self::check($assertion, $message);
     }
