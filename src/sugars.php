@@ -1877,9 +1877,8 @@ function http_parse_query(string $query, string $separator = '&', int $decoding 
         if ($decoding == PHP_QUERY_RFC3986) {
             $key = rawurldecode($key);
             $value = rawurldecode($value);
-        }
-        // All others as PHP_QUERY_RFC1738.
-        else {
+        } else {
+            // All others as PHP_QUERY_RFC1738.
             $key = urldecode($key);
             $value = urldecode($value);
         }
