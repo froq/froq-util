@@ -212,7 +212,7 @@ final /* fuckic static */ class Util extends \StaticClass
         // Fix skipped nulls by http_build_query() & empty strings of falses.
         $data = array_map_recursive(fn($value) => is_bool($value) ? intval($value) : strval($value), $data);
 
-        $query = http_build_query($data, encoding_type: PHP_QUERY_RFC3986);
+        $query = http_build_query($data, '', '&', PHP_QUERY_RFC3986);
 
         // Normalize arrays.
         if (str_contains($query, '%5D=')) {
@@ -238,7 +238,7 @@ final /* fuckic static */ class Util extends \StaticClass
             return [];
         }
 
-        $data = http_parse_query($query);
+        $data = http_parse_query($query, '&', PHP_QUERY_RFC3986);
 
         // Drop ignored keys.
         if ($ignoredKeys != '') {
