@@ -255,7 +255,7 @@ function segment(int|string $key, string $default = null): string|null
 }
 
 /**
- * Get all/many URI segments.
+ * Get all/many URI segments or Segments object.
  *
  * @param  array<int|string>|null $keys
  * @param  array<string>|null     $defaults
