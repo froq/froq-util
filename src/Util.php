@@ -157,6 +157,7 @@ final /* fuckic static */ class Util extends \StaticClass
         }
 
         $uri .= '';
+
         // PHP thinks it's a host, not path (also gives false if URI kinda "//").
         if (($i = strpos($uri, '//')) === 0) {
             while (($uri[++$i] ?? '') === '/');
