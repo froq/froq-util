@@ -199,9 +199,7 @@ final /* fuckic static */ class Util extends \StaticClass
 
         // Drop ignored keys.
         if ($ignoredKeys != '') {
-            $keys = explode(',', $ignoredKeys);
-            $data = array_filter($data, fn($key) => !in_array($key, $keys, true), 2);
-            unset($keys);
+            $data = array_delete_key($data, ...explode(',', $ignoredKeys));
         }
 
         // Remove HTML tags.
@@ -282,9 +280,7 @@ final /* fuckic static */ class Util extends \StaticClass
 
         // Drop ignored keys.
         if ($ignoredKeys != '') {
-            $keys = explode(',', $ignoredKeys);
-            $data = array_filter($data, fn($key) => !in_array($key, $keys, true), 2);
-            unset($keys);
+            $data = array_delete_key($data, ...explode(',', $ignoredKeys));
         }
 
         // Remove HTML tags.
