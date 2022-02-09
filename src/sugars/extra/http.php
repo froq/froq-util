@@ -10,15 +10,15 @@ use froq\util\Util;
 /**
  * Build a query string.
  *
- * @param  array  $query
+ * @param  array  $data
  * @param  string $ignored_keys
  * @param  bool   $remove_tags
  * @return string
  * @since  4.0
  */
-function build_query_string(array $query, string $ignored_keys = '', bool $remove_tags = false): string
+function build_query_string(array $data, string $ignored_keys = '', bool $remove_tags = false): string
 {
-    return Util::buildQueryString($query, $ignored_keys, $remove_tags);
+    return Util::buildQueryString($data, $ignored_keys, $remove_tags);
 }
 
 /**

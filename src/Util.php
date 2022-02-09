@@ -186,37 +186,37 @@ final /* fuckic static */ class Util extends \StaticClass
     /**
      * Build query string.
      *
-     * @param  array  $query
+     * @param  array  $data
      * @param  string $ignoredKeys
      * @param  bool   $removeTags
      * @return string
      */
-    public static function buildQueryString(array $query, string $ignoredKeys = '', bool $removeTags = false): string
+    public static function buildQueryString(array $data, string $ignoredKeys = '', bool $removeTags = false): string
     {
-        if (!$query) {
+        if (!$data) {
             return '';
         }
 
         // Drop ignored keys.
         if ($ignoredKeys != '') {
             $keys = explode(',', $ignoredKeys);
-            $query = array_filter($query, fn($key) => !in_array($key, $keys, true), 2);
+            $data = array_filter($data, fn($key) => !in_array($key, $keys, true), 2);
             unset($keys);
         }
 
         // Remove HTML tags.
         if ($removeTags) {
-            $query = array_map_recursive(fn($value) => (
+            $data = array_map_recursive(fn($value) => (
                 is_string($value) ? preg_remove('~<(\w+)\b[^>]*/?>(?:.*?</\1>)?~isu', $value) : $value
-            ), $query);
+            ), $data);
         }
 
         // Fix skipped nulls by http_build_query() & empty strings of falses.
-        $query = array_map_recursive(fn($value) => (
+        $data = array_map_recursive(fn($value) => (
             is_bool($value) ? intval($value) : strval($value)
-        ), $query);
+        ), $data);
 
-        $query = http_build_query($query, encoding_type: PHP_QUERY_RFC3986);
+        $query = http_build_query($data, encoding_type: PHP_QUERY_RFC3986);
 
         // Normalize arrays.
         if (str_contains($query, '%5D=')) {
@@ -257,14 +257,16 @@ final /* fuckic static */ class Util extends \StaticClass
         }
 
         // Preserve pluses (or parse_str() will replace all with spaces).
-        $query = str_replace('+', '%2B', $query);
+        if (str_contains($query, '+')) {
+            $query = str_replace('+', '%2B', $query);
+        }
 
-        parse_str($query, $query);
+        parse_str($query, $data);
 
         if ($hexed) {
-            foreach ($query as $key => $value) {
+            foreach ($data as $key => $value) {
                 // Drop hexed.
-                unset($query[$key]);
+                unset($data[$key]);
 
                 // Drop "@" prefix & unhex keys.
                 $key = hex2bin((string) $key);
@@ -272,25 +274,25 @@ final /* fuckic static */ class Util extends \StaticClass
                     $key = rawurldecode($key);
                 }
 
-                $query[$key] = $value;
+                $data[$key] = $value;
             }
         }
 
         // Drop ignored keys.
         if ($ignoredKeys != '') {
             $keys = explode(',', $ignoredKeys);
-            $query = array_filter($query, fn($key) => !in_array($key, $keys, true), 2);
+            $data = array_filter($data, fn($key) => !in_array($key, $keys, true), 2);
             unset($keys);
         }
 
         // Remove HTML tags.
         if ($removeTags) {
-            $query = array_map_recursive(fn($value) => (
+            $data = array_map_recursive(fn($value) => (
                 is_string($value) ? preg_remove('~<(\w+)\b[^>]*/?>(?:.*?</\1>)?~isu', $value) : $value
-            ), $query);
+            ), $data);
         }
 
-        return $query;
+        return $data;
     }
 
     /**
