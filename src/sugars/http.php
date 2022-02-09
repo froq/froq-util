@@ -249,7 +249,7 @@ function cookie_has(string|array $name): bool
  * @param  string|null $default
  * @return string|null
  */
-function segment(int|string $key, string $default = null): string
+function segment(int|string $key, string $default = null): string|null
 {
     return app()->request()->uri()->segment($key, $default);
 }
@@ -259,9 +259,9 @@ function segment(int|string $key, string $default = null): string
  *
  * @param  array<int|string>|null $keys
  * @param  array<string>|null     $defaults
- * @return array<string>|froq\http\request\Segments
+ * @return array<string>|froq\http\request\Segments|null
  */
-function segments(array $keys = null, array $defaults = null): array|Segments
+function segments(array $keys = null, array $defaults = null): array|Segments|null
 {
     return app()->request()->uri()->segments($key, $defaults);
 }
