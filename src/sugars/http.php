@@ -243,26 +243,27 @@ function cookie_has(string|array $name): bool
 }
 
 /**
- * Get a segment param.
+ * Get a URI segment.
  *
- * @param  int|string $key
- * @param  any|null   $default
- * @return any|null
+ * @param  int|string  $key
+ * @param  string|null $default
+ * @return string|null
  */
-function segment(int|string $key, $default = null)
+function segment(int|string $key, string $default = null): string
 {
-    return app()->request()->uri()->getSegment($key, $default);
+    return app()->request()->uri()->segment($key, $default);
 }
 
 /**
- * Get URI segments property or segment params.
+ * Get all/many URI segments.
  *
- * @param  bool $list
- * @return froq\http\request\Segments|array
+ * @param  array<int|string>|null $keys
+ * @param  array<string>|null     $defaults
+ * @return array<string>|froq\http\request\Segments
  */
-function segments(array $keys = null, $default = null): Segments|array
+function segments(array $keys = null, array $defaults = null): array|Segments
 {
-    return app()->request()->uri()->getSegments($key, $default);
+    return app()->request()->uri()->segments($key, $defaults);
 }
 
 /**
