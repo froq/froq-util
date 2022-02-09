@@ -225,56 +225,20 @@ final /* fuckic static */ class Util extends \StaticClass
     }
 
     /**
-     * Parse query string (without changing dotted param keys if dotted option is true).
+     * Parse query string (without changing dotted param keys).
      * https://github.com/php/php-src/blob/master/main/php_variables.c#L103
      *
      * @param  string $query
      * @param  string $ignoredKeys
      * @param  bool   $removeTags
-     * @param  bool   $dotted
      * @return array
      */
-    public static function parseQueryString(string $query, string $ignoredKeys = '', bool $removeTags = false, bool $dotted = false): array
+    public static function parseQueryString(string $query, string $ignoredKeys = '', bool $removeTags = false): array
     {
         $query = trim($query);
         if ($query == '') {
             return [];
         }
-
-        // $hexed = false;
-        // if ($dotted && str_contains($query, '.')) {
-        //     $hexed = true;
-
-        //     // Normalize arrays.
-        //     if (str_contains($query, '%5D=')) {
-        //         $query = str_replace(['%5B', '%5D'], ['[', ']'], $query);
-        //     }
-
-        //     // Hex keys.
-        //     $query = preg_replace_callback('~(^|(?<=&))[^=&\[]+~', fn($match) => bin2hex($match[0]), $query);
-        // }
-
-        // // Preserve pluses (or parse_str() will replace all with spaces).
-        // if (str_contains($query, '+')) {
-        //     $query = str_replace('+', '%2B', $query);
-        // }
-
-        // parse_str($query, $data);
-
-        // if ($hexed) {
-        //     foreach ($data as $key => $value) {
-        //         // Drop hexed.
-        //         unset($data[$key]);
-
-        //         // Drop "@" prefix & unhex keys.
-        //         $key = hex2bin((string) $key);
-        //         if (str_contains($key, '%')) {
-        //             $key = rawurldecode($key);
-        //         }
-
-        //         $data[$key] = $value;
-        //     }
-        // }
 
         $data = http_parse_query($query);
 
