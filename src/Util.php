@@ -186,108 +186,111 @@ final /* fuckic static */ class Util extends \StaticClass
     /**
      * Build query string.
      *
-     * @param  array       $qa
-     * @param  bool        $decode
-     * @param  string|null $ignoredKeys
-     * @param  bool        $stripTags
-     * @param  bool        $normalizeArrays
+     * @param  array  $query
+     * @param  string $ignoredKeys
+     * @param  bool   $removeTags
      * @return string
      */
-    public static function buildQueryString(array $qa, bool $decode = false, string $ignoredKeys = null,
-        bool $stripTags = true, bool $normalizeArrays = true): string
+    public static function buildQueryString(array $query, string $ignoredKeys = '', bool $removeTags = false): string
     {
-        if ($ignoredKeys != null) {
-            $ignoredKeys = explode(',', $ignoredKeys);
-            foreach (array_keys($qa) as $key) {
-                if (in_array($key, $ignoredKeys)) {
-                    unset($qa[$key]);
-                }
-            }
+        if (!$query) {
+            return '';
         }
 
-        // Fix skipped nulls by http_build_query().
-        $qa = array_map_recursive('strval', $qa);
-
-        $qs = http_build_query($qa, encoding_type: PHP_QUERY_RFC3986);
-
-        if ($decode) {
-            $qs = urldecode($qs);
-            // Fix such "=#foo" queries that not taken as parameter.
-            $qs = str_replace('=#', '=%23', $qs);
-        }
-        if ($stripTags && str_contains($qs, '%3C')) {
-            $qs = preg_replace('~%3C(\w+)\b(?!%3E)*(%2F)?%3E(.*?%3C%2F\1%3E)?~isu', '', $qs);
-        }
-        if ($normalizeArrays && str_contains($qs, '%5D=')) {
-            $qs = str_replace(['%5B', '%5D'], ['[', ']'], $qs);
+        // Drop ignored keys.
+        if ($ignoredKeys != '') {
+            $keys = explode(',', $ignoredKeys);
+            $query = array_filter($query, fn($key) => !in_array($key, $keys, true), 2);
+            unset($keys);
         }
 
-        return trim($qs);
+        // Remove HTML tags.
+        if ($removeTags) {
+            $query = array_map_recursive(fn($value) => (
+                is_string($value) ? preg_remove('~<(\w+)\b[^>]*/?>(?:.*?</\1>)?~isu', $value) : $value
+            ), $query);
+        }
+
+        // Fix skipped nulls by http_build_query() & empty strings of falses.
+        $query = array_map_recursive(fn($value) => (
+            is_bool($value) ? intval($value) : strval($value)
+        ), $query);
+
+        $query = http_build_query($query, encoding_type: PHP_QUERY_RFC3986);
+
+        // Normalize arrays.
+        if (str_contains($query, '%5D=')) {
+            $query = str_replace(['%5B', '%5D'], ['[', ']'], $query);
+        }
+
+        return $query;
     }
 
     /**
      * Parse query string (without changing dotted param keys if dotted option is true).
      * https://github.com/php/php-src/blob/master/main/php_variables.c#L103
      *
-     * @param  string      $qs
-     * @param  bool        $encode
-     * @param  string|null $ignoredKeys
-     * @param  bool        $dotted
+     * @param  string $query
+     * @param  string $ignoredKeys
+     * @param  bool   $removeTags
+     * @param  bool   $dotted
      * @return array
      */
-    public static function parseQueryString(string $qs, bool $encode = false, string $ignoredKeys = null,
-        bool $dotted = false): array
+    public static function parseQueryString(string $query, string $ignoredKeys = '', bool $removeTags = false, bool $dotted = false): array
     {
-        $qa = [];
-
-        $qs = trim($qs);
-        if ($qs == '') {
-            return $qa;
+        $query = trim($query);
+        if ($query == '') {
+            return [];
         }
 
         $hexed = false;
-        if ($dotted && str_contains($qs, '.')) {
+        if ($dotted && str_contains($query, '.')) {
             $hexed = true;
 
             // Normalize arrays.
-            if (str_contains($qs, '%5D=')) {
-                $qs = str_replace(['%5B', '%5D'], ['[', ']'], $qs);
+            if (str_contains($query, '%5D=')) {
+                $query = str_replace(['%5B', '%5D'], ['[', ']'], $query);
             }
 
             // Hex keys.
-            $qs = preg_replace_callback('~(^|(?<=&))[^=&\[]+~', fn($m) => bin2hex($m[0]), $qs);
+            $query = preg_replace_callback('~(^|(?<=&))[^=&\[]+~', fn($match) => bin2hex($match[0]), $query);
         }
 
-        // Preserve pluses (otherwise parse_str() will replace all with spaces).
-        if ($encode) {
-            $qs = str_replace('+', '%2B', $qs);
-        }
+        // Preserve pluses (or parse_str() will replace all with spaces).
+        $query = str_replace('+', '%2B', $query);
 
-        parse_str($qs, $qsp);
+        parse_str($query, $query);
 
         if ($hexed) {
-            // Unhex keys.
-            foreach ($qsp as $key => $value) {
+            foreach ($query as $key => $value) {
+                // Drop hexed.
+                unset($query[$key]);
+
+                // Drop "@" prefix & unhex keys.
                 $key = hex2bin((string) $key);
                 if (str_contains($key, '%')) {
                     $key = rawurldecode($key);
                 }
-                $qa[$key] = $value;
-            }
-        } else {
-            $qa = $qsp;
-        }
 
-        if ($ignoredKeys != null) {
-            $ignoredKeys = explode(',', $ignoredKeys);
-            foreach (array_keys($qa) as $key) {
-                if (in_array($key, $ignoredKeys)) {
-                    unset($qa[$key]);
-                }
+                $query[$key] = $value;
             }
         }
 
-        return $qa;
+        // Drop ignored keys.
+        if ($ignoredKeys != '') {
+            $keys = explode(',', $ignoredKeys);
+            $query = array_filter($query, fn($key) => !in_array($key, $keys, true), 2);
+            unset($keys);
+        }
+
+        // Remove HTML tags.
+        if ($removeTags) {
+            $query = array_map_recursive(fn($value) => (
+                is_string($value) ? preg_remove('~<(\w+)\b[^>]*/?>(?:.*?</\1>)?~isu', $value) : $value
+            ), $query);
+        }
+
+        return $query;
     }
 
     /**

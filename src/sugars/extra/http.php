@@ -10,29 +10,30 @@ use froq\util\Util;
 /**
  * Build a query string.
  *
- * @param  array       $query
- * @param  string|null $ignored_keys
- * @param  bool        $normalize_arrays
+ * @param  array  $query
+ * @param  string $ignored_keys
+ * @param  bool   $remove_tags
  * @return string
  * @since  4.0
  */
-function build_query_string(array $query, string $ignored_keys = null, bool $normalize_arrays = true): string
+function build_query_string(array $query, string $ignored_keys = '', bool $remove_tags = false): string
 {
-    return Util::buildQueryString($query, false, $ignored_keys, false, $normalize_arrays);
+    return Util::buildQueryString($query, $ignored_keys, $remove_tags);
 }
 
 /**
  * Parse a query string.
  *
- * @param  string      $query
- * @param  string|null $ignored_keys
- * @param  bool        $dotted
+ * @param  string $query
+ * @param  string $ignored_keys
+ * @param  bool   $remove_tags
+ * @param  bool   $dotted
  * @return array
  * @since  4.0
  */
-function parse_query_string(string $query, string $ignored_keys = null, bool $dotted = false): array
+function parse_query_string(string $query, string $ignored_keys = '', bool $remove_tags = false, bool $dotted = false): array
 {
-    return Util::parseQueryString($query, false, $ignored_keys, $dotted);
+    return Util::parseQueryString($query, $ignored_keys, $remove_tags, $dotted);
 }
 
 /**
