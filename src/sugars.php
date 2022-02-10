@@ -2880,7 +2880,7 @@ function array_extract(array $array, int|string|array $keys, mixed &...$vars): i
  */
 function value(array $array, int|string $key = null, mixed $default = null): mixed
 {
-    return ($key === null)
+    return (func_num_args() == 1)
          ? (first($array) ?? $default)
          : ($array[$key]  ?? $default);
 }
