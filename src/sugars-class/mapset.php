@@ -35,24 +35,16 @@ trait MapSetTrait
     /**
      * Constructor.
      *
-     * @param iterable|int|null $data
-     * @param int|null          $size
+     * @param iterable|null $data
      */
-    public function __construct(iterable|int $data = null, int $size = null)
+    public function __construct(iterable $data = null)
     {
         if ($data) {
-            if (is_iterable($data)) {
-                $map = $this instanceof Map;
-                foreach ($data as $key => $value) {
-                    $map ? $this->set($key, $value) : $this->add($value);
-                }
-            } elseif (is_int($data)) {
-                $size = $data;
+            $map = $this instanceof Map;
+            foreach ($data as $key => $value) {
+                $map ? $this->set($key, $value) : $this->add($value);
             }
         }
-
-        // When size given.
-        $size && ($this->data = array_pad($this->data, $size, null));
     }
 
     /** @magic */
