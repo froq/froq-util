@@ -246,6 +246,10 @@ trait MapSetTrait
     {
         $this->data = array_concat($this->data, $value, ...$values);
 
+        if ($this instanceof Set) {
+            $this->data = array_dedupe($this->data);
+        }
+
         return $this;
     }
 
