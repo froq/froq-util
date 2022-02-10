@@ -771,18 +771,31 @@ final class Arrays extends \StaticClass
      * @param  array      &$array
      * @param  int|string  $oldKey
      * @param  int|string  $newKey
-     * @param  mixed|null  $default
      * @return array
      * @since  4.2
      */
-    public static function swap(array &$array, int|string $oldKey, int|string $newKey, mixed $default = null): array
+    public static function swap(array &$array, int|string $oldKey, int|string $newKey): array
     {
-        $newValue = self::pull($array, $oldKey);
+        if (array_key_exists($oldKey, $array)) {
+            $array[$newKey] = $array[$oldKey];
+            unset($array[$oldKey]);
+        }
 
-        if ($newValue !== null) {
-            self::set($array, $newKey, $newValue);
-        } elseif (func_num_args() == 4) { // Create directive.
-            self::set($array, $newKey, $default);
+        return $array;
+    }
+
+    /**
+     * Swap two values on given array.
+     *
+     * @param  array &$array
+     * @param  mixed  $oldValue
+     * @param  mixed  $newValue
+     * @return array
+     */
+    public static function swapValue(array &$array, mixed $oldValue, mixed $newValue): array
+    {
+        if (array_value_exists($oldValue, $array, key: $key)) {
+            $array[$key] = $newValue;
         }
 
         return $array;

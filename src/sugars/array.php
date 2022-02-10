@@ -319,13 +319,26 @@ function array_random(array &$array, int $limit = 1, bool $pack = false, bool $d
  * @param  array      &$array
  * @param  int|string  $old_key
  * @param  int|string  $new_key
- * @param  mixed|null  $default
  * @return array
  * @since  4.2
  */
-function array_swap(array &$array, int|string $old_key, int|string $new_key, mixed $default = null): array
+function array_swap(array &$array, int|string $old_key, int|string $new_key): array
 {
-    return Arrays::swap($array, $old_key, $new_key, $default);
+    return Arrays::swap($array, $old_key, $new_key);
+}
+
+/**
+ * Bridge function to Arrays.swapValue().
+ *
+ * @param  array &$array
+ * @param  mixed  $old_value
+ * @param  mixed  $new_value
+ * @return array
+ * @since  6.0
+ */
+function array_swap_value(array &$array, mixed $old_value, mixed $new_value): array
+{
+    return Arrays::swapValue($array, $old_value, $new_value);
 }
 
 /**
