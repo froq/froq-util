@@ -394,6 +394,17 @@ trait MapSetTrait
     /**
      * Static constructor with data.
      *
+     * @param  mixed ...$data
+     * @return static
+     */
+    public static function of(mixed ...$data): static
+    {
+        return new static($data);
+    }
+
+    /**
+     * Static constructor with data.
+     *
      * @param  iterable $data
      * @return static
      */
@@ -415,17 +426,6 @@ trait MapSetTrait
     public static function fromSplit(string $string, string $pattern, int $limit = null, int $flags = null): static
     {
         return new static(split($pattern, $string, $limit, $flags));
-    }
-
-    /**
-     * Static constructor with items.
-     *
-     * @param  mixed ...$items
-     * @return static
-     */
-    public static function of(mixed ...$items): static
-    {
-        return new static($items);
     }
 }
 
