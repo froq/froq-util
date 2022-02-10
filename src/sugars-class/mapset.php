@@ -191,6 +191,21 @@ trait MapSetTrait
     }
 
     /**
+     * Fill tool.
+     *
+     * @param  int        $length
+     * @param  mixed|null $value
+     * @return self
+     * @since  6.0
+     */
+    public function fill(int $length, mixed $value = null): self
+    {
+        $this->data = array_fill(0, $length, $value);
+
+        return $this;
+    }
+
+    /**
      * Pad tool.
      *
      * @param  int        $length
@@ -201,6 +216,7 @@ trait MapSetTrait
     public function pad(int $length, mixed $value = null): self
     {
         $this->data = array_pad($this->data, $length, $value);
+
         return $this;
     }
 
