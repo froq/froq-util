@@ -676,7 +676,7 @@ class Set implements Iterator, ArrayAccess, Countable, Arrayable, Jsonable, List
     {
         $this->indexCheck($index);
 
-        return $this->hasIndex($index) ? $this->data[$index] : $default;
+        return $this->data[$index] ?? $default;
     }
 
     /**
