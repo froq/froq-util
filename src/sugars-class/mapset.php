@@ -435,18 +435,17 @@ class Map implements Iterator, ArrayAccess, Countable, Arrayable, Jsonable, List
     {
         $this->keyCheck($key);
 
-        if ($this->has($key)) {
-            // Assign value ref.
-            if (func_num_args() == 2) {
-                $value = $this->data[$key];
-            }
+        // Clear ref.
+        $value = null;
+
+        if ($ok = $this->has($key)) {
+            // Fill ref.
+            $value = $this->data[$key];
 
             unset($this->data[$key]);
-
-            return true;
         }
 
-        return false;
+        return $ok;
     }
 
     /**
@@ -458,13 +457,11 @@ class Map implements Iterator, ArrayAccess, Countable, Arrayable, Jsonable, List
      */
     public function removeValue(mixed $value, string &$key = null): bool
     {
-        if ($this->hasValue($value, $key)) {
+        if ($ok = $this->hasValue($value, $key)) {
             unset($this->data[$key]);
-
-            return true;
         }
 
-        return false;
+        return $ok;
     }
 
     /**
@@ -477,13 +474,11 @@ class Map implements Iterator, ArrayAccess, Countable, Arrayable, Jsonable, List
      */
     public function replace(mixed $oldValue, mixed $newValue, string &$key = null): bool
     {
-        if ($this->hasValue($oldValue, $key)) {
+        if ($ok = $this->hasValue($oldValue, $key)) {
             $this->data[$key] = $newValue;
-
-            return true;
         }
 
-        return false;
+        return $ok;
     }
 
     /** @aliasOf remove() */
@@ -688,7 +683,7 @@ class Set implements Iterator, ArrayAccess, Countable, Arrayable, Jsonable, List
      */
     public function remove(mixed $value, int &$index = null): bool
     {
-        if ($this->has($value, $index)) {
+        if ($ok = $this->has($value, $index)) {
             $count = $this->count();
 
             unset($this->data[$index]);
@@ -697,11 +692,9 @@ class Set implements Iterator, ArrayAccess, Countable, Arrayable, Jsonable, List
             if ($index != $count - 1) {
                 $this->resetIndexes();
             }
-
-            return true;
         }
 
-        return false;
+        return $ok;
     }
 
     /**
@@ -715,8 +708,14 @@ class Set implements Iterator, ArrayAccess, Countable, Arrayable, Jsonable, List
     {
         $this->indexCheck($index);
 
-        if ($this->hasIndex($index)) {
+        // Clear ref.
+        $value = null;
+
+        if ($ok = $this->hasIndex($index)) {
             $count = $this->count();
+
+            // Fill ref.
+            $value = $this->data[$index];
 
             unset($this->data[$index]);
 
@@ -724,11 +723,9 @@ class Set implements Iterator, ArrayAccess, Countable, Arrayable, Jsonable, List
             if ($index != $count - 1) {
                 $this->resetIndexes();
             }
-
-            return true;
         }
 
-        return false;
+        return $ok;
     }
 
     /**
@@ -741,13 +738,11 @@ class Set implements Iterator, ArrayAccess, Countable, Arrayable, Jsonable, List
      */
     public function replace(mixed $oldValue, mixed $newValue, int &$index = null): bool
     {
-        if ($this->remove($oldValue, $index)) {
+        if ($ok = $this->remove($oldValue, $index)) {
             $this->set($index, $newValue);
-
-            return true;
         }
 
-        return false;
+        return $ok;
     }
 
     /** @aliasOf remove() */
