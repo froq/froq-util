@@ -592,6 +592,7 @@ class Map implements Iterator, ArrayAccess, Countable, Arrayable, Jsonable, List
      *
      * @param  mixed $value
      * @return string|null
+     * @since  6.0
      */
     public function keyOf(mixed $value): string|null
     {
@@ -604,6 +605,7 @@ class Map implements Iterator, ArrayAccess, Countable, Arrayable, Jsonable, List
      *
      * @param  mixed $value
      * @return string|null
+     * @since  6.0
      */
     public function lastKeyOf(mixed $value): string|null
     {
@@ -856,6 +858,7 @@ class Set implements Iterator, ArrayAccess, Countable, Arrayable, Jsonable, List
      *
      * @param  mixed $value
      * @return int|null
+     * @since  6.0
      */
     public function indexOf(mixed $value): int|null
     {
