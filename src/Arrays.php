@@ -456,7 +456,7 @@ final class Arrays extends \StaticClass
     {
         // Note: Array $item won't be merged.
 
-        return array_merge($array, [$item], ...[$items]);
+        return array_merge($array, [$item], $items);
     }
 
     /**
