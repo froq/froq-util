@@ -108,9 +108,10 @@ trait MapSetTrait
             array_value_exists($value, $this->data)
                 || array_unshift($this->data, $value);
         } else {
-            if ($key !== null) {
-                $this->keyCheck($key);
+            if (func_num_args() == 2) {
+                $this->keyCheck($key, false);
             }
+
             $key = $this->prepareKey($key ?? $this->count());
             array_unshift_entry($this->data, $key, $value);
         }
@@ -131,9 +132,10 @@ trait MapSetTrait
             array_value_exists($value, $this->data)
                 || array_push($this->data, $value);
         } else {
-            if ($key !== null) {
-                $this->keyCheck($key);
+            if (func_num_args() == 2) {
+                $this->keyCheck($key, false);
             }
+
             $key = $this->prepareKey($key ?? $this->count());
             array_push_entry($this->data, $key, $value);
         }
@@ -403,8 +405,6 @@ class Map implements Iterator, ArrayAccess, Countable, Arrayable, Jsonable, List
     {
         $this->keyCheck($key);
 
-        $key = $this->prepareKey($key);
-
         $this->data[$key] = $value;
 
         return $this;
@@ -421,8 +421,6 @@ class Map implements Iterator, ArrayAccess, Countable, Arrayable, Jsonable, List
     {
         $this->keyCheck($key);
 
-        $key = $this->prepareKey($key);
-
         return $this->data[$key] ?? $default;
     }
 
@@ -436,8 +434,6 @@ class Map implements Iterator, ArrayAccess, Countable, Arrayable, Jsonable, List
     public function remove(int|string|object $key, mixed &$value = null): bool
     {
         $this->keyCheck($key);
-
-        $key = $this->prepareKey($key);
 
         if ($this->has($key)) {
             // Assign value ref.
@@ -596,16 +592,20 @@ class Map implements Iterator, ArrayAccess, Countable, Arrayable, Jsonable, List
     }
 
     /**
-     * Check key validity.
+     * Check key validity & prepare (as shortcut).
      *
-     * @param  mixed $key
+     * @param  mixed &$key
      * @return void
      * @throws KeyError
      */
-    protected function keyCheck(mixed $key): void
+    protected function keyCheck(mixed &$key, bool $prepare = true): void
     {
         if (is_string($key) && $key == '') {
             throw new KeyError('Empty key given');
+        }
+
+        if ($prepare) {
+            $key = $this->prepareKey($key);
         }
     }
 }
