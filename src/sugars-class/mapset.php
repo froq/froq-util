@@ -5,7 +5,7 @@
  */
 declare(strict_types=1);
 
-use froq\collection\{Collection, CollectionInterface};
+use froq\collection\Collection;
 use froq\collection\iterator\{ArrayIterator, ReverseArrayIterator};
 use froq\collection\trait\{EachTrait, SortTrait, FilterTrait, MapTrait, ReduceTrait, FindTrait,
     MinMaxTrait, FirstLastTrait};
@@ -199,17 +199,6 @@ trait MapSetTrait
     }
 
     /**
-     * Join items.
-     *
-     * @param  string $glue
-     * @return string
-     */
-    public function join(string $glue = ''): string
-    {
-        return join($glue, $this->data);
-    }
-
-    /**
      * Pad tool.
      *
      * @param  int        $length
@@ -289,6 +278,7 @@ trait MapSetTrait
      *
      * @param  iterable $data
      * @return self
+     * @since  6.0
      */
     public function merge(iterable $data): self
     {
@@ -297,6 +287,18 @@ trait MapSetTrait
         }
 
         return $this;
+    }
+
+    /**
+     * Join items.
+     *
+     * @param  string $glue
+     * @return string
+     * @since  6.0
+     */
+    public function join(string $glue = ''): string
+    {
+        return join($glue, $this->data);
     }
 
     /**
@@ -360,7 +362,7 @@ trait MapSetTrait
     }
 
     /** @inheritDoc froq\common\interface\Collectable */
-    public function toCollection(): CollectionInterface
+    public function toCollection(): Collection
     {
         return new Collection($this->data);
     }
@@ -389,15 +391,16 @@ trait MapSetTrait
     }
 
     /**
-     * Static constructor for string with regular split pattern.
+     * Static constructor with string & split pattern.
      *
-     * @param string   $string
-     * @param string   $pattern
-     * @param int|null $limit
-     * @param int|null $flags
-     * @since 6.0
+     * @param  string   $string
+     * @param  string   $pattern
+     * @param  int|null $limit
+     * @param  int|null $flags
+     * @return static
+     * @since  6.0
      */
-    public static function fromSplit(string $string, string $pattern, int $limit = null, int $flags = null)
+    public static function fromSplit(string $string, string $pattern, int $limit = null, int $flags = null): static
     {
         return new static(split($pattern, $string, $limit, $flags));
     }
