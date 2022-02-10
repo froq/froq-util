@@ -395,6 +395,7 @@ class JsonObject implements Arrayable, Jsonable, JsonSerializable, ArrayAccess
      *
      * @param  string|null $json
      * @param  int|null    $flags
+     * @return static
      * @throws JsonError
      * @since  6.0
      */
