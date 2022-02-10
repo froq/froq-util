@@ -510,6 +510,30 @@ class Map implements Iterator, ArrayAccess, Countable, Arrayable, Jsonable, List
     }
 
     /**
+     * Get key of given value, or return null.
+     *
+     * @param  mixed $value
+     * @return string|null
+     */
+    public function keyOf(mixed $value): string|null
+    {
+        return ($key = array_search_key($this->data, $value)) !== null
+             ? (string) $key : null;
+    }
+
+    /**
+     * Get last key of given value, or return null.
+     *
+     * @param  mixed $value
+     * @return string|null
+     */
+    public function lastKeyOf(mixed $value): string|null
+    {
+        return ($key = array_search_key($this->data, $value, last: true)) !== null
+             ? (string) $key : null;
+    }
+
+    /**
      * Check whether a key exists.
      *
      * @param  int|string|object $key
@@ -743,6 +767,17 @@ class Set implements Iterator, ArrayAccess, Countable, Arrayable, Jsonable, List
         foreach ($this->data as $index => $value) {
             $func($value, $index, $this);
         }
+    }
+
+    /**
+     * Get index of given value, or return null.
+     *
+     * @param  mixed $value
+     * @return int|null
+     */
+    public function indexOf(mixed $value): int|null
+    {
+        return array_search_key($this->data, $value);
     }
 
     /**
