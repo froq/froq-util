@@ -2067,8 +2067,8 @@ function array_contains_key(array $array, int|string ...$keys): bool
 function array_delete(array &$array, mixed ...$values): array
 {
     foreach ($values as $value) {
-        $key = array_search($value, $array, true);
-        if ($key !== false) {
+        $keys = array_keys($array, $value, true);
+        foreach ($keys as $key) {
             unset($array[$key]);
         }
     }
