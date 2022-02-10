@@ -439,8 +439,8 @@ trait MapSetTrait
  * @author  Kerem Güneş
  * @since   5.25
  */
-class Map implements Iterator, ArrayAccess, Countable, Arrayable, Jsonable, Listable, Collectable,
-    Iteratable, IteratableReverse
+class Map implements Arrayable, Jsonable, Listable, Collectable, Iteratable, IteratableReverse,
+    Countable, Iterator, ArrayAccess
 {
     use MapSetTrait;
 
@@ -704,8 +704,8 @@ class Map implements Iterator, ArrayAccess, Countable, Arrayable, Jsonable, List
  * @author  Kerem Güneş
  * @since   5.25
  */
-class Set implements Iterator, ArrayAccess, Countable, Arrayable, Jsonable, Listable, Collectable,
-    Iteratable, IteratableReverse
+class Set implements Arrayable, Jsonable, Listable, Collectable, Iteratable, IteratableReverse,
+    Countable, Iterator, ArrayAccess
 {
     use MapSetTrait;
 
