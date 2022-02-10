@@ -868,8 +868,7 @@ class Set implements Iterator, ArrayAccess, Countable, Arrayable, Jsonable, List
 /**
  * Dict.
  *
- * A Dict class just like Python's map but "a bit" extended. Also using Map structure,
- * it overrides some methods to accept null keys for flexibility.
+ * A dictionary class just like Python's dict but "a bit" extended.
  *
  * @package froq\util
  * @object  Dict
@@ -894,11 +893,12 @@ class Dict extends Map
      * Pop an item by given key if exists.
      *
      * @param  int|string|object $key
+     * @param  mixed|null        $default
      * @return mixed|null
      */
-    public function popKey(int|string|object $key): mixed
+    public function popKey(int|string|object $key, mixed $default = null): mixed
     {
-        return $this->remove($key, $value) ? $value : null;
+        return $this->remove($key, $value) ? $value : $default;
     }
 
     /**
