@@ -42,7 +42,7 @@ trait MapSetTrait
     {
         if ($data) {
             if (is_iterable($data)) {
-                $map = ($this instanceof Map);
+                $map = $this instanceof Map;
                 foreach ($data as $key => $value) {
                     $map ? $this->set($key, $value) : $this->add($value);
                 }
@@ -68,8 +68,7 @@ trait MapSetTrait
      */
     public function keys(): array
     {
-        return ($this instanceof Set)
-             ? array_keys($this->data)
+        return ($this instanceof Set) ? array_keys($this->data)
              : array_map(fn($k) => strval($k), array_keys($this->data));
     }
 
@@ -90,8 +89,7 @@ trait MapSetTrait
      */
     public function entries(): array
     {
-        return ($this instanceof Set)
-             ? array_entries($this->data)
+        return ($this instanceof Set) ? array_entries($this->data)
              : array_map(fn($e) => [strval($e[0]), $e[1]], array_entries($this->data));
     }
 
@@ -150,8 +148,7 @@ trait MapSetTrait
      */
     public function shift(): mixed
     {
-        return ($this instanceof Set)
-             ? array_shift($this->data)
+        return ($this instanceof Set) ? array_shift($this->data)
              : array_shift_entry($this->data)[1] ?? null;
     }
 
@@ -496,7 +493,7 @@ class Map implements Iterator, ArrayAccess, Countable, Arrayable, Jsonable, List
     public function forEach(callable $func): void
     {
         foreach ($this->data as $key => $value) {
-            $func($value, strval($key), $this);
+            $func($value, (string) $key, $this);
         }
     }
 
@@ -545,7 +542,7 @@ class Map implements Iterator, ArrayAccess, Countable, Arrayable, Jsonable, List
     public function hasValue(mixed $value, string &$key = null): bool
     {
         return array_value_exists($value, $this->data, key: $key)
-            && ($key = strval($key)) !== null; // Just for string cast.
+            && ($key = (string) $key) !== null; // Just for string cast.
     }
 
     /** @inheritDoc ArrayAccess */
@@ -583,7 +580,7 @@ class Map implements Iterator, ArrayAccess, Countable, Arrayable, Jsonable, List
      */
     protected function prepareKey(int|string|object $key): string
     {
-        return is_object($key) ? get_object_id($key) : strval($key);
+        return is_object($key) ? get_object_id($key) : (string) $key;
     }
 
     /**
@@ -904,7 +901,7 @@ class Dict extends Map
     public function popItem(): array|null
     {
         $item = array_pop_entry($this->data);
-        $item && ($item[0] = strval($item[0]));
+        $item && ($item[0] = (string) $item[0]);
         return $item;
     }
 
