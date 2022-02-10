@@ -454,10 +454,9 @@ final class Arrays extends \StaticClass
      */
     public static function concat(array $array, mixed $item, mixed ...$items): array
     {
-        // Unify all item(s) as array.
-        [$item, $items] = [(array) $item, array_map(fn($item) => (array) $item, $items)];
+        // Note: Array $item won't be merged.
 
-        return array_merge($array, $item, ...$items);
+        return array_merge($array, [$item], ...[$items]);
     }
 
     /**
