@@ -257,7 +257,7 @@ trait MapSetTrait
     }
 
     /**
-     * Splice tool
+     * Splice tool.
      *
      * @param  int         $start
      * @param  int|null    $end
