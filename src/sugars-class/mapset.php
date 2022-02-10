@@ -210,6 +210,81 @@ trait MapSetTrait
     }
 
     /**
+     * Pad tool.
+     *
+     * @param  int        $length
+     * @param  mixed|null $value
+     * @return self
+     * @since  6.0
+     */
+    public function pad(int $length, mixed $value = null): self
+    {
+        $this->data = array_pad($this->data, $length, $value);
+        return $this;
+    }
+
+    /**
+     * Chunk tool.
+     *
+     * @param  int $length
+     * @return self
+     * @since  6.0
+     */
+    public function chunk(int $length): self
+    {
+        $this->data = array_chunk($this->data, $length, $this instanceof Map);
+
+        return $this;
+    }
+
+    /**
+     * Concat tool.
+     *
+     * @param  mixed    $value
+     * @param  mixed ...$values
+     * @return self
+     * @since  6.0
+     */
+    public function concat(mixed $value, mixed ...$values): self
+    {
+        $this->data = array_concat($this->data, $value, ...$values);
+
+        return $this;
+    }
+
+    /**
+     * Slice tool.
+     *
+     * @param  int      $start
+     * @param  int|null $end
+     * @return self
+     * @since  6.0
+     */
+    public function slice(int $start, int $end = null): self
+    {
+        $this->data = array_slice($this->data, $start, $end, $this instanceof Map);
+
+        return $this;
+    }
+
+    /**
+     * Splice tool
+     *
+     * @param  int         $start
+     * @param  int|null    $end
+     * @param  mixed|null  $replace
+     * @param  mixed|null &$replaced
+     * @return self
+     * @since  6.0
+     */
+    public function splice(int $start, int $end = null, mixed $replace = null, mixed &$replaced = null): self
+    {
+        $replaced = array_splice($this->data, $start, $end, $replace);
+
+        return $this;
+    }
+
+    /**
      * Merge given data with self data.
      *
      * @param  iterable $data
