@@ -718,33 +718,28 @@ final class Arrays extends \StaticClass
      *
      * @param  array      $array
      * @param  array      $keys
-     * @param  bool       $keepKeys
      * @param  mixed|null $default
      * @return array
      * @since  4.0
      */
-    public static function default(array $array, array $keys, bool $keepKeys = true, mixed $default = null): array
+    public static function default(array $array, array $keys, mixed $default = null): array
     {
-        $ret = array_replace(array_fill_keys($keys, $default), $array);
-
-        $keepKeys || $ret = array_values($ret);
-
-        return $ret;
+        return array_replace(array_fill_keys($keys, $default), $array);
     }
 
     /**
      * Make an options array with/without defaults.
      *
      * @param  array|null $options
-     * @param  array|null $optionsDefault
+     * @param  array|null $defaults
      * @param  bool       $recursive
      * @return array
      * @since  5.44
      */
-    public static function options(array|null $options, array|null $optionsDefault = null, bool $recursive = true): array
+    public static function options(array|null $options, array|null $defaults = null, bool $recursive = true): array
     {
-        return $recursive ? array_replace_recursive((array) $optionsDefault, (array) $options)
-                          : array_replace((array) $optionsDefault, (array) $options);
+        return $recursive ? array_replace_recursive((array) $defaults, (array) $options)
+                          : array_replace((array) $defaults, (array) $options);
     }
 
     /**
