@@ -843,28 +843,29 @@ final class Arrays extends \StaticClass
      * Search given value's key.
      *
      * @param  array  $array
-     * @param  any    $value
+     * @param  mixed  $value
      * @param  bool   $strict
+     * @param  bool   $last
      * @return int|string|null
      * @since  5.3
      */
-    public static function searchKey(array $array, $value, bool $strict = true): int|string|null
+    public static function searchKey(array $array, mixed $value, bool $strict = true, bool $last = false): int|string|null
     {
-        return array_search_key($array, $value, $strict);
+        return array_search_key($array, $value, $strict, $last);
     }
 
     /**
      * Search given value's last key.
      *
      * @param  array  $array
-     * @param  any    $value
+     * @param  mixed  $value
      * @param  bool   $strict
      * @return int|string|null
      * @since  5.5
      */
-    public static function searchLastKey(array $array, $value, bool $strict = true): int|string|null
+    public static function searchLastKey(array $array, mixed $value, bool $strict = true): int|string|null
     {
-        return array_search_key($array, $value, $strict, last: true);
+        return array_search_key($array, $value, $strict, true);
     }
 
     /**
