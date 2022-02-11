@@ -733,6 +733,21 @@ final class Arrays extends \StaticClass
     }
 
     /**
+     * Make an options array with/without defaults.
+     *
+     * @param  array|null $options
+     * @param  array|null $optionsDefault
+     * @param  bool       $recursive
+     * @return array
+     * @since  5.44
+     */
+    public static function options(array|null $options, array|null $optionsDefault = null, bool $recursive = true): array
+    {
+        return $recursive ? array_replace_recursive((array) $optionsDefault, (array) $options)
+                          : array_replace((array) $optionsDefault, (array) $options);
+    }
+
+    /**
      * Clean given array filtering null, "" and [] values.
      *
      * @param  array      $array
@@ -816,18 +831,29 @@ final class Arrays extends \StaticClass
     }
 
     /**
-     * Make an options array with/without defaults.
+     * Compact given keys with given vars.
      *
-     * @param  array|null $options
-     * @param  array|null $optionsDefault
-     * @param  bool       $recursive
+     * @param  int|string|array    $keys
+     * @param  mixed            ...$vars
      * @return array
-     * @since  5.44
+     * @since  6.0
      */
-    public static function options(array|null $options, array|null $optionsDefault = null, bool $recursive = true): array
+    public static function compact(int|string|array $keys, mixed ...$vars): array
     {
-        return $recursive ? array_replace_recursive((array) $optionsDefault, (array) $options)
-                          : array_replace((array) $optionsDefault, (array) $options);
+        return array_compact($keys, ...$vars);
+    }
+
+    /**
+     * Extract given keys to given vars with refs.
+     *
+     * @param  int|string|array     $keys
+     * @param  mixed            &...$vars
+     * @return int
+     * @since  6.0
+     */
+    public static function extract(array $array, int|string|array $keys, mixed &...$vars): int
+    {
+        return array_extract($array, $keys, ...$vars);
     }
 
     /**
@@ -979,32 +1005,6 @@ final class Arrays extends \StaticClass
     public static function convertKeys(array $array, int $case, string $exploder = null, string $imploder = null, bool $recursive = false): array
     {
         return array_convert_keys($array, $case, $exploder, $imploder, $recursive);
-    }
-
-    /**
-     * Compact given keys with given vars.
-     *
-     * @param  int|string|array    $keys
-     * @param  mixed            ...$vars
-     * @return array
-     * @since  6.0
-     */
-    public static function compact(int|string|array $keys, mixed ...$vars): array
-    {
-        return array_compact($keys, ...$vars);
-    }
-
-    /**
-     * Extract given keys to given vars with refs.
-     *
-     * @param  int|string|array     $keys
-     * @param  mixed            &...$vars
-     * @return int
-     * @since  6.0
-     */
-    public static function extract(array $array, int|string|array $keys, mixed &...$vars): int
-    {
-        return array_extract($array, $keys, ...$vars);
     }
 
     /**
