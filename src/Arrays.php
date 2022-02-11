@@ -754,7 +754,7 @@ final class Arrays extends \StaticClass
      */
     public static function clean(array $array, bool $keepKeys = true, array $ignoredKeys = null): array
     {
-        $func = self::getFilterFunction();
+        $func = self::toFilterFunction();
 
         if (!$ignoredKeys) {
             $ret = array_filter($array, $func);
@@ -781,7 +781,7 @@ final class Arrays extends \StaticClass
      */
     public static function clear(array $array, array $values, bool $keepKeys = true, array $ignoredKeys = null): array
     {
-        $func = self::getFilterFunction($values);
+        $func = self::toFilterFunction($values);
 
         if (!$ignoredKeys) {
             $ret = array_filter($array, $func);
@@ -940,7 +940,7 @@ final class Arrays extends \StaticClass
         $ret = [];
 
         // Reduce O(n) stuff below.
-        $values = array_dedupe($array);
+        $values = self::dedupe($array);
 
         foreach ($values as $value) {
             $keys = array_keys($array, $value, $strict);
@@ -1063,7 +1063,7 @@ final class Arrays extends \StaticClass
     public static function filter(array $array, callable $func = null, bool $keepKeys = true): array
     {
         if (!$func) {
-            $ret = array_filter($array, self::getFilterFunction());
+            $ret = array_filter($array, self::toFilterFunction());
         } else {
             $ret = [];
             foreach ($array as $key => $value) try {
@@ -1228,15 +1228,13 @@ final class Arrays extends \StaticClass
      */
     public static function sort(array $array, callable|int $func = null, int $flags = 0, bool $assoc = null): array
     {
-        $func = self::getSortFunction($func);
+        $func = self::toSortFunction($func);
         $assoc ??= self::isAssoc($array);
 
         if ($assoc) {
-            $func ? uasort($array, $func)
-                  : asort($array, $flags);
+            $func ? uasort($array, $func) : asort($array, $flags);
         } else {
-            $func ? usort($array, $func)
-                  : sort($array, $flags);
+            $func ? usort($array, $func) : sort($array, $flags);
         }
 
         return $array;
@@ -1253,10 +1251,9 @@ final class Arrays extends \StaticClass
      */
     public static function sortKey(array $array, callable|int $func = null, int $flags = 0): array
     {
-        $func = self::getSortFunction($func);
+        $func = self::toSortFunction($func);
 
-        $func ? uksort($array, $func)
-              : ksort($array, $flags);
+        $func ? uksort($array, $func) : ksort($array, $flags);
 
         return $array;
     }
@@ -1275,9 +1272,8 @@ final class Arrays extends \StaticClass
         $assoc ??= self::isAssoc($array);
 
         // Use current locale.
-        if ($locale == null) {
-            $assoc ? uasort($array, 'strcoll')
-                   : usort($array, 'strcoll');
+        if (!$locale) {
+            $assoc ? uasort($array, 'strcoll') : usort($array, 'strcoll');
         } else {
             // Get & cache.
             static $currentLocale;
@@ -1288,8 +1284,7 @@ final class Arrays extends \StaticClass
                 setlocale(LC_COLLATE, $locale);
             }
 
-            $assoc ? uasort($array, 'strcoll')
-                   : usort($array, 'strcoll');
+            $assoc ? uasort($array, 'strcoll') : usort($array, 'strcoll');
 
             // Restore (if needed).
             if ($locale !== $currentLocale && $currentLocale !== null) {
@@ -1310,8 +1305,7 @@ final class Arrays extends \StaticClass
      */
     public static function sortNatural(array $array, bool $icase = false): array
     {
-        $icase ? natcasesort($array)
-               : natsort($array);
+        $icase ? natcasesort($array) : natsort($array);
 
         return $array;
     }
@@ -1393,7 +1387,7 @@ final class Arrays extends \StaticClass
     /**
      * Default filter function.
      */
-    private static function getFilterFunction(array $values = null): callable
+    private static function toFilterFunction(array $values = null): callable
     {
         // Default filter values.
         $values ??= [null, "", []];
@@ -1404,7 +1398,7 @@ final class Arrays extends \StaticClass
     /**
      * Sort function preparer.
      */
-    private static function getSortFunction(int|callable|null $func): callable|null
+    private static function toSortFunction(int|callable|null $func): callable|null
     {
         // As as shortcut for reversed (-1) sorts actually.
         if (is_int($func)) {
