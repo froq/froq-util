@@ -702,6 +702,25 @@ final class Arrays extends \StaticClass
     }
 
     /**
+     * Filter an array with default to ensure given keys.
+     *
+     * @param  array      $array
+     * @param  array      $keys
+     * @param  bool       $keepKeys
+     * @param  mixed|null $default
+     * @return array
+     * @since  4.0
+     */
+    public static function default(array $array, array $keys, bool $keepKeys = true, mixed $default = null): array
+    {
+        $ret = array_replace(array_fill_keys($keys, $default), $array);
+
+        $keepKeys || $ret = array_values($ret);
+
+        return $ret;
+    }
+
+    /**
      * Filter given array excluding given keys.
      *
      * @param  array             $array
@@ -711,36 +730,6 @@ final class Arrays extends \StaticClass
     public static function exclude(array $array, array $keys): array
     {
         return array_filter($array, fn($key) => !in_array($key, $keys, true), 2);
-    }
-
-    /**
-     * Flat given array.
-     *
-     * @param  array $array
-     * @param  bool  $keepKeys
-     * @param  bool  $fixKeys
-     * @param  bool  $multi
-     * @return array
-     * @since  4.0
-     */
-    public static function flat(array $array, bool $keepKeys = false, bool $fixKeys = false, bool $multi = true): array
-    {
-        $ret = [];
-
-        if ($multi) {
-            $i = 0;
-            // Seems short functions (=>) not work here [ref (&) issue].
-            array_walk_recursive($array, function ($value, $key) use (&$ret, &$i, $keepKeys, $fixKeys) {
-                !$keepKeys ? $ret[] = $value : (
-                    !$fixKeys ? $ret[$key] = $value // Use original keys.
-                              : $ret[is_string($key) ? $key : $i++] = $value // Re-index integer keys.
-                );
-            });
-        } else {
-            $ret = array_merge(...array_map(fn($value) => (array) $value, $array));
-        }
-
-        return $ret;
     }
 
     /**
@@ -797,20 +786,31 @@ final class Arrays extends \StaticClass
     }
 
     /**
-     * Filter an array with default to ensure given keys.
+     * Flat given array.
      *
-     * @param  array      $array
-     * @param  array      $keys
-     * @param  bool       $keepKeys
-     * @param  mixed|null $default
+     * @param  array $array
+     * @param  bool  $keepKeys
+     * @param  bool  $fixKeys
+     * @param  bool  $multi
      * @return array
      * @since  4.0
      */
-    public static function default(array $array, array $keys, bool $keepKeys = true, mixed $default = null): array
+    public static function flat(array $array, bool $keepKeys = false, bool $fixKeys = false, bool $multi = true): array
     {
-        $ret = array_replace(array_fill_keys($keys, $default), $array);
+        $ret = [];
 
-        $keepKeys || $ret = array_values($ret);
+        if ($multi) {
+            $i = 0;
+            // Seems short functions (=>) not work here [ref (&) issue].
+            array_walk_recursive($array, function ($value, $key) use (&$ret, &$i, $keepKeys, $fixKeys) {
+                !$keepKeys ? $ret[] = $value : (
+                    !$fixKeys ? $ret[$key] = $value // Use original keys.
+                              : $ret[is_string($key) ? $key : $i++] = $value // Re-index integer keys.
+                );
+            });
+        } else {
+            $ret = array_merge(...array_map(fn($value) => (array) $value, $array));
+        }
 
         return $ret;
     }
