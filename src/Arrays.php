@@ -816,6 +816,21 @@ final class Arrays extends \StaticClass
     }
 
     /**
+     * Make an options array with/without defaults.
+     *
+     * @param  array|null $options
+     * @param  array|null $optionsDefault
+     * @param  bool       $recursive
+     * @return array
+     * @since  5.44
+     */
+    public static function options(array|null $options, array|null $optionsDefault = null, bool $recursive = true): array
+    {
+        return $recursive ? array_replace_recursive((array) $optionsDefault, (array) $options)
+                          : array_replace((array) $optionsDefault, (array) $options);
+    }
+
+    /**
      * Check whether given keys exist in given array.
      *
      * @param  array             $array
@@ -884,7 +899,7 @@ final class Arrays extends \StaticClass
     }
 
     /**
-     * Search given value returning value's hit count.
+     * Count given value occurrences with strict mode as default.
      *
      * @param  array  $array
      * @param  mixed  $value
@@ -922,21 +937,6 @@ final class Arrays extends \StaticClass
         }
 
         return $ret;
-    }
-
-    /**
-     * Make an options array with/without defaults.
-     *
-     * @param  array|null $options
-     * @param  array|null $optionsDefault
-     * @param  bool       $recursive
-     * @return array
-     * @since  5.44
-     */
-    public static function options(array|null $options, array|null $optionsDefault = null, bool $recursive = true): array
-    {
-        return $recursive ? array_replace_recursive((array) $optionsDefault, (array) $options)
-                          : array_replace((array) $optionsDefault, (array) $options);
     }
 
     /**
