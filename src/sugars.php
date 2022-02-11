@@ -94,6 +94,19 @@ function qo(...$args): object
 function type(...$args) { return get_type(...$args); }
 
 /**
+ * Each wrapper for scoped function calls on given array or just for syntactic sugar.
+ *
+ * @param  array    $array
+ * @param  callable $func
+ * @return void
+ * @since  5.0
+ */
+function each(array $array, callable $func): void
+{
+    Arrays::each($array, $func);
+}
+
+/**
  * Filter an array with value/key notation.
  *
  * @param  array         $array
@@ -133,19 +146,6 @@ function map(array $array, callable $func, bool $recursive = false, bool $keep_k
 function reduce(array $array, mixed $carry, callable $func, bool $right = false)
 {
     return $right ? Arrays::reduceRight($array, $carry, $func) : Arrays::reduce($array, $carry, $func);
-}
-
-/**
- * Each wrapper for scoped function calls on given array or just for syntactic sugar.
- *
- * @param  array    $array
- * @param  callable $func
- * @return void
- * @since  5.0
- */
-function each(array $array, callable $func): void
-{
-    Arrays::each($array, $func);
 }
 
 /**
