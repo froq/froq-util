@@ -714,7 +714,7 @@ final class Arrays extends \StaticClass
     }
 
     /**
-     * Filter an array with default to ensure given keys.
+     * Ensure given keys with/without given default.
      *
      * @param  array      $array
      * @param  array      $keys
