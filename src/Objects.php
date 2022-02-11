@@ -195,7 +195,7 @@ final class Objects extends \StaticClass
      *
      * @param  object|string $object
      * @param  bool          $all
-     * @param  string        $_name @internal
+     * @param  string|null   $_name @internal
      * @return array|null
      */
     public static function getConstants(object|string $object, bool $all = true, string $_name = null): array|null
@@ -356,7 +356,7 @@ final class Objects extends \StaticClass
      *
      * @param  object|string $object
      * @param  bool          $all
-     * @param  string        $_name @internal
+     * @param  string|null   $_name @internal
      * @return array|null
      */
     public static function getProperties(object|string $object, bool $all = true, string $_name = null): array|null
@@ -485,7 +485,7 @@ final class Objects extends \StaticClass
      *
      * @param  object|string $object
      * @param  bool          $all
-     * @param  string        $_name @internal
+     * @param  string|null   $_name @internal
      * @return array|null
      */
     public static function getMethods(object|string $object, bool $all = true, string $_name = null): array|null
