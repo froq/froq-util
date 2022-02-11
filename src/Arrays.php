@@ -490,7 +490,7 @@ final class Arrays extends \StaticClass
      */
     public static function find(array $array, callable $func, bool $reverse = false): mixed
     {
-        $reverse && ($array = array_reverse($array));
+        $reverse && $array = array_reverse($array);
 
         foreach ($array as $key => $value) {
             if ($func($value, $key)) {
@@ -506,18 +506,19 @@ final class Arrays extends \StaticClass
      * @param  array    $array
      * @param  callable $func
      * @param  bool     $reverse
-     * @param  bool     $useKeys
+     * @param  bool     $keepKeys
      * @return array<mixed|null>
      * @since  4.10
      */
-    public static function findAll(array $array, callable $func, bool $reverse = false, bool $useKeys = true): array
+    public static function findAll(array $array, callable $func, bool $reverse = false, bool $keepKeys = true): array
     {
-        $reverse && ($array = array_reverse($array));
+        $reverse && $array = array_reverse($array);
 
         $ret = [];
         foreach ($array as $key => $value) {
             if ($func($value, $key)) {
-                $useKeys ? $ret[$key] = $value : $ret[] = $value;
+                $keepKeys ? $ret[$key] = $value
+                          : $ret[] = $value;
             }
         }
         return $ret;
@@ -534,7 +535,7 @@ final class Arrays extends \StaticClass
      */
     public static function findKey(array $array, callable $func, bool $reverse = false): int|string|null
     {
-        $reverse && ($array = array_reverse($array));
+        $reverse && $array = array_reverse($array);
 
         foreach ($array as $key => $value) {
             if ($func($value, $key)) {
@@ -555,7 +556,7 @@ final class Arrays extends \StaticClass
      */
     public static function findKeys(array $array, callable $func, bool $reverse = false): array
     {
-        $reverse && ($array = array_reverse($array));
+        $reverse && $array = array_reverse($array);
 
         $ret = [];
         foreach ($array as $key => $value) {
@@ -716,21 +717,21 @@ final class Arrays extends \StaticClass
      * Flat given array.
      *
      * @param  array $array
-     * @param  bool  $useKeys
+     * @param  bool  $keepKeys
      * @param  bool  $fixKeys
      * @param  bool  $multi
      * @return array
      * @since  4.0
      */
-    public static function flat(array $array, bool $useKeys = false, bool $fixKeys = false, bool $multi = true): array
+    public static function flat(array $array, bool $keepKeys = false, bool $fixKeys = false, bool $multi = true): array
     {
         $ret = [];
 
         if ($multi) {
             $i = 0;
             // Seems short functions (=>) not work here [ref (&) issue].
-            array_walk_recursive($array, function ($value, $key) use (&$ret, &$i, $useKeys, $fixKeys) {
-                !$useKeys ? $ret[] = $value : (
+            array_walk_recursive($array, function ($value, $key) use (&$ret, &$i, $keepKeys, $fixKeys) {
+                !$keepKeys ? $ret[] = $value : (
                     !$fixKeys ? $ret[$key] = $value // Use original keys.
                               : $ret[is_string($key) ? $key : $i++] = $value // Re-index integer keys.
                 );
@@ -800,16 +801,16 @@ final class Arrays extends \StaticClass
      *
      * @param  array      $array
      * @param  array      $keys
-     * @param  bool       $useKeys
+     * @param  bool       $keepKeys
      * @param  mixed|null $default
      * @return array
      * @since  4.0
      */
-    public static function default(array $array, array $keys, bool $useKeys = true, mixed $default = null): array
+    public static function default(array $array, array $keys, bool $keepKeys = true, mixed $default = null): array
     {
         $ret = array_replace(array_fill_keys($keys, $default), $array);
 
-        $useKeys || $ret = array_values($ret);
+        $keepKeys || $ret = array_values($ret);
 
         return $ret;
     }
