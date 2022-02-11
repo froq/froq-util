@@ -714,35 +714,6 @@ final class Arrays extends \StaticClass
     }
 
     /**
-     * Ensure given keys with/without given default.
-     *
-     * @param  array      $array
-     * @param  array      $keys
-     * @param  mixed|null $default
-     * @return array
-     * @since  4.0
-     */
-    public static function default(array $array, array $keys, mixed $default = null): array
-    {
-        return array_replace(array_fill_keys($keys, $default), $array);
-    }
-
-    /**
-     * Make an options array with/without defaults.
-     *
-     * @param  array|null $options
-     * @param  array|null $defaults
-     * @param  bool       $recursive
-     * @return array
-     * @since  5.44
-     */
-    public static function options(array|null $options, array|null $defaults = null, bool $recursive = true): array
-    {
-        return $recursive ? array_replace_recursive((array) $defaults, (array) $options)
-                          : array_replace((array) $defaults, (array) $options);
-    }
-
-    /**
      * Clean given array filtering null, "" and [] values.
      *
      * @param  array      $array
@@ -1000,6 +971,35 @@ final class Arrays extends \StaticClass
     public static function convertKeys(array $array, int $case, string $exploder = null, string $imploder = null, bool $recursive = false): array
     {
         return array_convert_keys($array, $case, $exploder, $imploder, $recursive);
+    }
+
+    /**
+     * Ensure given keys with/without given default.
+     *
+     * @param  array      $array
+     * @param  array      $keys
+     * @param  mixed|null $default
+     * @return array
+     * @since  4.0
+     */
+    public static function default(array $array, array $keys, mixed $default = null): array
+    {
+        return array_replace(array_fill_keys($keys, $default), $array);
+    }
+
+    /**
+     * Make an options array with/without defaults.
+     *
+     * @param  array|null $options
+     * @param  array|null $defaults
+     * @param  bool       $recursive
+     * @return array
+     * @since  5.44
+     */
+    public static function options(array|null $options, array|null $defaults = null, bool $recursive = true): array
+    {
+        return $recursive ? array_replace_recursive((array) $defaults, (array) $options)
+                          : array_replace((array) $defaults, (array) $options);
     }
 
     /**
