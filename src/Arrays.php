@@ -391,59 +391,6 @@ final class Arrays extends \StaticClass
     }
 
     /**
-     * Complete an array keys checking given other arrays to find non-null/non-null string value.
-     *
-     * @param  bool     $blanks
-     * @param  array    $keys
-     * @param  array ...$arrays
-     * @return array
-     * @since  4.14
-     */
-    public static function complete(bool $blanks, array $keys, array ...$arrays): array
-    {
-        $ret = [];
-
-        foreach ($keys as $key) {
-            foreach ($arrays as $array) {
-                $test = $blanks ? !isset($ret[$key]) || ($ret[$key] === '')
-                                : !isset($ret[$key]);
-                // Try array.key, ret.key (current) or set null (not ret.key ??= ..).
-                if ($test) {
-                    $ret[$key] = $array[$key] ?? $ret[$key] ?? null;
-                }
-            }
-        }
-
-        return $ret;
-    }
-
-    /**
-     * Coalesce an array keys checking given other arrays to find non-null/non-null string value.
-     *
-     * @param  bool     $blanks
-     * @param  array ...$arrays
-     * @return array
-     * @since  4.14
-     */
-    public static function coalesce(bool $blanks, array ...$arrays): array
-    {
-        $ret = [];
-
-        foreach ($arrays as $array) {
-            foreach ($array as $key => $value) {
-                $test = $blanks ? !isset($ret[$key]) || ($ret[$key] === '')
-                                : !isset($ret[$key]);
-                // Try value, ret.key (current) or set null (not ret.key ??= ..).
-                if ($test) {
-                    $ret[$key] = $value ?? $ret[$key] ?? null;
-                }
-            }
-        }
-
-        return $ret;
-    }
-
-    /**
      * Merge all given item(s).
      *
      * @param  array    $array
@@ -493,98 +440,6 @@ final class Arrays extends \StaticClass
 
         foreach ($array as $key => $value) {
             in_array($value, $ret, $strict) || $ret[$key] = $value;
-        }
-
-        return $ret;
-    }
-
-    /**
-     * Get mutual values in given arrays like array_intersect() but with strict comparison.
-     *
-     * @param  array $array1
-     * @param  array $array2
-     * @return array
-     * @since  5.25
-     */
-    public static function mutual(array $array1, array $array2): array
-    {
-        $ret = [];
-
-        // Swap bigger/smaller.
-        [$array1, $array2] = count($array1) > count($array2)
-            ? [$array1, $array2] : [$array2, $array1];
-
-        foreach ($array1 as $key => $value) {
-            in_array($value, $array2, true) && $ret[$key] = $value;
-        }
-
-        return $ret;
-    }
-
-    /**
-     * Get non-mutual values in given arrays like array_diff() but with strict comparison.
-     *
-     * @param  array $array1
-     * @param  array $array2
-     * @return array
-     * @since  5.25
-     */
-    public static function unmutual(array $array1, array $array2): array
-    {
-        $ret = [];
-
-        // Swap bigger/smaller.
-        [$array1, $array2] = count($array1) > count($array2)
-            ? [$array1, $array2] : [$array2, $array1];
-
-        foreach ($array1 as $key => $value) {
-            in_array($value, $array2, true) || $ret[$key] = $value;
-        }
-
-        return $ret;
-    }
-
-    /**
-     * Get distinct (repeating) values in given arrays with strict comparison.
-     *
-     * @param  array    $array
-     * @param  array ...$arrays
-     * @return array
-     * @since  5.25
-     */
-    public static function distinct(array $array, array ...$arrays): array
-    {
-        $ret = [];
-
-        $items = self::countValues(array_merge($array, ...$arrays), true, true);
-        foreach ($items as $item) {
-            if ($item['count'] == 1) {
-                $key = end($item['keys']);
-                $ret[$key] = $item['value'];
-            }
-        }
-
-        return $ret;
-    }
-
-    /**
-     * Get undistinct (non-repeating) values in given arrays with strict comparison.
-     *
-     * @param  array    $array
-     * @param  array ...$arrays
-     * @return array
-     * @since  5.25
-     */
-    public static function undistinct(array $array, array ...$arrays): array
-    {
-        $ret = [];
-
-        $items = self::countValues(array_merge($array, ...$arrays), true, true);
-        foreach ($items as $item) {
-            if ($item['count'] > 1) {
-                $key = end($item['keys']);
-                $ret[$key] = $item['value'];
-            }
         }
 
         return $ret;
@@ -1068,42 +923,6 @@ final class Arrays extends \StaticClass
     public static function searchKeys(array $array, array $values, bool $strict = true, bool $reverse = false): array
     {
         return array_search_keys($array, $values, $strict, $reverse);
-    }
-
-    /**
-     * Get a diff from given arrays by their count.
-     *
-     * @param  array  $array1
-     * @param  array  $array2
-     * @param  bool   $assoc
-     * @return array
-     * @since  5.10
-     */
-    public static function diff(array $array1, array $array2, bool $assoc = false): array
-    {
-        [$count1, $count2] = [count($array1), count($array2)];
-
-        if (!$assoc) {
-            return ($count1 > $count2) // Swaps for a proper diff calc.
-                 ? array_diff($array1, $array2) : array_diff($array2, $array1);
-        }
-
-        return ($count1 > $count2) // Swaps for a proper diff calc.
-             ? array_diff_assoc($array1, $array2) : array_diff_assoc($array2, $array1);
-    }
-
-    /**
-     * Get a diff from given arrays by their count.
-     *
-     * @param  array  $array1
-     * @param  array  $array2
-     * @return array
-     * @since  5.10
-     */
-    public static function diffKey(array $array1, array $array2): array
-    {
-        return (count($array1) > count($array2)) // Swaps for a proper diff calc.
-             ? array_diff_key($array1, $array2) : array_diff_key($array2, $array1);
     }
 
     /**
