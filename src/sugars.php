@@ -125,15 +125,14 @@ function map(array $array, callable $func, bool $recursive = false, bool $keep_k
  * Reduce an array with value/key notation.
  *
  * @param  array    $array
- * @param  any      $carry
+ * @param  mixed    $carry
  * @param  callable $func
  * @return any
  * @since  4.0, 5.0
  */
-function reduce(array $array, $carry, callable $func)
+function reduce(array $array, mixed $carry, callable $func, bool $right = false)
 {
-    return !is_array($carry) ? Arrays::reduce($array, $carry, $func)
-                             : Arrays::aggregate($array, $func, $carry);
+    return $right ? Arrays::reduceRight($array, $carry, $func) : Arrays::reduce($array, $carry, $func);
 }
 
 /**
