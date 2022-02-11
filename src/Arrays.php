@@ -568,6 +568,42 @@ final class Arrays extends \StaticClass
     }
 
     /**
+     * Swap two keys on given array.
+     *
+     * @param  array      &$array
+     * @param  int|string  $oldKey
+     * @param  int|string  $newKey
+     * @return array
+     * @since  4.2
+     */
+    public static function swap(array &$array, int|string $oldKey, int|string $newKey): array
+    {
+        if (array_key_exists($oldKey, $array)) {
+            $array[$newKey] = $array[$oldKey];
+            unset($array[$oldKey]);
+        }
+
+        return $array;
+    }
+
+    /**
+     * Swap two values on given array.
+     *
+     * @param  array &$array
+     * @param  mixed  $oldValue
+     * @param  mixed  $newValue
+     * @return array
+     */
+    public static function swapValue(array &$array, mixed $oldValue, mixed $newValue): array
+    {
+        if (array_value_exists($oldValue, $array, key: $key)) {
+            $array[$key] = $newValue;
+        }
+
+        return $array;
+    }
+
+    /**
      * Randomize given array, optionally returning as [key,value] pairs.
      *
      * @param  array &$array
@@ -619,42 +655,6 @@ final class Arrays extends \StaticClass
         }
 
         return $ret;
-    }
-
-    /**
-     * Swap two keys on given array.
-     *
-     * @param  array      &$array
-     * @param  int|string  $oldKey
-     * @param  int|string  $newKey
-     * @return array
-     * @since  4.2
-     */
-    public static function swap(array &$array, int|string $oldKey, int|string $newKey): array
-    {
-        if (array_key_exists($oldKey, $array)) {
-            $array[$newKey] = $array[$oldKey];
-            unset($array[$oldKey]);
-        }
-
-        return $array;
-    }
-
-    /**
-     * Swap two values on given array.
-     *
-     * @param  array &$array
-     * @param  mixed  $oldValue
-     * @param  mixed  $newValue
-     * @return array
-     */
-    public static function swapValue(array &$array, mixed $oldValue, mixed $newValue): array
-    {
-        if (array_value_exists($oldValue, $array, key: $key)) {
-            $array[$key] = $newValue;
-        }
-
-        return $array;
     }
 
     /**
