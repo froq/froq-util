@@ -840,28 +840,6 @@ final class Arrays extends \StaticClass
     }
 
     /**
-     * Search given value returning value's hit count.
-     *
-     * @param  array  $array
-     * @param  any    $value
-     * @param  bool   $strict
-     * @return int
-     * @since  5.3
-     */
-    public static function search(array $array, $value, bool $strict = true): int
-    {
-        $count = 0;
-
-        foreach ($array as $currentValue) {
-            if ($strict ? ($currentValue === $value) : ($currentValue == $value)) {
-                $count++;
-            }
-        }
-
-        return $count;
-    }
-
-    /**
      * Search given value's key.
      *
      * @param  array  $array
@@ -902,6 +880,20 @@ final class Arrays extends \StaticClass
     public static function searchKeys(array $array, array $values, bool $strict = true, bool $reverse = false): array
     {
         return array_search_keys($array, $values, $strict, $reverse);
+    }
+
+    /**
+     * Search given value returning value's hit count.
+     *
+     * @param  array  $array
+     * @param  mixed  $value
+     * @param  bool   $strict
+     * @return int
+     * @since  5.3, 6.0
+     */
+    public static function countValue(array $array, mixed $value, bool $strict = true): int
+    {
+        return count(array_keys($array, $value, $strict));
     }
 
     /**
