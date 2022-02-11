@@ -891,63 +891,6 @@ final class Arrays extends \StaticClass
     }
 
     /**
-     * Count given value repeats with strict mode as default.
-     *
-     * @param  array  $array
-     * @param  mixed  $value
-     * @param  bool   $strict
-     * @return int
-     * @since  5.3, 6.0
-     */
-    public static function countValue(array $array, mixed $value, bool $strict = true): int
-    {
-        return self::countAllValues($array, $strict, false, [$value])[0]['count'];
-    }
-
-    /**
-     * Count given values repeats with strict mode as default.
-     *
-     * @param  array $array
-     * @param  array $values
-     * @param  bool  $strict
-     * @param  bool  $addKeys
-     * @return array
-     * 6.0
-     */
-    public static function countValues(array $array, array $values, bool $strict = true, bool $addKeys = false): array
-    {
-        return self::countAllValues($array, $strict, $addKeys, $values);
-    }
-
-    /**
-     * Count each value repeats with strict mode as default.
-     *
-     * @param  array      $array
-     * @param  bool       $strict
-     * @param  bool       $addKeys
-     * @param  array|null $_values @internal
-     * @return array
-     * @since  5.13
-     */
-    public static function countAllValues(array $array, bool $strict = true, bool $addKeys = false, array $_values = null): array
-    {
-        $ret = [];
-
-        // Reduce O(n) stuff below.
-        $values = $_values ?? self::dedupe($array);
-
-        foreach ($values as $value) {
-            $keys = array_keys($array, $value, $strict);
-
-            $ret[] = $addKeys
-                ? ['count' => count($keys), 'value' => $value, 'keys' => $keys]
-                : ['count' => count($keys), 'value' => $value];
-        }
-
-        return $ret;
-    }
-
-    /**
      * Convert key cases to lower.
      *
      * @param  array  $array
