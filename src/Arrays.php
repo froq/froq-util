@@ -702,6 +702,18 @@ final class Arrays extends \StaticClass
     }
 
     /**
+     * Filter given array excluding given keys.
+     *
+     * @param  array             $array
+     * @param  array<int|string> $keys
+     * @return array
+     */
+    public static function exclude(array $array, array $keys): array
+    {
+        return array_filter($array, fn($key) => !in_array($key, $keys, true), 2);
+    }
+
+    /**
      * Filter an array with default to ensure given keys.
      *
      * @param  array      $array
@@ -718,18 +730,6 @@ final class Arrays extends \StaticClass
         $keepKeys || $ret = array_values($ret);
 
         return $ret;
-    }
-
-    /**
-     * Filter given array excluding given keys.
-     *
-     * @param  array             $array
-     * @param  array<int|string> $keys
-     * @return array
-     */
-    public static function exclude(array $array, array $keys): array
-    {
-        return array_filter($array, fn($key) => !in_array($key, $keys, true), 2);
     }
 
     /**
