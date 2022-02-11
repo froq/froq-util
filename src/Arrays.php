@@ -816,28 +816,6 @@ final class Arrays extends \StaticClass
     }
 
     /**
-     * Get first item from given array.
-     *
-     * @param  array $array
-     * @return any|null
-     */
-    public static function first(array $array)
-    {
-        return array_first($array);
-    }
-
-    /**
-     * Get last item from given array.
-     *
-     * @param  array $array
-     * @return any|null
-     */
-    public static function last(array $array)
-    {
-        return array_last($array);
-    }
-
-    /**
      * Check whether given keys exist in given array.
      *
      * @param  array             $array
@@ -1034,6 +1012,28 @@ final class Arrays extends \StaticClass
     public static function extract(array $array, int|string|array $keys, mixed &...$vars): int
     {
         return array_extract($array, $keys, ...$vars);
+    }
+
+    /**
+     * Get first item from given array.
+     *
+     * @param  array $array
+     * @return any|null
+     */
+    public static function first(array $array)
+    {
+        return array_first($array);
+    }
+
+    /**
+     * Get last item from given array.
+     *
+     * @param  array $array
+     * @return any|null
+     */
+    public static function last(array $array)
+    {
+        return array_last($array);
     }
 
     /**
