@@ -324,36 +324,36 @@ final class Arrays extends \StaticClass
     }
 
     /**
-     * Get one/multi items from given array randomly.
+     * Get one/many items from given array randomly.
      *
      * @param  array  &$array
      * @param  int     $limit
      * @param  bool    $pack
      * @param  bool    $drop
-     * @return any|null
+     * @return mixed|null
      * @since  4.12
      */
-    public static function getRandom(array &$array, int $limit = 1, bool $pack = false, bool $drop = false)
+    public static function getRandom(array &$array, int $limit = 1, bool $pack = false, bool $drop = false): mixed
     {
         return self::random($array, $limit, $pack, $drop);
     }
 
     /**
-     * Pull one/multi items from given array randomly.
+     * Pull one/many items from given array randomly.
      *
      * @param  array  &$array
      * @param  int     $limit
      * @param  bool    $pack
-     * @return any|null
+     * @return mixed|null
      * @since  4.12
      */
-    public static function pullRandom(array &$array, int $limit = 1, bool $pack = false)
+    public static function pullRandom(array &$array, int $limit = 1, bool $pack = false): mixed
     {
         return self::random($array, $limit, $pack, true);
     }
 
     /**
-     * Pull one/multi items from given array randomly.
+     * Pull one/many items from given array randomly.
      *
      * @param  array  &$array
      * @param  int     $limit
@@ -624,21 +624,21 @@ final class Arrays extends \StaticClass
             ));
         } elseif ($limit > $count) {
             throw new \ValueError(sprintf(
-                '%s(): Maximum limit must not be greater than %s, given limit %s is exceeding '.
-                'count of given array(%s)', __method__, $count, $limit, $count
+                '%s(): Maximum limit must not be greater than %s, given limit %s is '.
+                'exceeding count of given array(%s)', __method__, $count, $limit, $count
             ));
         }
 
         $ret = [];
 
-        srand(); // Ensure a new seed (@see https://wiki.php.net/rfc/object_scope_prng).
+        // Ensure a new seed (@see https://wiki.php.net/rfc/object_scope_prng).
+        srand();
 
         // Get & arrayify single keys (limit=1).
         $keys = (array) array_rand($array, $limit);
 
         foreach ($keys as $key) {
-            !$pack ? $ret[] = $array[$key]
-                   : $ret[$key] = $array[$key];
+            $pack ? $ret[$key] = $array[$key] : $ret[] = $array[$key];
 
             // Drop used item.
             if ($drop) {
@@ -646,10 +646,8 @@ final class Arrays extends \StaticClass
             }
         }
 
-        // Assign return by pack option.
         if (count($ret) == 1) {
-            $ret = !$pack ? current($ret)
-                          : [key($ret), current($ret)];
+            $ret = $pack ? [key($ret), current($ret)] : current($ret);
         }
 
         return $ret;
