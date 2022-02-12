@@ -7,8 +7,6 @@ declare(strict_types=1);
 
 namespace froq\util;
 
-use KeyError, ValueError;
-
 /**
  * Arrays.
  *
@@ -621,11 +619,11 @@ final class Arrays extends \StaticClass
 
         // Prevent trivial corruption from limit errors, but notice.
         if ($limit < 1) {
-            throw new ValueError(sprintf(
+            throw new \ValueError(sprintf(
                 '%s(): Minimum limit must be 1, %s given', $limit
             ));
         } elseif ($limit > $count) {
-            throw new ValueError(sprintf(
+            throw new \ValueError(sprintf(
                 '%s(): Maximum limit must not be greater than %s, given limit %s is exceeding '.
                 'count of given array(%s)', __method__, $count, $limit, $count
             ));
@@ -724,7 +722,7 @@ final class Arrays extends \StaticClass
      */
     public static function clean(array $array, bool $keepKeys = true, array $ignoredKeys = null): array
     {
-        $func = self::toFilterFunction();
+        $func = self::makeFilterFunction();
 
         if (!$ignoredKeys) {
             $ret = array_filter($array, $func);
@@ -751,7 +749,7 @@ final class Arrays extends \StaticClass
      */
     public static function clear(array $array, array $values, bool $keepKeys = true, array $ignoredKeys = null): array
     {
-        $func = self::toFilterFunction($values);
+        $func = self::makeFilterFunction($values);
 
         if (!$ignoredKeys) {
             $ret = array_filter($array, $func);
@@ -995,7 +993,7 @@ final class Arrays extends \StaticClass
      */
     public static function sort(array $array, callable|int $func = null, int $flags = 0, bool $assoc = null): array
     {
-        $func = self::toSortFunction($func);
+        $func = self::makeSortFunction($func);
         $assoc ??= self::isAssoc($array);
 
         if ($assoc) {
@@ -1018,7 +1016,7 @@ final class Arrays extends \StaticClass
      */
     public static function sortKey(array $array, callable|int $func = null, int $flags = 0): array
     {
-        $func = self::toSortFunction($func);
+        $func = self::makeSortFunction($func);
 
         $func ? uksort($array, $func) : ksort($array, $flags);
 
@@ -1104,7 +1102,7 @@ final class Arrays extends \StaticClass
      */
     public static function filter(array $array, callable $func = null, bool $recursive = false, bool $useKeys = false, bool $keepKeys = true): array
     {
-        $func ??= self::toFilterFunction();
+        $func ??= self::makeFilterFunction();
 
         $ret = [];
 
@@ -1428,9 +1426,9 @@ final class Arrays extends \StaticClass
     }
 
     /**
-     * Default filter function.
+     * Make filter function.
      */
-    private static function toFilterFunction(array $values = null): callable
+    private static function makeFilterFunction(array $values = null): callable
     {
         // Default filter values.
         $values ??= [null, "", []];
@@ -1439,16 +1437,16 @@ final class Arrays extends \StaticClass
     }
 
     /**
-     * Sort function preparer.
+     * Make sort function.
      */
-    private static function toSortFunction(int|callable|null $func): callable|null
+    private static function makeSortFunction(int|callable|null $func): callable|null
     {
         // As as shortcut for reversed (-1) sorts actually.
         if (is_int($func)) {
             $func = match ($func) {
                 -1      => fn($a, $b) => $a > $b ? -1 : 1,
                  1      => fn($a, $b) => $a < $b ? -1 : 1,
-                default => throw new ValueError('Only 1 and -1 accepted')
+                default => throw new \ValueError('Only 1, -1 accepted as int')
             };
         }
 
