@@ -723,7 +723,7 @@ final class Arrays extends \StaticClass
      */
     public static function clean(array $array, bool $keepKeys = true, array $ignoredKeys = null): array
     {
-        $func = self::makeFilterFunction();
+        $func = self::makeFilterFunction(null);
 
         if (!$ignoredKeys) {
             $ret = array_filter($array, $func);
@@ -1103,7 +1103,7 @@ final class Arrays extends \StaticClass
      */
     public static function filter(array $array, callable $func = null, bool $recursive = false, bool $useKeys = false, bool $keepKeys = true): array
     {
-        $func ??= self::makeFilterFunction();
+        $func = self::makeFilterFunction($func);
 
         $ret = [];
 
@@ -1171,15 +1171,17 @@ final class Arrays extends \StaticClass
     /**
      * Map.
      *
-     * @param  array    $array
-     * @param  callable $func
-     * @param  bool     $recursive
-     * @param  bool     $useKeys
-     * @param  bool     $keepKeys
+     * @param  array           $array
+     * @param  callable|string $func
+     * @param  bool            $recursive
+     * @param  bool            $useKeys
+     * @param  bool            $keepKeys
      * @return array
      */
-    public static function map(array $array, callable $func, bool $recursive = false, bool $useKeys = false, bool $keepKeys = true): array
+    public static function map(array $array, callable|string $func, bool $recursive = false, bool $useKeys = false, bool $keepKeys = true): array
     {
+        $func = self::makeMapFunction($func);
+
         $ret = [];
 
         if ($recursive) {
@@ -1354,12 +1356,34 @@ final class Arrays extends \StaticClass
     /**
      * Make filter function.
      */
-    private static function makeFilterFunction(array $values = null): callable
+    private static function makeFilterFunction(array|null $values): callable
     {
         // Default filter values.
         $values ??= [null, "", []];
 
         return fn($value) => !in_array($value, $values, true);
+    }
+
+    /**
+     * Make map function.
+     */
+    private static function makeMapFunction(callable|string $func): callable
+    {
+        // When a built-in type given.
+        if (!is_callable($func)) {
+            static $types = '~^(int|float|string|bool|array|object|null)$~';
+            $type = $func;
+
+            // Provide a mapper using settype().
+            if (preg_test($types, $type)) {
+                $func = function ($value) use ($type) {
+                    settype($value, $type);
+                    return $value;
+                };
+            }
+        }
+
+        return $func;
     }
 
     /**
