@@ -7,7 +7,7 @@ declare(strict_types=1);
 
 namespace froq\util;
 
-use ValueError, ArgumentCountError;
+use KeyError, ValueError;
 
 /**
  * Arrays.
@@ -984,186 +984,6 @@ final class Arrays extends \StaticClass
     }
 
     /**
-     * Each wrapper for scoped function calls on given array or just for syntactic sugar.
-     *
-     * @param  array    $array
-     * @param  callable $func
-     * @return void
-     */
-    public static function each(array $array, callable $func): void
-    {
-        $i = 0;
-        foreach ($array as $key => $value) {
-            $func($value, $key, $i++, $array);
-        }
-    }
-
-    /**
-     * Filter, unlike array_filter() using [value,key,i,array] notation for callable but fallback to [value]
-     * notation when ArgumentCountError occurs.
-     *
-     * @param  array         $array
-     * @param  callable|null $func
-     * @param  bool          $keepKeys
-     * @return array
-     */
-    public static function filter(array $array, callable $func = null, bool $keepKeys = true): array
-    {
-        if (!$func) {
-            $ret = array_filter($array, self::toFilterFunction());
-        } else {
-            $ret = [];
-            foreach ($array as $key => $value) try {
-                $func($value, $key, $array) && $ret[$key] = $value;
-            } catch (ArgumentCountError) {
-                $func($value) && $ret[$key] = $value;
-            }
-        }
-
-        $keepKeys || $ret = array_values($ret);
-
-        return $ret;
-    }
-
-    /**
-     * Map, unlike array_map() using [value,key,i,array] notation for callable but fallback to [value]
-     * notation when ArgumentCountError occurs.
-     *
-     * @param  array    $array
-     * @param  callable $func
-     * @param  bool     $recursive
-     * @param  bool     $keepKeys
-     * @return array
-     */
-    public static function map(array $array, callable $func, bool $recursive = false, bool $keepKeys = true): array
-    {
-        $ret = [];
-
-        foreach ($array as $key => $value) try {
-            $ret[$key] = ($recursive && is_array($value))
-                ? self::map($array, $func, true, $keepKeys)
-                : $func($value, $key, $array);
-        } catch (ArgumentCountError) {
-            $ret[$key] = ($recursive && is_array($value))
-                ? self::map($array, $func, true, $keepKeys)
-                : $func($value);
-        }
-
-        $keepKeys || $ret = array_values($ret);
-
-        return $ret;
-    }
-
-    /**
-     * Map keys.
-     *
-     * @param  array    $array
-     * @param  callable $func
-     * @param  bool     $recursive
-     * @return array
-     */
-    public static function mapKeys(array $array, callable $func, bool $recursive = false): array
-    {
-        return array_map_keys($array, $func, $recursive);
-    }
-
-    /**
-     * Reduce, unlike array_reduce() using [value,key,i,array] notation for callable.
-     *
-     * @param  array    $array
-     * @param  any      $carry
-     * @param  callable $func
-     * @return any
-     */
-    public static function reduce(array $array, $carry, callable $func)
-    {
-        $ret = $carry;
-
-        foreach ($array as $key => $value) {
-            $ret = $func($ret, $value, $key, $array);
-        }
-
-        return $ret;
-    }
-
-    /**
-     * Reduce-right, same as reduce() but right-to-left direction.
-     *
-     * @param  array    $array
-     * @param  any      $carry
-     * @param  callable $func
-     * @return any
-     */
-    public static function reduceRight(array $array, $carry, callable $func)
-    {
-        return self::reduce(array_reverse($array, true), $carry, $func);
-    }
-
-    /**
-     * Apply given function to each element of given array with key/value notation as default.
-     *
-     * @param  array    $array
-     * @param  callable $func
-     * @param  bool     $swapKeys
-     * @param  bool     $recursive
-     * @return array
-     * @since  5.11
-     */
-    public static function apply(array $array, callable $func, bool $swapKeys = false, bool $recursive = false): array
-    {
-        return array_apply($array, $func, $swapKeys, $recursive);
-    }
-
-    /**
-     * Aggregate an array with given carry variable that must be ref'ed like `fn(&$carry, $value, ..) => ..`
-     * in given aggregate function.
-     *
-     * @param  array      $array
-     * @param  callable   $func
-     * @param  array|null $carry
-     * @return array
-     * @since  4.14
-     */
-    public static function aggregate(array $array, callable $func, array $carry = null): array
-    {
-        $carry ??= [];
-
-        foreach ($array as $key => $value) {
-            // @cancel: Return can always be an array.
-            // Note: when "return" not used carry must be ref'ed (eg: (&$carry, $value, ..)).
-            // $ret = $func($carry, $value, $key, $array);
-            // When "return" used.
-            // if ($ret && is_array($ret)) {
-            //     $carry = $ret;
-            // }
-
-            // Note: carry must be ref'ed (eg: (&$carry, $value, ..)).
-            $func($carry, $value, $key, $array);
-
-            $carry = (array) $carry;
-        }
-
-        return $carry;
-    }
-
-    /**
-     * Get average of values.
-     *
-     * @param  array $array
-     * @param  bool  $zeros
-     * @return float
-     * @since  4.5
-     */
-    public static function average(array $array, bool $zeros = true): float
-    {
-        $array = array_filter($array, fn($v) => (
-            $zeros ? is_numeric($v) : is_numeric($v) && ($v > 0)
-        ));
-
-        return $array ? fdiv(array_sum($array), count($array)) : 0.0;
-    }
-
-    /**
      * Apply a regular/callback sort on given array.
      *
      * @param  array             $array
@@ -1255,6 +1075,282 @@ final class Arrays extends \StaticClass
         $icase ? natcasesort($array) : natsort($array);
 
         return $array;
+    }
+
+    /**
+     * Each wrapper for scoped function calls on given array or just for syntactic sugar.
+     *
+     * @param  array    $array
+     * @param  callable $func
+     * @return void
+     */
+    public static function each(array $array, callable $func): void
+    {
+        $i = 0;
+        foreach ($array as $key => $value) {
+            $func($value, $key, $i++, $array);
+        }
+    }
+
+    /**
+     * Filter.
+     *
+     * @param  array         $array
+     * @param  callable|null $func
+     * @param  bool          $recursive
+     * @param  bool          $useKeys
+     * @param  bool          $keepKeys
+     * @return array
+     */
+    public static function filter(array $array, callable $func = null, bool $recursive = false, bool $useKeys = false, bool $keepKeys = true): array
+    {
+        $func ??= self::toFilterFunction();
+
+        $ret = [];
+
+        if ($recursive) {
+            if ($useKeys) {
+                foreach ($array as $key => $value) {
+                    if (is_array($value)) {
+                        $ret[$key] = self::filter($value, $func, true, true, $keepKeys);
+                        continue;
+                    }
+
+                    $func($value, $key) && $ret[$key] = $value;
+                }
+            } else {
+                foreach ($array as $key => $value) {
+                    if (is_array($value)) {
+                        $ret[$key] = self::filter($value, $func, true, false, $keepKeys);
+                        continue;
+                    }
+
+                    $func($value) && $ret[$key] = $value;
+                }
+            }
+        } else {
+            if ($useKeys) {
+                foreach ($array as $key => $value) {
+                    $func($value, $key) && $ret[$key] = $value;
+                }
+            } else {
+                foreach ($array as $key => $value) {
+                    $func($value) && $ret[$key] = $value;
+                }
+            }
+        }
+
+        $keepKeys || $ret = array_values($ret);
+
+        return $ret;
+    }
+
+    /**
+     * Filter keys.
+     *
+     * @param  array    $array
+     * @param  callable $func
+     * @param  bool     $recursive
+     * @return array
+     */
+    public static function filterKeys(array $array, callable $func, bool $recursive = false): array
+    {
+         $ret = [];
+
+        foreach ($array as $key => $value) {
+            if ($recursive && is_array($value)) {
+                $ret[$key] = self::filterKeys($value, $func, true);
+                continue;
+            }
+
+            $func($key) && $ret[$key] = $value;
+        }
+
+        return $ret;
+    }
+
+    /**
+     * Map.
+     *
+     * @param  array    $array
+     * @param  callable $func
+     * @param  bool     $recursive
+     * @param  bool     $useKeys
+     * @param  bool     $keepKeys
+     * @return array
+     */
+    public static function map(array $array, callable $func, bool $recursive = false, bool $useKeys = false, bool $keepKeys = true): array
+    {
+        $ret = [];
+
+        if ($recursive) {
+            if ($useKeys) {
+                foreach ($array as $key => $value) {
+                    if (is_array($value)) {
+                        $ret[$key] = self::map($value, $func, true, true, $keepKeys);
+                        continue;
+                    }
+
+                    $ret[$key] = $func($value, $key);
+                }
+            } else {
+                foreach ($array as $key => $value) {
+                    if (is_array($value)) {
+                        $ret[$key] = self::map($value, $func, true, false, $keepKeys);
+                        continue;
+                    }
+
+                    $ret[$key] = $func($value);
+                }
+            }
+        } else {
+            if ($useKeys) {
+                foreach ($array as $key => $value) {
+                    $ret[$key] = $func($value, $key);
+                }
+            } else {
+                foreach ($array as $key => $value) {
+                    $ret[$key] = $func($value);
+                }
+            }
+        }
+
+        $keepKeys || $ret = array_values($ret);
+
+        return $ret;
+    }
+
+    /**
+     * Map keys.
+     *
+     * @param  array    $array
+     * @param  callable $func
+     * @param  bool     $recursive
+     * @return array
+     */
+    public static function mapKeys(array $array, callable $func, bool $recursive = false): array
+    {
+        $ret = [];
+
+        foreach ($array as $key => $value) {
+            $key = $func($key);
+
+            if ($recursive && is_array($value)) {
+                $ret[$key] = self::mapKeys($value, $func, true);
+                continue;
+            }
+
+            $ret[$key] = $value;
+        }
+
+        return $ret;
+    }
+
+    /**
+     * Reduce.
+     *
+     * @param  array    $array
+     * @param  mixed    $carry
+     * @param  callable $func
+     * @param  bool     $right
+     * @return mixed
+     */
+    public static function reduce(array $array, mixed $carry, callable $func, bool $right = false): mixed
+    {
+        if ($right) {
+            $array = array_reverse($array, true);
+        }
+
+        $ret = $carry;
+
+        foreach ($array as $key => $value) {
+            $ret = $func($ret, $value, $key);
+        }
+
+        return $ret;
+    }
+
+    /**
+     * Reduce right.
+     *
+     * @param  array    $array
+     * @param  mixed    $carry
+     * @param  callable $func
+     * @return mixed
+     */
+    public static function reduceRight(array $array, mixed $carry, callable $func): mixed
+    {
+        return self::reduce($array, $carry, $func, true);
+    }
+
+    /**
+     * Apply.
+     *
+     * @param  array    $array
+     * @param  callable $func
+     * @param  bool     $recursive
+     * @param  bool     $swap
+     * @return array
+     */
+    public static function apply(array $array, callable $func, bool $recursive = false, bool $swap = false): array
+    {
+        foreach ($array as $key => $value) {
+            if ($recursive && is_array($value)) {
+                $array[$key] = self::apply($value, $func, $swap, true);
+            } else {
+                $array[$key] = $swap ? $func($key, $value) : $func($value, $key);
+            }
+        }
+
+        return $array;
+    }
+
+    /**
+     * Aggregate.
+     *
+     * Note: Carry must be ref'ed like `fn(&$carry, $value, ..) => ..` in calls.
+     *
+     * @param  array      $array
+     * @param  callable   $func
+     * @param  array|null $carry
+     * @return array
+     */
+    public static function aggregate(array $array, callable $func, array $carry = null): array
+    {
+        $carry ??= [];
+
+        foreach ($array as $key => $value) {
+            // @cancel: Return can always be an array.
+            // Note: when "return" not used carry must be ref'ed (eg: (&$carry, $value, ..)).
+            // $ret = $func($carry, $value, $key, $array);
+            // When "return" used.
+            // if ($ret && is_array($ret)) {
+            //     $carry = $ret;
+            // }
+
+            // Note: carry must be ref'ed (eg: (&$carry, $value, ..)).
+            $func($carry, $value, $key, $array);
+
+            $carry = (array) $carry;
+        }
+
+        return $carry;
+    }
+
+    /**
+     * Average.
+     *
+     * @param  array $array
+     * @param  bool  $zeros
+     * @return float
+     */
+    public static function average(array $array, bool $zeros = true): float
+    {
+        $array = array_filter($array, fn($v) => (
+            $zeros ? is_numeric($v) : is_numeric($v) && ($v > 0)
+        ));
+
+        return $array ? fdiv(array_sum($array), count($array)) : 0.0;
     }
 
     /**

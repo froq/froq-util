@@ -107,45 +107,49 @@ function each(array $array, callable $func): void
 }
 
 /**
- * Filter an array with value/key notation.
+ * Filter, with some options.
  *
  * @param  array         $array
  * @param  callable|null $func
+ * @param  bool          $recursive
+ * @param  bool          $use_keys
  * @param  bool          $keep_keys
  * @return array
  * @since  3.0, 5.0
  */
-function filter(array $array, callable $func = null, bool $keep_keys = true): array
+function filter(array $array, callable $func = null, bool $recursive = false, bool $use_keys = false, bool $keep_keys = true): array
 {
-    return Arrays::filter($array, $func, $keep_keys);
+    return Arrays::filter($array, $func, $recursive, $use_keys, $keep_keys);
 }
 
 /**
- * Map an array with value/key notation.
+ * Map, with some options.
  *
  * @param  array    $array
  * @param  callable $func
+ * @param  bool     $use_keys
  * @param  bool     $keep_keys
  * @return array
  * @since  3.0, 5.0
  */
-function map(array $array, callable $func, bool $recursive = false, bool $keep_keys = true): array
+function map(array $array, callable $func, bool $recursive = false, bool $use_keys = false, bool $keep_keys = true): array
 {
-    return Arrays::map($array, $func, $recursive, $keep_keys);
+    return Arrays::map($array, $func, $recursive, $use_keys, $keep_keys);
 }
 
 /**
- * Reduce an array with value/key notation.
+ * Reduce, with right option.
  *
  * @param  array    $array
  * @param  mixed    $carry
  * @param  callable $func
- * @return any
+ * @param  bool     $right
+ * @return mixed
  * @since  4.0, 5.0
  */
-function reduce(array $array, mixed $carry, callable $func, bool $right = false)
+function reduce(array $array, mixed $carry, callable $func, bool $right = false): mixed
 {
-    return $right ? Arrays::reduceRight($array, $carry, $func) : Arrays::reduce($array, $carry, $func);
+    return Arrays::reduce($array, $carry, $func, $right);
 }
 
 /**
