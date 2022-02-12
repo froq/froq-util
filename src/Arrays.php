@@ -658,13 +658,16 @@ final class Arrays extends \StaticClass
     /**
      * Shuffle given array, keeping keys as default.
      *
-     * @param  array $array
-     * @param  bool  $assoc
+     * @param  array     $array
+     * @param  bool|null $assoc
      * @return array
      */
-    public static function shuffle(array $array, bool $assoc = false): array
+    public static function shuffle(array $array, bool $assoc = null): array
     {
-        srand(); // Ensure a new seed (@see https://wiki.php.net/rfc/object_scope_prng).
+        $assoc ??= self::isAssoc($array);
+
+        // Ensure a new seed (@see https://wiki.php.net/rfc/object_scope_prng).
+        srand();
 
         if (!$assoc) {
             shuffle($array);
