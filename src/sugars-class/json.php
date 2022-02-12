@@ -269,14 +269,14 @@ class JsonObject implements Arrayable, Jsonable, JsonSerializable, ArrayAccess
      * Get values by given keys (or paths with "." notation).
      *
      * @param  array<string> $keys
-     * @param  mixed|null    $default
-     * @return mixed|null
+     * @param  array|null    $defaults
+     * @return array|null
      */
-    public final function getAll(array $keys, mixed $default = null): mixed
+    public final function getAll(array $keys, array $defaults = null): array|null
     {
         $data = $this->arrayify();
 
-        return array_fetch($data, $keys, $default);
+        return array_fetch($data, $keys, $defaults);
     }
 
     /**
