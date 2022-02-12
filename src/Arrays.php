@@ -1290,16 +1290,15 @@ final class Arrays extends \StaticClass
      * @param  array    $array
      * @param  callable $func
      * @param  bool     $recursive
-     * @param  bool     $swap
      * @return array
      */
-    public static function apply(array $array, callable $func, bool $recursive = false, bool $swap = false): array
+    public static function apply(array $array, callable $func, bool $recursive = false): array
     {
         foreach ($array as $key => $value) {
             if ($recursive && is_array($value)) {
-                $array[$key] = self::apply($value, $func, $swap, true);
+                $array[$key] = self::apply($value, $func, true);
             } else {
-                $array[$key] = $swap ? $func($key, $value) : $func($value, $key);
+                $array[$key] = $func($value, $key);
             }
         }
 
