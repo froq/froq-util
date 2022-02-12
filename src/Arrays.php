@@ -103,19 +103,24 @@ final class Arrays extends \StaticClass
         // Usage:
         // Arrays::set($array, 'a.b.c', 1) => ['a' => ['b' => ['c' => 1]]]
 
-        if (array_key_exists($key, $array)) { // Direct access.
+        // Direct access.
+        if (array_key_exists($key, $array)) {
             $array[$key] = $value;
         } else {
             $key = (string) $key;
 
+            // Direct access.
             if (!str_contains($key, '.')) {
                 $array[$key] = $value;
             } else {
-                $keys = explode('.', trim($key, '.'));
+                $keys = explode('.', $key);
 
-                if (count($keys) <= 1) { // Direct access.
+                // Direct access.
+                if (count($keys) <= 1) {
                     $array[$keys[0]] = $value;
-                } else { // Path access (with dot notation).
+                }
+                // Path access (with dot notation).
+                else {
                     $current =& $array;
 
                     foreach ($keys as $key) {
@@ -154,58 +159,58 @@ final class Arrays extends \StaticClass
     /**
      * Get an item form given array, with dot notation support for sub-array paths.
      *
-     * @param  array      &$array
-     * @param  int|string  $key AKA path.
-     * @param  any|null    $default
-     * @param  bool        $drop
-     * @return any|null
+     * @param  array       &$array
+     * @param  int|string   $key AKA path.
+     * @param  mixed|null   $default
+     * @param  bool         $drop
+     * @return mixed|null
      */
-    public static function get(array &$array, int|string $key, $default = null, bool $drop = false)
+    public static function get(array &$array, int|string|array $key, mixed $default = null, bool $drop = false): mixed
     {
         // Usage:
         // $array = ['a' => ['b' => ['c' => ['d' => 1, 'd.e' => '...']]]]
         // Arrays::get($array, 'a.b.c.d') => 1
         // Arrays::get($array, 'a.b.c.d.e') => '...'
 
-        $value = $default;
-        if (empty($array)) {
-            return $value;
+        if (!$array) return $default;
+
+        if (is_array($key)) {
+            $ret = (array) $default;
+            foreach ($key as $i => $ke) {
+                $ret[$i] = self::get($array, $ke, $ret[$i] ?? null, $drop);
+            }
+            return $ret;
         }
 
+        // Direct access.
         if (array_key_exists($key, $array)) {
             $value = $array[$key];
-            if ($drop) { // Drop gotten item.
-                unset($array[$key]);
-            }
+            if ($drop) unset($array[$key]);
         } else {
             $key = (string) $key;
 
+            // Direct access.
             if (!str_contains($key, '.')) {
-                $value = $array[$key] ?? $value;
-                if ($drop) { // Drop gotten item.
-                    unset($array[$key]);
-                }
-            } else {
-                $keys = explode('.', trim($key, '.'));
+                $value = $array[$key] ?? null;
+                if ($drop) unset($array[$key]);
+            }
+            // Path access (with dot notation).
+            else {
+                $keys = explode('.', $key);
                 $key  = array_shift($keys);
 
-                // No more dig.
-                if (empty($keys)) {
-                    if (array_key_exists($key, $array)) {
-                        $value = $array[$key];
-                        if ($drop) { // Drop gotten item.
-                            unset($array[$key]);
-                        }
-                    }
+                if (!$keys) {
+                    $value = $array[$key] ?? null;
+                    if ($drop) unset($array[$key]);
                 }
                 // Dig more..
                 elseif (isset($array[$key]) && is_array($array[$key])) {
-                    $value = self::get($array[$key], implode('.', $keys), $value, $drop);
+                    $value = self::get($array[$key], implode('.', $keys), $default, $drop);
                 }
             }
         }
 
-        return $value;
+        return $value ?? $default;
     }
 
     /**
