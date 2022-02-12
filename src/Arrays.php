@@ -1171,14 +1171,14 @@ final class Arrays extends \StaticClass
     /**
      * Map.
      *
-     * @param  array           $array
-     * @param  callable|string $func
-     * @param  bool            $recursive
-     * @param  bool            $useKeys
-     * @param  bool            $keepKeys
+     * @param  array                 $array
+     * @param  callable|string|array $func
+     * @param  bool                  $recursive
+     * @param  bool                  $useKeys
+     * @param  bool                  $keepKeys
      * @return array
      */
-    public static function map(array $array, callable|string $func, bool $recursive = false, bool $useKeys = false, bool $keepKeys = true): array
+    public static function map(array $array, callable|string|array $func, bool $recursive = false, bool $useKeys = false, bool $keepKeys = true): array
     {
         $func = self::makeMapFunction($func);
 
@@ -1367,17 +1367,34 @@ final class Arrays extends \StaticClass
     /**
      * Make map function.
      */
-    private static function makeMapFunction(callable|string $func): callable
+    private static function makeMapFunction(callable|string|array $func): callable
     {
-        // When a built-in type given.
         if (!is_callable($func)) {
-            static $types = '~^(int|float|string|bool|array|object|null)$~';
-            $type = $func;
+            $funcs = $func;
 
-            // Provide a mapper using settype().
-            if (preg_test($types, $type)) {
-                $func = function ($value) use ($type) {
-                    settype($value, $type);
+            if (is_string($func)) {
+                // When a built-in type given.
+                static $types = '~^(int|float|string|bool|array|object|null)$~';
+                $type = $func;
+
+                // Provide a mapper using settype().
+                if (preg_test($types, $type)) {
+                    return function ($value) use ($type) {
+                        settype($value, $type);
+                        return $value;
+                    };
+                }
+
+                // When multiple functions given.
+                $funcs = explode('|', $func);
+            }
+
+            if (is_array($funcs)) {
+                return function ($value, $key = null) use ($funcs) {
+                    foreach ($funcs as $func) {
+                        $value = ($key !== null) // If using keys.
+                            ? $func($value, $key) : $func($value);
+                    }
                     return $value;
                 };
             }

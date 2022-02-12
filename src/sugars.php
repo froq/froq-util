@@ -125,14 +125,14 @@ function filter(array $array, callable $func = null, bool $recursive = false, bo
 /**
  * Map, with some options.
  *
- * @param  array           $array
- * @param  callable|string $func
- * @param  bool            $use_keys
- * @param  bool            $keep_keys
+ * @param  array                 $array
+ * @param  callable|string|array $func
+ * @param  bool                  $use_keys
+ * @param  bool                  $keep_keys
  * @return array
  * @since  3.0, 5.0
  */
-function map(array $array, callable|string $func, bool $recursive = false, bool $use_keys = false, bool $keep_keys = true): array
+function map(array $array, callable|string|array $func, bool $recursive = false, bool $use_keys = false, bool $keep_keys = true): array
 {
     return Arrays::map($array, $func, $recursive, $use_keys, $keep_keys);
 }
