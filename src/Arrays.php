@@ -94,11 +94,11 @@ final class Arrays extends \StaticClass
      * Put an item into given array, with dot notation support for sub-array paths.
      *
      * @param  array      &$array
-     * @param  int|string  $key
-     * @param  any         $value
+     * @param  int|string $key
+     * @param  mixed      $value
      * @return array
      */
-    public static function set(array &$array, int|string $key, $value): array
+    public static function set(array &$array, int|string $key, mixed $value): array
     {
         // Usage:
         // Arrays::set($array, 'a.b.c', 1) => ['a' => ['b' => ['c' => 1]]]
@@ -159,27 +159,21 @@ final class Arrays extends \StaticClass
     /**
      * Get an item form given array, with dot notation support for sub-array paths.
      *
-     * @param  array       &$array
-     * @param  int|string   $key AKA path.
-     * @param  mixed|null   $default
-     * @param  bool         $drop
+     * @param  array      &$array
+     * @param  int|string $key
+     * @param  mixed|null $default
+     * @param  bool       $drop
      * @return mixed|null
      */
-    public static function get(array &$array, int|string|array $key, mixed $default = null, bool $drop = false): mixed
+    public static function get(array &$array, int|string $key, mixed $default = null, bool $drop = false): mixed
     {
         // Usage:
         // $array = ['a' => ['b' => ['c' => ['d' => 1, 'd.e' => '...']]]]
         // Arrays::get($array, 'a.b.c.d') => 1
         // Arrays::get($array, 'a.b.c.d.e') => '...'
 
-        if (!$array) return $default;
-
-        if (is_array($key)) {
-            $ret = (array) $default;
-            foreach ($key as $i => $ke) {
-                $ret[$i] = self::get($array, $ke, $ret[$i] ?? null, $drop);
-            }
-            return $ret;
+        if (!$array) {
+            return $default;
         }
 
         // Direct access.
@@ -217,17 +211,18 @@ final class Arrays extends \StaticClass
      * Bridge method to get() for multiple items. Useful in some times eg. list(..) = Arrays::getAll(..).
      *
      * @param  array             &$array
-     * @param  array<int|string>  $keys AKA paths.
-     * @param  any|null           $default
-     * @param  bool               $drop
+     * @param  array<int|string> $keys
+     * @param  array|null        $defaults
+     * @param  bool              $drop
      * @return array
      */
-    public static function getAll(array &$array, array $keys, $default = null, bool $drop = false): array
+    public static function getAll(array &$array, array $keys, array $defaults = null, bool $drop = false): array
     {
         $values = [];
 
-        foreach ($keys as $key) {
-            $values[] = self::get($array, $key, $default, $drop);
+        foreach ($keys as $i => $key) {
+            $default    = $defaults[$i] ?? null;
+            $values[$i] = self::get($array, $key, $default, $drop);
         }
 
         return $values;
@@ -237,11 +232,11 @@ final class Arrays extends \StaticClass
      * Pull an item from given array by a key.
      *
      * @param  array      &$array
-     * @param  int|string  $key
-     * @param  any|null    $default
-     * @return any|null
+     * @param  int|string $key
+     * @param  mixed|null $default
+     * @return mixed|null
      */
-    public static function pull(array &$array, int|string $key, $default = null)
+    public static function pull(array &$array, int|string $key, mixed $default = null): mixed
     {
         return self::get($array, $key, $default, true);
     }
@@ -250,59 +245,20 @@ final class Arrays extends \StaticClass
      * Bridge method to get() for multiple items. Useful in some times eg. list(..) = Arrays::pullAll(..).
      *
      * @param  array             &$array
-     * @param  array<int|string>  $keys
-     * @param  any|null           $default
+     * @param  array<int|string> $keys
+     * @param  array|null        $defaults
      * @return array
      */
-    public static function pullAll(array &$array, array $keys, $default = null): array
+    public static function pullAll(array &$array, array $keys, array $defaults = null): array
     {
-        return self::getAll($array, $keys, $default, true);
-    }
-
-    /**
-     * Add (append) an item to data array, flat if key already exists when $flat is true.
-     *
-     * @param  array      &$array
-     * @param  int|string  $key
-     * @param  mixed       $value
-     * @param  flat        $flat
-     * @return array
-     * @since  5.7
-     */
-    public static function add(array &$array, int|string $key, mixed $value, bool $flat = true): array
-    {
-        if ($flat && isset($array[$key])) {
-            $array[$key] = self::flat([$array[$key], $value]);
-        } else {
-            $array[$key] = $value;
-        }
-
-        return $array;
-    }
-
-    /**
-     * Bridge method to add() for multiple items.
-     *
-     * @param  array &$array
-     * @param  array  $items
-     * @param  bool   $flat
-     * @return array
-     * @since  5.7
-     */
-    public static function addAll(array &$array, array $items, bool $flat = true): array
-    {
-        foreach ($items as $key => $value) {
-            self::add($array, $key, $value, $flat);
-        }
-
-        return $array;
+        return self::getAll($array, $keys, $defaults, true);
     }
 
     /**
      * Remove an item from given array by a key.
      *
      * @param  array      &$array
-     * @param  int|string  $key
+     * @param  int|string $key
      * @return array
      * @since  4.0
      */
@@ -317,7 +273,7 @@ final class Arrays extends \StaticClass
      * Bridge method to remove() for multiple items.
      *
      * @param  array             &$array
-     * @param  array<int|string>  $keys
+     * @param  array<int|string> $keys
      * @return array
      * @since  4.0
      */
