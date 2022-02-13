@@ -1864,15 +1864,24 @@ trait ReflectionCallableTrait
     }
 
     /** @override */
-    public function hasParameter(string $name): bool
+    public function hasParameter(string|int $name): bool
     {
+        if (is_int($name)) {
+            return isset($this->reference->reflection->getParameters()[$name]);
+        }
+
         return $this->collectParameters(name: $name)
             ->has($name);
     }
 
     /** @override */
-    public function getParameter(string $name): ReflectionParameterExtended|null
+    public function getParameter(string|int $name): ReflectionParameterExtended|null
     {
+        if (is_int($name)) {
+            $parameter = $this->reference->reflection->getParameters()[$name] ?? null;
+            return $parameter ? new ReflectionParameterExtended($this->reference->callable, $name) : null;
+        }
+
         return $this->collectParameters(name: $name, extend: true)
             ->get($name);
     }
