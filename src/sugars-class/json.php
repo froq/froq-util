@@ -256,7 +256,7 @@ class JsonObject implements Arrayable, Jsonable, JsonSerializable, ArrayAccess
      *
      * @param  string     $key
      * @param  mixed|null $default
-     * @return mixed|null
+     * @return mixed
      */
     public final function get(string $key, mixed $default = null): mixed
     {
@@ -270,9 +270,9 @@ class JsonObject implements Arrayable, Jsonable, JsonSerializable, ArrayAccess
      *
      * @param  array<string> $keys
      * @param  array|null    $defaults
-     * @return array|null
+     * @return array
      */
-    public final function getAll(array $keys, array $defaults = null): array|null
+    public final function getAll(array $keys, array $defaults = null): array
     {
         $data = $this->arrayify();
 

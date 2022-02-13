@@ -259,7 +259,7 @@ final class TraceEntry implements ArrayAccess
      *
      * @param  string     $key
      * @param  mixed|null $default
-     * @return mixed|null
+     * @return mixed
      */
     public function getField(string $key, mixed $default = null): mixed
     {
@@ -274,9 +274,9 @@ final class TraceEntry implements ArrayAccess
      *
      * @param  array      $keys
      * @param  array|null $defaults
-     * @return array|null
+     * @return array
      */
-    public function getFields(array $keys, array $defaults = null): array|null
+    public function getFields(array $keys, array $defaults = null): array
     {
         // When ref'ed  "Cannot modify readonly property TraceEntry::$data" error..
         $data = $this->data;
