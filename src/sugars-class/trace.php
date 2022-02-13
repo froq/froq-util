@@ -259,29 +259,29 @@ final class TraceEntry implements ArrayAccess
      *
      * @param  string     $key
      * @param  mixed|null $default
-     * @return mixed
+     * @return mixed|null
      */
     public function getField(string $key, mixed $default = null): mixed
     {
         // When ref'ed  "Cannot modify readonly property TraceEntry::$data" error..
         $data = $this->data;
 
-        return array_select($data, $key, default: $default);
+        return array_select($data, $key, $default);
     }
 
     /**
      * Get fields.
      *
      * @param  array      $keys
-     * @param  mixed|null $default
-     * @return mixed
+     * @param  array|null $defaults
+     * @return array|null
      */
-    public function getFields(array $keys, mixed $default = null): mixed
+    public function getFields(array $keys, array $defaults = null): array|null
     {
         // When ref'ed  "Cannot modify readonly property TraceEntry::$data" error..
         $data = $this->data;
 
-        return array_select($data, $keys, default: $default);
+        return array_select($data, $keys, $defaults);
     }
 
     /**
