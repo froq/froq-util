@@ -82,7 +82,7 @@ final class Arrays extends \StaticClass
     {
         $search = array_shift($array);
         foreach ($array as $value) {
-            if ($strict ? ($search === $value) : ($search == $value)) {
+            if ($strict ? $search === $value : $search == $value) {
                 return false;
             }
             $search = $value;
@@ -387,11 +387,11 @@ final class Arrays extends \StaticClass
 
     /**
      * Get "really" unique items with strict comparison as default since array_unique()
-     * comparison non-strict (eg: try [1,'1'])).
+     * comparison non-strict (eg: 1 == '1').
      *
      * @param  array $array
      * @param  bool  $strict
-     * @return 5.22, 5.25 Renamed as unique() => dedupe().
+     * @return 5.22, 5.25
      */
     public static function dedupe(array $array, bool $strict = true): array
     {
