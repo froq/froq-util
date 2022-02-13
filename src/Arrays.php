@@ -476,8 +476,7 @@ final class Arrays extends \StaticClass
         $ret = [];
         foreach ($array as $key => $value) {
             if ($func($value, $key)) {
-                $keepKeys ? $ret[$key] = $value
-                          : $ret[] = $value;
+                $keepKeys ? $ret[$key] = $value : $ret[] = $value;
             }
         }
         return $ret;
@@ -766,7 +765,13 @@ final class Arrays extends \StaticClass
      */
     public static function compact(int|string|array $keys, mixed ...$vars): array
     {
-        return array_compact($keys, ...$vars);
+        $ret = [];
+
+        foreach ((array) $keys as $i => $key) {
+            $ret[$key] = $vars[$i] ?? null;
+        }
+
+        return $ret;
     }
 
     /**
@@ -779,7 +784,21 @@ final class Arrays extends \StaticClass
      */
     public static function extract(array $array, int|string|array $keys, mixed &...$vars): int
     {
-        return array_extract($array, $keys, ...$vars);
+        $ret = 0;
+
+        // Extract all keys.
+        if ($keys === '*') {
+            $keys = array_keys($array);
+        }
+
+        foreach ((array) $keys as $i => $key) {
+            if (isset($array[$key])) {
+                $vars[$i] = $array[$key];
+                $ret++;
+            }
+        }
+
+        return $ret;
     }
 
     /**
@@ -791,7 +810,13 @@ final class Arrays extends \StaticClass
      */
     public static function keysExist(array $array, array $keys): bool
     {
-        return array_contains_key($array, ...$keys);
+        foreach ($keys as $key) {
+            if (!array_key_exists($key, $array)) {
+                return false;
+            }
+        }
+
+        return $array && $keys;
     }
 
     /**
@@ -799,11 +824,18 @@ final class Arrays extends \StaticClass
      *
      * @param  array      $array
      * @param  array<any> $values
+     * @param  bool       $strict
      * @return bool
      */
-    public static function valuesExist(array $array, array $values): bool
+    public static function valuesExist(array $array, array $values, bool $strict = true): bool
     {
-        return array_contains($array, ...$values);
+        foreach ($values as $value) {
+            if (!array_value_exists($value, $array, $strict)) {
+                return false;
+            }
+        }
+
+        return $array && $values;
     }
 
     /**
@@ -818,7 +850,10 @@ final class Arrays extends \StaticClass
      */
     public static function searchKey(array $array, mixed $value, bool $strict = true, bool $last = false): int|string|null
     {
-        return array_search_key($array, $value, $strict, $last);
+        $ret = $last ? array_search($value, array_reverse($array, true), $strict)
+                     : array_search($value, $array, $strict);
+
+        return ($ret !== false) ? $ret : null;
     }
 
     /**
@@ -832,7 +867,9 @@ final class Arrays extends \StaticClass
      */
     public static function searchLastKey(array $array, mixed $value, bool $strict = true): int|string|null
     {
-        return array_search_key($array, $value, $strict, true);
+        $ret = array_search($value, array_reverse($array, true), $strict);
+
+        return ($ret !== false) ? $ret : null;
     }
 
     /**
@@ -847,7 +884,20 @@ final class Arrays extends \StaticClass
      */
     public static function searchKeys(array $array, array $values, bool $strict = true, bool $reverse = false): array
     {
-        return array_search_keys($array, $values, $strict, $reverse);
+        $ret = [];
+
+        $keys = array_keys($array);
+        foreach ($values as $value) {
+            foreach ($keys as $key) {
+                if ($strict ? $array[$key] === $value : $array[$key] == $value) {
+                    $ret[] = $key;
+                }
+            }
+        }
+
+        $reverse && $ret = array_reverse($ret);
+
+        return $ret;
     }
 
     /**
@@ -860,7 +910,7 @@ final class Arrays extends \StaticClass
      */
     public static function lowerKeys(array $array, bool $recursive = false): array
     {
-        return array_lower_keys($array, $recursive);
+        return self::mapKeys($array, fn($key) => is_string($key) ? mb_strtolower($key) : $key, $recursive);
     }
 
     /**
@@ -873,7 +923,7 @@ final class Arrays extends \StaticClass
      */
     public static function upperKeys(array $array, bool $recursive = false): array
     {
-        return array_upper_keys($array, $recursive);
+        return self::mapKeys($array, fn($key) => is_string($key) ? mb_strtoupper($key) : $key, $recursive);
     }
 
     /**
@@ -889,7 +939,7 @@ final class Arrays extends \StaticClass
      */
     public static function convertKeys(array $array, int $case, string $exploder = null, string $imploder = null, bool $recursive = false): array
     {
-        return array_convert_keys($array, $case, $exploder, $imploder, $recursive);
+        return self::mapKeys($array, fn($key) => is_string($key) ? convert_case($key, $case, $exploder, $imploder) : $key, $recursive);
     }
 
     /**
@@ -929,7 +979,7 @@ final class Arrays extends \StaticClass
      */
     public static function first(array $array)
     {
-        return array_first($array);
+        return $array[array_key_first($array)] ?? null;
     }
 
     /**
@@ -940,7 +990,7 @@ final class Arrays extends \StaticClass
      */
     public static function last(array $array)
     {
-        return array_last($array);
+        return $array[array_key_last($array)] ?? null;
     }
 
     /**
@@ -1046,9 +1096,8 @@ final class Arrays extends \StaticClass
      */
     public static function each(array $array, callable $func): void
     {
-        $i = 0;
         foreach ($array as $key => $value) {
-            $func($value, $key, $i++, $array);
+            $func($value, $key);
         }
     }
 
@@ -1219,9 +1268,8 @@ final class Arrays extends \StaticClass
      */
     public static function reduce(array $array, mixed $carry, callable $func, bool $right = false): mixed
     {
-        if ($right) {
-            $array = array_reverse($array, true);
-        }
+        // Reduce right option.
+        $right && $array = array_reverse($array, true);
 
         $ret = $carry;
 
@@ -1290,7 +1338,7 @@ final class Arrays extends \StaticClass
             // }
 
             // Note: carry must be ref'ed (eg: (&$carry, $value, ..)).
-            $func($carry, $value, $key, $array);
+            $func($carry, $value, $key);
 
             $carry = (array) $carry;
         }
