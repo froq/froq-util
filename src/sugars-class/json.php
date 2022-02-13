@@ -262,7 +262,7 @@ class JsonObject implements Arrayable, Jsonable, JsonSerializable, ArrayAccess
     {
         $data = $this->arrayify();
 
-        return array_fetch($data, $key, $default);
+        return array_get($data, $key, $default);
     }
 
     /**
@@ -276,7 +276,7 @@ class JsonObject implements Arrayable, Jsonable, JsonSerializable, ArrayAccess
     {
         $data = $this->arrayify();
 
-        return array_fetch($data, $keys, $defaults);
+        return array_get_all($data, $keys, $defaults);
     }
 
     /**
