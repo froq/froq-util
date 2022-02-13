@@ -1884,15 +1884,10 @@ trait ReflectionCallableTrait
             ->values();
     }
 
-    /**
-     * Get parameters count.
-     *
-     * @return int
-     */
+    /** @alias getNumberOfParameters() */
     public function getParametersCount(): int
     {
-        return $this->collectParameters()
-            ->count();
+        return $this->getNumberOfParameters();
     }
 
     /**
