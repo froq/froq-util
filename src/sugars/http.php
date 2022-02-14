@@ -173,21 +173,22 @@ function is_ajax(): bool
 }
 
 /**
- * Get one/many "GET" param.
+ * Get one/many/all $_GET params.
  *
- * @param  string|array|null $name
- * @param  any|null          $default
- * @return any|null
+ * @param  string|array<string>|null $name
+ * @param  mixed|null                $default
+ * @param  mixed                  ...$options
+ * @return mixed
  */
-function get(string|array $name = null, $default = null)
+function get(string|array $name = null, mixed $default = null, mixed ...$options): mixed
 {
-    return app()->request()->get($name, $default);
+    return app()->request()->get($name, $default, ...$options);
 }
 
 /**
- * Get one/many "GET" param existence.
+ * Check one/many $_GET params.
  *
- * @param  string|array $name
+ * @param  string|array<string> $name
  * @return bool
  */
 function get_has(string|array $name): bool
@@ -196,21 +197,22 @@ function get_has(string|array $name): bool
 }
 
 /**
- * Get one/many "POST" param.
+ * Get one/many/all $_POST params.
  *
- * @param  string|array|null $name
- * @param  any|null          $default
- * @return any|null
+ * @param  string|array<string>|null $name
+ * @param  mixed|null                $default
+ * @param  mixed                  ...$options
+ * @return mixed
  */
-function post(string|array $name = null, $default = null)
+function post(string|array $name = null, mixed $default = null, mixed ...$options): mixed
 {
-    return app()->request()->post($name, $default);
+    return app()->request()->post($name, $default, ...$options);
 }
 
 /**
- * Get one/many "POST" param existence.
+ * Check one/many $_POST params.
  *
- * @param  string|array $name
+ * @param  string|array<string> $name
  * @return bool
  */
 function post_has(string|array $name): bool
@@ -219,22 +221,22 @@ function post_has(string|array $name): bool
 }
 
 /**
- * Get one/many "COOKIE" param.
+ * Get one/many/all $_COOKIE params.
  *
- * @param  string|array|null $name
- * @param  any|null          $default
- * @return any|null
+ * @param  string|array<string>|null $name
+ * @param  mixed|null                $default
+ * @param  mixed                  ...$options
+ * @return mixed
  */
-function cookie(string|array $name = null, $default = null)
+function cookie(string|array $name = null, mixed $default = null, mixed ...$options): mixed
 {
-    return func_num_args() > 1 ? app()->request()->cookie($name, $default)
-                               : app()->request()->cookie($name);
+    return app()->request()->cookie($name, $default, ...$options);
 }
 
 /**
- * Get one/many "COOKIE" param existence.
+ * Check one/many $_COOKIE params.
  *
- * @param  string|array $name
+ * @param  string|array<string> $name
  * @return bool
  */
 function cookie_has(string|array $name): bool
