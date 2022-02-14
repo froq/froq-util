@@ -47,7 +47,7 @@ function upper(string $in): string { return mb_strtoupper($in); }
 function lower(string $in): string { return mb_strtolower($in); }
 
 /**
- * Quick array & object (with "x:1, y:2" support).
+ * Quick array & object (with "x:1, y:2" notation).
  */
 function qa(...$args): array
 {
