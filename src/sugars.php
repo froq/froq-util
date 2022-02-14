@@ -40,7 +40,7 @@ function strpfx(...$args) { return str_has_prefix(...$args);  } // Search prefix
 function strsfx(...$args) { return str_has_suffix(...$args);  } // Search suffix.
 
 /**
- * Loving shorter stuff?
+ * Loving shorter stuff.
  * @since  3.0, 5.0
  */
 function upper(string $in): string { return mb_strtoupper($in); }
