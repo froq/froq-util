@@ -290,11 +290,9 @@ function split(string $sep, string $in, int $limit = null, int $flags = null, Re
             $res && $ret[] = join($res);
         }
     } else {
-        // Escape null bytes & delimiter & slash typos.
-        $sep = str_replace(["\0", '~'], ['\0', '\~'], $sep);
-        if ($sep == '\\') {
-            $sep .= '\\';
-        }
+        // Escape null bytes, delimiter & special char typos.
+        $sep = strlen($sep) == 1 ? preg_quote($sep, '~')
+             : str_replace(["\0", '~'], ['\0', '\~'], $sep);
 
         $ret = preg_split(
             '~'. $sep .'~u', $in,
@@ -303,14 +301,14 @@ function split(string $sep, string $in, int $limit = null, int $flags = null, Re
         ) ?: [];
     }
 
-    // Plus: prevent 'undefined index ..' error.
-    if ($limit && $limit > 0 && $limit > count($ret)) {
+    // Prevent 'undefined index ..' error.
+    if ($limit && $limit > count($ret)) {
         $ret = array_pad($ret, $limit, null);
     }
 
     // Fill error message if requested.
     if (func_num_args() == 5) {
-        $message = preg_error_message($code, 'preg_split', true);
+        $message = preg_error_message($code, 'preg_split');
         $message && $error = new RegExpError($message, $code);
     }
 
