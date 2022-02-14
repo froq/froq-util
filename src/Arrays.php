@@ -25,7 +25,7 @@ final class Arrays extends \StaticClass
      * @param  bool  $strict
      * @return bool
      */
-    public static function isList(array $array, bool $strict = true): bool
+    public static function isListArray(array $array, bool $strict = true): bool
     {
         if ($strict) {
             return array_is_list($array);
@@ -45,7 +45,7 @@ final class Arrays extends \StaticClass
      * @param  array $array
      * @return bool
      */
-    public static function isAssoc(array $array): bool
+    public static function isAssocArray(array $array): bool
     {
         foreach (array_keys($array) as $key) {
             if (is_string($key) || $key < 0) {
@@ -61,7 +61,7 @@ final class Arrays extends \StaticClass
      * @param  array $array
      * @return bool
      */
-    public static function isMap(array $array): bool
+    public static function isMapArray(array $array): bool
     {
         foreach (array_keys($array) as $key) {
             if (!is_string($key)) {
@@ -78,7 +78,7 @@ final class Arrays extends \StaticClass
      * @param  bool  $strict
      * @return bool
      */
-    public static function isSet(array $array, bool $strict = true): bool
+    public static function isSetArray(array $array, bool $strict = true): bool
     {
         $search = array_shift($array);
         foreach ($array as $value) {
@@ -387,7 +387,7 @@ final class Arrays extends \StaticClass
 
     /**
      * Get "really" unique items with strict comparison as default since array_unique()
-     * comparison non-strict (eg: 1 == '1').
+     * comparison non-strict (eg: 1 == '1' is true).
      *
      * @param  array $array
      * @param  bool  $strict
@@ -399,6 +399,29 @@ final class Arrays extends \StaticClass
 
         foreach ($array as $key => $value) {
             in_array($value, $ret, $strict) || $ret[$key] = $value;
+        }
+
+        return $ret;
+    }
+
+    /**
+     * Create a groupped result from given array (@see https://wiki.php.net/rfc/array_column_results_grouping).
+     *
+     * @param  array      $array
+     * @param  int|string $field
+     * @return array
+     * @since  5.31, 6.0
+     */
+    public static function group(array $array, int|string $field): array
+    {
+        $ret = [];
+
+        foreach ($array as $row) {
+            $row = (array) $row;
+            if (array_key_exists($field, $row)) {
+                $key = $row[$field];
+                $ret[$key][] = $row;
+            }
         }
 
         return $ret;
@@ -456,6 +479,7 @@ final class Arrays extends \StaticClass
                 return $value;
             }
         }
+
         return null;
     }
 
@@ -474,11 +498,13 @@ final class Arrays extends \StaticClass
         $reverse && $array = array_reverse($array);
 
         $ret = [];
+
         foreach ($array as $key => $value) {
             if ($func($value, $key)) {
                 $keepKeys ? $ret[$key] = $value : $ret[] = $value;
             }
         }
+
         return $ret;
     }
 
@@ -500,6 +526,7 @@ final class Arrays extends \StaticClass
                 return $key;
             }
         }
+
         return null;
     }
 
@@ -517,11 +544,13 @@ final class Arrays extends \StaticClass
         $reverse && $array = array_reverse($array);
 
         $ret = [];
+
         foreach ($array as $key => $value) {
             if ($func($value, $key)) {
                 $ret[] = $key;
             }
         }
+
         return $ret;
     }
 
@@ -622,7 +651,7 @@ final class Arrays extends \StaticClass
      */
     public static function shuffle(array $array, bool $assoc = null): array
     {
-        $assoc ??= self::isAssoc($array);
+        $assoc ??= self::isAssocArray($array);
 
         // Ensure a new seed (@see https://wiki.php.net/rfc/object_scope_prng).
         srand();
@@ -790,6 +819,10 @@ final class Arrays extends \StaticClass
         if ($keys === '*') {
             $keys = array_keys($array);
         }
+        // Extract comma-separated keys.
+        elseif (is_string($keys) && str_contains($keys, ',')) {
+            $keys = split('[, ]', $keys);
+        }
 
         foreach ((array) $keys as $i => $key) {
             if (isset($array[$key])) {
@@ -901,6 +934,27 @@ final class Arrays extends \StaticClass
     }
 
     /**
+     * Ensure an array keys.
+     *
+     * @param  array      $array
+     * @param  array      $keys
+     * @param  mixed|null $value
+     * @param  bool       $isset
+     * @return array
+     * @since  4.0, 6.0
+     */
+    public static function padKeys(array $array, array $keys, mixed $value = null, bool $isset = false): array
+    {
+        foreach ($keys as $key) {
+            if ($isset ? isset($array[$key]) : array_key_exists($key, $array)) {
+                $array[$key] = $value;
+            }
+        }
+
+        return $array;
+    }
+
+    /**
      * Convert key cases to lower.
      *
      * @param  array  $array
@@ -972,23 +1026,23 @@ final class Arrays extends \StaticClass
     }
 
     /**
-     * Get first item from given array.
+     * Get first value from given array.
      *
      * @param  array $array
-     * @return any|null
+     * @return mixed|null
      */
-    public static function first(array $array)
+    public static function first(array $array): mixed
     {
         return $array[array_key_first($array)] ?? null;
     }
 
     /**
-     * Get last item from given array.
+     * Get last value from given array.
      *
      * @param  array $array
-     * @return any|null
+     * @return mixed|null
      */
-    public static function last(array $array)
+    public static function last(array $array): mixed
     {
         return $array[array_key_last($array)] ?? null;
     }
@@ -1006,7 +1060,7 @@ final class Arrays extends \StaticClass
     public static function sort(array $array, callable|int $func = null, int $flags = 0, bool $assoc = null): array
     {
         $func = self::makeSortFunction($func);
-        $assoc ??= self::isAssoc($array);
+        $assoc ??= self::isAssocArray($array);
 
         if ($assoc) {
             $func ? uasort($array, $func) : asort($array, $flags);
@@ -1046,7 +1100,7 @@ final class Arrays extends \StaticClass
      */
     public static function sortLocale(array $array, string $locale = null, bool $assoc = null): array
     {
-        $assoc ??= self::isAssoc($array);
+        $assoc ??= self::isAssocArray($array);
 
         // Use current locale.
         if (!$locale) {
@@ -1360,6 +1414,277 @@ final class Arrays extends \StaticClass
         ));
 
         return $array ? fdiv(array_sum($array), count($array)) : 0.0;
+    }
+
+    /**
+     * Check whether all given keys were set in given array.
+     *
+     * @param  array         $array
+     * @param  int|string ...$keys
+     * @return bool
+     * @since  4.0, 6.0
+     */
+    public static function isset(array $array, int|string ...$keys): bool
+    {
+        foreach ($keys as $key) {
+            if (!isset($array[$key])) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Drop all given keys from given array.
+     *
+     * @param  array         &$array
+     * @param  int|string ...$keys
+     * @return array
+     * @since  4.0, 6.0
+     */
+    public static function unset(array &$array, int|string ...$keys): array
+    {
+        foreach ($keys as $key) {
+            unset($array[$key]);
+        }
+
+        return $array;
+    }
+
+    /**
+     * Check whether given values exist in given array.
+     *
+     * @param  array    $array
+     * @param  mixed ...$values
+     * @return bool
+     * @since  5.0, 6.0
+     */
+    public static function contains(array $array, mixed ...$values): bool
+    {
+        foreach ($values as $value) {
+            if (!array_value_exists($value, $array, true)) {
+                return false;
+            }
+        }
+
+        return $array && $values;
+    }
+
+    /**
+     * Check whether given keys exist in given array.
+     *
+     * @param  array         $array
+     * @param  int|string ...$keys
+     * @return bool
+     * @since  5.3, 6.0
+     */
+    public static function containsKey(array $array, int|string ...$keys): bool
+    {
+        foreach ($keys as $key) {
+            if (!array_key_exists($key, $array)) {
+                return false;
+            }
+        }
+
+        return $array && $keys;
+    }
+
+    /**
+     * Drop given values from given array if exist.
+     *
+     * @param  array    &$array
+     * @param  mixed ...$values
+     * @return array
+     * @since  5.0, 6.0
+     */
+    public static function delete(array &$array, mixed ...$values): array
+    {
+        foreach ($values as $value) {
+            $keys = array_keys($array, $value, true);
+            foreach ($keys as $key) {
+                unset($array[$key]);
+            }
+        }
+
+        return $array;
+    }
+
+    /**
+     * Drop given keys from given array if exist.
+     *
+     * @param  array      &$array
+     * @param  int|string $keys
+     * @return array
+     * @since  5.31, 6.0
+     */
+    public static function deleteKey(array &$array, int|string ...$keys): array
+    {
+        foreach ($keys as $key) {
+            unset($array[$key]);
+        }
+
+        return $array;
+    }
+
+    /**
+     * Append given values to an array, returning given array back.
+     *
+     * @param  array    &$array
+     * @param  mixed ...$values
+     * @return array
+     * @since  4.0, 6.0
+     */
+    public static function append(array &$array, mixed ...$values): array
+    {
+        array_push($array, ...$values);
+
+        return $array;
+    }
+
+    /**
+     * Prepend given values to an array, returning given array back.
+     *
+     * @param  array    &$array
+     * @param  mixed ...$values
+     * @return array
+     * @since  4.0, 6.0
+     */
+    public static function prepend(array &$array, mixed ...$values): array
+    {
+        array_unshift($array, ...$values);
+
+        return $array;
+    }
+
+    /**
+     * Get given array items as entries.
+     *
+     * @param  array $array
+     * @return array
+     * @since  5.19, 6.0
+     */
+    public static function entries(array $array): array
+    {
+        $ret = [];
+
+        foreach ($array as $key => $value) {
+            $ret[] = [$key, $value];
+        }
+
+        return $ret;
+    }
+
+    /**
+     * Like array_push() but taking key/value arguments.
+     *
+     * @param  array      &$array
+     * @param  int|string $key
+     * @param  mixed      $value
+     * @return array
+     * @since  5.22, 6.0
+     */
+    public static function pushEntry(array &$array, int|string $key, mixed $value): array
+    {
+        // Drop old key (in case).
+        unset($array[$key]);
+
+        $array[$key] = $value;
+
+        return $array;
+    }
+
+    /**
+     * Like array_pop() but returning key/value pairs.
+     *
+     * @param  array &$array
+     * @return array|null
+     * @since  5.22, 6.0
+     */
+    public static function popEntry(array &$array): array|null
+    {
+        $key = array_key_last($array);
+
+        if ($key !== null) {
+            return [$key, array_pop($array)];
+        }
+
+        return null;
+    }
+
+    /**
+     * Like array_unshift() but taking key/value arguments.
+     *
+     * @param  array      &$array
+     * @param  int|string $key
+     * @param  mixed      $value
+     * @return array
+     * @since  5.22, 6.0
+     */
+    public static function unshiftEntry(array &$array, int|string $key, mixed $value): array
+    {
+        $array = [$key => $value] + $array;
+
+        return $array;
+    }
+
+    /**
+     * Like array_shift() but returning key/value pairs.
+     *
+     * @param  array &$array
+     * @return array|null
+     * @since  5.22, 6.0
+     */
+    public static function shiftEntry(array &$array): array|null
+    {
+        $key = array_key_first($array);
+
+        if ($key !== null) {
+            if (is_list($array)) {
+                return [$key, array_shift($array)];
+            }
+
+            // Keep assoc keys (do not modify).
+            return [$key, array_select($array, $key, drop: true)];
+        }
+
+        return null;
+    }
+
+    /**
+     * Select item(s) from an array by given key(s), optionally combining keys/values.
+     *
+     * @param  array                        &$array
+     * @param  int|string|array<int|string> $key
+     * @param  mixed|null                   $default
+     * @param  bool                         $drop
+     * @param  bool                         $combine
+     * @return mixed|null
+     * @since  5.0, 6.0
+     */
+    public static function select(array &$array, int|string|array $key, mixed $default = null, bool $drop = false, bool $combine = false): mixed
+    {
+        if (!$array) {
+            return $default;
+        }
+
+        $keys   = (array) $key;
+        $values = [];
+
+        if ($single = !is_array($key)) {
+            $values[] = $array[$key] ?? $default;
+        } else {
+            $defaults = (array) $default;
+            foreach ($keys as $i => $key) {
+                $default    = $defaults[$i] ?? null;
+                $values[$i] = $array[$key] ?? $default;
+            }
+        }
+
+        $drop && array_unset($array, ...$keys);
+        $combine && $values = array_combine($keys, $values);
+
+        return ($single && !$combine) ? $values[0] : $values;
     }
 
     /**
