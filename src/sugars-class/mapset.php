@@ -286,6 +286,18 @@ trait MapSetTrait
     }
 
     /**
+     * Join items.
+     *
+     * @param  string $glue
+     * @return string
+     * @since  6.0
+     */
+    public function join(string $glue = ''): string
+    {
+        return join($glue, $this->data);
+    }
+
+    /**
      * Update self data by given data.
      *
      * @param  iterable $data
@@ -299,18 +311,6 @@ trait MapSetTrait
         }
 
         return $this;
-    }
-
-    /**
-     * Join items.
-     *
-     * @param  string $glue
-     * @return string
-     * @since  6.0
-     */
-    public function join(string $glue = ''): string
-    {
-        return join($glue, $this->data);
     }
 
     /**
@@ -351,11 +351,7 @@ trait MapSetTrait
      */
     public function copyTo(self $that): static
     {
-        foreach ($this->data as $key => $value) {
-            $that->set($key, $value);
-        }
-
-        return $that;
+        return $that->update($this->data);
     }
 
     /**
@@ -366,11 +362,7 @@ trait MapSetTrait
      */
     public function copyFrom(self $that): static
     {
-        foreach ($that->data as $key => $value) {
-            $this->set($key, $value);
-        }
-
-        return $this;
+        return $this->update($that->data);
     }
 
     /** @inheritDoc froq\common\interface\Collectable */
