@@ -86,66 +86,53 @@ trait MapSetTrait
     }
 
     /**
-     * Prepend given value to data.
+     * Unshift.
      *
-     * @param  mixed                  $value
-     * @param  int|string|object|null $key   For Map's only.
+     * @param  mixed $value
      * @return self
      */
-    public function unshift(mixed $value, int|string|object $key = null): self
+    public function unshift(mixed $value): self
     {
         if ($this instanceof Set) {
             array_value_exists($value, $this->data)
                 || array_unshift($this->data, $value);
         } else {
-            if (func_num_args() == 2) {
-                $this->keyCheck($key, false);
-            }
-
-            $key = $this->prepareKey($key ?? $this->count());
-            array_unshift_entry($this->data, $key, $value);
+            array_unshift($this->data, $value);
         }
 
         return $this;
     }
 
     /**
-     * Append given value to data.
+     * Push.
      *
-     * @param  mixed                  $value
-     * @param  int|string|object|null $key   For Map's only.
+     * @param  mixed $value
      * @return self
      */
-    public function push(mixed $value, int|string|object $key = null): self
+    public function push(mixed $value): self
     {
         if ($this instanceof Set) {
             array_value_exists($value, $this->data)
                 || array_push($this->data, $value);
         } else {
-            if (func_num_args() == 2) {
-                $this->keyCheck($key, false);
-            }
-
-            $key = $this->prepareKey($key ?? $this->count());
-            array_push_entry($this->data, $key, $value);
+            array_push($this->data, $value);
         }
 
         return $this;
     }
 
     /**
-     * Shift an item from data.
+     * Shift.
      *
      * @return mixed
      */
     public function shift(): mixed
     {
-        return ($this instanceof Set) ? array_shift($this->data)
-             : array_shift_entry($this->data)[1] ?? null;
+        return array_shift($this->data);
     }
 
     /**
-     * Pop an item from data.
+     * Pop.
      *
      * @return mixed
      */
