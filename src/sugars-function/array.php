@@ -430,7 +430,7 @@ function array_options(array|null $options, array|null $defaults = null, bool $r
  * @alias Arrays.first()
  * @since 5.0, 6.0
  */
-function array_first(array $array)
+function array_first(array $array): mixed
 {
     return Arrays::first($array);
 }
@@ -439,7 +439,7 @@ function array_first(array $array)
  * @alias Arrays.last()
  * @since 5.0, 6.0
  */
-function array_last(array $array)
+function array_last(array $array): mixed
 {
     return Arrays::last($array);
 }
