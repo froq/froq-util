@@ -306,7 +306,7 @@ function array_clean(array $array, bool $keep_keys = true, array $ignored_keys =
  */
 function array_clear(array $array, array $values, bool $keep_keys = true, array $ignored_keys = null): array
 {
-    return Arrays::clear($array, $keep_keys, $ignored_keys);
+    return Arrays::clear($array, $values, $keep_keys, $ignored_keys);
 }
 
 /**
