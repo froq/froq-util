@@ -153,7 +153,7 @@ function array_compose(array $keys, array $values, mixed $default = null): array
  */
 function array_concat(array $array, mixed $item, mixed ...$items): array
 {
-    return Arrays::concat($array, $item, $items);
+    return Arrays::concat($array, $item, ...$items);
 }
 
 /**
@@ -162,7 +162,7 @@ function array_concat(array $array, mixed $item, mixed ...$items): array
  */
 function array_union(array $array1, array $array2, array ...$arrays): array
 {
-    return Arrays::union($array1, $array2, $arrays);
+    return Arrays::union($array1, $array2, ...$arrays);
 }
 
 /**
