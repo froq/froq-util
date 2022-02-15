@@ -655,9 +655,45 @@ function array_unshift_entry(array &$array, array $entry): array
  * @alias Arrays.shiftEntry()
  * @since 5.22, 6.0
  */
-function array_shift_entry(array &$array): array|null
+function array_shift_entry(array &$array, array $default = null): array|null
 {
     return Arrays::shiftEntry($array);
+}
+
+/**
+ * @alias Arrays.pushKey()
+ * @since 6.0
+ */
+function array_push_key(array &$array, int|string $key, mixed $value): array
+{
+    return Arrays::pushKey($array, $key, $value);
+}
+
+/**
+ * @alias Arrays.popKey()
+ * @since 6.0
+ */
+function array_pop_key(array &$array, int|string $key, mixed $default = null): mixed
+{
+    return Arrays::popKey($array, $key, $default);
+}
+
+/**
+ * @alias Arrays.pushLeft()
+ * @since 6.0
+ */
+function array_push_left(array &$array, mixed $value, mixed ...$values): array
+{
+    return Arrays::pushLeft($array, $value, ...$values);
+}
+
+/**
+ * @alias Arrays.popLeft()
+ * @since 6.0
+ */
+function array_pop_left(array &$array, mixed $default = null): mixed
+{
+    return Arrays::popLeft($array, $default);
 }
 
 /** Selects. */

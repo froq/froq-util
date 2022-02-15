@@ -1665,10 +1665,67 @@ final class Arrays extends \StaticClass
             }
 
             // Keep assoc keys (do not modify).
-            return [$key, array_select($array, $key, drop: true)];
+            return [$key, self::select($array, $key, drop: true)];
         }
 
         return $default;
+    }
+
+    /**
+     * Like array_push() but taking key/value arguments.
+     *
+     * @param  array  &$array
+     * @param  string $key
+     * @param  mixed  $value
+     * @return array
+     * @since  6.0
+     */
+    public static function pushKey(array &$array, int|string $key, mixed $value): array
+    {
+        return self::pushEntry($array, [$key, $value]);
+    }
+
+    /**
+     * Like array_pop() but taking key argument.
+     *
+     * @param  array      &$array
+     * @param  string     $key
+     * @param  mixed|null $default
+     * @return array
+     * @since  6.0
+     */
+    public static function popKey(array &$array, int|string $key, mixed $default = null): mixed
+    {
+        return self::select($array, $key, $default, drop: true);
+    }
+
+    /**
+     * Like array_unshift() but more semantic.
+     *
+     * @param  array    &$array
+     * @param  mixed    $value
+     * @param  mixed ...$values
+     * @return array
+     * @since  6.0
+     */
+    public static function pushLeft(array &$array, mixed $value, mixed ...$values): array
+    {
+        array_unshift($array, $value, ...$values);
+
+        return $array;
+    }
+
+    /**
+     * Like array_shift() but more semantic.
+     *
+     * @param  array      &$array
+     * @param  mixed|null $default
+     * @return mixed
+     * @since  6.0
+     */
+    public static function popLeft(array &$array, mixed $default = null): mixed
+    {
+        return array_shift($array) ?? $default;
     }
 
     /**
