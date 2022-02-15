@@ -154,13 +154,13 @@ trait MapSetTrait
         return array_pop($this->data);
     }
 
-    /** @aliasOf unshift() */
+    /** @alias unshift() */
     public function pushLeft(...$args)
     {
         return $this->unshift(...$args);
     }
 
-    /** @aliasOf shift() */
+    /** @alias shift() */
     public function popLeft()
     {
         return $this->shift();
@@ -365,19 +365,25 @@ trait MapSetTrait
         return $this->update($that->data);
     }
 
-    /** @inheritDoc froq\common\interface\Collectable */
+    /**
+     * @inheritDoc froq\common\interface\Collectable
+     */
     public function toCollection(): CollectionInterface
     {
         return new Collection($this->data);
     }
 
-    /** @inheritDoc Iteratable */
+    /**
+     * @inheritDoc Iteratable
+     */
     public function getIterator(): iterable
     {
         return new ArrayIterator($this->data);
     }
 
-    /** @inheritDoc IteratableReverse */
+    /**
+     * @inheritDoc IteratableReverse
+     */
     public function getReverseIterator(): iterable
     {
         return new ReverseArrayIterator($this->data);
@@ -560,7 +566,7 @@ class Map implements Arrayable, Jsonable, Listable, Collectable, Iteratable, Ite
         return $ok;
     }
 
-    /** @aliasOf remove() */
+    /** @alias remove() */
     public function delete(int|string|object $key, mixed &$value = null): bool
     {
         return $this->remove($key, $value);
@@ -629,13 +635,17 @@ class Map implements Arrayable, Jsonable, Listable, Collectable, Iteratable, Ite
             && ($key = (string) $key) !== null; // Just for string cast.
     }
 
-    /** @inheritDoc ArrayAccess */
+    /**
+     * @inheritDoc ArrayAccess
+     */
     public function offsetExists(mixed $key): bool
     {
         return $this->has($key);
     }
 
-    /** @inheritDoc ArrayAccess */
+    /**
+     * @inheritDoc ArrayAccess
+     */
     public function offsetSet(mixed $key, mixed $value): void
     {
         // For calls like `items[] = item`.
@@ -644,13 +654,17 @@ class Map implements Arrayable, Jsonable, Listable, Collectable, Iteratable, Ite
         $this->set($key, $value);
     }
 
-    /** @inheritDoc ArrayAccess */
+    /**
+     * @inheritDoc ArrayAccess
+     */
     public function offsetGet(mixed $key): mixed
     {
         return $this->get($key);
     }
 
-    /** @inheritDoc ArrayAccess */
+    /**
+     * @inheritDoc ArrayAccess
+     */
     public function offsetUnset(mixed $key): void
     {
         $this->remove($key);
@@ -826,7 +840,7 @@ class Set implements Arrayable, Jsonable, Listable, Collectable, Iteratable, Ite
         return $ok;
     }
 
-    /** @aliasOf remove() */
+    /** @alias remove() */
     public function delete(mixed $value, int &$index = null): bool
     {
         return $this->remove($value, $index);
@@ -880,13 +894,17 @@ class Set implements Arrayable, Jsonable, Listable, Collectable, Iteratable, Ite
         return array_key_exists($index, $this->data);
     }
 
-    /** @inheritDoc ArrayAccess */
+    /**
+     * @inheritDoc ArrayAccess
+     */
     public function offsetExists(mixed $index): bool
     {
         return $this->hasIndex($index);
     }
 
-    /** @inheritDoc ArrayAccess */
+    /**
+     * @inheritDoc ArrayAccess
+     */
     public function offsetSet(mixed $index, mixed $value): void
     {
         // For calls like `items[] = item`.
@@ -895,13 +913,17 @@ class Set implements Arrayable, Jsonable, Listable, Collectable, Iteratable, Ite
         $this->set($index, $value);
     }
 
-    /** @inheritDoc ArrayAccess */
+    /**
+     * @inheritDoc ArrayAccess
+     */
     public function offsetGet(mixed $index): mixed
     {
         return $this->get($index);
     }
 
-    /** @inheritDoc ArrayAccess */
+    /**
+     * @inheritDoc ArrayAccess
+     */
     public function offsetUnset(mixed $index): void
     {
         $this->removeIndex($index);
