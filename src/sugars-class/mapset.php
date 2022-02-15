@@ -5,7 +5,7 @@
  */
 declare(strict_types=1);
 
-use froq\collection\Collection;
+use froq\collection\{Collection, CollectionInterface};
 use froq\collection\iterator\{ArrayIterator, ReverseArrayIterator};
 use froq\collection\trait\{EachTrait, SortTrait, FilterTrait, MapTrait, ReduceTrait, FindTrait,
     MinMaxTrait, FirstLastTrait};
@@ -366,7 +366,7 @@ trait MapSetTrait
     }
 
     /** @inheritDoc froq\common\interface\Collectable */
-    public function toCollection(): Collection
+    public function toCollection(): CollectionInterface
     {
         return new Collection($this->data);
     }
