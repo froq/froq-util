@@ -951,7 +951,7 @@ final class Arrays extends \StaticClass
     public static function padKeys(array $array, array $keys, mixed $value = null, bool $isset = false): array
     {
         foreach ($keys as $key) {
-            if ($isset ? isset($array[$key]) : array_key_exists($key, $array)) {
+            if (!($isset ? isset($array[$key]) : array_key_exists($key, $array))) {
                 $array[$key] = $value;
             }
         }
