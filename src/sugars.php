@@ -2243,13 +2243,13 @@ function format_bool(bool|int $in): string
  * Format an input as number (properly).
  *
  * @param  int|float|string $in
- * @param  int|null         $decs
+ * @param  int|bool|null    $decs
  * @param  string|null      $dsep
  * @param  string|null      $tsep
  * @return string|null
  * @since  5.31
  */
-function format_number(int|float|string $in, int|null $decs = 0, string $dsep = null, string $tsep = null): string|null
+function format_number(int|float|string $in, int|bool|null $decs = 0, string $dsep = null, string $tsep = null): string|null
 {
     if (is_string($in)) {
         if (!is_numeric($in)) {
@@ -2260,6 +2260,13 @@ function format_number(int|float|string $in, int|null $decs = 0, string $dsep = 
         $in += 0;
     }
 
+    $sin = var_export($in, true);
+
+    // Auto-detect decimals.
+    if (is_true($decs)) {
+        $decs = strlen(stracut($sin, '.'));
+    }
+
     // Prevent number corruption.
     if ($decs > PRECISION) {
         $decs = PRECISION;
@@ -2267,8 +2274,8 @@ function format_number(int|float|string $in, int|null $decs = 0, string $dsep = 
 
     $ret = number_format($in, (int) $decs, $dsep, $tsep);
 
-    // Append ".0" for 1.0 & upper NAN/INF.
-    if (!$decs && !is_int($in) && strlen($ret) == 1) {
+    // Append ".0" for eg: 1.0 & upper NAN/INF.
+    if (!$decs && !is_int($in) && strlen($sin) == 1) {
         $ret .= '.0';
     } elseif ($ret == 'inf' || $ret == 'nan') {
         $ret = strtoupper($ret);
