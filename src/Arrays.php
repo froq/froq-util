@@ -796,6 +796,11 @@ final class Arrays extends \StaticClass
     {
         $ret = [];
 
+        // Compact comma-separated keys.
+        if (is_string($keys) && str_contains($keys, ',')) {
+            $keys = split('[, ]', $keys);
+        }
+
         foreach ((array) $keys as $i => $key) {
             $ret[$key] = $vars[$i] ?? null;
         }
