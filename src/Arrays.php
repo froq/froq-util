@@ -598,6 +598,7 @@ final class Arrays extends \StaticClass
      * @param  bool   $pack
      * @param  bool   $drop
      * @return mixed|null
+     * @throws ValueError
      */
     public static function random(array &$array, int $limit = 1, bool $pack = false, bool $drop = false): mixed
     {
@@ -1581,17 +1582,23 @@ final class Arrays extends \StaticClass
     }
 
     /**
-     * Like array_push() but taking key/value arguments.
+     * Like array_push() but taking key/value pairs.
      *
-     * @param  array      &$array
-     * @param  int|string $key
-     * @param  mixed      $value
+     * @param  array &$array
+     * @param  array $entry
      * @return array
+     * @throws ValueError
      * @since  5.22, 6.0
      */
-    public static function pushEntry(array &$array, int|string $key, mixed $value): array
+    public static function pushEntry(array &$array, array $entry): array
     {
-        // Drop old key (in case).
+        if (count($entry) != 2) {
+            throw new \ValueError('Entry must contain key/value pairs');
+        }
+
+        [$key, $value] = $entry;
+
+        // Drop old one, in case.
         unset($array[$key]);
 
         $array[$key] = $value;
@@ -1602,11 +1609,12 @@ final class Arrays extends \StaticClass
     /**
      * Like array_pop() but returning key/value pairs.
      *
-     * @param  array &$array
+     * @param  array      &$array
+     * @param  array|null $default
      * @return array|null
      * @since  5.22, 6.0
      */
-    public static function popEntry(array &$array): array|null
+    public static function popEntry(array &$array, array $default = null): array|null
     {
         $key = array_key_last($array);
 
@@ -1614,20 +1622,26 @@ final class Arrays extends \StaticClass
             return [$key, array_pop($array)];
         }
 
-        return null;
+        return $default;
     }
 
     /**
-     * Like array_unshift() but taking key/value arguments.
+     * Like array_unshift() but taking key/value pairs.
      *
-     * @param  array      &$array
-     * @param  int|string $key
-     * @param  mixed      $value
+     * @param  array &$array
+     * @param  array $entry
      * @return array
+     * @throws ValueError
      * @since  5.22, 6.0
      */
-    public static function unshiftEntry(array &$array, int|string $key, mixed $value): array
+    public static function unshiftEntry(array &$array, array $entry): array
     {
+        if (count($entry) != 2) {
+            throw new \ValueError('Entry must contain key/value pairs');
+        }
+
+        [$key, $value] = $entry;
+
         $array = [$key => $value] + $array;
 
         return $array;
@@ -1636,16 +1650,17 @@ final class Arrays extends \StaticClass
     /**
      * Like array_shift() but returning key/value pairs.
      *
-     * @param  array &$array
+     * @param  array      &$array
+     * @param  array|null $default
      * @return array|null
      * @since  5.22, 6.0
      */
-    public static function shiftEntry(array &$array): array|null
+    public static function shiftEntry(array &$array, array $default = null): array|null
     {
         $key = array_key_first($array);
 
         if ($key !== null) {
-            if (is_list($array)) {
+            if (array_is_list($array)) {
                 return [$key, array_shift($array)];
             }
 
@@ -1653,7 +1668,7 @@ final class Arrays extends \StaticClass
             return [$key, array_select($array, $key, drop: true)];
         }
 
-        return null;
+        return $default;
     }
 
     /**

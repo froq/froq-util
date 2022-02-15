@@ -628,27 +628,27 @@ function array_entries(array $array): array
  * @alias Arrays.pushEntry()
  * @since 5.22, 6.0
  */
-function array_push_entry(array &$array, int|string $key, mixed $value): array
+function array_push_entry(array &$array, array $entry): array
 {
-    return Arrays::pushEntry($array, $key, $value);
+    return Arrays::pushEntry($array, $entry);
 }
 
 /**
  * @alias Arrays.popEntry()
  * @since 5.22, 6.0
  */
-function array_pop_entry(array &$array): array|null
+function array_pop_entry(array &$array, array $default = null): array|null
 {
-    return Arrays::popEntry($array);
+    return Arrays::popEntry($array, $default);
 }
 
 /**
  * @alias Arrays.unshiftEntry()
  * @since 5.22, 6.0
  */
-function array_unshift_entry(array &$array, int|string $key, mixed $value): array
+function array_unshift_entry(array &$array, array $entry): array
 {
-    return Arrays::unshiftEntry($array, $key, $value);
+    return Arrays::unshiftEntry($array, $entry);
 }
 
 /**
