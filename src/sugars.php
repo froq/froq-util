@@ -2267,7 +2267,7 @@ function format_number(int|float|string $in, int|bool|null $decs = 0, string $ds
         $decs = strlen(stracut($sin, '.'));
     }
 
-    // Prevent number corruption.
+    // Prevent corruptions.
     if ($decs > PRECISION) {
         $decs = PRECISION;
     }
