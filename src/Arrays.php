@@ -739,7 +739,7 @@ final class Arrays extends \StaticClass
      */
     public static function clear(array $array, array $values, bool $keepKeys = true, array $ignoredKeys = null): array
     {
-        $func = self::makeFilterFunction($values);
+        $func = self::makeFilterFunction(null, $values);
 
         if (!$ignoredKeys) {
             $ret = array_filter($array, $func);
@@ -1695,12 +1695,16 @@ final class Arrays extends \StaticClass
     /**
      * Make filter function.
      */
-    private static function makeFilterFunction(array|null $values): callable
+    private static function makeFilterFunction(callable|null $func, array $values = null): callable
     {
-        // Default filter values.
-        $values ??= [null, "", []];
+        if (is_null($func)) {
+            // Default filter values.
+            $values ??= [null, "", []];
 
-        return fn($value) => !in_array($value, $values, true);
+            $func = fn($value) => !in_array($value, $values, true);
+        }
+
+        return $func;
     }
 
     /**
@@ -1745,7 +1749,7 @@ final class Arrays extends \StaticClass
     /**
      * Make sort function.
      */
-    private static function makeSortFunction(int|callable|null $func): callable|null
+    private static function makeSortFunction(callable|int|null $func): callable|null
     {
         // As as shortcut for reversed (-1) sorts actually.
         if (is_int($func)) {
