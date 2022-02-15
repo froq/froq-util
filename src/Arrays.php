@@ -1303,7 +1303,7 @@ final class Arrays extends \StaticClass
         $ret = [];
 
         foreach ($array as $key => $value) {
-            $key = $func($key);
+            $key = $func((string) $key);
 
             if ($recursive && is_array($value)) {
                 $ret[$key] = self::mapKeys($value, $func, true);
