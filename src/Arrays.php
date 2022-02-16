@@ -1509,7 +1509,7 @@ final class Arrays extends \StaticClass
     }
 
     /**
-     * Drop given values from given array if exist.
+     * Delete given values from given array if exist.
      *
      * @param  array    &$array
      * @param  mixed ...$values
@@ -1532,7 +1532,7 @@ final class Arrays extends \StaticClass
     }
 
     /**
-     * Drop given keys from given array if exist.
+     * Delete given keys from given array if exist.
      *
      * @param  array      &$array
      * @param  int|string $keys
