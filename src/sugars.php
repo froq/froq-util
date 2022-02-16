@@ -315,7 +315,7 @@ function unsplit(string $sep, array $in): string
  */
 function strip(string $in, string $chars = null): string
 {
-    if ($chars === null) {
+    if ($chars === null || $chars === '') {
         return trim($in);
     } else {
         // RegExp: only ~..~ patterns accepted.
