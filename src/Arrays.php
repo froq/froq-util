@@ -1428,10 +1428,13 @@ final class Arrays extends \StaticClass
      * @param  array         $array
      * @param  int|string ...$keys
      * @return bool
+     * @throws ValueError
      * @since  4.0, 6.0
      */
     public static function isset(array $array, int|string ...$keys): bool
     {
+        $keys || throw new \ValueError('No key/keys given');
+
         foreach ($keys as $key) {
             if (!isset($array[$key])) {
                 return false;
@@ -1447,10 +1450,13 @@ final class Arrays extends \StaticClass
      * @param  array         &$array
      * @param  int|string ...$keys
      * @return array
+     * @throws ValueError
      * @since  4.0, 6.0
      */
     public static function unset(array &$array, int|string ...$keys): array
     {
+        $keys || throw new \ValueError('No key/keys given');
+
         foreach ($keys as $key) {
             unset($array[$key]);
         }
@@ -1464,17 +1470,20 @@ final class Arrays extends \StaticClass
      * @param  array    $array
      * @param  mixed ...$values
      * @return bool
+     * @throws ValueError
      * @since  5.0, 6.0
      */
     public static function contains(array $array, mixed ...$values): bool
     {
+        $values || throw new \ValueError('No value/values given');
+
         foreach ($values as $value) {
             if (!array_value_exists($value, $array, true)) {
                 return false;
             }
         }
 
-        return $array && $values;
+        return true;
     }
 
     /**
@@ -1483,17 +1492,20 @@ final class Arrays extends \StaticClass
      * @param  array         $array
      * @param  int|string ...$keys
      * @return bool
+     * @throws ValueError
      * @since  5.3, 6.0
      */
     public static function containsKey(array $array, int|string ...$keys): bool
     {
+        $keys || throw new \ValueError('No key/keys given');
+
         foreach ($keys as $key) {
             if (!array_key_exists($key, $array)) {
                 return false;
             }
         }
 
-        return $array && $keys;
+        return true;
     }
 
     /**
@@ -1502,10 +1514,13 @@ final class Arrays extends \StaticClass
      * @param  array    &$array
      * @param  mixed ...$values
      * @return array
+     * @throws ValueError
      * @since  5.0, 6.0
      */
     public static function delete(array &$array, mixed ...$values): array
     {
+        $values || throw new \ValueError('No value/values given');
+
         foreach ($values as $value) {
             $keys = array_keys($array, $value, true);
             foreach ($keys as $key) {
@@ -1522,10 +1537,13 @@ final class Arrays extends \StaticClass
      * @param  array      &$array
      * @param  int|string $keys
      * @return array
+     * @throws ValueError
      * @since  5.31, 6.0
      */
     public static function deleteKey(array &$array, int|string ...$keys): array
     {
+        $keys || throw new \ValueError('No key/keys given');
+
         foreach ($keys as $key) {
             unset($array[$key]);
         }
@@ -1539,10 +1557,13 @@ final class Arrays extends \StaticClass
      * @param  array    &$array
      * @param  mixed ...$values
      * @return array
+     * @throws ValueError
      * @since  4.0, 6.0
      */
     public static function append(array &$array, mixed ...$values): array
     {
+        $values || throw new \ValueError('No value/values given');
+
         array_push($array, ...$values);
 
         return $array;
@@ -1554,10 +1575,13 @@ final class Arrays extends \StaticClass
      * @param  array    &$array
      * @param  mixed ...$values
      * @return array
+     * @throws ValueError
      * @since  4.0, 6.0
      */
     public static function prepend(array &$array, mixed ...$values): array
     {
+        $values || throw new \ValueError('No value/values given');
+
         array_unshift($array, ...$values);
 
         return $array;
