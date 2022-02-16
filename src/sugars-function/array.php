@@ -310,6 +310,15 @@ function array_clear(array $array, array $values, bool $keep_keys = true, array 
 }
 
 /**
+ * @alias Arrays.split()
+ * @since 6.0
+ */
+function array_split(array $array, int $length, bool $keep_keys = false): array
+{
+    return Arrays::split($array, $length, $keep_keys);
+}
+
+/**
  * @alias Arrays.flat()
  * @since 4.0, 6.0
  */

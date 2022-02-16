@@ -603,7 +603,7 @@ final class Arrays extends \StaticClass
     public static function random(array &$array, int $limit = 1, bool $pack = false, bool $drop = false): mixed
     {
         $count = count($array);
-        if ($count == 0) {
+        if (!$count) {
             return null;
         }
 
@@ -751,6 +751,40 @@ final class Arrays extends \StaticClass
         }
 
         $keepKeys || $ret = array_values($ret);
+
+        return $ret;
+    }
+
+    /**
+     * Split an array preserving string keys, not like array_chunk().
+     *
+     * @param  array  $array
+     * @param  int    $length
+     * @param  bool   $keepKeys
+     * @return array
+     * @since  6.0
+     */
+    public static function split(array $array, int $length, bool $keepKeys = false): array
+    {
+        $ret = [];
+
+        if (!$array) {
+            return $ret;
+        }
+
+        $chunks = array_chunk($array, $length, true);
+        if ($keepKeys) {
+            return $chunks;
+        }
+
+        foreach ($chunks as $i => $chunk) {
+            $j = 0;
+            foreach ($chunk as $key => $value) {
+                is_string($key)
+                    ? $ret[$i][$key] = $value
+                    : $ret[$i][$j++] = $value;
+            }
+        }
 
         return $ret;
     }
