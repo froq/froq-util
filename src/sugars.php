@@ -2471,7 +2471,7 @@ function random_range(int $length, int|float $min = null, int|float $max = null,
         return null;
     }
 
-    while ($length) {
+    while ($length--) {
         $item = Numbers::random($min, $max, $precision);
 
         // Provide unique-ness.
@@ -2480,7 +2480,6 @@ function random_range(int $length, int|float $min = null, int|float $max = null,
         }
 
         $ret[] = $item;
-        $length--;
     }
 
     return $ret;
