@@ -241,29 +241,6 @@ function splice(array|string $in, int $start, int $end = null, array|string $rep
 }
 
 /**
- * Strip a string, with RegExp (~) option.
- *
- * @param  string      $in
- * @param  string|null $chars
- * @return string
- * @since  3.0, 5.0
- */
-function strip(string $in, string $chars = null): string
-{
-    if ($chars === null) {
-        return trim($in);
-    } else {
-        // RegExp: only ~..~ patterns accepted.
-        if ($chars[0] == '~' && strlen($chars) >= 3) {
-            $ruls = substr($chars, 1, ($pos = strrpos($chars, '~')) - 1);
-            $mods = substr($chars, $pos + 1);
-            return preg_replace(sprintf('~^%s|%s$~%s', $ruls, $ruls, $mods), '', $in);
-        }
-        return trim($in, $chars);
-    }
-}
-
-/**
  * Split a string, with unicode style.
  *
  * @param  string            $sep
@@ -326,6 +303,29 @@ function split(string $sep, string $in, int $limit = null, int $flags = null, Re
 function unsplit(string $sep, array $in): string
 {
     return join($sep, $in);
+}
+
+/**
+ * Strip a string, with RegExp (~) option.
+ *
+ * @param  string      $in
+ * @param  string|null $chars
+ * @return string
+ * @since  3.0, 5.0
+ */
+function strip(string $in, string $chars = null): string
+{
+    if ($chars === null) {
+        return trim($in);
+    } else {
+        // RegExp: only ~..~ patterns accepted.
+        if ($chars[0] == '~' && strlen($chars) >= 3) {
+            $ruls = substr($chars, 1, ($pos = strrpos($chars, '~')) - 1);
+            $mods = substr($chars, $pos + 1);
+            return preg_replace(sprintf('~^%s|%s$~%s', $ruls, $ruls, $mods), '', $in);
+        }
+        return trim($in, $chars);
+    }
 }
 
 /**
