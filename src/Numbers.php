@@ -38,7 +38,15 @@ final class Numbers extends \StaticClass
     {
         $input =@ format_number($input, $decimals ?? true);
 
-        return ($input !== null) ? ($input + 0) : NAN; // Invalid, not a number.
+        if ($input !== null) {
+            return match ($input) {
+                'NAN'   => NAN,
+                'INF'   => INF,
+                default => $input + 0,
+            };
+        }
+
+        return NAN; // Invalid, not a number.
     }
 
     /**
