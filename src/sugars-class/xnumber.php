@@ -473,3 +473,15 @@ class XNumber implements Stringable
         return $data;
     }
 }
+
+/**
+ * XNumber initializer.
+ *
+ * @param  int|float|string $data
+ * @param  int|bool|null    $precision
+ * @return XNumber
+ */
+function xnumber(int|float|string $data, int|bool $precision = null): XNumber
+{
+    return new XNumber($data, $encoding);
+}
