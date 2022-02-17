@@ -196,6 +196,63 @@ class XNumber implements Stringable
     }
 
     /**
+     * Percent by 100.
+     *
+     * @param  int|float $share
+     * @param  int       $precision
+     * @return self
+     */
+    public function percent(int|float $share, int $precision = PRECISION): self
+    {
+        $data = round($this->data / 100 * abs($share), $precision);
+        if ($data == round($data)) {
+            $data = (int) $data;
+        }
+
+        $this->data = $data;
+
+        return $this;
+    }
+
+    /**
+     * Percent by 100, of share.
+     *
+     * @param  int|float $share
+     * @param  int       $precision
+     * @return self
+     */
+    public function percentOf(int|float $share, int $precision = PRECISION): self
+    {
+        $data = round(abs($share) / $this->data * 100, $precision);
+        if ($data == round($data)) {
+            $data = (int) $data;
+        }
+
+        $this->data = $data;
+
+        return $this;
+    }
+
+    /**
+     * Percent by 100, of share rate (change).
+     *
+     * @param  int|float $share
+     * @param  int       $precision
+     * @return self
+     */
+    public function percentRateOf(int|float $share, int $precision = PRECISION): self
+    {
+        $data = round(abs($share) - $this->data / $this->data * 100, $precision);
+        if ($data == round($data)) {
+            $data = (int) $data;
+        }
+
+        $this->data = $data;
+
+        return $this;
+    }
+
+    /**
      * Sign data.
      *
      * @return self
@@ -425,6 +482,17 @@ class XNumber implements Stringable
     }
 
     /**
+     * Base converter.
+     *
+     * @param  int $base
+     * @return string|null
+     */
+    public function toBase(int $base): string|null
+    {
+        return $this->isInt() ? convert_base($this->data, 10, $base) : null;
+    }
+
+    /**
      * Create an static instance from self data.
      *
      * @return static
@@ -483,5 +551,5 @@ class XNumber implements Stringable
  */
 function xnumber(int|float|string $data, int|bool $precision = null): XNumber
 {
-    return new XNumber($data, $encoding);
+    return new XNumber($data, $precision);
 }
