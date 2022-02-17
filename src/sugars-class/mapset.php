@@ -56,7 +56,7 @@ trait MapSetTrait
     /**
      * Get data keys.
      *
-     * @return array.
+     * @return array
      */
     public function keys(): array
     {
@@ -67,7 +67,7 @@ trait MapSetTrait
     /**
      * Get data values.
      *
-     * @return array.
+     * @return array
      */
     public function values(): array
     {
@@ -77,7 +77,7 @@ trait MapSetTrait
     /**
      * Get data entries.
      *
-     * @return array.
+     * @return array
      */
     public function entries(): array
     {
