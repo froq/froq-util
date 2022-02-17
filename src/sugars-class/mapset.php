@@ -273,7 +273,22 @@ trait MapSetTrait
     }
 
     /**
-     * Join items.
+     * Split tool.
+     *
+     * @param  int  $length
+     * @param  bool $keepKeys
+     * @return self
+     * @since  6.0
+     */
+    public function split(int $length, bool $keepKeys = false): self
+    {
+        $this->data = array_split($this->data, $length, $keepKeys);
+
+        return $this;
+    }
+
+    /**
+     * Join tool.
      *
      * @param  string $glue
      * @return string
