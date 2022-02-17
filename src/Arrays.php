@@ -462,7 +462,7 @@ final class Arrays extends \StaticClass
     }
 
     /**
-     * Find first item that satisfies given test function.
+     * Find first/last item that satisfies given test function.
      *
      * @param  array    $array
      * @param  callable $func
@@ -489,27 +489,24 @@ final class Arrays extends \StaticClass
      * @param  array    $array
      * @param  callable $func
      * @param  bool     $reverse
-     * @param  bool     $keepKeys
-     * @return array<mixed|null>
+     * @return array|null
      * @since  4.10
      */
-    public static function findAll(array $array, callable $func, bool $reverse = false, bool $keepKeys = true): array
+    public static function findAll(array $array, callable $func, bool $reverse = false): array|null
     {
         $reverse && $array = array_reverse($array);
 
-        $ret = [];
-
         foreach ($array as $key => $value) {
             if ($func($value, $key)) {
-                $keepKeys ? $ret[$key] = $value : $ret[] = $value;
+                $ret[$key] = $value;
             }
         }
 
-        return $ret;
+        return $ret ?? null;
     }
 
     /**
-     * Find first item key that satisfies given test function.
+     * Find first/last item key that satisfies given test function.
      *
      * @param  array    $array
      * @param  callable $func
@@ -536,14 +533,12 @@ final class Arrays extends \StaticClass
      * @param  array    $array
      * @param  callable $func
      * @param  bool     $reverse
-     * @return array<int|string|null>
+     * @return array|null
      * @since  5.31
      */
-    public static function findKeys(array $array, callable $func, bool $reverse = false): array
+    public static function findKeys(array $array, callable $func, bool $reverse = false): array|null
     {
         $reverse && $array = array_reverse($array);
-
-        $ret = [];
 
         foreach ($array as $key => $value) {
             if ($func($value, $key)) {
@@ -551,7 +546,7 @@ final class Arrays extends \StaticClass
             }
         }
 
-        return $ret;
+        return $ret ?? null;
     }
 
     /**
