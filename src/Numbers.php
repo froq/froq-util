@@ -36,6 +36,10 @@ final class Numbers extends \StaticClass
      */
     public static function convert(int|float|string $input, int|bool $decimals = null): int|float
     {
+        if (is_number($input)) {
+            return $input;
+        }
+
         $input =@ format_number($input, $decimals ?? true);
 
         if ($input !== null) {
