@@ -1313,8 +1313,8 @@ function mkdirtemp(string $prefix = null, int $mode = 0755, bool $froq = false):
 function rmdirtemp(string $dir): bool
 {
     if (!is_tmpdir($dir)) {
-        trigger_error(sprintf('%s(): Cannot remove a directory which is outside of %s directory',
-            __function__, tmp()));
+        trigger_error(sprintf('%s(): Cannot remove `%s` directory that is out of %s directory or not exists',
+            __function__, $dir, tmp()));
         return false;
     }
 
@@ -1355,8 +1355,8 @@ function mkfiletemp(string $prefix = null, int $mode = 0644, bool $froq = false)
 function rmfiletemp(string $file): bool
 {
     if (!is_tmpnam($file)) {
-        trigger_error(sprintf('%s(): Cannot remove a file that is outside of %s directory or non-existent',
-            __function__, tmp()));
+        trigger_error(sprintf('%s(): Cannot remove `%s` file that is out of %s directory or not exists',
+            __function__, $file, tmp()));
         return false;
     }
 
