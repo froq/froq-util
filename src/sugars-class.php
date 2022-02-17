@@ -14,3 +14,4 @@ require 'sugars-class/trace.php';
 require 'sugars-class/xclass.php';
 require 'sugars-class/xobject.php';
 require 'sugars-class/xstring.php';
+require 'sugars-class/xarray.php';
