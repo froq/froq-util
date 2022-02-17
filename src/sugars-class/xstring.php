@@ -180,14 +180,13 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
      *
      * @param  int      $start
      * @param  int|null $length
-     * @param  bool     $init
-     * @return static|string
+     * @return self
      */
-    public function slice(int $start, int $length = null, bool $init = true): static|string
+    public function slice(int $start, int $length = null): self
     {
-        $ret = mb_substr($this->data, $start, $length, $this->encoding);
+        $this->data = mb_substr($this->data, $start, $length, $this->encoding);
 
-        return $init ? new static($ret, $this->encoding) : $ret;
+        return $this;
     }
 
     /**
@@ -1690,6 +1689,16 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     public function offsetUnset(mixed $offset): never
     {
         throw new Error('Not implemented');
+    }
+
+    /**
+     * Create an static instance from self data.
+     *
+     * @return static
+     */
+    public function copy(): static
+    {
+        return new static($this->data, $this->encoding);
     }
 
     /**
