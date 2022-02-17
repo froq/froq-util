@@ -30,17 +30,26 @@ final class Numbers extends \StaticClass
      * Convert.
      *
      * @param  int|float|string $input
-     * @param  int|bool|null    $decimals
+     * @param  int|bool|null    $precision
      * @return int|float
      * @since  4.0
      */
-    public static function convert(int|float|string $input, int|bool $decimals = null): int|float
+    public static function convert(int|float|string $input, int|bool $precision = null): int|float
     {
         if (is_number($input)) {
+            if ($precision !== null) {
+                // Auto-detect precision.
+                if (is_true($precision)) {
+                    $precision = strlen(stracut(strval($input), '.'));
+                }
+
+                $input = round($input, (int) $precision);
+            }
+
             return $input;
         }
 
-        $input =@ format_number($input, $decimals ?? true);
+        $input =@ format_number($input, $precision ?? true);
 
         if ($input !== null) {
             return match ($input) {
