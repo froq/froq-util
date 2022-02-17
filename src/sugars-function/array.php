@@ -625,6 +625,15 @@ function array_prepend(array &$array, mixed ...$values): array
 }
 
 /**
+ * @alias Arrays.list()
+ * @since 6.0
+ */
+function array_list(array $array): array
+{
+    return Arrays::list($array);
+}
+
+/**
  * @alias Arrays.entries()
  * @since 5.19, 6.0
  */

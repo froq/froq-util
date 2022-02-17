@@ -1607,6 +1607,17 @@ final class Arrays extends \StaticClass
     }
 
     /**
+     * Convert an array to list.
+     *
+     * @param  array $array
+     * @return array
+     */
+    public static function list(array $array): array
+    {
+        return array_values($array);
+    }
+
+    /**
      * Get given array items as entries.
      *
      * @param  array $array
