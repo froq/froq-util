@@ -1763,8 +1763,9 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
 /**
  * XString initializer.
  *
- * @param string      $data
- * @param string|null $encoding
+ * @param  string      $data
+ * @param  string|null $encoding
+ * @return XString
  */
 function xstring(string $data = '', string|null $encoding = ''): XString
 {
