@@ -2471,12 +2471,15 @@ function random_range(int $length, int|float $min = null, int|float $max = null,
         return null;
     }
 
+    // Unique stack.
+    $uni = [];
+
     while ($length--) {
         $item = Numbers::random($min, $max, $precision);
 
         // Provide unique-ness.
-        while ($unique && in_array($item, $ret, true)) {
-            $item = Numbers::random($min, $max, $precision);
+        while ($unique && in_array($item, $ret, true) && !in_array($item, $uni, true)) {
+            $item = $uni[] = Numbers::random($min, $max, $precision);
         }
 
         $ret[] = $item;
