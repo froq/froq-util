@@ -214,9 +214,9 @@ function array_find(array $array, callable $func, bool $reverse = false): mixed
  * @alias Arrays.findAll()
  * @since 5.31, 6.0
  */
-function array_find_all(array $array, callable $func, bool $reverse = false, bool $keep_keys = true): array|null
+function array_find_all(array $array, callable $func, bool $reverse = false): array|null
 {
-    return Arrays::findAll($array, $func, $reverse, $keep_keys);
+    return Arrays::findAll($array, $func, $reverse);
 }
 
 /**
