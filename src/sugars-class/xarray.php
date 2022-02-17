@@ -1388,3 +1388,14 @@ class XArray implements Arrayable, Jsonable, Listable, Collectable, Iteratable, 
         }
     }
 }
+
+/**
+ * XArray initializer.
+ *
+ * @param  iterable $data
+ * @return XArray
+ */
+function xarray(iterable $data = []): XArray
+{
+    return new XArray($data);
+}
