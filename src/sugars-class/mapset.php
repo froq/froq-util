@@ -392,7 +392,7 @@ trait MapSetTrait
     }
 
     /**
-     * Static constructor with data.
+     * Static constructor.
      *
      * @param  mixed ...$data
      * @return static
@@ -403,7 +403,7 @@ trait MapSetTrait
     }
 
     /**
-     * Static constructor with data.
+     * Static constructor.
      *
      * @param  iterable $data
      * @return static
@@ -414,7 +414,7 @@ trait MapSetTrait
     }
 
     /**
-     * Static constructor with string & split pattern.
+     * Static constructor from a string & split pattern.
      *
      * @param  string   $string
      * @param  string   $pattern
@@ -1020,7 +1020,7 @@ class Dict extends Map
     }
 
     /**
-     * Static constructor with given keys (and value optionally).
+     * Static constructor from given keys (and value optionally).
      *
      * @param  array      $keys
      * @param  mixed|null $value
