@@ -946,31 +946,38 @@ final class Arrays extends \StaticClass
     }
 
     /**
-     * Search given values returning found their keys.
+     * Search given values returning found keys.
      *
      * @param  array $array
      * @param  array $values
      * @param  bool  $strict
      * @param  bool  $reverse
-     * @return array<int|string|null>
+     * @return array<int|string>|null
      * @since  4.0
      */
-    public static function searchKeys(array $array, array $values, bool $strict = true, bool $reverse = false): array
+    public static function searchKeys(array $array, array $values, bool $strict = true, bool $reverse = false): array|null
     {
         $ret = [];
 
-        $keys = array_keys($array);
-        foreach ($values as $value) {
-            foreach ($keys as $key) {
-                if ($strict ? $array[$key] === $value : $array[$key] == $value) {
-                    $ret[] = $key;
+        $count = count($values);
+        $count || throw new \ValueError('No value/values given');
+
+        if ($count == 1) {
+            $ret = array_keys($array, $values[0], $strict);
+        } else {
+            $keys = array_keys($array);
+            foreach ($values as $value) {
+                foreach ($keys as $key) {
+                    if ($strict ? $array[$key] === $value : $array[$key] == $value) {
+                        $ret[] = $key;
+                    }
                 }
             }
         }
 
         $reverse && $ret = array_reverse($ret);
 
-        return $ret;
+        return $ret ?: null;
     }
 
     /**

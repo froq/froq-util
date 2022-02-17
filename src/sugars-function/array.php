@@ -376,7 +376,7 @@ function array_search_key(array $array, mixed $value, bool $strict = true, bool 
  * @alias Arrays.searchKeys()
  * @since 4.0, 5.25, 6.0
  */
-function array_search_keys(array $array, array $values, bool $strict = true, bool $reverse = false): array
+function array_search_keys(array $array, array $values, bool $strict = true, bool $reverse = false): array|null
 {
     return Arrays::searchKeys($array, $values, $strict, $reverse);
 }
