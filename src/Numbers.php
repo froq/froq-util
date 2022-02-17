@@ -36,7 +36,7 @@ final class Numbers extends \StaticClass
      */
     public static function convert(int|float|string $input, int $decimals = null): int|float
     {
-        $input =@ format_number($input, $decimals);
+        $input =@ format_number($input, $decimals ?? true);
 
         return ($input !== null) ? ($input + 0) : NAN; // Invalid, not a number.
     }
