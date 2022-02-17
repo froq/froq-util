@@ -30,11 +30,11 @@ final class Numbers extends \StaticClass
      * Convert.
      *
      * @param  int|float|string $input
-     * @param  int|null         $decimals
+     * @param  int|bool|null    $decimals
      * @return int|float
      * @since  4.0
      */
-    public static function convert(int|float|string $input, int $decimals = null): int|float
+    public static function convert(int|float|string $input, int|bool $decimals = null): int|float
     {
         $input =@ format_number($input, $decimals ?? true);
 
