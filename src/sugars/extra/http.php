@@ -120,44 +120,48 @@ function parse_cookie(string $cookie): array
 /**
  * Build a URL.
  *
- * @param  array $url
- * @return string
+ * @param  array $data
+ * @return string|null
  * @since  4.0
  */
-function build_url(array $url): string
+function build_url(array $data): string|null
 {
-    $authority = null;
-    if (!isset($url['authority'])) {
-        isset($url['user']) && $authority .= $url['user'];
-        isset($url['pass']) && $authority .= ':'. $url['pass'];
+    if (!$data) {
+        return null;
+    }
 
-        if ($authority) {
-            $authority .= '@'; // Separate.
+    $url = '';
+
+    // Syntax: https://tools.ietf.org/html/rfc3986#section-3
+    if (isset($data['scheme'])) {
+        $url .= $data['scheme'] . '://';
+    }
+
+    if (isset($data['authority'])) {
+        $url .= $data['authority'];
+    } else {
+        $authority = null;
+        isset($data['user']) && $authority = $data['user'];
+        isset($data['pass']) && $authority .= ':'. $data['pass'];
+
+        // Separate.
+        if ($authority !== null) {
+            $authority .= '@';
         }
 
-        isset($url['host']) && $authority .= $url['host'];
-        isset($url['port']) && $authority .= ':'. $url['port'];
+        isset($data['host']) && $authority .= $data['host'];
+        isset($data['port']) && $authority .= ':'. $data['port'];
+
+        $url .= $authority;
     }
 
-    $ret = '';
-
-    // Syntax url: https://tools.ietf.org/html/rfc3986#section-3
-    if (isset($url['scheme'])) {
-        $ret .= $url['scheme'];
-        $ret .= $authority ? '://'. $authority : ':';
-    } elseif (isset($url['authority'])) {
-        $ret .= $url['authority'];
-    } elseif ($authority) {
-        $ret .= $authority;
+    if (isset($data['queryParams'])) {
+        $data['query'] = http_build_query($data['queryParams']);
     }
 
-    if (isset($url['queryParams'])) {
-        $query = Util::buildQueryString($url['queryParams']);
-    }
+    isset($data['path']) && $url .= $data['path'];
+    isset($data['query']) && $url .= '?'. $data['query'];
+    isset($data['fragment']) && $url .= '#'. $data['fragment'];
 
-    isset($url['path'])     && $ret .= $url['path'];
-    isset($url['query'])    && $ret .= '?'. $url['query'];
-    isset($url['fragment']) && $ret .= '#'. $url['fragment'];
-
-    return $ret;
+    return $url;
 }
