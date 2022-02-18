@@ -20,7 +20,7 @@ namespace froq\util;
 final /* fuckic static */ class Util extends \StaticClass
 {
     /**
-     * Load sugar.
+     * Load sugar(s).
      *
      * @param  string|array<string> $name
      * @return void
@@ -28,15 +28,20 @@ final /* fuckic static */ class Util extends \StaticClass
      */
     public static function loadSugar(string|array $name): void
     {
-        // Name list given.
+        // Name list.
         if (is_array($name)) {
-            self::loadSugar($name);
-            return;
-        }
+            foreach ($name as $nam) {
+                self::loadSugar($nam);
+            }
+        } else {
+            $file = __dir__ . '/sugars/' . $name . '.php';
 
-        $file = __dir__ . '/sugars/' . $name . '.php';
+            if (file_exists($file)) {
+                require_once $file;
+                return;
+            }
 
-        if (!is_file($file)) {
+            // Not exists.
             $files = glob(__dir__ . '/sugars/{*.php,extra/*.php}', GLOB_BRACE);
             $names = array_map(
                 fn($file) => strsrc($file, 'extra/')
@@ -48,22 +53,6 @@ final /* fuckic static */ class Util extends \StaticClass
                 'Invalid sugar name %s, valids are: %s',
                 [$name, join(', ', $names)]
             );
-        }
-
-        include_once $file;
-    }
-
-    /**
-     * Load sugars.
-     *
-     * @param  array<string> $names
-     * @return void
-     * @causes froq\util\UtilException
-     */
-    public static function loadSugars(array $names): void
-    {
-        foreach ($names as $name) {
-            self::loadSugar($name);
         }
     }
 
