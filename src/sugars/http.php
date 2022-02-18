@@ -261,9 +261,9 @@ function segment(int|string $key, string $default = null): string|null
  *
  * @param  array<int|string>|null $keys
  * @param  array<string>|null     $defaults
- * @return array<string>|froq\http\request\Segments|null
+ * @return array<string>|froq\http\request\Segments
  */
-function segments(array $keys = null, array $defaults = null): array|Segments|null
+function segments(array $keys = null, array $defaults = null): array|Segments
 {
     return app()->request()->uri()->segments($key, $defaults);
 }
