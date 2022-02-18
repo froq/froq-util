@@ -73,10 +73,10 @@ function request(): Request
 /**
  * Get app's response, but also optionally set code, content, attributes, headers and cookies.
  *
- * @param  ... $args
+ * @param  mixed ...$args
  * @return froq\http\Response
  */
-function response(...$args): Response
+function response(mixed ...$args): Response
 {
     $response = app()->response();
 
@@ -86,7 +86,7 @@ function response(...$args): Response
         $code && $response->setStatus($code);
 
         if (count($args) >= 3) {
-            $response->setBody($content, (array) $attributes);
+            $response->setBody($content, $attributes);
         }
 
         $headers && $response->setHeaders($headers);
@@ -100,15 +100,17 @@ function response(...$args): Response
  * Set or get HTTP status code using app's response.
  *
  * @param  int|null $code
- * @return int|void
+ * @return int
  */
-function status(int $code = null)
+function status(int $code = null): int
 {
-    if ($code === null) {
-        return app()->response()->status()->getCode();
+    $status = app()->response()->status();
+
+    if ($code !== null) {
+        $status->setCode($code);
     }
 
-    app()->response()->status()->setCode($code);
+    return $status->getCode();
 }
 
 /**
@@ -253,7 +255,7 @@ function cookie_has(string|array $name): bool
  */
 function segment(int|string $key, string $default = null): string|null
 {
-    return app()->request()->uri()->segment($key, $default);
+    return app()->request()->segment($key, $default);
 }
 
 /**
@@ -265,7 +267,7 @@ function segment(int|string $key, string $default = null): string|null
  */
 function segments(array $keys = null, array $defaults = null): array|Segments
 {
-    return app()->request()->uri()->segments($key, $defaults);
+    return app()->request()->segments($keys, $defaults);
 }
 
 /**
