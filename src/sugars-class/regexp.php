@@ -628,7 +628,7 @@ class RegExpMatch extends Map
     }
 
     /**
-     * Clean filtering "", null fields.
+     * Clean filtering "" and null values.
      *
      * @return self
      */
@@ -638,7 +638,7 @@ class RegExpMatch extends Map
     }
 
     /**
-     * Clear filtering given search.
+     * Clear filtering given search values.
      *
      * @param  mixed ...$search
      * @return self
