@@ -263,7 +263,7 @@ final class Strings extends \StaticClass
      */
     public static function isBase64(string $string): bool
     {
-        return ($string && !strcmp($string, ''. base64_encode(''. base64_decode($string, true))));
+        return ($string && !strcmp($string, (string) base64_encode((string) base64_decode($string, true))));
     }
 
     /**
