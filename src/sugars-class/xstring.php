@@ -1354,6 +1354,26 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     }
 
     /**
+     * As a syntactic sugar for *Encode() methods.
+     */
+    public function encode(string $func, mixed ...$funcArgs): self
+    {
+        $func .= 'Encode';
+
+        return $this->$func(...$funcArgs);
+    }
+
+    /**
+     * As a syntactic sugar for *Decode() methods.
+     */
+    public function decode(string $func, mixed ...$funcArgs): self
+    {
+        $func .= 'Decode';
+
+        return $this->$func(...$funcArgs);
+    }
+
+    /**
      * Encode HTML characters.
      *
      * @param  bool $simple
