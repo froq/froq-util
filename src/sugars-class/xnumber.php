@@ -536,7 +536,7 @@ class XNumber implements Stringable
             return Numbers::convert($data, $this->precision);
         }
         if ($data instanceof self) {
-            return $data->data();
+            return $data->data;
         }
         return $data;
     }
