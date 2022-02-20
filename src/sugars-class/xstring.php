@@ -77,7 +77,7 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     }
 
     /**
-     * @aliasOf length()
+     * @alias length()
      */
     public function len()
     {
@@ -1714,6 +1714,14 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     public function toString(): string
     {
         return $this->data;
+    }
+
+    /**
+     * @alias toString()
+     */
+    public function string()
+    {
+        return $this->toString();
     }
 
     /** @inheritDoc IteratorAggregate */ #[\ReturnTypeWillChange]
