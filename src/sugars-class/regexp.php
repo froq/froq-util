@@ -69,7 +69,7 @@ final class RegExp implements Stringable
      */
     public function __construct(string $source, string $modifiers = null, bool $throw = false)
     {
-        if ($throw && strval($modifiers) !== '') {
+        if ($throw && $modifiers != '') {
             $modifiers = self::prepareModifiers($modifiers, $invalids);
             if (!$modifiers) {
                 throw new RegExpError('Invalid modifiers `' . $invalids . '`');
@@ -324,6 +324,9 @@ final class RegExp implements Stringable
             $this->processError();
             $ret = null;
         }
+
+        // Drop empty stuff.
+        $ret = array_filter($ret, 'count');
 
         return $class ? new $class((array) $ret) : $ret;
     }
