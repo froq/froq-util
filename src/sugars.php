@@ -341,12 +341,18 @@ function grep(string $in, string $pattern, bool $named = false): string|array|nu
 {
     preg_match($pattern, $in, $match, PREG_UNMATCHED_AS_NULL);
 
-    // For named capturing groups.
-    if ($named && $match) {
-        return array_filter($match, fn($k) => is_string($k), 2);
+    if (isset($match[1])) {
+        $ret = $match[1];
+
+        // For named capturing groups.
+        if ($named && $ret) {
+            return array_filter($ret, fn($k) => is_string($k), 2);
+        }
+
+        return $ret;
     }
 
-    return $match[1] ?? null;
+    return null;
 }
 
 /**
@@ -388,6 +394,9 @@ function grep_all(string $in, string $pattern, bool $named = false, bool $unifor
             // Maintain keys (so reset to 0-N).
             $ret = array_slice($ret, 0);
         }
+
+        // Drop empty stuff.
+        $ret = array_filter($ret, 'count');
 
         // For named capturing groups.
         if ($named && $ret) {
