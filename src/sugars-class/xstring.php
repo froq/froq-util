@@ -470,15 +470,16 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
      * @param  int                    $limit
      * @param  int|null              &$count
      * @param  int|array              $flags
+     * @param  bool                   $regexp
      * @param  string|null            $class
      * @return int
      */
     public function replace(string|array|RegExp $search, string|array|callable $replace, bool $icase = false,
-        int $limit = -1, int &$count = null, int|array $flags = 0, string $class = null): self
+        int $limit = -1, int &$count = null, int|array $flags = 0, bool $regexp = false, string $class = null): self
     {
         if ($search instanceof RegExp) {
             $this->data = $search->replace($this->data, $replace, $limit, $count, $flags, $class);
-        } elseif (is_string($search) && is_callable($replace)) {
+        } elseif ($regexp || (is_string($search) && is_callable($replace))) {
             $this->data = RegExp::fromPattern($search)->replace($this->data, $replace, $limit, $count, $flags, $class);
         } else {
             $this->data = $icase ? str_ireplace($search, $replace, $this->data, $count)
@@ -486,6 +487,23 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
         }
 
         return $this;
+    }
+
+    /**
+     * Replace-regexp, for RegExp replacement.
+     *
+     * @param  string          $search
+     * @param  string|callable $replace
+     * @param  int             $limit
+     * @param  int|null        &$count
+     * @param  array|int       $flags
+     * @param  string|null     $class
+     * @return self
+     */
+    public function replaceRegExp(string $search, string|callable $replace, int $limit = -1, int &$count = null,
+        int|array $flags = 0, string $class = null): self
+    {
+        return $this->replace($search, $replace, false, $limit, $count, $flags, true, $class);
     }
 
     /**
@@ -501,7 +519,7 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     public function replaceMatch(string|RegExp $search, callable $replace, int $limit = -1, int &$count = null,
         int|array $flags = 0): self
     {
-        return $this->replace($search, $replace, false, $limit, $count, $flags, RegExpMatch::class);
+        return $this->replace($search, $replace, false, $limit, $count, $flags, false, RegExpMatch::class);
     }
 
     /**
