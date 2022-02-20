@@ -983,7 +983,7 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     public function split(string|RegExp $pattern, int $limit = -1, int|array $flags = 0, string $class = null): iterable|null
     {
         if (is_string($pattern)) {
-            $pattern = new RegExp($pattern, 'u');
+            $pattern = RegExp::fromPattern($pattern);
         }
 
         return $pattern->split($this->data, $limit, $flags, $class);
@@ -1031,7 +1031,7 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     public function match(string|RegExp $pattern, int|array $flags = 0, int $offset = 0, string $class = null): iterable|null
     {
         if (is_string($pattern)) {
-            $pattern = new RegExp($pattern, 'u');
+            $pattern = RegExp::fromPattern($pattern);
         }
 
         return $pattern->match($this->data, $flags, $offset, $class);
@@ -1049,7 +1049,7 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     public function matchAll(string|RegExp $pattern, int|array $flags = 0, int $offset = 0, string $class = null): iterable|null
     {
         if (is_string($pattern)) {
-            $pattern = new RegExp($pattern, 'u');
+            $pattern = RegExp::fromPattern($pattern);
         }
 
         return $pattern->matchAll($this->data, $flags, $offset, $class);
@@ -1066,7 +1066,7 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     public function grep(string|RegExp $pattern, bool $named = false, string $class = null): string|iterable|null
     {
         if (is_string($pattern)) {
-            $pattern = new RegExp($pattern, 'u');
+            $pattern = RegExp::fromPattern($pattern);
         }
 
         return $pattern->grep($this->data, $named, $class);
@@ -1084,7 +1084,7 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     public function grepAll(string|RegExp $pattern, bool $named = false, bool $uniform = false, string $class = null): iterable|null
     {
         if (is_string($pattern)) {
-            $pattern = new RegExp($pattern, 'u');
+            $pattern = RegExp::fromPattern($pattern);
         }
 
         return $pattern->grepAll($this->data, $named, $uniform, $class);
@@ -1099,7 +1099,7 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     public function test(string|RegExp $pattern): bool
     {
         if (is_string($pattern)) {
-            $pattern = new RegExp($pattern, 'u');
+            $pattern = RegExp::fromPattern($pattern);
         }
 
         return $pattern->test($this->data);
@@ -1114,7 +1114,7 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     public function search(string|RegExp $pattern): int
     {
         if (is_string($pattern)) {
-            $pattern = new RegExp($pattern, 'u');
+            $pattern = RegExp::fromPattern($pattern);
         }
 
         return $pattern->search($this->data);
