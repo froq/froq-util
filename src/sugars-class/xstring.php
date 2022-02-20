@@ -983,6 +983,10 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     public function split(string|RegExp $pattern, int $limit = -1, int|array $flags = 0, string $class = null): iterable|null
     {
         if (is_string($pattern)) {
+            // Prepare single chars.
+            if (strlen($pattern) == 1) {
+                $pattern = RegExp::prepare($pattern, 'u');
+            }
             $pattern = RegExp::fromPattern($pattern);
         }
 
