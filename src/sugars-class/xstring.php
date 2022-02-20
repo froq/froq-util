@@ -1432,6 +1432,31 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     }
 
     /**
+     * Base64 encode.
+     *
+     * @return self
+     */
+    public function base64Encode(): self
+    {
+        $this->data = base64_encode($this->data);
+
+        return $this;
+    }
+
+    /**
+     * Base64 decode.
+     *
+     * @param  bool $strict
+     * @return self
+     */
+    public function base64Decode(bool $strict = false): self
+    {
+        $this->data = (string) base64_decode($this->data, $strict);
+
+        return $this;
+    }
+
+    /**
      * Formatter.
      *
      * @param  mixed    $input
