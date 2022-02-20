@@ -491,6 +491,7 @@ final class RegExp implements Stringable
             $invalids = join($diff);
             return null;
         }
+
         return join($mods);
     }
 
