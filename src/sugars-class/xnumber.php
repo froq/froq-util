@@ -528,7 +528,7 @@ class XNumber implements Stringable
     }
 
     /**
-     * Prepare given data for some calculation methods.
+     * Prepare given data for some methods.
      */
     private function prepare(int|float|string|self $data): int|float
     {
