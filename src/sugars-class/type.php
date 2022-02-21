@@ -47,6 +47,26 @@ final class Type implements Stringable
     }
 
     /**
+     * Get name.
+     *
+     * @return string
+     */
+    public function name(): string
+    {
+        return $this->name;
+    }
+
+    /**
+     * Get var.
+     *
+     * @return mixed
+     */
+    public function var(): mixed
+    {
+        return $this->var;
+    }
+
+    /**
      * Null check.
      *
      * @return bool
