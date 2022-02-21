@@ -1042,6 +1042,19 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     }
 
     /**
+     * X-split.
+     *
+     * @param  string   $pattern
+     * @param  int|null $limit
+     * @param  int|null $flags
+     * @return XArray
+     */
+    public function xsplit(string $pattern, int $limit = null, int $flags = null): XArray
+    {
+        return xsplit($pattern, $this->data, $limit, $flags);
+    }
+
+    /**
      * Match possibles.
      *
      * @param  string|RegExp $pattern
