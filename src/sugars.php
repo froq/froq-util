@@ -346,7 +346,7 @@ function grep(string $in, string $pattern, bool $named = false): string|array|nu
 
         // For named capturing groups.
         if ($named && $ret) {
-            return array_filter($ret, fn($k) => is_string($k), 2);
+            $ret = array_filter($ret, 'is_string', 2);
         }
 
         return $ret;
@@ -367,23 +367,26 @@ function grep(string $in, string $pattern, bool $named = false): string|array|nu
  */
 function grep_all(string $in, string $pattern, bool $named = false, bool $uniform = false): array|null
 {
-    preg_match_all($pattern, $in, $matches, PREG_UNMATCHED_AS_NULL);
+    preg_match_all($pattern, $in, $match, PREG_UNMATCHED_AS_NULL);
 
-    if (isset($matches[1])) {
-        unset($matches[0]); // Drop input.
+    if (isset($match[1])) {
+        unset($match[0]); // Drop input.
 
         $ret = [];
 
-        if (count($matches) == 1) {
-            $ret = $matches[1];
+        if (count($match) == 1) {
+            $ret = $match[1];
         } else {
-            $ret = array_map(fn($m) => count($m) == 1 ? $m[0] : $m, $matches);
+            // Reduce empty matches.
+            $ret = array_apply($match, fn($m) => (
+                is_array($m) && count($m) == 1 ? $m[0] : $m
+            ));
 
-            // Useful for in case '~href="(.+?)"|">(.+?)</~' etc.
+            // Useful for '~href="(.+?)"|">(.+?)</~' etc.
             if ($uniform) {
                 foreach ($ret as $i => &$re) {
                     if (is_array($re)) {
-                        $re = array_filter($re, fn($r) => isset($r) && strlen($r));
+                        $re = array_filter($re, 'size');
                         if (count($re) == 1) {
                             $re = current($re);
                         }
@@ -391,16 +394,16 @@ function grep_all(string $in, string $pattern, bool $named = false, bool $unifor
                 } unset($re);
             }
 
-            // Maintain keys (so reset to 0-N).
+            // Reset keys (to 0-N).
             $ret = array_slice($ret, 0);
         }
 
         // Drop empty stuff.
-        $ret = array_filter($ret, 'count');
+        $ret = array_filter($ret, 'size');
 
         // For named capturing groups.
         if ($named && $ret) {
-            return array_filter($ret, fn($k) => is_string($k), 2);
+            $ret = array_filter($ret, 'is_string', 2);
         }
 
         return $ret;
@@ -1787,9 +1790,9 @@ function ustime(string $where = null): int
 function strtoitime(string $format, string|int $time = null): int
 {
     // Eg: "1 day" or "1D" (instead "60*60*24" or "86400").
-    if (preg_match_all('~([+-]?\d+)([smhDMY])~', $format, $matches)) {
+    if (preg_match_all('~([+-]?\d+)([smhDMY])~', $format, $match)) {
         $format_list = null;
-        [, $numbers, $formats] = $matches;
+        [, $numbers, $formats] = $match;
 
         foreach ($formats as $i => $format) {
             $format_list[] = match ($format) {
