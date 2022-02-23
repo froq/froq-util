@@ -123,14 +123,14 @@ function map(array $array, callable|string|array $func, bool $recursive = false,
 /**
  * Reduce, with right option.
  *
- * @param  array    $array
- * @param  mixed    $carry
- * @param  callable $func
- * @param  bool     $right
+ * @param  array         $array
+ * @param  mixed         $carry
+ * @param  callable|null $func
+ * @param  bool          $right
  * @return mixed
  * @since  4.0, 5.0
  */
-function reduce(array $array, mixed $carry, callable $func, bool $right = false): mixed
+function reduce(array $array, mixed $carry, callable $func = null, bool $right = false): mixed
 {
     return Arrays::reduce($array, $carry, $func, $right);
 }
