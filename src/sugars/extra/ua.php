@@ -39,13 +39,13 @@ function is_bot(): bool
         preg_match('~google|yahoo|yandex|bing|msn|lycos|baidu|sogou|altavista|netcraft|alexa~i', $ua) ||
         preg_match('~facebook|whatsapp|(twit|tweet.*)~i', $ua) ||
         preg_match('~
-            zyborg|rambler|scooter|estyle|scrubby|scrapy|aspseek|accoona|jack|peerindex|
-            topsy|butterfly|ningmetauri|js-kit|unwindfetchor|kraken|digg|twit|tweet|inagist|longurl|newsme|
-            ahref|grapeshot|semrush|bbbike|ichiro|youdao|cyberduck|iframely|openlinkprofiler|
-            voyager|goo|wordpress|amsu *\d|majestic\d*|mail\.ru|
-            (link|url).*(controll|resolv|check)er|
-            curl|libwww|wget|moget|lwp|java|nmap|
-            cortex|adreview|ttd-content|admantx
+            zyborg|rambler|scooter|estyle|scrubby|scrapy|aspseek|accoona|jack|peerindex
+            |topsy|butterfly|ningmetauri|js-kit|unwindfetchor|kraken|digg|twit|tweet|inagist|longurl|newsme
+            |ahref|grapeshot|semrush|bbbike|ichiro|youdao|cyberduck|iframely|openlinkprofiler
+            |voyager|goo|wordpress|amsu *\d|majestic\d*|mail\.ru
+            |(link|url).*(controll|resolv|check)er
+            |curl|libwww|wget|moget|lwp|java|nmap
+            |cortex|adreview|ttd-content|admantx
         ~xi', $ua)
     );
 }
@@ -59,11 +59,11 @@ function is_google_bot(): bool
 {
     static $ret;
     return $ret ??= ($ua = get_user_agent()) && (
-        preg_match('~'
-            .'Googlebot'
-            .'|(AdsBot|Mediapartners|FeedFetcher|DuplexWeb)-Google'
-            .'|Google(-Read-Aloud|[ -]Favicon)'
-        .'~i', $ua)
+        preg_match('~
+            Googlebot
+            |(AdsBot|Mediapartners|FeedFetcher|DuplexWeb)-Google
+            |Google(-Read-Aloud|[ -]Favicon)
+        ~xi', $ua)
     );
 }
 
