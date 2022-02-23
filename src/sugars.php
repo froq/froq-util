@@ -680,14 +680,24 @@ function convert_base(int|string $in, int|string $from, int|string $to): string|
  * Convert case.
  *
  * @param  string      $in
- * @param  int         $case
+ * @param  string|int  $case
  * @param  string|null $exploder
  * @param  string|null $imploder
  * @return string|null
  * @since  4.26
  */
-function convert_case(string $in, int $case, string $exploder = null, string $imploder = null): string|null
+function convert_case(string $in, string|int $case, string $exploder = null, string $imploder = null): string|null
 {
+    if (is_string($case)) {
+        $constant = 'CASE_' . strtoupper($case);
+        if (!defined($constant)) {
+            trigger_error(sprintf('%s(): Invalid case %s, use lower,upper,title,dash,snake,camel', __function__, $case));
+            return null;
+        }
+
+        $case = constant($constant);
+    }
+
     // Check valid cases.
     if (!in_array($case, [CASE_LOWER, CASE_UPPER, CASE_TITLE, CASE_DASH, CASE_SNAKE, CASE_CAMEL])) {
         trigger_error(sprintf('%s(): Invalid case %s, use a case from 0..5 range', __function__, $case));
@@ -1871,16 +1881,16 @@ function http_parse_query(string $query, string $separator = '&', int $decoding 
         }
 
         if ($decoding == PHP_QUERY_RFC3986) {
-            $key = rawurldecode($key);
+            $key   = rawurldecode($key);
             $value = rawurldecode($value ?? '');
         } else {
             // All others as PHP_QUERY_RFC1738.
-            $key = urldecode($key);
+            $key   = urldecode($key);
             $value = urldecode($value ?? '');
         }
 
         if (preg_match_all('~\[([^\]]*)\]~m', $key, $match)) {
-            $key = substr($key, 0, strpos($key, '['));
+            $key  = substr($key, 0, strpos($key, '['));
             $keys = [$key, ...$match[1]];
         } else {
             $keys = [$key];
@@ -1892,15 +1902,15 @@ function http_parse_query(string $query, string $separator = '&', int $decoding 
             if ($index == '') {
                 if (isset($target)) {
                     if (is_array($target)) {
-                        $ikeys = array_filter(array_keys($target), 'is_int');
-                        $index = count($ikeys) ? max($ikeys) + 1 : 0;
+                        $ikeys  = array_filter(array_keys($target), 'is_int');
+                        $index  = $ikeys ? max($ikeys) + 1 : 0;
                     } else {
+                        $index  = 1;
                         $target = [$target];
-                        $index = 1;
                     }
                 } else {
+                    $index  = 0;
                     $target = [];
-                    $index = 0;
                 }
             } elseif (isset($target[$index]) && !is_array($target[$index])) {
                 $target[$index] = [$target[$index]];
