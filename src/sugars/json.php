@@ -5,8 +5,6 @@
  */
 declare(strict_types=1);
 
-use froq\util\misc\Json;
-
 /**
  * Short builders.
  */
