@@ -22,7 +22,7 @@ if (!class_exists(App::class, false)) {
  */
 function session(string|array $key = null, $value = null)
 {
-    static $session; $session ??= app()->session();
+    $session = app()->session();
 
     // Set/get.
     if ($session) {
@@ -43,7 +43,7 @@ function session(string|array $key = null, $value = null)
  */
 function session_flash($message = null)
 {
-    $session = session();
+    $session = app()->session();
 
     if ($session) {
         switch (func_num_args()) {
@@ -62,7 +62,7 @@ function session_flash($message = null)
  */
 function session_array(): array|null
 {
-    return session()?->toArray();
+    return app()->session()?->toArray();
 }
 
 /**
@@ -73,7 +73,7 @@ function session_array(): array|null
  */
 function session_has(string $key): bool|null
 {
-    return session()?->has($key);
+    return app()->session()?->has($key);
 }
 
 /**
@@ -85,7 +85,7 @@ function session_has(string $key): bool|null
  */
 function session_set(string|array $key, $value = null): bool|null
 {
-    return session()?->set($key, $value) ? true : null;
+    return app()->session()?->set($key, $value) ? true : null;
 }
 
 /**
@@ -93,12 +93,12 @@ function session_set(string|array $key, $value = null): bool|null
  *
  * @param  string|array $key
  * @param  any|null     $value
- * @param  bool         $remove
+ * @param  bool         $drop
  * @return any|null
  */
-function session_get(string|array $key, $default = null, bool $remove = false)
+function session_get(string|array $key, $default = null, bool $drop = false)
 {
-    return session()?->get($key, $default, $remove);
+    return app()->session()?->get($key, $default, $drop);
 }
 
 /**
@@ -109,7 +109,7 @@ function session_get(string|array $key, $default = null, bool $remove = false)
  */
 function session_remove(string|array $key): bool|null
 {
-    return session()?->remove($key);
+    return app()->session()?->remove($key);
 }
 
 /**
@@ -119,7 +119,7 @@ function session_remove(string|array $key): bool|null
  */
 function start_session(): bool|null
 {
-    return session()?->start();
+    return app()->session()?->start();
 }
 
 /**
@@ -129,7 +129,7 @@ function start_session(): bool|null
  */
 function end_session(): bool|null
 {
-    return session()?->end();
+    return app()->session()?->end();
 }
 
 /**
@@ -142,7 +142,7 @@ function end_session(): bool|null
  */
 function generate_csrf_token(string $form): string|null
 {
-    return session()?->generateCsrfToken($form);
+    return app()->session()?->generateCsrfToken($form);
 }
 
 /**
@@ -155,5 +155,5 @@ function generate_csrf_token(string $form): string|null
  */
 function validate_csrf_token(string $form, string $token): bool|null
 {
-    return session()?->validateCsrfToken($form, $token);
+    return app()->session()?->validateCsrfToken($form, $token);
 }
