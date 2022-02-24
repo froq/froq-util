@@ -176,20 +176,6 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     }
 
     /**
-     * Slice.
-     *
-     * @param  int      $start
-     * @param  int|null $length
-     * @return self
-     */
-    public function slice(int $start, int $length = null): self
-    {
-        $this->data = mb_substr($this->data, $start, $length, $this->encoding);
-
-        return $this;
-    }
-
-    /**
      * Splice.
      *
      * @param  int         $start
@@ -218,6 +204,72 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
         //     . $replace . $this->substr($start + $length);
 
         return $this;
+    }
+
+    /**
+     * Slice.
+     *
+     * @param  int      $start
+     * @param  int|null $length
+     * @return static
+     */
+    public function slice(int $start, int $length = null): static
+    {
+        $data = mb_substr($this->data, $start, $length, $this->encoding);
+
+        return new static($data, $this->encoding);
+    }
+
+    /**
+     * Slice before.
+     *
+     * @param  self|string $search
+     * @param  int|null    $length
+     * @param  bool        $icase
+     * @param  int         $offset
+     * @return static
+     */
+    function sliceBefore(self|string $search, int $length = null, bool $icase = false, int $offset = 0): static
+    {
+        $index = $this->index($search, $icase, $offset);
+
+        if ($index !== null) {
+            $data = mb_substr($this->data, 0, $index, $this->encoding);
+            if ($length !== null) {
+                $data = ($length >= 0) ? mb_substr($data, 0, $length, $this->encoding)
+                    : mb_substr($data, $length, null, $this->encoding);
+            }
+        } else {
+            $data = ''; // Not found.
+        }
+
+        return new static($data, $this->encoding);
+    }
+
+     /**
+     * Slice after.
+     *
+     * @param  self|string $search
+     * @param  int|null    $length
+     * @param  bool        $icase
+     * @param  int         $offset
+     * @return static
+     */
+    function sliceAfter(self|string $search, int $length = null, bool $icase = false, int $offset = 0): static
+    {
+        $index = $this->index($search, $icase, $offset);
+
+        if ($index !== null) {
+            $data = mb_substr($this->data, $index + mb_strlen($search, $this->encoding), null, $this->encoding);
+            if ($length !== null) {
+                $data = ($length >= 0) ? mb_substr($data, 0, $length, $this->encoding)
+                    : mb_substr($data, $length, null, $this->encoding);
+            }
+        } else {
+            $data = ''; // Not found.
+        }
+
+        return new static($data, $this->encoding);
     }
 
     /**
@@ -300,17 +352,23 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     }
 
     /**
-     * Index, with case-insensitive option.
+     * Index, with case-insensitive/last options.
      *
-     * @param  string $search
-     * @param  bool   $icase
-     * @param  int    $offset
+     * @param  self|string $search
+     * @param  bool        $icase
+     * @param  bool        $last
+     * @param  int         $offset
      * @return int|null
      */
-    public function index(self|string $search, bool $icase = false, int $offset = 0): int|null
+    public function index(self|string $search, bool $icase = false, bool $last = false, int $offset = 0): int|null
     {
-        $index = $icase ? mb_stripos($this->data, (string) $search, $offset, $this->encoding)
-                        : mb_strpos($this->data, (string) $search, $offset, $this->encoding);
+        if ($last) {
+            $index = $icase ? mb_strripos($this->data, (string) $search, $offset, $this->encoding)
+                            : mb_strrpos($this->data, (string) $search, $offset, $this->encoding);
+        } else {
+            $index = $icase ? mb_stripos($this->data, (string) $search, $offset, $this->encoding)
+                            : mb_strpos($this->data, (string) $search, $offset, $this->encoding);
+        }
 
         return ($index !== false) ? $index : null;
     }
@@ -319,28 +377,26 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
      * Index-of, like Javascript's indexOf().
      *
      * @param  self|string $search
+     * @param  bool        $icase
      * @param  int         $offset
      * @return int|null
      */
-    public function indexOf(self|string $search, int $offset = 0): int|null
+    public function indexOf(self|string $search, bool $icase = false, int $offset = 0): int|null
     {
-        $index = mb_strpos($this->data, (string) $search, $offset, $this->encoding);
-
-        return ($index !== false) ? $index : null;
+        return $this->index($search, $icase, false, $offset);
     }
 
     /**
      * Last index-of, like Javascript's lastIndexOf().
      *
      * @param  self|string $search
+     * @param  bool        $icase
      * @param  int         $offset
      * @return int|null
      */
-    public function lastIndexOf(self|string $search, int $offset = 0): int|null
+    public function lastIndexOf(self|string $search, bool $icase = false, int $offset = 0): int|null
     {
-        $index = mb_strrpos($this->data, (string) $search, $offset, $this->encoding);
-
-        return ($index !== false) ? $index : null;
+        return $this->index($search, $icase, true, $offset);
     }
 
     /**
