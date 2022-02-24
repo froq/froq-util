@@ -542,7 +542,7 @@ function str_has_suffix(string $str, string $src, bool $icase = false): bool
 function str_compare(string $str1, string $str2, bool $icase = false, int $length = null, string $locale = null, string $encoding = null): int
 {
     if ($locale !== null) {
-        return Strings::compareLocale($str1, $str2, $locale ?? getlocale(LC_COLLATE));
+        return Strings::compareLocale($str1, $str2, $locale);
     }
     return Strings::compare($str1, $str2, $icase, $length, $encoding);
 }
