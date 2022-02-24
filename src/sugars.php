@@ -8,7 +8,7 @@ declare(strict_types=1);
 use froq\util\{Util, Arrays, Objects, Numbers, Strings};
 use froq\util\misc\System;
 
-// Load consts & classes.
+// Load base stuff.
 require 'sugars-const.php';
 require 'sugars-class.php';
 require 'sugars-function.php';
