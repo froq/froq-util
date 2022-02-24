@@ -138,12 +138,10 @@ final /* fuckic static */ class Util extends \StaticClass
             $url .= $host;
         }
 
-        $colon = strpos($uri, ':');
+        $colon = str_contains($uri, ':');
 
         // Fix parse_url()'s fail with ":" character.
-        if ($colon) {
-            $uri = str_replace(':', '%3A', $uri);
-        }
+        $colon && $uri = str_replace(':', '%3A', $uri);
 
         $uri .= '';
 
@@ -161,9 +159,8 @@ final /* fuckic static */ class Util extends \StaticClass
         }
 
         $tmp['path'] ??= '/';
-        if ($colon) {
-            $tmp['path'] = str_replace('%3A', ':', $tmp['path']);
-        }
+
+        $colon && $tmp['path'] = str_replace('%3A', ':', $tmp['path']);
 
         $url .= $tmp['path'];
         if ($withQuery && ($query = $tmp['query'] ?? '') !== '') {
@@ -174,75 +171,45 @@ final /* fuckic static */ class Util extends \StaticClass
     }
 
     /**
-     * Build query string.
+     * Convert integer bytes to human-readable text.
      *
-     * @param  array  $data
-     * @param  string $ignoredKeys
-     * @param  bool   $removeTags
+     * @param  int $bytes
+     * @param  int $precision
      * @return string
      */
-    public static function buildQueryString(array $data, string $ignoredKeys = '', bool $removeTags = false): string
+    public static function formatBytes(int $bytes, int $precision = 2): string
     {
-        if (!$data) {
-            return '';
+        $base  = 1024;
+        $units = ['B', 'KB', 'MB', 'GB'];
+
+        $i = 0;
+        while ($bytes > $base) {
+            $i++;
+            $bytes /= $base;
         }
 
-        // Drop ignored keys.
-        if ($ignoredKeys != '') {
-            $data = array_delete_key($data, ...explode(',', $ignoredKeys));
-        }
-
-        // Remove HTML tags.
-        if ($removeTags) {
-            $data = array_map_recursive(fn($value) => (
-                is_string($value) ? preg_remove('~<(\w+)\b[^>]*/?>(?:.*?</\1>)?~isu', $value) : $value
-            ), $data);
-        }
-
-        // Fix skipped nulls by http_build_query() & empty strings of falses.
-        $data = array_map_recursive(fn($value) => is_bool($value) ? intval($value) : strval($value), $data);
-
-        $query = http_build_query($data, '', '&', PHP_QUERY_RFC3986);
-
-        // Normalize arrays.
-        if (str_contains($query, '%5D=')) {
-            $query = str_replace(['%5B', '%5D'], ['[', ']'], $query);
-        }
-
-        return $query;
+        return round($bytes, $precision) . $units[$i];
     }
 
     /**
-     * Parse query string (without changing dotted param keys).
-     * https://github.com/php/php-src/blob/master/main/php_variables.c#L103
+     * Convert human-readable text to integer bytes.
      *
-     * @param  string $query
-     * @param  string $ignoredKeys
-     * @param  bool   $removeTags
-     * @return array
+     * @param  string $bytes
+     * @return int
      */
-    public static function parseQueryString(string $query, string $ignoredKeys = '', bool $removeTags = false): array
+    public static function convertBytes(string $bytes): int
     {
-        $query = trim($query);
-        if ($query == '') {
-            return [];
+        $base  = 1024;
+        $units = ['', 'K', 'M', 'G'];
+
+        // Eg: 6.4M or 6.4MB => 6.4MB, 64M or 64MB => 64MB.
+        if (sscanf($bytes, '%f%c', $byte, $unit) == 2) {
+            $exp = array_search(strtoupper($unit), $units);
+
+            return (int) ($byte * pow($base, $exp));
         }
 
-        $data = http_parse_query($query, '&', PHP_QUERY_RFC3986);
-
-        // Drop ignored keys.
-        if ($ignoredKeys != '') {
-            $data = array_delete_key($data, ...explode(',', $ignoredKeys));
-        }
-
-        // Remove HTML tags.
-        if ($removeTags) {
-            $data = array_map_recursive(fn($value) => (
-                is_string($value) ? preg_remove('~<(\w+)\b[^>]*/?>(?:.*?</\1>)?~isu', $value) : $value
-            ), $data);
-        }
-
-        return $data;
+        return (int) $bytes;
     }
 
     /**
