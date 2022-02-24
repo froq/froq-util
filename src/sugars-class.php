@@ -3,7 +3,7 @@
 require 'sugars-class/_error.php';
 require 'sugars-class/_static.php';
 
-// Load class files.
+// Load other class files.
 require 'sugars-class/assert.php';
 require 'sugars-class/json.php';
 require 'sugars-class/mapset.php';
