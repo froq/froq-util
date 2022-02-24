@@ -226,12 +226,13 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
      * @param  self|string $search
      * @param  int|null    $length
      * @param  bool        $icase
+     * @param  bool        $last
      * @param  int         $offset
      * @return static
      */
-    function sliceBefore(self|string $search, int $length = null, bool $icase = false, int $offset = 0): static
+    function sliceBefore(self|string $search, int $length = null, bool $icase = false, bool $last = false, int $offset = 0): static
     {
-        $index = $this->index($search, $icase, $offset);
+        $index = $this->index($search, $icase, $last, $offset);
 
         if ($index !== null) {
             $data = mb_substr($this->data, 0, $index, $this->encoding);
@@ -252,12 +253,13 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
      * @param  self|string $search
      * @param  int|null    $length
      * @param  bool        $icase
+     * @param  bool        $last
      * @param  int         $offset
      * @return static
      */
-    function sliceAfter(self|string $search, int $length = null, bool $icase = false, int $offset = 0): static
+    function sliceAfter(self|string $search, int $length = null, bool $icase = false, bool $last = false, int $offset = 0): static
     {
-        $index = $this->index($search, $icase, $offset);
+        $index = $this->index($search, $icase, $last, $offset);
 
         if ($index !== null) {
             $data = mb_substr($this->data, $index + mb_strlen($search, $this->encoding), null, $this->encoding);
