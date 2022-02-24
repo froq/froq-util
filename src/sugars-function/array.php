@@ -169,9 +169,9 @@ function array_union(array $array1, array $array2, array ...$arrays): array
  * @alias Arrays.dedupe()
  * @since 5.25, 6.0
  */
-function array_dedupe(array $array, bool $strict = true): array
+function array_dedupe(array $array, bool $strict = true, bool $list = false): array
 {
-    return Arrays::dedupe($array, $strict);
+    return Arrays::dedupe($array, $strict, $list);
 }
 
 /**
@@ -346,6 +346,15 @@ function array_extract(array $array, int|string|array $keys, mixed &...$vars): i
 }
 
 /**
+ * @alias Arrays.export()
+ * @since 6.0
+ */
+function array_export(array $array, mixed &...$vars): int
+{
+    return Arrays::export($array, ...$vars);
+}
+
+/**
  * @alias Arrays.keysExist()
  * @since 1.0, 6.0
  */
@@ -412,7 +421,7 @@ function array_upper_keys(array $array, bool $recursive = false): array
  * @alias Arrays.convertKeys()
  * @since 4.19, 6.0
  */
-function array_convert_keys(array $array, int $case, string $exploder = null, string $imploder = null, bool $recursive = false): array
+function array_convert_keys(array $array, string|int $case, string $exploder = null, string $imploder = null, bool $recursive = false): array
 {
     return Arrays::convertKeys($array, $case, $exploder, $imploder, $recursive);
 }
@@ -523,6 +532,24 @@ function array_map_recursive(callable $func, array $array, bool $use_keys = fals
 function array_map_keys(array $array, callable $func, bool $recursive = false): array
 {
     return Arrays::mapKeys($array, $func, $recursive);
+}
+
+/**
+ * @alias Arrays.reduceRight()
+ * @since 6.0
+ */
+function array_reduce_right(array $array, mixed $carry, callable $func = null): mixed
+{
+    return Arrays::reduceRight($array, $carry, $func, $right);
+}
+
+/**
+ * @alias Arrays.reduceKeys()
+ * @since 6.0
+ */
+function array_reduce_keys(array $array, mixed $carry, callable $func = null, bool $right = false): mixed
+{
+    return Arrays::reduceKeys($array, $carry, $func, $right);
 }
 
 /**
@@ -726,21 +753,21 @@ function array_select(array &$array, int|string|array $key, mixed $default = nul
 }
 
 /**
- * @alias Arrays.select(drop=true|false, combine=none)
+ * @alias Arrays.select(drop=false)
  * @since 4.9, 6.0
  */
-function array_pick(array &$array, int|string|array $key, mixed $default = null, bool $drop = false): mixed
+function array_pick(array &$array, int|string|array $key, mixed $default = null, bool $combine = false): mixed
 {
-    return Arrays::select($array, $key, $default, drop: $drop);
+    return Arrays::select($array, $key, $default, false, $combine);
 }
 
 /**
  * @alias Arrays.select(drop=true)
  * @since 4.13, 6.0
  */
-function array_pluck(array &$array, int|string|array $key, mixed $default = null): mixed
+function array_pluck(array &$array, int|string|array $key, mixed $default = null, bool $combine = false): mixed
 {
-    return Arrays::select($array, $key, $default, drop: true);
+    return Arrays::select($array, $key, $default, true, $combine);
 }
 
 /** Additions. */
