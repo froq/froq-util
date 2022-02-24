@@ -42,15 +42,6 @@ function build_cookie(string $name, string|null $value, array $options = null): 
 }
 
 /**
- * @alias http_build_url()
- * @since 4.0
- */
-function build_url(array $data): string
-{
-    return http_build_url($data);
-}
-
-/**
  * @alias http_parse_headers()
  * @since 6.0
  */

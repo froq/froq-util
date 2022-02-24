@@ -68,7 +68,7 @@ function http_build_query_string(array $data, bool $clean = false): string
     }
 
     // Fix skipped nulls by http_build_query() & empty strings of falses.
-    $data = array_apply($data, fn($v) => is_bool($v) ? (int) $v : (string) $v, $data, true);
+    $data = array_apply($data, fn($v) => is_bool($v) ? (int) $v : (string) $v, true);
 
     $query = http_build_query($data, '', '&', PHP_QUERY_RFC3986);
 
@@ -548,4 +548,82 @@ function http_date_verify(string $date): bool
 {
     return ($d = date_create_from_format(HTTP_DATE_FORMAT, $date))
         && ($d->format(HTTP_DATE_FORMAT) === $date);
+}
+
+/**
+ * Parse a HTTP query (string) as array.
+ *
+ * @param  string $query
+ * @param  string $separator
+ * @param  int    $decoding
+ * @return array
+ * @since  6.0
+ */
+function http_parse_query(string $query, string $separator = '&', int $decoding = PHP_QUERY_RFC3986): array
+{
+    $data = [];
+
+    /** @thanks http://php.net/parse_str#119484 */
+    foreach (explode($separator, $query) as $tmp) {
+        @ [$key, $value] = explode('=', $tmp, 2);
+        if ($key == '') {
+            continue;
+        }
+
+        if ($decoding == PHP_QUERY_RFC3986) {
+            $key   = rawurldecode($key);
+            $value = rawurldecode($value ?? '');
+        } else {
+            // All others as PHP_QUERY_RFC1738.
+            $key   = urldecode($key);
+            $value = urldecode($value ?? '');
+        }
+
+        if (preg_match_all('~\[([^\]]*)\]~m', $key, $match)) {
+            $key  = substr($key, 0, strpos($key, '['));
+            $keys = [$key, ...$match[1]];
+        } else {
+            $keys = [$key];
+        }
+
+        $target =& $data;
+
+        foreach ($keys as $index) {
+            if ($index == '') {
+                if (isset($target)) {
+                    if (is_array($target)) {
+                        $ikeys  = array_filter(array_keys($target), 'is_int');
+                        $index  = $ikeys ? max($ikeys) + 1 : 0;
+                    } else {
+                        $index  = 1;
+                        $target = [$target];
+                    }
+                } else {
+                    $index  = 0;
+                    $target = [];
+                }
+            } elseif (isset($target[$index]) && !is_array($target[$index])) {
+                $target[$index] = [$target[$index]];
+            }
+
+            $target =& $target[$index];
+        }
+
+        if (is_array($target)) {
+            $target[] = $value;
+        } else {
+            $target = $value;
+        }
+    }
+
+    return $data;
+}
+
+/**
+ * @alias http_build_url()
+ * @since 4.0, 6.0
+ */
+function build_url(array $data): string
+{
+    return http_build_url($data);
 }
