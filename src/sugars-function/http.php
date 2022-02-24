@@ -529,7 +529,6 @@ function http_version(): float
 function http_date(int|string $time = null): string
 {
     $time ??= time();
-
     if (is_string($time)) {
         $time = strtotime($time);
     }
