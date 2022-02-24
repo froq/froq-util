@@ -391,15 +391,18 @@ final class Arrays extends \StaticClass
      *
      * @param  array $array
      * @param  bool  $strict
+     * @param  bool  $list
      * @return 5.22, 5.25
      */
-    public static function dedupe(array $array, bool $strict = true): array
+    public static function dedupe(array $array, bool $strict = true, bool $list = false): array
     {
         $ret = [];
 
         foreach ($array as $key => $value) {
             in_array($value, $ret, $strict) || $ret[$key] = $value;
         }
+
+        $list && $ret = array_list($ret);
 
         return $ret;
     }
@@ -870,6 +873,41 @@ final class Arrays extends \StaticClass
     }
 
     /**
+     * Export given array keys to vars given as list or named argument.
+     *
+     * @param  array     $array
+     * @param  mixed &...$vars
+     * @return int
+     * @since  6.0
+     */
+    public static function export(array $array, mixed &...$vars): int
+    {
+        $ret = 0;
+
+        if (array_is_list($vars)) {
+            // List stuff.
+            $list = array_list($array);
+            foreach ($vars as $i => $_) {
+                if (isset($list[$i])) {
+                    $vars[$i] = $list[$i];
+                    $ret++;
+                }
+            }
+        } else {
+            // Named stuff.
+            $keys = array_keys($vars);
+            foreach ($keys as $key) {
+                if (isset($array[$key])) {
+                    $vars[$key] = $array[$key];
+                    $ret++;
+                }
+            }
+        }
+
+        return $ret;
+    }
+
+    /**
      * Check whether given keys exist in given array.
      *
      * @param  array             $array
@@ -1009,14 +1047,14 @@ final class Arrays extends \StaticClass
      * Convert key cases to given case.
      *
      * @param  array       $array
-     * @param  int         $case
+     * @param  string|int  $case
      * @param  string|null $exploder
      * @param  string|null $imploder
      * @param  bool        $recursive
      * @return array
      * @since  6.0
      */
-    public static function convertKeys(array $array, int $case, string $exploder = null, string $imploder = null, bool $recursive = false): array
+    public static function convertKeys(array $array, string|int $case, string $exploder = null, string $imploder = null, bool $recursive = false): array
     {
         return self::mapKeys($array, fn($key) => is_string($key) ? convert_case($key, $case, $exploder, $imploder) : $key, $recursive);
     }
@@ -1323,7 +1361,7 @@ final class Arrays extends \StaticClass
         $ret = [];
 
         foreach ($array as $key => $value) {
-            $key = $func((string) $key);
+            $key = $func($key);
 
             if ($recursive && is_array($value)) {
                 $ret[$key] = self::mapKeys($value, $func, true);
@@ -1339,16 +1377,22 @@ final class Arrays extends \StaticClass
     /**
      * Reduce.
      *
-     * @param  array    $array
-     * @param  mixed    $carry
-     * @param  callable $func
-     * @param  bool     $right
+     * @param  array         $array
+     * @param  mixed         $carry
+     * @param  callable|null $func
+     * @param  bool          $right
      * @return mixed
      */
-    public static function reduce(array $array, mixed $carry, callable $func, bool $right = false): mixed
+    public static function reduce(array $array, mixed $carry, callable $func = null, bool $right = false): mixed
     {
+        if (is_callable($carry)) {
+            [$func, $carry] = [$carry, $func];
+        }
+
         // Reduce right option.
-        $right && $array = array_reverse($array, true);
+        if ($right) {
+            $array = array_reverse($array, true);
+        }
 
         $ret = $carry;
 
@@ -1360,14 +1404,28 @@ final class Arrays extends \StaticClass
     }
 
     /**
-     * Reduce right.
+     * Reduce keys.
      *
-     * @param  array    $array
-     * @param  mixed    $carry
-     * @param  callable $func
+     * @param  array         $array
+     * @param  mixed         $carry
+     * @param  callable|null $func
+     * @param  bool          $right
      * @return mixed
      */
-    public static function reduceRight(array $array, mixed $carry, callable $func): mixed
+    public static function reduceKeys(array $array, mixed $carry, callable $func = null, bool $right = false): mixed
+    {
+        return self::reduce(array_keys($array), $carry, $func, $right);
+    }
+
+    /**
+     * Reduce right.
+     *
+     * @param  array         $array
+     * @param  mixed         $carry
+     * @param  callable|null $func
+     * @return mixed
+     */
+    public static function reduceRight(array $array, mixed $carry, callable $func = null): mixed
     {
         return self::reduce($array, $carry, $func, true);
     }
