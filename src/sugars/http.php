@@ -15,52 +15,6 @@ if (!class_exists(App::class, false)) {
 }
 
 /**
- * Get HTTP protocol.
- *
- * @return string
- * @since  5.0
- */
-function http_protocol(): string
-{
-    return Http::protocol();
-}
-
-/**
- * Get HTTP version.
- *
- * @return float
- * @since  4.0
- */
-function http_version(): float
-{
-    return Http::version();
-}
-
-/**
- * Make/get an HTTP date.
- *
- * @param  int|string|null $time
- * @return string
- * @since  4.0
- */
-function http_date(int|string $time = null): string
-{
-    return Http::date($time);
-}
-
-/**
- * Verify an HTTP date.
- *
- * @param  string $date
- * @return bool
- * @since  4.0
- */
-function http_date_verify(string $date): bool
-{
-    return Http::dateVerify($date);
-}
-
-/**
  * Get app's request.
  *
  * @return froq\http\Request

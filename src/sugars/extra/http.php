@@ -5,163 +5,101 @@
  */
 declare(strict_types=1);
 
-use froq\util\Util;
-
 /**
- * Build a query string.
- *
- * @param  array  $data
- * @param  string $ignored_keys
- * @param  bool   $remove_tags
- * @return string
- * @since  4.0
+ * @alias http_parse_query_string()
+ * @since 4.0
  */
-function build_query_string(array $data, string $ignored_keys = '', bool $remove_tags = false): string
+function parse_query_string(string $query, bool $clean = false): array
 {
-    return Util::buildQueryString($data, $ignored_keys, $remove_tags);
+    return http_parse_query_string($query, $clean);
 }
 
 /**
- * Parse a query string.
- *
- * @param  string $query
- * @param  string $ignored_keys
- * @param  bool   $remove_tags
- * @return array
- * @since  4.0
+ * @alias http_build_query_string()
+ * @since 4.0
  */
-function parse_query_string(string $query, string $ignored_keys = '', bool $remove_tags = false): array
+function build_query_string(array $data, bool $clean = false): string
 {
-    return Util::parseQueryString($query, $ignored_keys, $remove_tags);
+    return http_build_query_string($data, $clean);
 }
 
 /**
- * Build a cookie.
- *
- * @param  string      $name
- * @param  string|null $value
- * @param  array|null  $options
- * @return string|null
- * @since  4.0
- */
-function build_cookie(string $name, string|null $value, array $options = null): string|null
-{
-    if ($name == '') {
-        trigger_error('No cookie name given');
-        return null;
-    }
-
-    $cookie = ['name' => $name, 'value' => $value] + array_replace(
-        array_pad_keys([], ['expires', 'path', 'domain', 'secure', 'httponly', 'samesite']),
-        array_map_keys($options ?? [], 'strtolower')
-    );
-
-    extract($cookie);
-
-    $ret = rawurlencode($name) . '=';
-
-    if ($value === '' || $value === null || $expires < 0) {
-        $ret .= sprintf('n/a; Expires=%s; Max-Age=0', gmdate('D, d M Y H:i:s \G\M\T', 0));
-    } else {
-        $ret .= rawurlencode($value);
-
-        // Must be given in-seconds format.
-        if ($expires !== null) {
-            $ret .= sprintf('; Expires=%s; Max-Age=%d', gmdate('D, d M Y H:i:s \G\M\T', time() + $expires),
-                $expires);
-        }
-    }
-
-    $path     && $ret .= '; Path=' . $path;
-    $domain   && $ret .= '; Domain=' . $domain;
-    $secure   && $ret .= '; Secure';
-    $httponly && $ret .= '; HttpOnly';
-    $samesite && $ret .= '; SameSite=' . $samesite;
-
-    return $ret;
-}
-
-/**
- * Parse a cookie (from a header line).
- *
- * @param  string $cookie
- * @return array
- * @since  4.0
+ * @alias http_parse_cookie()
+ * @since 4.0
  */
 function parse_cookie(string $cookie): array
 {
-    $ret = [];
-
-    foreach (split(';', $cookie) as $i => $component) {
-        $component = trim($component);
-        if ($component) {
-            [$name, $value] = split('=', $component, 2);
-            if ($i == 0) {
-                $ret['name']  = isset($name)  ? rawurldecode($name)  : $name;
-                $ret['value'] = isset($value) ? rawurldecode($value) : $value;
-                continue;
-            }
-
-            $name = strtolower($name ?? '');
-            if ($name) {
-                switch ($name) {
-                    case 'secure':   $value = true;               break;
-                    case 'httponly': $value = true;               break;
-                    case 'samesite': $value = strtolower($value); break;
-                }
-                $ret[$name] = $value;
-            }
-        }
-    }
-
-    return $ret;
+    return http_parse_cookie($cookie);
 }
 
 /**
- * Build a URL.
- *
- * @param  array $data
- * @return string|null
- * @since  4.0
+ * @alias http_build_cookie()
+ * @since 4.0
  */
-function build_url(array $data): string|null
+function build_cookie(string $name, string|null $value, array $options = null): string
 {
-    if (!$data) {
-        return null;
-    }
+    return http_build_cookie($name, $value, $options);
+}
 
-    $url = '';
+/**
+ * @alias http_build_url()
+ * @since 4.0
+ */
+function build_url(array $data): string
+{
+    return http_build_url($data);
+}
 
-    // Syntax: https://tools.ietf.org/html/rfc3986#section-3
-    if (isset($data['scheme'])) {
-        $url .= $data['scheme'] . '://';
-    }
+/**
+ * @alias http_parse_headers()
+ * @since 6.0
+ */
+function parse_headers(string $headers, string|int $case = null): array
+{
+    return http_parse_headers($headers, $case);
+}
 
-    if (isset($data['authority'])) {
-        $url .= $data['authority'];
-    } else {
-        $authority = null;
-        isset($data['user']) && $authority = $data['user'];
-        isset($data['pass']) && $authority .= ':'. $data['pass'];
+/**
+ * @alias http_build_headers()
+ * @since 6.0
+ */
+function build_headers(array $data, string|int $case = null): string
+{
+    return http_build_headers($data, $case);
+}
 
-        // Separate.
-        if ($authority !== null) {
-            $authority .= '@';
-        }
+/**
+ * @alias http_parse_header()
+ * @since 6.0
+ */
+function parse_header(string $header, string|int $case = null, bool $verbose = false): array
+{
+    return http_parse_header($header, $case, $verbose);
+}
 
-        isset($data['host']) && $authority .= $data['host'];
-        isset($data['port']) && $authority .= ':'. $data['port'];
+/**
+ * @alias http_build_header()
+ * @since 6.0
+ */
+function build_header(string $name, string|null $value): string
+{
+    return http_build_header($name, $value);
+}
 
-        $url .= $authority;
-    }
+/**
+ * @alias http_parse_request_line()
+ * @since 6.0
+ */
+function parse_request_line(string $line): array
+{
+    return http_parse_request_line($line);
+}
 
-    if (isset($data['queryParams'])) {
-        $data['query'] = http_build_query($data['queryParams']);
-    }
-
-    isset($data['path']) && $url .= $data['path'];
-    isset($data['query']) && $url .= '?'. $data['query'];
-    isset($data['fragment']) && $url .= '#'. $data['fragment'];
-
-    return $url;
+/**
+ * @alias http_parse_response_line()
+ * @since 6.0
+ */
+function parse_response_line(string $line): array
+{
+    return http_parse_response_line($line);
 }
