@@ -151,9 +151,9 @@ function array_compose(array $keys, array $values, mixed $default = null): array
  * @alias Arrays.concat()
  * @since 5.30, 6.0
  */
-function array_concat(array $array, mixed $item, mixed ...$items): array
+function array_concat(array $array, mixed ...$items): array
 {
-    return Arrays::concat($array, $item, ...$items);
+    return Arrays::concat($array, ...$items);
 }
 
 /**

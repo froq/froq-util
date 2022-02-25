@@ -358,23 +358,21 @@ final class Arrays extends \StaticClass
     }
 
     /**
-     * Merge all given item(s).
+     * Concat all given items.
      *
      * @param  array    $array
-     * @param  mixed    $item
      * @param  mixed ...$items
      * @return array
      * @since  5.30
      */
-    public static function concat(array $array, mixed $item, mixed ...$items): array
+    public static function concat(array $array, mixed ...$items): array
     {
-        // Note: Array $item won't be merged.
-
-        return array_merge($array, [$item], $items);
+        // Note: Array items won't be merged.
+        return [...$array, ...$items];
     }
 
     /**
-     * Merge all given array(s) returning a unique'd array with strict comparison.
+     * Union all given array(s) returning a unique'd array with strict comparison.
      *
      * @param  array    $array1
      * @param  array    $array2
