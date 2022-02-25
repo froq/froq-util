@@ -8,22 +8,22 @@ declare(strict_types=1);
 /**
  * Make an array with given input.
  *
- * @param  array|object $in
+ * @param  array|object $input
  * @param  bool         $deep
  * @return array
  */
-function to_array(array|object $in, bool $deep = true): array
+function to_array(array|object $input, bool $deep = true): array
 {
-    if ($in && is_object($in)) {
+    if ($input && is_object($input)) {
         $out = (array) (
-            is_iterator($in) ? iterator_to_array($in) : (
-                is_callable([$in, 'toArray']) ? $in->toArray() : (
-                    get_object_vars($in)
+            is_iterator($input) ? iterator_to_array($input) : (
+                is_callable([$input, 'toArray']) ? $input->toArray() : (
+                    get_object_vars($input)
                 )
             )
         );
     } else {
-        $out = (array) $in;
+        $out = (array) $input;
     }
 
     if ($deep) {
@@ -39,22 +39,22 @@ function to_array(array|object $in, bool $deep = true): array
 /**
  * Make an object with given input.
  *
- * @param  array|object $in
+ * @param  array|object $input
  * @param  bool         $deep
  * @return object
  */
-function to_object(array|object $in, bool $deep = true): object
+function to_object(array|object $input, bool $deep = true): object
 {
-    if ($in && is_object($in)) {
+    if ($input && is_object($input)) {
         $out = (object) (
-            is_iterator($in) ? iterator_to_array($in) : (
-                is_callable([$in, 'toArray']) ? $in->toArray() : (
-                    get_object_vars($in)
+            is_iterator($input) ? iterator_to_array($input) : (
+                is_callable([$input, 'toArray']) ? $input->toArray() : (
+                    get_object_vars($input)
                 )
             )
         );
     } else {
-        $out = (object) $in;
+        $out = (object) $input;
     }
 
     if ($deep) {
