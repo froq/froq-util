@@ -913,8 +913,8 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     /**
      * Compare with locale.
      *
-     * @param  self|string $search
-     * @param  bool        $icase
+     * @param  self|string $data
+     * @param  string      $locale
      * @return int
      */
     public function compareLocale(self|string $data, string $locale): int
@@ -925,7 +925,7 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     /**
      * Equals checker.
      *
-     * @param  self|string|array<self|string> $search
+     * @param  self|string|array<self|string> $data
      * @param  bool                           $icase
      * @return bool
      */
