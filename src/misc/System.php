@@ -36,7 +36,7 @@ final class System extends \StaticClass
             if ($remainds = strstr((string) $value, '.')) {
                 $decimals = strlen($remainds) - 1;
             }
-            $value = number_format($value, $decimals, '.', '');
+            $value = format_number($value, $decimals, '.', '');
         }
 
 
@@ -51,13 +51,13 @@ final class System extends \StaticClass
      * @param  string     $option
      * @param  mixed|null $default
      * @param  bool       $bool
-     * @return string|bool|null
+     * @return mixed|null
      */
-    public static function iniGet(string $option, mixed $default = null, bool $bool = false): string|bool|null
+    public static function iniGet(string $option, mixed $default = null, bool $bool = false): mixed
     {
         $value = ini_get($option);
 
-        if ($value === '') {
+        if ($value === '' || $value === false) {
             $value = $default;
         }
 
@@ -66,6 +66,10 @@ final class System extends \StaticClass
                 strtolower($value),
                 '1', 'on', 'yes', 'true'
             );
+        }
+
+        if (is_string($value) && is_numeric($value)) {
+            $value = str_contains($value, '.') ? (float) $value : (int) $value;
         }
 
         return $value;
@@ -88,7 +92,7 @@ final class System extends \StaticClass
             if ($remainds = strstr((string) $value, '.')) {
                 $decimals = strlen($remainds) - 1;
             }
-            $value = number_format($value, $decimals, '.', '');
+            $value = format_number($value, $decimals, '.', '');
         }
 
         return putenv($option .'='. $value);
@@ -116,6 +120,10 @@ final class System extends \StaticClass
                     $value = null;
                 }
             }
+        }
+
+        if (is_string($value) && is_numeric($value)) {
+            $value = str_contains($value, '.') ? (float) $value : (int) $value;
         }
 
         return $value ?? $default;
