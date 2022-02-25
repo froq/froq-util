@@ -1902,25 +1902,6 @@ function is_class_of(string|object $class, string|object ...$classes): bool
 }
 
 /**
- * Check whether given class method is callable (exists & public).
- *
- * @param  string|object   $class
- * @param  string          $method
- * @param  bool            $static
- * @param  Reflector|null &$ref
- * @return bool
- * @since  5.0
- */
-function is_callable_method(string|object $class, string $method, bool $static = false, Reflector &$ref = null): bool
-{
-    if (method_exists($class, $method)) {
-        $ref = new ReflectionMethod($class, $method);
-        return $static ? $ref->isPublic() && $ref->isStatic() : $ref->isPublic();
-    }
-    return false;
-}
-
-/**
  * Check empty state(s) of given input(s).
  *
  * @param  mixed    $var
