@@ -41,29 +41,29 @@ function string_contains(string $string, string|array $search, bool $icase = fal
 /**
  * Check whether given string starts with given search/searches.
  *
- * @param  string               $in
+ * @param  string               $string
  * @param  string|array<string> $src
  * @return bool
  * @since  3.0
  */
-function string_starts_with(string $in, string|array $src, bool $icase = false, bool $mbyte = false): bool
+function string_starts_with(string $string, string|array $src, bool $icase = false, bool $mbyte = false): bool
 {
-    return is_string($src) ? Strings::startsWith($in, $src, $icase, $mbyte)
-                           : Strings::startsWithAny($in, $src, $icase, $mbyte);
+    return is_string($src) ? Strings::startsWith($string, $src, $icase, $mbyte)
+                           : Strings::startsWithAny($string, $src, $icase, $mbyte);
 }
 
 /**
  * Check whether given string ends with given search/searches.
  *
- * @param  string               $in
+ * @param  string               $string
  * @param  string|array<string> $src
  * @return bool
  * @since  3.0
  */
-function string_ends_with(string $in, string|array $src, bool $icase = false, bool $mbyte = false): bool
+function string_ends_with(string $string, string|array $src, bool $icase = false, bool $mbyte = false): bool
 {
-    return is_string($src) ? Strings::endsWith($in, $src, $icase, $mbyte)
-                           : Strings::endsWithAny($in, $src, $icase, $mbyte);
+    return is_string($src) ? Strings::endsWith($string, $src, $icase, $mbyte)
+                           : Strings::endsWithAny($string, $src, $icase, $mbyte);
 }
 
 /**
