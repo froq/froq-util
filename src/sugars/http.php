@@ -6,7 +6,7 @@
 declare(strict_types=1);
 
 use froq\util\UtilException;
-use froq\http\{Http, Request, Response, request\Segments, response\Status};
+use froq\http\{Request, Response, request\Segments, response\Status};
 use froq\App;
 
 // Check dependencies (all others already come with froq\App).
