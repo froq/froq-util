@@ -55,8 +55,8 @@ function qo(...$args): object
 
 /**
  * Type getter.
+ * @alias get_type()
  * @since 6.0
- * @aliasOf get_type()
  */
 function type(...$args) { return get_type(...$args); }
 
@@ -120,126 +120,127 @@ function reduce(array $array, mixed $carry, callable $func = null, bool $right =
 }
 
 /**
- * Get size (count/length) of given input.
+ * Get size (length/count).
  *
- * @param  mixed<string|countable|object|null> $in
+ * @param  mixed<string|countable|object|null> $var
  * @return int
  * @since  3.0, 5.0
  */
-function size(mixed $in): int
+function size(mixed $var): int
 {
     // Speed up, a bit..
-    if ($in === null || $in === '' || $in === []) {
+    if ($var === null || $var === '' || $var === []) {
         return 0;
     }
 
     return match (true) {
-        is_string($in)    => mb_strlen($in),
-        is_countable($in) => count($in),
-        is_object($in)    => count(get_object_vars($in)),
-        default           => 0
+        is_string($var)    => mb_strlen($var),
+        is_countable($var) => count($var),
+        is_object($var)    => count(get_object_vars($var)),
+        default            => 0
     };
 }
 
 /**
  * Pad an array or string.
  *
- * @param  array|string $in
+ * @param  array|string $input
  * @param  int          $length
  * @param  mixed|null   $pad
  * @return array|string
  * @since  5.0
  */
-function pad(array|string $in, int $length, mixed $pad = null): array|string
+function pad(array|string $input, int $length, mixed $pad = null): array|string
 {
-    return is_array($in) ? array_pad($in, $length, $pad)
-         : str_pad($in, $length, strval($pad ?? ' '));
+    return is_array($input) ? array_pad($input, $length, $pad)
+         : str_pad($input, $length, strval($pad ?? ' '));
 }
 
 /**
  * Chunk an array or string.
  *
- * @param  array|string $in
+ * @param  array|string $input
  * @param  int          $length
  * @param  bool         $keep_keys
  * @return array
  * @since  5.0
  */
-function chunk(array|string $in, int $length, bool $keep_keys = false): array
+function chunk(array|string $input, int $length, bool $keep_keys = false): array
 {
-    return is_array($in) ? array_chunk($in, $length, $keep_keys)
-         : str_chunk($in, $length, join: false);
+    return is_array($input) ? array_chunk($input, $length, $keep_keys)
+         : str_chunk($input, $length, join: false);
 }
 
 /**
  * Concat an array or string.
  *
- * @param  array|string    $in
- * @param  mixed        ...$ins
+ * @param  array|string    $input
+ * @param  mixed        ...$inputs
  * @return array|string
  * @since  4.0, 5.0
  */
-function concat(array|string $in, mixed ...$ins): array|string
+function concat(array|string $input, mixed ...$inputs): array|string
 {
-    return is_array($in) ? array_concat($in, ...$ins)
-         : str_concat($in, ...$ins);
+    return is_array($input) ? array_concat($input, ...$inputs)
+         : str_concat($input, ...$inputs);
 }
 
 /**
  * Slice an array or string.
  *
- * @param  array|string $in
+ * @param  array|string $input
  * @param  int          $start
  * @param  int|null     $end
  * @param  bool         $keep_keys
  * @return array|string
  * @since  3.0, 4.0, 5.0
  */
-function slice(array|string $in, int $start, int $end = null, bool $keep_keys = false): array|string
+function slice(array|string $input, int $start, int $end = null, bool $keep_keys = false): array|string
 {
-    return is_array($in) ? array_slice($in, $start, $end, $keep_keys)
-         : mb_substr($in, $start, $end);
+    return is_array($input) ? array_slice($input, $start, $end, $keep_keys)
+         : mb_substr($input, $start, $end);
 }
 
 /**
  * Splice an array or string.
  *
- * @param  array|string       $in
- * @param  int                $start
- * @param  int|null           $end
- * @param  array|string|null  $replace
+ * @param  array|string      $input
+ * @param  int               $start
+ * @param  int|null          $end
+ * @param  array|string|null $replace
  * @param  array|string|null &$replaced
  * @return array|string
  * @since  6.0
  */
-function splice(array|string $in, int $start, int $end = null, array|string $replace = null, array|string &$replaced = null): array|string
+function splice(array|string $input, int $start, int $end = null, array|string $replace = null, array|string &$replaced = null): array|string
 {
-    $split  = is_array($in) ? $in : mb_str_split($in);
+    $split  = is_array($input) ? $input : mb_str_split($input);
     $splice = array_splice($split, $start, $end, (array) $replace);
 
+    $replaced = null;
     if ($splice) {
-        $replaced = is_array($in) ? $splice : join($splice);
+        $replaced = is_array($input) ? $splice : join($splice);
     }
 
-    return is_array($in) ? $split : join($split);
+    return is_array($input) ? $split : join($split);
 }
 
 /**
  * Split a string, with unicode style.
  *
- * @param  string            $sep
- * @param  string            $in
- * @param  int|null          $limit
- * @param  int|null          $flags
+ * @param  string           $separator
+ * @param  string           $input
+ * @param  int|null         $limit
+ * @param  int|null         $flags
  * @param  RegExpError|null &$error
  * @return array
  * @since  5.0
  */
-function split(string $sep, string $in, int $limit = null, int $flags = null, RegExpError &$error = null): array
+function split(string $separator, string $input, int $limit = null, int $flags = null, RegExpError &$error = null): array
 {
-    if ($sep == '') {
+    if ($separator == '') {
         $ret = preg_split(
-            '~~u', $in,
+            '~~u', $input,
             limit: -1,
             flags: PREG_SPLIT_NO_EMPTY
         ) ?: [];
@@ -252,11 +253,11 @@ function split(string $sep, string $in, int $limit = null, int $flags = null, Re
         }
     } else {
         // Escape null bytes, delimiter & special char typos.
-        $sep = strlen($sep) == 1 ? preg_quote($sep, '~')
-             : str_replace(["\0", '~'], ['\0', '\~'], $sep);
+        $separator = strlen($separator) == 1 ? preg_quote($separator, '~')
+             : str_replace(["\0", '~'], ['\0', '\~'], $separator);
 
         $ret = preg_split(
-            '~'. $sep .'~u', $in,
+            '~'. $separator .'~u', $input,
             limit: ($limit ?? -1),
             flags: ($flags |= PREG_SPLIT_NO_EMPTY)
         ) ?: [];
@@ -279,77 +280,77 @@ function split(string $sep, string $in, int $limit = null, int $flags = null, Re
 /**
  * Unsplit, a fun function.
  *
- * @param  string $sep
- * @param  array  $in
+ * @param  string $separator
+ * @param  array  $input
  * @return string
  * @since  3.0, 5.0
  */
-function unsplit(string $sep, array $in): string
+function unsplit(string $separator, array $input): string
 {
-    return join($sep, $in);
+    return join($separator, $input);
 }
 
 /**
  * Strip a string, with RegExp (~) option.
  *
- * @param  string $in
- * @param  string $chars
+ * @param  string $input
+ * @param  string $characters
  * @return string
  * @since  3.0, 5.0
  */
-function strip(string $in, string $chars = ''): string
+function strip(string $input, string $characters = ''): string
 {
-    if ($chars == '') {
-        return trim($in);
+    if ($characters == '') {
+        return trim($input);
     }
 
     // RegExp: only ~..~ patterns accepted.
-    if (strlen($chars) >= 3 && $chars[0] == '~') {
-        $ruls = substr($chars, 1, ($pos = strrpos($chars, '~')) - 1);
-        $mods = substr($chars, $pos + 1);
-        return preg_replace(sprintf('~^%s|%s$~%s', $ruls, $ruls, $mods), '', $in);
+    if (strlen($characters) >= 3 && $characters[0] == '~') {
+        $ruls = substr($characters, 1, ($pos = strrpos($characters, '~')) - 1);
+        $mods = substr($characters, $pos + 1);
+        return preg_replace(sprintf('~^%s|%s$~%s', $ruls, $ruls, $mods), '', $input);
     }
 
-    return trim($in, $chars);
+    return trim($input, $characters);
 }
 
 /**
  * Replace something(s) on an array or string.
  *
- * @param  string|array          $in
+ * @param  string|array          $input
  * @param  string|array          $search
  * @param  string|array|callable $replace
  * @param  bool                  $icase
  * @return string|array
  * @since  3.0, 6.0
  */
-function replace(string|array $in, string|array $search, string|array|callable $replace, bool $icase = false): string|array
+function replace(string|array $input, string|array $search, string|array|callable $replace, bool $icase = false): string|array
 {
-    if (is_string($in) && is_string($search)) {
+    if (is_string($input) && is_string($search)) {
         // RegExp: only ~..~ patterns accepted.
         if (strlen($search) >= 3 && $search[0] == '~') {
             return is_callable($replace)
-                 ? preg_replace_callback($search, $replace, $in)
-                 : preg_replace($search, $replace, $in);
+                 ? preg_replace_callback($search, $replace, $input)
+                 : preg_replace($search, $replace, $input);
         }
     }
 
-    return $icase ? str_ireplace($search, $replace, $in)
-                  : str_replace($search, $replace, $in);
+    return $icase ? str_ireplace($search, $replace, $input)
+                  : str_replace($search, $replace, $input);
 }
 
 /**
  * Grep, actually grabs something from given input.
  *
- * @param  string $in
+ * @param  string $input
  * @param  string $pattern
  * @param  bool   $named
  * @return string|array|null
  * @since  3.0, 5.0
  */
-function grep(string $in, string $pattern, bool $named = false): string|array|null
+function grep(string $input, string $pattern, bool $named = false): string|array|null
 {
-    preg_match($pattern, $in, $match, PREG_UNMATCHED_AS_NULL);
+    preg_match($pattern, $input, $match, PREG_UNMATCHED_AS_NULL);
 
     if (isset($match[1])) {
         $ret = $match[1];
@@ -368,16 +369,16 @@ function grep(string $in, string $pattern, bool $named = false): string|array|nu
 /**
  * Grep all, actually grabs somethings from given input.
  *
- * @param  string $in
+ * @param  string $input
  * @param  string $pattern
  * @param  bool   $named
  * @param  bool   $uniform
  * @return array<string|null>|null
  * @since  3.15, 5.0
  */
-function grep_all(string $in, string $pattern, bool $named = false, bool $uniform = false): array|null
+function grep_all(string $input, string $pattern, bool $named = false, bool $uniform = false): array|null
 {
-    preg_match_all($pattern, $in, $match, PREG_UNMATCHED_AS_NULL);
+    preg_match_all($pattern, $input, $match, PREG_UNMATCHED_AS_NULL);
 
     if (isset($match[1])) {
         unset($match[0]); // Drop input.
@@ -425,52 +426,52 @@ function grep_all(string $in, string $pattern, bool $named = false, bool $unifor
 /**
  * Convert base (original source: http://stackoverflow.com/a/4668620/362780).
  *
- * @param  int|string $in    Digits to convert.
- * @param  int|string $from  From chars or base.
- * @param  int|string $to    To chars or base.
+ * @param  int|string $input Digits to convert.
+ * @param  int|string $from  From characters or base.
+ * @param  int|string $to    To characters or base.
  * @return string|null
- * @since  4.0, 4.25 Derived from str_base_convert().
+ * @since  4.0, 4.25
  */
-function convert_base(int|string $in, int|string $from, int|string $to): string|null
+function convert_base(int|string $input, int|string $from, int|string $to): string|null
 {
     // Try to use speed/power of GMP.
     if (extension_loaded('gmp') && is_int($from) && is_int($to)) {
-        return gmp_strval(gmp_init($in, $from), $to);
+        return gmp_strval(gmp_init($input, $from), $to);
     }
 
-    // Using base62 chars.
-    $chars = BASE62_ALPHABET;
+    // Using base62 characters.
+    $characters = BASE62_ALPHABET;
 
     if (is_int($from)) {
         if ($from < 2 || $from > 62) {
-            trigger_error(sprintf('%s(): Invalid base for from chars, min=2 & max=62', __function__));
+            trigger_error(sprintf('%s(): Invalid base for from characters, min=2 & max=62', __function__));
             return null;
         }
-        $from = strcut($chars, $from);
+        $from = strcut($characters, $from);
     }
     if (is_int($to)) {
         if ($to < 2 || $to > 62) {
-            trigger_error(sprintf('%s(): Invalid base for to chars, min=2 & max=62', __function__));
+            trigger_error(sprintf('%s(): Invalid base for to characters, min=2 & max=62', __function__));
             return null;
         }
-        $to = strcut($chars, $to);
+        $to = strcut($characters, $to);
     }
 
-    $in = strval($in);
-    if (!$in || $from == $to) {
-        return $in;
+    $input = strval($input);
+    if (!$input || $from == $to) {
+        return $input;
     }
 
-    [$in_length, $from_base_length, $to_base_length]
-        = [strlen($in), strlen($from), strlen($to)];
+    [$input_length, $from_base_length, $to_base_length]
+        = [strlen($input), strlen($from), strlen($to)];
 
     $numbers = [];
-    for ($i = 0; $i < $in_length; $i++) {
-        $numbers[$i] = strpos($from, $in[$i]);
+    for ($i = 0; $i < $input_length; $i++) {
+        $numbers[$i] = strpos($from, $input[$i]);
     }
 
     $ret = '';
-    $old_length = $in_length;
+    $old_length = $input_length;
 
     do {
         $new_length = $div = 0;
@@ -478,7 +479,7 @@ function convert_base(int|string $in, int|string $from, int|string $to): string|
         for ($i = 0; $i < $old_length; $i++) {
             $div = ($div * $from_base_length) + $numbers[$i];
             if ($div >= $to_base_length) {
-                $numbers[$new_length++] = ($div / $to_base_length) | 0;
+                $numbers[$new_length++] = (int) ($div / $to_base_length);
                 $div = $div % $to_base_length;
             } elseif ($new_length > 0) {
                 $numbers[$new_length++] = 0;
@@ -496,14 +497,14 @@ function convert_base(int|string $in, int|string $from, int|string $to): string|
 /**
  * Convert case.
  *
- * @param  string      $in
+ * @param  string      $input
  * @param  string|int  $case
  * @param  string|null $exploder
  * @param  string|null $imploder
  * @return string|null
  * @since  4.26
  */
-function convert_case(string $in, string|int $case, string $exploder = null, string $imploder = null): string|null
+function convert_case(string $input, string|int $case, string $exploder = null, string $imploder = null): string|null
 {
     if (is_string($case)) {
         $case_value = get_constant_value('CASE_' . strtoupper($case));
@@ -522,24 +523,24 @@ function convert_case(string $in, string|int $case, string $exploder = null, str
     }
 
     if ($case == CASE_LOWER) {
-        return mb_strtolower($in);
+        return mb_strtolower($input);
     } elseif ($case == CASE_UPPER) {
-        return mb_strtoupper($in);
+        return mb_strtoupper($input);
     }
 
     // Set default split char.
     $exploder = ($exploder !== null && $exploder !== '') ? $exploder : ' ';
 
     return match ($case) {
-        CASE_DASH  => implode('-', explode($exploder, mb_strtolower($in))),
-        CASE_SNAKE => implode('_', explode($exploder, mb_strtolower($in))),
+        CASE_DASH  => implode('-', explode($exploder, mb_strtolower($input))),
+        CASE_SNAKE => implode('_', explode($exploder, mb_strtolower($input))),
         CASE_TITLE => implode($imploder ?? $exploder, array_map(
             fn($s) => mb_ucfirst(trim($s)),
-            explode($exploder, mb_strtolower($in))
+            explode($exploder, mb_strtolower($input))
         )),
         CASE_CAMEL => mb_lcfirst(implode('', array_map(
             fn($s) => mb_ucfirst(trim($s)),
-            explode($exploder, mb_strtolower($in))
+            explode($exploder, mb_strtolower($input))
         ))),
     };
 }
@@ -734,7 +735,7 @@ function get_uniqid(int $length = 14, int $base = 16, bool $hrtime = false, bool
         return null;
     }
     if ($base < 10 || $base > 62) {
-        trigger_error(sprintf('%s(): Invalid base, min=10, max=62', __function__));
+        trigger_error(sprintf('%s(): Invalid base, min=10 & max=62', __function__));
         return null;
     }
 
@@ -782,7 +783,7 @@ function get_random_uniqid(int $length = 14, int $base = 16, bool $upper = false
         return null;
     }
     if ($base < 10 || $base > 62) {
-        trigger_error(sprintf('%s(): Invalid base, min=10, max=62', __function__));
+        trigger_error(sprintf('%s(): Invalid base, min=10 & max=62', __function__));
         return null;
     }
 
@@ -819,7 +820,7 @@ function get_request_id(): string
  * Get real path of given path.
  *
  * @param  string           $path
- * @param  string|bool|null $check
+ * @param  string|bool|null $check True or "file", "dir".
  * @return string|null
  * @since  4.0
  */
@@ -1140,9 +1141,9 @@ function preg_test(string $pattern, string $subject): bool
 /**
  * Perform a regular expression search & remove.
  *
- * @param  string|array  $pattern
- * @param  string|array  $subject
- * @param  int|null      $limit
+ * @param  string|array $pattern
+ * @param  string|array $subject
+ * @param  int|null     $limit
  * @param  int|null     &$count
  * @return string|array|null
  * @since  4.0
@@ -1199,10 +1200,10 @@ function last(array $array): mixed
 /**
  * Sort an array without modifying input array.
  *
- * @param  array              $array
- * @param  callable|int|null  $func
- * @param  int                $flags
- * @param  bool|null          $assoc
+ * @param  array             $array
+ * @param  callable|int|null $func
+ * @param  int               $flags
+ * @param  bool|null         $assoc
  * @return array
  * @since  5.41
  */
@@ -1417,13 +1418,13 @@ function uuid_format(string $input): string|null
  * Format for sprintf().
  *
  * @param  string   $format
- * @param  mixed    $in
- * @param  mixed ...$ins
+ * @param  mixed    $input
+ * @param  mixed ...$inputs
  * @return string
  */
-function format(string $format, mixed $in, mixed ...$ins): string
+function format(string $format, mixed $input, mixed ...$inputs): string
 {
-    $params = [$in, ...$ins];
+    $params = [$input, ...$inputs];
 
     // Convert special formats (quoted string, int).
     $format = str_replace(['%q', '%Q', '%i'], ["'%s'", '"%s"', '%d'], $format);
@@ -1447,52 +1448,52 @@ function format(string $format, mixed $in, mixed ...$ins): string
 /**
  * Format an input as bool (yes).
  *
- * @param  bool|int $in
+ * @param  bool|int $input
  * @return string
  * @since  5.31
  */
-function format_bool(bool|int $in): string
+function format_bool(bool|int $input): string
 {
-    return $in ? 'true' : 'false';
+    return $input ? 'true' : 'false';
 }
 
 /**
- * Format an input as number (properly).
+ * Format an input as number.
  *
- * @param  int|float|string $in
- * @param  int|bool|null    $decs
- * @param  string|null      $dsep
- * @param  string|null      $tsep
+ * @param  int|float|string $input
+ * @param  int|bool|null    $decimals
+ * @param  string|null      $decimal_separator
+ * @param  string|null      $thousand_separator
  * @return string|null
  * @since  5.31
  */
-function format_number(int|float|string $in, int|bool|null $decs = 0, string $dsep = null, string $tsep = null): string|null
+function format_number(int|float|string $input, int|bool|null $decimals = 0, string $decimal_separator = null, string $thousand_separator = null): string|null
 {
-    if (is_string($in)) {
-        if (!is_numeric($in)) {
+    if (is_string($input)) {
+        if (!is_numeric($input)) {
             trigger_error(sprintf('%s(): Invalid non-numeric input', __function__));
             return null;
         }
 
-        $in += 0;
+        $input += 0;
     }
 
-    $sin = var_export($in, true);
+    $export = var_export($input, true);
 
     // Auto-detect decimals.
-    if (is_true($decs)) {
-        $decs = strlen(stracut($sin, '.'));
+    if (is_true($decimals)) {
+        $decimals = strlen(stracut($export, '.'));
     }
 
     // Prevent corruptions.
-    if ($decs > PRECISION) {
-        $decs = PRECISION;
+    if ($decimals > PRECISION) {
+        $decimals = PRECISION;
     }
 
-    $ret = number_format($in, (int) $decs, $dsep, $tsep);
+    $ret = number_format($input, (int) $decimals, $decimal_separator, $thousand_separator);
 
     // Append ".0" for eg: 1.0 & upper NAN/INF.
-    if (!$decs && !is_int($in) && strlen($sin) == 1) {
+    if (!$decimals && !is_int($input) && strlen($export) == 1) {
         $ret .= '.0';
     } elseif ($ret == 'inf' || $ret == 'nan') {
         $ret = strtoupper($ret);
@@ -1504,22 +1505,22 @@ function format_number(int|float|string $in, int|bool|null $decs = 0, string $ds
 /**
  * Translate given input to slugified output.
  *
- * @param  string $in
+ * @param  string $input
  * @param  string $preserve
  * @param  string $replace
  * @return string
  * @since  5.0
  */
-function slug(string $in, string $preserve = '', string $replace = '-'): string
+function slug(string $input, string $preserve = '', string $replace = '-'): string
 {
-    static $chars;
-    $chars ??= require 'statics/slug-chars.php';
+    static $map;
+    $map ??= require 'statics/slug-map.php';
 
     $preserve && $preserve = preg_quote($preserve, '~');
     $replace  || $replace  = '-';
 
     $out = preg_replace(['~[^\w'. $preserve . $replace .']+~', '~['. $replace .']+~'],
-        $replace, strtr($in, $chars));
+        $replace, strtr($input, $map));
 
     return strtolower(trim($out, $replace));
 }
