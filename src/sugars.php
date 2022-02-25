@@ -303,13 +303,35 @@ function strip(string $in, string $chars = null): string
         return trim($in);
     } else {
         // RegExp: only ~..~ patterns accepted.
-        if ($chars[0] == '~' && strlen($chars) >= 3) {
+        if (strlen($chars) >= 3 && $chars[0] == '~') {
             $ruls = substr($chars, 1, ($pos = strrpos($chars, '~')) - 1);
             $mods = substr($chars, $pos + 1);
             return preg_replace(sprintf('~^%s|%s$~%s', $ruls, $ruls, $mods), '', $in);
         }
         return trim($in, $chars);
     }
+}
+
+/**
+ * Replace something(s) on an array or string.
+ *
+ * @param  string|array         $in
+ * @param  string|array         $search
+ * @param  string|array|callable $replace
+ * @return string|array
+ * @since  3.0, 6.0
+ */
+function replace(string|array $in, string|array $search, string|array|callable $replace): string|array
+{
+    if (is_string($in)) {
+        // RegExp: only ~..~ patterns accepted.
+        if (is_string($search) && strlen($search) >= 3 && $search[0] == '~') {
+            return is_callable($replace)
+                 ? preg_replace_callback($search, $replace, $in)
+                 : preg_replace($search, $replace, $in);
+        }
+    }
+    return str_replace($search, $replace, $in);
 }
 
 /**
