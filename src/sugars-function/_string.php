@@ -17,14 +17,14 @@ function strpfx(...$args) { return str_has_prefix(...$args);  } // Search prefix
 function strsfx(...$args) { return str_has_suffix(...$args);  } // Search suffix.
 
 /**
- * Shorter stuff with multi-byte.
+ * Shorter stuff in multi-byte style.
  * @since 3.0, 5.0
  */
 function upper(string $in): string { return mb_strtoupper($in); }
 function lower(string $in): string { return mb_strtolower($in); }
 
 /**
- * Sub a string with given start/length in unicode manner.
+ * Sub a string with given start/length in multi-byte style.
  *
  * @param  string   $str
  * @param  int      $start
@@ -38,7 +38,7 @@ function strsub(string $str, int $start, int $length = null): string
 }
 
 /**
- * Cut a string with given length in unicode manner.
+ * Cut a string with given length in multi-byte style.
  *
  * @param  string $str
  * @param  int    $length
@@ -66,8 +66,8 @@ function strbcut(string $str, string $src, int $length = null, int $offset = nul
     $pos = !$icase ? mb_strpos($str, $src, $offset ?? 0) : mb_stripos($str, $src, $offset ?? 0);
 
     if ($pos !== false) {
-        $cut = mb_substr($str, 0, $pos); // Before (b).
-        return !$length ? $cut : strcut($cut, $length);
+        $ret = mb_substr($str, 0, $pos); // Before (b).
+        return $length ? strcut($ret, $length) : $ret;
     }
 
     return ''; // Not found.
@@ -89,8 +89,8 @@ function stracut(string $str, string $src, int $length = null, int $offset = nul
     $pos = !$icase ? mb_strpos($str, $src, $offset ?? 0) : mb_stripos($str, $src, $offset ?? 0);
 
     if ($pos !== false) {
-        $cut = mb_substr($str, $pos + mb_strlen($src)); // After (a).
-        return !$length ? $cut : strcut($cut, $length);
+        $ret = mb_substr($str, $pos + mb_strlen($src)); // After (a).
+        return $length ? strcut($ret, $length) : $ret;
     }
 
     return ''; // Not found.
@@ -139,7 +139,7 @@ function str_has_suffix(string $str, string $src, bool $icase = false): bool
 }
 
 /**
- * Randomize given string, return sub-part of when length given.
+ * Randomize given string, return a subpart when length given.
  *
  * @param  string   $str
  * @param  int|null $length
@@ -148,20 +148,17 @@ function str_has_suffix(string $str, string $src, bool $icase = false): bool
  */
 function str_rand(string $str, int $length = null): string
 {
-    if ($str == '') {
-        return '';
+    $tmp = array_shuffle(mb_str_split($str), false);
+
+    if ($length) {
+        $tmp = array_slice($tmp, 0, abs($length));
     }
 
-    $tmp = mb_str_split($str, 1);
-
-    // Ensure a new seed (@see https://wiki.php.net/rfc/object_scope_prng).
-    srand(); shuffle($tmp);
-
-    return !$length ? join($tmp) : join(array_slice($tmp, 0, abs($length)));
+    return join($tmp);
 }
 
 /**
- * Chunk given string properly in unicode style.
+ * Chunk given string properly in multi-byte style.
  *
  * @param  string $str
  * @param  int    $length
@@ -172,16 +169,20 @@ function str_rand(string $str, int $length = null): string
  */
 function str_chunk(string $str, int $length = 76, string $separator = "\r\n", bool $join = true): string|array
 {
-    $ret = array_chunk(mb_str_split($str, 1), abs($length));
+    $ret = array_chunk(mb_str_split($str), abs($length));
 
-    return $join ? array_reduce($ret, fn($ret, $part) => $ret .= join($part) . $separator) : $ret;
+    if ($join) {
+        $ret = array_reduce($ret, fn($s, $ss) => $s .= join($ss) . $separator);
+    }
+
+    return $ret;
 }
 
 /**
  * Concat given string with others.
  *
- * @param  string $str
- * @param  mixed  $strs
+ * @param  string    $str
+ * @param  mixed  ...$strs
  * @return string
  * @since  5.31
  */
@@ -191,7 +192,7 @@ function str_concat(string $str, mixed ...$strs): string
         return $str;
     }
 
-    return $str . join(array_map('strval', $strs));
+    return $str . join($strs);
 }
 
 /**
@@ -208,10 +209,9 @@ function str_concat(string $str, mixed ...$strs): string
  */
 function str_compare(string $str1, string $str2, bool $icase = false, int $length = null, string $locale = null, string $encoding = null): int
 {
-    if ($locale !== null) {
-        return Strings::compareLocale($str1, $str2, $locale);
-    }
-    return Strings::compare($str1, $str2, $icase, $length, $encoding);
+    return ($locale !== null)
+         ? Strings::compareLocale($str1, $str2, $locale)
+         : Strings::compare($str1, $str2, $icase, $length, $encoding);
 }
 
 /**
@@ -278,7 +278,7 @@ function mb_strrev(string $str, string $encoding = null): string
 }
 
 /**
- * Get a character by given index in Unicode style.
+ * Get a character by given index in multi-byte style.
  *
  * @param  string      $str
  * @param  int         $index
@@ -298,7 +298,7 @@ function char_at(string $str, int $index, string $encoding = null): string|null
 }
 
 /**
- * Get a character code by given index in Unicode style.
+ * Get a character code by given index in multi-byte style.
  *
  * @param  string      $str
  * @param  int         $index
