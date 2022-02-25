@@ -32,7 +32,7 @@ function generate_salt(int $length = 40, int $base = 62): string
  * @param  int $length
  * @param  int $base
  * @return string
- * @since  4.0, 4.1 Changed from rand_string(),rand_nonce().
+ * @since  4.0, 4.1
  */
 function generate_nonce(int $length = 16, int $base = 16): string
 {
@@ -52,13 +52,37 @@ function generate_token(int $hash_length = 32): string
 }
 
 /**
+ * Generate a UUID.
+ *
+ * @param  bool $dashed
+ * @return string
+ * @since  4.0, 4.1
+ */
+function generate_uuid(bool $dashed = true): string
+{
+    return Generator::generateUuid($dashed);
+}
+
+/**
+ * Generate a GUID.
+ *
+ * @param  bool $dashed
+ * @return string
+ * @since  4.0, 4.1
+ */
+function generate_guid(bool $dashed = true): string
+{
+    return Generator::generateGuid($dashed);
+}
+
+/**
  * Generate an ID.
  *
  * @param  int  $length
  * @param  int  $base
  * @param  bool $dated
  * @return string
- * @since  4.0, 4.1 Changed from rand_id().
+ * @since  4.0, 4.1
  */
 function generate_id(int $length, int $base = 10, bool $dated = false): string
 {
@@ -107,35 +131,11 @@ function generate_session_id(array $options = null): string
  *
  * @param  bool $counted
  * @return string
- * @since  4.0, 4.1 Changed from rand_oid().
+ * @since  4.0, 4.1
  */
 function generate_object_id(bool $counted = true): string
 {
     return Generator::generateObjectId($counted);
-}
-
-/**
- * Generate a UUID.
- *
- * @param  bool $dashed
- * @return string
- * @since  4.0, 4.1 Changed from rand_uuid().
- */
-function generate_uuid(bool $dashed = true): string
-{
-    return Generator::generateUuid($dashed);
-}
-
-/**
- * Generate a GUID.
- *
- * @param  bool $dashed
- * @return string
- * @since  4.0, 4.1 Changed from rand_guid().
- */
-function generate_guid(bool $dashed = true): string
-{
-    return Generator::generateGuid($dashed);
 }
 
 /**
