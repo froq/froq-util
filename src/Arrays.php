@@ -47,6 +47,10 @@ final class Arrays extends \StaticClass
      */
     public static function isAssocArray(array $array): bool
     {
+        if (array_is_list($array)) {
+            return false;
+        }
+
         foreach (array_keys($array) as $key) {
             if (is_string($key) || $key < 0) {
                 return true;
@@ -63,6 +67,10 @@ final class Arrays extends \StaticClass
      */
     public static function isMapArray(array $array): bool
     {
+        if (array_is_list($array)) {
+            return false;
+        }
+
         foreach (array_keys($array) as $key) {
             if (!is_string($key)) {
                 return false;
