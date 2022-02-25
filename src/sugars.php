@@ -1708,6 +1708,34 @@ function func_has_args(int|string ...$args): bool
 }
 
 /**
+ * Get an ini directive with bool option.
+ *
+ * @param  string     $name
+ * @param  mixed|null $default
+ * @param  bool       $bool
+ * @return mixed|null
+ * @since  4.0, 6.0
+ */
+function ini(string $name, mixed $default = null, bool $bool = false): mixed
+{
+    return System::iniGet($name, $default, $bool);
+}
+
+/**
+ * Get an env/server variable.
+ *
+ * @param  string     $name
+ * @param  mixed|null $default
+ * @param  bool       $server
+ * @return mixed|null
+ * @since  4.0, 6.0
+ */
+function env(string $name, mixed $default = null, bool $server = true): mixed
+{
+    return System::envGet($name, $default, $server);
+}
+
+/**
  * Check whether given array is a list array.
  *
  * @param  mixed $var
