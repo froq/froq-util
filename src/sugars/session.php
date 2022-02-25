@@ -17,10 +17,10 @@ if (!class_exists(App::class, false)) {
  * Set/get a session variable or get session object.
  *
  * @param  string|array|null $key
- * @param  any|null          $value
- * @return any|null|froq\session\Session
+ * @param  mixed|null        $value
+ * @return mixed|froq\session\Session|null
  */
-function session(string|array $key = null, $value = null)
+function session(string|array $key = null, mixed $value = null): mixed
 {
     $session = app()->session();
 
@@ -38,10 +38,10 @@ function session(string|array $key = null, $value = null)
 /**
  * Set/get session flash.
  *
- * @param  any|null $message
- * @return any|null
+ * @param  mixed|null $message
+ * @return mixed|null
  */
-function session_flash($message = null)
+function session_flash(mixed $message = null): mixed
 {
     $session = app()->session();
 
@@ -80,10 +80,10 @@ function session_has(string $key): bool|null
  * Set a session variable.
  *
  * @param  string|array $key
- * @param  any|null     $value
+ * @param  mixed|null   $value
  * @return bool|null
  */
-function session_set(string|array $key, $value = null): bool|null
+function session_set(string|array $key, mixed $value = null): bool|null
 {
     return app()->session()?->set($key, $value) ? true : null;
 }
@@ -92,11 +92,11 @@ function session_set(string|array $key, $value = null): bool|null
  * Get a session variable.
  *
  * @param  string|array $key
- * @param  any|null     $value
+ * @param  mixed|null   $default
  * @param  bool         $drop
- * @return any|null
+ * @return mixed|null
  */
-function session_get(string|array $key, $default = null, bool $drop = false)
+function session_get(string|array $key, mixed $default = null, bool $drop = false): mixed
 {
     return app()->session()?->get($key, $default, $drop);
 }
