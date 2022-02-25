@@ -219,7 +219,7 @@ final class Strings extends \StaticClass
      * Check whether given input encoding is UTF.
      *
      * @param  string $string
-     * @param  int     $bits
+     * @param  int    $bits
      * @return bool
      * @since  4.0
      */
