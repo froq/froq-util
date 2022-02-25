@@ -862,13 +862,13 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
      * Pad, left/right/both.
      *
      * @param  int    $length
-     * @param  string $pad
-     * @param  int    $padType
+     * @param  string $string
+     * @param  int    $type
      * @return self
      */
-    public function pad(int $length, string $pad = ' ', int $padType = STR_PAD_RIGHT): self
+    public function pad(int $length, string $string = ' ', int $type = STR_PAD_RIGHT): self
     {
-        $this->data = Strings::pad($this->data, $length, $pad, $padType, $this->encoding);
+        $this->data = Strings::pad($this->data, $length, $string, $type, $this->encoding);
 
         return $this;
     }
@@ -877,24 +877,24 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
      * Pad left.
      *
      * @param  int    $length
-     * @param  string $pad
+     * @param  string $string
      * @return self
      */
-    public function padLeft(int $length, string $pad = ' '): self
+    public function padLeft(int $length, string $string = ' '): self
     {
-        return $this->pad($length, $pad, STR_PAD_LEFT);
+        return $this->pad($length, $string, STR_PAD_LEFT);
     }
 
     /**
      * Pad right.
      *
      * @param  int    $length
-     * @param  string $pad
+     * @param  string $string
      * @return self
      */
-    public function padRight(int $length, string $pad = ' '): self
+    public function padRight(int $length, string $string = ' '): self
     {
-        return $this->pad($length, $pad, STR_PAD_RIGHT);
+        return $this->pad($length, $string, STR_PAD_RIGHT);
     }
 
     /**
