@@ -8,25 +8,14 @@ declare(strict_types=1);
 use froq\util\misc\Dumper;
 
 /**
- * @see Dumper.dump()
+ * Dumpers.
  */
-function dd(...$args)
-{
+function dd(...$args) {
     Dumper::dump(...$args);
 }
-
-/**
- * @see Dumper.echo()
- */
-function de(...$args)
-{
+function de(...$args) {
     return Dumper::echo(...$args);
 }
-
-/**
- * @see Dumper.echoPre()
- */
-function dp(...$args)
-{
+function dp(...$args) {
     return Dumper::echoPre(...$args);
 }
