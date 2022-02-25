@@ -426,9 +426,9 @@ function grep_all(string $input, string $pattern, bool $named = false, bool $uni
 /**
  * Convert base (original source: http://stackoverflow.com/a/4668620/362780).
  *
- * @param  int|string $input Digits to convert.
- * @param  int|string $from  From characters or base.
- * @param  int|string $to    To characters or base.
+ * @param  int|string $input
+ * @param  int|string $from  From base or characters.
+ * @param  int|string $to    To base or characters.
  * @return string|null
  * @since  4.0, 4.25
  */
