@@ -292,46 +292,50 @@ function unsplit(string $sep, array $in): string
 /**
  * Strip a string, with RegExp (~) option.
  *
- * @param  string      $in
- * @param  string|null $chars
+ * @param  string $in
+ * @param  string $chars
  * @return string
  * @since  3.0, 5.0
  */
-function strip(string $in, string $chars = null): string
+function strip(string $in, string $chars = ''): string
 {
-    if ($chars === null || $chars === '') {
+    if ($chars == '') {
         return trim($in);
-    } else {
-        // RegExp: only ~..~ patterns accepted.
-        if (strlen($chars) >= 3 && $chars[0] == '~') {
-            $ruls = substr($chars, 1, ($pos = strrpos($chars, '~')) - 1);
-            $mods = substr($chars, $pos + 1);
-            return preg_replace(sprintf('~^%s|%s$~%s', $ruls, $ruls, $mods), '', $in);
-        }
-        return trim($in, $chars);
     }
+
+    // RegExp: only ~..~ patterns accepted.
+    if (strlen($chars) >= 3 && $chars[0] == '~') {
+        $ruls = substr($chars, 1, ($pos = strrpos($chars, '~')) - 1);
+        $mods = substr($chars, $pos + 1);
+        return preg_replace(sprintf('~^%s|%s$~%s', $ruls, $ruls, $mods), '', $in);
+    }
+
+    return trim($in, $chars);
 }
 
 /**
  * Replace something(s) on an array or string.
  *
- * @param  string|array         $in
- * @param  string|array         $search
+ * @param  string|array          $in
+ * @param  string|array          $search
  * @param  string|array|callable $replace
+ * @param  bool                  $icase
  * @return string|array
  * @since  3.0, 6.0
  */
-function replace(string|array $in, string|array $search, string|array|callable $replace): string|array
+function replace(string|array $in, string|array $search, string|array|callable $replace, bool $icase = false): string|array
 {
-    if (is_string($in)) {
+    if (is_string($in) && is_string($search)) {
         // RegExp: only ~..~ patterns accepted.
-        if (is_string($search) && strlen($search) >= 3 && $search[0] == '~') {
+        if (strlen($search) >= 3 && $search[0] == '~') {
             return is_callable($replace)
                  ? preg_replace_callback($search, $replace, $in)
                  : preg_replace($search, $replace, $in);
         }
     }
-    return str_replace($search, $replace, $in);
+
+    return $icase ? str_ireplace($search, $replace, $in)
+                  : str_replace($search, $replace, $in);
 }
 
 /**
