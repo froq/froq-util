@@ -560,6 +560,11 @@ function http_date_verify(string $date): bool
  */
 function http_parse_query(string $query, string $separator = '&', int $decoding = PHP_QUERY_RFC3986): array
 {
+    $query = trim($query);
+    if ($query == '') {
+        return [];
+    }
+
     $data = [];
 
     /** @thanks http://php.net/parse_str#119484 */
