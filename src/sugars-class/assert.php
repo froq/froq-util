@@ -19,7 +19,10 @@ use froq\common\{Error, Exception};
  */
 final class Assert
 {
-    /** @var string Default exception class. */
+    /**
+     * Default exception class.
+     * @var string
+     **/
     public static string $exception = AssertException::class;
 
     /**
@@ -89,7 +92,7 @@ final class Assert
     /**
      * Message preparer.
      *
-     * @param  array<string,Throwable>|string|Throwable $message
+     * @param  array<string|Throwable>|string|Throwable $message
      * @return Throwable
      * @throws AssertException
      */
@@ -125,7 +128,7 @@ final class Assert
      * Throw given message when assertion fails.
      *
      * @param  bool                                     $assertion
-     * @param  array<string,Throwable>|string|Throwable $message
+     * @param  array<string|Throwable>|string|Throwable $message
      * @return never
      * @throws Throwable|AssertException
      */
@@ -140,7 +143,7 @@ final class Assert
      * Check & throw given message/throwable optionally when assertion fails.
      *
      * @param  bool                                          $assertion
-     * @param  array<string,Throwable>|string|Throwable|null $message
+     * @param  array<string|Throwable>|string|Throwable|null $message
      * @return bool
      * @throws Throwable|AssertException
      */
@@ -158,7 +161,7 @@ final class Assert
      *
      * @param  mixed                                         $input
      * @param  string                                        $type
-     * @param  array<string,Throwable>|string|Throwable|null $message
+     * @param  array<string|Throwable>|string|Throwable|null $message
      * @return bool
      * @causes Throwable|AssertException
      */
@@ -175,7 +178,7 @@ final class Assert
      *
      * @param  mixed                                         $input
      * @param  string                                        $class
-     * @param  array<string,Throwable>|string|Throwable|null $message
+     * @param  array<string|Throwable>|string|Throwable|null $message
      * @return bool
      * @causes Throwable|AssertException
      */
@@ -191,7 +194,7 @@ final class Assert
      *
      * @param  mixed                                         $input
      * @param  string                                        $class
-     * @param  array<string,Throwable>|string|Throwable|null $message
+     * @param  array<string|Throwable>|string|Throwable|null $message
      * @return bool
      * @causes Throwable|AssertException
      */
@@ -207,7 +210,7 @@ final class Assert
      *
      * @param  string                                        $input
      * @param  string                                        $pattern
-     * @param  array<string,Throwable>|string|Throwable|null $message
+     * @param  array<string|Throwable>|string|Throwable|null $message
      * @return bool
      * @causes Throwable|AssertException
      */
@@ -218,23 +221,41 @@ final class Assert
         return self::check($assertion, $message);
     }
 
-    /** @aliasof check() */
-    public static function ok(...$args) { return self::check(...$args); }
+    /** @alias check() */
+    public static function ok(...$args)
+    {
+        return self::check(...$args);
+    }
 
-    /** @aliasof check() */
-    public static function bool(...$args) { return self::check(...$args); }
+    /** @alias check() */
+    public static function bool(...$args)
+    {
+        return self::check(...$args);
+    }
 
-    /** @aliasof checkType() */
-    public static function type(...$args) { return self::checkType(...$args); }
+    /** @alias checkType() */
+    public static function type(...$args)
+    {
+        return self::checkType(...$args);
+    }
 
-    /** @aliasof checkClass() */
-    public static function class(...$args) { return self::checkClass(...$args); }
+    /** @alias checkClass() */
+    public static function class(...$args)
+    {
+        return self::checkClass(...$args);
+    }
 
-    /** @aliasof checkInstance() */
-    public static function instance(...$args) { return self::checkInstance(...$args); }
+    /** @alias checkInstance() */
+    public static function instance(...$args)
+    {
+        return self::checkInstance(...$args);
+    }
 
-    /** @aliasof checkRegExp() */
-    public static function regExp(...$args) { return self::checkRegExp(...$args); }
+    /** @alias checkRegExp() */
+    public static function regExp(...$args)
+    {
+        return self::checkRegExp(...$args);
+    }
 }
 
 /**

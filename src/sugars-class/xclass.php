@@ -154,19 +154,19 @@ class XClass implements Stringable
         return $this->exists && method_exists($this->name, $name);
     }
 
-    /** @aliasOf existsConstant() */
+    /** @alias existsConstant() */
     public function hasConstant(string $name): bool
     {
         return $this->existsConstant($name);
     }
 
-    /** @aliasOf existsProperty() */
+    /** @alias existsProperty() */
     public function hasProperty(string $name): bool
     {
         return $this->existsProperty($name);
     }
 
-    /** @aliasOf existsMethod() */
+    /** @alias existsMethod() */
     public function hasMethod(string $name): bool
     {
         return $this->existsMethod($name);
@@ -319,25 +319,25 @@ class XClass implements Stringable
         return is_class_of($this->name, $class, ...$classes);
     }
 
-    /** @aliasOf extends() */
+    /** @alias extends() */
     public function isSubclassOf(string $class, bool $parentOnly = false): bool
     {
         return $this->extends($class, $parentOnly);
     }
 
-    /** @aliasOf extends() */
+    /** @alias extends() */
     public function isExtenderOf(string $class, bool $parentOnly = false): bool
     {
         return $this->extends($class, $parentOnly);
     }
 
-    /** @aliasOf implements() */
+    /** @alias implements() */
     public function isImplementerOf(string $interface): bool
     {
         return $this->implements($interface);
     }
 
-    /** @aliasOf uses() */
+    /** @alias uses() */
     public function isUserOf(string $trait): bool
     {
         return $this->uses($trait);
