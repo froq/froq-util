@@ -20,9 +20,13 @@ trait ErrorTrait
     /** @magic __toString() */
     public function __toString(): string
     {
-        // Eg: Error: ... => Error(123): ...
-        return preg_replace('~^([^: ]+):* (.+)~', '\1('. $this->code .'): \2',
-            trim(parent::__toString()), 1);
+        $ret = trim(parent::__toString());
+
+        // Stack trace: ... => Trace: ...
+        $ret = preg_replace('~Stack trace:~', 'Trace:', $ret, 1);
+
+        // Error: ... => Error(123): ...
+        return preg_replace('~^([^: ]+):* (.+)~', '\1('. $this->code .'): \2', $ret, 1);
     }
 }
 
