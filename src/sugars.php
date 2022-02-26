@@ -886,7 +886,7 @@ function get_real_path(string $path, string|bool $check = null): string|null
 
     // Normalize.
     if ($ret) {
-        // Drop repeatings.
+        // Drop repeating separators.
         $ret = preg_replace(
             '~(['. preg_quote(PATH_SEPARATOR . DIRECTORY_SEPARATOR) .'])\1+~',
             '\1', $ret
