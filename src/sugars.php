@@ -1325,7 +1325,7 @@ function suid(int $length = 6, int $base = 62): string|null
         trigger_error(sprintf('%s(): Invalid length, min=1', __function__));
         return null;
     } elseif ($base < 2 || $base > 62) {
-        trigger_error(sprintf('%s(): Invalid base, min=2, max=62', __function__));
+        trigger_error(sprintf('%s(): Invalid base, min=2 & max=62', __function__));
         return null;
     }
 
