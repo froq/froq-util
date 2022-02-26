@@ -18,6 +18,7 @@ function strsfx(...$args) { return str_has_suffix(...$args);  } // Search suffix
 
 /**
  * Shorter stuff in multi-byte style.
+ * @alias mb_strtoupper(),mb_strtolower()
  * @since 3.0, 5.0
  */
 function upper(string $string): string { return mb_strtoupper($string); }
