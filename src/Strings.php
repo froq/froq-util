@@ -164,7 +164,7 @@ final class Strings extends \StaticClass
     public static function startsWithAny(string $string, array $searches, bool $icase = false, bool $mbyte = false): bool
     {
         foreach ($searches as $search) {
-            if (self::startsWith($string, (string) $search, $icase, $mbyte)) {
+            if (self::startsWith($string, $search, $icase, $mbyte)) {
                 return true;
             }
         }
@@ -208,7 +208,7 @@ final class Strings extends \StaticClass
     public static function endsWithAny(string $string, array $searches, bool $icase = false, bool $mbyte = false): bool
     {
         foreach ($searches as $search) {
-            if (self::endsWith($string, (string) $search, $icase, $mbyte)) {
+            if (self::endsWith($string, $search, $icase, $mbyte)) {
                 return true;
             }
         }
