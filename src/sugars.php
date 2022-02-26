@@ -1429,15 +1429,22 @@ function format(string $format, mixed $input, mixed ...$inputs): string
     // Convert special formats (quoted string, int).
     $format = str_replace(['%q', '%Q', '%i'], ["'%s'", '"%s"', '%d'], $format);
 
-    // Convert bools as proper bools (not 0/1).
-    if (str_contains($format, '%b')) {
+    if (str_has($format, ['%t', '%b'])) {
         // Must find all for a proper param index re-set.
         foreach (grep_all($format, '~(%[a-z])~') as $i => $op) {
-            if ($op == '%b') {
-                $format = substr_replace($format, '%s', strpos($format, '%b'), 2);
-                if (array_key_exists($i, $params)) {
-                    $params[$i] = format_bool($params[$i]);
-                }
+            switch ($op) {
+                case '%t': // Convert types.
+                    $format = substr_replace($format, '%s', strpos($format, '%t'), 2);
+                    if (array_key_exists($i, $params)) {
+                        $params[$i] = get_type($params[$i]);
+                    }
+                    break;
+                case '%b': // Convert bools (to proper bools, not 0/1).
+                    $format = substr_replace($format, '%s', strpos($format, '%b'), 2);
+                    if (array_key_exists($i, $params)) {
+                        $params[$i] = format_bool($params[$i]);
+                    }
+                    break;
             }
         }
     }
