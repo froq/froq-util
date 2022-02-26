@@ -13,7 +13,6 @@ final class __void {} function void() { return new __void; }
 
 /**
  * Nil/nils (null/null string).
- * @const null
  * @since 4.0
  */
 const nil = null, nils = '';
@@ -34,7 +33,6 @@ const PRECISION = 14;
 
 /**
  * Cases (0/1 already defined as CASSE_LOWER/CASE_UPPER).
- * @const string
  * @since 4.19
  */
 const CASE_TITLE = 2, CASE_DASH  = 3,
@@ -45,6 +43,12 @@ const CASE_TITLE = 2, CASE_DASH  = 3,
  * @since 6.0
  */
 const PATHINFO_TYPE = 0;
+
+/**
+ * Namespace separator.
+ * @since 6.0
+ */
+const NAMESPACE_SEPARATOR = '\\';
 
 /**
  * Base-62 alphabet.
