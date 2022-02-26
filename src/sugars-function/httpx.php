@@ -17,19 +17,23 @@ declare(strict_types=1);
  */
 function httpx_parse_header(string $header, string|int $case = null, bool $verbose = false): array
 {
-    $data = [];
-
-    [$name, $value] = split(' *: *', $header, 2);
-    if (!isset($name)) {
-        return $data;
+    $header = trim($header);
+    if ($header == '') {
+        return [];
     }
 
+    [$name, $value] = split(' *: *', $header, 2);
+    if ($name === null) {
+        return [];
+    }
+
+    $data  = [];
     $name  = trim($name);
     $value = trim($value ?? '');
 
     // Apply case conversion.
     if ($case !== null) {
-        $data = convert_case($data, $case, '-');
+        $name = convert_case($name, $case, '-');
     }
 
     // Normalize value.
