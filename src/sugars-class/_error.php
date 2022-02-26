@@ -21,8 +21,8 @@ trait ErrorTrait
     public function __toString(): string
     {
         // Eg: Error: ... => Error(123): ...
-        return preg_replace('~^(.+?): *(.+)~', '\1('. $this->code .'): \2',
-            parent::__toString());
+        return preg_replace('~^([^: ]+):* (.+)~', '\1('. $this->code .'): \2',
+            trim(parent::__toString()), 1);
     }
 }
 
