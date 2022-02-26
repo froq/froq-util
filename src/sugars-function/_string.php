@@ -99,14 +99,23 @@ function stracut(string $string, string $search, int $length = null, bool $icase
 /**
  * Check whether a string has given search part or not with case-intensive option.
  *
- * @param  string $string
- * @param  string $search
- * @param  bool   $icase
+ * @param  string               $string
+ * @param  string|array<string> $search
+ * @param  bool                 $icase
  * @return bool
  * @since  4.0
  */
-function str_has(string $string, string $search, bool $icase = false): bool
+function str_has(string $string, string|array $search, bool $icase = false): bool
 {
+    if (is_array($search)) {
+        foreach ($search as $search) {
+            if (str_has($string, $search, $icase)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     return !$icase ? str_contains($string, $search) : (
         mb_stripos($string, $search) !== false
     );
@@ -115,14 +124,23 @@ function str_has(string $string, string $search, bool $icase = false): bool
 /**
  * Check whether a string has given prefix or not with case-intensive option.
  *
- * @param  string $string
- * @param  string $search
- * @param  bool   $icase
+ * @param  string               $string
+ * @param  string|array<string> $search
+ * @param  bool                 $icase
  * @return bool
  * @since  4.0
  */
-function str_has_prefix(string $string, string $search, bool $icase = false): bool
+function str_has_prefix(string $string, string|array $search, bool $icase = false): bool
 {
+    if (is_array($search)) {
+        foreach ($search as $search) {
+            if (str_has_prefix($string, $search, $icase)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     return !$icase ? str_starts_with($string, $search) : (
         mb_stripos($string, $search) === 0
     );
@@ -131,14 +149,23 @@ function str_has_prefix(string $string, string $search, bool $icase = false): bo
 /**
  * Check whether a string has given suffix or not with case-intensive option.
  *
- * @param  string $string
- * @param  string $search
- * @param  bool   $icase
+ * @param  string               $string
+ * @param  string|array<string> $search
+ * @param  bool                 $icase
  * @return bool
  * @since  4.0
  */
-function str_has_suffix(string $string, string $search, bool $icase = false): bool
+function str_has_suffix(string $string, string|array $search, bool $icase = false): bool
 {
+    if (is_array($search)) {
+        foreach ($search as $search) {
+            if (str_has_suffix($string, $search, $icase)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     return !$icase ? str_ends_with($string, $search) : (
         mb_strripos($string, $search) === mb_strlen($string) - mb_strlen($search)
     );
