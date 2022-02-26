@@ -19,12 +19,12 @@ function tmp(): string
 /**
  * Create a folder in system temporary directory.
  *
- * @param  string|null $prefix
- * @param  int         $mode
+ * @param  string $prefix
+ * @param  int    $mode
  * @return string|null
  * @since  5.0
  */
-function tmpdir(string $prefix = null, int $mode = 0755): string|null
+function tmpdir(string $prefix = '', int $mode = 0755): string|null
 {
     // Prefix may becomes subdir here.
     $dir = tmp() . DIRECTORY_SEPARATOR . $prefix . suid();
@@ -35,17 +35,17 @@ function tmpdir(string $prefix = null, int $mode = 0755): string|null
 /**
  * Create a file in system temporary directory.
  *
- * @param  string|null $prefix
- * @param  int         $mode
+ * @param  string $prefix
+ * @param  int    $mode
  * @return string|null
  * @since  5.0
  */
-function tmpnam(string $prefix = null, int $mode = 0644): string|null
+function tmpnam(string $prefix = '', int $mode = 0644): string|null
 {
     // Prefix may becomes subdir here.
     $nam = tmp() . DIRECTORY_SEPARATOR . $prefix . suid();
 
-    return mkfile($nam, $mode, true) ? $nam : null;
+    return mkfile($nam, $mode) ? $nam : null;
 }
 
 /**
@@ -59,11 +59,11 @@ function is_tmpdir(string $dir): bool
 {
     return is_dir($dir)
         && str_starts_with($dir, tmp() . DIRECTORY_SEPARATOR)
-        && realpath($dir) !== tmp();
+        && realpath($dir) != tmp();
 }
 
 /**
- * Check whether given file is in temporary directory and created by tmpnam().
+ * Check whether given file is in temporary directory.
  *
  * @param  string $nam
  * @return bool
@@ -80,30 +80,29 @@ function is_tmpnam(string $nam): bool
  *
  * @param  string $file
  * @param  int    $mode
- * @param  bool   $tmp @internal
  * @return bool
  * @since  4.0
  */
-function mkfile(string $file, int $mode = 0644, bool $tmp = false): bool
+function mkfile(string $file, int $mode = 0644): bool
 {
-    if (trim($file) == '') {
+    $file = get_real_path($file);
+    if (!$file) {
         trigger_error(sprintf('%s(): No file given', __function__));
         return false;
     }
 
-    $file = get_real_path($file);
-
     if (is_dir($file)) {
         trigger_error(sprintf('%s(): Cannot make file %s, it\'s a directory', __function__, $file));
         return false;
-    } elseif (is_file($file)) {
+    }
+    if (is_file($file)) {
         trigger_error(sprintf('%s(): Cannot make file %s, it\'s already exist', __function__, $file));
         return false;
     }
 
     // Ensure directory.
     $dir = dirname($file);
-    if (!is_dir($dir) && !@mkdir($dir, 0755, true)) {
+    if (!(is_dir($dir) || @mkdir($dir, 0755, true))) {
         trigger_error(sprintf('%s(): Cannot make file directory %s [%s]', __function__, $dir, error_message()));
         return false;
     }
@@ -120,12 +119,11 @@ function mkfile(string $file, int $mode = 0644, bool $tmp = false): bool
  */
 function rmfile(string $file): bool
 {
-    if (trim($file) == '') {
+    $file = get_real_path($file);
+    if (!$file) {
         trigger_error(sprintf('%s(): No file given', __function__));
         return false;
     }
-
-    $file = get_real_path($file);
 
     if (is_dir($file)) {
         trigger_error(sprintf('%s(): Cannot remove %s, it\'s a directory', __function__, $file));
@@ -136,19 +134,46 @@ function rmfile(string $file): bool
 }
 
 /**
+ * Create a file in temporary directory.
+ *
+ * @param  string $prefix
+ * @param  int    $mode
+ * @return string|null
+ * @since  4.0
+ */
+function mkfiletemp(string $prefix = '', int $mode = 0644): string|null
+{
+    return tmpnam($prefix, $mode);
+}
+
+/**
+ * Remove a file from in temporary directory.
+ *
+ * @param  string $file
+ * @return bool
+ * @since  4.0
+ */
+function rmfiletemp(string $file): bool
+{
+    if (!is_tmpnam($file)) {
+        trigger_error(sprintf('%s(): Cannot remove `%s` file that is out of %s directory or not exists',
+            __function__, $file, tmp()));
+        return false;
+    }
+
+    return is_file($file) && unlink($file);
+}
+
+/**
  * Create a folder in system temporary directory.
  *
- * @param  string|null $prefix
- * @param  int         $mode
- * @param  bool        $froq
+ * @param  string $prefix
+ * @param  int    $mode
  * @since  4.0
  * @return string|null
  */
-function mkdirtemp(string $prefix = null, int $mode = 0755, bool $froq = false): string|null
+function mkdirtemp(string $prefix = '', int $mode = 0755): string|null
 {
-    // Make froq subdir.
-    $froq && $prefix = 'froq/' . $prefix;
-
     return tmpdir($prefix, $mode);
 }
 
@@ -178,165 +203,33 @@ function rmdirtemp(string $dir): bool
 }
 
 /**
- * Create a file in temporary directory.
- *
- * @param  string|null $prefix
- * @param  int         $mode
- * @param  bool        $froq
- * @return string|null
- * @since  4.0
- */
-function mkfiletemp(string $prefix = null, int $mode = 0644, bool $froq = false): string|null
-{
-    // Make froq subdir.
-    $froq && $prefix = 'froq/' . $prefix;
-
-    return tmpnam($prefix, $mode);
-}
-
-/**
- * Remove a file from in temporary directory.
- *
- * @param  string $file
- * @return bool
- * @since  4.0
- */
-function rmfiletemp(string $file): bool
-{
-    if (!is_tmpnam($file)) {
-        trigger_error(sprintf('%s(): Cannot remove `%s` file that is out of %s directory or not exists',
-            __function__, $file, tmp()));
-        return false;
-    }
-
-    return is_file($file) && unlink($file);
-}
-
-/**
- * Read all contents a file handle without modifing seek offset.
- *
- * @alias file_read_stream()
- * @since 5.0
- */
-function freadall(&$fp): string|null
-{
-    return file_read_stream($fp);
-}
-
-/**
- * Reset a file handle contents & set seek position to top.
- *
- * @alias stream_set_contents()
- * @since 4.0
- */
-function freset(&$fp, string $contents): int|null
-{
-    return stream_set_contents($fp, $contents);
-}
-
-/**
- * Get a file handle metadata.
- *
- * @param  resource $fp
- * @return array|null
- * @since  4.0
- */
-function fmeta($fp): array|null
-{
-    return stream_get_meta_data($fp) ?: null;
-}
-
-/**
- * Get a file handle size.
- *
- * @param  resource $fp
- * @return int|null
- * @since  5.0
- */
-function fsize($fp): int|null
-{
-    return fstat($fp)['size'] ?? null;
-}
-
-/**
- * Get a directory size.
- *
- * @param  string $dir
- * @param  bool   $deep
- * @return int|null
- * @since  5.0
- */
-function dirsize(string $dir, bool $deep = true): int|null
-{
-    $dir = realpath($dir);
-    if (!$dir) {
-        return null;
-    }
-
-    $ret = 0;
-
-    foreach (glob(chop($dir, '/') . '/*') as $path) {
-        is_file($path) && $ret += filesize($path);
-        if ($deep) {
-            is_dir($path) && $ret += dirsize($path, $deep);
-        }
-    }
-
-    return $ret;
-}
-
-/**
- * Reset a file/stream handle contents setting seek position to top.
- *
- * @param  resource &$handle
- * @param  string    $contents
- * @return int|null
- * @since  4.0
- */
-function stream_set_contents(&$handle, string $contents): int|null
-{
-    // Since handle stat size also pointer position is not changing even after ftruncate() for
-    // files (not "php://temp" etc), we rewind the handle. Without this, stats won't be resetted!
-    rewind($handle);
-
-    // Empty, write & rewind.
-    ftruncate($handle, 0);
-    $ret = fwrite($handle, $contents);
-    rewind($handle);
-
-    return ($ret !== false) ? $ret : null;
-}
-
-/**
  * Create a file, optionally a temporary file.
  *
  * @param  string $file
  * @param  int    $mode
- * @param  bool   $tmp
+ * @param  bool   $temp
  * @return string|null
  * @since  4.0
  */
-function file_create(string $file, int $mode = 0644, bool $tmp = false): string|null
+function file_create(string $file, int $mode = 0644, bool $temp = false): string|null
 {
-    // Check tmp directive.
-    if ($file == '@tmp') {
-        [$file, $tmp] = [null, true];
+    if ($temp) { // Prefix=file.
+        return mkfiletemp($file, $mode);
     }
-
-    return $tmp ? mkfiletemp($file, $mode) : (
-        mkfile($file, $mode) ? $file : null
-    );
+    return mkfile($file, $mode) ? $file : null;
 }
 
 /**
  * Create a temporary file.
  *
- * @alias mkfiletemp()
+ * @param  string $prefix
+ * @param  int    $mode
+ * @return string|null
  * @since 4.0
  */
-function file_create_temp(...$args)
+function file_create_temp(string $prefix = '', int $mode = 0644): string|null
 {
-    return mkfiletemp(...$args);
+    return mkfiletemp($prefix, $mode);
 }
 
 /**
@@ -389,7 +282,8 @@ function file_read_output(string $file, array $file_data = null): string|null
     if (!is_file($file)) {
         trigger_error(sprintf('%s(): No file exists such %s', __function__, $file));
         return null;
-    } elseif (!str_ends_with($file, '.php')) {
+    }
+    if (!str_ends_with($file, '.php')) {
         trigger_error(sprintf('%s(): Cannot include non-PHP file such %s', __function__, $file));
         return null;
     }
@@ -545,3 +439,98 @@ function file_extension(string $file, bool $with_dot = false, bool $lower = true
 function filepath(...$args) { return file_path(...$args); }
 function filename(...$args) { return file_name(...$args); }
 function filemime(...$args) { return file_mime(...$args); }
+
+/**
+ * Read all contents a file handle without modifing seek offset.
+ *
+ * @alias file_read_stream()
+ * @since 5.0
+ */
+function freadall(&$fp): string|null
+{
+    return file_read_stream($fp);
+}
+
+/**
+ * Reset a file handle contents & set seek position to top.
+ *
+ * @alias stream_set_contents()
+ * @since 4.0
+ */
+function freset(&$fp, string $contents): int|null
+{
+    return stream_set_contents($fp, $contents);
+}
+
+/**
+ * Get a file handle metadata.
+ *
+ * @param  resource $fp
+ * @return array|null
+ * @since  4.0
+ */
+function fmeta($fp): array|null
+{
+    return stream_get_meta_data($fp) ?: null;
+}
+
+/**
+ * Get a file handle size.
+ *
+ * @param  resource $fp
+ * @return int|null
+ * @since  5.0
+ */
+function fsize($fp): int|null
+{
+    return fstat($fp)['size'] ?? null;
+}
+
+/**
+ * Get a directory size.
+ *
+ * @param  string $dir
+ * @param  bool   $deep
+ * @return int|null
+ * @since  5.0
+ */
+function dirsize(string $dir, bool $deep = true): int|null
+{
+    $dir = realpath($dir);
+    if (!$dir) {
+        return null;
+    }
+
+    $ret = 0;
+
+    foreach (glob(chop($dir, '/') . '/*') as $path) {
+        is_file($path) && $ret += filesize($path);
+        if ($deep) {
+            is_dir($path) && $ret += dirsize($path, $deep);
+        }
+    }
+
+    return $ret;
+}
+
+/**
+ * Reset a file/stream handle contents setting seek position to top.
+ *
+ * @param  resource &$handle
+ * @param  string    $contents
+ * @return int|null
+ * @since  4.0
+ */
+function stream_set_contents(&$handle, string $contents): int|null
+{
+    // Since handle stat size also pointer position is not changing even after ftruncate() for
+    // files (not "php://temp" etc), we rewind the handle. Without this, stats won't be resetted!
+    rewind($handle);
+
+    // Empty, write & rewind.
+    ftruncate($handle, 0);
+    $ret = fwrite($handle, $contents);
+    rewind($handle);
+
+    return ($ret !== false) ? $ret : null;
+}
