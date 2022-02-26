@@ -415,9 +415,9 @@ function file_extension(string $file, bool $with_dot = false, bool $lower = true
 {
     $info = pathinfo($file);
 
-    // Function pathinfo() returns ".foo" for example "/some/path/.foo" and
-    // if $with_dot false then this function return ".", no baybe!
-    if (empty($info['filename']) || empty($info['extension'])) {
+    // Function pathinfo() returns ".foo" for example "/some/path/.foo",
+    // and if $with_dot false then this function return ".", no baybe!
+    if (empty($info['filename']) || !isset($info['extension'])) {
         return null;
     }
 
@@ -430,7 +430,7 @@ function file_extension(string $file, bool $with_dot = false, bool $lower = true
         }
     }
 
-    return $ret ?: null;
+    return ($ret != '' && $ret != '.') ? $ret : null;
 }
 
 /**
