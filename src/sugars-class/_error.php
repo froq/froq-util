@@ -8,7 +8,8 @@ declare(strict_types=1);
 /**
  * Error Trait.
  *
- * A trait for a proper string representation & used by errors below.
+ * A trait for property access and a proper string representation,
+ * used by errors below.
  *
  * @package froq\util
  * @object  ErrorTrait
