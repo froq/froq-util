@@ -434,16 +434,22 @@ function http_parse_header(string $header, string|int $case = null, bool $verbos
 /**
  * Build header.
  *
- * @param  string      $name
- * @param  string|null $value
+ * @param  string          $name
+ * @param  string|null     $value
+ * @param  string|int|null $case
  * @return string
  * @since  6.0
  */
-function http_build_header(string $name, string|null $value): string
+function http_build_header(string $name, string|null $value, string|int $case = null): string
 {
     $name = trim($name);
     if ($name == '') {
         return '';
+    }
+
+    // Apply case conversion.
+    if ($case !== null) {
+        $name = convert_case($name, $case, '-');
     }
 
     return $name . ': ' . $value;
