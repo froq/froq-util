@@ -1085,13 +1085,19 @@ final class Arrays extends \StaticClass
      * @param  array|null $options
      * @param  array|null $defaults
      * @param  bool       $recursive
+     * @param  bool       $map
      * @return array
      * @since  5.44
      */
-    public static function options(array|null $options, array|null $defaults = null, bool $recursive = true): array
+    public static function options(array|null $options, array|null $defaults = null, bool $recursive = true, bool $map = true): array
     {
-        return $recursive ? array_replace_recursive((array) $defaults, (array) $options)
+        $ret = $recursive ? array_replace_recursive((array) $defaults, (array) $options)
                           : array_replace((array) $defaults, (array) $options);
+
+        // When options are wanted as map (string keyed only).
+        $map && $ret = array_filter_keys($ret, 'is_string', $recursive);
+
+        return $ret;
     }
 
     /**

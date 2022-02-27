@@ -439,9 +439,9 @@ function array_default(array $array, array $keys, mixed $default = null): array
  * @alias Arrays.options()
  * @since 5.44, 6.0
  */
-function array_options(array|null $options, array|null $defaults = null, bool $recursive = true): array
+function array_options(array|null $options, array|null $defaults = null, bool $recursive = true, bool $map = true): array
 {
-    return Arrays::options($options, $defaults, $recursive);
+    return Arrays::options($options, $defaults, $recursive, $map);
 }
 
 /**
