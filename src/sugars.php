@@ -321,17 +321,18 @@ function strip(string $input, string $characters = ''): string
  * @param  string|array          $search
  * @param  string|array|callable $replace
  * @param  bool                  $icase
+ * @param  int                   $limit
  * @return string|array
  * @since  3.0, 6.0
  */
-function replace(string|array $input, string|array $search, string|array|callable $replace, bool $icase = false): string|array
+function replace(string|array $input, string|array $search, string|array|callable $replace, bool $icase = false, int $limit = -1): string|array
 {
     if (is_string($input) && is_string($search)) {
         // RegExp: only ~..~ patterns accepted.
         if (strlen($search) >= 3 && $search[0] == '~') {
             return is_callable($replace)
-                 ? preg_replace_callback($search, $replace, $input)
-                 : preg_replace($search, $replace, $input);
+                 ? preg_replace_callback($search, $replace, $input, $limit)
+                 : preg_replace($search, $replace, $input, $limit);
         }
     }
 
