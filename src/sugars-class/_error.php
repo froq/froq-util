@@ -17,7 +17,22 @@ declare(strict_types=1);
  */
 trait ErrorTrait
 {
-    /** @magic __toString() */
+    /** @magic */
+    public function __get(string $property): mixed
+    {
+        if (property_exists($this, $property)) {
+            return $this->$property;
+        }
+
+        trigger_error(
+            'Undefined property: '. $this::class .'::$'. $property,
+            E_USER_WARNING // Act like original.
+        );
+
+        return null;
+    }
+
+    /** @magic */
     public function __toString(): string
     {
         $ret = trim(parent::__toString());
