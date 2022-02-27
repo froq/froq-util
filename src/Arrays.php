@@ -1918,7 +1918,7 @@ final class Arrays extends \StaticClass
 
             if (is_string($func)) {
                 // When a built-in type given.
-                static $types = '~^(int|float|string|bool|array|object|null)$~';
+                static $types = '~^int|float|string|bool|array|object|null$~';
                 $type = $func;
 
                 // Provide a mapper using settype().
