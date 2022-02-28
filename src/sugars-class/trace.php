@@ -164,8 +164,6 @@ final class Trace implements Stringable, Countable, IteratorAggregate, ArrayAcce
 
     /**
      * @inheritDoc ArrayAccess
-     * @throws Error
-     * @notImplemented
      */
     public function offsetSet(mixed $index, mixed $_): never
     {
@@ -174,8 +172,6 @@ final class Trace implements Stringable, Countable, IteratorAggregate, ArrayAcce
 
     /**
      * @inheritDoc ArrayAccess
-     * @throws Error
-     * @notImplemented
      */
     public function offsetUnset(mixed $index): never
     {
