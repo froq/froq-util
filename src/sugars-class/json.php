@@ -366,25 +366,13 @@ class JsonObject implements Arrayable, Jsonable, JsonSerializable, ArrayAccess
         return property_exists($this, $key) ? $this->$key : null;
     }
 
-    /**
-     * Block mutations.
-     *
-     * @throws JsonError
-     * @inheritDoc ArrayAccess
-     * @notImplemented
-     */
+    /** @inheritDoc ArrayAccess */
     public function offsetSet(mixed $key, mixed $value): never
     {
         throw new JsonError('Not implemented');
     }
 
-    /**
-     * Block mutations.
-     *
-     * @throws JsonError
-     * @inheritDoc ArrayAccess
-     * @notImplemented
-     */
+    /** @inheritDoc ArrayAccess */
     public function offsetUnset(mixed $key): never
     {
         throw new JsonError('Not implemented');
