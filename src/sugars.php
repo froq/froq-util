@@ -830,8 +830,20 @@ function get_real_path(string $path, string|bool $check = null): string|null
     if (trim($path) == '') {
         return null;
     }
-    if ($rpath = realpath($path)) {
-        return $rpath;
+
+    // Validate file/directory or file only existence.
+    static $check_path;
+    $check_path ??= fn($p) => (
+        ($check === true) ? file_exists($p) : (
+            ($check === 'file') ? is_file($p) : is_dir($p)
+        )
+    );
+
+    if ($ret = realpath($path)) {
+        if ($check && !$check_path($ret)) {
+            return null;
+        }
+        return $ret;
     }
 
     $ret = '';
@@ -879,10 +891,8 @@ function get_real_path(string $path, string|bool $check = null): string|null
         $ret .= $sep . $cur;
     }
 
-    // Validate file/directory or file only existence.
-    if ($check) {
-        $ok = ($check == 'file') ? is_file($ret) : file_exists($ret);
-        $ok || $ret = null;
+    if ($check && !$check_path($ret)) {
+        return null;
     }
 
     // Normalize.
