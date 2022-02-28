@@ -1440,7 +1440,8 @@ function format(string $format, mixed $input, mixed ...$inputs): string
     // Convert special formats (quoted string, int).
     $format = str_replace(['%q', '%Q', '%i'], ["'%s'", '"%s"', '%d'], $format);
 
-    if (str_has($format, ['%t', '%b'])) {
+    // Convert special formats (type, bool, array).
+    if (preg_test('~%[tba]~', $format)) {
         // Must find all for a proper param index re-set.
         foreach (grep_all($format, '~(%[a-z])~') as $i => $op) {
             switch ($op) {
@@ -1450,10 +1451,16 @@ function format(string $format, mixed $input, mixed ...$inputs): string
                         $params[$i] = get_type($params[$i]);
                     }
                     break;
-                case '%b': // Convert bools (to proper bools, not 0/1).
+                case '%b': // Convert bools (as stringified bools, not 0/1).
                     $format = substr_replace($format, '%s', strpos($format, '%b'), 2);
                     if (array_key_exists($i, $params)) {
                         $params[$i] = format_bool($params[$i]);
+                    }
+                    break;
+                case '%a': // Convert arrays (as joinified items).
+                    $format = substr_replace($format, '%s', strpos($format, '%a'), 2);
+                    if (array_key_exists($i, $params)) {
+                        $params[$i] = join(',', (array) $params[$i]);
                     }
                     break;
             }
@@ -1466,11 +1473,11 @@ function format(string $format, mixed $input, mixed ...$inputs): string
 /**
  * Format an input as bool (yes).
  *
- * @param  bool|int $input
+ * @param  mixed $input
  * @return string
  * @since  5.31
  */
-function format_bool(bool|int $input): string
+function format_bool(mixed $input): string
 {
     return $input ? 'true' : 'false';
 }
