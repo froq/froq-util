@@ -1812,16 +1812,12 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     /** @inheritDoc ArrayAccess */
     public function offsetExists(mixed $offset): bool
     {
-        is_int($offset) || throw new Error('Non-integer offset ' . $offset);
-
         return $this->char($offset) !== null;
     }
 
     /** @inheritDoc ArrayAccess */
     public function offsetGet(mixed $offset): string|null
     {
-        is_int($offset) || throw new Error('Non-integer offset ' . $offset);
-
         return $this->char($offset);
     }
 
