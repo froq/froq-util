@@ -837,7 +837,7 @@ final class Arrays extends \StaticClass
 
         // Compact comma-separated keys.
         if (is_string($keys) && str_contains($keys, ',')) {
-            $keys = split(',', $keys);
+            $keys = split(' *, *', $keys);
         }
 
         foreach ((array) $keys as $i => $key) {
@@ -861,7 +861,7 @@ final class Arrays extends \StaticClass
 
         // Extract comma-separated keys.
         if (is_string($keys) && str_contains($keys, ',')) {
-            $keys = split(',', $keys);
+            $keys = split(' *, *', $keys);
         }
         // Extract all keys.
         elseif ($keys === '*') {
@@ -1871,7 +1871,7 @@ final class Arrays extends \StaticClass
 
         // Select comma-separated keys.
         if (is_string($key) && str_contains($key, ',')) {
-            $key = split(',', $key);
+            $key = split(' *, *', $key);
         }
 
         $keys   = (array) $key;
