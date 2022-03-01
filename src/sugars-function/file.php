@@ -101,8 +101,7 @@ function mkfile(string $file, int $mode = 0644): bool
     }
 
     // Ensure directory.
-    $dir = dirname($file);
-    if (!@dirmake($dir, 0755, true))) {
+    if (!@dirmake($dir = dirname($file))) {
         trigger_error(sprintf('%s(): Cannot make file directory %s [error: %s]', __function__, $dir,
             error_message()));
         return false;
