@@ -831,7 +831,7 @@ function get_real_path(string $path, string|bool $check = null): string|null
         return null;
     }
 
-    // NULL-byte issue.
+    // NULL-bytes issue.
     if (str_contains($path, "\0")) {
         $path = str_replace("\0", "\\0", $path);
     }
@@ -1442,13 +1442,13 @@ function format(string $format, mixed $input, mixed ...$inputs): string
 {
     $params = [$input, ...$inputs];
 
-    // Convert special formats (quoted string, int).
+    // Convert special formats (quoted strings, int).
     $format = str_replace(['%q', '%Q', '%i'], ["'%s'", '"%s"', '%d'], $format);
 
-    // Convert special formats (type, bool, array, upper, lower).
-    if (preg_test('~%[tbaAUL]~', $format)) {
+    // Convert special formats (type, bool, array, upper, lower, escape).
+    if (preg_test('~%[tbaAULS]~', $format)) {
         // Must find all for a proper param index re-set.
-        foreach (grep_all($format, '~(%[a-zAUL])~') as $i => $specifier) {
+        foreach (grep_all($format, '~(%[a-zAULS])~') as $i => $specifier) {
             switch ($specifier) {
                 case '%t': // Types.
                     $format = substr_replace($format, '%s', strpos($format, '%t'), 2);
@@ -1474,6 +1474,12 @@ function format(string $format, mixed $input, mixed ...$inputs): string
                     if (array_key_exists($i, $params)) {
                         $function   = ($specifier == '%U') ? 'upper' : 'lower';
                         $params[$i] = $function((string) $params[$i]);
+                    }
+                    break;
+                case '%S': // Escape (NULL-bytes only).
+                    $format = substr_replace($format, '%s', strpos($format, $specifier), 2);
+                    if (array_key_exists($i, $params)) {
+                        $params[$i] = str_replace("\0", "\\0", (string) $params[$i]);
                     }
                     break;
             }
