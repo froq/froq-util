@@ -43,16 +43,13 @@ final /* fuckic static */ class Util extends \StaticClass
 
             // Not exists.
             $files = glob(__dir__ . '/sugars/{*.php,extra/*.php}', GLOB_BRACE);
-            $names = array_map(
-                fn($file) => strsrc($file, 'extra/')
+            $names = map($files, fn($file) => (
+                strsrc($file, 'extra/')
                     ? 'extra/'. pathinfo($file, PATHINFO_FILENAME)
                     : pathinfo($file, PATHINFO_FILENAME)
-            , $files);
+            ));
 
-            throw new UtilException(
-                'Invalid sugar name %s, valids are: %s',
-                [$name, join(', ', $names)]
-            );
+            throw new UtilException('Invalid sugar name `%s` [valids: %A]', [$name, $names]);
         }
     }
 
