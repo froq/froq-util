@@ -166,7 +166,7 @@ final class RegExp implements Stringable
         $callback = is_callable($replace);
 
         // @cancel: Param $class added.
-        // Append Map instance as second argument to given callback. @todo: Use XArray().
+        // Append Map instance as second argument to given callback.
         // $callback && $replace = fn($match) => $replace($match, new $class($match));
 
         // Send class instance as match argument when a class given.
@@ -612,7 +612,6 @@ final class RegExp implements Stringable
  * RegExp Match.
  *
  * A class for match stuff of RegExp class.
- * @todo: Use XArray().
  *
  * @package froq\util
  * @object  RegExpMatch
