@@ -102,8 +102,9 @@ function mkfile(string $file, int $mode = 0644): bool
 
     // Ensure directory.
     $dir = dirname($file);
-    if (!(is_dir($dir) || @mkdir($dir, 0755, true))) {
-        trigger_error(sprintf('%s(): Cannot make file directory %s [%s]', __function__, $dir, error_message()));
+    if (!@dirmake($dir, 0755, true))) {
+        trigger_error(sprintf('%s(): Cannot make file directory %s [error: %s]', __function__, $dir,
+            error_message()));
         return false;
     }
 
@@ -511,6 +512,32 @@ function dirsize(string $dir, bool $deep = true): int|null
     }
 
     return $ret;
+}
+
+/**
+ * Make a directory.
+ *
+ * @param  string $dir
+ * @param  int    $mode
+ * @param  bool   $recursive
+ * @param  bool   $check
+ * @return bool
+ * @since  6.0
+ */
+function dirmake(string $dir, int $mode = 0755, bool $recursive = true, bool $check = true): bool
+{
+    $dir = get_real_path($dir);
+    if (!$dir) {
+        trigger_error(sprintf('%s(): No directory given', __function__));
+        return false;
+    }
+
+    // Check existence.
+    if ($check && is_dir($dir)) {
+        return true;
+    }
+
+    return mkdir($dir, $mode, $recursive);
 }
 
 /**
