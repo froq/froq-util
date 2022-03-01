@@ -831,6 +831,11 @@ function get_real_path(string $path, string|bool $check = null): string|null
         return null;
     }
 
+    // NULL-byte issue.
+    if (str_contains($path, "\0")) {
+        $path = str_replace("\0", "\\0", $path);
+    }
+
     // Validate file/directory or file only existence.
     static $check_path;
     $check_path ??= fn($p) => (
