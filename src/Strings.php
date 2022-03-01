@@ -7,8 +7,6 @@ declare(strict_types=1);
 
 namespace froq\util;
 
-use froq\util\UtilException;
-
 /**
  * Strings.
  *

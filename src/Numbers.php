@@ -7,8 +7,6 @@ declare(strict_types=1);
 
 namespace froq\util;
 
-use froq\util\UtilException;
-
 /**
  * Numbers.
  *
@@ -190,7 +188,6 @@ final class Numbers extends \StaticClass
         } elseif ($min > $max) {
             // Nope, not like rand()..
             // [$min, $max] = [$max, $min];
-
             throw new UtilException('Min value must be less than max value');
         }
 
