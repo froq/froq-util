@@ -1440,27 +1440,35 @@ function format(string $format, mixed $input, mixed ...$inputs): string
     // Convert special formats (quoted string, int).
     $format = str_replace(['%q', '%Q', '%i'], ["'%s'", '"%s"', '%d'], $format);
 
-    // Convert special formats (type, bool, array).
-    if (preg_test('~%[tba]~', $format)) {
+    // Convert special formats (type, bool, array, upper, lower).
+    if (preg_test('~%[tbaAUL]~', $format)) {
         // Must find all for a proper param index re-set.
-        foreach (grep_all($format, '~(%[a-z])~') as $i => $op) {
-            switch ($op) {
-                case '%t': // Convert types.
+        foreach (grep_all($format, '~(%[a-zAUL])~') as $i => $specifier) {
+            switch ($specifier) {
+                case '%t': // Types.
                     $format = substr_replace($format, '%s', strpos($format, '%t'), 2);
                     if (array_key_exists($i, $params)) {
                         $params[$i] = get_type($params[$i]);
                     }
                     break;
-                case '%b': // Convert bools (as stringified bools, not 0/1).
+                case '%b': // Bools (as stringified bools, not 0/1).
                     $format = substr_replace($format, '%s', strpos($format, '%b'), 2);
                     if (array_key_exists($i, $params)) {
                         $params[$i] = format_bool($params[$i]);
                     }
                     break;
-                case '%a': // Convert arrays (as joinified items).
-                    $format = substr_replace($format, '%s', strpos($format, '%a'), 2);
+                case '%a': case '%A': // Arrays (as joinified items).
+                    $format = substr_replace($format, '%s', strpos($format, $specifier), 2);
                     if (array_key_exists($i, $params)) {
-                        $params[$i] = join(',', (array) $params[$i]);
+                        $separator  = ($specifier == '%a') ? ',' : ', ';
+                        $params[$i] = join($separator, (array) $params[$i]);
+                    }
+                    break;
+                case '%U': case '%L': // Upper/lower.
+                    $format = substr_replace($format, '%s', strpos($format, $specifier), 2);
+                    if (array_key_exists($i, $params)) {
+                        $function   = ($specifier == '%U') ? 'upper' : 'lower';
+                        $params[$i] = $function((string) $params[$i]);
                     }
                     break;
             }
