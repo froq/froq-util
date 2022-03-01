@@ -34,20 +34,15 @@ final /* fuckic static */ class Util extends \StaticClass
                 self::loadSugar($nam);
             }
         } else {
-            $file = __dir__ . '/sugars/' . $name . '.php';
-
+            $file = sprintf(__dir__ . '/sugars/%s.php', $name);
             if (file_exists($file)) {
                 require_once $file;
                 return;
             }
 
             // Not exists.
-            $files = glob(__dir__ . '/sugars/{*.php,extra/*.php}', GLOB_BRACE);
-            $names = map($files, fn($file) => (
-                strsrc($file, 'extra/')
-                    ? 'extra/'. pathinfo($file, PATHINFO_FILENAME)
-                    : pathinfo($file, PATHINFO_FILENAME)
-            ));
+            $names = xglob(__dir__ . '/sugars/{*.php,extra/*.php}', GLOB_BRACE)
+                    ->map(fn($file) => strsrc($file, 'extra/') ? 'extra/' . filename($file) : filename($file));
 
             throw new UtilException('Invalid sugar name `%s` [valids: %A]', [$name, $names]);
         }
