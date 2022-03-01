@@ -42,7 +42,8 @@ final /* fuckic static */ class Util extends \StaticClass
 
             // Not exists.
             $names = xglob(__dir__ . '/sugars/{*.php,extra/*.php}', GLOB_BRACE)
-                    ->map(fn($file) => strsrc($file, 'extra/') ? 'extra/' . filename($file) : filename($file));
+                ->map(fn($file) => strsrc($file, 'extra/') ? 'extra/' . filename($file) : filename($file))
+                ->array();
 
             throw new UtilException('Invalid sugar name `%s` [valids: %A]', [$name, $names]);
         }
