@@ -441,6 +441,31 @@ function filename(...$args) { return file_name(...$args); }
 function filemime(...$args) { return file_mime(...$args); }
 
 /**
+ * Make a file.
+ *
+ * @param  string $file
+ * @param  int    $mode
+ * @param  bool   $check
+ * @return bool
+ * @since  6.0
+ */
+function filemake(string $file, int $mode = 0644, bool $check = true): bool
+{
+    $file = get_real_path($file);
+    if (!$file) {
+        trigger_error(sprintf('%s(): No file given', __function__));
+        return false;
+    }
+
+    // Check existence.
+    if ($check && file_exists($dir)) {
+        return true;
+    }
+
+    return touch($file) && chmod($file, $mode);
+}
+
+/**
  * Read all contents a file handle without modifing seek offset.
  *
  * @alias file_read_stream()
@@ -532,7 +557,7 @@ function dirmake(string $dir, int $mode = 0755, bool $recursive = true, bool $ch
     }
 
     // Check existence.
-    if ($check && is_dir($dir)) {
+    if ($check && file_exists($dir)) {
         return true;
     }
 
