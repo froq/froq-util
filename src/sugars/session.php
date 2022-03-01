@@ -109,7 +109,7 @@ function session_get(string|array $key, mixed $default = null, bool $drop = fals
  */
 function session_remove(string|array $key): bool|null
 {
-    return app()->session()?->remove($key);
+    return app()->session()?->remove($key) ? true : null;
 }
 
 /**
