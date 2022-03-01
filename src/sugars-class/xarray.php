@@ -1374,6 +1374,18 @@ class XArray implements Arrayable, Jsonable, Listable, Collectable, Iteratable, 
     }
 
     /**
+     * Static constructor from a glob.
+     *
+     * @param  string   $pattern
+     * @param  int|null $flags
+     * @return static
+     */
+    public static function fromGlob(string $pattern, int $flags = null): static
+    {
+        return new static(glob($pattern, $flags ?? 0) ?: []);
+    }
+
+    /**
      * Static constructor from a range.
      *
      * @param  int|float|string $min
@@ -1454,5 +1466,17 @@ function xarray(iterable $data = []): XArray
  */
 function xsplit(string $pattern, string $string, int $limit = null, int $flags = null): XArray
 {
-    return new XArray(split($pattern, $string, $limit, $flags));
+    return XArray::fromSplit($string, $pattern, $limit, $flags);
+}
+
+/**
+ * XArray initializer via glob.
+ *
+ * @param  string   $pattern
+ * @param  int|null $flags
+ * @return XArray
+ */
+function xglob(string $pattern, int $flags = null): XArray
+{
+    return XArray::fromGlob($pattern, $flags);
 }
