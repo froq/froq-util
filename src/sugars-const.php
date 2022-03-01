@@ -18,7 +18,7 @@ final class __void {} function void() { return new __void; }
 const nil = null, nils = '';
 
 /**
- * MB encoding.
+ * Multi-byte encoding.
  * @since 6.0
  */
 const ENCODING = 'UTF-8';

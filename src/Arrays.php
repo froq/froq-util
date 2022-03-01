@@ -1171,7 +1171,7 @@ final class Arrays extends \StaticClass
      * @param  string|null $locale
      * @param  bool|null   $assoc
      * @return array
-     * @since  5.3 Moved from collection.Collection.
+     * @since  5.3
      */
     public static function sortLocale(array $array, string $locale = null, bool $assoc = null): array
     {
@@ -1207,7 +1207,7 @@ final class Arrays extends \StaticClass
      * @param  array $array
      * @param  bool  $icase
      * @return array
-     * @since  5.3 Moved from collection.Collection.
+     * @since  5.3
      */
     public static function sortNatural(array $array, bool $icase = false): array
     {
