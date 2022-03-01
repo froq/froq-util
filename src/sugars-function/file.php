@@ -458,7 +458,7 @@ function filemake(string $file, int $mode = 0644, bool $check = true): bool
     }
 
     // Check existence.
-    if ($check && file_exists($dir)) {
+    if ($check && file_exists($file)) {
         return true;
     }
 
