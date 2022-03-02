@@ -1089,7 +1089,7 @@ final class Arrays extends \StaticClass
      * @return array
      * @since  5.44
      */
-    public static function options(array|null $options, array|null $defaults = null, bool $recursive = true, bool $map = true): array
+    public static function options(array|null $options, array|null $defaults, bool $recursive = true, bool $map = true): array
     {
         $ret = $recursive ? array_replace_recursive((array) $defaults, (array) $options)
                           : array_replace((array) $defaults, (array) $options);
