@@ -234,7 +234,7 @@ function http_parse_cookie(string $cookie): array
 
             // Skip invalid options.
             if (!$name || !in_array($name,
-                ['expires', 'path', 'domain', 'secure', 'httponly', 'samesite', 'max-age'])) {
+                ['expires', 'path', 'domain', 'secure', 'httponly', 'samesite', 'max-age'], true)) {
                 continue;
             }
 

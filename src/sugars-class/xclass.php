@@ -192,7 +192,7 @@ class XClass implements Stringable
      */
     public function implements(string $interface): bool
     {
-        return $this->exists && in_array($interface, (array) $this->getInterfaces());
+        return $this->exists && in_array($interface, (array) $this->getInterfaces(), true);
     }
 
     /**
@@ -203,7 +203,7 @@ class XClass implements Stringable
      */
     public function uses(string $trait): bool
     {
-        return $this->exists && in_array($trait, (array) $this->getTraits());
+        return $this->exists && in_array($trait, (array) $this->getTraits(), true);
     }
 
     /**

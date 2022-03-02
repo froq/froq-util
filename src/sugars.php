@@ -518,7 +518,7 @@ function convert_case(string $input, string|int $case, string $exploder = null, 
     }
 
     // Check valid cases.
-    if (!in_array($case, [CASE_LOWER, CASE_UPPER, CASE_TITLE, CASE_DASH, CASE_SNAKE, CASE_CAMEL])) {
+    if (!in_array($case, [CASE_LOWER, CASE_UPPER, CASE_TITLE, CASE_DASH, CASE_SNAKE, CASE_CAMEL], true)) {
         trigger_error(sprintf('%s(): Invalid case %s, use a case from 0..5 range', __function__, $case));
         return null;
     }
