@@ -940,11 +940,14 @@ function get_path_info(string $path, string|int $component = null): string|array
         return null;
     }
 
-    // Nullify "" fields, put in order.
+    // Drop "" fields, put in order.
     $info = array_filter($info, 'strlen');
     $info = array_select($info, ['dirname', 'basename', 'filename', 'extension'], combine: true);
 
-    $ret = ['path' => $path, 'type' => realpath($path) ? filetype($path) : null] + $info;
+    // Really really, real path.
+    $realpath = realpath($path);
+
+    $ret = ['path' => $path, 'realpath' => $realpath, 'type' => $realpath ? filetype($path) : null] + $info;
 
     if (is_dir($path)) {
         $ret['filename'] = $ret['extension'] = null;
