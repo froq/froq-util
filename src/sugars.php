@@ -1683,57 +1683,6 @@ function get_object_hash(object $object, bool $with_name = true, bool $with_reha
 }
 
 /**
- * Set a var on an object.
- *
- * @param  object     $object
- * @param  int|string $var
- * @param  mixed      $value
- * @param  bool       $easy
- * @return void
- * @since  5.20
- */
-function set_object_var(object $object, int|string $var, mixed $value, bool $easy = true): void
-{
-    // Yes property_exists(), cus of reflection exception for non-exists props.
-    if ($easy || !property_exists($object, $var)) {
-        $object->$var = $value;
-        return;
-    }
-
-    $ref = new ReflectionProperty($object, (string) $var);
-    $ref->setValue($object, $value);
-}
-
-/**
- * Get a var from an object.
- *
- * @param  object     $object
- * @param  int|string $var
- * @param  mixed|null $default
- * @param  bool       $easy
- * @return mixed
- * @since  5.20
- */
-function get_object_var(object $object, int|string $var, mixed $default = null, bool $easy = true): mixed
-{
-    // No property_exists() cus of scope errors.
-    if ($easy) {
-        return $object->$var ?? $default;
-    }
-
-    $ref = new ReflectionProperty($object, (string) $var);
-
-    @ $value = $ref->getValue($object);
-
-    // Cannot get the (default) value when unset() applied on the property.
-    if ($value === null && $ref->hasDefaultValue()) {
-        $value = $ref->getDefaultValue();
-    }
-
-    return $value ?? $default;
-}
-
-/**
  * Check whether an argument was given in call silently (so func_get_arg() causes errors).
  *
  * @param  int|string $arg
