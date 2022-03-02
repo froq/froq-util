@@ -140,9 +140,10 @@ final class Random
      *
      * @param  int  $length
      * @param  bool $join
+     * @param  bool $hex
      * @return string|array
      */
-    public function nextBytes(int $length, bool $join = true): string|array
+    public function nextBytes(int $length, bool $join = true, bool $hex = false): string|array
     {
         $bytes = [];
 
@@ -153,6 +154,7 @@ final class Random
         }
 
         $join && $bytes = join($bytes);
+        $hex  && $bytes = bin2hex($bytes);
 
         return $bytes;
     }
