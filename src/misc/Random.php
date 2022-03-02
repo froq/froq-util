@@ -152,7 +152,7 @@ final class Random
             $bytes = array_slice([...$bytes, ...$rands], 0, $length);
         }
 
-        $join && $bytes = join('', $bytes);
+        $join && $bytes = join($bytes);
 
         return $bytes;
     }
