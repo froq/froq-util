@@ -5,12 +5,12 @@
  */
 declare(strict_types=1);
 
-use froq\collection\{Collection, CollectionInterface};
-use froq\collection\iterator\{ArrayIterator, ReverseArrayIterator};
-use froq\collection\trait\{EachTrait, SortTrait, FilterTrait, MapTrait, ReduceTrait, FindTrait,
-    MinMaxTrait, FirstLastTrait};
 use froq\common\interface\{Arrayable, Jsonable, Listable, Collectable, Iteratable, IteratableReverse};
-use froq\common\trait\{DataCountTrait, DataEmptyTrait, DataIteratorTrait, DataToListTrait, DataToArrayTrait, DataToJsonTrait};
+use froq\collection\trait\{SortTrait, FilterTrait, MapTrait, ReduceTrait, EachTrait, CountTrait, EmptyTrait,
+    FindTrait, FirstLastTrait, MinMaxTrait, CalcAverageTrait, CalcProductTrait, CalcSumTrait,
+    IteratorTrait, ToListTrait, ToArrayTrait, ToJsonTrait};
+use froq\collection\iterator\{ArrayIterator, ReverseArrayIterator};
+use froq\collection\{Collection, CollectionInterface};
 
 /**
  * Map/Set trait.
@@ -26,8 +26,9 @@ use froq\common\trait\{DataCountTrait, DataEmptyTrait, DataIteratorTrait, DataTo
 trait MapSetTrait
 {
     /** Traits. */
-    use EachTrait, SortTrait, FilterTrait, MapTrait, ReduceTrait, FindTrait, MinMaxTrait, FirstLastTrait,
-        DataCountTrait, DataEmptyTrait, DataIteratorTrait, DataToListTrait, DataToArrayTrait, DataToJsonTrait;
+    use SortTrait, FilterTrait, MapTrait, ReduceTrait, EachTrait, CountTrait, EmptyTrait,
+        FindTrait, FirstLastTrait, MinMaxTrait, CalcAverageTrait, CalcProductTrait, CalcSumTrait,
+        IteratorTrait, ToListTrait, ToArrayTrait, ToJsonTrait;
 
     /** Data holder. */
     protected array $data = [];

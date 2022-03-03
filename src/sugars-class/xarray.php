@@ -5,13 +5,13 @@
  */
 declare(strict_types=1);
 
-use froq\collection\{Collection, CollectionInterface};
-use froq\collection\iterator\{ArrayIterator, ReverseArrayIterator};
-use froq\collection\trait\{EachTrait, SortTrait, FilterTrait, MapTrait, ReduceTrait, ApplyTrait, AggregateTrait,
-    MinMaxTrait, FirstLastTrait, CalcAverageTrait, CalcProductTrait, CalcSumTrait, FindTrait, HasTrait, GetTrait,
-    AccessTrait, AccessMagicTrait};
 use froq\common\interface\{Arrayable, Jsonable, Listable, Collectable, Iteratable, IteratableReverse};
-use froq\common\trait\{DataCountTrait, DataEmptyTrait, DataIteratorTrait, DataToListTrait, DataToArrayTrait, DataToJsonTrait};
+use froq\collection\trait\{SortTrait, FilterTrait, MapTrait, ReduceTrait, ApplyTrait, AggregateTrait,
+    EachTrait, CountTrait, EmptyTrait, HasTrait, GetTrait, AccessTrait, AccessMagicTrait,
+    FindTrait, FirstLastTrait, MinMaxTrait, CalcAverageTrait, CalcProductTrait, CalcSumTrait,
+    IteratorTrait, ToListTrait, ToArrayTrait, ToJsonTrait};
+use froq\collection\iterator\{ArrayIterator, ReverseArrayIterator};
+use froq\collection\{Collection, CollectionInterface};
 
 /**
  * X-Array.
@@ -27,12 +27,10 @@ class XArray implements Arrayable, Jsonable, Listable, Collectable, Iteratable, 
     Countable, Iterator, ArrayAccess
 {
     /** Traits. */
-    use EachTrait, SortTrait, FilterTrait, MapTrait, ReduceTrait, ApplyTrait, AggregateTrait,
-        MinMaxTrait, FirstLastTrait, CalcAverageTrait, CalcProductTrait, CalcSumTrait, FindTrait, HasTrait, GetTrait,
-        AccessTrait, AccessMagicTrait;
-
-    /** Traits more. */
-    use DataCountTrait, DataEmptyTrait, DataIteratorTrait, DataToListTrait, DataToArrayTrait, DataToJsonTrait;
+    use SortTrait, FilterTrait, MapTrait, ReduceTrait, ApplyTrait, AggregateTrait,
+        EachTrait, CountTrait, EmptyTrait, HasTrait, GetTrait, AccessTrait, AccessMagicTrait,
+        FindTrait, FirstLastTrait, MinMaxTrait, CalcAverageTrait, CalcProductTrait, CalcSumTrait,
+        IteratorTrait, ToListTrait, ToArrayTrait, ToJsonTrait;
 
     /** Data holder. */
     protected array $data = [];
