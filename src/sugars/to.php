@@ -77,7 +77,7 @@ function to_object(array|object $input, bool $deep = true): object
 function to_closure(string $func, int $argc = null): Closure
 {
     return function (...$args) use ($func, $argc) {
-        if ($argc != null) {
+        if ($argc) {
             $args = array_slice($args, 0, $argc);
         }
         return $func(...$args);

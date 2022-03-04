@@ -528,8 +528,7 @@ final class Objects extends \StaticClass
                     ];
 
                     if ($param->isVariadic()) {
-                        $parameter['type'] = ($parameter['type'] != null)
-                            ? $parameter['type'] .' ...' : '...';
+                        $parameter['type'] = $parameter['type'] ? $parameter['type'] .' ...' : '...';
                     }
 
                     $parameters[] = $parameter;
