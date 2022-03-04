@@ -288,10 +288,10 @@ final class Objects extends \StaticClass
      *
      * @param  object|string $object
      * @param  bool          $all
-     * @param  bool          $withNames
+     * @param  bool          $assoc
      * @return array|null
      */
-    public static function getConstantValues(object|string $object, bool $all = true, bool $withNames = false): array|null
+    public static function getConstantValues(object|string $object, bool $all = true, bool $assoc = false): array|null
     {
         $ref = self::reflect($object);
         if (!$ref) {
@@ -300,17 +300,17 @@ final class Objects extends \StaticClass
 
         if ($all) {
             // Seems doesn't matter constant visibility for getConstants().
-            $ret = !$withNames ? array_values($ref->getConstants())
-                               : $ref->getConstants();
+            $ret = $ref->getConstants();
         } else {
             $ret = [];
             foreach ($ref->getReflectionConstants() as $constant) {
                 if ($constant->isPublic()) {
-                    !$withNames ? $ret[] = $constant->getValue()
-                                : $ret[$constant->name] = $constant->getValue();
+                    $ret[$constant->name] = $constant->getValue();
                 }
             }
         }
+
+        $assoc || $ret = array_values($ret);
 
         return $ret;
     }
