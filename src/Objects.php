@@ -183,9 +183,9 @@ final class Objects extends \StaticClass
      *
      * @param  object|string $object
      * @param  string        $name
-     * @return any
+     * @return mixed|null
      */
-    public static function getConstantValue(object|string $object, string $name)
+    public static function getConstantValue(object|string $object, string $name): mixed
     {
         return self::getConstants($object, true, $name)[$name]['value'] ?? null;
     }
@@ -344,9 +344,9 @@ final class Objects extends \StaticClass
      *
      * @param  object|string $object
      * @param  string        $name
-     * @return any
+     * @return mixed|null
      */
-    public static function getPropertyValue(object|string $object, string $name)
+    public static function getPropertyValue(object|string $object, string $name): mixed
     {
         return self::reflect($object)?->getProperty($name)?->getValue($object);
     }

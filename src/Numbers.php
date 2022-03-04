@@ -90,10 +90,10 @@ final class Numbers extends \StaticClass
     /**
      * Check whether given input is number.
      *
-     * @param  any $input
+     * @param  mixed $input
      * @return bool
      */
-    public static function isNumber($input): bool
+    public static function isNumber(mixed $input): bool
     {
         return is_number($input);
     }
@@ -101,10 +101,10 @@ final class Numbers extends \StaticClass
     /**
      * Check whether given input is digit.
      *
-     * @param  any $input
+     * @param  mixed $input
      * @return bool
      */
-    public static function isDigit($input): bool
+    public static function isDigit(mixed $input): bool
     {
         return is_numeric($input) && ($input >= 0)
             && (is_int($input) || ctype_digit((string) $input));
@@ -113,10 +113,10 @@ final class Numbers extends \StaticClass
     /**
      * Check whether given input is an ID (useful for any (db) incremental id check).
      *
-     * @param  any $input
+     * @param  mixed $input
      * @return bool
      */
-    public static function isId($input): bool
+    public static function isId(mixed $input): bool
     {
         return is_numeric($input) && ($input >= 1)
             && (is_int($input) || ctype_digit((string) $input));
@@ -125,10 +125,10 @@ final class Numbers extends \StaticClass
     /**
      * Check whether given input is uint.
      *
-     * @param  any $input
+     * @param  mixed $input
      * @return bool
      */
-    public static function isUInt($input): bool
+    public static function isUInt(mixed $input): bool
     {
         return is_int($input) && ($input >= 0);
     }
@@ -136,10 +136,10 @@ final class Numbers extends \StaticClass
     /**
      * Check whether given input is ufloat.
      *
-     * @param  any $input
+     * @param  mixed $input
      * @return bool
      */
-    public static function isUFloat($input): bool
+    public static function isUFloat(mixed $input): bool
     {
         return is_float($input) && ($input >= 0);
     }
@@ -147,20 +147,20 @@ final class Numbers extends \StaticClass
     /**
      * Check whether given input is signed.
      *
-     * @param  any $input
+     * @param  mixed $input
      * @return bool
      */
-    public static function isSigned($input): bool
+    public static function isSigned(mixed $input): bool
     {
         return is_number($input) && ($input < 0);
     }
 
     /**
      * Check whether given input is unsigned.
-     * @param  any $input
+     * @param  mixed $input
      * @return bool
      */
-    public static function isUnsigned($input): bool
+    public static function isUnsigned(mixed $input): bool
     {
         return is_number($input) && ($input >= 0);
     }

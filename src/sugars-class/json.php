@@ -61,11 +61,11 @@ class Json extends \StaticClass
     /**
      * Build arrayified JSON string.
      *
-     * @param  any  $data
-     * @param  ?int $flags
+     * @param  mixed $data
+     * @param  ?int  $flags
      * @return ?string
      */
-    public static function buildArray($data, ?int $flags = 0): ?string
+    public static function buildArray(mixed $data, ?int $flags = 0): ?string
     {
         return self::build($data, self::ARRAY, $flags);
     }
@@ -73,11 +73,11 @@ class Json extends \StaticClass
     /**
      * Build objectified JSON string.
      *
-     * @param  any  $data
-     * @param  ?int $flags
+     * @param  mixed $data
+     * @param  ?int  $flags
      * @return ?string
      */
-    public static function buildObject($data, ?int $flags = 0): ?string
+    public static function buildObject(mixed $data, ?int $flags = 0): ?string
     {
         return self::build($data, self::OBJECT, $flags);
     }
@@ -85,12 +85,12 @@ class Json extends \StaticClass
     /**
      * Build prettified JSON string.
      *
-     * @param  any  $data
-     * @param  ?int $type
-     * @param  ?int $flags
+     * @param  mixed $data
+     * @param  ?int  $type
+     * @param  ?int  $flags
      * @return ?string
      */
-    public static function buildPretty($data, ?int $type = 0, ?int $flags = 0): ?string
+    public static function buildPretty(mixed $data, ?int $type = 0, ?int $flags = 0): ?string
     {
         return self::build($data, $type, ($flags |= JSON_PRETTY_PRINT));
     }
@@ -101,9 +101,9 @@ class Json extends \StaticClass
      * @param  ?string $json
      * @param  ?int    $type
      * @param  ?int    $flags
-     * @return any
+     * @return mixed
      */
-    public static function parse(?string $json, ?int $type = 0, ?int $flags = 0)
+    public static function parse(?string $json, ?int $type = 0, ?int $flags = 0): mixed
     {
         $json = (string) $json;
 

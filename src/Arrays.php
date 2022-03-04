@@ -168,9 +168,9 @@ final class Arrays extends \StaticClass
      * Get an item form given array, with dot notation support for sub-array paths.
      *
      * @param  array      &$array
-     * @param  int|string $key
-     * @param  mixed|null $default
-     * @param  bool       $drop
+     * @param  int|string  $key
+     * @param  mixed|null  $default
+     * @param  bool        $drop
      * @return mixed|null
      */
     public static function get(array &$array, int|string $key, mixed $default = null, bool $drop = false): mixed
@@ -219,9 +219,9 @@ final class Arrays extends \StaticClass
      * Bridge method to get() for multiple items. Useful in some times eg. list(..) = Arrays::getAll(..).
      *
      * @param  array             &$array
-     * @param  array<int|string> $keys
-     * @param  array|null        $defaults
-     * @param  bool              $drop
+     * @param  array<int|string>  $keys
+     * @param  array|null         $defaults
+     * @param  bool               $drop
      * @return array
      */
     public static function getAll(array &$array, array $keys, array $defaults = null, bool $drop = false): array
@@ -240,8 +240,8 @@ final class Arrays extends \StaticClass
      * Pull an item from given array by a key.
      *
      * @param  array      &$array
-     * @param  int|string $key
-     * @param  mixed|null $default
+     * @param  int|string  $key
+     * @param  mixed|null  $default
      * @return mixed|null
      */
     public static function pull(array &$array, int|string $key, mixed $default = null): mixed
@@ -253,8 +253,8 @@ final class Arrays extends \StaticClass
      * Bridge method to get() for multiple items. Useful in some times eg. list(..) = Arrays::pullAll(..).
      *
      * @param  array             &$array
-     * @param  array<int|string> $keys
-     * @param  array|null        $defaults
+     * @param  array<int|string>  $keys
+     * @param  array|null         $defaults
      * @return array
      */
     public static function pullAll(array &$array, array $keys, array $defaults = null): array
@@ -266,7 +266,7 @@ final class Arrays extends \StaticClass
      * Remove an item from given array by a key.
      *
      * @param  array      &$array
-     * @param  int|string $key
+     * @param  int|string  $key
      * @return array
      * @since  4.0
      */
@@ -281,7 +281,7 @@ final class Arrays extends \StaticClass
      * Bridge method to remove() for multiple items.
      *
      * @param  array             &$array
-     * @param  array<int|string> $keys
+     * @param  array<int|string>  $keys
      * @return array
      * @since  4.0
      */
@@ -326,7 +326,7 @@ final class Arrays extends \StaticClass
      *
      * @param  array  &$array
      * @param  int     $limit
-     * @return any|null
+     * @return array
      * @since  4.12
      */
     public static function removeRandom(array &$array, int $limit = 1): array
@@ -340,13 +340,13 @@ final class Arrays extends \StaticClass
      * Compose an array with given keys/values, unlike errorizing array_combine() when keys/values count
      * not match.
      *
-     * @param  array    $keys
-     * @param  array    $values
-     * @param  any|null $default
+     * @param  array      $keys
+     * @param  array      $values
+     * @param  mixed|null $default
      * @return array
      * @since  4.11
      */
-    public static function compose(array $keys, array $values, $default = null): array
+    public static function compose(array $keys, array $values, mixed $default = null): array
     {
         $ret = [];
 
@@ -916,8 +916,8 @@ final class Arrays extends \StaticClass
     /**
      * Check whether given keys exist in given array.
      *
-     * @param  array             $array
-     * @param  array<int|string> $keys
+     * @param  array $array
+     * @param  array $keys
      * @return bool
      */
     public static function keysExist(array $array, array $keys): bool
@@ -934,9 +934,9 @@ final class Arrays extends \StaticClass
     /**
      * Check whether given values exist given array.
      *
-     * @param  array      $array
-     * @param  array<any> $values
-     * @param  bool       $strict
+     * @param  array $array
+     * @param  array $values
+     * @param  bool  $strict
      * @return bool
      */
     public static function valuesExist(array $array, array $values, bool $strict = true): bool

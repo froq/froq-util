@@ -710,10 +710,10 @@ function get_type(mixed $var, bool $scalars = false): string
  * Get last error if exists, by field when given.
  *
  * @param  string|null $field
- * @return any
+ * @return mixed|null
  * @since  4.17
  */
-function get_error(string $field = null)
+function get_error(string $field = null): mixed
 {
     return $field ? error_get_last()[$field] ?? null
                   : error_get_last();
@@ -978,10 +978,10 @@ function get_path_info(string $path, string|int $component = null): string|array
  * @param  int|null    $limit
  * @param  int|null    $index
  * @param  string|null $field
- * @return any|null
+ * @return mixed|null
  * @since  4.0
  */
-function get_trace(int $options = null, int $limit = null, int $index = null, string $field = null)
+function get_trace(int $options = null, int $limit = null, int $index = null, string $field = null): mixed
 {
     $stack = debug_backtrace($options ?? 0, $limit ? $limit + 1 : 0);
     array_shift($stack); // Drop self.

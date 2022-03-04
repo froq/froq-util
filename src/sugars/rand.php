@@ -35,12 +35,12 @@ function rand_float(float $min = null, float $max = null, int $precision = null)
 /**
  * Get a random item from given array, filling ref'ed key with found key.
  *
- * @param  array      $array
+ * @param  array       $array
  * @param  int|string &$key
- * @return ?any
+ * @return mixed|null
  * @since  4.1
  */
-function rand_item(array $array, int|string &$key = null)
+function rand_item(array $array, int|string &$key = null): mixed
 {
     srand();
 
@@ -55,8 +55,8 @@ function rand_item(array $array, int|string &$key = null)
 /**
  * Get a random items from given array by given limit, filling ref'ed key with found key.
  *
- * @param  array             $array
- * @param  int               $limit
+ * @param  array              $array
+ * @param  int                $limit
  * @param  array<int|string> &$keys
  * @return array|null
  * @since  4.1
