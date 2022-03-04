@@ -167,7 +167,7 @@ class ReflectionTypeExtended extends ReflectionType
         return $this->reference->nullable;
     }
 
-    /** @aliasOf isNullable() */
+    /** @alias isNullable() */
     public function allowsNull(): bool
     {
         return $this->isNullable();
@@ -344,13 +344,13 @@ trait ReflectionClassTrait
         return array_map(fn($ref) => $ref->name, parent::getMethods($filter));
     }
 
-    /** @aliasOf getParent() @override */ #[ReturnTypeWillChange]
+    /** @alias getParent() @override */ #[ReturnTypeWillChange]
     public function getParentClass(): ReflectionClassExtended|null
     {
         return $this->getParent();
     }
 
-    /** @aliasOf getParents() */
+    /** @alias getParents() */
     public function getParentClasses(): array
     {
         return $this->getParents();

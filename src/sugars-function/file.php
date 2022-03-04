@@ -324,7 +324,7 @@ function file_read_stream(&$handle): string|null
 function file_set_contents(string $file, string $contents, int $flags = 0): int|null
 {
     // Because, setting entire file contents.
-    if ($flags) $flags &= ~FILE_APPEND;
+    $flags && $flags &= ~FILE_APPEND;
 
     $ret = file_put_contents($file, $contents, $flags);
 
@@ -334,7 +334,7 @@ function file_set_contents(string $file, string $contents, int $flags = 0): int|
 /**
  * Get a file path.
  *
- * @aliasOf get_real_path()
+ * @alias get_real_path()
  * @since 4.0
  */
 function file_path(...$args)

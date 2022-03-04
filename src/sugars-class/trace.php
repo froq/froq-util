@@ -103,7 +103,7 @@ final class Trace implements Stringable, Countable, IteratorAggregate, ArrayAcce
     }
 
     /**
-     * @aliasOf getFirst()
+     * @alias getFirst()
      */
     public function first()
     {
@@ -111,7 +111,7 @@ final class Trace implements Stringable, Countable, IteratorAggregate, ArrayAcce
     }
 
     /**
-     * @aliasOf getLast()
+     * @alias getLast()
      */
     public function last()
     {
@@ -281,7 +281,7 @@ final class TraceEntry implements ArrayAccess
     }
 
     /**
-     * @aliasOf getField()
+     * @alias getField()
      */
     public function field(...$args)
     {
@@ -289,7 +289,7 @@ final class TraceEntry implements ArrayAccess
     }
 
     /**
-     * @aliasOf getFields()
+     * @alias getFields()
      */
     public function fields(...$args)
     {
