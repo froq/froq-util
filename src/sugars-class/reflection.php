@@ -56,6 +56,7 @@ class ReflectionTypeExtended extends ReflectionType
     /**
      * Proxy for reference object properties.
      *
+     * @magic
      * @param  string $property
      * @return string
      * @throws Error
@@ -72,14 +73,14 @@ class ReflectionTypeExtended extends ReflectionType
         ));
     }
 
-    /** @magic __debugInfo() */
+    /** @magic */
     public function __debugInfo(): array
     {
         return ['name' => $this->reference->name,
                 'nullable' => $this->reference->nullable];
     }
 
-    /** @magic __toString() */
+    /** @magic */
     public function __toString(): string
     {
         return $this->reference->name;
@@ -312,7 +313,7 @@ trait ReflectionClassTrait
         parent::__construct($class);
     }
 
-    /** @magic __debugInfo() */
+    /** @magic */
     public function __debugInfo(): array
     {
         return ['name' => $this->name];
@@ -747,13 +748,13 @@ class ReflectionPropertyExtended extends ReflectionProperty
         }
     }
 
-    /** @magic __debugInfo() */
+    /** @magic */
     public function __debugInfo(): array
     {
         return ['name' => $this->getName(), 'class' => $this->getClass()];
     }
 
-    /** @magic __toString() */
+    /** @magic */
     public function __toString(): string
     {
         try {
@@ -1539,6 +1540,7 @@ class ReflectionCallable implements Reflector
     /**
      * Proxy for reflection object properties.
      *
+     * @magic
      * @param  string $property
      * @return string
      * @throws Error
@@ -1559,6 +1561,7 @@ class ReflectionCallable implements Reflector
     /**
      * Proxy for reflection object methods.
      *
+     * @magic
      * @param  string $method
      * @param  array  $methodArgs
      * @return mixed
@@ -1577,11 +1580,7 @@ class ReflectionCallable implements Reflector
         ));
     }
 
-    /**
-     * Proxy for reflection object __toString().
-     *
-     * @return string
-     */
+    /** @magic */
     public function __toString(): string
     {
         return $this->reference->reflection->__toString();
@@ -1653,7 +1652,7 @@ trait ReflectionCallableTrait
         }
     }
 
-    /** @magic __debugInfo() */
+    /** @magic */
     public function __debugInfo(): array
     {
         return ($this->reference->reflection instanceof ReflectionMethod)
