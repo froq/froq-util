@@ -9,7 +9,7 @@ use froq\common\interface\{Arrayable, Jsonable, Listable, Collectable, Iteratabl
 use froq\collection\trait\{SortTrait, FilterTrait, MapTrait, ReduceTrait, ApplyTrait, AggregateTrait,
     EachTrait, CountTrait, EmptyTrait, HasTrait, GetTrait, AccessTrait, AccessMagicTrait,
     FindTrait, FirstLastTrait, MinMaxTrait, CalcAverageTrait, CalcProductTrait, CalcSumTrait,
-    IteratorTrait, ToListTrait, ToArrayTrait, ToJsonTrait};
+    IteratorTrait, ToArrayTrait, ToListTrait, ToJsonTrait};
 use froq\collection\iterator\{ArrayIterator, ReverseArrayIterator};
 use froq\collection\{Collection, CollectionInterface};
 
@@ -30,7 +30,7 @@ class XArray implements Arrayable, Jsonable, Listable, Collectable, Iteratable, 
     use SortTrait, FilterTrait, MapTrait, ReduceTrait, ApplyTrait, AggregateTrait,
         EachTrait, CountTrait, EmptyTrait, HasTrait, GetTrait, AccessTrait, AccessMagicTrait,
         FindTrait, FirstLastTrait, MinMaxTrait, CalcAverageTrait, CalcProductTrait, CalcSumTrait,
-        IteratorTrait, ToListTrait, ToArrayTrait, ToJsonTrait;
+        IteratorTrait, ToArrayTrait, ToListTrait, ToJsonTrait;
 
     /** Data holder. */
     protected array $data = [];

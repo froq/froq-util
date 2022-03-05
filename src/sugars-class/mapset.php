@@ -8,7 +8,7 @@ declare(strict_types=1);
 use froq\common\interface\{Arrayable, Jsonable, Listable, Collectable, Iteratable, IteratableReverse};
 use froq\collection\trait\{SortTrait, FilterTrait, MapTrait, ReduceTrait, EachTrait, CountTrait, EmptyTrait,
     FindTrait, FirstLastTrait, MinMaxTrait, CalcAverageTrait, CalcProductTrait, CalcSumTrait,
-    IteratorTrait, ToListTrait, ToArrayTrait, ToJsonTrait};
+    IteratorTrait, ToArrayTrait, ToListTrait, ToJsonTrait};
 use froq\collection\iterator\{ArrayIterator, ReverseArrayIterator};
 use froq\collection\{Collection, CollectionInterface};
 
@@ -28,7 +28,7 @@ trait MapSetTrait
     /** Traits. */
     use SortTrait, FilterTrait, MapTrait, ReduceTrait, EachTrait, CountTrait, EmptyTrait,
         FindTrait, FirstLastTrait, MinMaxTrait, CalcAverageTrait, CalcProductTrait, CalcSumTrait,
-        IteratorTrait, ToListTrait, ToArrayTrait, ToJsonTrait;
+        IteratorTrait, ToArrayTrait, ToListTrait, ToJsonTrait;
 
     /** Data holder. */
     protected array $data = [];
