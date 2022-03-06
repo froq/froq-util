@@ -1677,14 +1677,25 @@ final class Arrays extends \StaticClass
     }
 
     /**
-     * Convert an array to list.
+     * Convert an array to list with/without desired length.
      *
-     * @param  array $array
+     * @param  array    $array
+     * @param  int|null $length
      * @return array
+     * @throws ValueError
      */
-    public static function list(array $array): array
+    public static function list(array $array, int $length = null): array
     {
-        return array_values($array);
+        if (!$length) {
+            return array_values($array);
+        }
+        if ($length < 0) {
+            throw new \ValueError('Argument $length must be greater than 0');
+        }
+
+        return ($length > count($array))
+             ? array_pad(array_values($array), $length, null) // Pad missing fields.
+             : array_slice(array_values($array), 0, $length); // Cut exceeding fields.
     }
 
     /**

@@ -655,9 +655,9 @@ function array_prepend(array &$array, mixed ...$values): array
  * @alias Arrays.list()
  * @since 6.0
  */
-function array_list(array $array): array
+function array_list(array $array, int $length = null): array
 {
-    return Arrays::list($array);
+    return Arrays::list($array, $length);
 }
 
 /**
