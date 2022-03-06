@@ -308,7 +308,8 @@ final class Strings extends \StaticClass
      * @return string
      * @throws froq\util\UtilException
      */
-    public static function pad(string $string, int $padLength, string $padString = ' ', int $padType = 0, string $encoding = null): string
+    public static function pad(string $string, int $padLength, string $padString = ' ', int $padType = STR_PAD_RIGHT,
+        string $encoding = null): string
     {
         $stringLength    = mb_strlen($string, $encoding);
         $padStringLength = mb_strlen($padString, $encoding);
