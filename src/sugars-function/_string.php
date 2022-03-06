@@ -198,15 +198,19 @@ function str_rand(string $string, int $length = null): string
  * @param  int    $length
  * @param  string $separator
  * @param  bool   $join
+ * @param  bool   $chop
  * @return string|array
  * @since  5.31
  */
-function str_chunk(string $string, int $length = 76, string $separator = "\r\n", bool $join = true): string|array
+function str_chunk(string $string, int $length = 76, string $separator = "\r\n", bool $join = true, bool $chop = false): string|array
 {
     $ret = array_chunk(mb_str_split($string), abs($length));
 
     if ($join) {
         $ret = array_reduce($ret, fn($s, $ss) => $s .= join($ss) . $separator);
+        if ($chop) {
+            $ret = chop($ret, $separator);
+        }
     }
 
     return $ret;
@@ -223,6 +227,32 @@ function str_chunk(string $string, int $length = 76, string $separator = "\r\n",
 function str_concat(string $string, string|Stringable ...$strings): string
 {
     return $string . join($strings);
+}
+
+/**
+ * Apply word-wrap on given string in multi-byte style.
+ *
+ * @param  string $string
+ * @param  int    $width
+ * @param  string $break
+ * @param  bool   $cut
+ * @return string
+ * @since  6.0
+ */
+function str_wordwrap(string $string, int $width = 75, string $break = "\n", bool $cut = false): string
+{
+    if (!$cut) {
+        return wordwrap($string, $width, $break);
+    }
+
+    /** @thanks http://php.net/wordwrap#107570 */
+    $string = preg_replace(
+        '~(.{1,' . $width . '})(?:\s|$)|(.{' . $width . '})~uS',
+        '\1\2' . $break,
+        $string
+    );
+
+    return trim($string, $break);
 }
 
 /**
