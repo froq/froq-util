@@ -1363,13 +1363,15 @@ final class Arrays extends \StaticClass
     /**
      * Map keys.
      *
-     * @param  array    $array
-     * @param  callable $func
-     * @param  bool     $recursive
+     * @param  array                 $array
+     * @param  callable|string|array $func
+     * @param  bool                  $recursive
      * @return array
      */
-    public static function mapKeys(array $array, callable $func, bool $recursive = false): array
+    public static function mapKeys(array $array, callable|string|array $func, bool $recursive = false): array
     {
+        $func = self::makeMapFunction($func);
+
         $ret = [];
 
         foreach ($array as $key => $value) {
@@ -1929,7 +1931,7 @@ final class Arrays extends \StaticClass
 
             if (is_string($func)) {
                 // When a built-in type given.
-                static $types = '~^int|float|string|bool|array|object|null$~';
+                static $types = '~^(?:int|float|string|bool|array|object|null)$~';
                 $type = $func;
 
                 // Provide a mapper using settype().
