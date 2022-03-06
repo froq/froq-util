@@ -227,12 +227,6 @@ final class Assert
         return self::check(...$args);
     }
 
-    /** @alias check() */
-    public static function bool(...$args)
-    {
-        return self::check(...$args);
-    }
-
     /** @alias checkType() */
     public static function type(...$args)
     {
