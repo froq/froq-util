@@ -946,7 +946,7 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     }
 
     /**
-     * Contains-with checker.
+     * Contains checker.
      *
      * @param  self|string|array<self|string> $search
      * @param  bool                           $icase
@@ -956,13 +956,7 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     {
         is_array($search) || $search = [$search];
 
-        foreach ($search as $data) {
-            $data = (string) $data;
-            if (str_has($this->data, $data, $icase)) {
-                return true;
-            }
-        }
-        return false;
+        return str_has($this->data, $search, $icase);
     }
 
     /**
@@ -976,13 +970,7 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     {
         is_array($search) || $search = [$search];
 
-        foreach ($search as $data) {
-            $data = (string) $data;
-            if (str_has_prefix($this->data, $data, $icase)) {
-                return true;
-            }
-        }
-        return false;
+        return str_has_prefix($this->data, $search, $icase);
     }
 
     /**
@@ -996,13 +984,7 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     {
         is_array($search) || $search = [$search];
 
-        foreach ($search as $data) {
-            $data = (string) $data;
-            if (str_has_suffix($this->data, $data, $icase)) {
-                return true;
-            }
-        }
-        return false;
+        return str_has_suffix($this->data, $search, $icase);
     }
 
     /**

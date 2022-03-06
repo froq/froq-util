@@ -110,7 +110,7 @@ function str_has(string $string, string|array $search, bool $icase = false): boo
 {
     if (is_array($search)) {
         foreach ($search as $search) {
-            if (str_has($string, $search, $icase)) {
+            if (str_has($string, (string) $search, $icase)) {
                 return true;
             }
         }
@@ -135,7 +135,7 @@ function str_has_prefix(string $string, string|array $search, bool $icase = fals
 {
     if (is_array($search)) {
         foreach ($search as $search) {
-            if (str_has_prefix($string, $search, $icase)) {
+            if (str_has_prefix($string, (string) $search, $icase)) {
                 return true;
             }
         }
@@ -160,7 +160,7 @@ function str_has_suffix(string $string, string|array $search, bool $icase = fals
 {
     if (is_array($search)) {
         foreach ($search as $search) {
-            if (str_has_suffix($string, $search, $icase)) {
+            if (str_has_suffix($string, (string) $search, $icase)) {
                 return true;
             }
         }
