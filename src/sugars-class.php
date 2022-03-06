@@ -7,6 +7,7 @@ require 'sugars-class/_static.php';
 require 'sugars-class/assert.php';
 require 'sugars-class/json.php';
 require 'sugars-class/mapset.php';
+require 'sugars-class/mapobject.php';
 require 'sugars-class/reflection.php';
 require 'sugars-class/regexp.php';
 require 'sugars-class/type.php';
