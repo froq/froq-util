@@ -550,12 +550,12 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     /**
      * Replace-regexp, for RegExp replacement.
      *
-     * @param  string          $search
-     * @param  string|callable $replace
-     * @param  int             $limit
+     * @param  string           $search
+     * @param  string|callable  $replace
+     * @param  int              $limit
      * @param  int|null        &$count
-     * @param  array|int       $flags
-     * @param  string|null     $class
+     * @param  array|int        $flags
+     * @param  string|null      $class
      * @return self
      */
     public function replaceRegExp(string $search, string|callable $replace, int $limit = -1, int &$count = null,
@@ -793,11 +793,12 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
      * @param  int    $length
      * @param  string $separator
      * @param  bool   $join
+     * @param  bool   $chop
      * @return self|array
      */
-    public function chunk(int $length = 76, string $separator = "\r\n", bool $join = true): self|array
+    public function chunk(int $length = 76, string $separator = "\r\n", bool $join = true, bool $chop = false): self|array
     {
-        $chunk = str_chunk($this->data, $length, $separator, $join);
+        $chunk = str_chunk($this->data, $length, $separator, $join, $chop);
 
         if ($join) {
             $this->data = $chunk;
@@ -1227,13 +1228,13 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
      */
     public function wordCount(int $format = 0): int|array
     {
-        $words = $this->split('[^\p{L}\'\-]+');
+        $words = $this->split('~[^\p{L}\'\-]+~u');
 
-        return ($format === 0) ? count($words) : $words;
+        return ($format == 0) ? count($words) : $words;
     }
 
     /**
-     * Interface to wordwrap().
+     * Interface to wordwrap(), but unicode.
      *
      * @param  int    $width
      * @param  string $break
@@ -1242,7 +1243,7 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
      */
     public function wordWrap(int $width = 75, string $break = "\n", bool $cut = false): self
     {
-        $this->data = wordwrap($this->data, $width, $break, $cut);
+        $this->data = str_wordwrap($this->data, $width, $break, $cut);
 
         return $this;
     }
@@ -1252,7 +1253,7 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
      *
      * @return self
      */
-    public function quotemeta(): self
+    public function quoteMeta(): self
     {
         $this->data = quotemeta($this->data);
 
@@ -1274,16 +1275,16 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     /**
      * Interface to strtok(), but unicode.
      *
-     * @param  string $token
+     * @param  string $pattern
      * @return array|null
      */
-    public function token(string $token): array|null
+    public function token(string $pattern): array|null
     {
         // No strtok(), corrupting data.
         $data = null;
 
-        if ($token !== '') {
-            $data = $this->split($token);
+        if ($pattern !== '') {
+            $data = $this->split($pattern);
 
             // For invalid parsing.
             if ($data[0] === $this->data) {
