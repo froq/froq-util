@@ -304,12 +304,21 @@ trait MapSetTrait
      * Update self data by given data.
      *
      * @param  iterable $data
+     * @param  bool     $merge
      * @return self
      * @since  6.0
      */
-    public function update(iterable $data): self
+    public function update(iterable $data, bool $merge = true): self
     {
         foreach ($data as $key => $value) {
+            // Handle current iterable fields to keep as original.
+            if ($merge && is_iterable($value)) {
+                if (is_iterable($current = $this->get($key))) {
+                    $value = static::from($current)->update($value);
+                    $value = is_array($current) ? $value->array() : $value;
+                } unset($current);
+            }
+
             $this->set($key, $value);
         }
 
