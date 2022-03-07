@@ -28,12 +28,9 @@ class MapObject extends ArrayObject implements Arrayable, Objectable, Jsonable
      * Constructor
      *
      * @param array|self|null $data
-     * @param array|self|null $dataDefault
      */
-    public function __construct(array|self $data = null, array|self $dataDefault = null)
+    public function __construct(array|self $data = null)
     {
-        $data = $this->prepare($data, $dataDefault);
-
         parent::__construct($data, parent::ARRAY_AS_PROPS);
     }
 
@@ -113,26 +110,6 @@ class MapObject extends ArrayObject implements Arrayable, Objectable, Jsonable
     }
 
     /**
-     * Prepare data with/without default.
-     *
-     * @param  array|self|null $data
-     * @param  array|self|null $dataDefault
-     * @return array
-     */
-    public function prepare(array|self|null $data, array|self|null $dataDefault = null): array
-    {
-        $data = array_replace_recursive((array) $dataDefault, (array) $data);
-
-        foreach ($data as &$value) {
-            if (is_array($value)) {
-                $value = new static($value);
-            }
-        }
-
-        return $data;
-    }
-
-    /**
      * Update current data with given data.
      *
      * @param  array|self $data
@@ -140,9 +117,7 @@ class MapObject extends ArrayObject implements Arrayable, Objectable, Jsonable
      */
     public function update(array|self $data): self
     {
-        $this->setData($this->prepare(
-            (array) $data, $this->toArray(true),
-        ));
+        $this->setData(array_replace_recursive($this->toArray(true), (array) $data));
 
         return $this;
     }
@@ -170,10 +145,10 @@ class MapObject extends ArrayObject implements Arrayable, Objectable, Jsonable
      */
     public function filter(callable $func = null, bool $recursive = false, bool $useKeys = false): self
     {
-        $this->setData($this->prepare(Arrays::filter(
+        $this->setData(Arrays::filter(
             $this->toArray($recursive),
             $func, $recursive, $useKeys,
-        )));
+        ));
 
         return $this;
     }
@@ -187,10 +162,10 @@ class MapObject extends ArrayObject implements Arrayable, Objectable, Jsonable
      */
     public function filterKeys(callable $func, bool $recursive = false): self
     {
-        $this->setData($this->prepare(Arrays::filterKeys(
+        $this->setData(Arrays::filterKeys(
             $this->toArray($recursive),
             $func, $recursive
-        )));
+        ));
 
         return $this;
     }
@@ -205,10 +180,10 @@ class MapObject extends ArrayObject implements Arrayable, Objectable, Jsonable
      */
     public function map(callable|string $func, bool $recursive = false, bool $useKeys = false): self
     {
-        $this->setData($this->prepare(Arrays::map(
+        $this->setData(Arrays::map(
             $this->toArray($recursive),
             $func, $recursive, $useKeys,
-        )));
+        ));
 
         return $this;
     }
@@ -222,10 +197,10 @@ class MapObject extends ArrayObject implements Arrayable, Objectable, Jsonable
      */
     public function mapKeys(callable|string $func, bool $recursive = false): self
     {
-        $this->setData($this->prepare(Arrays::mapKeys(
+        $this->setData(Arrays::mapKeys(
             $this->toArray($recursive),
             $func, $recursive
-        )));
+        ));
 
         return $this;
     }
