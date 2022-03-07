@@ -58,9 +58,11 @@ class MapObject extends ArrayObject implements Arrayable, Objectable, Jsonable
      * @param  mixed      $value
      * @return self
      */
-    public function set(string|int $key, mixed $value = null): void
+    public function set(string|int $key, mixed $value): self
     {
         parent::offsetSet($key, $value);
+
+        return $this;
     }
 
     /**
@@ -79,11 +81,13 @@ class MapObject extends ArrayObject implements Arrayable, Objectable, Jsonable
      * Remove a key if exists.
      *
      * @param  string|int $key
-     * @return bool
+     * @return self
      */
-    public function remove(string|int $key): void
+    public function remove(string|int $key): self
     {
         parent::offsetUnset($key);
+
+        return $this;
     }
 
     /**
