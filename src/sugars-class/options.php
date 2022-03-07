@@ -30,6 +30,52 @@ class Options extends MapObject
     }
 
     /**
+     * Check an option.
+     *
+     * @param  string $key
+     * @return bool
+     */
+    public function hasOption(string $key): bool
+    {
+        return $this->has($key);
+    }
+
+    /**
+     * Set an option.
+     *
+     * @param  string $key
+     * @param  mixed  $value
+     * @return self
+     */
+    public function setOption(string $key, mixed $value): self
+    {
+        return $this->set($key, $value);
+    }
+
+    /**
+     * Get an option.
+     *
+     * @param  string     $key
+     * @param  mixed|null $default
+     * @return mixed
+     */
+    public function getOption(string $key, mixed $default = null): mixed
+    {
+        return $this->get($key, $default);
+    }
+
+    /**
+     * Remove an option.
+     *
+     * @param  string $key
+     * @return self
+     */
+    public function removeOption(string $key): self
+    {
+        return $this->remove($key);
+    }
+
+    /**
      * Select an item.
      *
      * @param  int|string|array $key
