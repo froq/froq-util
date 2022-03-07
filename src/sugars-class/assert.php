@@ -157,6 +157,32 @@ final class Assert
     }
 
     /**
+     * Check given input whether is true & throw given message/throwable optionally when assertion fails.
+     *
+     * @param  mixed                                         $input
+     * @param  array<string|Throwable>|string|Throwable|null $message
+     * @return bool
+     * @causes Throwable|AssertException
+     */
+    public static function checkTrue(mixed $input, array|string|Throwable $message = null): bool
+    {
+        return self::check($input === true, $message);
+    }
+
+    /**
+     * Check given input whether is false & throw given message/throwable optionally when assertion fails.
+     *
+     * @param  mixed                                         $input
+     * @param  array<string|Throwable>|string|Throwable|null $message
+     * @return bool
+     * @causes Throwable|AssertException
+     */
+    public static function checkFalse(mixed $input, array|string|Throwable $message = null): bool
+    {
+        return self::check($input === false, $message);
+    }
+
+    /**
      * Check given input type & throw given message/throwable optionally when assertion fails.
      *
      * @param  mixed                                         $input
@@ -225,6 +251,18 @@ final class Assert
     public static function ok(...$args)
     {
         return self::check(...$args);
+    }
+
+    /** @alias checkTrue() */
+    public static function true(...$args)
+    {
+        return self::checkTrue(...$args);
+    }
+
+    /** @alias checkFalse() */
+    public static function false(...$args)
+    {
+        return self::checkFalse(...$args);
     }
 
     /** @alias checkType() */
