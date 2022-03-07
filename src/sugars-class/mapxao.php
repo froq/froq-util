@@ -10,17 +10,17 @@ use froq\collection\trait\GetTrait;
 use froq\util\Arrays;
 
 /**
- * Map Object.
+ * X-Array Object.
  *
  * A class just like ArrayObject but "a bit" extended, basically designed
  * for Options & Attributes classes.
  *
  * @package froq\util
- * @object  MapObject
+ * @object  XArrayObject
  * @author  Kerem Güneş
  * @since   6.0
  */
-class MapObject extends ArrayObject implements Arrayable, Objectable, Jsonable
+class XArrayObject extends ArrayObject implements Arrayable, Objectable, Jsonable
 {
     use GetTrait;
 

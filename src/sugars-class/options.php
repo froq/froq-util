@@ -15,7 +15,7 @@ declare(strict_types=1);
  * @author  Kerem Güneş
  * @since   6.0
  */
-class Options extends MapObject
+class Options extends XArrayObject
 {
     /**
      * Constructor.
