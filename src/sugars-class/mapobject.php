@@ -6,7 +6,7 @@
 declare(strict_types=1);
 
 use froq\common\interface\{Arrayable, Objectable, Jsonable};
-use froq\collection\trait\{GetTrait};
+use froq\collection\trait\GetTrait;
 use froq\util\Arrays;
 
 /**
