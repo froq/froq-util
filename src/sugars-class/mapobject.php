@@ -115,9 +115,9 @@ class MapObject extends ArrayObject implements Arrayable, Objectable, Jsonable
      * @param  array|self $data
      * @return self
      */
-    public function update(array|self $data): self
+    public function updateData(array|self $data): self
     {
-        $this->setData(array_replace_recursive($this->toArray(true), (array) $data));
+        $this->setData(array_replace_recursive($this->toArray(), (array) $data));
 
         return $this;
     }
