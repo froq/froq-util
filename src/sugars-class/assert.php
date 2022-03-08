@@ -23,7 +23,7 @@ final class Assert
      * Default exception class.
      * @var string
      **/
-    public static string $exception = AssertException::class;
+    private static string $exception = AssertException::class;
 
     /**
      * Constructor.
