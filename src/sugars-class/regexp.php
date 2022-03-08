@@ -44,8 +44,8 @@ final class RegExp implements Stringable
     /** @var string */
     public readonly string $source;
 
-    /** @var string|null */
-    public readonly string|null $modifiers;
+    /** @var string */
+    public readonly string $modifiers;
 
     /** @var string */
     public readonly string $pattern;
@@ -53,21 +53,21 @@ final class RegExp implements Stringable
     /** @var bool */
     public bool $throw = false;
 
-    /** @var RegExpError|null */
-    private RegExpError|null $error = null;
+    /** @var RegExpError */
+    private RegExpError $error;
 
-    /** @var int|null */
-    private int|null $errorCode = null;
+    /** @var int */
+    private int $errorCode;
 
     /**
      * Constructor.
      *
-     * @param  string      $source
-     * @param  string|null $modifiers
-     * @param  bool        $throw
+     * @param  string $source
+     * @param  string $modifiers
+     * @param  bool   $throw
      * @throws RegExpError
      */
-    public function __construct(string $source, string $modifiers = null, bool $throw = false)
+    public function __construct(string $source, string $modifiers = '', bool $throw = false)
     {
         if ($throw && $modifiers != '') {
             $modifiers = self::prepareModifiers($modifiers, $invalids);
@@ -95,7 +95,7 @@ final class RegExp implements Stringable
      */
     public function error(): RegExpError|null
     {
-        return $this->error;
+        return $this->error ?? null;
     }
 
     /**
@@ -105,7 +105,7 @@ final class RegExp implements Stringable
      */
     public function errorCode(): int|null
     {
-        return $this->errorCode;
+        return $this->errorCode ?? null;
     }
 
     /**
@@ -402,14 +402,14 @@ final class RegExp implements Stringable
     }
 
     /**
-     * Escape pattern with/without modifiers.
+     * Escape pattern with/without delimiter.
      * Note: Sould not be used with prepare().
      *
-     * @param  string      $input
-     * @param  string|null $delimiter
+     * @param  string $input
+     * @param  string $delimiter
      * @return string
      */
-    public static function escape(string $input, string $delimiter = null): string
+    public static function escape(string $input, string $delimiter = ''): string
     {
         $input = preg_quote($input, $delimiter);
 
@@ -436,11 +436,11 @@ final class RegExp implements Stringable
      * Prepare source as pattern with/without modifiers.
      * Note: Sould not be used with escape().
      *
-     * @param  string      $source
-     * @param  string|null $modifiers
+     * @param  string $source
+     * @param  string $modifiers
      * @return string
      */
-    public static function prepare(string $source, string $modifiers = null): string
+    public static function prepare(string $source, string $modifiers = ''): string
     {
         $chars = "\r\n\t\v\f\0";
         $delim = self::DELIMITER;
@@ -481,12 +481,12 @@ final class RegExp implements Stringable
     /**
      * Create an instance using given source/modifiers.
      *
-     * @param  string      $source
-     * @param  string|null $modifiers
-     * @param  bool        $throw
+     * @param  string $source
+     * @param  string $modifiers
+     * @param  bool   $throw
      * @return static
      */
-    public static function from(string $source, string $modifiers = null, bool $throw = false): static
+    public static function from(string $source, string $modifiers = '', bool $throw = false): static
     {
         return new static($source, $modifiers, $throw);
     }
@@ -521,7 +521,7 @@ final class RegExp implements Stringable
     /**
      * Prepare pattern.
      */
-    private function preparePattern(string $source, string|null $modifiers): string
+    private function preparePattern(string $source, string $modifiers): string
     {
         return self::prepare($source, $modifiers);
     }
