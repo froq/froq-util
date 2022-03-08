@@ -207,7 +207,7 @@ final class TraceEntry implements ArrayAccess
     public function __construct(array $data)
     {
         $this->data  = $data;
-        $this->index = $data['#'];
+        $this->index = $data['#'] ?? null;
     }
 
     /** @magic */
@@ -461,8 +461,6 @@ final class TraceEntry implements ArrayAccess
 
     /**
      * @inheritDoc ArrayAccess
-     * @throws Error
-     * @notImplemented
      */
     public function offsetSet(mixed $key, mixed $_): never
     {
@@ -471,8 +469,6 @@ final class TraceEntry implements ArrayAccess
 
     /**
      * @inheritDoc ArrayAccess
-     * @throws Error
-     * @notImplemented
      */
     public function offsetUnset(mixed $key): never
     {
