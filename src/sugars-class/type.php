@@ -21,7 +21,7 @@ final class Type implements Stringable
     public readonly string $name;
 
     /** @var mixed */
-    private mixed $var;
+    public readonly mixed $var;
 
     /**
      * Constructor.
@@ -44,26 +44,6 @@ final class Type implements Stringable
     public function __debugInfo(): array
     {
         return ['name' => $this->name];
-    }
-
-    /**
-     * Get name.
-     *
-     * @return string
-     */
-    public function name(): string
-    {
-        return $this->name;
-    }
-
-    /**
-     * Get var.
-     *
-     * @return mixed
-     */
-    public function var(): mixed
-    {
-        return $this->var;
     }
 
     /**
