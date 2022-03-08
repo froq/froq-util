@@ -51,7 +51,7 @@ final class RegExp implements Stringable
     public readonly string $pattern;
 
     /** @var bool */
-    private bool $throw = false;
+    public bool $throw = false;
 
     /** @var RegExpError|null */
     private RegExpError|null $error = null;
@@ -106,23 +106,6 @@ final class RegExp implements Stringable
     public function errorCode(): int|null
     {
         return $this->errorCode;
-    }
-
-    /**
-     * Set/get throw option.
-     *
-     * @param  bool|null $throw
-     * @return bool|self
-     */
-    public function throw(bool $throw = null): bool|self
-    {
-        if ($throw === null) {
-            return $this->throw;
-        }
-
-        $this->throw = $throw;
-
-        return $this;
     }
 
     /**
