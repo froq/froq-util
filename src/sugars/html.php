@@ -66,9 +66,9 @@ function html_remove(string $input, string|array $allowed = null, bool $decode =
     if ($allowed && is_string($allowed)) {
         $allowed = split('\s*,\s*', $allowed);
         $allowed = array_map(fn($tag) => trim($tag, '<>'), $allowed);
-        $pattern = '~<(?!(?:' . join('|', $allowed) . ')\b)(\w[\w-]+)\b[^>]*/?>(?:.*?</\1>)?~isu';
+        $pattern = '~<(?!(?:' . join('|', $allowed) . ')\b)(\w[\w-]*)\b[^>]*/?>(?:.*?</\1>)?~isu';
     } else {
-        $pattern = '~<(\w[\w-]+)\b[^>]*/?>(?:.*?</\1>)?~isu';
+        $pattern = '~<(\w[\w-]*)\b[^>]*/?>(?:.*?</\1>)?~isu';
     }
 
     return preg_remove($pattern, $input);
@@ -210,8 +210,8 @@ function html_compress(string $input): string
     $input = preg_remove('~<!--(.*?)-->~sm', $input);
 
     // Remove tag spaces (not inner spaces, eg: "Text <b>bold</b>").
-    $input = preg_replace('~<(\w[\w-]+)(.*?)>\s+~sm', '<\1\2>', $input);
-    $input = preg_replace('~\s*</(\w[\w-]+)>\s*~sm', '</\1>', $input);
+    $input = preg_replace('~<(\w[\w-]*)(.*?)>\s+~sm', '<\1\2>', $input);
+    $input = preg_replace('~\s*</(\w[\w-]*)>\s*~sm', '</\1>', $input);
 
     // Textarea "\n" problem.
     $textarea_templ = '%{textarea-' . time() . '}';
