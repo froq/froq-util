@@ -1778,7 +1778,9 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
         return $this->toString();
     }
 
-    /** @inheritDoc IteratorAggregate */ #[\ReturnTypeWillChange]
+    /**
+     * @inheritDoc IteratorAggregate
+     */ #[\ReturnTypeWillChange]
     public function getIterator(): iterable
     {
         for ($i = 0, $il = $this->length(); $i < $il; $i++) {
@@ -1786,31 +1788,41 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
         }
     }
 
-    /** @inheritDoc JsonSerializable */
+    /**
+     * @inheritDoc JsonSerializable
+     */
     public function jsonSerialize(): string
     {
         return $this->data;
     }
 
-    /** @inheritDoc ArrayAccess */
+    /**
+     * @inheritDoc ArrayAccess
+     */
     public function offsetExists(mixed $offset): bool
     {
         return $this->char($offset) !== null;
     }
 
-    /** @inheritDoc ArrayAccess */
+    /**
+     * @inheritDoc ArrayAccess
+     */
     public function offsetGet(mixed $offset): string|null
     {
         return $this->char($offset);
     }
 
-    /** @inheritDoc ArrayAccess */
-    public function offsetSet(mixed $offset, mixed $char): never
+    /**
+     * @inheritDoc ArrayAccess
+     */
+    public function offsetSet(mixed $offset, mixed $_): never
     {
         throw new Error('Not implemented');
     }
 
-    /** @inheritDoc ArrayAccess */
+    /**
+     * @inheritDoc ArrayAccess
+     */
     public function offsetUnset(mixed $offset): never
     {
         throw new Error('Not implemented');
