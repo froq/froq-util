@@ -91,6 +91,19 @@ class XArrayObject extends ArrayObject implements Arrayable, Objectable, Jsonabl
     }
 
     /**
+     * Search a key for given value.
+     *
+     * @param  mixed  $value
+     * @param  bool   $strict
+     * @param  bool   $last
+     * @return string|int|null
+     */
+    public function search(mixed $value, bool $strict = true, bool $last = false): string|int|null
+    {
+        return array_search_key($this->getArrayCopy(), $value, $strict, $last);
+    }
+
+    /**
      * Set data.
      *
      * @param  array|self $data
