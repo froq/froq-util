@@ -25,7 +25,7 @@ function upper(string $string): string { return mb_strtoupper($string); }
 function lower(string $string): string { return mb_strtolower($string); }
 
 /**
- * Sub a string with given start/length in multi-byte style.
+ * Sub-string with given start/length in multi-byte style.
  *
  * @param  string   $string
  * @param  int      $start
