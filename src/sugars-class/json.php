@@ -15,7 +15,7 @@ declare(strict_types=1);
  * @author  Kerem Güneş
  * @since   5.0
  */
-class Json extends \StaticClass
+class Json extends StaticClass
 {
     /** Types. */
     public final const ARRAY = 1, OBJECT = 2;
@@ -228,8 +228,7 @@ use froq\common\interface\{Arrayable, Jsonable};
  * @author  Kerem Güneş
  * @since   5.0
  */
-#[AllowDynamicProperties] // 8.2
-class JsonObject implements Arrayable, Jsonable, JsonSerializable, ArrayAccess
+class JsonObject extends stdClass implements Arrayable, Jsonable, JsonSerializable, ArrayAccess
 {
     /**
      * Constructor
