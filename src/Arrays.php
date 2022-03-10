@@ -879,7 +879,7 @@ final class Arrays extends \StaticClass
     }
 
     /**
-     * Export given array keys to vars given as list or named argument.
+     * Export given array keys to given vars as list or named argument.
      *
      * @param  array     $array
      * @param  mixed &...$vars
