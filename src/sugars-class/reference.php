@@ -49,4 +49,10 @@ class References extends stdClass
             $this->$name = $value;
         }
     }
+
+    /** @magic */
+    public function __get(string $name): mixed
+    {
+        return $this->$name ?? null;
+    }
 }
