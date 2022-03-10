@@ -8,7 +8,7 @@ declare(strict_types=1);
 /**
  * Reference.
  *
- * A class for references.
+ * A class for references with dynamic properties.
  *
  * @package froq\util
  * @object  Reference
