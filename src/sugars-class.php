@@ -9,6 +9,7 @@ require 'sugars-class/json.php';
 require 'sugars-class/mapset.php';
 require 'sugars-class/mapxao.php';
 require 'sugars-class/options.php';
+require 'sugars-class/reference.php';
 require 'sugars-class/reflection.php';
 require 'sugars-class/regexp.php';
 require 'sugars-class/type.php';
