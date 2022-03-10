@@ -15,7 +15,7 @@ declare(strict_types=1);
  * @author  Kerem Güneş
  * @since   6.0
  */
-final class RegExp implements Stringable
+class RegExp implements Stringable
 {
     /** @const string */
     public const DELIMITER = '~';
