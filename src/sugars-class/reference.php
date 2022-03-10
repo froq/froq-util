@@ -8,35 +8,14 @@ declare(strict_types=1);
 /**
  * Reference.
  *
- * A class for single reference.
+ * A class for references.
  *
  * @package froq\util
  * @object  Reference
  * @author  Kerem Güneş
  * @since   6.0
  */
-class Reference
-{
-    /**
-     * Constructor.
-     *
-     * @param mixed $value
-     */
-    public function __construct(public mixed $value)
-    {}
-}
-
-/**
- * References.
- *
- * A class for multiple references.
- *
- * @package froq\util
- * @object  References
- * @author  Kerem Güneş
- * @since   6.0
- */
-class References extends stdClass
+class Reference extends stdClass
 {
     /**
      * Constructor.
