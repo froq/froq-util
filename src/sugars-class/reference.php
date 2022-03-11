@@ -29,9 +29,26 @@ class Reference extends stdClass
         }
     }
 
-    /** @magic */
+    /**
+     * For getting properties safely.
+     *
+     * @param  string $name
+     * @return mixed
+     */
     public function __get(string $name): mixed
     {
         return $this->$name ?? null;
+    }
+
+    /**
+     * Clear all properties.
+     *
+     * @return void
+     */
+    public function clear(): void
+    {
+        foreach (get_object_vars($this) as $name => $_) {
+            unset($this->$name);
+        }
     }
 }
