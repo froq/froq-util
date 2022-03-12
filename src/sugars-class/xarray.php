@@ -516,6 +516,20 @@ class XArray implements Arrayable, Jsonable, Listable, Collectable, Iteratable, 
     }
 
     /**
+     * Ensure given keys with/without given default.
+     *
+     * @param  array      $keys
+     * @param  mixed|null $default
+     * @return self
+     */
+    public function default(array $keys, mixed $default = null): self
+    {
+        $this->data = array_default($this->data, $keys, $default);
+
+        return $this;
+    }
+
+    /**
      * Convert key cases to lower.
      *
      * @param  bool $recursive
