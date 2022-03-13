@@ -1848,7 +1848,7 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
      * @param  string|null  $encoding
      * @return static
      */
-    public static function from(string|array $data = '', string|null $encoding = ''): static
+    public static function from(string|array $data, string|null $encoding = ''): static
     {
         return new static($data, $encoding);
     }
