@@ -173,10 +173,10 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     /**
      * Splice.
      *
-     * @param  int         $start
-     * @param  int|null    $length
-     * @param  string|null $replace
-     * @param  string|null $replaced
+     * @param  int          $start
+     * @param  int|null     $length
+     * @param  string|null  $replace
+     * @param  string|null &$replaced
      * @return self
      */
     public function splice(int $start, int $length = null, string $replace = null, string &$replaced = null): self
