@@ -21,9 +21,9 @@ class Json extends StaticClass
     public final const ARRAY = 1, OBJECT = 2;
 
     /** Build flags. */
-    public final const BUILD_FLAGS = JSON_UNESCAPED_UNICODE
+    public final const BUILD_FLAGS = JSON_PRESERVE_ZERO_FRACTION
                                    | JSON_UNESCAPED_SLASHES
-                                   | JSON_PRESERVE_ZERO_FRACTION;
+                                   | JSON_UNESCAPED_UNICODE;
 
     /** Parse flags. */
     public final const PARSE_FLAGS = JSON_BIGINT_AS_STRING;
