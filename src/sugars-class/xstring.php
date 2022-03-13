@@ -295,12 +295,7 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
      */
     public function charAt(int $index): string|null
     {
-        $char = $this->char($index);
-        if ($char === null) {
-            return null;
-        }
-
-        return $char;
+        return ($char = $this->char($index)) !== null ? $char : null;
     }
 
     /**
@@ -311,12 +306,7 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
      */
     public function charCodeAt(int $index): int|null
     {
-        $char = $this->char($index);
-        if ($char === null) {
-            return null;
-        }
-
-        return Strings::ord($char);
+        return ($char = $this->char($index)) !== null ? Strings::ord($char) : null;
     }
 
     /**
