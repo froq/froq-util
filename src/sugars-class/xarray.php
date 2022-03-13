@@ -226,9 +226,9 @@ class XArray implements Arrayable, Jsonable, Listable, Collectable, Iteratable, 
     /**
      * Splice tool.
      *
-     * @param  int        $start
-     * @param  int|null   $end
-     * @param  mixed|null $replace
+     * @param  int         $start
+     * @param  int|null    $end
+     * @param  mixed|null  $replace
      * @param  mixed|null &$replaced
      * @return self
      */
