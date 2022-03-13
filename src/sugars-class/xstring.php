@@ -28,11 +28,14 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     /**
      * Constructor.
      *
-     * @param string      $data
-     * @param string|null $encoding
+     * @param string|array $data
+     * @param string|null  $encoding
      */
-    public function __construct(string $data = '', string|null $encoding = '')
+    public function __construct(string|array $data = '', string|null $encoding = '')
     {
+        // When character sequence given.
+        is_array($data) && $data = join($data);
+
         $this->data = $data;
 
         if ($encoding !== '') {
@@ -1829,7 +1832,7 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     }
 
     /**
-     * Create an static instance from self data.
+     * Create a copy instance from self data and encoding.
      *
      * @return static
      */
@@ -1839,13 +1842,13 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     }
 
     /**
-     * Create an instance from given data (and encoding).
+     * Create an instance from given data and encoding.
      *
-     * @param  string      $data
-     * @param  string|null $encoding
+     * @param  string|array $data
+     * @param  string|null  $encoding
      * @return static
      */
-    public static function from(string $data = '', string|null $encoding = ''): static
+    public static function from(string|array $data = '', string|null $encoding = ''): static
     {
         return new static($data, $encoding);
     }
@@ -1881,12 +1884,7 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
      */
     public static function fromCharCode(int ...$codes): static
     {
-        $data = '';
-        foreach ($codes as $code) {
-            $data .= Strings::chr($code);
-        }
-
-        return new static($data);
+        return new static(array_map(fn($code) => Strings::chr($code), $codes));
     }
 
     /**
@@ -1897,23 +1895,18 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
      */
     public static function fromCodePoint(int ...$codes): static
     {
-        $data = '';
-        foreach ($codes as $code) {
-            $data .= Strings::chr($code);
-        }
-
-        return new static($data);
+        return new static(array_map(fn($code) => Strings::chr($code), $codes));
     }
 }
 
 /**
  * XString initializer.
  *
- * @param  string      $data
- * @param  string|null $encoding
+ * @param  string|array $data
+ * @param  string|null  $encoding
  * @return XString
  */
-function xstring(string $data = '', string|null $encoding = ''): XString
+function xstring(string|array $data = '', string|null $encoding = ''): XString
 {
     return new XString($data, $encoding);
 }
