@@ -493,7 +493,7 @@ class XNumber implements Stringable
     }
 
     /**
-     * Create an static instance from self data.
+     * Create a copy instance from self data and precision.
      *
      * @return static
      */
