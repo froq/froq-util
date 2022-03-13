@@ -80,14 +80,6 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     }
 
     /**
-     * @alias length()
-     */
-    public function len()
-    {
-        return $this->length();
-    }
-
-    /**
      * Trim.
      *
      * @param  string $characters
@@ -946,6 +938,7 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
                 return false;
             }
         }
+
         return true;
     }
 
