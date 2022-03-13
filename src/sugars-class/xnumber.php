@@ -549,7 +549,7 @@ class XNumber implements Stringable
  * @param  int|bool|null    $precision
  * @return XNumber
  */
-function xnumber(int|float|string $data, int|bool $precision = null): XNumber
+function xnumber(int|float|string $data = 0, int|bool $precision = null): XNumber
 {
     return new XNumber($data, $precision);
 }
