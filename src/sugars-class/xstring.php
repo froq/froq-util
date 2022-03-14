@@ -1757,16 +1757,6 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     }
 
     /**
-     * Get data as array.
-     *
-     * @return array
-     */
-    public function toArray(): array
-    {
-        return split('', $this->data);
-    }
-
-    /**
      * @alias toString()
      */
     public function string()

@@ -641,16 +641,6 @@ class StringBuffer implements Stringable, IteratorAggregate, JsonSerializable, A
     }
 
     /**
-     * Get buffer data as array.
-     *
-     * @return array
-     */
-    public function toArray(): array
-    {
-        return $this->data;
-    }
-
-    /**
      * @alias toString()
      */
     public function string()
