@@ -322,7 +322,7 @@ function mb_lcfirst(string $string, bool $tr = false, string $encoding = null): 
 }
 
 /**
- * Reverse a multi-byte string.
+ * Reverse given string in multi-byte style.
  *
  * @param  string      $string
  * @param  string|null $encoding
@@ -336,6 +336,22 @@ function mb_strrev(string $string, string $encoding = null): string
     }
 
     return join(array_reverse(mb_str_split($string, 1, $encoding)));
+}
+
+/**
+ * Pad given string in multi-byte style.
+ *
+ * @param  string      $string
+ * @param  int         $pad_length
+ * @param  string      $pad_string
+ * @param  int         $pad_type
+ * @param  string|null $encoding
+ * @return string
+ * @since  6.0
+ */
+function mb_str_pad(string $string, int $pad_length, string $pad_string = ' ', int $pad_type = STR_PAD_RIGHT, string $encoding = null): string
+{
+    return Strings::pad($string, $pad_length, $pad_string, $pad_type, $encoding);
 }
 
 /**
