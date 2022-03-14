@@ -204,10 +204,10 @@ function slice(array|string $input, int $start, int $end = null, bool $keep_keys
 /**
  * Splice an array or string.
  *
- * @param  array|string      $input
- * @param  int               $start
- * @param  int|null          $end
- * @param  array|string|null $replace
+ * @param  array|string       $input
+ * @param  int                $start
+ * @param  int|null           $end
+ * @param  array|string|null  $replace
  * @param  array|string|null &$replaced
  * @return array|string
  * @since  6.0
@@ -228,10 +228,10 @@ function splice(array|string $input, int $start, int $end = null, array|string $
 /**
  * Split a string, with unicode style.
  *
- * @param  string           $separator
- * @param  string           $input
- * @param  int|null         $limit
- * @param  int|null         $flags
+ * @param  string            $separator
+ * @param  string            $input
+ * @param  int|null          $limit
+ * @param  int|null          $flags
  * @param  RegExpError|null &$error
  * @return array
  * @since  5.0
@@ -1162,9 +1162,9 @@ function preg_test(string $pattern, string $subject): bool
 /**
  * Perform a regular expression search & remove.
  *
- * @param  string|array $pattern
- * @param  string|array $subject
- * @param  int|null     $limit
+ * @param  string|array  $pattern
+ * @param  string|array  $subject
+ * @param  int|null      $limit
  * @param  int|null     &$count
  * @return string|array|null
  * @since  4.0
@@ -1252,10 +1252,10 @@ function error_clear(int $code = null): void
 /**
  * Get last error message with code, optionally formatted.
  *
- * @param  int|null $code
- * @param  bool     $format
- * @param  bool     $extract
- * @param  bool     $clear
+ * @param  int|null &$code
+ * @param  bool      $format
+ * @param  bool      $extract
+ * @param  bool      $clear
  * @return string|null
  * @since  4.17
  */
@@ -1293,7 +1293,7 @@ function error_message(int &$code = null, bool $format = false, bool $extract = 
 /**
  * Get JSON last error message with code if any, instead "No error".
  *
- * @param  int|null $code
+ * @param  int|null &$code
  * @return string|null
  * @since  4.17
  */
@@ -1305,9 +1305,9 @@ function json_error_message(int &$code = null): string|null
 /**
  * Get PECL last error message with code if any, instead "No error".
  *
- * @param  int|null    $code
- * @param  string|null $func
- * @param  bool        $clear
+ * @param  int|null    &$code
+ * @param  string|null  $func
+ * @param  bool         $clear
  * @return string|null
  * @since  4.17
  */
