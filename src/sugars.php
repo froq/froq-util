@@ -239,11 +239,9 @@ function splice(array|string $input, int $start, int $end = null, array|string $
 function split(string $separator, string $input, int $limit = null, int $flags = null, RegExpError &$error = null): array
 {
     if ($separator == '') {
-        $ret = preg_split(
-            '~~u', $input,
-            limit: -1,
-            flags: PREG_SPLIT_NO_EMPTY
-        ) ?: [];
+        // Safe for binary strings.
+        $ret = strlen($input) == mb_strlen($input)
+             ? str_split($input) : mb_str_split($input);
 
         // Mind limit option.
         if ($limit && $limit > 0) {
