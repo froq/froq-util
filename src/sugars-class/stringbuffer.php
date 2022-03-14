@@ -557,7 +557,7 @@ class StringBuffer implements Stringable, IteratorAggregate, JsonSerializable, A
      */
     public function trim(string $characters = " \n\r\t\v\0"): self
     {
-        $this->data = split('', trim(join($this->data), $characters));
+        $this->trimLeft($characters)->trimRight($characters);
 
         return $this;
     }
@@ -570,7 +570,18 @@ class StringBuffer implements Stringable, IteratorAggregate, JsonSerializable, A
      */
     public function trimLeft(string $characters = " \n\r\t\v\0"): self
     {
-        $this->data = split('', ltrim(join($this->data), $characters));
+        $trimmed = null;
+        for ($i = 0, $il = count($this->data); $i < $il; $i++) {
+            if (!str_contains($characters, $this->data[$i])) {
+                break;
+            }
+
+            unset($this->data[$i]);
+            $trimmed = 1;
+        }
+
+        // Reset indexes if trimmed.
+        $trimmed && $this->data = array_list($this->data);
 
         return $this;
     }
@@ -583,7 +594,18 @@ class StringBuffer implements Stringable, IteratorAggregate, JsonSerializable, A
      */
     public function trimRight(string $characters = " \n\r\t\v\0"): self
     {
-        $this->data = split('', rtrim(join($this->data), $characters));
+        $trimmed = null;
+        for ($i = count($this->data) - 1; $i > -1; $i--) {
+            if (!str_contains($characters, $this->data[$i])) {
+                break;
+            }
+
+            unset($this->data[$i]);
+            $trimmed = 1;
+        }
+
+        // Reset indexes if trimmed.
+        $trimmed && $this->data = array_list($this->data);
 
         return $this;
     }
@@ -619,6 +641,16 @@ class StringBuffer implements Stringable, IteratorAggregate, JsonSerializable, A
     }
 
     /**
+     * Get buffer data as array.
+     *
+     * @return array
+     */
+    public function toArray(): array
+    {
+        return $this->data;
+    }
+
+    /**
      * @alias toString()
      */
     public function string()
@@ -645,7 +677,7 @@ class StringBuffer implements Stringable, IteratorAggregate, JsonSerializable, A
      */
     public function filter(callable $func): self
     {
-        $this->data = array_filter($this->data, $func);
+        $this->data = array_list(array_filter($this->data, $func));
 
         return $this;
     }
@@ -673,6 +705,21 @@ class StringBuffer implements Stringable, IteratorAggregate, JsonSerializable, A
     public function reduce(mixed $carry, callable $func): mixed
     {
         return array_reduce($this->data, $func, $carry);
+    }
+
+    /**
+     * Apply interface to any action in.
+     *
+     * @param  callable    $func
+     * @param  mixed    ...$funcArgs
+     * @return self
+     */
+    public function apply(callable $func, mixed ...$funcArgs): self
+    {
+        $func = $func->bindTo($this, $this);
+        $func(...$funcArgs);
+
+        return $this;
     }
 
     /**
