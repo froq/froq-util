@@ -282,16 +282,18 @@ final class Strings extends \StaticClass
         }
 
         $chars = BASE62_ALPHABET;
-        if ($puncted) { // Add punctuation chars.
+
+        // Add punctuation chars.
+        if ($puncted) {
             $chars .= '!^+%&/\(){}[]<>=*?-_|$#.:,;';
         }
-        $charsLength = strlen($chars);
 
+        $max = strlen($chars) - 1;
         $ret = '';
 
         srand();
         while (strlen($ret) < $length) {
-            $ret .= $chars[rand(0, $charsLength - 1)];
+            $ret .= $chars[rand(0, $max)];
         }
 
         return $ret;

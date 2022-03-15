@@ -1350,8 +1350,8 @@ function suid(int $length = 6, int $base = 62): string|null
         return null;
     }
 
-    $ret = '';
     $max = $base - 1;
+    $ret = '';
 
     srand();
     while ($length--) {
