@@ -105,21 +105,6 @@ class JsonError extends Error
 }
 
 /**
- * Readonly Error.
- *
- * An error class for readonly stuff (which is missing internally, suppose).
- *
- * @package froq\util
- * @object  ReadonlyError
- * @author  Kerem Güneş
- * @since   6.0
- */
-class ReadonlyError extends Error
-{
-    use ErrorTrait;
-}
-
-/**
  * RegExp Error.
  *
  * An error class for RegExp (which is missing internally, suppose).
@@ -130,6 +115,21 @@ class ReadonlyError extends Error
  * @since   6.0
  */
 class RegExpError extends Error
+{
+    use ErrorTrait;
+}
+
+/**
+ * Readonly Error.
+ *
+ * An error class for readonly stuff (which is missing internally, suppose).
+ *
+ * @package froq\util
+ * @object  ReadonlyError
+ * @author  Kerem Güneş
+ * @since   6.0
+ */
+class ReadonlyError extends Error
 {
     use ErrorTrait;
 }
