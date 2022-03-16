@@ -1801,6 +1801,18 @@ function is_number(mixed $var): bool
 }
 
 /**
+ * Check whether given input is an enum.
+ *
+ * @param  mixed $var
+ * @return bool
+ * @since  6.0
+ */
+function is_enum(mixed $var): bool
+{
+    return is_object($var) && enum_exists($var::class, false);
+}
+
+/**
  * Check whether given input is an iterator.
  *
  * @param  mixed $var
