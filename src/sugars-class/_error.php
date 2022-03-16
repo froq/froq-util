@@ -6,8 +6,6 @@
 declare(strict_types=1);
 
 /**
- * Error Trait.
- *
  * A trait for property access and a proper string representation,
  * used by errors below.
  *
@@ -47,9 +45,8 @@ trait ErrorTrait
 }
 
 /**
- * Last Error.
- *
  * An error class utilies error_get_last() stuff.
+ *
  * @package froq\util
  * @object  LastError
  * @author  Kerem Güneş
@@ -75,8 +72,6 @@ class LastError extends Error
 }
 
 /**
- * Key Error.
- *
  * An error class for invalid keys (which is missing internally).
  *
  * @package froq\util
@@ -90,8 +85,6 @@ class KeyError extends Error
 }
 
 /**
- * Json Error.
- *
  * An error class for JSON stuff (which is missing internally, suppose).
  *
  * @package froq\util
@@ -105,8 +98,6 @@ class JsonError extends Error
 }
 
 /**
- * RegExp Error.
- *
  * An error class for RegExp (which is missing internally, suppose).
  *
  * @package froq\util
@@ -120,8 +111,6 @@ class RegExpError extends Error
 }
 
 /**
- * Readonly Error.
- *
  * An error class for readonly stuff (which is missing internally, suppose).
  *
  * @package froq\util
@@ -135,8 +124,6 @@ class ReadonlyError extends Error
 }
 
 /**
- * Range Error.
- *
  * An error class for some range stuff.
  *
  * @package froq\util
