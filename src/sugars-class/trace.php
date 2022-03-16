@@ -444,6 +444,29 @@ final class TraceEntry implements ArrayAccess
     }
 
     /**
+     * Extract.
+     *
+     * @param  array     $keys
+     * @param  mixed &...$vars
+     * @return int
+     */
+    public function extract(int|string|array $keys, mixed &...$vars): int
+    {
+        return array_extract($this->data, $keys, ...$vars);
+    }
+
+    /**
+     * Export.
+     *
+     * @param  mixed &...$vars
+     * @return int
+     */
+    public function export(mixed &...$vars): int
+    {
+        return array_export($this->data, ...$vars);
+    }
+
+    /**
      * @inheritDoc ArrayAccess
      */
     public function offsetExists(mixed $key): bool
