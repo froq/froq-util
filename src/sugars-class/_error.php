@@ -47,6 +47,34 @@ trait ErrorTrait
 }
 
 /**
+ * Last Error.
+ *
+ * An error class utilies error_get_last() stuff.
+ * @package froq\util
+ * @object  LastError
+ * @author  Kerem Güneş
+ * @since   6.0
+ */
+class LastError extends Error
+{
+    use ErrorTrait;
+
+    /**
+     * Constructor.
+     *
+     * @param bool $format
+     * @param bool $extract
+     * @param bool $clear
+     */
+    public function __construct(bool $format = false, bool $extract = false, bool $clear = false)
+    {
+        $message = error_message($code, $format, $extract, $clear);
+
+        parent::__construct((string) $message, (int) $code);
+    }
+}
+
+/**
  * Key Error.
  *
  * An error class for invalid keys (which is missing internally).
