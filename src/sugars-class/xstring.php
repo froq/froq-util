@@ -225,7 +225,7 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
      * @param  int         $offset
      * @return static
      */
-    function sliceBefore(self|string $search, int $length = null, bool $icase = false, bool $last = false, int $offset = 0): static
+    public function sliceBefore(self|string $search, int $length = null, bool $icase = false, bool $last = false, int $offset = 0): static
     {
         $index = $this->index($search, $icase, $last, $offset);
 
@@ -252,7 +252,7 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
      * @param  int         $offset
      * @return static
      */
-    function sliceAfter(self|string $search, int $length = null, bool $icase = false, bool $last = false, int $offset = 0): static
+    public function sliceAfter(self|string $search, int $length = null, bool $icase = false, bool $last = false, int $offset = 0): static
     {
         $index = $this->index($search, $icase, $last, $offset);
 
@@ -267,6 +267,22 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
         }
 
         return new static($data, $this->encoding);
+    }
+
+    /**
+     * @alias sliceBefore()
+     */
+    public function before(...$args)
+    {
+        return $this->sliceBefore(...$args);
+    }
+
+    /**
+     * @alias sliceAfter()
+     */
+    public function after(...$args)
+    {
+        return $this->sliceAfter(...$args);
     }
 
     /**
