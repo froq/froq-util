@@ -119,6 +119,7 @@ class StringBuffer implements Stringable, IteratorAggregate, JsonSerializable, A
      * @param  int    $index
      * @param  string $data
      * @return self
+     * @throws ValueError
      */
     public function insert(int $index, string $data): self
     {
@@ -143,6 +144,7 @@ class StringBuffer implements Stringable, IteratorAggregate, JsonSerializable, A
      * @param  int $start
      * @param  int $end
      * @return self
+     * @throws ValueError
      */
     public function delete(int $start, int $end = 1): self
     {
@@ -163,6 +165,7 @@ class StringBuffer implements Stringable, IteratorAggregate, JsonSerializable, A
      * @param  int    $end
      * @param  string $data
      * @return self
+     * @throws ValueError
      */
     public function replace(int $start, int $end, string $data): self
     {
@@ -251,6 +254,7 @@ class StringBuffer implements Stringable, IteratorAggregate, JsonSerializable, A
      *
      * @param  int $length
      * @return self
+     * @throws ValueError
      */
     public function setLength(int $length): self
     {
