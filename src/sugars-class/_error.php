@@ -45,33 +45,6 @@ trait ErrorTrait
 }
 
 /**
- * An error class utilies error_get_last() stuff.
- *
- * @package froq\util
- * @object  LastError
- * @author  Kerem Güneş
- * @since   6.0
- */
-class LastError extends Error
-{
-    use ErrorTrait;
-
-    /**
-     * Constructor.
-     *
-     * @param bool $format
-     * @param bool $extract
-     * @param bool $clear
-     */
-    public function __construct(bool $format = false, bool $extract = false, bool $clear = false)
-    {
-        $message = error_message($code, $format, $extract, $clear);
-
-        parent::__construct((string) $message, (int) $code);
-    }
-}
-
-/**
  * An error class for invalid keys (which is missing internally).
  *
  * @package froq\util
@@ -134,4 +107,31 @@ class ReadonlyError extends Error
 class RangeError extends Error
 {
     use ErrorTrait;
+}
+
+/**
+ * An error class utilies error_get_last() stuff.
+ *
+ * @package froq\util
+ * @object  LastError
+ * @author  Kerem Güneş
+ * @since   6.0
+ */
+class LastError extends Error
+{
+    use ErrorTrait;
+
+    /**
+     * Constructor.
+     *
+     * @param bool $format
+     * @param bool $extract
+     * @param bool $clear
+     */
+    public function __construct(bool $format = false, bool $extract = false, bool $clear = false)
+    {
+        $message = error_message($code, $format, $extract, $clear);
+
+        parent::__construct((string) $message, (int) $code);
+    }
 }
