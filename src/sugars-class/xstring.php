@@ -549,7 +549,7 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     }
 
     /**
-     * Replace-regexp, for RegExp replacement.
+     * Replace-RegExp, for RegExp replacement.
      *
      * @param  string           $search
      * @param  string|callable  $replace
@@ -566,7 +566,7 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     }
 
     /**
-     * Replace-match, for RegExpMatch as callable argument.
+     * Replace-RegExpMatch, for RegExpMatch as callable argument.
      *
      * @param  string|RegExp $search
      * @param  callable      $replace
@@ -575,7 +575,7 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
      * @param  array|int     $flags
      * @return self
      */
-    public function replaceMatch(string|RegExp $search, callable $replace, int $limit = -1, int &$count = null,
+    public function replaceRegExpMatch(string|RegExp $search, callable $replace, int $limit = -1, int &$count = null,
         int|array $flags = 0): self
     {
         return $this->replace($search, $replace, false, $limit, $count, $flags, false, RegExpMatch::class);
