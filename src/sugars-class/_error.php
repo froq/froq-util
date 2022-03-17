@@ -16,22 +16,29 @@ declare(strict_types=1);
  */
 trait ErrorTrait
 {
-    /** @magic */
+    /**
+     * To get rid of calling get*() methods for those readonly properties.
+     */
     public function __get(string $property): mixed
     {
         if (property_exists($this, $property)) {
             return $this->$property;
         }
+        if ($property == 'trace') {
+            return $this->getTrace();
+        }
 
-        trigger_error(
-            'Undefined property: '. $this::class .'::$'. $property,
-            E_USER_WARNING // Act like original.
-        );
+        // Act as original.
+        trigger_error(sprintf(
+            'Undefined property: %s::$%s', static::class, $property
+        ), E_USER_WARNING);
 
         return null;
     }
 
-    /** @magic */
+    /**
+     * For a proper string representation with code.
+     */
     public function __toString(): string
     {
         $ret = trim(parent::__toString());
@@ -146,6 +153,8 @@ class LastError extends Error
  */
 class UndefinedConstantError extends Error
 {
+    use ErrorTrait;
+
     /**
      * Constructor.
      *
@@ -176,6 +185,8 @@ class UndefinedConstantError extends Error
  */
 class UndefinedPropertyError extends Error
 {
+    use ErrorTrait;
+
     /**
      * Constructor.
      *
@@ -200,6 +211,8 @@ class UndefinedPropertyError extends Error
  */
 class UndefinedMethodError extends Error
 {
+    use ErrorTrait;
+
     /**
      * Constructor.
      *
