@@ -135,3 +135,81 @@ class LastError extends Error
         parent::__construct((string) $message, (int) $code);
     }
 }
+
+/**
+ * An error class for undefined constants/class constants.
+ *
+ * @package froq\util
+ * @object  UndefinedConstantError
+ * @author  Kerem Güneş
+ * @since   6.0
+ */
+class UndefinedConstantError extends Error
+{
+    /**
+     * Constructor.
+     *
+     * @param string|object|null $class
+     * @param string             $constant
+     */
+    public function __construct(string|object|null $class, string $constant)
+    {
+        if ($class) {
+            parent::__construct(sprintf(
+                'Undefined constant %s::%s', get_class_name($class), $constant
+            ));
+        } else {
+            parent::__construct(sprintf(
+                'Undefined constant %s', $constant
+            ));
+        }
+    }
+}
+
+/**
+ * An error class for undefined class properties.
+ *
+ * @package froq\util
+ * @object  UndefinedPropertyError
+ * @author  Kerem Güneş
+ * @since   6.0
+ */
+class UndefinedPropertyError extends Error
+{
+    /**
+     * Constructor.
+     *
+     * @param string|object $class
+     * @param string        $property
+     */
+    public function __construct(string|object $class, string $property)
+    {
+        parent::__construct(sprintf(
+            'Undefined property %s::$%s', get_class_name($class), $property
+        ));
+    }
+}
+
+/**
+ * An error class for undefined class methods.
+ *
+ * @package froq\util
+ * @object  UndefinedMethodError
+ * @author  Kerem Güneş
+ * @since   6.0
+ */
+class UndefinedMethodError extends Error
+{
+    /**
+     * Constructor.
+     *
+     * @param string|object $class
+     * @param string        $method
+     */
+    public function __construct(string|object $class, string $method)
+    {
+        parent::__construct(sprintf(
+            'Undefined method %s::%s()', get_class_name($class), $method
+        ));
+    }
+}
