@@ -335,6 +335,17 @@ trait ReflectionClassTrait
     }
 
     /**
+     * Get namespace with/without base-only option.
+     *
+     * @param  bool $baseOnly
+     * @return string
+     */
+    public function getNamespace(bool $baseOnly = false): string
+    {
+        return $baseOnly ? Objects::getNamespace($this->reference, true) : parent::getNamespaceName();
+    }
+
+    /**
      * Get method names.
      *
      * @param  int|null $filter
