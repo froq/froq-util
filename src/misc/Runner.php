@@ -56,8 +56,8 @@ final class Runner
         $this->runs += 1;
 
         if ($profile) {
-            $startMem = memory_get_usage();
-            $start    = microtime(true);
+            $startMemo = memory_get_usage();
+            $startTime = microtime(true);
         }
 
         $limit  = $this->limit;
@@ -69,23 +69,23 @@ final class Runner
         }
 
         if ($profile) {
-            $endMem = memory_get_usage();
-            $end    = microtime(true) - $start;
+            $endMemo = memory_get_usage();
+            $endTime = microtime(true) - $startTime;
 
             // Free.
             unset($temp);
 
-            $format = fn($v) => number_format($v, 0, '', '.');
+            $format = fn($v) => number_format($v, 0, '', ',');
 
             // Simple drops memory info.
             if ($simple) {
                 printf("run(%s)#%d: %F\n",
-                    $format($this->limit), $this->runs, $end,
+                    $format($this->limit), $this->runs, $endTime,
                 );
             } else {
                 printf("run(%s)#%d: %F, mem: %d (%d-%d)\n",
-                    $format($this->limit), $this->runs, $end,
-                    $endMem - $startMem, $endMem, $startMem,
+                    $format($this->limit), $this->runs, $endTime,
+                    $endMemo - $startMemo, $endMemo, $startMemo,
                 );
             }
         }
