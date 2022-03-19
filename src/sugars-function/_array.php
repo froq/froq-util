@@ -499,6 +499,15 @@ function array_sort_natural(array $array, bool $icase = false): array
 }
 
 /**
+ * @alias Arrays.filter(keepKeys=false)
+ * @since 6.0
+ */
+function array_filter_list(array $array, callable $func = null, bool $recursive = false, bool $use_keys = false): array
+{
+    return Arrays::filter($array, $func, $recursive, $use_keys, false);
+}
+
+/**
  * @alias Arrays.filter(recursive=true)
  * @since 5.40, 6.0
  */
