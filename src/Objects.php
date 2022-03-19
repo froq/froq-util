@@ -576,6 +576,22 @@ final class Objects extends \StaticClass
     }
 
     /**
+     * Get parent.
+     *
+     * @param  object|string $object
+     * @return string|null
+     * @since  6.0
+     */
+    public static function getParent(object|string $object): string|null
+    {
+        try {
+            return get_parent_class($object) ?: null;
+        } catch (\Throwable) {
+            return null;
+        }
+    }
+
+    /**
      * Get parents.
      *
      * @param  object|string $object
