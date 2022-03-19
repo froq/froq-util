@@ -319,6 +319,20 @@ trait ReflectionClassTrait
         return ['name' => $this->name];
     }
 
+    /**
+     * Type.
+     *
+     * @return string
+     */
+    public function type(): string
+    {
+        return match (true) {
+            $this->isInterface() => 'interface',
+            $this->isTrait()     => 'trait',
+            default              => 'class'
+        };
+    }
+
     /** @override */ #[ReturnTypeWillChange]
     public function getMethod(string $name): ReflectionMethodExtended|null
     {
