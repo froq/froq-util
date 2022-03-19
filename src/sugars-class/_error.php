@@ -153,14 +153,41 @@ class ReadonlyError extends Error
      * Constructor.
      *
      * @param string|object $class
+     * @param string|null   $property
+     */
+    public function __construct(string|object $class, string $property = null)
+    {
+        if (func_num_args() == 1) {
+            parent::__construct(sprintf(
+                'Cannot modify readonly class %s', get_class_name($class)
+            ));
+        } else {
+            parent::__construct(sprintf(
+                'Cannot modify readonly property %s::$%s', get_class_name($class), $property
+            ));
+        }
+    }
+}
+
+/**
+ * @package froq\util
+ * @object  ReadonlyClassError
+ * @author  Kerem Güneş
+ * @since   6.0
+ */
+class ReadonlyClassError extends ReadonlyError
+{
+    /**
+     * Constructor.
+     *
+     * @param string|object $class
      */
     public function __construct(string|object $class)
     {
-        parent::__construct(sprintf(
-            'Cannot modify readonly class %s', get_class_name($class)
-        ));
+        parent::__construct($class);
     }
 }
+
 
 /**
  * @package froq\util
@@ -168,10 +195,8 @@ class ReadonlyError extends Error
  * @author  Kerem Güneş
  * @since   6.0
  */
-class ReadonlyPropertyError extends Error
+class ReadonlyPropertyError extends ReadonlyError
 {
-    use ErrorTrait;
-
     /**
      * Constructor.
      *
@@ -180,9 +205,7 @@ class ReadonlyPropertyError extends Error
      */
     public function __construct(string|object $class, string $property)
     {
-        parent::__construct(sprintf(
-            'Cannot modify readonly property %s::$%s', get_class_name($class), $property
-        ));
+        parent::__construct($class, $property);
     }
 }
 
@@ -229,13 +252,13 @@ class UndefinedConstantError extends Error
      */
     public function __construct(string|object|null $class, string $constant)
     {
-        if ($class) {
+        if ($class === null) {
             parent::__construct(sprintf(
-                'Undefined constant %s::%s', get_class_name($class), $constant
+                'Undefined constant %s', $constant
             ));
         } else {
             parent::__construct(sprintf(
-                'Undefined constant %s', $constant
+                'Undefined class constant %s::%s', get_class_name($class), $constant
             ));
         }
     }
