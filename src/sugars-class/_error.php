@@ -91,19 +91,6 @@ class RegExpError extends Error
 }
 
 /**
- * An error class for readonly stuff (which is missing internally, suppose).
- *
- * @package froq\util
- * @object  ReadonlyError
- * @author  Kerem Güneş
- * @since   6.0
- */
-class ReadonlyError extends Error
-{
-    use ErrorTrait;
-}
-
-/**
  * An error class for some range stuff.
  *
  * @package froq\util
@@ -114,6 +101,57 @@ class ReadonlyError extends Error
 class RangeError extends Error
 {
     use ErrorTrait;
+}
+
+/**
+ * An error class for readonly stuff (which is missing internally, suppose).
+ *
+ * @package froq\util
+ * @object  ReadonlyError
+ * @author  Kerem Güneş
+ * @since   6.0
+ */
+class ReadonlyError extends Error
+{
+    use ErrorTrait;
+
+    /**
+     * Constructor.
+     *
+     * @param string|object $class
+     */
+    public function __construct(string|object $class)
+    {
+        parent::__construct(sprintf(
+            'Cannot modify readonly class %s', get_class_name($class)
+        ));
+    }
+}
+
+/**
+ * An error class for readonly stuff (which is missing internally, suppose).
+ *
+ * @package froq\util
+ * @object  ReadonlyError
+ * @author  Kerem Güneş
+ * @since   6.0
+ */
+class ReadonlyPropertyError extends Error
+{
+    use ErrorTrait;
+
+    /**
+     * Constructor.
+     *
+     * @param string|object $class
+     * @param string        $property
+     */
+    public function __construct(string|object $class, string $property)
+    {
+        parent::__construct(sprintf(
+            'Cannot modify readonly property %s::$%s', get_class_name($class), $property
+        ));
+    }
 }
 
 /**
