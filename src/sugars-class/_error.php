@@ -37,7 +37,7 @@ trait ErrorTrait
     }
 
     /**
-     * For a proper string representation with code.
+     * To get a proper string representation with code.
      */
     public function __toString(): string
     {
@@ -52,8 +52,6 @@ trait ErrorTrait
 }
 
 /**
- * An error class for invalid keys (which is missing internally).
- *
  * @package froq\util
  * @object  KeyError
  * @author  Kerem Güneş
@@ -65,8 +63,6 @@ class KeyError extends Error
 }
 
 /**
- * An error class for JSON stuff (which is missing internally, suppose).
- *
  * @package froq\util
  * @object  JsonError
  * @author  Kerem Güneş
@@ -78,8 +74,6 @@ class JsonError extends Error
 }
 
 /**
- * An error class for RegExp (which is missing internally, suppose).
- *
  * @package froq\util
  * @object  RegExpError
  * @author  Kerem Güneş
@@ -91,8 +85,6 @@ class RegExpError extends Error
 }
 
 /**
- * An error class for some range stuff.
- *
  * @package froq\util
  * @object  RangeError
  * @author  Kerem Güneş
@@ -104,8 +96,50 @@ class RangeError extends Error
 }
 
 /**
- * An error class for readonly stuff (which is missing internally, suppose).
- *
+ * @package froq\util
+ * @object  ArgumentError
+ * @author  Kerem Güneş
+ * @since   6.0
+ */
+class ArgumentError extends Error
+{
+    use ErrorTrait;
+}
+
+/**
+ * @package froq\util
+ * @object  UnknownError
+ * @author  Kerem Güneş
+ * @since   6.0
+ */
+class UnknownError extends Error
+{
+    use ErrorTrait;
+}
+
+/**
+ * @package froq\util
+ * @object  UnsupportedError
+ * @author  Kerem Güneş
+ * @since   6.0
+ */
+class UnsupportedError extends Error
+{
+    use ErrorTrait;
+}
+
+/**
+ * @package froq\util
+ * @object  UnimplementedError
+ * @author  Kerem Güneş
+ * @since   6.0
+ */
+class UnimplementedError extends Error
+{
+    use ErrorTrait;
+}
+
+/**
  * @package froq\util
  * @object  ReadonlyError
  * @author  Kerem Güneş
@@ -129,10 +163,8 @@ class ReadonlyError extends Error
 }
 
 /**
- * An error class for readonly stuff (which is missing internally, suppose).
- *
  * @package froq\util
- * @object  ReadonlyError
+ * @object  ReadonlyPropertyError
  * @author  Kerem Güneş
  * @since   6.0
  */
@@ -155,8 +187,6 @@ class ReadonlyPropertyError extends Error
 }
 
 /**
- * An error class utilies error_get_last() stuff.
- *
  * @package froq\util
  * @object  LastError
  * @author  Kerem Güneş
@@ -182,8 +212,6 @@ class LastError extends Error
 }
 
 /**
- * An error class for undefined constants/class constants.
- *
  * @package froq\util
  * @object  UndefinedConstantError
  * @author  Kerem Güneş
@@ -214,8 +242,6 @@ class UndefinedConstantError extends Error
 }
 
 /**
- * An error class for undefined class properties.
- *
  * @package froq\util
  * @object  UndefinedPropertyError
  * @author  Kerem Güneş
@@ -240,8 +266,6 @@ class UndefinedPropertyError extends Error
 }
 
 /**
- * An error class for undefined class methods.
- *
  * @package froq\util
  * @object  UndefinedMethodError
  * @author  Kerem Güneş

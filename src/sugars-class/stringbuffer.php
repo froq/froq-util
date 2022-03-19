@@ -755,7 +755,7 @@ class StringBuffer implements Stringable, IteratorAggregate, JsonSerializable, A
      */
     public function offsetSet(mixed $offset, mixed $_): never
     {
-        throw new Error('Not implemented');
+        throw new UnimplementedError();
     }
 
     /**
@@ -763,7 +763,7 @@ class StringBuffer implements Stringable, IteratorAggregate, JsonSerializable, A
      */
     public function offsetUnset(mixed $offset): never
     {
-        throw new Error('Not implemented');
+        throw new UnimplementedError();
     }
 
     /**

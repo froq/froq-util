@@ -167,7 +167,7 @@ final class Trace implements Stringable, Countable, IteratorAggregate, ArrayAcce
      */
     public function offsetSet(mixed $index, mixed $_): never
     {
-        throw new Error('Not implemented');
+        throw new UnimplementedError();
     }
 
     /**
@@ -175,7 +175,7 @@ final class Trace implements Stringable, Countable, IteratorAggregate, ArrayAcce
      */
     public function offsetUnset(mixed $index): never
     {
-        throw new Error('Not implemented');
+        throw new UnimplementedError();
     }
 }
 
@@ -219,7 +219,7 @@ final class TraceEntry implements ArrayAccess
     /** @magic */
     public function __set(string $key, mixed $_): never
     {
-        throw new Error('Not implemented');
+        throw new UnimplementedError();
     }
 
     /** @magic */
@@ -487,7 +487,7 @@ final class TraceEntry implements ArrayAccess
      */
     public function offsetSet(mixed $key, mixed $_): never
     {
-        throw new Error('Not implemented');
+        throw new UnimplementedError();
     }
 
     /**
@@ -495,6 +495,6 @@ final class TraceEntry implements ArrayAccess
      */
     public function offsetUnset(mixed $key): never
     {
-        throw new Error('Not implemented');
+        throw new UnimplementedError();
     }
 }

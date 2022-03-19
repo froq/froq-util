@@ -1819,7 +1819,7 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
      */
     public function offsetSet(mixed $offset, mixed $_): never
     {
-        throw new Error('Not implemented');
+        throw new UnimplementedError();
     }
 
     /**
@@ -1827,7 +1827,7 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
      */
     public function offsetUnset(mixed $offset): never
     {
-        throw new Error('Not implemented');
+        throw new UnimplementedError();
     }
 
     /**

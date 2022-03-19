@@ -326,7 +326,9 @@ class JsonObject extends stdClass implements Arrayable, Jsonable, JsonSerializab
         return (bool) $this->get($key, $default);
     }
 
-    /** @inheritDoc froq\common\interface\Arrayable */
+    /**
+     * @inheritDoc froq\common\interface\Arrayable
+     */
     public function toArray(bool $deep = true): array
     {
         $ret = [];
@@ -341,40 +343,52 @@ class JsonObject extends stdClass implements Arrayable, Jsonable, JsonSerializab
         return $ret;
     }
 
-    /** @inheritDoc froq\common\interface\Jsonable */
+    /**
+     * @inheritDoc froq\common\interface\Jsonable
+     */
     public function toJson(int $flags = 0): string
     {
         return (string) json_encode($this, $flags);
     }
 
-    /** @inheritDoc JsonSerializable */
+    /**
+     * @inheritDoc JsonSerializable
+     */
     public function jsonSerialize(): static
     {
         return $this;
     }
 
-    /** @inheritDoc ArrayAccess */
+    /**
+     * @inheritDoc ArrayAccess
+     */
     public function offsetExists(mixed $key): bool
     {
         return property_exists($this, $key);
     }
 
-    /** @inheritDoc ArrayAccess */
+    /**
+     * @inheritDoc ArrayAccess
+     */
     public function offsetGet(mixed $key): mixed
     {
         return property_exists($this, $key) ? $this->$key : null;
     }
 
-    /** @inheritDoc ArrayAccess */
-    public function offsetSet(mixed $key, mixed $value): never
+    /**
+     * @inheritDoc ArrayAccess
+     */
+    public function offsetSet(mixed $key, mixed $_): never
     {
-        throw new JsonError('Not implemented');
+        throw new UnimplementedError();
     }
 
-    /** @inheritDoc ArrayAccess */
+    /**
+     * @inheritDoc ArrayAccess
+     */
     public function offsetUnset(mixed $key): never
     {
-        throw new JsonError('Not implemented');
+        throw new UnimplementedError();
     }
 
     /**
