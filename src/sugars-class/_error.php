@@ -188,7 +188,6 @@ class ReadonlyClassError extends ReadonlyError
     }
 }
 
-
 /**
  * @package froq\util
  * @object  ReadonlyPropertyError
@@ -206,31 +205,6 @@ class ReadonlyPropertyError extends ReadonlyError
     public function __construct(string|object $class, string $property)
     {
         parent::__construct($class, $property);
-    }
-}
-
-/**
- * @package froq\util
- * @object  LastError
- * @author  Kerem Güneş
- * @since   6.0
- */
-class LastError extends Error
-{
-    use ErrorTrait;
-
-    /**
-     * Constructor.
-     *
-     * @param bool $format
-     * @param bool $extract
-     * @param bool $clear
-     */
-    public function __construct(bool $format = false, bool $extract = false, bool $clear = false)
-    {
-        $message = error_message($code, $format, $extract, $clear);
-
-        parent::__construct((string) $message, (int) $code);
     }
 }
 
@@ -309,5 +283,60 @@ class UndefinedMethodError extends Error
         parent::__construct(sprintf(
             'Undefined method %s::%s()', get_class_name($class), $method
         ));
+    }
+}
+
+/**
+ * @package froq\util
+ * @object  LastError
+ * @author  Kerem Güneş
+ * @since   6.0
+ */
+class LastError extends Error
+{
+    use ErrorTrait;
+
+    /** @var ?string */
+    private readonly ?string $call;
+
+    /** @var ?string */
+    private readonly ?string $callPath;
+
+    /**
+     * Constructor.
+     */
+    public function __construct()
+    {
+        if ($error = get_error()) {
+            ['type' => $code, 'message' => $message] = $error;
+            $this->call = $error['function'];
+            $this->callPath = $error['file'] .':'. $error['line'];
+        } else {
+            // Invalid call/throw.
+            [$code, $message] = [-1, 'No error'];
+            $this->call = $this->callPath = null;
+        }
+
+        parent::__construct($message, $code);
+    }
+
+    /**
+     * Get call.
+     *
+     * @return ?string
+     */
+    public function getCall(): ?string
+    {
+        return $this->call;
+    }
+
+    /**
+     * Get call path.
+     *
+     * @return ?string
+     */
+    public function getCallPath(): ?string
+    {
+        return $this->callPath;
     }
 }
