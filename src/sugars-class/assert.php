@@ -183,6 +183,22 @@ final class Assert
     }
 
     /**
+     * Check given input equality & throw given message/throwable optionally when assertion fails.
+     *
+     * @param  mixed                                         $input
+     * @param  mixed                                         $inputs
+     * @param  array<string|Throwable>|string|Throwable|null $message
+     * @return bool
+     * @causes Throwable|AssertException
+     */
+    public static function checkEquals(mixed $input, mixed $inputs, array|string|Throwable $message = null): bool
+    {
+        $assertion = equals($input, ...(array) $inputs);
+
+        return self::check($assertion, $message);
+    }
+
+    /**
      * Check given input type & throw given message/throwable optionally when assertion fails.
      *
      * @param  mixed                                         $input
@@ -263,6 +279,12 @@ final class Assert
     public static function false(...$args)
     {
         return self::checkFalse(...$args);
+    }
+
+    /** @alias checkEquals() */
+    public static function equals(...$args)
+    {
+        return self::checkEquals(...$args);
     }
 
     /** @alias checkType() */
