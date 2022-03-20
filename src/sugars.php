@@ -1697,15 +1697,17 @@ function get_object_hash(object $object, bool $with_name = true, bool $with_reha
  * Sets the accessible non-static properties of the given object according to scope.
  *
  * @param  object       $object
- * @param  array|object $vars
- * @return void
+ * @param  object|array $vars
+ * @return object
  * @since  6.0
  */
-function set_object_vars(object $object, array|object $vars): void
+function set_object_vars(object $object, object|array $vars): object
 {
     foreach ($vars as $key => $value) {
         $object->$key = $value;
     }
+
+    return $object;
 }
 
 /**
