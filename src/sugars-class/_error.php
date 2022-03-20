@@ -297,27 +297,32 @@ class LastError extends Error
     use ErrorTrait;
 
     /** @var ?string */
-    private readonly ?string $call;
+    private ?string $call = null;
 
     /** @var ?string */
-    private readonly ?string $callPath;
+    private ?string $callPath = null;
 
     /**
      * Constructor.
+     *
+     * @param string|null $message
+     * @param int|null    $code
      */
-    public function __construct()
+    public function __construct(string $message = null, int $code = null)
     {
-        if ($error = get_error()) {
-            ['type' => $code, 'message' => $message] = $error;
-            $this->call = $error['function'];
-            $this->callPath = $error['file'] .':'. $error['line'];
-        } else {
-            // Invalid call/throw.
-            [$code, $message] = [-1, 'No error'];
-            $this->call = $this->callPath = null;
+        // Normal process with last error when no arguments given.
+        if (func_num_args() == 0) {
+            if ($error = get_error()) {
+                ['type' => $code, 'message' => $message] = $error;
+                $this->call = $error['function'];
+                $this->callPath = $error['file'] .':'. $error['line'];
+            } else {
+                // Invalid call/throw.
+                [$code, $message] = [-1, 'No error'];
+            }
         }
 
-        parent::__construct($message, $code);
+        parent::__construct((string) $message, (int) $code);
     }
 
     /**
