@@ -724,7 +724,7 @@ function get_error(string $field = null): mixed
     // Separate message & function if available.
     if ($pos = strpos($error['message'], '):')) {
         $error['function'] = substr($error['message'], 0, $pos - 1);
-        $error['message']  = substr($error['message'], $pos + 3);
+        $error['message']  = ucfirst(substr($error['message'], $pos + 3));
     }
 
     return $field ? $error[$field] ?? null : $error;
