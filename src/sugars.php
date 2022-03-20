@@ -713,8 +713,21 @@ function get_type(mixed $var, bool $scalars = false): string
  */
 function get_error(string $field = null): mixed
 {
-    return $field ? error_get_last()[$field] ?? null
-                  : error_get_last();
+    $error = error_get_last();
+    if (!$error) {
+        return null;
+    }
+
+    // Put in a new order.
+    $error = array_select($error, ['type', 'file', 'line', 'message', 'function'], combine: true);
+
+    // Separate message & function if available.
+    if ($pos = strpos($error['message'], '):')) {
+        $error['function'] = substr($error['message'], 0, $pos - 1);
+        $error['message']  = substr($error['message'], $pos + 3);
+    }
+
+    return $field ? $error[$field] ?? null : $error;
 }
 
 /**
