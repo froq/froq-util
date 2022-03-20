@@ -1896,7 +1896,7 @@ final class Arrays extends \StaticClass
             $defaults = (array) $default;
             foreach ($keys as $i => $key) {
                 $default    = $defaults[$i] ?? null;
-                $values[$i] = $array[$key] ?? $default;
+                $values[$i] = $array[$key]  ?? $default;
             }
         }
 
