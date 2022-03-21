@@ -1205,46 +1205,6 @@ class XArray implements Arrayable, Listable, Jsonable, Collectable, Iteratable, 
     }
 
     /**
-     * Get first value.
-     *
-     * @return mixed
-     */
-    public function first(): mixed
-    {
-        return array_first($this->data);
-    }
-
-    /**
-     * Get last value.
-     *
-     * @return mixed
-     */
-    public function last(): mixed
-    {
-        return array_last($this->data);
-    }
-
-    /**
-     * Get first key.
-     *
-     * @return int|string|null
-     */
-    public function firstKey(): int|string|null
-    {
-        return array_key_first($this->data);
-    }
-
-    /**
-     * Get last key.
-     *
-     * @return int|string|null
-     */
-    public function lastKey(): int|string|null
-    {
-        return array_key_last($this->data);
-    }
-
-    /**
      * Get item.
      *
      * @param  int|string $key
