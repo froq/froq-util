@@ -12,6 +12,7 @@ require 'sugars-class/options.php';
 require 'sugars-class/reference.php';
 require 'sugars-class/reflection.php';
 require 'sugars-class/regexp.php';
+require 'sugars-class/simplelist.php';
 require 'sugars-class/stringbuffer.php';
 require 'sugars-class/type.php';
 require 'sugars-class/trace.php';
