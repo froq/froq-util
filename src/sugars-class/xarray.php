@@ -647,7 +647,7 @@ class XArray implements Arrayable, Listable, Jsonable, Collectable, Iteratable, 
      */
     public function append(mixed ...$values): self
     {
-        array_append($this->data, $value, ...$values);
+        array_append($this->data, ...$values);
 
         return $this;
     }
@@ -660,7 +660,7 @@ class XArray implements Arrayable, Listable, Jsonable, Collectable, Iteratable, 
      */
     public function prepend(mixed ...$values): self
     {
-        array_prepend($this->data, $value, ...$values);
+        array_prepend($this->data, ...$values);
 
         return $this;
     }
