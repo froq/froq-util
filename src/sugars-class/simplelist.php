@@ -5,7 +5,7 @@
  */
 declare(strict_types=1);
 
-use froq\common\interface\{Arrayable, Listable, Jsonable};
+use froq\common\interface\{Arrayable, Jsonable};
 use froq\collection\trait\{SortTrait, FilterTrait, MapTrait, ReduceTrait,
     EachTrait, CountTrait, EmptyTrait, ToArrayTrait, ToJsonTrait};
 
@@ -19,7 +19,7 @@ use froq\collection\trait\{SortTrait, FilterTrait, MapTrait, ReduceTrait,
  * @author  Kerem Güneş
  * @since   6.0
  */
-class SimpleList implements Arrayable, Listable, Jsonable, Countable, IteratorAggregate, ArrayAccess
+class SimpleList implements Arrayable, Jsonable, Countable, IteratorAggregate, ArrayAccess
 {
     use SortTrait, FilterTrait, MapTrait, ReduceTrait,
         EachTrait, CountTrait, EmptyTrait, ToArrayTrait, ToJsonTrait;
