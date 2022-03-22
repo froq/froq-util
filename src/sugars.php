@@ -1873,12 +1873,18 @@ function is_enum(mixed $var): bool
  */
 function is_type_of(mixed $var, string ...$types): bool
 {
+    $var_type = strtolower(get_debug_type($var));
+
     // Multiple at once.
     if ($types && str_contains($types[0], '|')) {
         $types = explode('|', $types[0]);
+
+        // A little bit faster than foreach().
+        if (in_array($var_type, $types, true)) {
+            return true;
+        }
     }
 
-    $var_type = null;
     foreach ($types as $type) {
         $type = strtolower($type);
         if (match ($type) {
@@ -1892,8 +1898,7 @@ function is_type_of(mixed $var, string ...$types): bool
                 => ('is_' . $type)($var),
 
             // All others.
-            default => ($type === ($var_type ??= strtolower(get_type($var))))
-                    || ($var instanceof $type)
+            default => ($var_type === $type) || ($var instanceof $type)
         }) {
             return true;
         }
