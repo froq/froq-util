@@ -1878,16 +1878,17 @@ function is_type_of(mixed $var, string ...$types): bool
         $types = explode('|', $types[0]);
     }
 
+    $var_type = null;
     foreach ($types as $type) {
         $type = strtolower($type);
         if (match ($type) {
-            // Required for objects & below).
+            // Required for objects & below.
             'object'   => is_object($var),
 
             // Sugar stuff.
             'list'     => is_list($var),     'number'    => is_number($var),
+            'enum'     => is_enum($var),     'iterator'  => is_iterator($var),
             'image'    => is_image($var),    'stream'    => is_stream($var),
-            'iterator' => is_iterator($var),
 
             // Internal stuff.
             'iterable' => is_iterable($var), 'callable'  => is_callable($var),
@@ -1895,7 +1896,8 @@ function is_type_of(mixed $var, string ...$types): bool
             'scalar'   => is_scalar($var),   'numeric'   => is_numeric($var),
 
             // All others.
-            default    => strtolower(get_type($var)) === $type
+            default    => ($type === ($var_type ??= strtolower(get_type($var))))
+                       || ($var instanceof $type)
         }) {
             return true;
         }
