@@ -8,6 +8,7 @@ require 'sugars-class/assert.php';
 require 'sugars-class/json.php';
 require 'sugars-class/mapset.php';
 require 'sugars-class/mapxao.php';
+require 'sugars-class/items.php';
 require 'sugars-class/options.php';
 require 'sugars-class/reference.php';
 require 'sugars-class/reflection.php';
