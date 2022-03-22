@@ -112,11 +112,9 @@ final class Arrays extends \StaticClass
         // Arrays::set($array, 'a.b.c', 1) => ['a' => ['b' => ['c' => 1]]]
 
         // Direct access.
-        if (array_key_exists($key, $array)) {
+        if (array_key_exists($key, $array) || is_int($key)) {
             $array[$key] = $value;
         } else {
-            $key = (string) $key;
-
             // Direct access.
             if (!str_contains($key, '.')) {
                 $array[$key] = $value;
@@ -185,12 +183,10 @@ final class Arrays extends \StaticClass
         }
 
         // Direct access.
-        if (array_key_exists($key, $array)) {
-            $value = $array[$key];
+        if (array_key_exists($key, $array) || is_int($key)) {
+            $value = $array[$key] ?? null;
             if ($drop) unset($array[$key]);
         } else {
-            $key = (string) $key;
-
             // Direct access.
             if (!str_contains($key, '.')) {
                 $value = $array[$key] ?? null;
