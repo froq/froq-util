@@ -6,8 +6,6 @@
 declare(strict_types=1);
 
 /**
- * Items.
- *
  * A simple item list.
  *
  * @package froq\util
@@ -15,7 +13,7 @@ declare(strict_types=1);
  * @author  Kerem Güneş
  * @since   6.0
  */
-class Items implements Countable, IteratorAggregate, ArrayAccess
+class ItemList implements Countable, IteratorAggregate, ArrayAccess
 {
     /** @var array */
     protected array $items = [];
@@ -36,6 +34,12 @@ class Items implements Countable, IteratorAggregate, ArrayAccess
         }
 
         $this->locked = $locked;
+    }
+
+    /** @magic */
+    public function __debugInfo(): array
+    {
+        return ['locked' => $this->locked] + $this->items;
     }
 
     /**

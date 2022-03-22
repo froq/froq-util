@@ -10,8 +10,6 @@ use froq\collection\trait\{SortTrait, FilterTrait, MapTrait, ReduceTrait,
     EachTrait, CountTrait, EmptyTrait, ToArrayTrait, ToJsonTrait};
 
 /**
- *  Simple List.
- *
  * A class for playing with lists in OOP-way.
  *
  * @package froq\util
