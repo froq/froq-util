@@ -210,6 +210,16 @@ final class Type implements Stringable
     }
 
     /**
+     * Stream check.
+     *
+     * @return bool
+     */
+    public function isStream(): bool
+    {
+        return is_stream($this->var);
+    }
+
+    /**
      * Iterator check.
      *
      * @return bool
@@ -220,13 +230,13 @@ final class Type implements Stringable
     }
 
     /**
-     * Stream check.
+     * Enum check.
      *
      * @return bool
      */
-    public function isStream(): bool
+    public function isEnum(): bool
     {
-        return is_stream($this->var);
+        return is_enum($this->var);
     }
 
     /**
