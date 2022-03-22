@@ -35,7 +35,7 @@ class SimpleList implements Arrayable, Jsonable, Countable, IteratorAggregate, A
     public function __construct(iterable $data = [])
     {
         foreach ($data as $value) {
-            $this->add($value);
+            $this->data[] = $value;
         }
     }
 
