@@ -1816,30 +1816,6 @@ function is_number(mixed $var): bool
 }
 
 /**
- * Check whether given input is an enum.
- *
- * @param  mixed $var
- * @return bool
- * @since  6.0
- */
-function is_enum(mixed $var): bool
-{
-    return is_object($var) && enum_exists($var::class, false);
-}
-
-/**
- * Check whether given input is an iterator.
- *
- * @param  mixed $var
- * @return bool
- * @since  6.0
- */
-function is_iterator(mixed $var): bool
-{
-    return $var && ($var instanceof Traversable);
-}
-
-/**
  * Check whether given input is a GdImage.
  *
  * @param  mixed $var
@@ -1864,6 +1840,30 @@ function is_stream(mixed $var): bool
 }
 
 /**
+ * Check whether given input is an iterator.
+ *
+ * @param  mixed $var
+ * @return bool
+ * @since  6.0
+ */
+function is_iterator(mixed $var): bool
+{
+    return $var && ($var instanceof Traversable);
+}
+
+/**
+ * Check whether given input is an enum.
+ *
+ * @param  mixed $var
+ * @return bool
+ * @since  6.0
+ */
+function is_enum(mixed $var): bool
+{
+    return is_object($var) && enum_exists($var::class, false);
+}
+
+/**
  * Check whether given input is any type of given types.
  *
  * @param  mixed     $var
@@ -1882,22 +1882,18 @@ function is_type_of(mixed $var, string ...$types): bool
     foreach ($types as $type) {
         $type = strtolower($type);
         if (match ($type) {
-            // Required for objects & below.
-            'object'   => is_object($var),
-
             // Sugar stuff.
-            'list'     => is_list($var),     'number'    => is_number($var),
-            'enum'     => is_enum($var),     'iterator'  => is_iterator($var),
-            'image'    => is_image($var),    'stream'    => is_stream($var),
+            'list', 'number', 'image', 'stream', 'iterator', 'enum'
+                => ('is_' . $type)($var),
 
-            // Internal stuff.
-            'iterable' => is_iterable($var), 'callable'  => is_callable($var),
-            'resource' => is_resource($var), 'countable' => is_countable($var),
-            'scalar'   => is_scalar($var),   'numeric'   => is_numeric($var),
+            // Primitive & internal stuff.
+            'int', 'float', 'string', 'bool', 'array', 'object', 'null',
+            'numeric', 'scalar', 'resource', 'iterable', 'callable', 'countable',
+                => ('is_' . $type)($var),
 
             // All others.
-            default    => ($type === ($var_type ??= strtolower(get_type($var))))
-                       || ($var instanceof $type)
+            default => ($type === ($var_type ??= strtolower(get_type($var))))
+                    || ($var instanceof $type)
         }) {
             return true;
         }
