@@ -1888,6 +1888,9 @@ function is_type_of(mixed $var, string ...$types): bool
     foreach ($types as $type) {
         $type = strtolower($type);
         if (match ($type) {
+            // Any/mixed.
+            'any', 'mixed' => 1,
+
             // Sugar stuff.
             'list', 'number', 'image', 'stream', 'iterator', 'enum'
                 => ('is_' . $type)($var),
