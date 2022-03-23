@@ -5,41 +5,55 @@
  */
 declare(strict_types=1);
 
+use froq\common\interface\{Arrayable, Jsonable};
+use froq\collection\trait\{CountTrait, EmptyTrait};
+
 /**
  * A simple item list.
  *
  * @package froq\util
- * @object  Items
+ * @object  ItemList
  * @author  Kerem Güneş
  * @since   6.0
  */
-class ItemList implements Countable, IteratorAggregate, ArrayAccess
+class ItemList implements Arrayable, Jsonable, Countable, IteratorAggregate, ArrayAccess
 {
+    use CountTrait, EmptyTrait;
+
     /** @var array */
-    protected array $items = [];
+    private array $data = [];
+
+    /** @var string|null */
+    private string|null $type;
 
     /** @var bool */
-    protected bool $locked;
+    private bool $locked = false;
+
 
     /**
      * Constructor.
      *
-     * @param iterable $items
-     * @param bool     $locked
+     * @param iterable    $data
+     * @param string|null $type
+     * @param bool        $locked
      */
-    public function __construct(iterable $items, bool $locked = false)
+    public function __construct(iterable $data = [], string $type = null, bool $locked = false)
     {
-        foreach ($items as $item) {
-            $this->items[] = $item;
+        // Set type before.
+        $this->type = $type;
+
+        foreach ($data as $item) {
+            $this->add($item);
         }
 
+        // Set locked after.
         $this->locked = $locked;
     }
 
     /** @magic */
     public function __debugInfo(): array
     {
-        return ['locked' => $this->locked] + $this->items;
+        return ['type' => $this->type, 'locked' => $this->locked] + $this->data;
     }
 
     /**
@@ -50,7 +64,7 @@ class ItemList implements Countable, IteratorAggregate, ArrayAccess
      */
     public function item(int $index): mixed
     {
-        return $this->items[$index] ?? null;
+        return $this->data[$index] ?? null;
     }
 
     /**
@@ -60,7 +74,17 @@ class ItemList implements Countable, IteratorAggregate, ArrayAccess
      */
     public function items(): array
     {
-        return $this->items;
+        return $this->data;
+    }
+
+    /**
+     * Get type info.
+     *
+     * @return string
+     */
+    public function type(): string
+    {
+        return $this->type;
     }
 
     /**
@@ -94,7 +118,7 @@ class ItemList implements Countable, IteratorAggregate, ArrayAccess
      */
     public function index(mixed $item, bool $strict = true, bool $last = false): int|null
     {
-        return array_search_key($this->items, $item, $strict, $last);
+        return array_search_key($this->data, $item, $strict, $last);
     }
 
     /**
@@ -104,7 +128,7 @@ class ItemList implements Countable, IteratorAggregate, ArrayAccess
      */
     public function first(): mixed
     {
-        return first($this->items);
+        return first($this->data);
     }
 
     /**
@@ -114,7 +138,7 @@ class ItemList implements Countable, IteratorAggregate, ArrayAccess
      */
     public function last(): mixed
     {
-        return last($this->items);
+        return last($this->data);
     }
 
     /**
@@ -125,46 +149,46 @@ class ItemList implements Countable, IteratorAggregate, ArrayAccess
      */
     public function each(callable $func): self
     {
-        each($this->items, $func);
+        each($this->data, $func);
 
         return $this;
     }
 
     /**
-     * Sort items.
+     * Sort.
      *
      * @param  callable|null $func
      * @return self
      */
     public function sort(callable $func = null, int $flags = 0): self
     {
-        $this->items = sorted($this->items, $func, $flags, assoc: false);
+        $this->data = sorted($this->data, $func, $flags, assoc: false);
 
         return $this;
     }
 
     /**
-     * Filter items.
+     * Filter.
      *
      * @param  callable|null $func
      * @return self
      */
     public function filter(callable $func = null): self
     {
-        $this->items = array_filter_list($this->items, $func);
+        $this->data = array_filter_list($this->data, $func);
 
         return $this;
     }
 
     /**
-     * Map items.
+     * Map.
      *
      * @param  callable $func
      * @return self
      */
     public function map(callable $func): self
     {
-        $this->items = array_map($func, $this->items);
+        $this->data = array_map($func, $this->data);
 
         return $this;
     }
@@ -178,27 +202,35 @@ class ItemList implements Countable, IteratorAggregate, ArrayAccess
      */
     public function reduce(mixed $carry, callable $func): mixed
     {
-        return array_reduce($this->items, $func, $carry);
+        return array_reduce($this->data, $func, $carry);
     }
 
     /**
-     * Reverse items.
+     * Reverse.
      *
      * @return self
      */
     public function reverse(): self
     {
-        $this->items = array_reverse($this->items);
+        $this->data = array_reverse($this->data);
 
         return $this;
     }
 
     /**
-     * @inheritDoc Countable
+     * @inheritDoc froq\common\interface\Arrayable
      */
-    public function count(): int
+    public function toArray(): array
     {
-        return count($this->items);
+        return $this->data;
+    }
+
+    /**
+     * @inheritDoc froq\common\interface\Jsonable
+     */
+    public function toJson(int $flags = 0): string
+    {
+        return (string) json_encode($this->data, $flags);
     }
 
     /**
@@ -206,69 +238,89 @@ class ItemList implements Countable, IteratorAggregate, ArrayAccess
      */ #[\ReturnTypeWillChange]
     public function getIterator(): iterable
     {
-        return new ArrayIterator($this->items);
+        return new ArrayIterator($this->data);
     }
 
     /**
      * @inheritDoc ArrayAccess
+     * @causes     KeyError
      */
-    public function offsetExists(mixed $index): bool
+    public final function offsetExists(mixed $index): bool
     {
         $this->indexCheck($index);
 
-        return array_key_exists($index, $this->items);
+        return array_key_exists($index, $this->data);
     }
 
     /**
      * @inheritDoc ArrayAccess
+     * @causes     KeyError
      */
-    public function offsetGet(mixed $index, mixed $default = null): mixed
+    public final function offsetGet(mixed $index, mixed $default = null): mixed
     {
         $this->indexCheck($index);
 
-        return array_get($this->items, $index, $default);
+        return array_get($this->data, $index, $default);
     }
 
     /**
      * @inheritDoc ArrayAccess
+     * @causes     KeyError|TypeError
+     * @throws     ReadonlyError
      */ #[\ReturnTypeWillChange]
-    public function offsetSet(mixed $index, mixed $item): self
+    public final function offsetSet(mixed $index, mixed $item): self
     {
         $this->locked && throw new ReadonlyError($this);
+
+        $this->indexCheck($index); $this->typeCheck($item);
 
         $index ??= $this->count();
-        $this->indexCheck($index);
 
-        array_splice($this->items, $index, 1, $item);
+        // Splice, because it resets indexes.
+        array_splice($this->data, $index, 1, [$item]);
 
         return $this;
     }
 
     /**
      * @inheritDoc ArrayAccess
+     * @causes     KeyError
+     * @throws     ReadonlyError
      */ #[\ReturnTypeWillChange]
-    public function offsetUnset(mixed $index): self
+    public final function offsetUnset(mixed $index): self
     {
         $this->locked && throw new ReadonlyError($this);
 
         $this->indexCheck($index);
 
-        array_splice($this->items, $index, 1);
+        // Splice, because it resets indexes.
+        array_splice($this->data, $index, 1);
 
         return $this;
     }
 
     /**
-     * Check index validity.
+     * Check index validity (if index is not null).
      *
-     * @param  mixed $index
-     * @return void
      * @throws KeyError
      */
     private function indexCheck(mixed $index): void
     {
-        if (!is_int($index) || $index < 0) {
-            throw new KeyError('Index must be int & greater than -1');
+        if ($index !== null && (!is_int($index) || $index < 0)) {
+            throw new KeyError('Index must be int, greater than -1');
+        }
+    }
+
+    /**
+     * Check type validity (if type is not empty).
+     *
+     * @throws TypeError
+     */
+    private function typeCheck(mixed $item): void
+    {
+        if ($this->type && !is_type_of($item, $this->type)) {
+            throw new TypeError(sprintf('Item type must be %s, %s given',
+                $this->type, get_type($item)));
         }
     }
 }
