@@ -657,4 +657,22 @@ final class Objects extends \StaticClass
         }
         return null;
     }
+
+    /**
+     * Get vars.
+     *
+     * @param  string|object $object
+     * @param  bool          $namesOnly
+     * @return array|null
+     * @since  6.0
+     */
+    public static function getVars(object|string $object, bool $namesOnly = false): array|null
+    {
+        try {
+            $vars = is_object($object) ? get_object_vars($object) : get_class_vars($object);
+            return $namesOnly ? array_keys($vars) : $vars;
+        } catch (\Throwable) {
+            return null;
+        }
+    }
 }
