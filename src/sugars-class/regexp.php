@@ -18,28 +18,28 @@ declare(strict_types=1);
 class RegExp implements Stringable
 {
     /** @const string */
-    public const DELIMITER = '~';
+    public final const DELIMITER = '~';
 
     /** @const array<string> */
-    public const MODIFIERS = ['i', 'm', 's', 'u', 'x', 'A', 'D', 'S', 'U', 'J', 'X'];
+    public final const MODIFIERS = ['i', 'm', 's', 'u', 'x', 'A', 'D', 'S', 'U', 'J', 'X'];
 
     /** @const int */
-    public const PATTERN_ORDER        = PREG_PATTERN_ORDER,
-                 SET_ORDER            = PREG_SET_ORDER,
-                 OFFSET_CAPTURE       = PREG_OFFSET_CAPTURE,
-                 SPLIT_NO_EMPTY       = PREG_SPLIT_NO_EMPTY,
-                 SPLIT_DELIM_CAPTURE  = PREG_SPLIT_DELIM_CAPTURE,
-                 SPLIT_OFFSET_CAPTURE = PREG_SPLIT_OFFSET_CAPTURE,
-                 UNMATCHED_AS_NULL    = PREG_UNMATCHED_AS_NULL;
+    public final const PATTERN_ORDER        = PREG_PATTERN_ORDER,
+                       SET_ORDER            = PREG_SET_ORDER,
+                       OFFSET_CAPTURE       = PREG_OFFSET_CAPTURE,
+                       SPLIT_NO_EMPTY       = PREG_SPLIT_NO_EMPTY,
+                       SPLIT_DELIM_CAPTURE  = PREG_SPLIT_DELIM_CAPTURE,
+                       SPLIT_OFFSET_CAPTURE = PREG_SPLIT_OFFSET_CAPTURE,
+                       UNMATCHED_AS_NULL    = PREG_UNMATCHED_AS_NULL;
 
     /** @const int */
-    public const ERROR_NONE            = PREG_NO_ERROR,
-                 ERROR_INTERNAL        = PREG_INTERNAL_ERROR,
-                 ERROR_BACKTRACK_LIMIT = PREG_BACKTRACK_LIMIT_ERROR,
-                 ERROR_RECURSION_LIMIT = PREG_RECURSION_LIMIT_ERROR,
-                 ERROR_BAD_UTF8        = PREG_BAD_UTF8_ERROR,
-                 ERROR_BAD_UTF8_OFFSET = PREG_BAD_UTF8_OFFSET_ERROR,
-                 ERROR_JIT_STACKLIMIT  = PREG_JIT_STACKLIMIT_ERROR;
+    public final const ERROR_NONE            = PREG_NO_ERROR,
+                       ERROR_INTERNAL        = PREG_INTERNAL_ERROR,
+                       ERROR_BACKTRACK_LIMIT = PREG_BACKTRACK_LIMIT_ERROR,
+                       ERROR_RECURSION_LIMIT = PREG_RECURSION_LIMIT_ERROR,
+                       ERROR_BAD_UTF8        = PREG_BAD_UTF8_ERROR,
+                       ERROR_BAD_UTF8_OFFSET = PREG_BAD_UTF8_OFFSET_ERROR,
+                       ERROR_JIT_STACKLIMIT  = PREG_JIT_STACKLIMIT_ERROR;
 
     /** @var string */
     public readonly string $source;
