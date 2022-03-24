@@ -105,7 +105,22 @@ class ItemList implements Arrayable, Jsonable, Countable, IteratorAggregate, Arr
      */
     public function add(mixed $item): self
     {
-        return $this->offsetSet(null, $item);
+        $this->offsetSet(null, $item);
+
+        return $this;
+    }
+
+    /**
+     * Drop an item if exists.
+     *
+     * @param  mixed $item
+     * @return self
+     */
+    public function drop(mixed $item): self
+    {
+        $this->offsetUnset($this->index($item));
+
+        return $this;
     }
 
     /**
@@ -267,36 +282,36 @@ class ItemList implements Arrayable, Jsonable, Countable, IteratorAggregate, Arr
      * @inheritDoc ArrayAccess
      * @causes     KeyError|TypeError
      * @throws     ReadonlyError
-     */ #[\ReturnTypeWillChange]
-    public final function offsetSet(mixed $index, mixed $item): self
+     */
+    public final function offsetSet(mixed $index, mixed $item): void
     {
         $this->locked && throw new ReadonlyError($this);
 
         $this->indexCheck($index); $this->typeCheck($item);
 
+        // For calls like `items[] = item`.
         $index ??= $this->count();
 
         // Splice, because it resets indexes.
         array_splice($this->data, $index, 1, [$item]);
-
-        return $this;
     }
 
     /**
      * @inheritDoc ArrayAccess
      * @causes     KeyError
      * @throws     ReadonlyError
-     */ #[\ReturnTypeWillChange]
-    public final function offsetUnset(mixed $index): self
+     */
+    public final function offsetUnset(mixed $index): void
     {
         $this->locked && throw new ReadonlyError($this);
 
         $this->indexCheck($index);
 
+        // In case..
+        $index ??= PHP_INT_MAX;
+
         // Splice, because it resets indexes.
         array_splice($this->data, $index, 1);
-
-        return $this;
     }
 
     /**
@@ -307,9 +322,16 @@ class ItemList implements Arrayable, Jsonable, Countable, IteratorAggregate, Arr
     private function indexCheck(mixed $index): void
     {
         if ($index !== null && (!is_int($index) || $index < 0)) {
+            $indexRepr = match ($type = get_type($index)) {
+                'int'    => "int($index)",
+                'float'  => "float($index)",
+                'string' => "string('$index')",
+                default  => $type,
+            };
+
             throw new KeyError(format(
-                'Invalid index %t(%s) for %s<%s>',
-                $index, $index, static::class, $this->type
+                'Invalid index %s for %s<%s>',
+                $indexRepr, static::class, $this->type
             ));
         }
     }
@@ -323,7 +345,7 @@ class ItemList implements Arrayable, Jsonable, Countable, IteratorAggregate, Arr
     {
         if ($this->type && !is_type_of($item, $this->type)) {
             throw new TypeError(format(
-                'Invalid type %t for %s<%s>',
+                'Invalid item type %t for %s<%s>',
                 $item, static::class, $this->type
             ));
         }
