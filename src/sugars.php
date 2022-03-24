@@ -1204,7 +1204,10 @@ function preg_remove(string|array $pattern, string|array $subject, int $limit = 
  */
 function value(array $array, int|string $key = null, mixed $default = null): mixed
 {
-    return (func_num_args() == 1) ? current($array) ?? $default : $array[$key] ?? $default;
+    if (func_num_args() > 1) {
+        return $array[$key] ?? $default;
+    }
+    return $array ? current($array) : null; // No falses.
 }
 
 /**
