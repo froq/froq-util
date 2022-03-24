@@ -307,7 +307,10 @@ class ItemList implements Arrayable, Jsonable, Countable, IteratorAggregate, Arr
     private function indexCheck(mixed $index): void
     {
         if ($index !== null && (!is_int($index) || $index < 0)) {
-            throw new KeyError('Index must be int, greater than -1');
+            throw new KeyError(format(
+                'Invalid index %t(%s) for %s<%s>',
+                $index, $index, static::class, $this->type
+            ));
         }
     }
 
@@ -319,8 +322,10 @@ class ItemList implements Arrayable, Jsonable, Countable, IteratorAggregate, Arr
     private function typeCheck(mixed $item): void
     {
         if ($this->type && !is_type_of($item, $this->type)) {
-            throw new TypeError(sprintf('Item type must be %s, %s given',
-                $this->type, get_type($item)));
+            throw new TypeError(format(
+                'Invalid type %t for %s<%s>',
+                $item, static::class, $this->type
+            ));
         }
     }
 }
