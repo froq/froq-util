@@ -1963,8 +1963,7 @@ function is_empty(mixed $var, mixed ...$vars): bool
             return true;
         }
 
-        $sizeable = is_string($var) || is_countable($var) || is_object($var);
-        if ($sizeable && !size($var)) {
+        if (is_object($var) && size($var) == 0) {
             return true;
         }
     }
