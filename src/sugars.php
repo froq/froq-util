@@ -1797,7 +1797,6 @@ function env(string $name, mixed $default = null, bool $server = true): mixed
  * Check whether given array is a list array.
  *
  * @param  mixed $var
- * @param  bool  $strict
  * @return bool
  * @since  5.0
  */
