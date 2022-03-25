@@ -31,7 +31,7 @@ function equals($a, $b, ...$c): bool {
 }
 
 /**
- * Quick array & object (with "x:1, y:2" notation).
+ * Quick array/object (with "x:1, y:2" notation).
  */
 function qa(...$args): array
 {
@@ -54,11 +54,12 @@ function qo(...$args): object
 }
 
 /**
- * Type getter.
- * @alias get_type()
- * @since 6.0
+ * Quick array/object export (with "x:$x, y:$y" notation).
  */
-function type(...$args) { return get_type(...$args); }
+function qx(array|object $array, &...$vars): int
+{
+    return array_export((array) $array, ...$vars);
+}
 
 /**
  * Each wrapper for scoped function calls on given array or just for syntactic sugar.
