@@ -6,42 +6,17 @@
 declare(strict_types=1);
 
 /**
- * Reference.
- *
- * A class for references with dynamic properties.
+ * A class for references.
  *
  * @package froq\util
  * @object  Reference
  * @author  Kerem Güneş
  * @since   6.0
  */
-class Reference extends stdClass
+class Reference extends PlainObject
 {
     /**
-     * Constructor.
-     *
-     * @param mixed ...$properties
-     */
-    public function __construct(mixed ...$properties)
-    {
-        foreach ($properties as $name => $value) {
-            $this->$name = $value;
-        }
-    }
-
-    /**
-     * For getting properties safely.
-     *
-     * @param  string $name
-     * @return mixed
-     */
-    public function __get(string $name): mixed
-    {
-        return $this->$name ?? null;
-    }
-
-    /**
-     * Clear all properties.
+     * Clear all properties (references).
      *
      * @return void
      */

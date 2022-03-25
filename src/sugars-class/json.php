@@ -6,8 +6,6 @@
 declare(strict_types=1);
 
 /**
- * Json.
- *
  * A static class which builds/parses JSON arrays/objects/strings safely.
  *
  * @package froq\util
@@ -219,8 +217,6 @@ class Json extends StaticClass
 use froq\common\interface\{Arrayable, Jsonable};
 
 /**
- * Json Object.
- *
  * A dynamic class which is mapped as JSON object including some utility methods.
  *
  * @package froq\util
@@ -228,16 +224,16 @@ use froq\common\interface\{Arrayable, Jsonable};
  * @author  Kerem Güneş
  * @since   5.0
  */
-class JsonObject extends stdClass implements Arrayable, Jsonable, JsonSerializable, ArrayAccess
+class JsonObject extends PlainObject implements Arrayable, Jsonable, JsonSerializable, ArrayAccess
 {
     /**
      * Constructor
      *
-     * @param  array|object|null $data
+     * @param array|object|null $data
      */
     public function __construct(array|object|null $data)
     {
-        if ($data && (is_array($data) || is_object($data))) {
+        if ($data) {
             foreach ($data as $key => $value) {
                 // Convert objects to JsonObject when available.
                 $value = $this->objectify($value);
