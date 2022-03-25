@@ -56,9 +56,9 @@ function qo(...$args): object
 /**
  * Quick array/object export (with "x:$x, y:$y" notation).
  */
-function qx(array|object $array, &...$vars): int
+function qx(array|object $iter, &...$vars): int
 {
-    return array_export((array) $array, ...$vars);
+    return array_export((array) $iter, ...$vars);
 }
 
 /**
