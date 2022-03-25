@@ -1491,7 +1491,7 @@ function format(string $format, mixed $input, mixed ...$inputs): string
                         $params[$i] = join($separator, (array) $params[$i]);
                     }
                     break;
-                case '%U': case '%L': // Upper/lower.
+                case '%U': case '%L': // Upper/Lower.
                     $format = substr_replace($format, '%s', strpos($format, $specifier), 2);
                     if (array_key_exists($i, $params)) {
                         $function   = ($specifier == '%U') ? 'upper' : 'lower';
