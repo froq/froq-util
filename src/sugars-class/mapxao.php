@@ -259,11 +259,11 @@ class XArrayObject extends ArrayObject implements Arrayable, Objectable, Jsonabl
     }
 
     /**
-     * @inheritDoc froq\common\interface\Arrayable
+     * @inheritDoc froq\common\interface\Jsonable
      */
     public function toJson(int $flags = 0): string
     {
-        return json_encode($this->getArrayCopy(), $flags);
+        return json_encode($this->toArray(true), $flags);
     }
 
     /**
