@@ -750,7 +750,16 @@ function array_pop_left(array &$array, mixed $default = null): mixed
     return Arrays::popLeft($array, $default);
 }
 
-/** Selects. */
+/** Selections. */
+
+/**
+ * @alias Arrays.choose()
+ * @since 6.0
+ */
+function array_choose(array &$array, int|string|array $key, mixed $default = null, bool $drop = false): mixed
+{
+    return Arrays::choose($array, $key, $default, $drop);
+}
 
 /**
  * @alias Arrays.select()

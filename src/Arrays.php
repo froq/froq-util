@@ -1861,6 +1861,38 @@ final class Arrays extends \StaticClass
         return array_shift($array) ?? $default;
     }
 
+     /**
+     * Choose an item from an array by given key(s).
+     *
+     * @param  array                        &$array
+     * @param  int|string|array<int|string> $key
+     * @param  mixed|null                   $default
+     * @param  bool                         $drop
+     * @return mixed|null
+     * @since  6.0
+     */
+    public static function choose(array &$array, int|string|array $key, mixed $default = null, bool $drop = false): mixed
+    {
+        if (!$array) {
+            return $default;
+        }
+
+        // Choose comma-separated keys.
+        if (is_string($key) && str_contains($key, ',')) {
+            $key = split(' *, *', $key);
+        }
+
+        foreach ((array) $key as $key) {
+            if (isset($array[$key])) {
+                $value = $array[$key];
+                if ($drop) unset($array[$key]);
+                break;
+            }
+        }
+
+        return $value ?? $default;
+    }
+
     /**
      * Select item(s) from an array by given key(s), optionally combining keys/values.
      *

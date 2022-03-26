@@ -112,6 +112,19 @@ class XArray implements Arrayable, Listable, Jsonable, Collectable, Iteratable, 
     }
 
     /**
+     * Choose an item.
+     *
+     * @param  int|string|array $key
+     * @param  mixed|null       $default
+     * @param  bool             $drop
+     * @return mixed
+     */
+    public function choose(int|string|array $key, mixed $default = null, bool $drop = false): mixed
+    {
+        return array_choose($this->data, $key, $default, $drop);
+    }
+
+    /**
      * Select an item.
      *
      * @param  int|string|array $key
