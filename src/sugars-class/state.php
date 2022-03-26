@@ -6,8 +6,6 @@
 declare(strict_types=1);
 
 /**
- * State.
- *
  * A class for states as reference.
  *
  * @package froq\util
@@ -17,12 +15,6 @@ declare(strict_types=1);
  */
 class State extends PlainObject
 {
-    /**
-     * Array, because readonly.
-     * @var array
-     */
-    private readonly array $initial;
-
     /**
      * Constructor.
      *
@@ -39,34 +31,13 @@ class State extends PlainObject
     }
 
     /**
-     * Set initial state.
-     *
-     * @param  array $initial
-     * @return void
-     */
-    public function setInitialState(array $initial): void
-    {
-        $this->initial = $initial;
-    }
-
-    /**
-     * Get initial state.
-     *
-     * @return ?array
-     */
-    public function getInitialState(): ?array
-    {
-        return $this->initial ?? null;
-    }
-
-    /**
      * Set a state.
      *
      * @param  string $name
      * @param  mixed  $value
      * @return self
      */
-    public function setState(string $name, mixed $value): self
+    public function set(string $name, mixed $value): self
     {
         $this->$name = $value;
 
@@ -80,7 +51,7 @@ class State extends PlainObject
      * @param  mixed|null $default
      * @return mixed|null
      */
-    public function getState(string $name, mixed $default = null): mixed
+    public function get(string $name, mixed $default = null): mixed
     {
         return $this->$name ?? $default;
     }
