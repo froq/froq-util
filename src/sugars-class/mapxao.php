@@ -31,7 +31,7 @@ class XArrayObject extends ArrayObject implements Arrayable, Objectable, Jsonabl
      */
     public function __construct(array|self $data = null)
     {
-        parent::__construct($data, parent::ARRAY_AS_PROPS);
+        parent::__construct((array) $data, parent::ARRAY_AS_PROPS);
     }
 
     /** @magic */
