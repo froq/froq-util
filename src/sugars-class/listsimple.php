@@ -57,6 +57,22 @@ class SimpleList implements Arrayable, Jsonable, Countable, IteratorAggregate, A
     }
 
     /**
+     * Drop an item if exists.
+     *
+     * @param  mixed $value
+     * @return self
+     */
+    public function drop(mixed $value): self
+    {
+        $index = $this->indexOf($value);
+        if ($index !== null) {
+            $this->remove($index);
+        }
+
+        return $this;
+    }
+
+    /**
      * Set an index with given value.
      *
      * @param  int   $index
