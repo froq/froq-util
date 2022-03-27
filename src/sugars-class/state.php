@@ -22,12 +22,7 @@ class State extends PlainObject
      */
     public function __construct(mixed ...$states)
     {
-        // When a list of states given (eg: ["a" => 1, ..]).
-        if ($states && is_list($states)) {
-            $states = $states[0];
-        }
-
-        parent::__construct(...$states);
+        parent::__construct(...$this->prepare($states));
     }
 
     /**
@@ -54,5 +49,34 @@ class State extends PlainObject
     public function get(string $name, mixed $default = null): mixed
     {
         return $this->$name ?? $default;
+    }
+
+    /**
+     * Reset given states.
+     *
+     * @param  mixed ...$states
+     * @return self
+     */
+    public function reset(mixed ...$states): self
+    {
+        // With no existence check.
+        foreach ($this->prepare($states) as $name => $value) {
+            $this->$name = $value;
+        }
+
+        return $this;
+    }
+
+    /**
+     * Prepare states, when a list given use list[0] else all named params.
+     */
+    private function prepare(array $states): array
+    {
+        // When a list of states given (eg: ["a" => 1, ..]).
+        if ($states && is_list($states)) {
+            $states = $states[0];
+        }
+
+        return $states;
     }
 }
