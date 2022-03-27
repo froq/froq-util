@@ -52,7 +52,7 @@ class State extends PlainObject
     }
 
     /**
-     * Reset given states.
+     * Reset/re-set given states.
      *
      * @param  mixed ...$states
      * @return self
@@ -68,11 +68,23 @@ class State extends PlainObject
     }
 
     /**
+     * Clear all states.
+     *
+     * @return void
+     */
+    public function clear(): void
+    {
+        foreach ($this as $name => $_) {
+            unset($this->$name);
+        }
+    }
+
+    /**
      * Prepare states, when a list given use list[0] else all named params.
      */
     private function prepare(array $states): array
     {
-        // When a list of states given (eg: ["a" => 1, ..]).
+        // When no named params given.
         if ($states && is_list($states)) {
             $states = $states[0];
         }
