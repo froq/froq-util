@@ -52,7 +52,7 @@ class ItemList implements Arrayable, Jsonable, Countable, IteratorAggregate, Arr
     /** @magic */
     public function __debugInfo(): array
     {
-        return ['type' => $this->type, 'locked' => $this->locked] + $this->data;
+        return $this->data;
     }
 
     /**
