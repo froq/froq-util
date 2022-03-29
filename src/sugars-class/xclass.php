@@ -26,7 +26,7 @@ class XClass implements Stringable
     // public readonly string|null $nameAlias;
 
     /** @var bool */
-    private readonly bool $exists;
+    public readonly bool $exists;
 
     /**
      * Constructor.
@@ -108,7 +108,7 @@ class XClass implements Stringable
      */
     public function getNamespace(bool $baseOnly = false): string
     {
-        return Objects::getNamespace($this, $baseOnly);
+        return Objects::getNamespace($this->name, $baseOnly);
     }
 
     /**
