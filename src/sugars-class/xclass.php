@@ -43,16 +43,6 @@ class XClass implements Stringable
             $this->name   = $class::class;
             $this->exists = true;
         }
-
-        // Nope.. (use isAliasName() & getRealName()).
-        // if ($this->exists) {
-        //     $ref = new ReflectionClass($name);
-        //     $this->name = ($name !== $ref->name) ? $ref->name : $name;
-        //     $this->nameAlias = $name;
-        // } else {
-        //     $this->name = $name;
-        //     $this->nameAlias = null;
-        // }
     }
 
     /** @magic */
@@ -64,10 +54,7 @@ class XClass implements Stringable
     /** @magic */
     public function __debugInfo(): array
     {
-        return [
-            'name' => $this->name,
-            // 'nameAlias' => $this->nameAlias
-        ];
+        return ['name' => $this->name];
     }
 
     /**
