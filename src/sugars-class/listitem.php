@@ -29,7 +29,6 @@ class ItemList implements Arrayable, Jsonable, Countable, IteratorAggregate, Arr
     /** @var bool */
     private bool $locked = false;
 
-
     /**
      * Constructor.
      *
@@ -228,6 +227,32 @@ class ItemList implements Arrayable, Jsonable, Countable, IteratorAggregate, Arr
     public function reverse(): self
     {
         $this->data = array_reverse($this->data);
+
+        return $this;
+    }
+
+    /**
+     * Refine list using given values or null, '', [] values as default.
+     *
+     * @param  array $values
+     * @return self
+     */
+    public function refine(array $values = [null, '', []]): self
+    {
+        $this->data = array_clear($this->data, $values, false);
+
+        return $this;
+    }
+
+    /**
+     * Dedupe values applying unique check.
+     *
+     * @param  bool $strict
+     * @return self
+     */
+    public function dedupe(bool $strict = true): self
+    {
+        $this->data = array_dedupe($this->data, $strict, true);
 
         return $this;
     }

@@ -132,15 +132,27 @@ class SimpleList implements Arrayable, Jsonable, Countable, IteratorAggregate, A
     }
 
     /**
+     * Refine list using given values or null, '', [] values as default.
+     *
+     * @param  array $values
+     * @return self
+     */
+    public function refine(array $values = [null, '', []]): self
+    {
+        $this->data = array_clear($this->data, $values, false);
+
+        return $this;
+    }
+
+    /**
      * Dedupe values applying unique check.
      *
      * @param  bool $strict
-     * @param  bool $list
      * @return self
      */
     public function dedupe(bool $strict = true): self
     {
-        $this->data = array_dedupe($this->data, $strict, list: true);
+        $this->data = array_dedupe($this->data, $strict, true);
 
         return $this;
     }

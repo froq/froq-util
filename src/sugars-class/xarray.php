@@ -331,6 +331,20 @@ class XArray implements Arrayable, Listable, Jsonable, Collectable, Iteratable, 
     }
 
     /**
+     * Refine list using given values or null, '', [] values as default.
+     *
+     * @param  array $values
+     * @param  bool $list
+     * @return self
+     */
+    public function refine(array $values = [null, '', []], bool $list = false): self
+    {
+        $this->data = array_clear($this->data, $values, $list);
+
+        return $this;
+    }
+
+    /**
      * Group by given field.
      *
      * @param  int|string $field
