@@ -61,27 +61,31 @@ class ItemList implements Arrayable, Jsonable, Countable, IteratorAggregate, Arr
     }
 
     /**
-     * Add an item.
+     * Add items.
      *
-     * @param  mixed $item
+     * @param  mixed ...$items
      * @return self
      */
-    public function add(mixed $item): self
+    public function add(mixed ...$items): self
     {
-        $this->offsetSet(null, $item);
+        foreach ($items as $item) {
+            $this->offsetSet(null, $item);
+        }
 
         return $this;
     }
 
     /**
-     * Drop an item if exists.
+     * Drop items.
      *
-     * @param  mixed $item
+     * @param  mixed ...$items
      * @return self
      */
-    public function drop(mixed $item): self
+    public function drop(mixed ...$items): self
     {
-        $this->offsetUnset($this->index($item));
+        foreach ($items as $item) {
+            $this->offsetUnset($this->index($item));
+        }
 
         return $this;
     }
