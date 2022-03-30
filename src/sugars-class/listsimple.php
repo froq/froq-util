@@ -32,9 +32,7 @@ class SimpleList implements Arrayable, Jsonable, Countable, IteratorAggregate, A
      */
     public function __construct(iterable $data = [])
     {
-        foreach ($data as $value) {
-            $this->data[] = $value;
-        }
+        $this->data[] = array_values($data);
     }
 
     /** @magic */
@@ -160,12 +158,12 @@ class SimpleList implements Arrayable, Jsonable, Countable, IteratorAggregate, A
     /**
      * Check whether given values exist.
      *
-     * @param  mixed ...$values
+     * @param  mixed $value
      * @return bool
      */
-    public function contains(mixed ...$values): bool
+    public function contains(mixed $value): bool
     {
-        return array_contains($this->data, ...$values);
+        return array_contains($this->data, $value);
     }
 
     /**
@@ -334,38 +332,8 @@ class SimpleList implements Arrayable, Jsonable, Countable, IteratorAggregate, A
     }
 
     /**
-     * Get keys.
-     *
-     * @return array
-     */
-    public function keys(): array
-    {
-        return array_keys($this->data);
-    }
-
-    /**
-     * Get values.
-     *
-     * @return array
-     */
-    public function values(): array
-    {
-        return array_values($this->data);
-    }
-
-    /**
-     * Get entries.
-     *
-     * @return array
-     */
-    public function entries(): array
-    {
-        return array_entries($this->data);
-    }
-
-    /**
      * @inheritDoc IteratorAggregate
-     */ #[\ReturnTypeWillChange]
+     */ #[ReturnTypeWillChange]
     public function getIterator(): iterable
     {
         return new ArrayIterator($this->data);
