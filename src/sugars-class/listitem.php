@@ -268,7 +268,7 @@ class ItemList implements Arrayable, Jsonable, Countable, IteratorAggregate, Arr
     {
         $this->indexCheck($index);
 
-        return array_get($this->data, $index, $default);
+        return $this->data[$index] ?? $default;
     }
 
     /**
