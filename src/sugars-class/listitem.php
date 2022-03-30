@@ -21,7 +21,7 @@ class ItemList implements Arrayable, Jsonable, Countable, IteratorAggregate, Arr
     use CountTrait, EmptyTrait;
 
     /** @var array */
-    private array $data = [];
+    protected array $data = [];
 
     /**
      * Constructor.
@@ -31,7 +31,7 @@ class ItemList implements Arrayable, Jsonable, Countable, IteratorAggregate, Arr
     public function __construct(iterable $data = [])
     {
         foreach ($data as $item) {
-            $this->add($item);
+            $this->data[] = $item;
         }
     }
 
@@ -251,7 +251,7 @@ class ItemList implements Arrayable, Jsonable, Countable, IteratorAggregate, Arr
      * @inheritDoc ArrayAccess
      * @causes     KeyError
      */
-    public final function offsetExists(mixed $index): bool
+    public function offsetExists(mixed $index): bool
     {
         $this->indexCheck($index);
 
@@ -262,7 +262,7 @@ class ItemList implements Arrayable, Jsonable, Countable, IteratorAggregate, Arr
      * @inheritDoc ArrayAccess
      * @causes     KeyError
      */
-    public final function offsetGet(mixed $index, mixed $default = null): mixed
+    public function offsetGet(mixed $index, mixed $default = null): mixed
     {
         $this->indexCheck($index);
 
@@ -273,7 +273,7 @@ class ItemList implements Arrayable, Jsonable, Countable, IteratorAggregate, Arr
      * @inheritDoc ArrayAccess
      * @causes     KeyError
      */
-    public final function offsetSet(mixed $index, mixed $item): void
+    public function offsetSet(mixed $index, mixed $item): void
     {
         $this->indexCheck($index);
 
@@ -288,7 +288,7 @@ class ItemList implements Arrayable, Jsonable, Countable, IteratorAggregate, Arr
      * @inheritDoc ArrayAccess
      * @causes     KeyError
      */
-    public final function offsetUnset(mixed $index): void
+    public function offsetUnset(mixed $index): void
     {
         $this->indexCheck($index);
 
