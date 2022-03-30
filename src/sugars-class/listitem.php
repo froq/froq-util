@@ -23,30 +23,16 @@ class ItemList implements Arrayable, Jsonable, Countable, IteratorAggregate, Arr
     /** @var array */
     private array $data = [];
 
-    /** @var string|null */
-    private string|null $type;
-
-    /** @var bool */
-    private bool $locked = false;
-
     /**
      * Constructor.
      *
-     * @param iterable    $data
-     * @param string|null $type
-     * @param bool        $locked
+     * @param iterable $data
      */
-    public function __construct(iterable $data = [], string $type = null, bool $locked = false)
+    public function __construct(iterable $data = [])
     {
-        // Set type before.
-        $this->type = $type;
-
         foreach ($data as $item) {
             $this->add($item);
         }
-
-        // Set locked after.
-        $this->locked = $locked;
     }
 
     /** @magic */
@@ -74,26 +60,6 @@ class ItemList implements Arrayable, Jsonable, Countable, IteratorAggregate, Arr
     public function items(): array
     {
         return $this->data;
-    }
-
-    /**
-     * Get type info.
-     *
-     * @return string
-     */
-    public function type(): string
-    {
-        return $this->type;
-    }
-
-    /**
-     * Get locked state.
-     *
-     * @return bool
-     */
-    public function locked(): bool
-    {
-        return $this->locked;
     }
 
     /**
@@ -275,7 +241,7 @@ class ItemList implements Arrayable, Jsonable, Countable, IteratorAggregate, Arr
 
     /**
      * @inheritDoc IteratorAggregate
-     */ #[\ReturnTypeWillChange]
+     */ #[ReturnTypeWillChange]
     public function getIterator(): iterable
     {
         return new ArrayIterator($this->data);
@@ -305,14 +271,11 @@ class ItemList implements Arrayable, Jsonable, Countable, IteratorAggregate, Arr
 
     /**
      * @inheritDoc ArrayAccess
-     * @causes     KeyError|TypeError
-     * @throws     ReadonlyError
+     * @causes     KeyError
      */
     public final function offsetSet(mixed $index, mixed $item): void
     {
-        $this->locked && throw new ReadonlyError($this);
-
-        $this->indexCheck($index); $this->typeCheck($item);
+        $this->indexCheck($index);
 
         // For calls like `items[] = item`.
         $index ??= $this->count();
@@ -324,12 +287,9 @@ class ItemList implements Arrayable, Jsonable, Countable, IteratorAggregate, Arr
     /**
      * @inheritDoc ArrayAccess
      * @causes     KeyError
-     * @throws     ReadonlyError
      */
     public final function offsetUnset(mixed $index): void
     {
-        $this->locked && throw new ReadonlyError($this);
-
         $this->indexCheck($index);
 
         // In case..
@@ -357,21 +317,6 @@ class ItemList implements Arrayable, Jsonable, Countable, IteratorAggregate, Arr
             throw new KeyError(format(
                 'Invalid index %s for %s<%s>',
                 $indexRepr, static::class, $this->type
-            ));
-        }
-    }
-
-    /**
-     * Check type validity (if type is not empty).
-     *
-     * @throws TypeError
-     */
-    private function typeCheck(mixed $item): void
-    {
-        if ($this->type && !is_type_of($item, $this->type)) {
-            throw new TypeError(format(
-                'Invalid item type %t for %s<%s>',
-                $item, static::class, $this->type
             ));
         }
     }
