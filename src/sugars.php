@@ -1013,8 +1013,8 @@ function get_trace(int $options = null, int $limit = null, int $index = null, st
             'line' => $trace['line'] ?? null,
         ] + $trace + [
             // Additions.
-            'caller' => null,
             'callee' => $trace['function'] ?? null,
+            'caller' => null, 'callerClass' => null, 'callerMethod' => null,
         ];
 
         if (isset($trace['file'], $trace['line'])) {
@@ -1029,6 +1029,10 @@ function get_trace(int $options = null, int $limit = null, int $index = null, st
         }
         if (isset($stack[$i + 1]['function'])) {
             $trace['caller'] = $stack[$i + 1]['function'];
+        }
+        if (isset($stack[$i + 1]['class'])) {
+            $trace['callerClass']  = $stack[$i + 1]['class'];
+            $trace['callerMethod'] = sprintf('%s::%s', $stack[$i + 1]['class'], $stack[$i + 1]['function']);
         }
 
         $stack[$i] = $trace;
