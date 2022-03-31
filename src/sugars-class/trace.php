@@ -358,6 +358,16 @@ final class TraceEntry implements ArrayAccess
     }
 
     /**
+     * Get callee.
+     *
+     * @return string|null
+     */
+    public function callee(): string|null
+    {
+        return $this->getField('callee');
+    }
+
+    /**
      * Get caller.
      *
      * @return string|null
@@ -368,13 +378,23 @@ final class TraceEntry implements ArrayAccess
     }
 
     /**
-     * Get callee.
+     * Get caller class.
      *
      * @return string|null
      */
-    public function callee(): string|null
+    public function callerClass(): string|null
     {
-        return $this->getField('callee');
+        return $this->getField('callerClass');
+    }
+
+    /**
+     * Get caller method.
+     *
+     * @return string|null
+     */
+    public function callerMethod(): string|null
+    {
+        return $this->getField('callerMethod');
     }
 
     /**
