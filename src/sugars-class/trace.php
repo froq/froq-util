@@ -178,6 +178,14 @@ final class Trace implements Stringable, Countable, IteratorAggregate, ArrayAcce
     {
         throw new UnimplementedError();
     }
+
+    /**
+     * Static initializer.
+     */
+    public static function init(...$args): static
+    {
+        return new static(...$args);
+    }
 }
 
 /**
