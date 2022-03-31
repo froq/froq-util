@@ -986,17 +986,17 @@ function get_path_info(string $path, string|int $component = null): string|array
 /**
  * Get a bit detailed trace with default options, limit, index and field options.
  *
- * @param  int|null    $options
- * @param  int|null    $limit
+ * @param  int         $options
+ * @param  int         $limit
  * @param  int|null    $index
  * @param  string|null $field
  * @param  int|null    $slice
  * @return mixed|null
  * @since  4.0
  */
-function get_trace(int $options = null, int $limit = null, int $index = null, string $field = null, int $slice = null): mixed
+function get_trace(int $options = 0, int $limit = 0, int $index = null, string $field = null, int $slice = null): mixed
 {
-    $stack = debug_backtrace($options ?? 0, $limit ? $limit + 1 : 0);
+    $stack = debug_backtrace($options, limit: $limit ? $limit + 1 : 0);
 
     // Drop self.
     array_shift($stack);
