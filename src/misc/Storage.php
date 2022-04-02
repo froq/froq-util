@@ -7,35 +7,42 @@ declare(strict_types=1);
 
 namespace froq\util\misc;
 
+use froq\common\trait\DataAccessMagicOffsetTrait;
+
 /**
- * A class for storing static stuff that can used as stand-alone or
- * as a global storage.
+ * A class for storing stuff dynamically or statically,
+ * and can used as stand-alone or as a global storage.
+ *
+ * Note: For dynamic usage, access magic or offset methods
+ * must be used, otherwise store/unstore methods can be used.
  *
  * @package froq\util\misc
  * @object  froq\util\misc\Storage
  * @author  Kerem Güneş
  * @since   6.0
- * @static
  */
-final class Storage implements \Countable, \ArrayAccess
+class Storage implements \Countable, \ArrayAccess
 {
+    /** For using access magic methods via offset methods. */
+    use DataAccessMagicOffsetTrait;
+
     /** @var string */
     private string $id;
 
     /** @var array */
-    private static array $items = [];
+    private static array $data = [];
 
     /**
      * Constructor.
      *
-     * @param array|null $items
+     * @param mixed ...$data
      */
-    public function __construct(array $items = [])
+    public function __construct(mixed ...$data)
     {
         $this->id = get_object_id($this);
 
-        // Init sub array for dynamic usages.
-        self::$items[$this->id] = $items;
+        // Init subarray for dynamic usages.
+        self::$data[$this->id] = $data;
     }
 
     /**
@@ -43,8 +50,8 @@ final class Storage implements \Countable, \ArrayAccess
      */
     public function __destruct()
     {
-        // Clear sub array.
-        unset(self::$items[$this->id]);
+        // Clear subarray.
+        unset(self::$data[$this->id]);
     }
 
     /**
@@ -58,38 +65,50 @@ final class Storage implements \Countable, \ArrayAccess
     }
 
     /**
-     * Get items.
+     * Get all items.
      *
      * @return array
      */
     public static function items(): array
     {
-        return self::$items;
+        return self::$data;
+    }
+
+    /**
+     * Get an item.
+     *
+     * @param  string|int $key
+     * @return mixed
+     */
+    public static function item(string|int $key): mixed
+    {
+        return self::$data[$key] ?? null;
     }
 
     /**
      * Store an item.
      *
-     * @param  string|int $id
+     * @param  string|int $key
      * @param  mixed      $item
      * @return void
      */
-    public static function store(string|int $id, mixed $item): void
+    public static function store(string|int $key, mixed $item): void
     {
-        self::$items[$id] = $item;
+        self::$data[$key] = $item;
     }
 
     /**
      * Unstore an item.
      *
-     * @param  string|int $id
+     * @param  string|int $key
+     * @param  mixed|null $default
      * @return mixed
      */
-    public static function unstore(string|int $id): mixed
+    public static function unstore(string|int $key, mixed $default = null): mixed
     {
-        $item = self::$items[$id] ?? null;
+        $item = self::$data[$key] ?? $default;
 
-        unset(self::$items[$id]);
+        unset(self::$data[$key]);
 
         return $item;
     }
@@ -99,38 +118,38 @@ final class Storage implements \Countable, \ArrayAccess
      */
     public function count(): int
     {
-        return count(self::$items[$this->id]);
+        return count(self::$data[$this->id]);
     }
 
     /**
      * @inheritDoc ArrayAccess
      */
-    public function offsetExists(mixed $id): bool
+    public function offsetExists(mixed $key): bool
     {
-        return array_key_exists($id, self::$items[$this->id]);
+        return array_key_exists($key, self::$data[$this->id]);
     }
 
     /**
      * @inheritDoc ArrayAccess
      */
-    public function offsetGet(mixed $id): mixed
+    public function &offsetGet(mixed $key): mixed
     {
-        return self::$items[$this->id][$id] ?? null;
+        return self::$data[$this->id][$key];
     }
 
     /**
      * @inheritDoc ArrayAccess
      */
-    public function offsetSet(mixed $id, mixed $item): void
+    public function offsetSet(mixed $key, mixed $item): void
     {
-        self::$items[$this->id][$id] = $item;
+        self::$data[$this->id][$key] = $item;
     }
 
     /**
      * @inheritDoc ArrayAccess
      */
-    public function offsetUnset(mixed $id): void
+    public function offsetUnset(mixed $key): void
     {
-        unset(self::$items[$this->id][$id]);
+        unset(self::$data[$this->id][$key]);
     }
 }
