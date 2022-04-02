@@ -71,7 +71,7 @@ final class Storage implements \Countable, \ArrayAccess
      * Store an item.
      *
      * @param  string|int $id
-     * @param  mixed  $item
+     * @param  mixed      $item
      * @return void
      */
     public static function store(string|int $id, mixed $item): void
