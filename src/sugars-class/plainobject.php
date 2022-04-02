@@ -33,8 +33,8 @@ class PlainObject extends stdClass
      * @param  string $name
      * @return mixed
      */
-    public function __get(string $name): mixed
+    public function &__get(string $name): mixed
     {
-        return $this->$name ?? null;
+        return $this->$name;
     }
 }
