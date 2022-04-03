@@ -5,18 +5,18 @@
  */
 declare(strict_types=1);
 
-use froq\common\interface\{Arrayable, Jsonable};
+use froq\common\interface\{Arrayable, Listable, Jsonable};
 use froq\collection\trait\{CountTrait, EmptyTrait};
 
 /**
- * A simple item list.
+ * A simple item class with key/value paired data container & access magics.
  *
  * @package froq\util
  * @object  ItemList
  * @author  Kerem Güneş
  * @since   6.0
  */
-class ItemList implements Arrayable, Jsonable, Countable, IteratorAggregate, ArrayAccess
+class Item implements Arrayable, Listable, Jsonable, Countable, IteratorAggregate, ArrayAccess
 {
     use CountTrait, EmptyTrait;
 
@@ -39,88 +39,111 @@ class ItemList implements Arrayable, Jsonable, Countable, IteratorAggregate, Arr
         return $this->data;
     }
 
+    /** @magic */
+    public function __isset(int|string $key): bool
+    {
+        return $this->has($key);
+    }
+
+    /** @magic */
+    public function __set(int|string $key, mixed $item): void
+    {
+        $this->set($key, $item);
+    }
+
+    /** @magic */
+    public function __get(int|string $key): mixed
+    {
+        return $this->get($key);
+    }
+
+    /** @magic */
+    public function __unset(int|string $key): void
+    {
+        $this->remove($key);
+    }
+
+    /**
+     * Check an item.
+     *
+     * @param  string $key
+     * @return bool
+     */
+    public function has(int|string $key): bool
+    {
+        return array_key_exists($key, $this->data);
+    }
+
+    /**
+     * Set an item.
+     *
+     * @param  string $key
+     * @param  mixed  $item
+     * @return self
+     */
+    public function set(int|string $key, mixed $item): self
+    {
+        $this->data[$key] = $item;
+
+        return $this;
+    }
+
     /**
      * Get an item.
      *
-     * @param  int $index
+     * @param  string     $key
+     * @param  mixed|null $default
      * @return mixed
      */
-    public function item(int $index): mixed
+    public function get(int|string $key, mixed $default = null): mixed
     {
-        return $this->data[$index] ?? null;
+        return $this->data[$key] ?? $default;
     }
 
     /**
-     * Get all items.
+     * Remove an item.
      *
-     * @return array
-     */
-    public function items(): array
-    {
-        return $this->data;
-    }
-
-    /**
-     * Add items.
-     *
-     * @param  mixed ...$items
+     * @param  string $key
      * @return self
      */
-    public function add(mixed ...$items): self
+    public function remove(int|string $key): self
     {
-        foreach ($items as $item) {
-            $this->offsetSet(null, $item);
-        }
+        unset($this->data[$key]);
 
         return $this;
     }
 
     /**
-     * Drop items.
-     *
-     * @param  mixed ...$items
-     * @return self
-     */
-    public function drop(mixed ...$items): self
-    {
-        foreach ($items as $item) {
-            $this->offsetUnset($this->index($item));
-        }
-
-        return $this;
-    }
-
-    /**
-     * Get index of given item.
+     * Get key of given item.
      *
      * @param  mixed $item
      * @param  bool  $strict
      * @param  bool  $last
      * @return int|null
      */
-    public function index(mixed $item, bool $strict = true, bool $last = false): int|null
+    public function key(mixed $item, bool $strict = true, bool $last = false): int|null
     {
         return array_search_key($this->data, $item, $strict, $last);
     }
 
     /**
-     * Get first item.
+     * Get keys.
      *
-     * @return mixed
+     * @return array
      */
-    public function first(): mixed
+    public function keys(): array
     {
-        return first($this->data);
+        return array_keys($this->data);
     }
 
     /**
-     * Get last item.
+     * Get values.
      *
-     * @return mixed
+     * @return array
      */
-    public function last(): mixed
+    public function values(): array
     {
-        return last($this->data);
+        return array_values($this->data);
     }
 
     /**
@@ -131,7 +154,7 @@ class ItemList implements Arrayable, Jsonable, Countable, IteratorAggregate, Arr
      */
     public function sort(callable $func = null, int $flags = 0): self
     {
-        $this->data = sorted($this->data, $func, $flags, assoc: false);
+        $this->data = sorted($this->data, $func, $flags, assoc: true);
 
         return $this;
     }
@@ -158,7 +181,7 @@ class ItemList implements Arrayable, Jsonable, Countable, IteratorAggregate, Arr
      */
     public function filter(callable $func = null, bool $useKeys = false): self
     {
-        $this->data = filter($this->data, $func, use_keys: $useKeys, keep_keys: false);
+        $this->data = filter($this->data, $func, use_keys: $useKeys);
 
         return $this;
     }
@@ -172,7 +195,7 @@ class ItemList implements Arrayable, Jsonable, Countable, IteratorAggregate, Arr
      */
     public function map(callable $func, bool $useKeys = false): self
     {
-        $this->data = map($func, $this->data, use_keys: $useKeys);
+        $this->data = map($this->data, $func, use_keys: $useKeys);
 
         return $this;
     }
@@ -209,7 +232,7 @@ class ItemList implements Arrayable, Jsonable, Countable, IteratorAggregate, Arr
      */
     public function refine(array $items = [null, '', []]): self
     {
-        $this->data = array_clear($this->data, $items, keep_keys: false);
+        $this->data = array_clear($this->data, $items, keep_keys: true);
 
         return $this;
     }
@@ -222,7 +245,7 @@ class ItemList implements Arrayable, Jsonable, Countable, IteratorAggregate, Arr
      */
     public function dedupe(bool $strict = true): self
     {
-        $this->data = array_dedupe($this->data, $strict, list: true);
+        $this->data = array_dedupe($this->data, $strict, list: false);
 
         return $this;
     }
@@ -233,6 +256,14 @@ class ItemList implements Arrayable, Jsonable, Countable, IteratorAggregate, Arr
     public function toArray(): array
     {
         return $this->data;
+    }
+
+    /**
+     * @inheritDoc froq\common\interface\Listable
+     */
+    public function toList(): array
+    {
+        return array_list($this->data);
     }
 
     /**
@@ -253,75 +284,33 @@ class ItemList implements Arrayable, Jsonable, Countable, IteratorAggregate, Arr
 
     /**
      * @inheritDoc ArrayAccess
-     * @causes     KeyError
      */
-    public function offsetExists(mixed $index): bool
+    public function offsetExists(mixed $key): bool
     {
-        $this->indexCheck($index);
-
-        return array_key_exists($index, $this->data);
+        return $this->has($key);
     }
 
     /**
      * @inheritDoc ArrayAccess
-     * @causes     KeyError
      */
-    public function offsetGet(mixed $index, mixed $default = null): mixed
+    public function offsetGet(mixed $key, mixed $default = null): mixed
     {
-        $this->indexCheck($index);
-
-        return $this->data[$index] ?? $default;
+        return $this->get($key, $default);
     }
 
     /**
      * @inheritDoc ArrayAccess
-     * @causes     KeyError
      */
-    public function offsetSet(mixed $index, mixed $item): void
+    public function offsetSet(mixed $key, mixed $item): void
     {
-        $this->indexCheck($index);
-
-        // For calls like `items[] = item`.
-        $index ??= $this->count();
-
-        // Splice, because it resets indexes.
-        array_splice($this->data, $index, 1, [$item]);
+        $this->set($key, $item);
     }
 
     /**
      * @inheritDoc ArrayAccess
-     * @causes     KeyError
      */
-    public function offsetUnset(mixed $index): void
+    public function offsetUnset(mixed $key): void
     {
-        $this->indexCheck($index);
-
-        // In case..
-        $index ??= PHP_INT_MAX;
-
-        // Splice, because it resets indexes.
-        array_splice($this->data, $index, 1);
-    }
-
-    /**
-     * Check index validity (if index is not null).
-     *
-     * @throws KeyError
-     */
-    private function indexCheck(mixed $index): void
-    {
-        if ($index !== null && (!is_int($index) || $index < 0)) {
-            $indexRepr = match ($type = get_type($index)) {
-                'int'    => "int($index)",
-                'float'  => "float($index)",
-                'string' => "string('$index')",
-                default  => $type,
-            };
-
-            throw new KeyError(format(
-                'Invalid index %s for %s<%s>',
-                $indexRepr, static::class, $this->type
-            ));
-        }
+        $this->remove($key);
     }
 }
