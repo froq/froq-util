@@ -7,9 +7,10 @@ require 'sugars-class/plainobject.php';
 // Load other class files.
 require 'sugars-class/assert.php';
 require 'sugars-class/json.php';
+require 'sugars-class/item.php';
+require 'sugars-class/itemlist.php';
 require 'sugars-class/mapset.php';
 require 'sugars-class/mapxao.php';
-require 'sugars-class/listitem.php';
 require 'sugars-class/listsimple.php';
 require 'sugars-class/options.php';
 require 'sugars-class/reference.php';
