@@ -125,7 +125,7 @@ class XArray implements Arrayable, Listable, Jsonable, Collectable, Iteratable, 
     }
 
     /**
-     * Select an item.
+     * Select an item or items.
      *
      * @param  int|string|array $key
      * @param  mixed|null       $default
@@ -139,7 +139,7 @@ class XArray implements Arrayable, Listable, Jsonable, Collectable, Iteratable, 
     }
 
     /**
-     * Pick an item.
+     * Pick an item or items.
      *
      * @param  int|string|array $key
      * @param  mixed|null       $default
@@ -152,7 +152,7 @@ class XArray implements Arrayable, Listable, Jsonable, Collectable, Iteratable, 
     }
 
     /**
-     * Pluck an item.
+     * Pluck an item or items.
      *
      * @param  int|string|array $key
      * @param  mixed|null       $default
