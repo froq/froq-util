@@ -6,9 +6,25 @@
 declare(strict_types=1);
 
 /**
- * For type-check purposes & null/void/undefined refs.
+ * Nil: For null/void/undefined refs.
  */
-final class Nil {} function nil(&$v = nil) { return $v = new Nil(); }
+final class Nil {}
+
+/**
+ * Ref: For byref semantics.
+ */
+final class Ref {
+  public function __construct(
+    public $data = null
+  ) {}
+}
+
+function Nil(&$ref = nil): Nil {
+  return $ref = new Nil();
+}
+function Ref($data = null): Ref {
+  return new Ref($data);
+}
 
 /**
  * Nil/nils (null/null string).
