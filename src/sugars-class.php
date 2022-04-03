@@ -11,7 +11,6 @@ require 'sugars-class/item.php';
 require 'sugars-class/itemlist.php';
 require 'sugars-class/mapset.php';
 require 'sugars-class/mapxao.php';
-require 'sugars-class/listsimple.php';
 require 'sugars-class/options.php';
 require 'sugars-class/reference.php';
 require 'sugars-class/reflection.php';
