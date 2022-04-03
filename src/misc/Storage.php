@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace froq\util\misc;
 
+use froq\common\interface\Arrayable;
 use froq\common\trait\DataAccessMagicOffsetTrait;
 
 /**
@@ -21,7 +22,7 @@ use froq\common\trait\DataAccessMagicOffsetTrait;
  * @author  Kerem Güneş
  * @since   6.0
  */
-class Storage implements \Countable, \ArrayAccess
+class Storage implements Arrayable, \Countable, \ArrayAccess
 {
     /** For using access magic methods via offset methods. */
     use DataAccessMagicOffsetTrait;
@@ -111,6 +112,14 @@ class Storage implements \Countable, \ArrayAccess
         unset(self::$data[$key]);
 
         return $item;
+    }
+
+    /**
+     * @inheritDoc froq\common\interface\Arrayable
+     */
+    public function toArray(): array
+    {
+        return self::$data[$this->id];
     }
 
     /**

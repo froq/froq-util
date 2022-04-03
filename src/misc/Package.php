@@ -7,8 +7,8 @@ declare(strict_types=1);
 
 namespace froq\util\misc;
 
+use froq\common\interface\Arrayable;
 use froq\common\trait\{DataAccessMagicTrait, DataAccessTrait};
-use froq\collection\trait\CountTrait;
 
 /**
  * A class for packaging stuff dynamically.
@@ -18,12 +18,10 @@ use froq\collection\trait\CountTrait;
  * @author  Kerem Güneş
  * @since   6.0
  */
-class Package implements \Countable, \ArrayAccess
+class Package implements Arrayable, \Countable, \ArrayAccess
 {
     /** For using access magic & offset methods. */
     use DataAccessMagicTrait, DataAccessTrait;
-
-    use CountTrait;
 
     /** @var array */
     private array $data = [];
@@ -85,5 +83,21 @@ class Package implements \Countable, \ArrayAccess
         unset($this->data[$key]);
 
         return $item;
+    }
+
+    /**
+     * @inheritDoc froq\common\interface\Arrayable
+     */
+    public function toArray(): array
+    {
+        return $this->data;
+    }
+
+    /**
+     * @inheritDoc Countable
+     */
+    public function count(): int
+    {
+        return count($this->data);
     }
 }
