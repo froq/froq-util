@@ -172,7 +172,7 @@ class ItemList implements Arrayable, Jsonable, Countable, IteratorAggregate, Arr
      */
     public function map(callable $func, bool $useKeys = false): self
     {
-        $this->data = map($func, $this->data, use_keys: $useKeys);
+        $this->data = map($this->data, $func, use_keys: $useKeys);
 
         return $this;
     }
