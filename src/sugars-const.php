@@ -6,10 +6,9 @@
 declare(strict_types=1);
 
 /**
- * For type-check purposes for null/void(undefined) refs.
+ * For type-check purposes & null/void/undefined refs.
  */
-final class __null {} function __null() { return new __null; }
-final class __void {} function __void() { return new __void; }
+final class Nil {} function nil(&$v = nil) { return $v = new Nil(); }
 
 /**
  * Nil/nils (null/null string).

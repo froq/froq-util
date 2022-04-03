@@ -55,12 +55,6 @@ final class Dumper
 
             case 'array':
             case 'object':
-                if ($input == __null()) {
-                    return '**NULL';
-                } elseif ($input == __void()) {
-                    return '**VOID';
-                }
-
                 $tabs += 1;
 
                 if ($type == 'array') {
