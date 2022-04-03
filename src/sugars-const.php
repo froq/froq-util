@@ -19,7 +19,7 @@ final class Ref {
   ) {}
 }
 
-function Nil(&$ref = nil): Nil {
+function Nil(&$ref = null): Nil {
   return $ref = new Nil();
 }
 function Ref($data = null): Ref {
