@@ -9,7 +9,7 @@ use froq\common\interface\{Arrayable, Jsonable};
 use froq\collection\trait\{CountTrait, EmptyTrait};
 
 /**
- * A simple item list.
+ * A simple item list class with list data container & access magics.
  *
  * @package froq\util
  * @object  ItemList
@@ -202,7 +202,7 @@ class ItemList implements Arrayable, Jsonable, Countable, IteratorAggregate, Arr
     }
 
     /**
-     * Refine list using given items or null, '', [] items as default.
+     * Refine data using given items or null, '', [] items as default.
      *
      * @param  array $items
      * @return self

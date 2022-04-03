@@ -5,18 +5,18 @@
  */
 declare(strict_types=1);
 
-use froq\common\interface\{Arrayable, Listable, Jsonable};
+use froq\common\interface\{Arrayable, Jsonable};
 use froq\collection\trait\{CountTrait, EmptyTrait};
 
 /**
- * A simple item class with key/value paired data container & access magics.
+ * A simple item class with key/value paire data container & access stuff.
  *
  * @package froq\util
- * @object  ItemList
+ * @object  Item
  * @author  Kerem Güneş
  * @since   6.0
  */
-class Item implements Arrayable, Listable, Jsonable, Countable, IteratorAggregate, ArrayAccess
+class Item implements Arrayable, Jsonable, Countable, IteratorAggregate, ArrayAccess
 {
     use CountTrait, EmptyTrait;
 
@@ -225,7 +225,7 @@ class Item implements Arrayable, Listable, Jsonable, Countable, IteratorAggregat
     }
 
     /**
-     * Refine list using given items or null, '', [] items as default.
+     * Refine data using given items or null, '', [] items as default.
      *
      * @param  array $items
      * @return self
@@ -256,14 +256,6 @@ class Item implements Arrayable, Listable, Jsonable, Countable, IteratorAggregat
     public function toArray(): array
     {
         return $this->data;
-    }
-
-    /**
-     * @inheritDoc froq\common\interface\Listable
-     */
-    public function toList(): array
-    {
-        return array_list($this->data);
     }
 
     /**
