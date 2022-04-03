@@ -8,8 +8,8 @@ declare(strict_types=1);
 /**
  * For type-check purposes for null/void(undefined) refs.
  */
-final class __null {} function null() { return new __null; }
-final class __void {} function void() { return new __void; }
+final class __null {} function __null() { return new __null; }
+final class __void {} function __void() { return new __void; }
 
 /**
  * Nil/nils (null/null string).
