@@ -9,7 +9,7 @@ use froq\common\interface\{Arrayable, Jsonable};
 use froq\collection\trait\{CountTrait, EmptyTrait};
 
 /**
- * A simple item class with key/value paire data container & access stuff.
+ * A simple item class with a key/value pair data container & access stuff.
  *
  * @package froq\util
  * @object  Item
