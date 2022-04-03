@@ -30,7 +30,7 @@ class Item implements Arrayable, Jsonable, Countable, IteratorAggregate, ArrayAc
      */
     public function __construct(iterable $data = [])
     {
-        $this->data = [...$data];
+        $data && $this->data = [...$data];
     }
 
     /** @magic */
