@@ -225,14 +225,14 @@ class Item implements Arrayable, Jsonable, Countable, IteratorAggregate, ArrayAc
     }
 
     /**
-     * Refine data using given items or null, '', [] items as default.
+     * Refine filtering given or null, "" and [] items as default.
      *
-     * @param  array $items
+     * @param  array|null $items
      * @return self
      */
-    public function refine(array $items = [null, '', []]): self
+    public function refine(array $items = null): self
     {
-        $this->data = array_clear($this->data, $items, keep_keys: true);
+        $this->data = array_refine($this->data, $items);
 
         return $this;
     }

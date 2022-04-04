@@ -330,15 +330,14 @@ class XArray implements Arrayable, Listable, Jsonable, Collectable, Iteratable, 
     }
 
     /**
-     * Refine list using given values or null, '', [] values as default.
+     * Refine filtering given or null, "" and [] items as default.
      *
-     * @param  array $values
-     * @param  bool $list
+     * @param  array|null $values
      * @return self
      */
-    public function refine(array $values = [null, '', []], bool $list = false): self
+    public function refine(array $values = null): self
     {
-        $this->data = array_clear($this->data, $values, $list);
+        $this->data = array_refine($this->data, $values);
 
         return $this;
     }
@@ -454,35 +453,6 @@ class XArray implements Arrayable, Listable, Jsonable, Collectable, Iteratable, 
     public function exclude(array $keys): self
     {
         $this->data = array_exclude($this->data, $keys);
-
-        return $this;
-    }
-
-    /**
-     * Clean filtering null, "" and [] values.
-     *
-     * @param  bool       $keepKeys
-     * @param  array|null $ignoredKeys
-     * @return self
-     */
-    public function clean(bool $keepKeys = true, array $ignoredKeys = null): self
-    {
-        $this->data = array_clean($this->data, $keepKeys, $ignoredKeys);
-
-        return $this;
-    }
-
-    /**
-     * Clear filtering given values.
-     *
-     * @param  array      $values
-     * @param  bool       $keepKeys
-     * @param  array|null $ignoredKeys
-     * @return self
-     */
-    public function clear(array $values, bool $keepKeys = true, array $ignoredKeys = null): self
-    {
-        $this->data = array_clear($this->data, $values, $keepKeys, $ignoredKeys);
 
         return $this;
     }

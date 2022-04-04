@@ -411,6 +411,27 @@ final class Arrays extends \StaticClass
     }
 
     /**
+     * Refine given array filtering given or null, "" and [] values as default.
+     *
+     * @param  array      $array
+     * @param  array|null $values
+     * @return array
+     * @since  6.0
+     */
+    public static function refine(array $array, array $values = null): array
+    {
+        $func = self::makeFilterFunction(null, $values);
+
+        $list = array_is_list($array);
+
+        $ret = array_filter($array, $func);
+
+        $list && $ret = array_list($ret); // Re-index.
+
+        return $ret;
+    }
+
+    /**
      * Create a groupped result from given array (@see https://wiki.php.net/rfc/array_column_results_grouping).
      *
      * @param  array      $array
@@ -699,59 +720,6 @@ final class Arrays extends \StaticClass
     public static function exclude(array $array, array $keys): array
     {
         return array_filter($array, fn($key) => !in_array($key, $keys, true), 2);
-    }
-
-    /**
-     * Clean given array filtering null, "" and [] values.
-     *
-     * @param  array      $array
-     * @param  bool       $keepKeys
-     * @param  array|null $ignoredKeys
-     * @return array
-     * @since  4.0
-     */
-    public static function clean(array $array, bool $keepKeys = true, array $ignoredKeys = null): array
-    {
-        $func = self::makeFilterFunction(null);
-
-        if (!$ignoredKeys) {
-            $ret = array_filter($array, $func);
-        } else {
-            $ret = array_filter($array, fn($value, $key) => (
-                in_array($key, $ignoredKeys, true) || $func($value)
-            ), 1);
-        }
-
-        $keepKeys || $ret = array_values($ret);
-
-        return $ret;
-    }
-
-    /**
-     * Clear given array filtering given values.
-     *
-     * @param  array      $array
-     * @param  array      $values
-     * @param  bool       $keepKeys
-     * @param  array|null $ignoredKeys
-     * @return array
-     * @since  6.0
-     */
-    public static function clear(array $array, array $values, bool $keepKeys = true, array $ignoredKeys = null): array
-    {
-        $func = self::makeFilterFunction(null, $values);
-
-        if (!$ignoredKeys) {
-            $ret = array_filter($array, $func);
-        } else {
-            $ret = array_filter($array, fn($value, $key) => (
-                in_array($key, $ignoredKeys, true) || $func($value)
-            ), 1);
-        }
-
-        $keepKeys || $ret = array_values($ret);
-
-        return $ret;
     }
 
     /**

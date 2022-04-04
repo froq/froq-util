@@ -175,6 +175,15 @@ function array_dedupe(array $array, bool $strict = true): array
 }
 
 /**
+ * @alias Arrays.refine()
+ * @since 6.0
+ */
+function array_refine(array $array, array $values = null): array
+{
+    return Arrays::refine($array, $values);
+}
+
+/**
  * @alias Arrays.group()
  * @since 5.31, 6.0
  */
@@ -289,24 +298,6 @@ function array_include(array $array, array $keys): array
 function array_exclude(array $array, array $keys): array
 {
     return Arrays::exclude($array, $keys);
-}
-
-/**
- * @alias Arrays.clean()
- * @since 4.0, 6.0
- */
-function array_clean(array $array, bool $keep_keys = true, array $ignored_keys = null): array
-{
-    return Arrays::clean($array, $keep_keys, $ignored_keys);
-}
-
-/**
- * @alias Arrays.clear()
- * @since 6.0
- */
-function array_clear(array $array, array $values, bool $keep_keys = true, array $ignored_keys = null): array
-{
-    return Arrays::clear($array, $values, $keep_keys, $ignored_keys);
 }
 
 /**
