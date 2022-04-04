@@ -185,12 +185,12 @@ final class Arrays extends \StaticClass
         // Direct access.
         if (array_key_exists($key, $array) || is_int($key)) {
             $value = $array[$key] ?? null;
-            if ($drop) unset($array[$key]);
+            $drop && array_unset($array, $key);
         } else {
             // Direct access.
             if (!str_contains($key, '.')) {
                 $value = $array[$key] ?? null;
-                if ($drop) unset($array[$key]);
+                $drop && array_unset($array, $key);
             }
             // Path access (with dot notation).
             else {
@@ -199,7 +199,7 @@ final class Arrays extends \StaticClass
 
                 if (!$keys) {
                     $value = $array[$key] ?? null;
-                    if ($drop) unset($array[$key]);
+                    $drop && array_unset($array, $key);
                 }
                 // Dig more..
                 elseif (isset($array[$key]) && is_array($array[$key])) {
