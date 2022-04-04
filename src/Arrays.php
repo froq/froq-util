@@ -393,18 +393,19 @@ final class Arrays extends \StaticClass
      *
      * @param  array $array
      * @param  bool  $strict
-     * @param  bool  $list
      * @return 5.22, 5.25
      */
-    public static function dedupe(array $array, bool $strict = true, bool $list = false): array
+    public static function dedupe(array $array, bool $strict = true): array
     {
         $ret = [];
+
+        $list = array_is_list($array);
 
         foreach ($array as $key => $value) {
             in_array($value, $ret, $strict) || $ret[$key] = $value;
         }
 
-        $list && $ret = array_list($ret);
+        $list && $ret = array_list($ret); // Re-index.
 
         return $ret;
     }

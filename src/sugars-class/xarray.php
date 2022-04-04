@@ -320,12 +320,11 @@ class XArray implements Arrayable, Listable, Jsonable, Collectable, Iteratable, 
      * Dedupe values applying unique check.
      *
      * @param  bool $strict
-     * @param  bool $list
      * @return self
      */
-    public function dedupe(bool $strict = true, bool $list = false): self
+    public function dedupe(bool $strict = true): self
     {
-        $this->data = array_dedupe($this->data, $strict, $list);
+        $this->data = array_dedupe($this->data, $strict);
 
         return $this;
     }

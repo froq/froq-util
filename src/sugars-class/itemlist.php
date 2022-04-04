@@ -222,7 +222,7 @@ class ItemList implements Arrayable, Jsonable, Countable, IteratorAggregate, Arr
      */
     public function dedupe(bool $strict = true): self
     {
-        $this->data = array_dedupe($this->data, $strict, list: true);
+        $this->data = array_dedupe($this->data, $strict);
 
         return $this;
     }

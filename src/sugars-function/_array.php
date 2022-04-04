@@ -169,9 +169,9 @@ function array_union(array $array1, array $array2, array ...$arrays): array
  * @alias Arrays.dedupe()
  * @since 5.25, 6.0
  */
-function array_dedupe(array $array, bool $strict = true, bool $list = false): array
+function array_dedupe(array $array, bool $strict = true): array
 {
-    return Arrays::dedupe($array, $strict, $list);
+    return Arrays::dedupe($array, $strict);
 }
 
 /**

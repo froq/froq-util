@@ -245,7 +245,7 @@ class Item implements Arrayable, Jsonable, Countable, IteratorAggregate, ArrayAc
      */
     public function dedupe(bool $strict = true): self
     {
-        $this->data = array_dedupe($this->data, $strict, list: false);
+        $this->data = array_dedupe($this->data, $strict);
 
         return $this;
     }
