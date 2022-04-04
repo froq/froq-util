@@ -631,9 +631,7 @@ final class Arrays extends \StaticClass
             $pack ? $ret[$key] = $array[$key] : $ret[] = $array[$key];
 
             // Drop used item.
-            if ($drop) {
-                unset($array[$key]);
-            }
+            $drop && array_unset($array, $key);
         }
 
         if (count($ret) == 1) {
@@ -1207,7 +1205,11 @@ final class Arrays extends \StaticClass
      */
     public static function sortNatural(array $array, bool $icase = false): array
     {
+        $list = array_is_list($array);
+
         $icase ? natcasesort($array) : natsort($array);
+
+        $list && $array = array_list($array); // Re-index.
 
         return $array;
     }
@@ -1395,6 +1397,7 @@ final class Arrays extends \StaticClass
      */
     public static function reduce(array $array, mixed $carry, callable $func = null, bool $right = false): mixed
     {
+        // When carry is a function.
         if (is_callable($carry)) {
             [$func, $carry] = [$carry, $func];
         }
@@ -1544,9 +1547,13 @@ final class Arrays extends \StaticClass
     {
         $keys || throw new \ValueError('No key/keys given');
 
+        $list = array_is_list($array);
+
         foreach ($keys as $key) {
             unset($array[$key]);
         }
+
+        $list && $array = array_list($array); // Re-index.
 
         return $array;
     }
@@ -1608,12 +1615,16 @@ final class Arrays extends \StaticClass
     {
         $values || throw new \ValueError('No value/values given');
 
+        $list = array_is_list($array);
+
         foreach ($values as $value) {
             $keys = array_keys($array, $value, true);
             foreach ($keys as $key) {
                 unset($array[$key]);
             }
         }
+
+        $list && $array = array_list($array); // Re-index.
 
         return $array;
     }
@@ -1631,9 +1642,13 @@ final class Arrays extends \StaticClass
     {
         $keys || throw new \ValueError('No key/keys given');
 
+        $list = array_is_list($array);
+
         foreach ($keys as $key) {
             unset($array[$key]);
         }
+
+        $list && $array = array_list($array); // Re-index.
 
         return $array;
     }
@@ -1885,7 +1900,7 @@ final class Arrays extends \StaticClass
         foreach ((array) $key as $key) {
             if (isset($array[$key])) {
                 $value = $array[$key];
-                if ($drop) unset($array[$key]);
+                $drop && array_unset($array, $key);
                 break;
             }
         }
