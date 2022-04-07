@@ -1230,6 +1230,17 @@ class XArray implements Arrayable, Listable, Jsonable, Collectable, Iteratable, 
         return $items;
     }
 
+    /**
+     * Format.
+     *
+     * @param  string $format
+     * @return string
+     */
+    public function format(string $format): string
+    {
+        return format($format, ...$this->data);
+    }
+
     // Copy & inherit.
 
     /**
