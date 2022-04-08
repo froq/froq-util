@@ -22,9 +22,6 @@ class XClass implements Stringable
     /** @var string */
     public readonly string $name;
 
-    // /** @var string */
-    // public readonly string|null $nameAlias;
-
     /** @var bool */
     public readonly bool $exists;
 
@@ -114,7 +111,7 @@ class XClass implements Stringable
      * @param  string $name
      * @return bool
      */
-    public function existsConstant(string $name): bool
+    public function constantExists(string $name): bool
     {
         return $this->exists && constant_exists($this->name, $name);
     }
@@ -125,7 +122,7 @@ class XClass implements Stringable
      * @param  string $name
      * @return bool
      */
-    public function existsProperty(string $name): bool
+    public function propertyExists(string $name): bool
     {
         return $this->exists && property_exists($this->name, $name);
     }
@@ -136,27 +133,27 @@ class XClass implements Stringable
      * @param  string $name
      * @return bool
      */
-    public function existsMethod(string $name): bool
+    public function methodExists(string $name): bool
     {
         return $this->exists && method_exists($this->name, $name);
     }
 
-    /** @alias existsConstant() */
+    /** @alias constantExists() */
     public function hasConstant(string $name): bool
     {
-        return $this->existsConstant($name);
+        return $this->constantExists($name);
     }
 
-    /** @alias existsProperty() */
+    /** @alias propertyExists() */
     public function hasProperty(string $name): bool
     {
-        return $this->existsProperty($name);
+        return $this->propertyExists($name);
     }
 
-    /** @alias existsMethod() */
+    /** @alias methodExists() */
     public function hasMethod(string $name): bool
     {
-        return $this->existsMethod($name);
+        return $this->methodExists($name);
     }
 
     /**
