@@ -700,17 +700,13 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     /**
      * Wrap.
      *
-     * @param  string      $start
-     * @param  string|null $end
+     * @param  string      $left
+     * @param  string|null $right
      * @return self
      */
-    public function wrap(string $start, string $end = null): self
+    public function wrap(string $left, string $right = null): self
     {
-        if ($end === null || $end === '') {
-            $end = $start;
-        }
-
-        $this->data = $start . $this->data . $end;
+        $this->data = $left . $this->data . ($right ?? $left);
 
         return $this;
     }
@@ -718,18 +714,14 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     /**
      * Unwrap.
      *
-     * @param  string      $start
-     * @param  string|null $end
+     * @param  string      $left
+     * @param  string|null $right
      * @return self
      */
-    public function unwrap(string $start, string $end = null): self
+    public function unwrap(string $left, string $right = null): self
     {
-        if ($end === null || $end === '') {
-            $end = $start;
-        }
-
         $pattern = vsprintf('^(%s)+|(%s)+$', [
-            RegExp::escape($start), RegExp::escape($end)
+            RegExp::escape($left), RegExp::escape($right ?? $left)
         ]);
 
         $this->data = RegExp::from($pattern, 'u')->remove($this->data);
