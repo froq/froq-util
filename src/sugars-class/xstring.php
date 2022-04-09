@@ -757,10 +757,10 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     /**
      * Append.
      *
-     * @param  string $data
+     * @param  self|string $data
      * @return self
      */
-    public function append(string $data): self
+    public function append(self|string $data): self
     {
         $this->data .= $data;
 
@@ -770,10 +770,10 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     /**
      * Prepend.
      *
-     * @param  string $data
+     * @param  self|string $data
      * @return self
      */
-    public function prepend(string $data): self
+    public function prepend(self|string $data): self
     {
         $this->data = $data . $this->data;
 
