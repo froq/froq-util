@@ -58,7 +58,7 @@ function response(mixed ...$args): Response
  */
 function status(int $code = null): int
 {
-    $status = app()->response()->status();
+    $status = app()->response()->status;
 
     if ($code !== null) {
         $status->setCode($code);
