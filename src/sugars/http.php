@@ -21,7 +21,7 @@ if (!class_exists(App::class, false)) {
  */
 function request(): Request
 {
-    return app()->request();
+    return app()->request;
 }
 
 /**
@@ -32,7 +32,7 @@ function request(): Request
  */
 function response(mixed ...$args): Response
 {
-    $response = app()->response();
+    $response = app()->response;
 
     if ($args) {
         @ [$code, $content, $attributes, $headers, $cookies] = $args;
@@ -58,7 +58,7 @@ function response(mixed ...$args): Response
  */
 function status(int $code = null): int
 {
-    $status = app()->response()->status;
+    $status = app()->response->status;
 
     if ($code !== null) {
         $status->setCode($code);
@@ -74,7 +74,7 @@ function status(int $code = null): int
  */
 function is_get(): bool
 {
-    return app()->request()->isGet();
+    return app()->request->isGet();
 }
 
 /**
@@ -84,7 +84,7 @@ function is_get(): bool
  */
 function is_post(): bool
 {
-    return app()->request()->isPost();
+    return app()->request->isPost();
 }
 
 /**
@@ -94,7 +94,7 @@ function is_post(): bool
  */
 function is_put(): bool
 {
-    return app()->request()->isPut();
+    return app()->request->isPut();
 }
 
 /**
@@ -105,7 +105,7 @@ function is_put(): bool
  */
 function is_patch(): bool
 {
-    return app()->request()->isPatch();
+    return app()->request->isPatch();
 }
 
 /**
@@ -115,7 +115,7 @@ function is_patch(): bool
  */
 function is_delete(): bool
 {
-    return app()->request()->isDelete();
+    return app()->request->isDelete();
 }
 
 /**
@@ -125,7 +125,7 @@ function is_delete(): bool
  */
 function is_ajax(): bool
 {
-    return app()->request()->isAjax();
+    return app()->request->isAjax();
 }
 
 /**
@@ -138,7 +138,7 @@ function is_ajax(): bool
  */
 function get(string|array $name = null, mixed $default = null, mixed ...$options): mixed
 {
-    return app()->request()->get($name, $default, ...$options);
+    return app()->request->get($name, $default, ...$options);
 }
 
 /**
@@ -149,7 +149,7 @@ function get(string|array $name = null, mixed $default = null, mixed ...$options
  */
 function get_has(string|array $name): bool
 {
-    return app()->request()->hasGet($name);
+    return app()->request->hasGet($name);
 }
 
 /**
@@ -162,7 +162,7 @@ function get_has(string|array $name): bool
  */
 function post(string|array $name = null, mixed $default = null, mixed ...$options): mixed
 {
-    return app()->request()->post($name, $default, ...$options);
+    return app()->request->post($name, $default, ...$options);
 }
 
 /**
@@ -173,7 +173,7 @@ function post(string|array $name = null, mixed $default = null, mixed ...$option
  */
 function post_has(string|array $name): bool
 {
-    return app()->request()->hasPost($name);
+    return app()->request->hasPost($name);
 }
 
 /**
@@ -186,7 +186,7 @@ function post_has(string|array $name): bool
  */
 function cookie(string|array $name = null, mixed $default = null, mixed ...$options): mixed
 {
-    return app()->request()->cookie($name, $default, ...$options);
+    return app()->request->cookie($name, $default, ...$options);
 }
 
 /**
@@ -197,7 +197,7 @@ function cookie(string|array $name = null, mixed $default = null, mixed ...$opti
  */
 function cookie_has(string|array $name): bool
 {
-    return app()->request()->hasCookie($name);
+    return app()->request->hasCookie($name);
 }
 
 /**
@@ -209,7 +209,7 @@ function cookie_has(string|array $name): bool
  */
 function segment(int|string $key, string $default = null): string|null
 {
-    return app()->request()->segment($key, $default);
+    return app()->request->segment($key, $default);
 }
 
 /**
@@ -221,7 +221,7 @@ function segment(int|string $key, string $default = null): string|null
  */
 function segments(array $keys = null, array $defaults = null): array|Segments
 {
-    return app()->request()->segments($keys, $defaults);
+    return app()->request->segments($keys, $defaults);
 }
 
 /**
@@ -235,5 +235,5 @@ function segments(array $keys = null, array $defaults = null): array|Segments
  */
 function redirect(string $to, int $code = Status::FOUND, array $headers = null, array $cookies = null): void
 {
-    app()->response()->redirect($to, $code, $headers, $cookies);
+    app()->response->redirect($to, $code, $headers, $cookies);
 }
