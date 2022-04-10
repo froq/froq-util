@@ -21,7 +21,7 @@ if (!class_exists(App::class, false)) {
  */
 function logger(): Logger
 {
-    return app()->logger();
+    return app()->logger;
 }
 
 /**
@@ -33,7 +33,7 @@ function logger(): Logger
  */
 function log_error(string|Throwable $message, bool $separate = true): bool
 {
-    return app()->logger()->logError($message, $separate);
+    return app()->logger->logError($message, $separate);
 }
 
 /**
@@ -45,7 +45,7 @@ function log_error(string|Throwable $message, bool $separate = true): bool
  */
 function log_warn(string|Throwable $message, bool $separate = true): bool
 {
-    return app()->logger()->logWarn($message, $separate);
+    return app()->logger->logWarn($message, $separate);
 }
 
 /**
@@ -57,7 +57,7 @@ function log_warn(string|Throwable $message, bool $separate = true): bool
  */
 function log_info(string|Throwable $message, bool $separate = true): bool
 {
-    return app()->logger()->logInfo($message, $separate);
+    return app()->logger->logInfo($message, $separate);
 }
 
 /**
@@ -69,5 +69,5 @@ function log_info(string|Throwable $message, bool $separate = true): bool
  */
 function log_debug(string|Throwable $message, bool $separate = true): bool
 {
-    return app()->logger()->logDebug($message, $separate);
+    return app()->logger->logDebug($message, $separate);
 }
