@@ -1547,7 +1547,7 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     }
 
     /**
-     * Formatter.
+     * Format.
      *
      * @param  mixed    $input
      * @param  mixed ...$inputs
