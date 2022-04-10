@@ -37,14 +37,3 @@ if (!function_exists('prd')) {
         $e && exit;
     }
 }
-if (!function_exists('prc')) {
-    function prc($s, $t='i', $e=0) {
-        match ($t) {
-            'e' => prs("\033[31m{$s}\033[0m", $e), // error
-            's' => prs("\033[32m{$s}\033[0m", $e), // success
-            'w' => prs("\033[33m{$s}\033[0m", $e), // warning
-            'i' => prs("\033[36m{$s}\033[0m", $e), // info
-            default => prs($s, 1)
-        };
-    };
-}
