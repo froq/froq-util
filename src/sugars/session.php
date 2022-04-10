@@ -22,7 +22,7 @@ if (!class_exists(App::class, false)) {
  */
 function session(string|array $key = null, mixed $value = null): mixed
 {
-    $session = app()->session();
+    $session = app()->session;
 
     // Set/get.
     if ($session) {
@@ -43,7 +43,7 @@ function session(string|array $key = null, mixed $value = null): mixed
  */
 function session_flash(mixed $message = null): mixed
 {
-    $session = app()->session();
+    $session = app()->session;
 
     if ($session) {
         switch (func_num_args()) {
@@ -62,7 +62,7 @@ function session_flash(mixed $message = null): mixed
  */
 function session_array(): array|null
 {
-    return app()->session()?->toArray();
+    return app()->session?->toArray();
 }
 
 /**
@@ -73,7 +73,7 @@ function session_array(): array|null
  */
 function session_has(string $key): bool|null
 {
-    return app()->session()?->has($key);
+    return app()->session?->has($key);
 }
 
 /**
@@ -85,7 +85,7 @@ function session_has(string $key): bool|null
  */
 function session_set(string|array $key, mixed $value = null): bool|null
 {
-    return app()->session()?->set($key, $value) ? true : null;
+    return app()->session?->set($key, $value) ? true : null;
 }
 
 /**
@@ -98,7 +98,7 @@ function session_set(string|array $key, mixed $value = null): bool|null
  */
 function session_get(string|array $key, mixed $default = null, bool $drop = false): mixed
 {
-    return app()->session()?->get($key, $default, $drop);
+    return app()->session?->get($key, $default, $drop);
 }
 
 /**
@@ -109,7 +109,7 @@ function session_get(string|array $key, mixed $default = null, bool $drop = fals
  */
 function session_remove(string|array $key): bool|null
 {
-    return app()->session()?->remove($key) ? true : null;
+    return app()->session?->remove($key) ? true : null;
 }
 
 /**
@@ -119,7 +119,7 @@ function session_remove(string|array $key): bool|null
  */
 function start_session(): bool|null
 {
-    return app()->session()?->start();
+    return app()->session?->start();
 }
 
 /**
@@ -129,7 +129,7 @@ function start_session(): bool|null
  */
 function end_session(): bool|null
 {
-    return app()->session()?->end();
+    return app()->session?->end();
 }
 
 /**
@@ -142,7 +142,7 @@ function end_session(): bool|null
  */
 function generate_csrf_token(string $form): string|null
 {
-    return app()->session()?->generateCsrfToken($form);
+    return app()->session?->generateCsrfToken($form);
 }
 
 /**
@@ -155,5 +155,5 @@ function generate_csrf_token(string $form): string|null
  */
 function validate_csrf_token(string $form, string $token): bool|null
 {
-    return app()->session()?->validateCsrfToken($form, $token);
+    return app()->session?->validateCsrfToken($form, $token);
 }
