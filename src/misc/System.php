@@ -147,7 +147,7 @@ final class System extends \StaticClass
      */
     public static function defaultTimezone(string $id = null): string
     {
-        if (func_get_args()) {
+        if ($id !== null) {
             date_default_timezone_set($id);
         }
 
