@@ -140,12 +140,12 @@ final class System extends \StaticClass
     }
 
     /**
-     * Set/Get default timezone.
+     * Set/get default timezone.
      *
      * @param  string|null $timezone
-     * @return string|null
+     * @return string
      */
-    public static function defaultTimezone(string $timezone = null): string|null
+    public static function defaultTimezone(string $timezone = null): string
     {
         if (func_get_args()) {
             $old = date_default_timezone_get() ?: 'UTC';
