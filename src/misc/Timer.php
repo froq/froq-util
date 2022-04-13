@@ -109,24 +109,14 @@ class Timer implements Arrayable
     }
 
     /**
-     * Pack start/stop/time values.
-     *
-     * @return array
+     * @inheritDoc froq\common\interface\Arrayable
      */
-    public function pack(): array
+    public function toArray(): array
     {
         return [
             'start' => $this->getStart(),
             'stop'  => $this->getStop(),
             'time'  => $this->getTime()
         ];
-    }
-
-    /**
-     * @inheritDoc froq\common\interface\Arrayable
-     */
-    public function toArray(): array
-    {
-        return $this->pack();
     }
 }
