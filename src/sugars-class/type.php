@@ -6,8 +6,6 @@
 declare(strict_types=1);
 
 /**
- * Type.
- *
  * A class for playing with types in OOP-way.
  *
  * @package froq\util

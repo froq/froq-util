@@ -8,8 +8,6 @@ declare(strict_types=1);
 use froq\common\{Error, Exception};
 
 /**
- * Assert.
- *
  * An assert(ion) class with some utility methods.
  *
  * @package froq\util
@@ -313,8 +311,6 @@ final class Assert
 }
 
 /**
- * Assert Exception.
- *
  * @package froq\util
  * @object  AssertException
  * @author  Kerem Güneş

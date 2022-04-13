@@ -10,8 +10,6 @@ namespace froq\util\misc;
 use froq\util\Objects;
 
 /**
- * Dumper.
- *
  * A static class that provides a dumping interface via `dump()` method or printing
  * options via `echo()` or `echoPre()` methods.
  *

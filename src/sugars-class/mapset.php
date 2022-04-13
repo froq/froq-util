@@ -13,8 +13,6 @@ use froq\collection\iterator\{ArrayIterator, ReverseArrayIterator};
 use froq\collection\{Collection, CollectionInterface};
 
 /**
- * Map/Set trait.
- *
  * A trait used by Map/Set classes.
  *
  * @package froq\util
@@ -440,8 +438,6 @@ trait MapSetTrait
 }
 
 /**
- * Map.
- *
  * A map class just like JavaScript's map but "a bit" extended.
  *
  * @package froq\util
@@ -713,8 +709,6 @@ class Map implements Arrayable, Listable, Jsonable, Collectable, Iteratable, Ite
 }
 
 /**
- * Set.
- *
  * A set class just like JavaScript's set but "a bit" extended.
  *
  * @package froq\util
@@ -977,8 +971,6 @@ class Set implements Arrayable, Listable, Jsonable, Collectable, Iteratable, Ite
 }
 
 /**
- * Dict.
- *
  * A dictionary class just like Python's dict but "a bit" extended.
  *
  * @package froq\util

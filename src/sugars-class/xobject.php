@@ -8,8 +8,6 @@ declare(strict_types=1);
 use froq\util\Objects;
 
 /**
- * X-Object.
- *
  * A class for playing with objects in OOP-way.
  *
  * @package froq\util

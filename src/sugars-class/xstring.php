@@ -8,8 +8,6 @@ declare(strict_types=1);
 use froq\util\Strings;
 
 /**
- * X-String.
- *
  * A class for playing with strings in OOP-way.
  *
  * @package froq\util

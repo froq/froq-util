@@ -6,8 +6,6 @@
 declare(strict_types=1);
 
 /**
- * Trace.
- *
  * A class for playing with traces in OOP-way.
  *
  * @package froq\util
@@ -181,8 +179,6 @@ final class Trace implements Stringable, Countable, IteratorAggregate, ArrayAcce
 }
 
 /**
- * Trace Entry.
- *
  * An internal class for Trace entries.
  *
  * @package froq\util

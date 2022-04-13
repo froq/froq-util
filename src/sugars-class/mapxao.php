@@ -10,8 +10,6 @@ use froq\collection\trait\GetTrait;
 use froq\util\Arrays;
 
 /**
- * X-Array Object.
- *
  * A class just like ArrayObject but "a bit" extended, basically designed
  * for Options & Attributes classes.
  *

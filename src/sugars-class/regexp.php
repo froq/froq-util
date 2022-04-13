@@ -6,8 +6,6 @@
 declare(strict_types=1);
 
 /**
- * RegExp.
- *
  * A class for playing with regular expression stuff in OOP-way.
  *
  * @package froq\util

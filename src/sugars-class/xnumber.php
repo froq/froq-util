@@ -8,8 +8,6 @@ declare(strict_types=1);
 use froq\util\Numbers;
 
 /**
- * X-Number.
- *
  * A class for playing with numbers in OOP-way.
  *
  * @package froq\util

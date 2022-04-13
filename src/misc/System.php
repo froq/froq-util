@@ -8,8 +8,6 @@ declare(strict_types=1);
 namespace froq\util\misc;
 
 /**
- * System.
- *
  * A static class for system related stuff.
  *
  * @package froq\util\misc

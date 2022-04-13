@@ -6,8 +6,6 @@
 declare(strict_types=1);
 
 /**
- * Options.
- *
  * A class for options-related works.
  *
  * @package froq\util

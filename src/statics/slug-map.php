@@ -1,8 +1,7 @@
 <?php
 /**
- * Slug characters (seem far enough).
+ * Slug characters (seems far enough).
  */
-
 return [
   'À' => 'A',
   'Á' => 'A',

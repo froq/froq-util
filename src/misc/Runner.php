@@ -8,8 +8,6 @@ declare(strict_types=1);
 namespace froq\util\misc;
 
 /**
- * Runner.
- *
  * A class that provides a profiling interface via `run()` method printing
  * speed & memory peeks.
  *

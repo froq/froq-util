@@ -14,8 +14,6 @@ use froq\collection\iterator\{ArrayIterator, ReverseArrayIterator};
 use froq\collection\{Collection, CollectionInterface};
 
 /**
- * X-Array.
- *
  * A class for playing with arrays in OOP-way.
  *
  * @package froq\util

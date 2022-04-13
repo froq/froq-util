@@ -8,9 +8,7 @@ declare(strict_types=1);
 use froq\util\Strings;
 
 /**
- * String Buffer.
- *
- * A simple string class, inpired by Java's StringBuffer.
+ * A simple string buffer class, inpired by Java's StringBuffer.
  *
  * @package froq\util
  * @object  StringBuffer

@@ -8,8 +8,6 @@ declare(strict_types=1);
 namespace froq\util\misc;
 
 /**
- * Random.
- *
  * A RNG class that generates pseudorandom numbers. This class is highly
  * inspired by java.util.Random class using its some same implementations.
  * @see https://docs.oracle.com/javase/8/docs/api/java/util/Random.html
