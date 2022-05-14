@@ -283,7 +283,7 @@ class StringBuffer implements Stringable, IteratorAggregate, JsonSerializable, A
     }
 
     /**
-     * @alias toString()
+     * @alias getLength()
      */
     public function length()
     {
