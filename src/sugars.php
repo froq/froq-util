@@ -435,7 +435,7 @@ function grep_all(string $input, string $pattern, bool $named = false, bool $uni
 function convert_base(int|string $input, int|string $from, int|string $to): string|null
 {
     // Try to use speed/power of GMP.
-    if (extension_loaded('gmp') && is_int($from) && is_int($to)) {
+    if (is_int($from) && is_int($to) && extension_loaded('gmp')) {
         return gmp_strval(gmp_init($input, $from), $to);
     }
 
