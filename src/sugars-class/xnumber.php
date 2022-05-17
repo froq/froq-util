@@ -194,7 +194,7 @@ class XNumber implements Stringable
     }
 
     /**
-     * Percent by 100.
+     * Calculates: What is the % B (share) of A (this.data)?
      *
      * @param  int|float $share
      * @param  int       $precision
@@ -202,6 +202,7 @@ class XNumber implements Stringable
      */
     public function percent(int|float $share, int $precision = PRECISION): self
     {
+        // @tome: A'nın % B'si kaçtır? https://hesaptablosu.net/yuzde-hesaplama/
         $data = round($this->data / 100 * abs($share), $precision);
         if ($data == round($data)) {
             $data = (int) $data;
@@ -213,7 +214,7 @@ class XNumber implements Stringable
     }
 
     /**
-     * Percent by 100, of share.
+     * Calculates: What is the % of A (this.data) of B (share)?
      *
      * @param  int|float $share
      * @param  int       $precision
@@ -221,7 +222,8 @@ class XNumber implements Stringable
      */
     public function percentOf(int|float $share, int $precision = PRECISION): self
     {
-        $data = round(abs($share) / $this->data * 100, $precision);
+        // @tome: A B'nin % kaçıdır? https://hesaptablosu.net/yuzde-hesaplama/
+        $data = round($this->data * 100 / abs($share), $precision);
         if ($data == round($data)) {
             $data = (int) $data;
         }
@@ -232,7 +234,7 @@ class XNumber implements Stringable
     }
 
     /**
-     * Percent by 100, of share rate (change).
+     * Calculates: What is the difference ratio (%) from A (this.data) to B (share)?
      *
      * @param  int|float $share
      * @param  int       $precision
@@ -240,7 +242,8 @@ class XNumber implements Stringable
      */
     public function percentRateOf(int|float $share, int $precision = PRECISION): self
     {
-        $data = round(abs($share) - $this->data / $this->data * 100, $precision);
+        // @tome: A'dan B'ye fark oranı (%) nedir? https://hesaptablosu.net/yuzde-hesaplama/
+        $data = round((abs($share) - $this->data) * 100 / $this->data, $precision);
         if ($data == round($data)) {
             $data = (int) $data;
         }
