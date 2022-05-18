@@ -261,7 +261,7 @@ class XArrayObject extends ArrayObject implements Arrayable, Objectable, Jsonabl
      */
     public function toJson(int $flags = 0): string
     {
-        return json_encode($this->toArray(true), $flags);
+        return (string) json_encode($this->toArray(true), $flags);
     }
 
     /**
