@@ -21,7 +21,7 @@ class ItemList implements Arrayable, Jsonable, Countable, IteratorAggregate, Arr
     use CountTrait, EmptyTrait;
 
     /** @var array */
-    protected array $data = [];
+    private array $data = [];
 
     /**
      * Constructor.

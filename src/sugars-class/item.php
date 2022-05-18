@@ -21,7 +21,7 @@ class Item implements Arrayable, Jsonable, Countable, IteratorAggregate, ArrayAc
     use CountTrait, EmptyTrait;
 
     /** @var array */
-    protected array $data = [];
+    private array $data = [];
 
     /**
      * Constructor.
