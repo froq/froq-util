@@ -521,15 +521,15 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     /**
      * Replace.
      *
-     * @param  string|RegExp          $search
+     * @param  string|array|RegExp    $search
      * @param  string|array|callable  $replace
      * @param  bool                   $icase
      * @param  int                    $limit
      * @param  int|null              &$count
      * @param  int|array              $flags
      * @param  string|null            $class
-     * @param  bool                   $re
-     * @return int
+     * @param  bool                   $re @internal
+     * @return self
      */
     public function replace(string|array|RegExp $search, string|array|callable $replace, bool $icase = false,
         int $limit = -1, int &$count = null, int|array $flags = 0, string $class = null, bool $re = false): self
@@ -553,7 +553,7 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
      * @param  string|callable  $replace
      * @param  int              $limit
      * @param  int|null        &$count
-     * @param  array|int        $flags
+     * @param  int|array        $flags
      * @param  string|null      $class
      * @return self
      */
@@ -570,7 +570,7 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
      * @param  callable      $replace
      * @param  int           $limit
      * @param  int|null     &$count
-     * @param  array|int     $flags
+     * @param  int|array     $flags
      * @return self
      */
     public function replaceRegExpMatch(string|RegExp $search, callable $replace, int $limit = -1, int &$count = null,
@@ -624,10 +624,10 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     /**
      * Remove.
      *
-     * @param  string|RegExp  $search
-     * @param  bool           $icase
-     * @param  int            $limit
-     * @param  int|null      &$count
+     * @param  string|array|RegExp  $search
+     * @param  bool                 $icase
+     * @param  int                  $limit
+     * @param  int|null            &$count
      * @return self
      */
     public function remove(string|array|RegExp $search, bool $icase = false, int $limit = -1, int &$count = null): self
