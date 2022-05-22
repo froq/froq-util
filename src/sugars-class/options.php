@@ -74,7 +74,7 @@ class Options extends XArrayObject
     }
 
     /**
-     * Select an item.
+     * Select an option item or many.
      *
      * @param  int|string|array $key
      * @param  mixed|null       $default
