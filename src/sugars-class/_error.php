@@ -311,7 +311,7 @@ class LastError extends Error
     public function __construct(string $message = null, int $code = null)
     {
         // Normal process with last error when no arguments given.
-        if (func_num_args() == 0) {
+        if (!func_num_args()) {
             if ($error = get_error()) {
                 ['type' => $code, 'message' => $message] = $error;
                 $this->call = $error['function'];
