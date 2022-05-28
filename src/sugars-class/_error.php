@@ -21,17 +21,21 @@ trait ErrorTrait
      */
     public function __get(string $property): mixed
     {
+        // Note: Subclasses must define properties as "protected".
         if (property_exists($this, $property)) {
             return $this->$property;
         }
+
         if ($property == 'trace') {
             return $this->getTrace();
         }
+        if ($property == 'traceString') {
+            return $this->getTraceAsString();
+        }
 
         // Act as original.
-        trigger_error(sprintf(
-            'Undefined property: %s::$%s', static::class, $property
-        ), E_USER_WARNING);
+        $message = sprintf('Undefined property: %s::$%s', $this::class, $property);
+        trigger_error($message, E_USER_WARNING);
 
         return null;
     }
