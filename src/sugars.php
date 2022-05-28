@@ -1708,7 +1708,7 @@ function get_object_hash(object $object, bool $with_name = true, bool $with_reha
 }
 
 /**
- * Sets the accessible non-static properties of the given object according to scope.
+ * Set object vars.
  *
  * @param  object       $object
  * @param  object|array $vars
@@ -1717,8 +1717,14 @@ function get_object_hash(object $object, bool $with_name = true, bool $with_reha
  */
 function set_object_vars(object $object, object|array $vars): object
 {
-    foreach ($vars as $key => $value) {
-        $object->$key = $value;
+    foreach ($vars as $name => $value) {
+        // Handle private/protected stuff.
+        try {
+            $object->$name = $value;
+        } catch (Error) {
+            $ref = new ReflectionProperty($object, $name);
+            return $ref->setValue($object, $value);
+        }
     }
 
     return $object;
