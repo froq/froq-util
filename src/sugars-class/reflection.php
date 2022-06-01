@@ -56,10 +56,10 @@ class ReflectionTypeExtended extends ReflectionType
     /**
      * Proxy for reference object properties.
      *
-     * @magic
      * @param  string $property
      * @return string
      * @throws Error
+     * @magic
      */
     public function __get(string $property): string|bool
     {
@@ -1565,10 +1565,10 @@ class ReflectionCallable implements Reflector
     /**
      * Proxy for reflection object properties.
      *
-     * @magic
      * @param  string $property
      * @return string
      * @throws Error
+     * @magic
      */
     public function __get(string $property): string
     {
@@ -1586,11 +1586,11 @@ class ReflectionCallable implements Reflector
     /**
      * Proxy for reflection object methods.
      *
-     * @magic
      * @param  string $method
      * @param  array  $methodArgs
      * @return mixed
      * @throws Error
+     * @magic
      */
     public function __call(string $method, array $methodArgs): mixed
     {
