@@ -1710,12 +1710,12 @@ function get_object_hash(object $object, bool $with_name = true, bool $with_reha
 /**
  * Set object vars.
  *
- * @param  object       $object
- * @param  object|array $vars
+ * @param  object   $object
+ * @param  iterable $vars
  * @return object
  * @since  6.0
  */
-function set_object_vars(object $object, object|array $vars): object
+function set_object_vars(object $object, iterable $vars): object
 {
     foreach ($vars as $name => $value) {
         $ref = new ReflectionProperty($object, $name);

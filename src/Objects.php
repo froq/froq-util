@@ -659,6 +659,19 @@ final class Objects extends \StaticClass
     }
 
     /**
+     * Set vars.
+     *
+     * @param object   $object
+     * @param iterable $vars
+     * @return object
+     * @since  6.0
+     */
+    public static function setVars(object $object, iterable $vars): object
+    {
+        return set_object_vars($object, $vars);
+    }
+
+    /**
      * Get vars.
      *
      * @param  string|object $object
