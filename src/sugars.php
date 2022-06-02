@@ -673,7 +673,7 @@ function get_constant_value(string $name, mixed $default = null): mixed
  * @return bool
  * @since  4.0
  */
-function constant_exists(string|object $class, string $name, bool $scope_check = true, bool $upper = false): bool
+function constant_exists(string|object $class, string $name, bool $scope_check = false, bool $upper = false): bool
 {
     $class = Objects::getName($class);
     $upper && $name = strtoupper($name);
