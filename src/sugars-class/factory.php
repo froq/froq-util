@@ -40,7 +40,7 @@ class Factory
     }
 
     /**
-     * When a modifier method not defined in subclasses (eg: `withId()`), this method
+     * When a modifier method is not defined in subclass (eg: `withId()`) this method
      * will handle such these methods dynamically using `with()` method and returning
      * self instance for chaining functionality.
      *
@@ -190,13 +190,12 @@ class Factory
     /**
      * Static initializer.
      *
-     * @param  string $class
-     * @param  array  $classArgs
+     * @param  mixed ...$args
      * @return static
      */
-    public static function new(string $class = '', array $classArgs = []): static
+    public static function new(mixed ...$args): static
     {
-        return new static($class, $classArgs);
+        return new static(...$args);
     }
 
     /**
