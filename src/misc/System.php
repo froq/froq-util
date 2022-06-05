@@ -77,11 +77,15 @@ final class System extends \StaticClass
      * Set an ENV directive.
      *
      * @param string                     $option
+     * @param bool                       $server
      * @param int|float|string|bool|null $value
      */
-    public static function envSet(string $option, int|float|string|bool|null $value): bool
+    public static function envSet(string $option, int|float|string|bool|null $value, bool $server = false): bool
     {
         $_ENV[$option] = $value;
+
+        // Add it to server global.
+        $server && $_SERVER[$option] = $value;
 
         if ($value === false) {
             $value = '0';
