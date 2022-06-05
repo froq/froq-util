@@ -155,4 +155,56 @@ final class System extends \StaticClass
 
         return date_default_timezone_get() ?: 'UTC';
     }
+
+    /**
+     * Check whether system is nix*-like.
+     *
+     * @return bool
+     */
+    public static function isUnix(): bool
+    {
+        return PATH_SEPARATOR === ':';
+    }
+
+    /**
+     * Check whether system is win*-like.
+     *
+     * @return bool
+     */
+    public static function isWindows(): bool
+    {
+        return PATH_SEPARATOR === ';';
+    }
+
+    /**
+     * Get OS info (best for Linux only).
+     *
+     * @return array
+     */
+    public static function osInfo(): array
+    {
+        $osf = strtolower(PHP_OS_FAMILY);
+        if (str_starts_with($osf, 'win')) {
+            return ['id' => 'windows', 'type' => 'Windows', 'name' => 'Windows'];
+        }
+        if (str_starts_with('osf', 'darwin')) {
+            return ['id' => 'darwin', 'type' => 'Darwin', 'name' => 'Darwin'];
+        }
+
+        $ret = [];
+
+        try {
+            exec('cat /etc/os-release 2>/dev/null', $infos);
+            foreach ((array) $infos as $info) {
+                $info = split('=', (string) $info, 2);
+                if (isset($info[0])) {
+                    $key = strtolower($info[0]);
+                    $value = trim((string) $info[1], '"');
+                    $ret[$key] = $value;
+                }
+            }
+        } catch (\Error) {}
+
+        return $ret;
+    }
 }
