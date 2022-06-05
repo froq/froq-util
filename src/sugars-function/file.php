@@ -26,7 +26,7 @@ function tmp(): string
  */
 function tmpdir(string $prefix = '', int $mode = 0755): string|null
 {
-    // Prefix may becomes subdir here.
+    // Prefix may become subdir here.
     $dir = tmp() . DIRECTORY_SEPARATOR . $prefix . suid();
 
     return mkdir($dir, $mode, true) ? $dir : null;
@@ -42,7 +42,7 @@ function tmpdir(string $prefix = '', int $mode = 0755): string|null
  */
 function tmpnam(string $prefix = '', int $mode = 0644): string|null
 {
-    // Prefix may becomes subdir here.
+    // Prefix may become subdir here.
     $nam = tmp() . DIRECTORY_SEPARATOR . $prefix . suid();
 
     return mkfile($nam, $mode) ? $nam : null;
