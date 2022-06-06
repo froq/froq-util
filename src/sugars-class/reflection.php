@@ -235,7 +235,7 @@ class ReflectionParameterExtended extends ReflectionParameter
         }
     }
 
-    /** @override */ #[ReturnTypeWillChange]
+    /** @override */
     public function getType(): ReflectionTypeExtended|null
     {
         if ($type = parent::getType()) {
@@ -1066,7 +1066,7 @@ class ReflectionPropertyExtended extends ReflectionProperty
         return $this->getType() != null;
     }
 
-    /** @override */ #[ReturnTypeWillChange]
+    /** @override */
     public function getType(): ReflectionTypeExtended|null
     {
         return ($res = $this->resolveType()) ? new ReflectionTypeExtended(...$res) : null;
