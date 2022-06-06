@@ -495,7 +495,7 @@ trait ReflectionClassTrait
     /**
      * Map of attributes.
      *
-     * @return Map
+     * @return Map<ReflectionAttribute>
      */
     public function attributes(): Map
     {
@@ -902,7 +902,7 @@ class ReflectionPropertyExtended extends ReflectionProperty
     /**
      * Map of attributes.
      *
-     * @return Map
+     * @return Map<ReflectionAttribute>
      */
     public function attributes(): Map
     {
@@ -1814,7 +1814,7 @@ trait ReflectionCallableTrait
     /**
      * Map of attributes.
      *
-     * @return Map
+     * @return Map<ReflectionAttribute>
      */
     public function attributes(): Map
     {
