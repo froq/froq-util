@@ -1887,6 +1887,16 @@ trait ReflectionCallableTrait
         return null;
     }
 
+    /**
+     * Map of parameters.
+     *
+     * @return Map<ReflectionParameterExtended>
+     */
+    public function parameters(): Map
+    {
+        return $this->collectParameters(extend: true);
+    }
+
     /** @override */
     public function hasParameter(string|int $name): bool
     {
