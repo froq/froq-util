@@ -333,6 +333,17 @@ trait ReflectionClassTrait
         };
     }
 
+    /**
+     * Set of methods.
+     *
+     * @return Set<ReflectionMethodExtended>
+     */
+    public function methods(bool $map = true): Set
+    {
+        return Set::from(parent::getMethods())
+            ->map(fn($ref) => new ReflectionMethodExtended($ref->class, $ref->name));
+    }
+
     /** @override */ #[ReturnTypeWillChange]
     public function getMethod(string $name): ReflectionMethodExtended|null
     {
@@ -345,7 +356,7 @@ trait ReflectionClassTrait
     public function getMethods(int $filter = null): array
     {
         return array_map(fn($ref) => new ReflectionMethodExtended($ref->class, $ref->name),
-            parent::getMethods());
+            parent::getMethods($filter));
     }
 
     /**
@@ -532,6 +543,16 @@ trait ReflectionClassTrait
     public function getAttributeNames(): array
     {
         return $this->attributes()->map(fn($ref) => $ref->getName())->toArray();
+    }
+
+    /**
+     * Set of properties.
+     *
+     * @return Set<ReflectionPropertyExtended>
+     */
+    public function properties(): Set
+    {
+        return new Set($this->collectProperties(extend: true));
     }
 
     /** @override */
@@ -776,7 +797,8 @@ class ReflectionPropertyExtended extends ReflectionProperty
     /** @magic */
     public function __debugInfo(): array
     {
-        return ['name' => $this->getName(), 'class' => $this->getClass()];
+        return ['name' => $this->getName(), 'class' => $this->getClass(),
+                'type' => $this->getType()?->getName()];
     }
 
     /** @magic */
