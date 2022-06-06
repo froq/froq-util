@@ -118,6 +118,22 @@ final class Trace implements Stringable, Countable, IteratorAggregate, ArrayAcce
     }
 
     /**
+     * Find a trace entry that satisfies the provided callable.
+     *
+     * @param  callable $func
+     * @return TraceEntry|null
+     */
+    public function find(callable $func): TraceEntry|null
+    {
+        foreach ($this->getIterator() as $entry) {
+            if ($func($entry)) {
+                return $entry;
+            }
+        }
+        return null;
+    }
+
+    /**
      * Get a reversed trace.
      *
      * @return Trace
