@@ -1910,13 +1910,13 @@ trait ReflectionCallableTrait
     }
 
     /**
-     * Map of parameters.
+     * Set of parameters.
      *
-     * @return Map<ReflectionParameterExtended>
+     * @return Set<ReflectionParameterExtended>
      */
-    public function parameters(): Map
+    public function parameters(): Set
     {
-        return $this->collectParameters(extend: true);
+        return new Set($this->collectParameters(extend: true));
     }
 
     /** @override */
