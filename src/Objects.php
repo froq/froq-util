@@ -674,7 +674,7 @@ final class Objects extends \StaticClass
     /**
      * Get vars.
      *
-     * @param  string|object $object
+     * @param  object|string $object
      * @param  bool          $namesOnly
      * @return array|null
      * @since  6.0
