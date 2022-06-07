@@ -1073,7 +1073,7 @@ function udate(int|float|string $when = null, string $where = null): DateTime
 }
 
 /**
- * Get current microtime (float or string).
+ * Get current microtime as float or string.
  *
  * @param  bool $string
  * @return float|string
@@ -1087,7 +1087,7 @@ function utime(bool $string = false): float|string
 }
 
 /**
- * Get current microtime (high-resolution).
+ * Get current microtime with fraction.
  *
  * @param  string|null $where
  * @return int
