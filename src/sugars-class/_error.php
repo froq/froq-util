@@ -21,11 +21,11 @@ trait ErrorTrait
      */
     public function __get(string $property): mixed
     {
-        if ($property == 'trace') {
-            return $this->getTrace();
-        }
-        if ($property == 'traceString') {
-            return $this->getTraceAsString();
+        switch ($property) {
+            case 'trace':
+                return $this->getTrace();
+            case 'traceString':
+                return $this->getTraceAsString();
         }
 
         // Note: Subclasses must define properties as "protected".
