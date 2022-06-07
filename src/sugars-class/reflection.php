@@ -23,6 +23,9 @@ class ReflectionTypeExtended extends ReflectionType
     /** Name/nullable reference. */
     private object $reference;
 
+    /** Typing delimiter. */
+    private string $delimiter;
+
     /**
      * Constructor.
      *
@@ -40,15 +43,20 @@ class ReflectionTypeExtended extends ReflectionType
         }
 
         // Uniform nullable types.
-        if (strsrc($name, '?')) {
+        if (strpfx($name, '?')) {
             $name = substr($name, 1);
             $nullable = true;
         }
+
+        // @tome: Null allways goes to the end.
         if ($nullable && ($name != 'null' && $name != 'mixed')) {
             $name .= '|null';
         }
 
-        $name = implode('|', array_unique(explode('|', $name)));
+        // @tome: Intersection-type not allows nulls.
+        $this->delimiter = str_contains($name, '&') ? '&' : '|';
+
+        $name = implode($this->delimiter, array_unique(explode($this->delimiter, $name)));
 
         $this->reference = qo(name: $name, nullable: $nullable);
     }
@@ -97,13 +105,26 @@ class ReflectionTypeExtended extends ReflectionType
     }
 
     /**
+     * Get pure name if named (without "null" part if nullable).
+     *
+     * @return string|null
+     */
+    public function getPureName(): string|null
+    {
+        if ($this->isNamed()) {
+            return first($this->getNames());
+        }
+        return null;
+    }
+
+    /**
      * Get names.
      *
      * @return array
      */
     public function getNames(): array
     {
-        return explode('|', $this->reference->name);
+        return explode($this->delimiter, $this->reference->name);
     }
 
     /**
@@ -135,7 +156,7 @@ class ReflectionTypeExtended extends ReflectionType
      */
     public function isNamed(): bool
     {
-        return substr_count($this->getName(), '|') == 1 && $this->allowsNull();
+        return !$this->isUnion() && !$this->isIntersection();
     }
 
     /**
@@ -171,7 +192,7 @@ class ReflectionTypeExtended extends ReflectionType
     /** @alias isNullable() */
     public function allowsNull(): bool
     {
-        return $this->isNullable();
+        return $this->reference->nullable;
     }
 
     /**
@@ -182,7 +203,7 @@ class ReflectionTypeExtended extends ReflectionType
      */
     public function contains(string $name): bool
     {
-        return in_array($name, $this->getNames());
+        return in_array($name, $this->getNames(), true);
     }
 }
 
@@ -240,8 +261,7 @@ class ReflectionParameterExtended extends ReflectionParameter
     {
         if ($type = parent::getType()) {
             return new ReflectionTypeExtended(
-                ($type instanceof ReflectionUnionType)
-                    ? (string) $type : $type->getName(),
+                ($type instanceof ReflectionNamedType) ? $type->getName() : (string) $type,
                 $type->allowsNull()
             );
         }
@@ -1495,8 +1515,7 @@ class ReflectionPropertyExtended extends ReflectionProperty
 
             if ($type = parent::getType()) {
                 return [
-                    ($type instanceof ReflectionUnionType)
-                        ? (string) $type : $type->getName(),
+                    ($type instanceof ReflectionNamedType) ? $type->getName() : (string) $type,
                     $type->allowsNull()
                 ];
             }
@@ -1677,12 +1696,10 @@ trait ReflectionCallableTrait
     public function __construct(string|callable|array|object $callable, string $name = null)
     {
         // When "Foo.bar" or "Foo::bar" given.
-        if (is_string($callable) && strpbrk($callable, '.:') !== false) {
-            $callable = preg_split(
-                '~(.+?)(?:[.:]+)(\w+)$~', $callable, limit: 2,
-                flags: PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE
-            );
-        } elseif ($name !== null && (is_string($callable) || is_object($callable))) {
+        if (is_string($callable) && preg_match('~(.+)(?:\.|::)(\w+)~', $callable, $match)) {
+            $callable = array_slice($match, 1);
+        } else
+        if ($name !== null && (is_string($callable) || is_object($callable))) {
             $callable = [$callable, $name];
         }
 
@@ -1901,8 +1918,7 @@ trait ReflectionCallableTrait
     {
         if ($type = $this->reference->reflection->getReturnType()) {
             return new ReflectionTypeExtended(
-                ($type instanceof ReflectionUnionType)
-                    ? (string) $type : $type->getName(),
+                ($type instanceof ReflectionNamedType) ? $type->getName() : (string) $type,
                 $type->allowsNull()
             );
         }
