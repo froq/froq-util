@@ -21,16 +21,16 @@ trait ErrorTrait
      */
     public function __get(string $property): mixed
     {
-        // Note: Subclasses must define properties as "protected".
-        if (property_exists($this, $property)) {
-            return $this->$property;
-        }
-
         if ($property == 'trace') {
             return $this->getTrace();
         }
         if ($property == 'traceString') {
             return $this->getTraceAsString();
+        }
+
+        // Note: Subclasses must define properties as "protected".
+        if (property_exists($this, $property)) {
+            return $this->$property;
         }
 
         // Act as original.
