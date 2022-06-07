@@ -29,7 +29,6 @@ final class Random
      */
     public function __construct(int $seed = null)
     {
-        // Use milliseconds as default.
         $seed ??= ustime();
 
         $this->seed($seed);
