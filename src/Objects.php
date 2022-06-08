@@ -82,6 +82,26 @@ final class Objects extends \StaticClass
     }
 
     /**
+     * Get type.
+     *
+     * @param  string|object $object
+     * @return string|null
+     * @since  6.0
+     */
+    public static function getType(object|string $object): string|null
+    {
+        $ref = self::reflect($object);
+
+        return match (true) {
+            $ref?->isClass()     => 'class',
+            $ref?->isInterface() => 'interface',
+            $ref?->isTrait()     => 'trait',
+            $ref?->isEnum()      => 'enum',
+            default              => null
+        };
+    }
+
+    /**
      * Get name.
      *
      * @param  object|string $object
