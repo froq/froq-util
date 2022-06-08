@@ -353,6 +353,12 @@ trait ReflectionClassTrait
         };
     }
 
+    /** @missing */
+    public function isClass(): bool
+    {
+        return !$this->isInterface() && !$this->isTrait() && !$this->isEnum();
+    }
+
     /**
      * Set of methods.
      *
@@ -1698,8 +1704,7 @@ trait ReflectionCallableTrait
         // When "Foo.bar" or "Foo::bar" given.
         if (is_string($callable) && preg_match('~(.+)(?:\.|::)(\w+)~', $callable, $match)) {
             $callable = array_slice($match, 1);
-        } else
-        if ($name !== null && (is_string($callable) || is_object($callable))) {
+        } elseif ($name !== null && (is_string($callable) || is_object($callable))) {
             $callable = [$callable, $name];
         }
 
