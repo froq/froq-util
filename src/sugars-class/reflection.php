@@ -386,17 +386,6 @@ trait ReflectionClassTrait
     }
 
     /**
-     * Get namespace with/without base-only option.
-     *
-     * @param  bool $baseOnly
-     * @return string
-     */
-    public function getNamespace(bool $baseOnly = false): string
-    {
-        return $baseOnly ? Objects::getNamespace($this->reference, true) : parent::getNamespaceName();
-    }
-
-    /**
      * Get method names.
      *
      * @param  int|null $filter
@@ -405,6 +394,17 @@ trait ReflectionClassTrait
     public function getMethodNames(int $filter = null): array
     {
         return array_map(fn($ref) => $ref->name, parent::getMethods($filter));
+    }
+
+    /**
+     * Get namespace with/without base-only option.
+     *
+     * @param  bool $baseOnly
+     * @return string
+     */
+    public function getNamespace(bool $baseOnly = false): string
+    {
+        return $baseOnly ? Objects::getNamespace($this->reference, true) : parent::getNamespaceName();
     }
 
     /** @alias getParent() @override */ #[ReturnTypeWillChange]
