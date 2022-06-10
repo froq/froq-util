@@ -673,7 +673,7 @@ final class Objects extends \StaticClass
                     $ret = array_unique($ret);
                 }
             }
-            return $ret;
+            return array_values($ret);
         }
         return null;
     }
