@@ -7,8 +7,8 @@ declare(strict_types=1);
 
 namespace froq\util;
 
-use Reflection, ReflectionException,
-    ReflectionObjectExtended, ReflectionClassExtended;
+use Reflection, ReflectionException;
+use XReflectionObject, XReflectionClass;
 
 /**
  * Objects.
@@ -25,14 +25,13 @@ final class Objects extends \StaticClass
      * Reflect.
      *
      * @param  object|string $target
-     * @return ReflectionObjectExtended|ReflectionClassExtended|null
+     * @return XReflectionObject|XReflectionClass|null
      */
-    public static function reflect(object|string $target): ReflectionObjectExtended|ReflectionClassExtended|null
+    public static function reflect(object|string $target): XReflectionObject|XReflectionClass|null
     {
         try {
-            return is_object($target)
-                 ? new ReflectionObjectExtended($target)
-                 : new ReflectionClassExtended($target);
+            return is_object($target) ? new XReflectionObject($target)
+                 : new XReflectionClass($target);
         } catch (ReflectionException) {
             return null;
         }

@@ -341,14 +341,13 @@ class XClass implements Stringable
      * Reflect & return reflection, or null (error).
      *
      * @param  bool $extended
-     * @return ReflectionClass|ReflectionClassExtended|null
+     * @return ReflectionClass|XReflectionClass|null
      */
-    public function reflect(bool $extended = false): ReflectionClass|ReflectionClassExtended|null
+    public function reflect(bool $extended = false): ReflectionClass|XReflectionClass|null
     {
         try {
-            return !$extended
-                 ? new ReflectionClass($this->name)
-                 : new ReflectionClassExtended($this->name);
+            return !$extended ? new ReflectionClass($this->name)
+                 : new XReflectionClass($this->name);
         } catch (ReflectionException) {
             return null;
         }
