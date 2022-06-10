@@ -73,6 +73,7 @@ class Factory
      * @param  string $name
      * @param  array  $arguments
      * @return self
+     * @throws Error
      * @magic
      */
     public function __call(string $name, array $arguments = []): self
