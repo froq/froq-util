@@ -849,16 +849,13 @@ function get_real_path(string $path, string|bool $check = null): string|null
         $path = str_replace("\0", "\\0", $path);
     }
 
-    // Validate file/directory or file only existence.
-    static $check_path;
-    $check_path ??= fn($p) => (
-        ($check === true) ? file_exists($p) : (
-            ($check === 'file') ? is_file($p) : is_dir($p)
-        )
+    // Validate existence of file/directory or file only.
+    static $check_path; $check_path ??= fn($c, $p) => (
+        $c === true ? 'file_exists' : ($c === 'file' ? 'is_file' : 'is_dir')
     );
 
     if ($ret = realpath($path)) {
-        if ($check && !$check_path($ret)) {
+        if ($check && !$check_path($check, $ret)) {
             return null;
         }
         return $ret;
@@ -909,7 +906,7 @@ function get_real_path(string $path, string|bool $check = null): string|null
         $ret .= $sep . $cur;
     }
 
-    if ($check && !$check_path($ret)) {
+    if ($check && !$check_path($check, $ret)) {
         return null;
     }
 
@@ -926,7 +923,7 @@ function get_real_path(string $path, string|bool $check = null): string|null
             $ret = chop($ret, PATH_SEPARATOR . DIRECTORY_SEPARATOR);
         }
 
-        // Fix leading slash for win
+        // Fix leading slash for win.
         if ($win && $ret[0] == $sep) {
             $ret = substr($ret, 1);
         }
