@@ -1040,7 +1040,7 @@ function get_trace(int $options = 0, int $limit = 0, int $index = null, string $
 }
 
 /**
- * Init a DateTime object with/without given when option & with/without timezone if given or default timezone.
+ * Create a DateTime instance with/without when & where options.
  *
  * @param  int|float|string|null $when
  * @param  string|null           $where
@@ -1070,7 +1070,7 @@ function udate(int|float|string $when = null, string $where = null): DateTime
 }
 
 /**
- * Get current microtime as float or string.
+ * Get current Unix timestamp with microseconds as float or string.
  *
  * @param  bool $string
  * @return float|string
@@ -1084,15 +1084,14 @@ function utime(bool $string = false): float|string
 }
 
 /**
- * Get current microtime with fraction.
+ * Get current Unix timestamp with microseconds with fraction.
  *
- * @param  string|null $where
  * @return int
  * @since  5.0
  */
-function ustime(string $where = null): int
+function ustime(): int
 {
-    $date = udate(utime(), $where);
+    $date = udate(microtime(true));
 
     return (int) $date->format('Uu');
 }
