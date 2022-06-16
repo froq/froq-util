@@ -851,7 +851,7 @@ function get_real_path(string $path, string|bool $check = null): string|null
 
     // Validate existence of file/directory or file only.
     static $check_path; $check_path ??= fn($c, $p) => (
-        $c === true ? 'file_exists' : ($c === 'file' ? 'is_file' : 'is_dir')
+        $c === true ? file_exists($p) : ($c === 'file' ? is_file($p) : is_dir($p))
     );
 
     if ($ret = realpath($path)) {
