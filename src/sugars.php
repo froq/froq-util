@@ -1084,7 +1084,7 @@ function utime(bool $string = false): float|string
 }
 
 /**
- * Get current Unix timestamp with microseconds with fraction.
+ * Get current Unix timestamp with microseconds & fraction.
  *
  * @return int
  * @since  5.0
