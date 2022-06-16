@@ -1086,14 +1086,15 @@ function utime(bool $string = false): float|string
 /**
  * Get current Unix timestamp with microseconds & fraction.
  *
- * @return int
+ * @param  bool $string
+ * @return int|string
  * @since  5.0
  */
-function ustime(): int
+function ustime(bool $string = false): int|string
 {
-    $date = udate(microtime(true));
+    $time = str_replace('.', '', utime(true));
 
-    return (int) $date->format('Uu');
+    return !$string ? (int) $time : $time;
 }
 
 /**
