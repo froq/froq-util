@@ -1307,9 +1307,9 @@ function error_message(int &$code = null, bool $format = false, bool $extract = 
             $error, ['name', 'type', 'message', 'file', 'line']
         ));
     }
-    // Extract message only.
-    elseif ($extract) {
-        return substr($error['message'], strpos($error['message'], '):') + 3);
+    // Extract message only dropping caused function.
+    elseif ($extract && ($pos = strpos($error['message'], '):'))) {
+        return ucfirst(substr($error['message'], $pos + 3));
     }
 
     return $error['message'];
