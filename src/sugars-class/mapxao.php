@@ -151,6 +151,23 @@ class XArrayObject extends ArrayObject implements Arrayable, Objectable, Jsonabl
     }
 
     /**
+     * Sort.
+     *
+     * @param  int|null $func
+     * @param  int      $flags
+     * @return self
+     */
+    public function sort(callable|int $func = null, int $flags = 0): self
+    {
+        $this->setData(Arrays::sort(
+            $this->toArray(false),
+            $func, $flags, assoc: true
+        ));
+
+        return $this;
+    }
+
+    /**
      * Filter.
      *
      * @param  callable|null $func
@@ -227,11 +244,9 @@ class XArrayObject extends ArrayObject implements Arrayable, Objectable, Jsonabl
     {
         $ret = $this->getArrayCopy();
 
-        if ($deep) {
-            foreach ($ret as $key => &$value) {
-                if ($value instanceof self) {
-                    $value = $value->toArray(true);
-                }
+        if ($deep) foreach ($ret as $key => &$value) {
+            if ($value instanceof self) {
+                $value = $value->toArray(true);
             }
         }
 
@@ -245,11 +260,9 @@ class XArrayObject extends ArrayObject implements Arrayable, Objectable, Jsonabl
     {
         $ret = $this->getArrayCopy();
 
-        if ($deep) {
-            foreach ($ret as $key => &$value) {
-                if ($value instanceof self) {
-                    $value = $value->toObject(true);
-                }
+        if ($deep) foreach ($ret as $key => &$value) {
+            if ($value instanceof self) {
+                $value = $value->toObject(true);
             }
         }
 
