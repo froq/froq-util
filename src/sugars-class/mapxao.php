@@ -138,6 +138,26 @@ class XArrayObject extends ArrayObject implements Arrayable, Objectable, Jsonabl
     }
 
     /**
+     * Keys.
+     *
+     * @return array
+     */
+    public function keys(): array
+    {
+        return array_keys($this->getArrayCopy());
+    }
+
+    /**
+     * Values.
+     *
+     * @return array
+     */
+    public function values(): array
+    {
+        return array_values($this->getArrayCopy());
+    }
+
+    /**
      * Each.
      *
      * @param  callable $func
