@@ -1084,7 +1084,7 @@ function utime(bool $string = false): float|string
 }
 
 /**
- * Get current Unix timestamp with microseconds & fraction.
+ * Get current Unix timestamp with milliseconds as int or string.
  *
  * @param  bool $string
  * @return int|string
@@ -1092,9 +1092,9 @@ function utime(bool $string = false): float|string
  */
 function ustime(bool $string = false): int|string
 {
-    $time = str_replace('.', '', utime(true));
+    $time = microtime(true) * 1000;
 
-    return !$string ? (int) $time : $time;
+    return !$string ? (int) $time : (string) $time;
 }
 
 /**
