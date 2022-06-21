@@ -595,16 +595,27 @@ final class Objects extends \StaticClass
     }
 
     /**
-     * Get parent.
+     * Get parent, optionally the base parent only.
      *
      * @param  object|string $target
+     * @param  bool          $baseOnly
      * @return string|null
      * @since  6.0
      */
-    public static function getParent(object|string $target): string|null
+    public static function getParent(object|string $target, bool $baseOnly = false): string|null
     {
         try {
-            return get_parent_class($target) ?: null;
+            $ret = [];
+            if (!$baseOnly) {
+                $ret[] = get_parent_class($target);
+            } else {
+                $parent = get_parent_class($target);
+                while ($parent) {
+                    array_push($ret, $parent);
+                    $parent = get_parent_class($parent);
+                }
+            }
+            return array_last($ret) ?: null;
         } catch (\Throwable) {
             return null;
         }
