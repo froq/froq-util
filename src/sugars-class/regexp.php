@@ -313,7 +313,7 @@ class RegExp implements Stringable
     }
 
     /**
-     * Find possible matches (@see sugars.grep()).
+     * Find a possible match.
      *
      * @param  string      $input
      * @param  bool        $named
@@ -334,7 +334,7 @@ class RegExp implements Stringable
     }
 
     /**
-     * Find all possible matches (@see sugars.grep_all()).
+     * Find all possible matches.
      *
      * @param  string      $input
      * @param  bool        $named

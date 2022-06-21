@@ -1124,7 +1124,7 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     }
 
     /**
-     * Find possible matches (@see sugars.grep()).
+     * Find a possible match.
      *
      * @param  string|RegExp $pattern
      * @param  bool          $named
@@ -1141,7 +1141,7 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     }
 
     /**
-     * Find all possible matches (@see sugars.grep_all()).
+     * Find all possible matches.
      *
      * @param  string|RegExp $pattern
      * @param  bool          $named
@@ -1189,7 +1189,7 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     }
 
     /**
-     * Slug (@see sugars.slug()).
+     * Slug.
      *
      * @param  string $preserve
      * @param  string $replace
