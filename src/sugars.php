@@ -342,13 +342,13 @@ function replace(string|array $input, string|array $search, string|array|callabl
 /**
  * Grep, actually grabs something from given input.
  *
- * @param  string $input
  * @param  string $pattern
+ * @param  string $input
  * @param  bool   $named
  * @return string|array|null
  * @since  3.0, 5.0
  */
-function grep(string $input, string $pattern, bool $named = false): string|array|null
+function grep(string $pattern, string $input, bool $named = false): string|array|null
 {
     preg_match($pattern, $input, $match, PREG_UNMATCHED_AS_NULL);
 
@@ -369,14 +369,14 @@ function grep(string $input, string $pattern, bool $named = false): string|array
 /**
  * Grep all, actually grabs somethings from given input.
  *
- * @param  string $input
  * @param  string $pattern
+ * @param  string $input
  * @param  bool   $named
  * @param  bool   $uniform
  * @return array<string|null>|null
  * @since  3.15, 5.0
  */
-function grep_all(string $input, string $pattern, bool $named = false, bool $uniform = false): array|null
+function grep_all(string $pattern, string $input, bool $named = false, bool $uniform = false): array|null
 {
     preg_match_all($pattern, $input, $match, PREG_UNMATCHED_AS_NULL);
 
@@ -1478,7 +1478,7 @@ function format(string $format, mixed $input, mixed ...$inputs): string
     // Convert special formats (type, bool, array, upper, lower, escape).
     if (preg_test('~%[tbaAULS]~', $format)) {
         // Must find all for a proper param index re-set.
-        foreach (grep_all($format, '~(%[a-zAULS])~') as $i => $specifier) {
+        foreach (grep_all('~(%[a-zAULS])~', $format) as $i => $specifier) {
             switch ($specifier) {
                 case '%t': // Types.
                     $format = substr_replace($format, '%s', strpos($format, '%t'), 2);

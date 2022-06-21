@@ -324,7 +324,7 @@ class RegExp implements Stringable
     {
         $this->classCheck($class);
 
-        $ret = grep($input, $this->pattern, $named);
+        $ret = grep($this->pattern, $input, $named);
 
         if ($ret === null) {
             $this->processError();
@@ -346,7 +346,7 @@ class RegExp implements Stringable
     {
         $this->classCheck($class);
 
-        $ret = grep_all($input, $this->pattern, $named, $uniform);
+        $ret = grep_all($this->pattern, $input, $named, $uniform);
 
         if ($ret === null) {
             $this->processError();
