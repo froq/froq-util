@@ -70,7 +70,7 @@ class RegExp implements Stringable
         if ($throw && $modifiers != '') {
             $modifiers = self::prepareModifiers($modifiers, $invalids);
             if (!$modifiers) {
-                throw new RegExpError('Invalid modifiers `' . $invalids . '`');
+                throw new RegExpError('Invalid modifiers: ' . $invalids);
             }
         }
 
@@ -548,10 +548,10 @@ class RegExp implements Stringable
                 throw new RegExpError('Empty class given');
             }
             if (!class_exists($class)) {
-                throw new RegExpError('No class exists such `' . $class . '`');
+                throw new RegExpError('No class exists such ' . $class);
             }
             if (!class_extends($class, 'Traversable')) {
-                throw new RegExpError('Class `' . $class . '` must be an iterable');
+                throw new RegExpError('Class ' . $class . ' must be an iterable');
             }
         }
     }
@@ -567,8 +567,8 @@ class RegExp implements Stringable
             foreach ($flags as $flag) {
                 if (is_string($flag)) {
                     $constant = 'RegExp::' . strtoupper($flag);
-                    defined($constant) || throw new RegExpError(sprintf(
-                        'No constant exists such `%s`',
+                    defined($constant) || throw new RegExpError(format(
+                        'No constant exists such %s',
                         $constant
                     ));
 
@@ -576,9 +576,9 @@ class RegExp implements Stringable
                 } elseif (is_int($flag)) {
                     $flagsSum |= $flag;
                 } else {
-                    throw new RegExpError(sprintf(
-                        'Invalid flag type `%s` [valids: string,int]',
-                        type($flag)
+                    throw new RegExpError(format(
+                        'Invalid flag type %s [valids: string,int]',
+                        get_type($flag)
                     ));
                 }
             }
@@ -590,8 +590,6 @@ class RegExp implements Stringable
 }
 
 /**
- * RegExp Match.
- *
  * A class for match stuff of RegExp class.
  *
  * @package froq\util
