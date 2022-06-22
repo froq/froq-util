@@ -287,19 +287,10 @@ final class Objects extends \StaticClass
             return null;
         }
 
-        if ($all) {
-            // Seems doesn't matter constant visibility for getConstants().
-            $ret = array_keys($ref->getConstants());
-        } else {
-            $ret = [];
-            foreach ($ref->getReflectionConstants() as $constant) {
-                if ($constant->isPublic()) {
-                    $ret[] = $constant->name;
-                }
-            }
-        }
+        // Shorter: -1 = all, 1 = public only.
+        $filter = $all ? -1 : 1;
 
-        return $ret;
+        return $ref->getConstantNames($filter);
     }
 
     /**
@@ -317,21 +308,10 @@ final class Objects extends \StaticClass
             return null;
         }
 
-        if ($all) {
-            // Seems doesn't matter constant visibility for getConstants().
-            $ret = $ref->getConstants();
-        } else {
-            $ret = [];
-            foreach ($ref->getReflectionConstants() as $constant) {
-                if ($constant->isPublic()) {
-                    $ret[$constant->name] = $constant->getValue();
-                }
-            }
-        }
+        // Shorter: -1 = all, 1 = public only.
+        $filter = $all ? -1 : 1;
 
-        $assoc || $ret = array_values($ret);
-
-        return $ret;
+        return $ref->getConstantValues($filter, $assoc);
     }
 
     /**
