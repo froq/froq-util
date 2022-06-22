@@ -8,8 +8,9 @@ declare(strict_types=1);
 /**
  * Extensions.
  */
-class XReflectionClass extends froq\reflection\ReflectionClass {}
 class XReflectionObject extends froq\reflection\ReflectionObject {}
+class XReflectionClass extends froq\reflection\ReflectionClass {}
+class XReflectionClassConstant extends froq\reflection\ReflectionClassConstant {}
 class XReflectionProperty extends froq\reflection\ReflectionProperty {}
 class XReflectionMethod extends froq\reflection\ReflectionMethod {}
 class XReflectionFunction extends froq\reflection\ReflectionFunction {}
