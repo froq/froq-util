@@ -448,7 +448,8 @@ class RegExp implements Stringable
             $chars .= $delim;
         }
 
-        if (strpbrk($source, $chars) !== false) {
+        if (strpbrk($source, $chars) !== false
+            && !str_contains($modifiers, 'x')) {
             $source = addcslashes($source, $chars);
         }
 
