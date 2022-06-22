@@ -593,12 +593,12 @@ function get_class_name(string|object $class, bool $short = false, bool $clean =
  * Get constants of given class/object, or return null if no such class.
  *
  * @param  string|object $class
- * @param  bool          $with_names
  * @param  bool          $scope_check
+ * @param  bool          $assoc
  * @return array|null
  * @since  4.0
  */
-function get_class_constants(string|object $class, bool $with_names = true, bool $scope_check = true): array|null
+function get_class_constants(string|object $class, bool $scope_check = true, bool $assoc = true): array|null
 {
     if ($scope_check) {
         $caller_class = debug_backtrace(2, 2)[1]['class'] ?? null;
@@ -607,19 +607,19 @@ function get_class_constants(string|object $class, bool $with_names = true, bool
         }
     }
 
-    return Objects::getConstantValues($class, ($all ?? !$scope_check), $with_names);
+    return Objects::getConstantValues($class, ($all ?? !$scope_check), $assoc);
 }
 
 /**
  * Get properties of given class/object, or return null if no such class.
  *
  * @param  string|object $class
- * @param  bool          $with_names
  * @param  bool          $scope_check
+ * @param  bool          $assoc
  * @return array|null
  * @since  4.0
  */
-function get_class_properties(string|object $class, bool $with_names = true, bool $scope_check = true): array|null
+function get_class_properties(string|object $class, bool $scope_check = true, bool $assoc = true): array|null
 {
     if ($scope_check) {
         $caller_class = debug_backtrace(2, 2)[1]['class'] ?? null;
@@ -628,7 +628,7 @@ function get_class_properties(string|object $class, bool $with_names = true, boo
         }
     }
 
-    return Objects::getPropertyValues($class, ($all ?? !$scope_check), $with_names);
+    return Objects::getPropertyValues($class, ($all ?? !$scope_check), $assoc);
 }
 
 /**
