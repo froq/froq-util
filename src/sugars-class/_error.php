@@ -17,6 +17,28 @@ declare(strict_types=1);
 trait ErrorTrait
 {
     /**
+     * Constructor.
+     *
+     * @param string|Throwable|null $message
+     * @param mixed|null            $messageParams
+     * @param int|null              $code
+     * @param Throwable|null        $previous
+     * @param Throwable|null        $cause          Not used.
+     */
+    public function __construct(string $message = null, mixed $messageParams = null, int $code = null,
+        Throwable $previous = null, /* Throwable $cause = null */)
+    {
+        if ($message && func_num_args() > 1) {
+            $message = format($message, ...array_values(
+                is_array($messageParams) || is_scalar($messageParams)
+                    ? (array) $messageParams : [$messageParams]
+            ));
+        }
+
+        parent::__construct((string) $message, (int) $code, $previous);
+    }
+
+    /**
      * To get rid of calling get*() methods for those readonly properties.
      */
     public function __get(string $property): mixed
