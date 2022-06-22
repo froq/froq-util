@@ -15,14 +15,14 @@ final class Nil {}
  */
 final class Ref {
   public function __construct(
-    public $data = null
+    public mixed $data = nil
   ) {}
 }
 
-function Nil(&$ref = null): Nil {
+function Nil(mixed &$ref = nil): Nil {
   return $ref = new Nil();
 }
-function Ref($data = null): Ref {
+function Ref(mixed $data = nil): Ref {
   return new Ref($data);
 }
 
