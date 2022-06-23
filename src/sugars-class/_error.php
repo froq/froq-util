@@ -9,10 +9,8 @@ declare(strict_types=1);
  * A trait for property access and a proper string representation,
  * used by errors below.
  *
- * @package froq\util
- * @object  ErrorTrait
- * @author  Kerem Güneş
- * @since   6.0
+ * @author Kerem Güneş
+ * @since  6.0
  */
 trait ErrorTrait
 {
@@ -78,10 +76,8 @@ trait ErrorTrait
 }
 
 /**
- * @package froq\util
- * @object  KeyError
- * @author  Kerem Güneş
- * @since   5.25
+ * @author Kerem Güneş
+ * @since  5.25
  */
 class KeyError extends Error
 {
@@ -89,10 +85,8 @@ class KeyError extends Error
 }
 
 /**
- * @package froq\util
- * @object  JsonError
- * @author  Kerem Güneş
- * @since   6.0
+ * @author Kerem Güneş
+ * @since  6.0
  */
 class JsonError extends Error
 {
@@ -100,10 +94,8 @@ class JsonError extends Error
 }
 
 /**
- * @package froq\util
- * @object  RegExpError
- * @author  Kerem Güneş
- * @since   6.0
+ * @author Kerem Güneş
+ * @since  6.0
  */
 class RegExpError extends Error
 {
@@ -111,10 +103,8 @@ class RegExpError extends Error
 }
 
 /**
- * @package froq\util
- * @object  RangeError
- * @author  Kerem Güneş
- * @since   6.0
+ * @author Kerem Güneş
+ * @since  6.0
  */
 class RangeError extends Error
 {
@@ -122,10 +112,8 @@ class RangeError extends Error
 }
 
 /**
- * @package froq\util
- * @object  ArgumentError
- * @author  Kerem Güneş
- * @since   6.0
+ * @author Kerem Güneş
+ * @since  6.0
  */
 class ArgumentError extends Error
 {
@@ -133,10 +121,8 @@ class ArgumentError extends Error
 }
 
 /**
- * @package froq\util
- * @object  UnknownError
- * @author  Kerem Güneş
- * @since   6.0
+ * @author Kerem Güneş
+ * @since  6.0
  */
 class UnknownError extends Error
 {
@@ -144,10 +130,8 @@ class UnknownError extends Error
 }
 
 /**
- * @package froq\util
- * @object  UnsupportedError
- * @author  Kerem Güneş
- * @since   6.0
+ * @author Kerem Güneş
+ * @since  6.0
  */
 class UnsupportedError extends Error
 {
@@ -155,10 +139,8 @@ class UnsupportedError extends Error
 }
 
 /**
- * @package froq\util
- * @object  UnimplementedError
- * @author  Kerem Güneş
- * @since   6.0
+ * @author Kerem Güneş
+ * @since  6.0
  */
 class UnimplementedError extends Error
 {
@@ -166,10 +148,8 @@ class UnimplementedError extends Error
 }
 
 /**
- * @package froq\util
- * @object  ReadonlyError
- * @author  Kerem Güneş
- * @since   6.0
+ * @author Kerem Güneş
+ * @since  6.0
  */
 class ReadonlyError extends Error
 {
@@ -196,10 +176,8 @@ class ReadonlyError extends Error
 }
 
 /**
- * @package froq\util
- * @object  ReadonlyClassError
- * @author  Kerem Güneş
- * @since   6.0
+ * @author Kerem Güneş
+ * @since  6.0
  */
 class ReadonlyClassError extends ReadonlyError
 {
@@ -215,10 +193,8 @@ class ReadonlyClassError extends ReadonlyError
 }
 
 /**
- * @package froq\util
- * @object  ReadonlyPropertyError
- * @author  Kerem Güneş
- * @since   6.0
+ * @author Kerem Güneş
+ * @since  6.0
  */
 class ReadonlyPropertyError extends ReadonlyError
 {
@@ -235,10 +211,8 @@ class ReadonlyPropertyError extends ReadonlyError
 }
 
 /**
- * @package froq\util
- * @object  UndefinedConstantError
- * @author  Kerem Güneş
- * @since   6.0
+ * @author Kerem Güneş
+ * @since  6.0
  */
 class UndefinedConstantError extends Error
 {
@@ -265,10 +239,8 @@ class UndefinedConstantError extends Error
 }
 
 /**
- * @package froq\util
- * @object  UndefinedPropertyError
- * @author  Kerem Güneş
- * @since   6.0
+ * @author Kerem Güneş
+ * @since  6.0
  */
 class UndefinedPropertyError extends Error
 {
@@ -289,10 +261,8 @@ class UndefinedPropertyError extends Error
 }
 
 /**
- * @package froq\util
- * @object  UndefinedMethodError
- * @author  Kerem Güneş
- * @since   6.0
+ * @author Kerem Güneş
+ * @since  6.0
  */
 class UndefinedMethodError extends Error
 {
@@ -313,19 +283,17 @@ class UndefinedMethodError extends Error
 }
 
 /**
- * @package froq\util
- * @object  LastError
- * @author  Kerem Güneş
- * @since   6.0
+ * @author Kerem Güneş
+ * @since  6.0
  */
 class LastError extends Error
 {
     use ErrorTrait;
 
-    /** @var ?string */
+    /** Causing function name. */
     private ?string $call = null;
 
-    /** @var ?string */
+    /** Caused file/line info. */
     private ?string $callPath = null;
 
     /**
