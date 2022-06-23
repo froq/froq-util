@@ -1153,14 +1153,17 @@ function getlocale(int $category = LC_ALL, string|array $default = null, bool $a
 
     if ($tmp !== false && $array) {
         $tmp = [];
+        // Multi, eg: LC_ALL.
         if (str_contains($ret, ';')) {
             foreach (split(';', $ret) as $re) {
                 [$name, $value] = split('=', $re, 2);
-                $tmp[] = [$name, get_constant_value($name), 'value' => $value];
+                $tmp[] = ['name' => $name, 'value' => $value,
+                          'category' => get_constant_value($name)];
             }
         } else {
-            $tmp = [$name = get_constant_name($category, 'LC_'),
-                    $name ? $category : null, 'value' => $ret];
+            // Single, eg: LC_TIME.
+            $tmp = ['name' => ($name = get_constant_name($category, 'LC_')),
+                    'value' => $ret, 'category' => $name ? $category : null];
         }
         $ret = $tmp;
     }
