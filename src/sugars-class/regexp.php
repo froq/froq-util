@@ -313,6 +313,57 @@ class RegExp implements Stringable
     }
 
     /**
+     * Perform a match names.
+     *
+     * @param  string      $input
+     * @param  int|array   $flags
+     * @param  int         $offset
+     * @param  string|null $class
+     * @return iterable|null
+     */
+    public function matchNames(string $input, int|array $flags = 0, int $offset = 0, string $class = null): iterable|null
+    {
+        $this->classCheck($class);
+        $this->flagsCheck($flags);
+
+        $res =@ preg_match_names($this->pattern, $input, $ret, $flags, $offset);
+
+        if ($res === false) {
+            $this->processError();
+            $ret = null;
+        }
+
+        return $class ? new $class((array) $ret) : $ret;
+    }
+
+    /**
+     * Perform a match-all names.
+     *
+     * @param  string      $input
+     * @param  int|array   $flags
+     * @param  int         $offset
+     * @param  string|null $class
+     * @return iterable|null
+     */
+    public function matchAllNames(string $input, int|array $flags = 0, int $offset = 0, string $class = null): iterable|null
+    {
+        $this->classCheck($class);
+        $this->flagsCheck($flags);
+
+        $res =@ preg_match_all_names($this->pattern, $input, $ret, $flags, $offset);
+
+        if ($res === false) {
+            $this->processError();
+            $ret = null;
+        }
+
+        // Drop empty stuff.
+        $ret = array_filter($ret, 'count');
+
+        return $class ? new $class((array) $ret) : $ret;
+    }
+
+    /**
      * Find a possible match.
      *
      * @param  string      $input

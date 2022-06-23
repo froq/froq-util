@@ -1206,6 +1206,50 @@ function preg_remove(string|array $pattern, string|array $subject, int $limit = 
 }
 
 /**
+ * Same as preg_match() but for only named capturing groups.
+ *
+ * @param  string  $pattern
+ * @param  string  $subject
+ * @param  array  &$match
+ * @param  int     $flags
+ * @param  int     $offset
+ * @return int|false
+ */
+function preg_match_names(string $pattern, string $subject, array &$match, int $flags = 0, int $offset = 0): int|false
+{
+    $res = preg_match($pattern, $subject, $match, $flags, $offset);
+
+    // Select string/named keys.
+    if ($res !== false) {
+        $match = array_filter($match, 'is_string', 2);
+    }
+
+    return $res;
+}
+
+/**
+ * Same as preg_match_all() but for only named capturing groups.
+ *
+ * @param  string  $pattern
+ * @param  string  $subject
+ * @param  array  &$match
+ * @param  int     $flags
+ * @param  int     $offset
+ * @return int|false
+ */
+function preg_match_all_names(string $pattern, string $subject, array &$match, int $flags = 0, int $offset = 0): int|false
+{
+    $res = preg_match_all($pattern, $subject, $match, $flags, $offset);
+
+    // Select string/named keys.
+    if ($res !== false) {
+        $match = array_filter($match, 'is_string', 2);
+    }
+
+    return $res;
+}
+
+/**
  * Get current value of given array (for the sake of current()) or given key's value if exists.
  *
  * @param  array           $array
