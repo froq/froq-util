@@ -15,9 +15,6 @@ use froq\common\interface\Arrayable;
  */
 class Locale implements Arrayable, Stringable
 {
-    /** To use as default. */
-    public const DEFAULT = 'en_US.UTF-8';
-
     /** To use for parse/validate. */
     public const PATTERN = '~^
         (?<language>[a-zA-Z]{1,3})
@@ -348,27 +345,6 @@ class Locale implements Arrayable, Stringable
         }
 
         return getlocale($category, null, $array);
-    }
-
-    /**
-     * Get a locale category value or default.
-     *
-     * @param  int|string|LocaleCategory $category
-     * @param  string|null               $default
-     * @param  bool                      $array
-     * @return string|array|null
-     */
-    public static function getDefault(int|string|LocaleCategory $category, string $default = null, bool $array = false
-        ): string|array|null
-    {
-        if (is_string($category)) {
-            $category = new LocaleCategory($category);
-        }
-        if ($category instanceof LocaleCategory) {
-            $category = $category->value;
-        }
-
-        return getlocale($category, $default ?? static::DEFAULT, $array);
     }
 }
 
