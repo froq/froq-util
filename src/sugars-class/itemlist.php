@@ -30,7 +30,7 @@ class ItemList implements Arrayable, Jsonable, Countable, IteratorAggregate, Arr
      */
     public function __construct(iterable $data = [])
     {
-        $data && $this->data = [...$data];
+        $data && $this->data = array_list([...$data]);
     }
 
     /** @magic */
