@@ -10,6 +10,7 @@ require 'sugars-class/factory.php';
 require 'sugars-class/item.php';
 require 'sugars-class/itemlist.php';
 require 'sugars-class/json.php';
+require 'sugars-class/locale.php';
 require 'sugars-class/mapset.php';
 require 'sugars-class/mapxao.php';
 require 'sugars-class/options.php';

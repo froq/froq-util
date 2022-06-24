@@ -97,6 +97,15 @@ class JsonError extends Error
  * @author Kerem Güneş
  * @since  6.0
  */
+class LocaleError extends Error
+{
+    use ErrorTrait;
+}
+
+/**
+ * @author Kerem Güneş
+ * @since  6.0
+ */
 class RegExpError extends Error
 {
     use ErrorTrait;
