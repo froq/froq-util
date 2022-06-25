@@ -1441,8 +1441,8 @@ function suid(int $length = 6, int $base = 62): string|null
  */
 function uuid(bool $dashed = true, bool $timed = false, bool $guid = false, bool $upper = false): string
 {
-    $bytes = !$timed ? random_bytes(16)               // Full 16-random bytes.
-        : hex2bin(dechex(time())) . random_bytes(12); // Time bin prefix & 12-random bytes.
+    $bytes = !$timed ? random_bytes(16)         // Full 16-random bytes.
+        : pack('L', time()) . random_bytes(12); // Time bin prefix & 12-random bytes.
 
     // Add signs: 4 (version) & 8, 9, A, B, but GUID doesn't use them.
     if (!$guid) {
