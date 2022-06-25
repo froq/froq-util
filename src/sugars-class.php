@@ -3,6 +3,7 @@
 require 'sugars-class/_error.php';
 require 'sugars-class/_static.php';
 require 'sugars-class/plainobject.php';
+require 'sugars-class/plainarrayobject.php';
 
 // Load other class files.
 require 'sugars-class/assert.php';

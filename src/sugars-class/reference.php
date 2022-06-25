@@ -16,7 +16,7 @@ declare(strict_types=1);
 class Reference extends PlainObject
 {
     /**
-     * Clear all properties (references).
+     * Clear all references (properties).
      *
      * @return void
      */

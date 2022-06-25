@@ -13,12 +13,13 @@ declare(strict_types=1);
  * @author  Kerem Güneş
  * @since   6.0
  */
-class State extends PlainObject
+class State extends PlainArrayObject
 {
     /**
      * Constructor.
      *
      * @param mixed ...$states
+     * @override
      */
     public function __construct(mixed ...$states)
     {
@@ -68,7 +69,7 @@ class State extends PlainObject
     }
 
     /**
-     * Clear all states.
+     * Clear all states (properties).
      *
      * @return void
      */
