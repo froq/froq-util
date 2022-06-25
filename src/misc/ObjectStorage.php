@@ -20,6 +20,29 @@ use froq\common\interface\Arrayable;
 class ObjectStorage extends \SplObjectStorage implements Arrayable
 {
     /**
+     * Store an object with its info.
+     *
+     * @param  object $object
+     * @param  mixed  $info
+     * @return void
+     */
+    public function store(object $object, mixed $info): void
+    {
+        parent::attach($object, $info);
+    }
+
+    /**
+     * Unstore an object.
+     *
+     * @param  object $object
+     * @return void
+     */
+    public function unstore(object $object): void
+    {
+        parent::detach($object);
+    }
+
+    /**
      * Get id.
      *
      * @param  object $object
