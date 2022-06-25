@@ -135,7 +135,7 @@ class Storage implements Arrayable, \Countable, \ArrayAccess
      */
     public function offsetExists(mixed $key): bool
     {
-        return array_key_exists($key, self::$data[$this->id]);
+        return isset(self::$data[$this->id][$key]);
     }
 
     /**
