@@ -1461,24 +1461,25 @@ function uuid(bool $dashed = true, bool $timed = false, bool $guid = false, bool
 /**
  * Generate a random UUID/GUID hash, optionally with timestamp prefix.
  *
- * @param  int  $length
- * @param  bool $format
- * @param  bool $timed
- * @param  bool $guid
- * @param  bool $upper
+ * @param  int         $length
+ * @param  bool        $format
+ * @param  bool        $timed
+ * @param  bool        $guid
+ * @param  bool        $upper
+ * @param  string|null $uuid @internal
  * @return string|null
  * @since  5.0
  */
-function uuid_hash(int $length = 32, bool $format = false, bool $timed = false, bool $guid = false, bool $upper = false): string|null
+function uuid_hash(int $length = 32, bool $format = false, bool $timed = false, bool $guid = false, bool $upper = false, string $uuid = null): string|null
 {
-    $algo = [32 => 'md5', 40 => 'sha1', 64 => 'sha256', 16 => 'fnv1a64'][$length] ?? null;
+    static $algos = [32 => 'md5', 40 => 'sha1', 64 => 'sha256', 16 => 'fnv1a64'];
 
-    if (!$algo) {
-        trigger_error(sprintf('%s(): Invalid length `%s` [valids: 32,40,64,16]', __function__, $length));
+    if (!$algo = ($algos[$length] ?? null)) {
+        trigger_error(sprintf('%s(): Invalid length %s [valids: 32,40,64,16]', __function__, $length));
         return null;
     }
 
-    $ret = hash($algo, uuid(true, $timed, $guid));
+    $ret = hash($algo, $uuid ?? uuid(true, $timed, $guid));
 
     $format && $ret = uuid_format($ret);
     $upper  && $ret = strtoupper($ret);
@@ -1487,20 +1488,20 @@ function uuid_hash(int $length = 32, bool $format = false, bool $timed = false, 
 }
 
 /**
- * Format given input as UUID/GUID.
+ * Format given uuid hash as UUID/GUID.
  *
- * @param  string $input
+ * @param  string $uuid
  * @return string|null
  * @since  5.0
  */
-function uuid_format(string $input): string|null
+function uuid_format(string $uuid): string|null
 {
-    if (strlen($input) != 32 || !ctype_xdigit($input)) {
+    if (strlen($uuid) != 32 || !ctype_xdigit($uuid)) {
         trigger_error(sprintf('%s(): Format for only 32-length UUIDs/GUIDs', __function__));
         return null;
     }
 
-    return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split($input, 4));
+    return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split($uuid, 4));
 }
 
 /**
