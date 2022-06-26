@@ -760,6 +760,18 @@ class XArray implements Arrayable, Listable, Jsonable, Collectable, Iteratable, 
     // Internal & addition.
 
     /**
+     * Flip.
+     *
+     * @return self
+     */
+    public function flip(): self
+    {
+        $this->data = array_flip($this->data);
+
+        return $this;
+    }
+
+    /**
      * Pad.
      *
      * @param  int        $length
