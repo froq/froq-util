@@ -6,7 +6,7 @@
 declare(strict_types=1);
 
 /**
- * A class for states as reference.
+ * A class for dynamic states as reference.
  *
  * @package froq\util
  * @object  State
@@ -24,6 +24,17 @@ class State extends PlainArrayObject
     public function __construct(mixed ...$states)
     {
         parent::__construct(...$this->prepare($states));
+    }
+
+    /**
+     * Check a state.
+     *
+     * @param  string $name
+     * @return bool
+     */
+    public function has(string $name): bool
+    {
+        return property_exists($this, $name);
     }
 
     /**
@@ -53,7 +64,20 @@ class State extends PlainArrayObject
     }
 
     /**
-     * Reset/re-set given states.
+     * Remove given states.
+     *
+     * @param  string ...$names
+     * @return self
+     */
+    public function remove(string ...$names): self
+    {
+        foreach ($names as $name) {
+            unset($this->$name);
+        }
+    }
+
+    /**
+     * Reset (re-set) given states.
      *
      * @param  mixed ...$states
      * @return self
@@ -69,7 +93,7 @@ class State extends PlainArrayObject
     }
 
     /**
-     * Clear all states (properties).
+     * Clear all states.
      *
      * @return void
      */

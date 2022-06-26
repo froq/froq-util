@@ -6,7 +6,7 @@
 declare(strict_types=1);
 
 /**
- * A class for dynamic properties with array-access.
+ * A class for dynamic properties with array-access utility.
  *
  * @package froq\util
  * @object  PlainArrayObject
@@ -18,7 +18,7 @@ class PlainArrayObject extends PlainObject implements ArrayAccess
     /** @inheritDoc ArrayAccess */
     public function offsetExists(mixed $name): bool
     {
-        return isset($this->$name);
+        return property_exists($this, $name);
     }
 
     /** @inheritDoc ArrayAccess */
