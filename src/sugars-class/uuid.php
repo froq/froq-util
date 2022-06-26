@@ -22,11 +22,12 @@ class Uuid implements Stringable
      * Constructor.
      *
      * @param string|null $value
+     * @param bool     ...$options
      */
-    public function __construct(string $value = null)
+    public function __construct(string $value = null, bool ...$options)
     {
         // Create if none given.
-        $this->value = $value ?? uuid();
+        $this->value = $value ?? uuid(...$options);
     }
 
     /**
@@ -81,7 +82,7 @@ class Uuid implements Stringable
     /**
      * Create an Uuid instance with options.
      *
-     * @param  ... $options
+     * @param  bool ...$options
      * @return Uuid
      */
     public static function withOptions(bool ...$options): Uuid
