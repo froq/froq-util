@@ -8,8 +8,8 @@ declare(strict_types=1);
 namespace froq\util\misc;
 
 /**
- * A RNG class that generates pseudorandom numbers. This class is highly
- * inspired by java.util.Random class using its some same implementations.
+ * An RNG class that generates pseudorandom numbers, chars & bytes. This class is
+ * highly inspired by java.util.Random class using its some same implementations.
  * @see https://docs.oracle.com/javase/8/docs/api/java/util/Random.html
  *
  * @package froq\util\misc
@@ -54,6 +54,7 @@ final class Random
      *
      * @param  int $bound
      * @return int
+     * @throws ValueError
      */
     public function nextInt(int $bound = PHP_INT_MAX): int
     {
