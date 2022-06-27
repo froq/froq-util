@@ -27,7 +27,9 @@ class Uuid implements Stringable
     public function __construct(string $value = null, bool ...$options)
     {
         // Create if none given.
-        $this->value = $value ?? uuid(...$options);
+        $value ??= uuid(...$options);
+
+        $this->value = $value;
     }
 
     /**
@@ -55,7 +57,7 @@ class Uuid implements Stringable
      */
     public function toUpper(): string
     {
-        return strtoupper($this->toString());
+        return strtoupper($this->value);
     }
 
     /**
@@ -63,9 +65,9 @@ class Uuid implements Stringable
      *
      * @return string
      */
-    public function toPlain(): string
+    public function toUndash(): string
     {
-        return str_replace('-', '', $this->toString());
+        return str_replace('-', '', $this->value);
     }
 
     /**
@@ -76,7 +78,7 @@ class Uuid implements Stringable
      */
     public function toHash(int $length = 32): string|null
     {
-        return uuid_hash($length, format: $length == 32, uuid: $this->toString());
+        return uuid_hash($length, format: $length == 32, uuid: $this->value);
     }
 
     /**
@@ -109,7 +111,7 @@ class Uuid implements Stringable
      */
     public static function withDate(bool $guid = false): Uuid
     {
-        $bins = pack('L', gmdate('Ymd')) . random_bytes(12);
+        $bins = strrev(pack('L', gmdate('Ymd'))) . random_bytes(12);
         $guid || $bins = self::modify($bins);
 
         return new Uuid(uuid_format(bin2hex($bins)));
@@ -123,7 +125,7 @@ class Uuid implements Stringable
      */
     public static function withTime(bool $guid = false): Uuid
     {
-        $bins = pack('L', time()) . random_bytes(12);
+        $bins = strrev(pack('L', time())) . random_bytes(12);
         $guid || $bins = self::modify($bins);
 
         return new Uuid(uuid_format(bin2hex($bins)));
@@ -137,7 +139,12 @@ class Uuid implements Stringable
      */
     public static function withHRTime(bool $guid = false): Uuid
     {
-        $bins = pack('LL', ...hrtime()) . random_bytes(8);
+        $time = map(hrtime(), function ($t) {
+            $t = pad((string) $t, 10, 0);
+            return strrev(pack('L', $t));
+        });
+
+        $bins = join($time) . random_bytes(8);
         $guid || $bins = self::modify($bins);
 
         return new Uuid(uuid_format(bin2hex($bins)));
@@ -158,15 +165,15 @@ class Uuid implements Stringable
     }
 
     /**
-     * Decode UUID hash extracting its create date/time.
+     * Decode UUID hash extracting its creation date/time.
      *
      * @param  string $uuid
      * @return int|null
      */
     public static function decode(string $uuid): int|null
     {
-        $bins =@ hex2bin(substr($uuid, 0, 8));
+        $sub = substr($uuid, 0, 8);
 
-        return ($bins != '') ? current(unpack('L', $bins)) : null;
+        return ctype_xdigit($sub) ? hexdec($sub) : null;
     }
 }
