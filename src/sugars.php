@@ -258,7 +258,7 @@ function split(string $separator, string $input, int $limit = null, int $flags =
         $ret = preg_split(
             '~'. $separator .'~u', $input,
             limit: ($limit ?? -1),
-            flags: ($flags |= PREG_SPLIT_NO_EMPTY)
+            flags: ($flags |= PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE)
         ) ?: [];
     }
 
