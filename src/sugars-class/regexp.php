@@ -231,7 +231,7 @@ class RegExp implements Stringable
         $this->flagsCheck($flags);
 
         $ret =@ preg_split($this->pattern, $input, $limit, flags: (
-            $flags |= PREG_SPLIT_NO_EMPTY // Always..
+            $flags |= PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE // Always..
         ));
 
         if ($ret === false) {
