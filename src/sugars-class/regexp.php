@@ -262,6 +262,19 @@ class RegExp implements Stringable
     }
 
     /**
+     * Perform a split for XArray class.
+     *
+     * @param  string    $input
+     * @param  int       $limit
+     * @param  int|array $flags
+     * @return XArray
+     */
+    public function xsplit(string $input, int $limit = -1, int|array $flags = 0): XArray
+    {
+        return $this->split($input, $limit, $flags, XArray::class);
+    }
+
+    /**
      * Perform a match.
      *
      * @param  string      $input
