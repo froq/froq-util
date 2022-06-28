@@ -89,7 +89,44 @@ class Uuid implements Stringable
      */
     public function getPrefix(): int|null
     {
-        return self::decode($this->value);
+        return self::decodePrefix($this->value);
+    }
+
+    /**
+     * Get date/time prefix if UUID was created by `withDate()`.
+     *
+     * @return string|null
+     */
+    public function getDate(): string|null
+    {
+        $date = $this->getPrefix();
+
+        return ($date !== null && $date <= gmdate('Ymd')) ? (string) $date : null;
+    }
+
+    /**
+     * Get time prefix if UUID was created by `withTime()` or with option `timed: true`.
+     *
+     * @return int|null
+     */
+    public function getTime(): int|null
+    {
+        $time = $this->getPrefix();
+
+        return ($time !== null && $time <= time()) ? $time : null;
+    }
+
+    /**
+     * Get (UTC) datetime if UUID was created by `withTime()` or with option `timed: true`.
+     *
+     * @param  string $format
+     * @return string|null
+     */
+    public function getDateTime(string $format = 'c'): string|null
+    {
+        $time = $this->getPrefix();
+
+        return ($time !== null && $time <= time()) ? gmdate($format, $time) : null;
     }
 
     /**
@@ -106,7 +143,7 @@ class Uuid implements Stringable
     /**
      * Create an Uuid instance with hashed value.
      *
-     * @param  bool $guid
+     * @param  int $length
      * @return Uuid
      */
     public static function withHash(int $length = 32): Uuid
@@ -123,7 +160,7 @@ class Uuid implements Stringable
     public static function withDate(bool $guid = false): Uuid
     {
         $bins = strrev(pack('L', gmdate('Ymd'))) . random_bytes(12);
-        $guid || $bins = self::modify($bins);
+        $guid || $bins = self::applyProps($bins);
 
         return new Uuid(uuid_format(bin2hex($bins)));
     }
@@ -137,7 +174,7 @@ class Uuid implements Stringable
     public static function withTime(bool $guid = false): Uuid
     {
         $bins = strrev(pack('L', time())) . random_bytes(12);
-        $guid || $bins = self::modify($bins);
+        $guid || $bins = self::applyProps($bins);
 
         return new Uuid(uuid_format(bin2hex($bins)));
     }
@@ -156,18 +193,18 @@ class Uuid implements Stringable
         });
 
         $bins = join($time) . random_bytes(8);
-        $guid || $bins = self::modify($bins);
+        $guid || $bins = self::applyProps($bins);
 
         return new Uuid(uuid_format(bin2hex($bins)));
     }
 
     /**
-     * Modify UUID binary adding version (4) and variant (8, 9, a or b).
+     * Apply version (4) and variant (8, 9, a or b) props to given UUID binary string.
      *
      * @param  string $bins
      * @return string
      */
-    public static function modify(string $bins): string
+    public static function applyProps(string $bins): string
     {
         $bins[6] = chr(ord($bins[6]) & 0x0F | 0x40); // Version.
         $bins[8] = chr(ord($bins[8]) & 0x3F | 0x80); // Variant.
@@ -181,7 +218,7 @@ class Uuid implements Stringable
      * @param  string $uuid
      * @return int|null
      */
-    public static function decode(string $uuid): int|null
+    public static function decodePrefix(string $uuid): int|null
     {
         $sub = substr($uuid, 0, 8);
 
