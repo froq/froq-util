@@ -6,7 +6,7 @@
 declare(strict_types=1);
 
 /**
- * A simple UUID class for working customized UUIDs.
+ * A simple UUID/v4 class for working customized UUIDs.
  *
  * @package global
  * @class   Uuid
@@ -82,6 +82,17 @@ class Uuid implements Stringable
     }
 
     /**
+     * Get date/time prefix if UUID was created by `withDate()`, `withTime()`
+     * or with option `timed: true`.
+     *
+     * @return int|null
+     */
+    public function getPrefix(): int|null
+    {
+        return self::decode($this->value);
+    }
+
+    /**
      * Create an Uuid instance with options.
      *
      * @param  bool ...$options
@@ -151,15 +162,15 @@ class Uuid implements Stringable
     }
 
     /**
-     * Modify UUID bins adding signs: 4 (version) & 8, 9, A, B.
+     * Modify UUID binary adding version (4) and variant (8, 9, a or b).
      *
      * @param  string $bins
-     * @return string.
+     * @return string
      */
     public static function modify(string $bins): string
     {
-        $bins[6] = chr(ord($bins[6]) & 0x0F | 0x40);
-        $bins[8] = chr(ord($bins[8]) & 0x3F | 0x80);
+        $bins[6] = chr(ord($bins[6]) & 0x0F | 0x40); // Version.
+        $bins[8] = chr(ord($bins[8]) & 0x3F | 0x80); // Variant.
 
         return $bins;
     }
