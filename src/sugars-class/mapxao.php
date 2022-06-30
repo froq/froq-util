@@ -70,9 +70,11 @@ class XArrayObject extends ArrayObject implements Arrayable, Objectable, Jsonabl
      * @param  mixed|null $default
      * @return mixed
      */
-    public function get(string|int $key, mixed $default = null): mixed
+    public function &get(string|int $key, mixed $default = null): mixed
     {
-        return parent::offsetExists($key) ? parent::offsetGet($key) : $default;
+        $value = parent::offsetExists($key) ? parent::offsetGet($key) : $default;
+        $ret =& $value;
+        return $ret;
     }
 
     /**
@@ -300,7 +302,15 @@ class XArrayObject extends ArrayObject implements Arrayable, Objectable, Jsonabl
     /**
      * @override
      */
-    public function offsetGet(mixed $key): mixed
+    public function offsetSet(mixed $key, mixed $value): void
+    {
+        $this->set($key, $value);
+    }
+
+    /**
+     * @override
+     */
+    public function &offsetGet(mixed $key): mixed
     {
         return $this->get($key);
     }
