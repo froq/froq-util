@@ -22,7 +22,7 @@ final class Runner
     private int $limit, $runs = 0;
 
     /** @var bool */
-    private bool $simple = false;
+    private bool $simple;
 
     /**
      * Constructor.
@@ -73,17 +73,19 @@ final class Runner
             // Free.
             unset($temp);
 
-            $format = fn($v) => number_format($v, 0, '', ',');
+            $formatRun = fn($v) => number_format($v, 0, '', ',');
+            $formatMemo = fn($v) => \froq\util\Util::formatBytes($v, 3);
 
             // Simple drops memory info.
             if ($simple) {
-                printf("run(%s)#%d: %F\n",
-                    $format($this->limit), $this->runs, $endTime,
+                printf("run(%s)#%s: %F\n",
+                    $formatRun($this->limit), $this->runs, $endTime,
                 );
             } else {
-                printf("run(%s)#%d: %F, mem: %d (%d-%d)\n",
-                    $format($this->limit), $this->runs, $endTime,
-                    $endMemo - $startMemo, $endMemo, $startMemo,
+                printf("run(%s)#%s: %F, memo: %s (%s - %s)\n",
+                    $formatRun($this->limit), $this->runs, $endTime,
+                    $formatMemo($endMemo - $startMemo),
+                    $formatMemo($endMemo), $formatMemo($startMemo),
                 );
             }
         }
