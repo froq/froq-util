@@ -17,7 +17,7 @@ namespace froq\util\misc;
  * @author  Kerem Güneş
  * @since   5.0
  */
-final class Random
+class Random
 {
     /** @var int */
     private int $seed;

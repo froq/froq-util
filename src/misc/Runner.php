@@ -16,7 +16,7 @@ namespace froq\util\misc;
  * @author  Kerem Güneş
  * @since   5.5
  */
-final class Runner
+class Runner
 {
     /** @var int, int */
     private int $limit, $runs = 0;
