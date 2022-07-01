@@ -1401,21 +1401,20 @@ function preg_error_message(int &$code = null, string $func = null, bool $clear 
 }
 
 /**
- * Generate an arbitrary unique identifier in given/default base.
+ * Generate an arbitrary string identifier in given/default base.
  *
  * @param  int $length
  * @param  int $base
- * @return string|null
+ * @return string
  * @since  5.0
+ * @throws ArgumentError
  */
-function suid(int $length = 6, int $base = 62): string|null
+function suid(int $length = 6, int $base = 62): string
 {
     if ($length < 1) {
-        trigger_error(sprintf('%s(): Invalid length, min=1', __function__));
-        return null;
+        throw new ArgumentError('Invalid length: %q [min=1]', $length);
     } elseif ($base < 2 || $base > 62) {
-        trigger_error(sprintf('%s(): Invalid base, min=2 & max=62', __function__));
-        return null;
+        throw new ArgumentError('Invalid base: %q [min=2 & max=62]', $base);
     }
 
     $max = $base - 1;
