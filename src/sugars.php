@@ -1401,48 +1401,6 @@ function preg_error_message(int &$code = null, string $func = null, bool $clear 
 }
 
 /**
- * Generate an arbitrary string identifier in given/default base.
- *
- * @param  int $length
- * @param  int $base
- * @return string
- * @since  5.0
- * @throws ArgumentError
- */
-function suid(int $length = 6, int $base = 62): string
-{
-    if ($length < 1) {
-        throw new ArgumentError('Invalid length: %q [min=1]', $length);
-    } elseif ($base < 2 || $base > 62) {
-        throw new ArgumentError('Invalid base: %q [min=2 & max=62]', $base);
-    }
-
-    $max = $base - 1;
-    $ret = '';
-
-    while ($length--) {
-        $ret .= BASE62_ALPHABET[random_int(0, $max)];
-    }
-
-    return $ret;
-}
-
-/**
- * Generate a UUID by given options or defaults.
- *
- * @param  string $with Prefix option, 'time' or 'date' only.
- * @param  bool   $guid
- * @param  bool   $upper
- * @param  bool   $plain
- * @return string
- * @since  5.0
- */
-function uuid(string $with = '', bool $guid = false, bool $upper = false, bool $plain = false): string
-{
-    return Uuid::generate($with, $guid, $upper, $plain);
-}
-
-/**
  * Format for sprintf().
  *
  * @param  string   $format
@@ -1579,6 +1537,48 @@ function slug(string $input, string $preserve = '', string $replace = '-'): stri
         $replace, strtr($input, $map));
 
     return strtolower(trim($out, $replace));
+}
+
+/**
+ * Generate an arbitrary string identifier in given/default base.
+ *
+ * @param  int $length
+ * @param  int $base
+ * @return string
+ * @since  5.0
+ * @throws ArgumentError
+ */
+function suid(int $length = 6, int $base = 62): string
+{
+    if ($length < 1) {
+        throw new ArgumentError('Invalid length: %q [min=1]', $length);
+    } elseif ($base < 2 || $base > 62) {
+        throw new ArgumentError('Invalid base: %q [min=2 & max=62]', $base);
+    }
+
+    $max = $base - 1;
+    $ret = '';
+
+    while ($length--) {
+        $ret .= BASE62_ALPHABET[random_int(0, $max)];
+    }
+
+    return $ret;
+}
+
+/**
+ * Generate a UUID by given options or defaults.
+ *
+ * @param  string $with Prefix option, 'time' or 'date' only.
+ * @param  bool   $guid
+ * @param  bool   $upper
+ * @param  bool   $plain
+ * @return string
+ * @since  5.0
+ */
+function uuid(string $with = '', bool $guid = false, bool $upper = false, bool $plain = false): string
+{
+    return Uuid::generate($with, $guid, $upper, $plain);
 }
 
 /**
