@@ -130,7 +130,7 @@ class Uuid implements Stringable
     }
 
     /**
-     * Create an Uuid instance with options.
+     * Create a Uuid instance with options.
      *
      * @param  bool ...$options
      * @return Uuid
@@ -141,7 +141,7 @@ class Uuid implements Stringable
     }
 
     /**
-     * Create an Uuid instance with hashed value.
+     * Create a Uuid instance with hashed value.
      *
      * @param  int $length
      * @return Uuid
@@ -152,7 +152,7 @@ class Uuid implements Stringable
     }
 
     /**
-     * Create an Uuid instance with (UTC) date prefixed value.
+     * Create a Uuid instance with (UTC) date prefixed value.
      *
      * @param  bool $guid
      * @return Uuid
@@ -166,7 +166,7 @@ class Uuid implements Stringable
     }
 
     /**
-     * Create an Uuid instance with (Unix) time prefixed value.
+     * Create a Uuid instance with (Unix) time prefixed value.
      *
      * @param  bool $guid
      * @return Uuid
@@ -180,7 +180,7 @@ class Uuid implements Stringable
     }
 
     /**
-     * Create an Uuid instance with HR-time prefixed value.
+     * Create a Uuid instance with HR-time prefixed value.
      *
      * @param  bool $guid
      * @return Uuid
@@ -196,6 +196,42 @@ class Uuid implements Stringable
         $guid || $bins = self::applyProps($bins);
 
         return new Uuid(uuid_format(bin2hex($bins)));
+    }
+
+    /**
+     * Generate a UUID/v4 or GUID.
+     *
+     * @param  string $uuid
+     * @param  bool   $strict
+     * @return bool
+     */
+    public static function generate(bool ...$options): string
+    {
+        return uuid(...$options);
+    }
+
+    /**
+     * Validate a UUID/v4 or GUID.
+     *
+     * @param  string $uuid
+     * @param  bool   $strict
+     * @return bool
+     */
+    public static function validate(string $uuid, bool $strict = true): bool
+    {
+        // With version & dashes.
+        if ($strict) {
+            return preg_test(
+                '~^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[ab89][a-f0-9]{3}-[a-f0-9]{12}$~',
+                $uuid
+            );
+        }
+
+        // With/without version & dash-free (uuid/guid).
+        return preg_test(
+            '~^[a-f0-9]{8}-?[a-f0-9]{4}-?[a-f0-9]{4}-?[a-f0-9]{4}-?[a-f0-9]{12}$~',
+            $uuid
+        );
     }
 
     /**
