@@ -312,30 +312,35 @@ class Locale implements Arrayable, Stringable
      * Set a locale category value.
      *
      * @param  int|string|LocaleCategory $category
-     * @param  string                    $locale
-     * @param  string                 ...$locales
+     * @param  string|Locale             $locale
+     * @param  string|Locale          ...$locales
      * @return string|false
      */
-    public static function set(int|string|LocaleCategory $category, string $locale, string ...$locales): string|false
+    public static function set(int|string|LocaleCategory $category, string|Locale $locale, string|Locale ...$locales): string|false
     {
         if (is_string($category)) {
             $category = new LocaleCategory($category);
         }
         if ($category instanceof LocaleCategory) {
             $category = $category->value;
+        }
+
+        $locale = (string) $locale;
+        foreach ($locales as $i => $_) {
+            $locales[$i] = (string) $locales[$i];
         }
 
         return setlocale($category, $locale, ...$locales);
     }
 
     /**
-     * Get a locale category value.
+     * Get a locale category value or all.
      *
      * @param  int|string|LocaleCategory $category
-     * @param  bool                      $array
-     * @return string|array|null
+     * @param  bool                      $init
+     * @return string|array|Locale|LocaleList|null
      */
-    public static function get(int|string|LocaleCategory $category, bool $array = false): string|array|null
+    public static function get(int|string|LocaleCategory $category, bool $init = false): string|array|Locale|LocaleList|null
     {
         if (is_string($category)) {
             $category = new LocaleCategory($category);
@@ -344,7 +349,29 @@ class Locale implements Arrayable, Stringable
             $category = $category->value;
         }
 
-        return getlocale($category, null, $array);
+        $locale = getlocale($category, null, array: $category == LC_ALL);
+
+        // No locale or init.
+        if (!$locale || !$init) {
+            return $locale;
+        }
+
+        // No LC_ALL given.
+        if (!is_array($locale)) {
+            $locale = Locale::from($locale);
+            $locale->setCategory($category);
+            return $locale;
+        }
+
+        $items = [];
+        foreach ($locale as $item) {
+            if (defined($item['name'])) {
+                $locale = Locale::from($item['value']);
+                $locale->setCategory($item['category']);
+                $items[] = $locale;
+            }
+        }
+        return new LocaleList($items);
     }
 }
 
@@ -421,6 +448,22 @@ class LocaleCategory implements Arrayable
     public function toArray(): array
     {
         return ['name' => $this->name, 'value' => $this->value];
+    }
+
+    /**
+     * Create from given locale category.
+     *
+     * @param  int|string $category
+     * @return LocaleCategory
+     */
+    public static function from(int|string $category): LocaleCategory
+    {
+        // When LC_* constant given.
+        if (is_string($category) && strpfx($category, 'LC_', true)) {
+            $category = substr($category, 3);
+        }
+
+        return new LocaleCategory($category);
     }
 
     /**
