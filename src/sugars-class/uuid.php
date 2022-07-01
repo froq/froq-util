@@ -226,6 +226,20 @@ class Uuid implements Stringable
     }
 
     /**
+     * Generate a UUID hash.
+     *
+     * @param  int  $length
+     * @param  bool $format
+     * @param  bool $upper
+     * @return string
+     * @causes UuidError
+     */
+    public static function generateHash(int $length = 32, bool $format = false, bool $upper = false): string
+    {
+        return self::hash(self::generate(), $length, $format, $upper);
+    }
+
+    /**
      * Validate a UUID/v4 or GUID.
      *
      * @param  string $uuid
