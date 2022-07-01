@@ -732,7 +732,7 @@ function get_error(string $field = null): mixed
 }
 
 /**
- * Get a uniq-id with/without length & base options.
+ * Get a unique id with/without length & base options.
  *
  * @param  int  $length
  * @param  int  $base
@@ -742,13 +742,13 @@ function get_error(string $field = null): mixed
  * @throws ArgumentError
  * @since  4.0
  */
-function get_uniqid(int $length = 14, int $base = 16, bool $hrtime = false, bool $upper = false): string
+function get_unique_id(int $length = 14, int $base = 16, bool $hrtime = false, bool $upper = false): string
 {
     if ($length < 14 && $base < 17) {
-        throw new ArgumentError('Invalid length: %q [min=14]', $length);
+        throw new ArgumentError('Invalid length: %s [min=14]', $length);
     }
     if ($base < 10 || $base > 62) {
-        throw new ArgumentError('Invalid base: %q [min=10 & max=62]', $base);
+        throw new ArgumentError('Invalid base: %s [min=10 & max=62]', $base);
     }
 
     // Grab 14-length hex from uniqid() or map to hex hrtime() stuff.
@@ -769,8 +769,7 @@ function get_uniqid(int $length = 14, int $base = 16, bool $hrtime = false, bool
     }
 
     // Pad if needed.
-    $ret_length = strlen($ret);
-    if ($ret_length < $length) {
+    if ($length > ($ret_length = strlen($ret))) {
         $ret .= suid($length - $ret_length, $base);
     }
 
@@ -780,7 +779,7 @@ function get_uniqid(int $length = 14, int $base = 16, bool $hrtime = false, bool
 }
 
 /**
- * Get a random uniq-id with/without length & base options.
+ * Get a random id with/without length & base options..
  *
  * @param  int  $length
  * @param  int  $base
@@ -788,18 +787,18 @@ function get_uniqid(int $length = 14, int $base = 16, bool $hrtime = false, bool
  * @return string
  * @since  4.0
  */
-function get_random_uniqid(int $length = 14, int $base = 16, bool $upper = false): string
+function get_random_id(int $length = 14, int $base = 16, bool $upper = false): string
 {
     if ($length < 14 && $base < 17) {
-        throw new ArgumentError('Invalid length: %q [min=14]', $length);
+        throw new ArgumentError('Invalid length: %s [min=14]', $length);
     }
     if ($base < 10 || $base > 62) {
-        throw new ArgumentError('Invalid base: %q [min=10 & max=62]', $base);
+        throw new ArgumentError('Invalid base: %s [min=10 & max=62]', $base);
     }
 
     $ret = '';
 
-    while (strlen($ret) < $length) {
+    while ($length > strlen($ret)) {
         $id = bin2hex(random_bytes(4));
 
         // Convert non-hex ids.
@@ -1547,9 +1546,9 @@ function slug(string $input, string $preserve = '', string $replace = '-'): stri
 function suid(int $length = 6, int $base = 62): string
 {
     if ($length < 1) {
-        throw new ArgumentError('Invalid length: %q [min=1]', $length);
+        throw new ArgumentError('Invalid length: %s [min=1]', $length);
     } elseif ($base < 2 || $base > 62) {
-        throw new ArgumentError('Invalid base: %q [min=2 & max=62]', $base);
+        throw new ArgumentError('Invalid base: %s [min=2 & max=62]', $base);
     }
 
     $max = $base - 1;
