@@ -10,8 +10,10 @@ use froq\common\interface\Arrayable;
 /**
  * Locale class.
  *
- * @author Kerem Güneş
- * @since  6.0
+ * @package global
+ * @class   Locale
+ * @author  Kerem Güneş
+ * @since   6.0
  */
 class Locale implements Arrayable, Stringable
 {
@@ -378,10 +380,12 @@ class Locale implements Arrayable, Stringable
 /**
  * Locale category class.
  *
- * @author Kerem Güneş
- * @since  6.0
+ * @package global
+ * @class   LocaleCategory
+ * @author  Kerem Güneş
+ * @since   6.0
  */
-class LocaleCategory implements Arrayable
+class LocaleCategory implements Arrayable, Stringable
 {
     /** Type/value constants. */
     public final const ALL      = LC_ALL,
@@ -420,6 +424,14 @@ class LocaleCategory implements Arrayable
 
         $this->name  = $name;
         $this->value = $value;
+    }
+
+    /**
+     * @magic
+     */
+    public function __toString()
+    {
+        return 'LC_' . $this->name;
     }
 
     /**
@@ -500,8 +512,10 @@ class LocaleCategory implements Arrayable
 /**
  * Locale list class.
  *
- * @author Kerem Güneş
- * @since  6.0
+ * @package global
+ * @class   LocaleList
+ * @author  Kerem Güneş
+ * @since   6.0
  */
 class LocaleList extends ItemList
 {
@@ -525,8 +539,10 @@ class LocaleList extends ItemList
 /**
  * Locale category list class.
  *
- * @author Kerem Güneş
- * @since  6.0
+ * @package global
+ * @class   LocaleCategoryList
+ * @author  Kerem Güneş
+ * @since   6.0
  */
 class LocaleCategoryList extends ItemList
 {
