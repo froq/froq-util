@@ -1420,9 +1420,8 @@ function suid(int $length = 6, int $base = 62): string
     $max = $base - 1;
     $ret = '';
 
-    srand();
     while ($length--) {
-        $ret .= BASE62_ALPHABET[rand(0, $max)];
+        $ret .= BASE62_ALPHABET[random_int(0, $max)];
     }
 
     return $ret;

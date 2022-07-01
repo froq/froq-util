@@ -281,6 +281,7 @@ final class Strings extends \StaticClass
             );
         }
 
+        // As default.
         $chars = BASE62_ALPHABET;
 
         // Add punctuation chars.
@@ -291,9 +292,8 @@ final class Strings extends \StaticClass
         $max = strlen($chars) - 1;
         $ret = '';
 
-        srand();
         while (strlen($ret) < $length) {
-            $ret .= $chars[rand(0, $max)];
+            $ret .= $chars[random_int(0, $max)];
         }
 
         return $ret;
