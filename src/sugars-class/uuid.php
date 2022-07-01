@@ -22,12 +22,12 @@ class Uuid implements Stringable
      * Constructor.
      *
      * @param string|null $value
-     * @param bool     ...$options
+     * @param mixed    ...$options See generate().
      */
-    public function __construct(string $value = null, bool ...$options)
+    public function __construct(string $value = null, mixed ...$options)
     {
         // Create if none given.
-        $value ??= uuid(...$options);
+        $value ??= self::generate(...$options);
 
         $this->value = $value;
     }
@@ -55,7 +55,7 @@ class Uuid implements Stringable
      *
      * @return string
      */
-    public function toUpper(): string
+    public function toUpperString(): string
     {
         return strtoupper($this->value);
     }
@@ -65,35 +65,47 @@ class Uuid implements Stringable
      *
      * @return string
      */
-    public function toUndash(): string
+    public function toPlainString(): string
     {
         return str_replace('-', '', $this->value);
     }
 
     /**
-     * Get Uuid value as hashed by length 32, 40, 64 or 16.
+     * Get Uuid value as hashed by length 16, 32, 40 or 64.
      *
-     * @param  int $length
+     * @param  int  $length
+     * @param  bool $format
+     * @param  bool $upper
      * @return string|null
      */
-    public function toHash(int $length = 32): string|null
+    public function toHashString(int $length = 32, bool $format = false, bool $upper = false): string|null
     {
-        return uuid_hash($length, format: $length == 32, uuid: $this->value);
+        return self::hash($this->value, $length, $format, $upper);
     }
 
     /**
-     * Get date/time prefix if UUID was created by `withDate()`, `withTime()`
-     * or with option `timed: true`.
+     * Get date/time prefix if UUID was created by `withDate()`, `withTime()` or
+     * with option `with: 'date' or 'time'`.
      *
      * @return int|null
      */
     public function getPrefix(): int|null
     {
-        return self::decodePrefix($this->value);
+        return self::decode($this->value)['prefix'];
     }
 
     /**
-     * Get date/time prefix if UUID was created by `withDate()`.
+     * Get version if UUID was created by randomly (v4).
+     *
+     * @return int|null
+     */
+    public function getVersion(): int|null
+    {
+        return self::decode($this->value, true)['version'];
+    }
+
+    /**
+     * Get date prefix if UUID was created by `withDate()` or with option `with: 'date'`.
      *
      * @return string|null
      */
@@ -105,7 +117,7 @@ class Uuid implements Stringable
     }
 
     /**
-     * Get time prefix if UUID was created by `withTime()` or with option `timed: true`.
+     * Get time prefix if UUID was created by `withTime()` or with option `with: 'time'`.
      *
      * @return int|null
      */
@@ -117,7 +129,7 @@ class Uuid implements Stringable
     }
 
     /**
-     * Get (UTC) datetime if UUID was created by `withTime()` or with option `timed: true`.
+     * Get (UTC) date/time if UUID was created by `withTime()` or with option `with: 'time'`.
      *
      * @param  string $format
      * @return string|null
@@ -130,25 +142,25 @@ class Uuid implements Stringable
     }
 
     /**
-     * Create a Uuid instance with options.
+     * Check whether Uuid value is valid.
      *
-     * @param  bool ...$options
-     * @return Uuid
+     * @param  bool $strict
+     * @return bool
      */
-    public static function withOptions(bool ...$options): Uuid
+    public function isValid(bool $strict = true): bool
     {
-        return new Uuid(uuid(...$options));
+        return self::validate($this->value, $strict);
     }
 
     /**
-     * Create a Uuid instance with hashed value.
+     * Create a Uuid instance with options.
      *
-     * @param  int $length
+     * @param  mixed ...$options See generate().
      * @return Uuid
      */
-    public static function withHash(int $length = 32): Uuid
+    public static function withOptions(mixed ...$options): Uuid
     {
-        return new Uuid(uuid_hash($length, format: $length == 32));
+        return new Uuid(self::generate(...$options));
     }
 
     /**
@@ -159,10 +171,7 @@ class Uuid implements Stringable
      */
     public static function withDate(bool $guid = false): Uuid
     {
-        $bins = strrev(pack('L', gmdate('Ymd'))) . random_bytes(12);
-        $guid || $bins = self::applyProps($bins);
-
-        return new Uuid(uuid_format(bin2hex($bins)));
+        return new Uuid(self::generate('date', $guid));
     }
 
     /**
@@ -173,91 +182,137 @@ class Uuid implements Stringable
      */
     public static function withTime(bool $guid = false): Uuid
     {
-        $bins = strrev(pack('L', time())) . random_bytes(12);
-        $guid || $bins = self::applyProps($bins);
-
-        return new Uuid(uuid_format(bin2hex($bins)));
+        return new Uuid(self::generate('time', $guid));
     }
 
     /**
-     * Create a Uuid instance with HR-time prefixed value.
+     * Generate a UUID by given options or defaults.
      *
-     * @param  bool $guid
-     * @return Uuid
+     * @param  string $with Prefix option, 'time' or 'date' only.
+     * @param  bool   $guid
+     * @param  bool   $upper
+     * @param  bool   $plain
+     * @return string
+     * @throws UuidError
      */
-    public static function withHRTime(bool $guid = false): Uuid
+    public static function generate(string $with = '', bool $guid = false, bool $upper = false, bool $plain = false): string
     {
-        $time = map(hrtime(), function ($t) {
-            $t = pad((string) $t, 10, 0);
-            return strrev(pack('L', $t));
-        });
+        $bins = match ($with) {
+            // Full 16-random bytes.
+            '' => random_bytes(16),
 
-        $bins = join($time) . random_bytes(8);
-        $guid || $bins = self::applyProps($bins);
+            // Time prefix & 12-random bytes.
+            'time' => strrev(pack('L', time())) . random_bytes(12),
 
-        return new Uuid(uuid_format(bin2hex($bins)));
-    }
+            // Date prefix & 12-random bytes.
+            'date' => strrev(pack('L', gmdate('Ymd'))) . random_bytes(12),
 
-    /**
-     * Generate a UUID/v4 or GUID.
-     *
-     * @param  string $uuid
-     * @param  bool   $strict
-     * @return bool
-     */
-    public static function generate(bool ...$options): string
-    {
-        return uuid(...$options);
+            // Invalid "with" option.
+            default => throw new UuidError('Invalid "with" option: %q [valids: time,date]', $with),
+        };
+
+        // Add signs: 4 (version) & 8, 9, A, B, but GUID doesn't use them.
+        if (!$guid) {
+            $bins[6] = chr(ord($bins[6]) & 0x0F | 0x40); // Version.
+            $bins[8] = chr(ord($bins[8]) & 0x3F | 0x80); // Variant.
+        }
+
+        $uuid = vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($bins), 4));
+
+        $upper && $uuid = strtoupper($uuid);
+        $plain && $uuid = str_replace('-', '', $uuid);
+
+        return $uuid;
     }
 
     /**
      * Validate a UUID/v4 or GUID.
      *
      * @param  string $uuid
-     * @param  bool   $strict
+     * @param  bool   $strict For version, variant & dashes.
      * @return bool
      */
     public static function validate(string $uuid, bool $strict = true): bool
     {
-        // With version & dashes.
         if ($strict) {
+            // With version, variant & dashes.
             return preg_test(
-                '~^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[ab89][a-f0-9]{3}-[a-f0-9]{12}$~',
+                '~^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[ab89][a-f0-9]{3}-[a-f0-9]{12}$~i',
                 $uuid
             );
         }
 
-        // With/without version & dash-free (uuid/guid).
+        // With/without version, variant & dashes.
         return preg_test(
-            '~^[a-f0-9]{8}-?[a-f0-9]{4}-?[a-f0-9]{4}-?[a-f0-9]{4}-?[a-f0-9]{12}$~',
+            '~^[a-f0-9]{8}-?[a-f0-9]{4}-?[a-f0-9]{4}-?[a-f0-9]{4}-?[a-f0-9]{12}$~i',
             $uuid
         );
     }
 
     /**
-     * Apply version (4) and variant (8, 9, a or b) props to given UUID binary string.
+     * Validate a hash by length.
      *
-     * @param  string $bins
-     * @return string
+     * @param  string $hash
+     * @param  int    $length
+     * @return bool
      */
-    public static function applyProps(string $bins): string
+    public static function validateHash(string $hash, int $length): bool
     {
-        $bins[6] = chr(ord($bins[6]) & 0x0F | 0x40); // Version.
-        $bins[8] = chr(ord($bins[8]) & 0x3F | 0x80); // Variant.
-
-        return $bins;
+        // With given length.
+        return preg_test('~^[a-f0-9]{' . $length . '}$~i', $hash);
     }
 
     /**
-     * Decode UUID hash extracting its creation date/time.
+     * Decode a UUID extracting its creation date/time & optionally version.
      *
      * @param  string $uuid
-     * @return int|null
+     * @param  bool   $withVersion
+     * @return array
      */
-    public static function decodePrefix(string $uuid): int|null
+    public static function decode(string $uuid, bool $withVersion = false): array
     {
-        $sub = substr($uuid, 0, 8);
+        $prefix = $version = null;
 
-        return ctype_xdigit($sub) ? hexdec($sub) : null;
+        if (ctype_xdigit($sub = substr($uuid, 0, 8))) {
+            $prefix = hexdec($sub);
+        }
+        if ($withVersion && self::validate($uuid, true)) {
+            $version = 4;
+        }
+
+        return ['prefix' => $prefix, 'version' => $version];
+    }
+
+    /**
+     * Hash a UUID by given length.
+     *
+     * @param  string $uuid
+     * @param  int    $length
+     * @param  bool   $format
+     * @param  bool   $upper
+     * @return string
+     * @throws UuidError
+     */
+    public static function hash(string $uuid, int $length, bool $format = false, bool $upper = false): string
+    {
+        static $algos = [16 => 'fnv1a64', 32 => 'md5', 40 => 'sha1', 64 => 'sha256'];
+
+        if (!$algo = ($algos[$length] ?? null)) {
+            throw new UuidError('Invalid length: %q [valids: 16,32,40,64]', $length);
+        }
+
+        $hash = hash($algo, $uuid);
+
+        if ($format) {
+            if (strlen($hash) != 32 || !ctype_xdigit($hash)) {
+                throw new UuidError('Format option for only 32-length UUIDs/GUIDs');
+            }
+
+            $hash = vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split($hash, 4));
+        }
+
+        $upper && $hash = strtoupper($hash);
+
+        return $hash;
     }
 }
