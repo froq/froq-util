@@ -429,10 +429,11 @@ function grep_all(string $pattern, string $input, bool $named = false, bool $uni
  * @param  int|string $input
  * @param  int|string $from  From base or characters.
  * @param  int|string $to    To base or characters.
- * @return string|null
+ * @return string
+ * @throws ArgumentError
  * @since  4.0, 4.25
  */
-function convert_base(int|string $input, int|string $from, int|string $to): string|null
+function convert_base(int|string $input, int|string $from, int|string $to): string
 {
     // Try to use speed/power of GMP.
     if (is_int($from) && is_int($to) && extension_loaded('gmp')) {
@@ -444,15 +445,13 @@ function convert_base(int|string $input, int|string $from, int|string $to): stri
 
     if (is_int($from)) {
         if ($from < 2 || $from > 62) {
-            trigger_error(sprintf('%s(): Invalid base for from characters, min=2 & max=62', __function__));
-            return null;
+            throw new ArgumentError('Invalid base %q for from [min=2 & max=62]', $from);
         }
         $from = strcut($characters, $from);
     }
     if (is_int($to)) {
         if ($to < 2 || $to > 62) {
-            trigger_error(sprintf('%s(): Invalid base for to characters, min=2 & max=62', __function__));
-            return null;
+            throw new ArgumentError('Invalid base %q for to [min=2 & max=62]', $to);
         }
         $to = strcut($characters, $to);
     }
@@ -501,16 +500,16 @@ function convert_base(int|string $input, int|string $from, int|string $to): stri
  * @param  string|int  $case
  * @param  string|null $exploder
  * @param  string|null $imploder
- * @return string|null
+ * @return string
+ * @throws ArgumentError
  * @since  4.26
  */
-function convert_case(string $input, string|int $case, string $exploder = null, string $imploder = null): string|null
+function convert_case(string $input, string|int $case, string $exploder = null, string $imploder = null): string
 {
     if (is_string($case)) {
         $case_value = get_constant_value('CASE_' . strtoupper($case));
         if ($case_value === null) {
-            trigger_error(sprintf('%s(): Invalid case %s, use lower,upper,title,dash,snake,camel', __function__, $case));
-            return null;
+            throw new ArgumentError('Invalid case %q, use lower,upper,title,dash,snake,camel', $case);
         }
 
         $case = $case_value;
@@ -518,8 +517,7 @@ function convert_case(string $input, string|int $case, string $exploder = null, 
 
     // Check valid cases.
     if (!in_array($case, [CASE_LOWER, CASE_UPPER, CASE_TITLE, CASE_DASH, CASE_SNAKE, CASE_CAMEL], true)) {
-        trigger_error(sprintf('%s(): Invalid case %s, use a case from 0..5 range', __function__, $case));
-        return null;
+        throw new ArgumentError('Invalid case %q, use a case from 0..5 range', $case);
     }
 
     if ($case == CASE_LOWER) {
@@ -637,16 +635,14 @@ function get_class_properties(string|object $class, bool $scope_check = true, bo
  * @param  mixed  $value
  * @param  string $name_prefix
  * @return string|null
+ * @throws ArgumentError
  * @since  5.26
  */
-function get_constant_name(mixed $value = null, string $name_prefix): string|null
+function get_constant_name(mixed $value, string $name_prefix): string|null
 {
-    if ($name_prefix == '') {
-        trigger_error(sprintf('%s(): Empty name prefix given', __function__));
-        return null;
-    }
+    $name_prefix || throw new ArgumentError('Empty name prefix given');
 
-    return first(array_filter(array_keys(get_defined_constants(), $value, true),
+    return array_first(array_filter(array_keys(get_defined_constants(), $value, true),
         fn($name) => str_starts_with($name, $name_prefix)));
 }
 
@@ -656,10 +652,13 @@ function get_constant_name(mixed $value = null, string $name_prefix): string|nul
  * @param  string     $name
  * @param  mixed|null $default
  * @return mixed|null
+ * @throws ArgumentError
  * @since  5.26
  */
 function get_constant_value(string $name, mixed $default = null): mixed
 {
+    $name || throw new ArgumentError('Empty name given');
+
     return defined($name) ? constant($name) : $default;
 }
 
@@ -739,18 +738,17 @@ function get_error(string $field = null): mixed
  * @param  int  $base
  * @param  bool $hrtime
  * @param  bool $upper
- * @return string|null
+ * @return string
+ * @throws ArgumentError
  * @since  4.0
  */
-function get_uniqid(int $length = 14, int $base = 16, bool $hrtime = false, bool $upper = false): string|null
+function get_uniqid(int $length = 14, int $base = 16, bool $hrtime = false, bool $upper = false): string
 {
-    if ($length < 14  && $base < 17) {
-        trigger_error(sprintf('%s(): Invalid length, min=14', __function__));
-        return null;
+    if ($length < 14 && $base < 17) {
+        throw new ArgumentError('Invalid length: %q [min=14]', $length);
     }
     if ($base < 10 || $base > 62) {
-        trigger_error(sprintf('%s(): Invalid base, min=10 & max=62', __function__));
-        return null;
+        throw new ArgumentError('Invalid base: %q [min=10 & max=62]', $base);
     }
 
     // Grab 14-length hex from uniqid() or map to hex hrtime() stuff.
@@ -787,18 +785,16 @@ function get_uniqid(int $length = 14, int $base = 16, bool $hrtime = false, bool
  * @param  int  $length
  * @param  int  $base
  * @param  bool $upper
- * @return string|null
+ * @return string
  * @since  4.0
  */
-function get_random_uniqid(int $length = 14, int $base = 16, bool $upper = false): string|null
+function get_random_uniqid(int $length = 14, int $base = 16, bool $upper = false): string
 {
-    if ($base < 17 && $length < 14) {
-        trigger_error(sprintf('%s(): Invalid length, min=14', __function__));
-        return null;
+    if ($length < 14 && $base < 17) {
+        throw new ArgumentError('Invalid length: %q [min=14]', $length);
     }
     if ($base < 10 || $base > 62) {
-        trigger_error(sprintf('%s(): Invalid base, min=10 & max=62', __function__));
-        return null;
+        throw new ArgumentError('Invalid base: %q [min=10 & max=62]', $base);
     }
 
     $ret = '';
@@ -1630,17 +1626,17 @@ function random_string(int $length, bool $puncted = false): string
  * @param  int|float|null $max
  * @param  int|null       $precision
  * @param  bool           $unique
- * @return array|null
+ * @return array
+ * @throws ArgumentError
  * @since  5.41
  */
-function random_range(int $length, int|float $min = null, int|float $max = null, int $precision = null, bool $unique = true): array|null
+function random_range(int $length, int|float $min = null, int|float $max = null, int $precision = null, bool $unique = true): array
 {
-    $ret = [];
-
     if ($length < 0) {
-        trigger_error(sprintf('%s(): Negative length given', __function__));
-        return null;
+        throw new ArgumentError('Negative length given');
     }
+
+    $ret = [];
 
     // Unique stack.
     $uni = [];
