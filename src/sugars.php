@@ -1534,20 +1534,7 @@ function slug(string $input, string $preserve = '', string $replace = '-'): stri
 }
 
 /**
- * Generate an arbitrary string identifier in given/default base.
- *
- * @param  int $length
- * @param  int $base
- * @return string
- * @since  5.0
- */
-function suid(int $length = 6, int $base = 62): string
-{
-    return Uuid::generateSuid($length, $base);
-}
-
-/**
- * Generate a UUID by given options or defaults.
+ * Generate a UUID.
  *
  * @param  bool $timed For Unix time prefix.
  * @param  bool $guid
@@ -1559,6 +1546,19 @@ function suid(int $length = 6, int $base = 62): string
 function uuid(bool $timed = false, bool $guid = false, bool $upper = false, bool $plain = false): string
 {
     return Uuid::generate($timed, $guid, $upper, $plain);
+}
+
+/**
+ * Generate a simple UID.
+ *
+ * @param  int $length
+ * @param  int $base
+ * @return string
+ * @since  5.0
+ */
+function suid(int $length = 6, int $base = 62): string
+{
+    return Uuid::generateSuid($length, $base);
 }
 
 /**
