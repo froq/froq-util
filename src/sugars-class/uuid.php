@@ -189,6 +189,45 @@ class Uuid implements Stringable
     }
 
     /**
+     * Generate a GUID.
+     *
+     * @param  bool   $timed
+     * @param  bool   $upper
+     * @param  bool   $plain
+     * @return string
+     */
+    public static function generateGuid(bool $timed = false, bool $upper = false, bool $plain = false): string
+    {
+        return self::generate($timed, true, $upper, $plain);
+    }
+
+    /**
+     * Generate a simple UID.
+     *
+     * @param  int $length
+     * @param  int $base
+     * @return string
+     * @throws UuidError
+     */
+    public static function generateSuid(int $length, int $base = 62): string
+    {
+        if ($length < 1) {
+            throw new UuidError('Invalid length: %s [min=1]', $length);
+        } elseif ($base < 2 || $base > 62) {
+            throw new UuidError('Invalid base: %s [min=2, max=62]', $base);
+        }
+
+        $max = $base - 1;
+        $ret = '';
+
+        while ($length--) {
+            $ret .= BASE62_ALPHABET[random_int(0, $max)];
+        }
+
+        return $ret;
+    }
+
+    /**
      * Generate a UUID hash.
      *
      * @param  int  $length
@@ -254,7 +293,7 @@ class Uuid implements Stringable
         static $algos = [16 => 'fnv1a64', 32 => 'md5', 40 => 'sha1', 64 => 'sha256'];
 
         if (!$algo = ($algos[$length] ?? null)) {
-            throw new UuidError('Invalid length: %q [valids: 16,32,40,64]', $length);
+            throw new UuidError('Invalid length: %s [valids: 16,32,40,64]', $length);
         }
 
         $hash = hash($algo, $uuid);

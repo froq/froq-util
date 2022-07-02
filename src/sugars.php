@@ -1540,24 +1540,10 @@ function slug(string $input, string $preserve = '', string $replace = '-'): stri
  * @param  int $base
  * @return string
  * @since  5.0
- * @throws ArgumentError
  */
 function suid(int $length = 6, int $base = 62): string
 {
-    if ($length < 1) {
-        throw new ArgumentError('Invalid length: %s [min=1]', $length);
-    } elseif ($base < 2 || $base > 62) {
-        throw new ArgumentError('Invalid base: %s [min=2, max=62]', $base);
-    }
-
-    $max = $base - 1;
-    $ret = '';
-
-    while ($length--) {
-        $ret .= BASE62_ALPHABET[random_int(0, $max)];
-    }
-
-    return $ret;
+    return Uuid::generateSuid($length, $base);
 }
 
 /**
