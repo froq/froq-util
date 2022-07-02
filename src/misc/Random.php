@@ -93,7 +93,7 @@ class Random
      */
     public function nextFloat(int $precision = PRECISION): float
     {
-        return round($this->next(24) / (float) (1 << 24), $precision);
+        return round($this->next(24) / (1 << 24), $precision);
     }
 
     /**
