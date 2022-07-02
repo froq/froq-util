@@ -164,7 +164,7 @@ class Random
         }
 
         $join && $ret = join($ret);
-        $hex  && $ret = bin2hex($ret);
+        $hex  && $ret = $join ? bin2hex($ret) : array_map('bin2hex', $ret);
 
         return $ret;
     }
