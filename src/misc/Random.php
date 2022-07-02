@@ -117,7 +117,7 @@ class Random
         $chars = '';
 
         while (strlen($chars) < $length) {
-            $chars .= BASE62_ALPHABET[$this->nextInt(61)];
+            $chars .= BASE62_ALPHABET[$this->nextInt(63) - 1];
         }
 
         return $chars;
