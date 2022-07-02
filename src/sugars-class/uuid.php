@@ -22,9 +22,9 @@ class Uuid implements Stringable
      * Constructor.
      *
      * @param string|null $value
-     * @param mixed    ...$options See generate().
+     * @param bool     ...$options See generate().
      */
-    public function __construct(string $value = null, mixed ...$options)
+    public function __construct(string $value = null, bool ...$options)
     {
         // Create if none given.
         $value ??= self::generate(...$options);
@@ -76,16 +76,15 @@ class Uuid implements Stringable
      * @param  int  $length
      * @param  bool $format
      * @param  bool $upper
-     * @return string|null
+     * @return string
      */
-    public function toHashString(int $length = 32, bool $format = false, bool $upper = false): string|null
+    public function toHashString(int $length = 32, bool $format = false, bool $upper = false): string
     {
         return self::hash($this->value, $length, $format, $upper);
     }
 
     /**
-     * Get date/time prefix if UUID was created by `withDate()`, `withTime()` or
-     * with option `with: 'date' or 'time'`.
+     * Get Unix time prefix if UUID was created by `withTime()` or with option `timed: true`.
      *
      * @return int|null
      */
@@ -105,19 +104,7 @@ class Uuid implements Stringable
     }
 
     /**
-     * Get date prefix if UUID was created by `withDate()` or with option `with: 'date'`.
-     *
-     * @return string|null
-     */
-    public function getDate(): string|null
-    {
-        $date = $this->getPrefix();
-
-        return ($date !== null && $date <= gmdate('Ymd')) ? (string) $date : null;
-    }
-
-    /**
-     * Get time prefix if UUID was created by `withTime()` or with option `with: 'time'`.
+     * Get Unix time if UUID was created by `withTime()` or with option `timed: true`.
      *
      * @return int|null
      */
@@ -129,12 +116,12 @@ class Uuid implements Stringable
     }
 
     /**
-     * Get (UTC) date/time if UUID was created by `withTime()` or with option `with: 'time'`.
+     * Format UTC time if UUID was created by `withTime()` or with option `timed: true`.
      *
      * @param  string $format
      * @return string|null
      */
-    public function getDateTime(string $format = 'c'): string|null
+    public function formatTime(string $format = 'c'): string|null
     {
         $time = $this->getPrefix();
 
@@ -155,63 +142,45 @@ class Uuid implements Stringable
     /**
      * Create a Uuid instance with options.
      *
-     * @param  mixed ...$options See generate().
+     * @param  bool ...$options See generate().
      * @return Uuid
      */
-    public static function withOptions(mixed ...$options): Uuid
+    public static function withOptions(bool ...$options): Uuid
     {
         return new Uuid(self::generate(...$options));
     }
 
     /**
-     * Create a Uuid instance with (UTC) date prefixed value.
+     * Create a Uuid instance with Unix time prefix.
      *
-     * @param  bool $guid
+     * @param  bool ...$options See generate().
      * @return Uuid
      */
-    public static function withDate(bool $guid = false): Uuid
+    public static function withTime(bool ...$options): Uuid
     {
-        return new Uuid(self::generate('date', $guid));
+        return new Uuid(self::generate(true, ...$options));
     }
 
     /**
-     * Create a Uuid instance with (Unix) time prefixed value.
+     * Generate a UUID.
      *
+     * @param  bool $timed For Unix time prefix.
      * @param  bool $guid
-     * @return Uuid
-     */
-    public static function withTime(bool $guid = false): Uuid
-    {
-        return new Uuid(self::generate('time', $guid));
-    }
-
-    /**
-     * Generate a UUID by given options or defaults.
-     *
-     * @param  string $with Prefix option, 'time' or 'date' only.
-     * @param  bool   $guid
-     * @param  bool   $upper
-     * @param  bool   $plain
+     * @param  bool $upper
+     * @param  bool $plain
      * @return string
-     * @throws UuidError
      */
-    public static function generate(string $with = '', bool $guid = false, bool $upper = false, bool $plain = false): string
+    public static function generate(bool $timed = false, bool $guid = false, bool $upper = false, bool $plain = false): string
     {
-        $bins = match ($with) {
+        if (!$timed) {
             // Full 16-random bytes.
-            '' => random_bytes(16),
+            $bins = random_bytes(16);
+        } else {
+            // Unix time prefix & 12-random bytes.
+            $bins = strrev(pack('L', time())) . random_bytes(12);
+        }
 
-            // Time prefix & 12-random bytes.
-            'time' => strrev(pack('L', time())) . random_bytes(12),
-
-            // Date prefix & 12-random bytes.
-            'date' => strrev(pack('L', gmdate('Ymd'))) . random_bytes(12),
-
-            // Invalid "with" option.
-            default => throw new UuidError('Invalid "with" option: %q [valids: time,date]', $with),
-        };
-
-        // Add signs: 4 (version) & 8, 9, A, B, but GUID doesn't use them.
+        // Add signs: 4 (version) & 8, 9, A, B (variant), but GUID doesn't use them.
         if (!$guid) {
             $bins[6] = chr(ord($bins[6]) & 0x0F | 0x40); // Version.
             $bins[8] = chr(ord($bins[8]) & 0x3F | 0x80); // Variant.
@@ -277,7 +246,7 @@ class Uuid implements Stringable
     }
 
     /**
-     * Decode a UUID extracting its creation date/time & optionally version.
+     * Decode a UUID extracting its creation time & optionally version.
      *
      * @param  string $uuid
      * @param  bool   $withVersion
