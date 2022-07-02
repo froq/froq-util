@@ -445,13 +445,13 @@ function convert_base(int|string $input, int|string $from, int|string $to): stri
 
     if (is_int($from)) {
         if ($from < 2 || $from > 62) {
-            throw new ArgumentError('Invalid base %q for from [min=2 & max=62]', $from);
+            throw new ArgumentError('Invalid base %q for from [min=2, max=62]', $from);
         }
         $from = strcut($characters, $from);
     }
     if (is_int($to)) {
         if ($to < 2 || $to > 62) {
-            throw new ArgumentError('Invalid base %q for to [min=2 & max=62]', $to);
+            throw new ArgumentError('Invalid base %q for to [min=2, max=62]', $to);
         }
         $to = strcut($characters, $to);
     }
@@ -1547,7 +1547,7 @@ function suid(int $length = 6, int $base = 62): string
     if ($length < 1) {
         throw new ArgumentError('Invalid length: %s [min=1]', $length);
     } elseif ($base < 2 || $base > 62) {
-        throw new ArgumentError('Invalid base: %s [min=2 & max=62]', $base);
+        throw new ArgumentError('Invalid base: %s [min=2, max=62]', $base);
     }
 
     $max = $base - 1;
@@ -1563,16 +1563,16 @@ function suid(int $length = 6, int $base = 62): string
 /**
  * Generate a UUID by given options or defaults.
  *
- * @param  string $with Prefix option, 'time' or 'date' only.
- * @param  bool   $guid
- * @param  bool   $upper
- * @param  bool   $plain
+ * @param  bool $timed For Unix time prefix.
+ * @param  bool $guid
+ * @param  bool $upper
+ * @param  bool $plain
  * @return string
  * @since  5.0
  */
-function uuid(string $with = '', bool $guid = false, bool $upper = false, bool $plain = false): string
+function uuid(bool $timed = false, bool $guid = false, bool $upper = false, bool $plain = false): string
 {
-    return Uuid::generate($with, $guid, $upper, $plain);
+    return Uuid::generate($timed, $guid, $upper, $plain);
 }
 
 /**
