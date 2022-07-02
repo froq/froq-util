@@ -84,48 +84,32 @@ class Uuid implements Stringable
     }
 
     /**
-     * Get Unix time prefix if UUID was created by `withTime()` or with option `timed: true`.
-     *
-     * @return int|null
-     */
-    public function getPrefix(): int|null
-    {
-        return self::decode($this->value)['prefix'];
-    }
-
-    /**
-     * Get version if UUID was created by randomly (v4).
-     *
-     * @return int|null
-     */
-    public function getVersion(): int|null
-    {
-        return self::decode($this->value, true)['version'];
-    }
-
-    /**
-     * Get Unix time if UUID was created by `withTime()` or with option `timed: true`.
+     * Get Unix time if UUID was created by `withTime()` or option `timed: true`.
      *
      * @return int|null
      */
     public function getTime(): int|null
     {
-        $time = $this->getPrefix();
+        $time = null;
+
+        if (ctype_xdigit($sub = substr($this->value, 0, 8))) {
+            $time = hexdec($sub);
+        }
 
         return ($time !== null && $time <= time()) ? $time : null;
     }
 
     /**
-     * Format UTC time if UUID was created by `withTime()` or with option `timed: true`.
+     * Format UTC time if UUID was created by `withTime()` or option `timed: true`.
      *
      * @param  string $format
      * @return string|null
      */
     public function formatTime(string $format = 'c'): string|null
     {
-        $time = $this->getPrefix();
+        $time = $this->getTime();
 
-        return ($time !== null && $time <= time()) ? gmdate($format, $time) : null;
+        return ($time !== null) ? gmdate($format, $time) : null;
     }
 
     /**
@@ -243,27 +227,6 @@ class Uuid implements Stringable
     {
         // With given length.
         return preg_test('~^[a-f0-9]{' . $length . '}$~i', $hash);
-    }
-
-    /**
-     * Decode a UUID extracting its creation time & optionally version.
-     *
-     * @param  string $uuid
-     * @param  bool   $withVersion
-     * @return array
-     */
-    public static function decode(string $uuid, bool $withVersion = false): array
-    {
-        $prefix = $version = null;
-
-        if (ctype_xdigit($sub = substr($uuid, 0, 8))) {
-            $prefix = hexdec($sub);
-        }
-        if ($withVersion && self::validate($uuid, true)) {
-            $version = 4;
-        }
-
-        return ['prefix' => $prefix, 'version' => $version];
     }
 
     /**
