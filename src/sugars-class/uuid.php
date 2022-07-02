@@ -84,6 +84,16 @@ class Uuid implements Stringable
     }
 
     /**
+     * Get Uuid value as byte array.
+     *
+     * @return array
+     */
+    public function toByteArray(): array
+    {
+        return str_split(hex2bin($this->toPlainString()));
+    }
+
+    /**
      * Get Unix time if UUID was created by `withTime()` or option `timed: true`.
      *
      * @return int|null
