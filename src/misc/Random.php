@@ -54,12 +54,12 @@ class Random
      *
      * @param  int $bound
      * @return int
-     * @throws ValueError
+     * @throws ArgumentError
      */
     public function nextInt(int $bound = PHP_INT_MAX): int
     {
         if ($bound < 1) {
-            throw new \ValueError("Min bound is 1, {$bound} given");
+            throw new \ArgumentError('Invalid bound: %s [min=1]', $bound);
         }
 
         // i.e. bound is a power of 2.
@@ -99,28 +99,40 @@ class Random
     /**
      * Get next char.
      *
+     * @param  int $base
      * @return string
      */
-    public function nextChar(): string
+    public function nextChar(int $base = 62): string
     {
-        return $this->nextChars(1);
+        return $this->nextChars(1, $base);
     }
 
     /**
      * Get next chars.
      *
      * @param  int $length
+     * @param  int $base
      * @return string
+     * @throws ArgumentError
      */
-    public function nextChars(int $length): string
+    public function nextChars(int $length, int $base = 62): string
     {
-        $chars = '';
-
-        while (strlen($chars) < $length) {
-            $chars .= BASE62_ALPHABET[$this->nextInt(63) - 1];
+        if ($length < 1) {
+            throw new \ArgumentError('Invalid length: %s [min=1]', $length);
+        } elseif ($base < 2 || $base > 62) {
+            throw new \ArgumentError('Invalid base: %s [min=2, max=62]', $base);
         }
 
-        return $chars;
+        $chars = strcut(BASE62_ALPHABET, $base);
+        $bound = strlen($chars) + 1;
+
+        $ret = '';
+
+        while (strlen($ret) < $length) {
+            $ret .= $chars[$this->nextInt($bound) - 1];
+        }
+
+        return $ret;
     }
 
     /**
@@ -143,18 +155,18 @@ class Random
      */
     public function nextBytes(int $length, bool $join = true, bool $hex = false): string|array
     {
-        $bytes = [];
+        $ret = [];
 
-        while (count($bytes) < $length) {
-            $rands = unpack('C*', pack('L', $this->next(32)));
-            $rands = array_map('chr', array_slice($rands, 1));
-            $bytes = array_slice([...$bytes, ...$rands], 0, $length);
+        while (count($ret) < $length) {
+            $res = unpack('C*', pack('L', $this->next(32)));
+            $res = array_map('chr', array_slice($res, 1));
+            $ret = array_slice([...$ret, ...$res], 0, $length);
         }
 
-        $join && $bytes = join($bytes);
-        $hex  && $bytes = bin2hex($bytes);
+        $join && $ret = join($ret);
+        $hex  && $ret = bin2hex($ret);
 
-        return $bytes;
+        return $ret;
     }
 
     /**
