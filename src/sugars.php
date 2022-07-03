@@ -632,18 +632,25 @@ function get_class_properties(string|object $class, bool $scope_check = true, bo
 /**
  * Get a constant name.
  *
- * @param  mixed  $value
- * @param  string $name_prefix
+ * @param  mixed        $value
+ * @param  string|array $name_prefix
  * @return string|null
  * @throws ArgumentError
  * @since  5.26
  */
-function get_constant_name(mixed $value, string $name_prefix): string|null
+function get_constant_name(mixed $value, string|array $name_prefix): string|null
 {
     $name_prefix || throw new ArgumentError('Empty name prefix given');
 
-    return array_first(array_filter(array_keys(get_defined_constants(), $value, true),
-        fn($name) => str_starts_with($name, $name_prefix)));
+    // Regular constants.
+    if (is_string($name_prefix)) {
+        return array_first(array_filter(array_keys(get_defined_constants(), $value, true),
+            fn($name) => str_starts_with($name, $name_prefix)));
+    }
+
+    // Class constants.
+    return array_first(array_filter(array_keys(get_class_constants($name_prefix[0], false), $value, true),
+        fn($name) => str_starts_with($name, $name_prefix[1])));
 }
 
 /**
