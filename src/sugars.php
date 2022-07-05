@@ -1093,9 +1093,9 @@ function utime(bool $string = false): float|string
  */
 function ustime(bool $string = false): int|string
 {
-    $time = microtime(true) * 1000;
+    $time = (int) (microtime(true) * 1000);
 
-    return !$string ? (int) $time : (string) (int) $time;
+    return !$string ? $time : (string) $time;
 }
 
 /**
