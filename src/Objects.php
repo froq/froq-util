@@ -371,7 +371,6 @@ final class Objects extends \StaticClass
         $ret = [];
 
         foreach ($ref->getProperties($filter) as $property) {
-            // Only getters used, name/property cannot overriden.
             $propertyName  = $property->getName();
             $propertyClass = $property->getClass();
 
