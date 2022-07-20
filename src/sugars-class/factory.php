@@ -54,10 +54,9 @@ class Factory
      * this factory class can be declared & used like:
      *
      * ```
-     * class UserFactory extends Factory
-     * {
+     * class UserFactory extends Factory {
      *   function __construct() {
-     *     super(User::class);
+     *     parent::__construct(User::class);
      *   }
      *
      *   function withId(int $id): self {
