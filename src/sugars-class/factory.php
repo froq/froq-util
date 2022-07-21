@@ -6,7 +6,7 @@
 declare(strict_types=1);
 
 /**
- * A class for factoring objects dynamically.
+ * A class for factoring class instances dynamically.
  *
  * @package froq\util
  * @object  Factory
