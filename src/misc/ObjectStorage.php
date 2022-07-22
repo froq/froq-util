@@ -50,7 +50,7 @@ class ObjectStorage extends \SplObjectStorage implements Arrayable
      */
     public function getId(object $object): string
     {
-        return get_object_id($object, false);
+        return get_object_id($object, with_name: false);
     }
 
     /**
@@ -61,29 +61,31 @@ class ObjectStorage extends \SplObjectStorage implements Arrayable
      */
     public function getNamedId(object $object): string
     {
-        return get_object_id($object, true);
+        return get_object_id($object, with_name: true);
     }
 
     /**
      * Get hash with name.
      *
      * @param  object $object
+     * @param  bool   $withRehash
      * @return string
      */
-    public function getNamedHash(object $object): string
+    public function getNamedHash(object $object, bool $withRehash = false): string
     {
-        return get_class($object) .'#'. parent::getHash($object);
+        return get_object_hash($object, with_name: true, with_rehash: $withRehash);
     }
 
     /**
      * Get hash with serialize.
      *
      * @param  object $object
+     * @param  bool   $withName
      * @return string
      */
-    public function getSerializedHash(object $object): string
+    public function getSerializedHash(object $object, bool $withName = true): string
     {
-        return get_class($object) .'#'. get_object_hash($object, serialized: true);
+        return get_object_hash($object, with_name: $withName, serialized: true);
     }
 
     /**
