@@ -76,7 +76,7 @@ final class Objects extends \StaticClass
      * @param  bool   $withName
      * @return string
      */
-    public static function getSerializedHash(object $target, bool $withName = false): string
+    public static function getSerializedHash(object $target, bool $withName = true): string
     {
         $hash = hash('crc32', self::getHash($target) . serialize($target));
 
