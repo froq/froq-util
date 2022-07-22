@@ -1465,7 +1465,7 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     public function htmlDecode(bool $simple = false): self
     {
         $this->data = $simple ? str_ireplace(['&lt;', '&gt;'], ['<', '>'], $this->data)
-             : str_ireplace(['&#39;', '&#34;', '&lt;', '&gt;'], ["'", '"', '<', '>'], $this->data);
+            : str_ireplace(['&#39;', '&#34;', '&lt;', '&gt;'], ["'", '"', '<', '>'], $this->data);
 
         return $this;
     }
