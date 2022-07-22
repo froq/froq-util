@@ -1417,6 +1417,32 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     }
 
     /**
+     * Encode URL characters.
+     *
+     * @param  bool $raw
+     * @return self
+     */
+    public function urlEncode(bool $raw = false): self
+    {
+        $this->data = $raw ? rawurlencode($this->data) : urlencode($this->data);
+
+        return $this;
+    }
+
+    /**
+     * Decode URL characters.
+     *
+     * @param  bool $raw
+     * @return self
+     */
+    public function urlDecode(bool $raw = false): self
+    {
+        $this->data = $raw ? rawurldecode($this->data) : urldecode($this->data);
+
+        return $this;
+    }
+
+    /**
      * Encode HTML characters.
      *
      * @param  bool $simple
