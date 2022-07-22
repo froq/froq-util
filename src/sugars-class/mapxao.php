@@ -72,7 +72,7 @@ class XArrayObject extends ArrayObject implements Arrayable, Objectable, Jsonabl
      */
     public function &get(string|int $key, mixed $default = null): mixed
     {
-        // @thanks: https://php.net/arrayobject#125849
+        /** @thanks https://php.net/arrayobject#125849 */
         $iter  = $this->getIterator();
         $value =& $iter[$key] ?? $default;
 
