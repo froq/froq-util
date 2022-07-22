@@ -69,11 +69,12 @@ class XObject extends XClass
     /**
      * Get serialized hash.
      *
+     * @param  bool $withName
      * @return string
      */
-    public function getSerializedHash(): string
+    public function getSerializedHash(bool $withName = true): string
     {
-        return Objects::getSerializedHash($this->object);
+        return Objects::getSerializedHash($this->object, $withName);
     }
 
     /**
