@@ -642,12 +642,12 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     }
 
     /**
-     * Remove whitespaces.
+     * Remove spaces.
      *
      * @param  bool $trim
      * @return self
      */
-    public function removeWhitespaces(bool $trim = true): self
+    public function removeSpaces(bool $trim = true): self
     {
         $this->replace(new RegExp('\s+'), '');
         $trim && $this->trim();
@@ -656,12 +656,12 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     }
 
     /**
-     * Reduce whitespaces.
+     * Reduce spaces.
      *
      * @param  bool $trim
      * @return self
      */
-    public function reduceWhitespaces(bool $trim = true): self
+    public function reduceSpaces(bool $trim = true): self
     {
         $this->replace(new RegExp('\s+'), ' ');
         $trim && $this->trim();
