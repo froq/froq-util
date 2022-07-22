@@ -30,7 +30,7 @@ function html_decode(string $input, bool $simple = false): string
 }
 
 /**
- * Strip HTML characters in given input.
+ * Strip HTML tags in given input.
  *
  * @param  string            $input
  * @param  string|array|null $allowed
@@ -39,13 +39,11 @@ function html_decode(string $input, bool $simple = false): string
  */
 function html_strip(string $input, string|array $allowed = null, bool $decode = false): string
 {
-    return xstring($input)
-        ->stripTags($allowed, $decode)
-        ->toString();
+    return xstring($input)->stripTags($allowed, $decode)->toString();
 }
 
 /**
- * Remove HTML characters in given input.
+ * Remove HTML tags in given input.
  *
  * @param  string            $input
  * @param  string|array|null $allowed
@@ -54,9 +52,7 @@ function html_strip(string $input, string|array $allowed = null, bool $decode = 
  */
 function html_remove(string $input, string|array $allowed = null, bool $decode = false): string
 {
-    return xstring($input)
-        ->removeTags($allowed, $decode)
-        ->toString();
+    return xstring($input)->removeTags($allowed, $decode)->toString();
 }
 
 /**
