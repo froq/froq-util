@@ -14,8 +14,7 @@ declare(strict_types=1);
  */
 function html_encode(string $input, bool $simple = false): string
 {
-    return $simple ? str_replace(['<', '>'], ['&lt;', '&gt;'], $input)
-         : str_replace(["'", '"', '<', '>'], ['&#39;', '&#34;', '&lt;', '&gt;'], $input);
+    return xstring($input)->htmlEncode($simple)->toString();
 }
 
 /**
@@ -27,8 +26,7 @@ function html_encode(string $input, bool $simple = false): string
  */
 function html_decode(string $input, bool $simple = false): string
 {
-    return $simple ? str_ireplace(['&lt;', '&gt;'], ['<', '>'], $input)
-         : str_ireplace(['&#39;', '&#34;', '&lt;', '&gt;'], ["'", '"', '<', '>'], $input);
+    return xstring($input)->htmlDecode($simple)->toString();
 }
 
 /**
