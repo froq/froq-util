@@ -13,7 +13,7 @@ use froq\util\Arrays;
  * A class just like ArrayObject but "a bit" extended, basically designed
  * for Options & Attributes classes.
  *
- * @package froq\util
+ * @package global
  * @object  XArrayObject
  * @author  Kerem Güneş
  * @since   6.0

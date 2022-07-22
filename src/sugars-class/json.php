@@ -8,7 +8,7 @@ declare(strict_types=1);
 /**
  * A static class which builds/parses JSON arrays/objects/strings safely.
  *
- * @package froq\util
+ * @package global
  * @object  Json
  * @author  Kerem Güneş
  * @since   5.0
@@ -219,7 +219,7 @@ use froq\common\interface\{Arrayable, Jsonable};
 /**
  * A dynamic class which is mapped as JSON object including some utility methods.
  *
- * @package froq\util
+ * @package global
  * @object  JsonObject
  * @author  Kerem Güneş
  * @since   5.0

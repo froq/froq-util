@@ -10,7 +10,7 @@ use froq\util\Strings;
 /**
  * A class for playing with strings in OOP-way.
  *
- * @package froq\util
+ * @package global
  * @object  XString
  * @author  Kerem Güneş
  * @since   6.0

@@ -10,7 +10,7 @@ use froq\util\Numbers;
 /**
  * A class for playing with numbers in OOP-way.
  *
- * @package froq\util
+ * @package global
  * @object  XNumber
  * @author  Kerem Güneş
  * @since   6.0

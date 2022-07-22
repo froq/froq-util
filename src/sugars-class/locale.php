@@ -11,7 +11,7 @@ use froq\common\interface\Arrayable;
  * Locale class.
  *
  * @package global
- * @class   Locale
+ * @object  Locale
  * @author  Kerem Güneş
  * @since   6.0
  */
@@ -381,7 +381,7 @@ class Locale implements Arrayable, Stringable
  * Locale category class.
  *
  * @package global
- * @class   LocaleCategory
+ * @object  LocaleCategory
  * @author  Kerem Güneş
  * @since   6.0
  */
@@ -513,7 +513,7 @@ class LocaleCategory implements Arrayable, Stringable
  * Locale list class.
  *
  * @package global
- * @class   LocaleList
+ * @object  LocaleList
  * @author  Kerem Güneş
  * @since   6.0
  */
@@ -540,7 +540,7 @@ class LocaleList extends ItemList
  * Locale category list class.
  *
  * @package global
- * @class   LocaleCategoryList
+ * @object  LocaleCategoryList
  * @author  Kerem Güneş
  * @since   6.0
  */

@@ -8,7 +8,7 @@ declare(strict_types=1);
 /**
  * A class for references.
  *
- * @package froq\util
+ * @package global
  * @object  Reference
  * @author  Kerem Güneş
  * @since   6.0

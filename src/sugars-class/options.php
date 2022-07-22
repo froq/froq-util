@@ -6,9 +6,9 @@
 declare(strict_types=1);
 
 /**
- * A class for options-related works.
+ * A class for options related works.
  *
- * @package froq\util
+ * @package global
  * @object  Options
  * @author  Kerem Güneş
  * @since   6.0

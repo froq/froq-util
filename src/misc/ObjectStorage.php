@@ -13,7 +13,7 @@ use froq\common\interface\Arrayable;
  * An extended SplObjectStorage class.
  *
  * @package froq\util\misc
- * @class   froq\util\misc\ObjectStorage
+ * @object  froq\util\misc\ObjectStorage
  * @author  Kerem Güneş
  * @since   6.0
  */

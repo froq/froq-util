@@ -8,7 +8,7 @@ declare(strict_types=1);
 /**
  * A class for dynamic properties.
  *
- * @package froq\util
+ * @package global
  * @object  PlainObject
  * @author  Kerem Güneş
  * @since   6.0

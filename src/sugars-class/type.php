@@ -8,7 +8,7 @@ declare(strict_types=1);
 /**
  * A class for playing with types in OOP-way.
  *
- * @package froq\util
+ * @package global
  * @object  Type
  * @author  Kerem Güneş
  * @since   6.0

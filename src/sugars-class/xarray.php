@@ -16,7 +16,7 @@ use froq\collection\{Collection, CollectionInterface};
 /**
  * A class for playing with arrays in OOP-way.
  *
- * @package froq\util
+ * @package global
  * @object  XArray
  * @author  Kerem Güneş
  * @since   6.0

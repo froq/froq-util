@@ -11,7 +11,7 @@ use froq\collection\trait\{CountTrait, EmptyTrait};
 /**
  * A simple item list class with a list data container & access stuff.
  *
- * @package froq\util
+ * @package global
  * @object  ItemList
  * @author  Kerem Güneş
  * @since   6.0

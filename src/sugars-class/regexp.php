@@ -8,7 +8,7 @@ declare(strict_types=1);
 /**
  * A class for playing with regular expression stuff in OOP-way.
  *
- * @package froq\util
+ * @package global
  * @object  RegExp
  * @author  Kerem Güneş
  * @since   6.0
@@ -657,7 +657,7 @@ class RegExp implements Stringable
 /**
  * A class for match stuff of RegExp class.
  *
- * @package froq\util
+ * @package global
  * @object  RegExpMatch
  * @author  Kerem Güneş
  * @since   6.0

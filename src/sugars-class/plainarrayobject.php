@@ -8,7 +8,7 @@ declare(strict_types=1);
 /**
  * A class for dynamic properties with array-access utility.
  *
- * @package froq\util
+ * @package global
  * @object  PlainArrayObject
  * @author  Kerem Güneş
  * @since   6.0

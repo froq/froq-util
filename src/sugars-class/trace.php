@@ -8,7 +8,7 @@ declare(strict_types=1);
 /**
  * A class for playing with traces in OOP-way.
  *
- * @package froq\util
+ * @package global
  * @object  Trace
  * @author  Kerem Güneş
  * @since   6.0
@@ -197,7 +197,7 @@ final class Trace implements Stringable, Countable, IteratorAggregate, ArrayAcce
 /**
  * An internal class for Trace entries.
  *
- * @package froq\util
+ * @package global
  * @object  TraceEntry
  * @author  Kerem Güneş
  * @since   6.0

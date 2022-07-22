@@ -8,7 +8,7 @@ declare(strict_types=1);
 /**
  * A class for dynamic states as reference.
  *
- * @package froq\util
+ * @package global
  * @object  State
  * @author  Kerem Güneş
  * @since   6.0

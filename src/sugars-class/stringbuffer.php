@@ -10,7 +10,7 @@ use froq\util\Strings;
 /**
  * A simple string buffer class, inpired by Java's StringBuffer.
  *
- * @package froq\util
+ * @package global
  * @object  StringBuffer
  * @author  Kerem Güneş
  * @since   6.0

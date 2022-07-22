@@ -9,7 +9,7 @@ declare(strict_types=1);
  * A simple UUID/v4 class for working customized UUIDs.
  *
  * @package global
- * @class   Uuid
+ * @object  Uuid
  * @author  Kerem Güneş
  * @since   6.0
  */

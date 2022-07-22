@@ -11,7 +11,7 @@ declare(strict_types=1);
  *
  * Note: not abstract'ed, letting the error in constructor.
  *
- * @package froq\util
+ * @package global
  * @object  StaticClass
  * @author  Kerem Güneş
  * @since   4.0, 6.0
@@ -24,7 +24,7 @@ class StaticClass
 /**
  * A trait entity which is able to forbid initialions on user object.
  *
- * @package froq\util
+ * @package global
  * @object  StaticClassTrait
  * @author  Kerem Güneş
  * @since   4.3, 6.0

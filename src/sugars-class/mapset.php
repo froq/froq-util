@@ -15,7 +15,7 @@ use froq\collection\{Collection, CollectionInterface};
 /**
  * A trait used by Map/Set classes.
  *
- * @package froq\util
+ * @package global
  * @object  MapSetTrait
  * @author  Kerem Güneş
  * @since   5.35
@@ -440,7 +440,7 @@ trait MapSetTrait
 /**
  * A map class just like JavaScript's map but "a bit" extended.
  *
- * @package froq\util
+ * @package global
  * @object  Map
  * @author  Kerem Güneş
  * @since   5.25
@@ -711,7 +711,7 @@ class Map implements Arrayable, Listable, Jsonable, Collectable, Iteratable, Ite
 /**
  * A set class just like JavaScript's set but "a bit" extended.
  *
- * @package froq\util
+ * @package global
  * @object  Set
  * @author  Kerem Güneş
  * @since   5.25
@@ -973,7 +973,7 @@ class Set implements Arrayable, Listable, Jsonable, Collectable, Iteratable, Ite
 /**
  * A dictionary class just like Python's dict but "a bit" extended.
  *
- * @package froq\util
+ * @package global
  * @object  Dict
  * @author  Kerem Güneş
  * @since   5.31
