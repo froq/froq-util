@@ -41,14 +41,9 @@ function html_decode(string $input, bool $simple = false): string
  */
 function html_strip(string $input, string|array $allowed = null, bool $decode = false): string
 {
-    $decode && $input = html_decode($input, true);
-
-    if ($allowed && is_string($allowed)) {
-        $allowed = split('\s*,\s*', $allowed);
-        $allowed = array_map(fn($tag) => trim($tag, '<>'), $allowed);
-    }
-
-    return strip_tags($input, $allowed);
+    return xstring($input)
+        ->stripTags($allowed, $decode)
+        ->toString();
 }
 
 /**
@@ -61,17 +56,9 @@ function html_strip(string $input, string|array $allowed = null, bool $decode = 
  */
 function html_remove(string $input, string|array $allowed = null, bool $decode = false): string
 {
-    $decode && $input = html_decode($input, true);
-
-    if ($allowed && is_string($allowed)) {
-        $allowed = split('\s*,\s*', $allowed);
-        $allowed = array_map(fn($tag) => trim($tag, '<>'), $allowed);
-        $pattern = '~<(?!(?:' . join('|', $allowed) . ')\b)(\w[\w-]*)\b[^>]*/?>(?:.*?</\1>)?~isu';
-    } else {
-        $pattern = '~<(\w[\w-]*)\b[^>]*/?>(?:.*?</\1>)?~isu';
-    }
-
-    return preg_remove($pattern, $input);
+    return xstring($input)
+        ->removeTags($allowed, $decode)
+        ->toString();
 }
 
 /**
