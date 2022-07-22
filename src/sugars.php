@@ -1671,7 +1671,7 @@ function get_object_id(object $object, bool $with_name = true): string
  */
 function get_object_hash(object $object, bool $with_name = true, bool $with_rehash = false, bool $serialized = false): string
 {
-    return !$serialized ? Objects::getHash($object, $with_name, $with_rehash) : Objects::getSerializedHash($object);
+    return !$serialized ? Objects::getHash($object, $with_name, $with_rehash) : Objects::getSerializedHash($object, $with_name);
 }
 
 /**
