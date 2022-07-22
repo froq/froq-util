@@ -6,7 +6,7 @@
 declare(strict_types=1);
 
 /**
- * Encode HTML characters on given input.
+ * Encode HTML characters in given input.
  *
  * @param  string $input
  * @param  bool   $simple
@@ -19,7 +19,7 @@ function html_encode(string $input, bool $simple = false): string
 }
 
 /**
- * Decode HTML characters on given input.
+ * Decode HTML characters in given input.
  *
  * @param  string $input
  * @param  bool   $simple
@@ -32,7 +32,7 @@ function html_decode(string $input, bool $simple = false): string
 }
 
 /**
- * Strip HTML characters on given input.
+ * Strip HTML characters in given input.
  *
  * @param  string            $input
  * @param  string|array|null $allowed
@@ -47,7 +47,7 @@ function html_strip(string $input, string|array $allowed = null, bool $decode = 
 }
 
 /**
- * Remove HTML characters on given input.
+ * Remove HTML characters in given input.
  *
  * @param  string            $input
  * @param  string|array|null $allowed
@@ -62,32 +62,32 @@ function html_remove(string $input, string|array $allowed = null, bool $decode =
 }
 
 /**
- * Make an attribute string with given [name=>value] notated array.
+ * Make an attribute string with given name/value notated array.
  *
- * @param  array $input
+ * @param  array $attributes
  * @return string
  */
-function html_attributes(array $input): string
+function html_attributes(array $attributes): string
 {
-    $tmp = [];
+    $ret = [];
 
-    foreach ($input as $name => $value) {
-        $tmp[] = sprintf('%s="%s"', $name, $value);
+    foreach ($attributes as $name => $value) {
+        $ret[] = sprintf('%s="%s"', $name, $value);
     }
 
-    return join(' ', $tmp);
+    return join(' ', $ret);
 }
 
 /**
- * Make options string with given [name=>value] notated array.
+ * Make options string with given name/value notated array.
  *
- * @param  array             $input
+ * @param  array             $options
  * @param  mixed             $current
  * @param  bool              $strict
  * @param  string|array|null $extra
  * @return string
  */
-function html_options(array $input, mixed $current = null, bool $strict = false, string|array $extra = null): string
+function html_options(array $options, mixed $current = null, bool $strict = false, string|array $extra = null): string
 {
     if ($extra !== null) {
         if (is_array($extra)) {
@@ -98,7 +98,7 @@ function html_options(array $input, mixed $current = null, bool $strict = false,
 
     $ret = '';
 
-    foreach ($input as $value => $text) {
+    foreach ($options as $value => $text) {
         if (is_array($text)) {
             [$value, $text] = $text;
         }
