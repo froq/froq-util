@@ -1382,18 +1382,44 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     {
         $decode && $this->htmlDecode();
 
-        if ($allowed) {
-            if (is_string($allowed)) {
-                $allowed = Set::fromSplit($allowed, '\s*,\s*')
-                    ->map(fn($tag) => trim($tag, '<>'))
-                    ->toArray();
-            }
-            $pattern = '~<(?!(?:' . join('|', $allowed) . ')\b)(\w+)\b[^>]*/?>(?:.*?</\1>)?~isu';
-        } else {
-            $pattern = '~<(\w+)\b[^>]*/?>(?:.*?</\1>)?~isu';
+        if ($allowed && is_string($allowed)) {
+            $allowed = Set::fromSplit($allowed, '\s*,\s*')
+                ->map(fn($tag) => strtolower(trim($tag, '<>')))
+                ->toArray();
         }
 
-        $this->data = preg_remove($pattern, $this->data);
+        /* @cancel: Slow & memo-expensive.
+        $doc = new DOMDocument();
+        $doc->loadXML('<?xml version="1.0" encoding="utf-8"?><xstring>' . $this->data . '</xstring>');
+        $data = '';
+        foreach ($doc->firstChild->childNodes as $node) {
+            if ($allowed && in_array($node->nodeName, $allowed, true)) {
+                $temp  = new DOMDocument();
+                $data .= $temp->saveXML($temp->importNode($node, true));
+                unset($temp);
+            } elseif ($node->nodeName == '#text') {
+                $data .= $node->nodeValue;
+            }
+        }
+        $this->data = $data;
+        return $this; */
+
+        static $pattern = '~<(\w[\w-]*)\b[^>]*/?>(?:.*?</\1>)?~isu';
+
+        if (!$allowed) {
+            $data = preg_remove($pattern, $this->data);
+        } else {
+            $data = $this->data;
+            if (preg_match_all($pattern, $data, $match)) {
+                foreach ($match[0] as $i => $content) {
+                    if (!in_array(/* $tag = */ strtolower($match[1][$i]), $allowed, true)) {
+                        $data = preg_remove('~' . preg_quote($content) . '~isu', $data, 1);
+                    }
+                }
+            }
+        }
+
+        $this->data = $data;
 
         return $this;
     }
