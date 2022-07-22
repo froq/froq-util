@@ -989,7 +989,7 @@ class Dict extends Map
      */
     public function pushKey(int|string|object $key, mixed $value): self
     {
-        $this->data = array_push_key($this->data, $key, $value);
+        $this->data = array_push_key($this->data, $this->prepareKey($key), $value);
 
         return $this;
     }
@@ -1003,7 +1003,7 @@ class Dict extends Map
      */
     public function popKey(int|string|object $key, mixed $default = null): mixed
     {
-        $value = array_pop_key($this->data, $key, $default);
+        $value = array_pop_key($this->data, $this->prepareKey($key), $default);
 
         return $value;
     }
