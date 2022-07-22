@@ -1363,7 +1363,7 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
         if ($allowed && is_string($allowed)) {
             $allowed = Set::fromSplit($allowed, '\s*,\s*')
                 ->map(fn($tag) => trim($tag, '<>'))
-                ->array();
+                ->toArray();
         }
 
         $this->data = strip_tags($this->data, $allowed);
@@ -1386,7 +1386,7 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
             if (is_string($allowed)) {
                 $allowed = Set::fromSplit($allowed, '\s*,\s*')
                     ->map(fn($tag) => trim($tag, '<>'))
-                    ->array();
+                    ->toArray();
             }
             $pattern = '~<(?!(?:' . join('|', $allowed) . ')\b)(\w+)\b[^>]*/?>(?:.*?</\1>)?~isu';
         } else {
