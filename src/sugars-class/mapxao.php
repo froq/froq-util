@@ -72,9 +72,11 @@ class XArrayObject extends ArrayObject implements Arrayable, Objectable, Jsonabl
      */
     public function &get(string|int $key, mixed $default = null): mixed
     {
-        $value = parent::offsetExists($key) ? parent::offsetGet($key) : $default;
-        $ret =& $value;
-        return $ret;
+        // @thanks: https://php.net/arrayobject#125849
+        $iter  = $this->getIterator();
+        $value =& $iter[$key] ?? $default;
+
+        return $value;
     }
 
     /**
