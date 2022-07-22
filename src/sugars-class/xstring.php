@@ -1382,10 +1382,12 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     {
         $decode && $this->htmlDecode();
 
-        if ($allowed && is_string($allowed)) {
-            $allowed = Set::fromSplit($allowed, '\s*,\s*')
-                ->map(fn($tag) => trim($tag, '<>'))
-                ->array();
+        if ($allowed) {
+            if (is_string($allowed)) {
+                $allowed = Set::fromSplit($allowed, '\s*,\s*')
+                    ->map(fn($tag) => trim($tag, '<>'))
+                    ->array();
+            }
             $pattern = '~<(?!(?:' . join('|', $allowed) . ')\b)(\w+)\b[^>]*/?>(?:.*?</\1>)?~isu';
         } else {
             $pattern = '~<(\w+)\b[^>]*/?>(?:.*?</\1>)?~isu';
