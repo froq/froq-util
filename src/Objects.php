@@ -48,7 +48,7 @@ final class Objects extends \StaticClass
     {
         $id = (string) spl_object_id($target);
 
-        return $withName ? self::getName($target) .'#'. $id : $id;
+        return $withName ? $target::class .'#'. $id : $id;
     }
 
     /**
@@ -66,7 +66,7 @@ final class Objects extends \StaticClass
         // Pack "000..." stuff.
         $withRehash && $hash = hash('crc32', $hash);
 
-        return $withName ? self::getName($target) .'#'. $hash : $hash;
+        return $withName ? $target::class .'#'. $hash : $hash;
     }
 
     /**
@@ -80,7 +80,7 @@ final class Objects extends \StaticClass
     {
         $hash = hash('crc32', self::getHash($target) . serialize($target));
 
-        return $withName ? self::getName($target) .'#'. $hash : $hash;
+        return $withName ? $target::class .'#'. $hash : $hash;
     }
 
     /**
