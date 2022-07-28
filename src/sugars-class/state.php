@@ -111,7 +111,7 @@ class State extends PlainArrayObject
     {
         // When no named params given.
         if ($states && is_list($states)) {
-            $states = $states[0];
+            $states = current($states);
         }
 
         return $states;
