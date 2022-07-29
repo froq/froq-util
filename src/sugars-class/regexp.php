@@ -622,7 +622,7 @@ class RegExp implements Stringable
     private function processError(string $func = ''): void
     {
         if ($message = preg_error_message($code, $func, true)) {
-            $this->error = new RegExpError($message, $code);
+            $this->error = new RegExpError($message, code: $code);
             $this->errorCode = $code;
             if ($this->throw) {
                 throw $this->error;
