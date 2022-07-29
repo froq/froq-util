@@ -332,7 +332,7 @@ class ItemList implements Arrayable, Jsonable, Countable, IteratorAggregate, Arr
                 default  => $type,
             };
 
-            throw new KeyError(format('Invalid index %s for %s', $indexRepr, static::class));
+            throw new KeyError('Invalid index %s for %s', [$indexRepr, $this::class]);
         }
     }
 }

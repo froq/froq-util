@@ -60,24 +60,24 @@ class RegExp implements Stringable
     /**
      * Constructor.
      *
-     * @param  string $source
-     * @param  string $modifiers
-     * @param  bool   $throw
+     * @param  string $source    Plain RegExp source (without delimiter).
+     * @param  string $modifiers Valids: imsuxADSUJX.
+     * @param  bool   $throw     False is silent mode.
      * @throws RegExpError
      */
     public function __construct(string $source, string $modifiers = '', bool $throw = false)
     {
-        if ($throw && $modifiers != '') {
+        if ($modifiers != '') {
             $modifiers = self::prepareModifiers($modifiers, $invalids);
             if (!$modifiers) {
-                throw new RegExpError('Invalid modifiers: ' . $invalids);
+                throw new RegExpError('Invalid modifiers: %q', $invalids);
             }
         }
 
         $this->source    = $source;
         $this->modifiers = $modifiers;
         $this->pattern   = $this->preparePattern($source, $modifiers);
-        $this->throw     = $throw; // False is silent mode.
+        $this->throw     = $throw;
     }
 
     /** @magic */
@@ -598,7 +598,7 @@ class RegExp implements Stringable
 
         $pos = strrpos($pattern, $delimiter, 1);
         if (!$pos) {
-            throw new RegExpError('No end delimiter ' . $delimiter);
+            throw new RegExpError('No end delimiter %q', $delimiter);
         }
 
         return new static(
@@ -640,10 +640,10 @@ class RegExp implements Stringable
                 throw new RegExpError('Empty class given');
             }
             if (!class_exists($class)) {
-                throw new RegExpError('No class exists such ' . $class);
+                throw new RegExpError('No class exists such %q', $class);
             }
             if (!class_extends($class, 'Traversable')) {
-                throw new RegExpError('Class ' . $class . ' must be an iterable');
+                throw new RegExpError('Class %q must be an iterable', $class);
             }
         }
     }
@@ -659,19 +659,19 @@ class RegExp implements Stringable
             foreach ($flags as $flag) {
                 if (is_string($flag)) {
                     $constant = 'RegExp::' . strtoupper($flag);
-                    defined($constant) || throw new RegExpError(format(
+                    defined($constant) || throw new RegExpError(
                         'No constant exists such %s',
                         $constant
-                    ));
+                    );
 
                     $flagsSum |= constant($constant);
                 } elseif (is_int($flag)) {
                     $flagsSum |= $flag;
                 } else {
-                    throw new RegExpError(format(
-                        'Invalid flag type %s [valids: string,int]',
-                        get_type($flag)
-                    ));
+                    throw new RegExpError(
+                        'Invalid flag type %t [valids: string,int]',
+                        $flag
+                    );
                 }
             }
 

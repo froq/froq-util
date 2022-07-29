@@ -270,7 +270,7 @@ function split(string $separator, string $input, int $limit = null, int $flags =
     // Fill error message if requested.
     if (func_num_args() == 5) {
         $message = preg_error_message($code, 'preg_split');
-        $message && $error = new RegExpError($message, $code);
+        $message && $error = new RegExpError($message, code: $code);
     }
 
     return $ret;

@@ -26,6 +26,7 @@ trait ErrorTrait
     public function __construct(string $message = null, mixed $messageParams = null, int $code = null,
         Throwable $previous = null, /* Throwable $cause = null */)
     {
+        // Formattable message with params.
         if ($message && func_num_args() > 1) {
             $message = format($message, ...array_values(
                 is_array($messageParams) || is_scalar($messageParams)
