@@ -377,6 +377,33 @@ class RegExp implements Stringable
     }
 
     /**
+     * Perform an exec.
+     *
+     * @param  string      $input
+     * @param  int|array   $flags
+     * @param  int         $offset
+     * @param  string|null $class
+     * @return iterable|null
+     */
+    public function exec(string $input, int|array $flags = 0, int $offset = 0, string $class = null): iterable|null
+    {
+        $this->classCheck($class);
+        $this->flagsCheck($flags);
+
+        $res =@ preg_match($this->pattern, $input, $ret, $flags, $offset);
+
+        if ($res === false) {
+            $this->processError();
+            $ret = null;
+        } else {
+            $ret = array_filter_keys($ret, 'is_int')
+                 + ['groups' => array_filter_keys($ret, 'is_string')];
+        }
+
+        return $class ? new $class((array) $ret) : $ret;
+    }
+
+    /**
      * Find a possible match.
      *
      * @param  string      $input
