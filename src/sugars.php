@@ -253,7 +253,7 @@ function split(string $separator, string $input, int $limit = null, int $flags =
     } else {
         // Escape null bytes, delimiter & special char typos.
         $separator = strlen($separator) == 1 ? preg_quote($separator, '~')
-             : str_replace(["\0", '~'], ['\0', '\~'], $separator);
+            : str_replace(["\0", '~'], ['\0', '\~'], $separator);
 
         $ret = preg_split(
             '~'. $separator .'~u', $input,
