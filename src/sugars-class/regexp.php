@@ -395,7 +395,7 @@ class RegExp implements Stringable
         if ($res === false) {
             $this->processError();
             $ret = null;
-        } else {
+        } elseif ($ret) {
             $ret = array_filter_keys($ret, 'is_int')
                  + ['groups' => array_filter_keys($ret, 'is_string')];
         }
