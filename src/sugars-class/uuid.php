@@ -191,9 +191,9 @@ class Uuid implements Stringable
     /**
      * Generate a GUID.
      *
-     * @param  bool   $timed
-     * @param  bool   $upper
-     * @param  bool   $plain
+     * @param  bool $timed
+     * @param  bool $upper
+     * @param  bool $plain
      * @return string
      */
     public static function generateGuid(bool $timed = false, bool $upper = false, bool $plain = false): string
@@ -292,9 +292,8 @@ class Uuid implements Stringable
     {
         static $algos = [16 => 'fnv1a64', 32 => 'md5', 40 => 'sha1', 64 => 'sha256'];
 
-        if (!$algo = ($algos[$length] ?? null)) {
-            throw new UuidError('Invalid length: %s [valids: 16,32,40,64]', $length);
-        }
+        $algo = $algos[$length]
+            ?? throw new UuidError('Invalid length: %s [valids: 16,32,40,64]', $length);
 
         $hash = hash($algo, $uuid);
 
