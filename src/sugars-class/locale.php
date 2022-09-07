@@ -498,7 +498,7 @@ class LocaleCategory implements Arrayable, Stringable
      * Get constants map, creating for once.
      *
      * @param  bool $flip
-     * @return array<string, int>
+     * @return array
      */
     public static function map(bool $flip = false): array
     {
