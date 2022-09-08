@@ -66,7 +66,7 @@ class Item implements Arrayable, Jsonable, Countable, IteratorAggregate, ArrayAc
     /**
      * Check an item.
      *
-     * @param  string $key
+     * @param  int|string $key
      * @return bool
      */
     public function has(int|string $key): bool
@@ -77,8 +77,8 @@ class Item implements Arrayable, Jsonable, Countable, IteratorAggregate, ArrayAc
     /**
      * Set an item.
      *
-     * @param  string $key
-     * @param  mixed  $item
+     * @param  int|string $key
+     * @param  mixed      $item
      * @return self
      */
     public function set(int|string $key, mixed $item): self
@@ -91,7 +91,7 @@ class Item implements Arrayable, Jsonable, Countable, IteratorAggregate, ArrayAc
     /**
      * Get an item.
      *
-     * @param  string     $key
+     * @param  int|string $key
      * @param  mixed|null $default
      * @return mixed
      */
@@ -103,7 +103,7 @@ class Item implements Arrayable, Jsonable, Countable, IteratorAggregate, ArrayAc
     /**
      * Remove an item.
      *
-     * @param  string $key
+     * @param  int|string $key
      * @return self
      */
     public function remove(int|string $key): self
@@ -150,6 +150,7 @@ class Item implements Arrayable, Jsonable, Countable, IteratorAggregate, ArrayAc
      * Sort.
      *
      * @param  callable|null $func
+     * @param  int           $flags
      * @return self
      */
     public function sort(callable $func = null, int $flags = 0): self
