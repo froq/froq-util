@@ -281,7 +281,7 @@ class JsonObject extends PlainObject implements Arrayable, Jsonable, JsonSeriali
      * @param  mixed|null $default
      * @return mixed
      */
-    public final function get(string $key, mixed $default = null): mixed
+    public function get(string $key, mixed $default = null): mixed
     {
         $data = $this->arrayify();
 
@@ -295,7 +295,7 @@ class JsonObject extends PlainObject implements Arrayable, Jsonable, JsonSeriali
      * @param  array|null    $defaults
      * @return array
      */
-    public final function getAll(array $keys, array $defaults = null): array
+    public function getAll(array $keys, array $defaults = null): array
     {
         $data = $this->arrayify();
 
@@ -309,7 +309,7 @@ class JsonObject extends PlainObject implements Arrayable, Jsonable, JsonSeriali
      * @param  mixed|null $default
      * @return int
      */
-    public final function getInt(string $key, mixed $default = null): int
+    public function getInt(string $key, mixed $default = null): int
     {
         return (int) $this->get($key, $default);
     }
@@ -321,7 +321,7 @@ class JsonObject extends PlainObject implements Arrayable, Jsonable, JsonSeriali
      * @param  mixed|null $default
      * @return float
      */
-    public final function getFloat(string $key, mixed $default = null): float
+    public function getFloat(string $key, mixed $default = null): float
     {
         return (float) $this->get($key, $default);
     }
@@ -333,7 +333,7 @@ class JsonObject extends PlainObject implements Arrayable, Jsonable, JsonSeriali
      * @param  mixed|null $default
      * @return string
      */
-    public final function getString(string $key, mixed $default = null): string
+    public function getString(string $key, mixed $default = null): string
     {
         return (string) $this->get($key, $default);
     }
@@ -345,7 +345,7 @@ class JsonObject extends PlainObject implements Arrayable, Jsonable, JsonSeriali
      * @param  mixed|null $default
      * @return bool
      */
-    public final function getBool(string $key, mixed $default = null): bool
+    public function getBool(string $key, mixed $default = null): bool
     {
         return (bool) $this->get($key, $default);
     }
@@ -424,19 +424,19 @@ class JsonObject extends PlainObject implements Arrayable, Jsonable, JsonSeriali
      * @throws JsonError
      * @since  6.0
      */
-    public static function parse(string|null $json, int|null $flags = 0): static
+    public static function parse(?string $json, ?int $flags = 0): static
     {
         $data = null;
 
         if ($json !== null) {
             $type = Json::detectType($json);
             if ($type != Json::ARRAY && $type != Json::OBJECT) {
-                throw new JsonError('Invalid JSON, it must be a valid JSON struct');
+                throw new JsonError('Given input must be a valid JSON struct');
             }
 
             $data = Json::parse($json, $type, $flags);
             if ($error = json_error_message()) {
-                throw new JsonError('Invalid JSON [error: '. strtolower($error) .']');
+                throw new JsonError($error);
             }
         }
 
