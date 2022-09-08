@@ -1764,6 +1764,19 @@ function func_has_args(int|string ...$args): bool
 }
 
 /**
+ * Validate given input as JSON (@see https://wiki.php.net/rfc/json_validate).
+ *
+ * @param  string|null     $input
+ * @param  JsonError|null &$error
+ * @return bool
+ * @since  6.0
+ */
+function json_validate(string|null $input, JsonError &$error = null): bool
+{
+    return Json::validate($input, $error);
+}
+
+/**
  * Get an ini directive with bool option.
  *
  * @param  string     $name

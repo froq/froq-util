@@ -212,6 +212,34 @@ class Json extends StaticClass
             default       => null
         };
     }
+
+    /**
+     * Validate given input as JSON.
+     *
+     * @param  string|null     $input
+     * @param  JsonError|null &$error
+     * @return bool
+     * @since  6.0
+     */
+    public static function validate(?string $input, JsonError &$error = null): bool
+    {
+        $error = $code = $message = null;
+
+        // If '' or null input.
+        if ($input == null) {
+            $message = 'Empty/null input given';
+        } else {
+            json_decode($input);
+            $message = json_error_message($code, clear: true);
+        }
+
+        // If $error was passed on call.
+        if ($message && func_num_args() > 1) {
+            $error = new JsonError($message, code: $code);
+        }
+
+        return ($message == null);
+    }
 }
 
 use froq\common\interface\{Arrayable, Jsonable};
