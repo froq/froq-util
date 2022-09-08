@@ -1363,12 +1363,20 @@ function error_message(int &$code = null, bool $format = false, bool $extract = 
  * Get JSON last error message with code if any, instead "No error".
  *
  * @param  int|null &$code
+ * @param  bool      $clear
  * @return string|null
  * @since  4.17
  */
-function json_error_message(int &$code = null): string|null
+function json_error_message(int &$code = null, bool $clear = false): string|null
 {
-    return ($code = json_last_error()) ? json_last_error_msg() : null;
+    $message = ($code = json_last_error()) ? json_last_error_msg() : null;
+
+    // Clear last error.
+    if ($clear && $message) {
+        json_decode('""');
+    }
+
+    return $message;
 }
 
 /**
@@ -1382,19 +1390,30 @@ function json_error_message(int &$code = null): string|null
  */
 function preg_error_message(int &$code = null, string $func = null, bool $clear = false): string|null
 {
+    // No specific functions.
     if ($func === null) {
-        return ($code = preg_last_error()) ? preg_last_error_msg() : null;
+        $message = ($code = preg_last_error()) ? preg_last_error_msg() : null;
+
+        // Clear last error.
+        if ($clear && $message) {
+            preg_test('~~', '');
+        }
+
+        return $message;
     }
 
-    // Somehow code disappears when error_get_last() called.
-    $error_code    = preg_last_error();
-    $error_message = error_message(clear: $clear);
+    $error = error_get_last();
 
-    if ($error_message && strsrc($error_message, $func ?: 'preg_')) {
-        $message = strsub($error_message, strpos($error_message, '):') + 3);
-        if ($message) {
-            $code = $error_code;
-            return $message;
+    if ($code = $error['type']) {
+        $message = $error['message'];
+        if ($message && strpfx($message, $func ?: 'preg_')) {
+            // Clear last error.
+            $clear && error_clear_last();
+
+            $message = strsub($message, strpos($message, '):') + 3);
+            if ($message) {
+                return $message;
+            }
         }
     }
 
