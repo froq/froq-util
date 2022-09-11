@@ -55,7 +55,7 @@ class Options extends XArrayObject
      *
      * @param  string     $key
      * @param  mixed|null $default
-     * @return mixed
+     * @return mixed|null
      */
     public function getOption(string $key, mixed $default = null): mixed
     {

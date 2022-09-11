@@ -68,7 +68,7 @@ class XArrayObject extends ArrayObject implements Arrayable, Objectable, Jsonabl
      *
      * @param  string|int $key
      * @param  mixed|null $default
-     * @return mixed
+     * @return mixed|null
      */
     public function &get(string|int $key, mixed $default = null): mixed
     {
