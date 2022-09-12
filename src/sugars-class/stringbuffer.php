@@ -670,7 +670,7 @@ class StringBuffer implements Stringable, IteratorAggregate, JsonSerializable, A
      */
     public function filter(callable $func): self
     {
-        $this->data = array_list(array_filter($this->data, $func));
+        $this->data = array_filter_list($this->data, $func);
 
         return $this;
     }
