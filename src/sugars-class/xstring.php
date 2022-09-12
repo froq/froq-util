@@ -44,7 +44,7 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     /** @magic */
     public function __toString(): string
     {
-        return $this->data;
+        return $this->toString();
     }
 
     /**
@@ -1818,7 +1818,7 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
      */
     public function jsonSerialize(): string
     {
-        return $this->data;
+        return $this->toString();
     }
 
     /**
