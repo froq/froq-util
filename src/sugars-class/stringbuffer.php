@@ -18,7 +18,7 @@ use froq\util\Strings;
 class StringBuffer implements Stringable, IteratorAggregate, JsonSerializable, ArrayAccess
 {
     /** @var array */
-    protected array $data;
+    protected array $data = [];
 
     /** @var string|null */
     protected string|null $encoding = 'UTF-8';
@@ -26,20 +26,21 @@ class StringBuffer implements Stringable, IteratorAggregate, JsonSerializable, A
     /**
      * Constructor.
      *
-     * @param string|array|int $data
-     * @param string|null      $encoding
+     * @param string|int|array<string> $data
+     * @param string|null              $encoding
      */
-    public function __construct(string|array|int $data = '', string|null $encoding = '')
+    public function __construct(string|int|array $data = '', string|null $encoding = '')
     {
-        $this->data = match (get_type($data)) {
-            'string' => split('', $data),
-            'array'  => $data,
-            'int'    => array_fill(0, $data, ''),
-        };
-
-        if ($encoding !== '') {
-            $this->encoding = $encoding;
+        if ($data !== '' && $data !== 0 && $data !== []) {
+            $this->data = match (get_type($data)) {
+                'string' => split('', $data),
+                'int'    => array_fill(0, $data, ''),
+                'array'  => array_map('strval', $data),
+            };
         }
+
+        // Allow null (for internal encoding).
+        if ($encoding !== '') $this->encoding = $encoding;
     }
 
     /** @magic */
