@@ -717,7 +717,7 @@ class StringBuffer implements Stringable, IteratorAggregate, JsonSerializable, A
 
     /**
      * @inheritDoc IteratorAggregate
-     */ #[\ReturnTypeWillChange]
+     */ #[ReturnTypeWillChange]
     public function getIterator(): iterable
     {
         for ($i = 0, $il = $this->getLength(); $i < $il; $i++) {

@@ -1805,7 +1805,7 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
 
     /**
      * @inheritDoc IteratorAggregate
-     */ #[\ReturnTypeWillChange]
+     */ #[ReturnTypeWillChange]
     public function getIterator(): iterable
     {
         for ($i = 0, $il = $this->length(); $i < $il; $i++) {

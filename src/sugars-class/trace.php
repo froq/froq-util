@@ -153,7 +153,7 @@ final class Trace implements Stringable, Countable, IteratorAggregate, ArrayAcce
 
     /**
      * @inheritDoc IteratorAggregate
-     */ #[\ReturnTypeWillChange]
+     */ #[ReturnTypeWillChange]
     public function getIterator(): iterable
     {
         foreach ($this->stack as $entry) {
