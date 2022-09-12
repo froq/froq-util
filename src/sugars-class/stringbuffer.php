@@ -62,9 +62,9 @@ class StringBuffer implements Stringable, IteratorAggregate, JsonSerializable, A
     /**
      * Get encoding.
      *
-     * @return string
+     * @return string|null
      */
-    public function encoding(): string
+    public function encoding(): string|null
     {
         return $this->encoding;
     }
