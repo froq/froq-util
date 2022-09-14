@@ -1705,8 +1705,10 @@ function get_object_hash(object $object, bool $with_name = true, bool $with_reha
 function set_object_vars(object $object, object|iterable $vars): object
 {
     foreach ($vars as $name => $value) {
-        $ref = new ReflectionProperty($object, $name);
-        $ref->setValue($object, $value);
+        if (property_exists($object, (string) $name)) {
+            $ref = new ReflectionProperty($object, $name);
+            $ref->setValue($object, $value);
+        }
     }
 
     return $object;
