@@ -2,8 +2,8 @@
 // Load top class files.
 require 'sugars-class/_error.php';
 require 'sugars-class/_static.php';
-require 'sugars-class/plainobject.php';
-require 'sugars-class/plainarrayobject.php';
+require 'sugars-class/plain-object.php';
+require 'sugars-class/plain-array-object.php';
 
 // Load other class files.
 require 'sugars-class/assert.php';
@@ -20,7 +20,7 @@ require 'sugars-class/reference.php';
 require 'sugars-class/reflection.php';
 require 'sugars-class/regexp.php';
 require 'sugars-class/state.php';
-require 'sugars-class/stringbuffer.php';
+require 'sugars-class/string-buffer.php';
 require 'sugars-class/trace.php';
 require 'sugars-class/type.php';
 require 'sugars-class/uuid.php';
