@@ -123,6 +123,26 @@ class Uuid implements Stringable
     }
 
     /**
+     * Check null value.
+     *
+     * @return bool
+     */
+    public function isNull(): bool
+    {
+        return hash_equals('00000000-0000-0000-0000-000000000000', $this->value);
+    }
+
+    /**
+     * Check null-hash value.
+     *
+     * @return bool
+     */
+    public function isNullHash(): bool
+    {
+        return hash_equals('00000000000000000000000000000000', $this->value);
+    }
+
+    /**
      * Check whether Uuid value is valid.
      *
      * @param  bool $strict
