@@ -14,6 +14,7 @@ require 'sugars-class/json.php';
 require 'sugars-class/locale.php';
 require 'sugars-class/mapset.php';
 require 'sugars-class/mapxao.php';
+require 'sugars-class/object-mapper.php';
 require 'sugars-class/options.php';
 require 'sugars-class/reference.php';
 require 'sugars-class/reflection.php';
