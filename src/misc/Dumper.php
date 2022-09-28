@@ -10,9 +10,7 @@ namespace froq\util\misc;
 use froq\util\Objects;
 
 /**
- * Dumper.
- *
- * Represents a dumper class that provides a dumping interface via `dump()` method or printing
+ * A static class that provides a dumping interface via `dump()` method or printing
  * options via `echo()` or `echoPre()` methods.
  *
  * @package froq\util\misc
@@ -24,7 +22,7 @@ final class Dumper
 {
     /**
      * Dump given input.
-     * Note: Be careful while dumping recursions with arrays.
+     * Note: Be careful while dumping recursions with arrays/objects.
      *
      * @param  mixed  $input
      * @param  string $tab  Indent.
@@ -42,13 +40,10 @@ final class Dumper
                 return 'int: '. $input;
 
             case 'double':
-                // Check decimals for appending 0 to 1.0 (as expected).
-                $decimals = 1;
-                if ($remainds = strstr((string) $input, '.')) {
-                    $decimals = strlen($remainds) - 1;
-                }
+                return 'float: '. var_export($input, true);
 
-                return 'float: '. format_number($input, $decimals);
+            case 'boolean':
+                return 'bool: '. var_export($input, true);
 
             case 'string':
                 // Add multibyte length (as expected).
@@ -56,17 +51,8 @@ final class Dumper
 
                 return 'string('. $length .') "'. $input .'"';
 
-            case 'boolean':
-                return 'bool: '. format_bool($input);
-
             case 'array':
             case 'object':
-                if ($input == null()) {
-                    return '**NULL';
-                } elseif ($input == void()) {
-                    return '**VOID';
-                }
-
                 $tabs += 1;
 
                 if ($type == 'array') {

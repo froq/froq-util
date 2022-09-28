@@ -11,11 +11,11 @@ use froq\util\Numbers;
  * Make a number from given a numeric input.
  *
  * @param  int|float|string $input
- * @param  int|null         $decimals
+ * @param  int|bool|null    $decimals
  * @return int|float
  * @since  3.0
  */
-function number(int|float|string $input, int $decimals = null): int|float
+function number(int|float|string $input, int|bool $decimals = null): int|float
 {
     return Numbers::convert($input, $decimals);
 }
@@ -51,11 +51,11 @@ function number_equals(int|float $number1, int|float $number2, int $precision = 
 /**
  * Check whether given input is digit.
  *
- * @param  any $input
+ * @param  mixed $input
  * @return bool
  * @since  3.0
  */
-function is_digit($input): bool
+function is_digit(mixed $input): bool
 {
     return Numbers::isDigit($input);
 }
@@ -63,11 +63,11 @@ function is_digit($input): bool
 /**
  * Check whether given input is an ID (useful for any (db) incremental id checking).
  *
- * anyparam  number $input
+ * @param  mixed $input
  * @return bool
  * @since  3.0
  */
-function is_id($input): bool
+function is_id(mixed $input): bool
 {
     return Numbers::isId($input);
 }
@@ -75,11 +75,11 @@ function is_id($input): bool
 /**
  * Check whether given input is uint.
  *
- * @param  any $input
+ * @param  mixed $input
  * @return bool
  * @since  3.0
  */
-function is_uint($input): bool
+function is_uint(mixed $input): bool
 {
     return Numbers::isUInt($input);
 }
@@ -87,11 +87,11 @@ function is_uint($input): bool
 /**
  * Check whether given input is ufloat.
  *
- * @param  any $input
+ * @param  mixed $input
  * @return bool
  * @since  3.0
  */
-function is_ufloat($input): bool
+function is_ufloat(mixed $input): bool
 {
     return Numbers::isUFloat($input);
 }
@@ -99,11 +99,11 @@ function is_ufloat($input): bool
 /**
  * Check whether given input is signed.
  *
- * @param  any $input
+ * @param  mixed $input
  * @return bool
  * @since  3.0
  */
-function is_signed($input): bool
+function is_signed(mixed $input): bool
 {
     return Numbers::isSigned($input);
 }
@@ -111,11 +111,11 @@ function is_signed($input): bool
 /**
  * Check whether given input is unsigned.
  *
- * @param  any $input
+ * @param  mixed $input
  * @return bool
  * @since  3.0
  */
-function is_unsigned($input): bool
+function is_unsigned(mixed $input): bool
 {
     return Numbers::isUnsigned($input);
 }

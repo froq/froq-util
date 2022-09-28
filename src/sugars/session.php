@@ -17,12 +17,12 @@ if (!class_exists(App::class, false)) {
  * Set/get a session variable or get session object.
  *
  * @param  string|array|null $key
- * @param  any|null          $value
- * @return any|null|froq\session\Session
+ * @param  mixed|null        $value
+ * @return mixed|froq\session\Session|null
  */
-function session(string|array $key = null, $value = null)
+function session(string|array $key = null, mixed $value = null): mixed
 {
-    static $session; $session ??= app()->session();
+    $session = app()->session;
 
     // Set/get.
     if ($session) {
@@ -38,12 +38,12 @@ function session(string|array $key = null, $value = null)
 /**
  * Set/get session flash.
  *
- * @param  any|null $message
- * @return any|null
+ * @param  mixed|null $message
+ * @return mixed|null
  */
-function session_flash($message = null)
+function session_flash(mixed $message = null): mixed
 {
-    $session = session();
+    $session = app()->session;
 
     if ($session) {
         switch (func_num_args()) {
@@ -62,7 +62,7 @@ function session_flash($message = null)
  */
 function session_array(): array|null
 {
-    return session()?->toArray();
+    return app()->session?->toArray();
 }
 
 /**
@@ -73,32 +73,32 @@ function session_array(): array|null
  */
 function session_has(string $key): bool|null
 {
-    return session()?->has($key);
+    return app()->session?->has($key);
 }
 
 /**
  * Set a session variable.
  *
  * @param  string|array $key
- * @param  any|null     $value
+ * @param  mixed|null   $value
  * @return bool|null
  */
-function session_set(string|array $key, $value = null): bool|null
+function session_set(string|array $key, mixed $value = null): bool|null
 {
-    return session()?->set($key, $value) ? true : null;
+    return app()->session?->set($key, $value) ? true : null;
 }
 
 /**
  * Get a session variable.
  *
  * @param  string|array $key
- * @param  any|null     $value
- * @param  bool         $remove
- * @return any|null
+ * @param  mixed|null   $default
+ * @param  bool         $drop
+ * @return mixed|null
  */
-function session_get(string|array $key, $default = null, bool $remove = false)
+function session_get(string|array $key, mixed $default = null, bool $drop = false): mixed
 {
-    return session()?->get($key, $default, $remove);
+    return app()->session?->get($key, $default, $drop);
 }
 
 /**
@@ -109,7 +109,7 @@ function session_get(string|array $key, $default = null, bool $remove = false)
  */
 function session_remove(string|array $key): bool|null
 {
-    return session()?->remove($key);
+    return app()->session?->remove($key) ? true : null;
 }
 
 /**
@@ -119,7 +119,7 @@ function session_remove(string|array $key): bool|null
  */
 function start_session(): bool|null
 {
-    return session()?->start();
+    return app()->session?->start();
 }
 
 /**
@@ -129,7 +129,7 @@ function start_session(): bool|null
  */
 function end_session(): bool|null
 {
-    return session()?->end();
+    return app()->session?->end();
 }
 
 /**
@@ -142,7 +142,7 @@ function end_session(): bool|null
  */
 function generate_csrf_token(string $form): string|null
 {
-    return session()?->generateCsrfToken($form);
+    return app()->session?->generateCsrfToken($form);
 }
 
 /**
@@ -155,5 +155,5 @@ function generate_csrf_token(string $form): string|null
  */
 function validate_csrf_token(string $form, string $token): bool|null
 {
-    return session()?->validateCsrfToken($form, $token);
+    return app()->session?->validateCsrfToken($form, $token);
 }

@@ -38,84 +38,84 @@ function is_cli_server(): bool
 }
 
 /**
- * Check whether given input is a plain object.
+ * Check whether given variable is plain object.
  *
- * @param  any $in
+ * @param  mixed $var
  * @return bool
  */
-function is_plain_object($in): bool
+function is_plain_object(mixed $var): bool
 {
-    return ($in instanceof stdClass);
+    return ($var && $var instanceof stdClass);
 }
 
 /**
- * Check whether given input is array-like.
+ * Check whether given variable is array-like.
  *
- * @param  any $in
+ * @param  mixed $var
  * @return bool
  */
-function is_array_like($in): bool
+function is_array_like(mixed $var): bool
 {
-    return is_array($in) || is_plain_object($in);
+    return is_array($var) || is_plain_object($var);
 }
 
 /**
- * Check whether given input is iterable-like.
+ * Check whether given variable is iterable-like.
  *
- * @param  any $in
+ * @param  mixed $var
  * @return bool
  */
-function is_iterable_like($in): bool
+function is_iterable_like(mixed $var): bool
 {
-    return is_iterable($in) || is_plain_object($in);
+    return is_iterable($var) || is_plain_object($var);
 }
 
 /**
- * Check whether given input is a closure.
+ * Check whether given variable is closure.
  *
- * @param  any $in
+ * @param  mixed $var
  * @return bool
  * @since  3.0
  */
-function is_closure($in): bool
+function is_closure(mixed $var): bool
 {
-    return ($in instanceof Closure);
+    return ($var && $var instanceof Closure);
 }
 
 /**
- * Check whether given input is between given min/max directives.
+ * Check whether given variable is between given min/max directives.
  *
- * @param  any $in
- * @param  any $min
- * @param  any $max
+ * @param  mixed            $var
+ * @param  int|float|string $min
+ * @param  int|float|string $max
  * @return bool
  * @since  3.0
  */
-function is_between($in, $min, $max): bool
+function is_between(mixed $var, int|float|string $min, int|float|string $max): bool
 {
-    return ($in >= $min && $in <= $max);
+    return ($var >= $min && $var <= $max);
 }
 
 /**
- * Check whether given input is nil (null).
+ * Check whether given variable is nil (null).
  *
- * @param  any $in
+ * @param  mixed $var
  * @return bool
- * @since  4.0 Added back.
+ * @since  4.0
  */
-function is_nil($in): bool
+function is_nil(mixed $var): bool
 {
-    return ($in === null);
+    return ($var === nil);
 }
 
 /**
- * Check whether given input is nils (null string).
+ * Check whether given variable is nils (null string).
  *
- * @param  any $in
+ * @param  mixed $var
  * @return bool
- * @since  4.0 Added back.
+ * @since  4.0
  */
-function is_nils($in): bool
+function is_nils(mixed $var): bool
 {
-    return ($in === '');
+    return ($var === nils);
 }

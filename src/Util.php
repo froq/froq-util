@@ -7,9 +7,6 @@ declare(strict_types=1);
 
 namespace froq\util;
 
-use froq\util\UtilException;
-use froq\common\object\StaticClass;
-
 /**
  * Util.
  *
@@ -19,10 +16,10 @@ use froq\common\object\StaticClass;
  * @since   1.0
  * @static
  */
-final /* fuckic static */ class Util extends StaticClass
+final /* fuckic static */ class Util extends \StaticClass
 {
     /**
-     * Load sugar.
+     * Load sugar(s).
      *
      * @param  string|array<string> $name
      * @return void
@@ -30,42 +27,24 @@ final /* fuckic static */ class Util extends StaticClass
      */
     public static function loadSugar(string|array $name): void
     {
-        // Name list given.
+        // Name list.
         if (is_array($name)) {
-            self::loadSugar($name);
-            return;
-        }
+            foreach ($name as $nam) {
+                self::loadSugar($nam);
+            }
+        } else {
+            $file = sprintf(__dir__ . '/sugars/%s.php', $name);
+            if (file_exists($file)) {
+                require_once $file;
+                return;
+            }
 
-        $file = __dir__ . '/sugars/' . $name . '.php';
+            // Not exists.
+            $names = xglob(__dir__ . '/sugars/{*.php,extra/*.php}', GLOB_BRACE)
+                ->map(fn($file) => strsrc($file, 'extra/') ? 'extra/' . filename($file) : filename($file))
+                ->array();
 
-        if (!is_file($file)) {
-            $files = glob(__dir__ . '/sugars/{*.php,extra/*.php}', GLOB_BRACE);
-            $names = array_map(
-                fn($file) => strsrc($file, 'extra/')
-                    ? 'extra/'. pathinfo($file, PATHINFO_FILENAME)
-                    : pathinfo($file, PATHINFO_FILENAME)
-            , $files);
-
-            throw new UtilException(
-                'Invalid sugar name %s, valids are: %s',
-                [$name, join(', ', $names)]
-            );
-        }
-
-        include_once $file;
-    }
-
-    /**
-     * Load sugars.
-     *
-     * @param  array<string> $names
-     * @return void
-     * @causes froq\util\UtilException
-     */
-    public static function loadSugars(array $names): void
-    {
-        foreach ($names as $name) {
-            self::loadSugar($name);
+            throw new UtilException('Invalid sugar name `%s` [valids: %A]', [$name, $names]);
         }
     }
 
@@ -151,14 +130,13 @@ final /* fuckic static */ class Util extends StaticClass
             $url .= $host;
         }
 
-        $colon = strpos($uri, ':');
+        $colon = str_contains($uri, ':');
 
         // Fix parse_url()'s fail with ":" character.
-        if ($colon) {
-            $uri = str_replace(':', '%3A', $uri);
-        }
+        $colon && $uri = str_replace(':', '%3A', $uri);
 
         $uri .= '';
+
         // PHP thinks it's a host, not path (also gives false if URI kinda "//").
         if (($i = strpos($uri, '//')) === 0) {
             while (($uri[++$i] ?? '') === '/');
@@ -173,9 +151,8 @@ final /* fuckic static */ class Util extends StaticClass
         }
 
         $tmp['path'] ??= '/';
-        if ($colon) {
-            $tmp['path'] = str_replace('%3A', ':', $tmp['path']);
-        }
+
+        $colon && $tmp['path'] = str_replace('%3A', ':', $tmp['path']);
 
         $url .= $tmp['path'];
         if ($withQuery && ($query = $tmp['query'] ?? '') !== '') {
@@ -186,134 +163,50 @@ final /* fuckic static */ class Util extends StaticClass
     }
 
     /**
-     * Get (system) temporary directory.
+     * Convert integer bytes to human-readable text.
      *
+     * @param  int $bytes
+     * @param  int $precision
      * @return string
      */
-    public static function getTemporaryDirectory(): string
+    public static function formatBytes(int $bytes, int $precision = 2): string
     {
-        return sys_get_temp_dir() ?: '/tmp';
+        $base  = 1024;
+        $units = ['B', 'KB', 'MB', 'GB'];
+
+        $i = 0;
+        while ($bytes > $base) {
+            $i++;
+            $bytes /= $base;
+        }
+
+        return round($bytes, $precision) . $units[$i];
     }
 
     /**
-     * Get (system) default timezone.
+     * Convert human-readable text to integer bytes.
      *
-     * @return string
+     * @param  string $bytes
+     * @return int
      */
-    public static function getDefaultTimezone(): string
+    public static function convertBytes(string $bytes): int
     {
-        return date_default_timezone_get() ?: 'UTC';
-    }
+        $base  = 1024;
+        $units = ['', 'K', 'M', 'G'];
 
-    /**
-     * Build query string.
-     *
-     * @param  array       $qa
-     * @param  bool        $decode
-     * @param  string|null $ignoredKeys
-     * @param  bool        $stripTags
-     * @param  bool        $normalizeArrays
-     * @return string
-     */
-    public static function buildQueryString(array $qa, bool $decode = false, string $ignoredKeys = null,
-        bool $stripTags = true, bool $normalizeArrays = true): string
-    {
-        if ($ignoredKeys != null) {
-            $ignoredKeys = explode(',', $ignoredKeys);
-            foreach (array_keys($qa) as $key) {
-                if (in_array($key, $ignoredKeys)) {
-                    unset($qa[$key]);
-                }
-            }
+        // Eg: 6.4M or 6.4MB => 6.4MB, 64M or 64MB => 64MB.
+        if (sscanf($bytes, '%f%c', $byte, $unit) == 2) {
+            $exp = array_search(strtoupper($unit), $units);
+
+            return (int) ($byte * pow($base, $exp));
         }
 
-        // Fix skipped NULL values by http_build_query().
-        $qa = array_map_recursive('strval', $qa);
-
-        $qs = http_build_query($qa);
-
-        if ($decode) {
-            $qs = urldecode($qs);
-            // Fix such "=#foo" queries that not taken as parameter.
-            $qs = str_replace('=#', '=%23', $qs);
-        }
-        if ($stripTags && str_contains($qs, '%3C')) {
-            $qs = preg_replace('~%3C[\w]+(%2F)?%3E~ismU', '', $qs);
-        }
-        if ($normalizeArrays && str_contains($qs, '%5D=')) {
-            $qs = str_replace(['%5B', '%5D'], ['[', ']'], $qs);
-        }
-
-        return trim($qs);
-    }
-
-    /**
-     * Parse query string (without changing dotted param keys if dotted option is true).
-     * https://github.com/php/php-src/blob/master/main/php_variables.c#L103
-     *
-     * @param  string      $qs
-     * @param  bool        $encode
-     * @param  string|null $ignoredKeys
-     * @param  bool        $dotted
-     * @return array
-     */
-    public static function parseQueryString(string $qs, bool $encode = false, string $ignoredKeys = null,
-        bool $dotted = false): array
-    {
-        $qa = [];
-
-        $qs = trim($qs);
-        if ($qs == '') {
-            return $qa;
-        }
-
-        $hexed = false;
-        if ($dotted && str_contains($qs, '.')) {
-            $hexed = true;
-
-            // Normalize arrays.
-            if (str_contains($qs, '%5D=')) {
-                $qs = str_replace(['%5B', '%5D'], ['[', ']'], $qs);
-            }
-
-            // Hex keys.
-            $qs = preg_replace_callback('~(^|(?<=&))[^=&\[]+~', fn($m) => bin2hex($m[0]), $qs);
-        }
-
-        // Preserve pluses (otherwise parse_str() will replace all with spaces).
-        if ($encode) {
-            $qs = str_replace('+', '%2B', $qs);
-        }
-
-        parse_str($qs, $qsp);
-
-        if ($hexed) {
-            // Unhex keys.
-            foreach ($qsp as $key => $value) {
-                $key = hex2bin((string) $key);
-                if (str_contains($key, '%')) {
-                    $key = rawurldecode($key);
-                }
-                $qa[$key] = $value;
-            }
-        } else {
-            $qa = $qsp;
-        }
-
-        if ($ignoredKeys != null) {
-            $ignoredKeys = explode(',', $ignoredKeys);
-            foreach (array_keys($qa) as $key) {
-                if (in_array($key, $ignoredKeys)) {
-                    unset($qa[$key]);
-                }
-            }
-        }
-
-        return $qa;
+        return (int) $bytes;
     }
 
     /**
      * Make an array with given data input.
+     * Note: must be used for arrays/iterables and stdClass or public var'ed objects.
      *
      * @param  array|object|null $data
      * @param  bool              $deep
@@ -324,22 +217,43 @@ final /* fuckic static */ class Util extends StaticClass
     {
         // Memoize maker function.
         static $make; $make ??= function ($data) use (&$make, $deep) {
-            foreach ($data as $key => $value) {
-                $value = ($deep && is_object($value)) ? $make($value) : $value;
-                if (is_array($data)) {
-                    $data[$key] = $value;
-                } else {
-                    $data->$key = $value;
+            if ($data) {
+                if ($data instanceof \Traversable) {
+                    if ($data instanceof \Generator) {
+                        // Prevent "Cannot rewind a generator that was already run" error.
+                        $data = (new \froq\collection\iterator\GeneratorIterator($data))
+                            ->toArray();
+                    } else {
+                        // Rewind for keys after iteration.
+                        $temp = iterator_to_array($data);
+                        $data->rewind();
+                        $data = $temp;
+                        unset($temp);
+                    }
+                }
+
+                if ($deep) {
+                    $array = is_array($data);
+                    foreach ($data as $key => $value) {
+                        $value = is_array($value) || is_object($value) ? $make($value) : $value;
+                        if ($array) {
+                            $data[$key] = $value;
+                        } else {
+                            $data->$key = $value;
+                        }
+                    }
                 }
             }
+
             return (array) $data;
         };
 
-        return (array) $make($data);
+        return $make($data);
     }
 
     /**
      * Make an object with given data input.
+     * Note: must be used for arrays/iterables and stdClass or public var'ed objects.
      *
      * @param  array|object|null $data
      * @param  bool              $deep
@@ -350,17 +264,37 @@ final /* fuckic static */ class Util extends StaticClass
     {
         // Memoize maker function.
         static $make; $make ??= function ($data) use (&$make, $deep) {
-            foreach ($data as $key => $value) {
-                $value = ($deep && is_array($value)) ? $make($value) : $value;
-                if (is_array($data)) {
-                    $data[$key] = $value;
-                } else {
-                    $data->$key = $value;
+            if ($data) {
+                if ($data instanceof \Traversable) {
+                    if ($data instanceof \Generator) {
+                        // Prevent "Cannot rewind a generator that was already run" error.
+                        $data = (new \froq\collection\iterator\GeneratorIterator($data))
+                            ->toArray();
+                    } else {
+                        // Rewind for keys after iteration.
+                        $temp = iterator_to_array($data);
+                        $data->rewind();
+                        $data = $temp;
+                        unset($temp);
+                    }
+                }
+
+                if ($deep) {
+                    $array = is_array($data);
+                    foreach ($data as $key => $value) {
+                        $value = is_array($value) || is_object($value) ? $make($value) : $value;
+                        if ($array) {
+                            $data[$key] = $value;
+                        } else {
+                            $data->$key = $value;
+                        }
+                    }
                 }
             }
+
             return (object) $data;
         };
 
-        return (object) $make($data);
+        return $make($data);
     }
 }

@@ -7,12 +7,8 @@ declare(strict_types=1);
 
 namespace froq\util\misc;
 
-use froq\util\UtilException;
-
 /**
- * Runner.
- *
- * Represents a profiler class entity that provides a profiling interface via `run()` method printing
+ * A class that provides a profiling interface via `run()` method printing
  * speed & memory peeks.
  *
  * @package froq\util\misc
@@ -20,13 +16,13 @@ use froq\util\UtilException;
  * @author  Kerem Güneş
  * @since   5.5
  */
-final class Runner
+class Runner
 {
     /** @var int, int */
     private int $limit, $runs = 0;
 
     /** @var bool */
-    private bool $simple = false;
+    private bool $simple;
 
     /**
      * Constructor.
@@ -38,7 +34,7 @@ final class Runner
     public function __construct(int $limit = 1000, bool $simple = false)
     {
         if ($limit < 1) {
-            throw new UtilException('Min limit is 1, ' . $limit . ' given');
+            throw new \ValueError('Min limit is 1, ' . $limit . ' given');
         }
 
         $this->limit  = $limit;
@@ -58,8 +54,8 @@ final class Runner
         $this->runs += 1;
 
         if ($profile) {
-            $startMem = memory_get_usage();
-            $start    = microtime(true);
+            $startMemo = memory_get_usage();
+            $startTime = microtime(true);
         }
 
         $limit  = $this->limit;
@@ -71,19 +67,25 @@ final class Runner
         }
 
         if ($profile) {
-            $endMem = memory_get_usage();
-            $end    = microtime(true) - $start;
-            $temp   = null;
+            $endMemo = memory_get_usage();
+            $endTime = microtime(true) - $startTime;
+
+            // Free.
+            unset($temp);
+
+            $formatRun = fn($v) => number_format($v, 0, '', ',');
+            $formatMemo = fn($v) => \froq\util\Util::formatBytes($v, 3);
 
             // Simple drops memory info.
             if ($simple) {
-                printf("run(%d)#%d: %F\n",
-                    $this->limit, $this->runs, $end,
+                printf("run(%s)#%s: %F\n",
+                    $formatRun($this->limit), $this->runs, $endTime,
                 );
             } else {
-                printf("run(%d)#%d: %F, mem: %d (%d-%d)\n",
-                    $this->limit, $this->runs, $end,
-                    $endMem - $startMem, $endMem, $startMem,
+                printf("run(%s)#%s: %F, memo: %s (%s - %s)\n",
+                    $formatRun($this->limit), $this->runs, $endTime,
+                    $formatMemo($endMemo - $startMemo),
+                    $formatMemo($endMemo), $formatMemo($startMemo),
                 );
             }
         }

@@ -5,19 +5,17 @@
  */
 declare(strict_types=1);
 
-use froq\collection\{Collection, CollectionInterface};
+use froq\common\interface\{Arrayable, Listable, Jsonable, Collectable, Iteratable, IteratableReverse};
+use froq\collection\trait\{SortTrait, FilterTrait, MapTrait, ReduceTrait, EachTrait, CountTrait, EmptyTrait,
+    FindTrait, FirstLastTrait, MinMaxTrait, CalcAverageTrait, CalcProductTrait, CalcSumTrait,
+    IteratorTrait, ToArrayTrait, ToListTrait, ToJsonTrait};
 use froq\collection\iterator\{ArrayIterator, ReverseArrayIterator};
-use froq\collection\trait\{EachTrait, SortTrait, FilterTrait, MapTrait, ReduceTrait, FindTrait,
-    MinMaxTrait, FirstLastTrait};
-use froq\common\interface\{Arrayable, Jsonable, Listable, Collectable, Iteratable, IteratableReverse};
-use froq\common\trait\{DataCountTrait, DataEmptyTrait, DataIteratorTrait, DataToListTrait, DataToArrayTrait, DataToJsonTrait};
+use froq\collection\{Collection, CollectionInterface};
 
 /**
- * Map/Set trait.
- *
  * A trait used by Map/Set classes.
  *
- * @package froq\util
+ * @package global
  * @object  MapSetTrait
  * @author  Kerem Güneş
  * @since   5.35
@@ -26,8 +24,9 @@ use froq\common\trait\{DataCountTrait, DataEmptyTrait, DataIteratorTrait, DataTo
 trait MapSetTrait
 {
     /** Traits. */
-    use EachTrait, SortTrait, FilterTrait, MapTrait, ReduceTrait, FindTrait, MinMaxTrait, FirstLastTrait,
-        DataCountTrait, DataEmptyTrait, DataIteratorTrait, DataToListTrait, DataToArrayTrait, DataToJsonTrait;
+    use SortTrait, FilterTrait, MapTrait, ReduceTrait, EachTrait, CountTrait, EmptyTrait,
+        FindTrait, FirstLastTrait, MinMaxTrait, CalcAverageTrait, CalcProductTrait, CalcSumTrait,
+        IteratorTrait, ToArrayTrait, ToListTrait, ToJsonTrait;
 
     /** Data holder. */
     protected array $data = [];
@@ -35,27 +34,19 @@ trait MapSetTrait
     /**
      * Constructor.
      *
-     * @param iterable|int|null $data
-     * @param int|null          $size
+     * @param iterable|null $data
      */
-    public function __construct(iterable|int $data = null, int $size = null)
+    public function __construct(iterable $data = null)
     {
         if ($data) {
-            if (is_iterable($data)) {
-                $map = ($this instanceof Map);
-                foreach ($data as $key => $value) {
-                    $map ? $this->set($key, $value) : $this->add($value);
-                }
-            } elseif (is_int($data)) {
-                $size = $data;
+            $map = $this instanceof Map;
+            foreach ($data as $key => $value) {
+                $map ? $this->set($key, $value) : $this->add($value);
             }
         }
-
-        // When size given.
-        $size && ($this->data = array_pad($this->data, $size, null));
     }
 
-    /** @magic __debugInfo() */
+    /** @magic */
     public function __debugInfo(): array
     {
         return $this->data;
@@ -64,19 +55,18 @@ trait MapSetTrait
     /**
      * Get data keys.
      *
-     * @return array.
+     * @return array
      */
     public function keys(): array
     {
-        return ($this instanceof Set)
-             ? array_keys($this->data)
+        return ($this instanceof Set) ? array_keys($this->data)
              : array_map(fn($k) => strval($k), array_keys($this->data));
     }
 
     /**
      * Get data values.
      *
-     * @return array.
+     * @return array
      */
     public function values(): array
     {
@@ -86,69 +76,62 @@ trait MapSetTrait
     /**
      * Get data entries.
      *
-     * @return array.
+     * @return array
      */
     public function entries(): array
     {
-        return ($this instanceof Set)
-             ? array_entries($this->data)
+        return ($this instanceof Set) ? array_entries($this->data)
              : array_map(fn($e) => [strval($e[0]), $e[1]], array_entries($this->data));
     }
 
     /**
-     * Prepend given value to data.
+     * Unshift.
      *
-     * @param  mixed                  $value
-     * @param  int|string|object|null $key   For Map's only.
+     * @param  mixed $value
      * @return self
      */
-    public function unshift(mixed $value, int|string|object $key = null): self
+    public function unshift(mixed $value): self
     {
         if ($this instanceof Set) {
             array_value_exists($value, $this->data)
                 || array_unshift($this->data, $value);
         } else {
-            $key = $this->prepareKey($key ?? $this->count());
-            array_unshift_entry($this->data, $key, $value);
+            array_unshift($this->data, $value);
         }
 
         return $this;
     }
 
     /**
-     * Append given value to data.
+     * Push.
      *
-     * @param  mixed                  $value
-     * @param  int|string|object|null $key   For Map's only.
+     * @param  mixed $value
      * @return self
      */
-    public function push(mixed $value, int|string|object $key = null): self
+    public function push(mixed $value): self
     {
         if ($this instanceof Set) {
             array_value_exists($value, $this->data)
                 || array_push($this->data, $value);
         } else {
-            $key = $this->prepareKey($key ?? $this->count());
-            array_push_entry($this->data, $key, $value);
+            array_push($this->data, $value);
         }
 
         return $this;
     }
 
     /**
-     * Shift an item from data.
+     * Shift.
      *
      * @return mixed
      */
     public function shift(): mixed
     {
-        return ($this instanceof Set)
-             ? array_shift($this->data)
-             : array_shift_entry($this->data)[1] ?? null;
+        return array_shift($this->data);
     }
 
     /**
-     * Pop an item from data.
+     * Pop.
      *
      * @return mixed
      */
@@ -157,49 +140,197 @@ trait MapSetTrait
         return array_pop($this->data);
     }
 
-    /** @aliasOf unshift() */
+    /** @alias unshift() */
     public function pushLeft(...$args)
     {
         return $this->unshift(...$args);
     }
 
-    /** @aliasOf shift() */
+    /** @alias shift() */
     public function popLeft()
     {
         return $this->shift();
     }
 
     /**
-     * Check whether data contains given value.
+     * Check whether data contains given value/values.
      *
-     * @param  mixed $value
-     * @param  bool  $strict
+     * @param  mixed    $value
+     * @param  mixed ...$values
      * @return bool
      */
-    public function contains(mixed $value, bool $strict = true): bool
+    public function contains(mixed $value, mixed ...$values): bool
     {
-        return array_value_exists($value, $this->data, $strict);
+        return array_contains($this->data, $value, ...$values);
     }
 
     /**
-     * Check whether data contains given key.
+     * Check whether data contains given key/keys.
      *
-     * @param  int|string $key
+     * @param  int|string    $key
+     * @param  int|string ...$keys
      * @return bool
      */
-    public function containsKey(int|string $key): bool
+    public function containsKey(int|string $key, int|string ...$keys): bool
     {
-        return array_key_exists($key, $this->data);
+        return array_contains_key($this->data, $key, ...$keys);
+    }
+
+    /**
+     * Fill tool.
+     *
+     * @param  int        $length
+     * @param  mixed|null $value
+     * @return self
+     * @since  6.0
+     */
+    public function fill(int $length, mixed $value = null): self
+    {
+        $this->data = array_fill(0, $length, $value);
+
+        return $this;
+    }
+
+    /**
+     * Pad tool.
+     *
+     * @param  int        $length
+     * @param  mixed|null $value
+     * @return self
+     * @since  6.0
+     */
+    public function pad(int $length, mixed $value = null): self
+    {
+        $this->data = array_pad($this->data, $length, $value);
+
+        return $this;
+    }
+
+    /**
+     * Chunk tool.
+     *
+     * @param  int $length
+     * @return self
+     * @since  6.0
+     */
+    public function chunk(int $length): self
+    {
+        $this->data = array_chunk($this->data, $length, $this instanceof Map);
+
+        return $this;
+    }
+
+    /**
+     * Concat tool.
+     *
+     * @param  mixed    $value
+     * @param  mixed ...$values
+     * @return self
+     * @since  6.0
+     */
+    public function concat(mixed $value, mixed ...$values): self
+    {
+        $this->data = array_concat($this->data, $value, ...$values);
+
+        if ($this instanceof Set) {
+            $this->data = array_dedupe($this->data);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Slice tool.
+     *
+     * @param  int      $start
+     * @param  int|null $end
+     * @return self
+     * @since  6.0
+     */
+    public function slice(int $start, int $end = null): self
+    {
+        $this->data = array_slice($this->data, $start, $end, $this instanceof Map);
+
+        return $this;
+    }
+
+    /**
+     * Splice tool.
+     *
+     * @param  int         $start
+     * @param  int|null    $end
+     * @param  mixed|null  $replace
+     * @param  mixed|null &$replaced
+     * @return self
+     * @since  6.0
+     */
+    public function splice(int $start, int $end = null, mixed $replace = null, mixed &$replaced = null): self
+    {
+        $replaced = array_splice($this->data, $start, $end, $replace);
+
+        return $this;
+    }
+
+    /**
+     * Split tool.
+     *
+     * @param  int  $length
+     * @param  bool $keepKeys
+     * @return self
+     * @since  6.0
+     */
+    public function split(int $length, bool $keepKeys = false): self
+    {
+        $this->data = array_split($this->data, $length, $keepKeys);
+
+        return $this;
+    }
+
+    /**
+     * Join tool.
+     *
+     * @param  string $glue
+     * @return string
+     * @since  6.0
+     */
+    public function join(string $glue = ''): string
+    {
+        return join($glue, $this->data);
+    }
+
+    /**
+     * Update self data by given data.
+     *
+     * @param  iterable $data
+     * @param  bool     $merge
+     * @return self
+     * @since  6.0
+     */
+    public function update(iterable $data, bool $merge = true): self
+    {
+        foreach ($data as $key => $value) {
+            // Handle current iterable fields to keep as original.
+            if ($merge && is_iterable($value)) {
+                if (is_iterable($current = $this->get($key))) {
+                    $value = static::from($current)->update($value);
+                    $value = is_array($current) ? $value->array() : $value;
+                } unset($current);
+            }
+
+            $this->set($key, $value);
+        }
+
+        return $this;
     }
 
     /**
      * Clear map/set.
      *
-     * @return void
+     * @return self
      */
-    public function clear(): void
+    public function clear(): self
     {
-        $this->empty();
+        return $this->empty();
     }
 
     /**
@@ -230,11 +361,7 @@ trait MapSetTrait
      */
     public function copyTo(self $that): static
     {
-        foreach ($this->data as $key => $value) {
-            $that->set($key, $value);
-        }
-
-        return $that;
+        return $that->update($this->data);
     }
 
     /**
@@ -245,33 +372,46 @@ trait MapSetTrait
      */
     public function copyFrom(self $that): static
     {
-        foreach ($that->data as $key => $value) {
-            $this->set($key, $value);
-        }
-
-        return $this;
+        return $this->update($that->data);
     }
 
-    /** @inheritDoc froq\common\interface\Collectable */
+    /**
+     * @inheritDoc froq\common\interface\Collectable
+     */
     public function toCollection(): CollectionInterface
     {
         return new Collection($this->data);
     }
 
-    /** @inheritDoc Iteratable */
+    /**
+     * @inheritDoc Iteratable
+     */
     public function getIterator(): iterable
     {
         return new ArrayIterator($this->data);
     }
 
-    /** @inheritDoc IteratableReverse */
+    /**
+     * @inheritDoc IteratableReverse
+     */
     public function getReverseIterator(): iterable
     {
         return new ReverseArrayIterator($this->data);
     }
 
     /**
-     * Static constructor with data.
+     * Static constructor.
+     *
+     * @param  mixed ...$data
+     * @return static
+     */
+    public static function of(mixed ...$data): static
+    {
+        return new static($data);
+    }
+
+    /**
+     * Static constructor.
      *
      * @param  iterable $data
      * @return static
@@ -282,31 +422,57 @@ trait MapSetTrait
     }
 
     /**
-     * Static constructor with items.
+     * Static constructor from a string & split pattern.
      *
-     * @param  mixed ...$items
+     * @param  string   $string
+     * @param  string   $pattern
+     * @param  int|null $limit
+     * @param  int|null $flags
      * @return static
+     * @since  6.0
      */
-    public static function of(mixed ...$items): static
+    public static function fromSplit(string $string, string $pattern, int $limit = null, int $flags = null): static
     {
-        return new static($items);
+        return new static(split($pattern, $string, $limit, $flags));
     }
 }
 
 /**
- * Map.
- *
  * A map class just like JavaScript's map but "a bit" extended.
  *
- * @package froq\util
+ * @package global
  * @object  Map
  * @author  Kerem Güneş
  * @since   5.25
  */
-class Map implements Iterator, ArrayAccess, Countable, Arrayable, Jsonable, Listable, Collectable,
-    Iteratable, IteratableReverse
+class Map implements Arrayable, Listable, Jsonable, Collectable, Iteratable, IteratableReverse,
+    Countable, Iterator, ArrayAccess
 {
     use MapSetTrait;
+
+    /** @magic */
+    public function __set(int|string|object $key, mixed $value): void
+    {
+        $this->set($key, $value);
+    }
+
+    /** @magic */
+    public function __get(int|string|object $key): mixed
+    {
+        return $this->get($key);
+    }
+
+    /** @magic */
+    public function __isset(int|string|object $key): bool
+    {
+        return $this->has($key);
+    }
+
+    /** @magic */
+    public function __unset(int|string|object $key): void
+    {
+        $this->remove($key);
+    }
 
     /**
      * Add a value.
@@ -330,7 +496,7 @@ class Map implements Iterator, ArrayAccess, Countable, Arrayable, Jsonable, List
      */
     public function set(int|string|object $key, mixed $value): self
     {
-        $key = $this->prepareKey($key);
+        $this->keyCheck($key);
 
         $this->data[$key] = $value;
 
@@ -346,7 +512,7 @@ class Map implements Iterator, ArrayAccess, Countable, Arrayable, Jsonable, List
      */
     public function get(int|string|object $key, mixed $default = null): mixed
     {
-        $key = $this->prepareKey($key);
+        $this->keyCheck($key);
 
         return $this->data[$key] ?? $default;
     }
@@ -360,20 +526,19 @@ class Map implements Iterator, ArrayAccess, Countable, Arrayable, Jsonable, List
      */
     public function remove(int|string|object $key, mixed &$value = null): bool
     {
-        $key = $this->prepareKey($key);
+        $this->keyCheck($key);
 
-        if ($this->has($key)) {
-            // Assign value ref.
-            if (func_num_args() == 2) {
-                $value = $this->data[$key];
-            }
+        // Clear ref.
+        $value = null;
+
+        if ($ok = $this->has($key)) {
+            // Fill ref.
+            $value = $this->data[$key];
 
             unset($this->data[$key]);
-
-            return true;
         }
 
-        return false;
+        return $ok;
     }
 
     /**
@@ -385,13 +550,11 @@ class Map implements Iterator, ArrayAccess, Countable, Arrayable, Jsonable, List
      */
     public function removeValue(mixed $value, string &$key = null): bool
     {
-        if ($this->hasValue($value, $key)) {
+        if ($ok = $this->hasValue($value, $key)) {
             unset($this->data[$key]);
-
-            return true;
         }
 
-        return false;
+        return $ok;
     }
 
     /**
@@ -404,16 +567,14 @@ class Map implements Iterator, ArrayAccess, Countable, Arrayable, Jsonable, List
      */
     public function replace(mixed $oldValue, mixed $newValue, string &$key = null): bool
     {
-        if ($this->hasValue($oldValue, $key)) {
+        if ($ok = $this->hasValue($oldValue, $key)) {
             $this->data[$key] = $newValue;
-
-            return true;
         }
 
-        return false;
+        return $ok;
     }
 
-    /** @aliasOf remove() */
+    /** @alias remove() */
     public function delete(int|string|object $key, mixed &$value = null): bool
     {
         return $this->remove($key, $value);
@@ -428,8 +589,34 @@ class Map implements Iterator, ArrayAccess, Countable, Arrayable, Jsonable, List
     public function forEach(callable $func): void
     {
         foreach ($this->data as $key => $value) {
-            $func($value, strval($key), $this);
+            $func($value, (string) $key, $this);
         }
+    }
+
+    /**
+     * Get key of given value, or return null.
+     *
+     * @param  mixed $value
+     * @return string|null
+     * @since  6.0
+     */
+    public function keyOf(mixed $value): string|null
+    {
+        return ($key = array_search_key($this->data, $value)) !== null
+             ? (string) $key : null;
+    }
+
+    /**
+     * Get last key of given value, or return null.
+     *
+     * @param  mixed $value
+     * @return string|null
+     * @since  6.0
+     */
+    public function lastKeyOf(mixed $value): string|null
+    {
+        return ($key = array_search_key($this->data, $value, last: true)) !== null
+             ? (string) $key : null;
     }
 
     /**
@@ -453,16 +640,20 @@ class Map implements Iterator, ArrayAccess, Countable, Arrayable, Jsonable, List
     public function hasValue(mixed $value, string &$key = null): bool
     {
         return array_value_exists($value, $this->data, key: $key)
-            && ($key = strval($key)) !== null; // Just for string cast.
+            && ($key = (string) $key) !== null; // Just for string cast.
     }
 
-    /** @inheritDoc ArrayAccess */
+    /**
+     * @inheritDoc ArrayAccess
+     */
     public function offsetExists(mixed $key): bool
     {
         return $this->has($key);
     }
 
-    /** @inheritDoc ArrayAccess */
+    /**
+     * @inheritDoc ArrayAccess
+     */
     public function offsetSet(mixed $key, mixed $value): void
     {
         // For calls like `items[] = item`.
@@ -471,13 +662,17 @@ class Map implements Iterator, ArrayAccess, Countable, Arrayable, Jsonable, List
         $this->set($key, $value);
     }
 
-    /** @inheritDoc ArrayAccess */
+    /**
+     * @inheritDoc ArrayAccess
+     */
     public function offsetGet(mixed $key): mixed
     {
         return $this->get($key);
     }
 
-    /** @inheritDoc ArrayAccess */
+    /**
+     * @inheritDoc ArrayAccess
+     */
     public function offsetUnset(mixed $key): void
     {
         $this->remove($key);
@@ -488,30 +683,41 @@ class Map implements Iterator, ArrayAccess, Countable, Arrayable, Jsonable, List
      *
      * @param  int|string|object $key
      * @return string
-     * @throws KeyError
      */
     protected function prepareKey(int|string|object $key): string
+    {
+        return is_object($key) ? get_object_id($key) : (string) $key;
+    }
+
+    /**
+     * Check key validity & prepare (as shortcut).
+     *
+     * @param  mixed &$key
+     * @return void
+     * @throws KeyError
+     */
+    protected function keyCheck(mixed &$key, bool $prepare = true): void
     {
         if (is_string($key) && $key == '') {
             throw new KeyError('Empty key given');
         }
 
-        return is_object($key) ? get_object_id($key) : strval($key);
+        if ($prepare) {
+            $key = $this->prepareKey($key);
+        }
     }
 }
 
 /**
- * Set.
- *
  * A set class just like JavaScript's set but "a bit" extended.
  *
- * @package froq\util
+ * @package global
  * @object  Set
  * @author  Kerem Güneş
  * @since   5.25
  */
-class Set implements Iterator, ArrayAccess, Countable, Arrayable, Jsonable, Listable, Collectable,
-    Iteratable, IteratableReverse
+class Set implements Arrayable, Listable, Jsonable, Collectable, Iteratable, IteratableReverse,
+    Countable, Iterator, ArrayAccess
 {
     use MapSetTrait;
 
@@ -566,7 +772,7 @@ class Set implements Iterator, ArrayAccess, Countable, Arrayable, Jsonable, List
     {
         $this->indexCheck($index);
 
-        return $this->hasIndex($index) ? $this->data[$index] : $default;
+        return $this->data[$index] ?? $default;
     }
 
     /**
@@ -578,7 +784,7 @@ class Set implements Iterator, ArrayAccess, Countable, Arrayable, Jsonable, List
      */
     public function remove(mixed $value, int &$index = null): bool
     {
-        if ($this->has($value, $index)) {
+        if ($ok = $this->has($value, $index)) {
             $count = $this->count();
 
             unset($this->data[$index]);
@@ -587,11 +793,9 @@ class Set implements Iterator, ArrayAccess, Countable, Arrayable, Jsonable, List
             if ($index != $count - 1) {
                 $this->resetIndexes();
             }
-
-            return true;
         }
 
-        return false;
+        return $ok;
     }
 
     /**
@@ -605,8 +809,14 @@ class Set implements Iterator, ArrayAccess, Countable, Arrayable, Jsonable, List
     {
         $this->indexCheck($index);
 
-        if ($this->hasIndex($index)) {
+        // Clear ref.
+        $value = null;
+
+        if ($ok = $this->hasIndex($index)) {
             $count = $this->count();
+
+            // Fill ref.
+            $value = $this->data[$index];
 
             unset($this->data[$index]);
 
@@ -614,11 +824,9 @@ class Set implements Iterator, ArrayAccess, Countable, Arrayable, Jsonable, List
             if ($index != $count - 1) {
                 $this->resetIndexes();
             }
-
-            return true;
         }
 
-        return false;
+        return $ok;
     }
 
     /**
@@ -631,16 +839,14 @@ class Set implements Iterator, ArrayAccess, Countable, Arrayable, Jsonable, List
      */
     public function replace(mixed $oldValue, mixed $newValue, int &$index = null): bool
     {
-        if ($this->remove($oldValue, $index)) {
+        if ($ok = $this->remove($oldValue, $index)) {
             $this->set($index, $newValue);
-
-            return true;
         }
 
-        return false;
+        return $ok;
     }
 
-    /** @aliasOf remove() */
+    /** @alias remove() */
     public function delete(mixed $value, int &$index = null): bool
     {
         return $this->remove($value, $index);
@@ -657,6 +863,18 @@ class Set implements Iterator, ArrayAccess, Countable, Arrayable, Jsonable, List
         foreach ($this->data as $index => $value) {
             $func($value, $index, $this);
         }
+    }
+
+    /**
+     * Get index of given value, or return null.
+     *
+     * @param  mixed $value
+     * @return int|null
+     * @since  6.0
+     */
+    public function indexOf(mixed $value): int|null
+    {
+        return array_search_key($this->data, $value);
     }
 
     /**
@@ -682,13 +900,17 @@ class Set implements Iterator, ArrayAccess, Countable, Arrayable, Jsonable, List
         return array_key_exists($index, $this->data);
     }
 
-    /** @inheritDoc ArrayAccess */
+    /**
+     * @inheritDoc ArrayAccess
+     */
     public function offsetExists(mixed $index): bool
     {
         return $this->hasIndex($index);
     }
 
-    /** @inheritDoc ArrayAccess */
+    /**
+     * @inheritDoc ArrayAccess
+     */
     public function offsetSet(mixed $index, mixed $value): void
     {
         // For calls like `items[] = item`.
@@ -697,13 +919,17 @@ class Set implements Iterator, ArrayAccess, Countable, Arrayable, Jsonable, List
         $this->set($index, $value);
     }
 
-    /** @inheritDoc ArrayAccess */
+    /**
+     * @inheritDoc ArrayAccess
+     */
     public function offsetGet(mixed $index): mixed
     {
         return $this->get($index);
     }
 
-    /** @inheritDoc ArrayAccess */
+    /**
+     * @inheritDoc ArrayAccess
+     */
     public function offsetUnset(mixed $index): void
     {
         $this->removeIndex($index);
@@ -736,7 +962,7 @@ class Set implements Iterator, ArrayAccess, Countable, Arrayable, Jsonable, List
      * @return void
      * @throws KeyError
      */
-    private function indexCheck(mixed $index): void
+    protected function indexCheck(mixed $index): void
     {
         if (!is_int($index) || $index < 0) {
             throw new KeyError('Index must be int & greater than -1');
@@ -745,12 +971,9 @@ class Set implements Iterator, ArrayAccess, Countable, Arrayable, Jsonable, List
 }
 
 /**
- * Dict.
+ * A dictionary class just like Python's dict but "a bit" extended.
  *
- * A Dict class just like Python's map but "a bit" extended. Also using Map structure,
- * it overrides some methods to accept null keys for flexibility.
- *
- * @package froq\util
+ * @package global
  * @object  Dict
  * @author  Kerem Güneş
  * @since   5.31
@@ -766,18 +989,23 @@ class Dict extends Map
      */
     public function pushKey(int|string|object $key, mixed $value): self
     {
-        return $this->push($value, $key);
+        $this->data = array_push_key($this->data, $this->prepareKey($key), $value);
+
+        return $this;
     }
 
     /**
      * Pop an item by given key if exists.
      *
      * @param  int|string|object $key
+     * @param  mixed|null        $default
      * @return mixed|null
      */
-    public function popKey(int|string|object $key): mixed
+    public function popKey(int|string|object $key, mixed $default = null): mixed
     {
-        return $this->remove($key, $value) ? $value : null;
+        $value = array_pop_key($this->data, $this->prepareKey($key), $default);
+
+        return $value;
     }
 
     /**
@@ -788,12 +1016,13 @@ class Dict extends Map
     public function popItem(): array|null
     {
         $item = array_pop_entry($this->data);
-        $item && ($item[0] = strval($item[0]));
+        $item && ($item[0] = (string) $item[0]);
+
         return $item;
     }
 
     /**
-     * Static constructor with given keys (and value optionally).
+     * Static constructor from given keys (and value optionally).
      *
      * @param  array      $keys
      * @param  mixed|null $value
@@ -804,8 +1033,3 @@ class Dict extends Map
         return new static(array_fill_keys($keys, $value));
     }
 }
-
-/** Functions. */
-function xmap(...$args): Map { return new Map(...$args); }
-function xset(...$args): Set { return new Set(...$args); }
-function xdict(...$args): Dict { return new Dict(...$args); }

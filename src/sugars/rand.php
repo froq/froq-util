@@ -37,10 +37,10 @@ function rand_float(float $min = null, float $max = null, int $precision = null)
  *
  * @param  array       $array
  * @param  int|string &$key
- * @return ?any
+ * @return mixed|null
  * @since  4.1
  */
-function rand_item(array $array, int|string &$key = null)
+function rand_item(array $array, int|string &$key = null): mixed
 {
     srand();
 
@@ -65,8 +65,9 @@ function rand_items(array $array, int $limit, array &$keys = null): array|null
 {
     srand();
 
-    $ret = [];
-    $len = count($array);
+    $ret  = [];
+    $len  = count($array);
+    $keys = null;
 
     do {
         $key = array_rand($array);

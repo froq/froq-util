@@ -107,6 +107,7 @@ function get_url_fragment(string $url = null): string|null
 /**
  * Get a segment by index from current or given URL.
  *
+ * @param  int         $i
  * @param  string|null $url
  * @return string|null
  * @since  4.0

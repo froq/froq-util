@@ -5,8 +5,6 @@
  */
 declare(strict_types=1);
 
-use froq\util\misc\Json;
-
 /**
  * Short builders.
  */
@@ -52,12 +50,12 @@ function json_parse_object($json, ...$args) {
 /**
  * Checkers.
  */
-function is_json_array($in) {
-    return Json::isArray($in);
+function is_json_array($input) {
+    return Json::isArray($input);
 }
-function is_json_object($in) {
-    return Json::isObject($in);
+function is_json_object($input) {
+    return Json::isObject($input);
 }
-function is_json_struct($in) {
-    return Json::isValidStruct($in);
+function is_json_struct($input) {
+    return Json::isValidStruct($input);
 }

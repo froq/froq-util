@@ -6,58 +6,12 @@
 declare(strict_types=1);
 
 use froq\util\UtilException;
-use froq\http\{Http, Request, Response, request\Segments, response\Status};
+use froq\http\{Request, Response, request\Segments, response\Status};
 use froq\App;
 
 // Check dependencies (all others already come with froq\App).
 if (!class_exists(App::class, false)) {
     throw new UtilException('Http sugars dependent to `froq` module but not found');
-}
-
-/**
- * Get HTTP protocol.
- *
- * @return string
- * @since  5.0
- */
-function http_protocol(): string
-{
-    return Http::protocol();
-}
-
-/**
- * Get HTTP version.
- *
- * @return float
- * @since  4.0
- */
-function http_version(): float
-{
-    return Http::version();
-}
-
-/**
- * Make/get an HTTP date.
- *
- * @param  int|null $time
- * @return string
- * @since  4.0
- */
-function http_date(int $time = null): string
-{
-    return Http::date($time);
-}
-
-/**
- * Verify an HTTP date.
- *
- * @param  string $date
- * @return bool
- * @since  4.0
- */
-function http_date_verify(string $date): bool
-{
-    return Http::dateVerify($date);
 }
 
 /**
@@ -67,18 +21,18 @@ function http_date_verify(string $date): bool
  */
 function request(): Request
 {
-    return app()->request();
+    return app()->request;
 }
 
 /**
  * Get app's response, but also optionally set code, content, attributes, headers and cookies.
  *
- * @param  ... $args
+ * @param  mixed ...$args
  * @return froq\http\Response
  */
-function response(...$args): Response
+function response(mixed ...$args): Response
 {
-    $response = app()->response();
+    $response = app()->response;
 
     if ($args) {
         @ [$code, $content, $attributes, $headers, $cookies] = $args;
@@ -86,7 +40,7 @@ function response(...$args): Response
         $code && $response->setStatus($code);
 
         if (count($args) >= 3) {
-            $response->setBody($content, (array) $attributes);
+            $response->setBody($content, $attributes);
         }
 
         $headers && $response->setHeaders($headers);
@@ -100,15 +54,17 @@ function response(...$args): Response
  * Set or get HTTP status code using app's response.
  *
  * @param  int|null $code
- * @return int|void
+ * @return int
  */
-function status(int $code = null)
+function status(int $code = null): int
 {
-    if ($code === null) {
-        return app()->response()->status()->getCode();
+    $status = app()->response->status;
+
+    if ($code !== null) {
+        $status->setCode($code);
     }
 
-    app()->response()->status()->setCode($code);
+    return $status->getCode();
 }
 
 /**
@@ -118,7 +74,7 @@ function status(int $code = null)
  */
 function is_get(): bool
 {
-    return app()->request()->isGet();
+    return app()->request->isGet();
 }
 
 /**
@@ -128,7 +84,7 @@ function is_get(): bool
  */
 function is_post(): bool
 {
-    return app()->request()->isPost();
+    return app()->request->isPost();
 }
 
 /**
@@ -138,7 +94,7 @@ function is_post(): bool
  */
 function is_put(): bool
 {
-    return app()->request()->isPut();
+    return app()->request->isPut();
 }
 
 /**
@@ -149,7 +105,7 @@ function is_put(): bool
  */
 function is_patch(): bool
 {
-    return app()->request()->isPatch();
+    return app()->request->isPatch();
 }
 
 /**
@@ -159,7 +115,7 @@ function is_patch(): bool
  */
 function is_delete(): bool
 {
-    return app()->request()->isDelete();
+    return app()->request->isDelete();
 }
 
 /**
@@ -169,100 +125,103 @@ function is_delete(): bool
  */
 function is_ajax(): bool
 {
-    return app()->request()->isAjax();
+    return app()->request->isAjax();
 }
 
 /**
- * Get one/many "GET" param.
+ * Get one/many/all $_GET params.
  *
- * @param  string|array|null $name
- * @param  any|null          $default
- * @return any|null
+ * @param  string|array<string>|null $name
+ * @param  mixed|null                $default
+ * @param  mixed                  ...$options
+ * @return mixed
  */
-function get(string|array $name = null, $default = null)
+function get(string|array $name = null, mixed $default = null, mixed ...$options): mixed
 {
-    return app()->request()->get($name, $default);
+    return app()->request->get($name, $default, ...$options);
 }
 
 /**
- * Get one/many "GET" param existence.
+ * Check one/many $_GET params.
  *
- * @param  string|array $name
+ * @param  string|array<string> $name
  * @return bool
  */
 function get_has(string|array $name): bool
 {
-    return app()->request()->hasGet($name);
+    return app()->request->hasGet($name);
 }
 
 /**
- * Get one/many "POST" param.
+ * Get one/many/all $_POST params.
  *
- * @param  string|array|null $name
- * @param  any|null          $default
- * @return any|null
+ * @param  string|array<string>|null $name
+ * @param  mixed|null                $default
+ * @param  mixed                  ...$options
+ * @return mixed
  */
-function post(string|array $name = null, $default = null)
+function post(string|array $name = null, mixed $default = null, mixed ...$options): mixed
 {
-    return app()->request()->post($name, $default);
+    return app()->request->post($name, $default, ...$options);
 }
 
 /**
- * Get one/many "POST" param existence.
+ * Check one/many $_POST params.
  *
- * @param  string|array $name
+ * @param  string|array<string> $name
  * @return bool
  */
 function post_has(string|array $name): bool
 {
-    return app()->request()->hasPost($name);
+    return app()->request->hasPost($name);
 }
 
 /**
- * Get one/many "COOKIE" param.
+ * Get one/many/all $_COOKIE params.
  *
- * @param  string|array|null $name
- * @param  any|null          $default
- * @return any|null
+ * @param  string|array<string>|null $name
+ * @param  mixed|null                $default
+ * @param  mixed                  ...$options
+ * @return mixed
  */
-function cookie(string|array $name = null, $default = null)
+function cookie(string|array $name = null, mixed $default = null, mixed ...$options): mixed
 {
-    return func_num_args() > 1 ? app()->request()->cookie($name, $default)
-                               : app()->request()->cookie($name);
+    return app()->request->cookie($name, $default, ...$options);
 }
 
 /**
- * Get one/many "COOKIE" param existence.
+ * Check one/many $_COOKIE params.
  *
- * @param  string|array $name
+ * @param  string|array<string> $name
  * @return bool
  */
 function cookie_has(string|array $name): bool
 {
-    return app()->request()->hasCookie($name);
+    return app()->request->hasCookie($name);
 }
 
 /**
- * Get a segment param.
+ * Get a URI segment.
  *
- * @param  int|string $key
- * @param  any|null   $default
- * @return any|null
+ * @param  int|string  $key
+ * @param  string|null $default
+ * @return string|null
  */
-function segment(int|string $key, $default = null)
+function segment(int|string $key, string $default = null): string|null
 {
-    return app()->request()->uri()->getSegment($key, $default);
+    return app()->request->segment($key, $default);
 }
 
 /**
- * Get URI segments property or segment params.
+ * Get all/many URI segments or Segments object.
  *
- * @param  bool $list
- * @return froq\http\request\Segments|array
+ * @param  array<int|string>|null $keys
+ * @param  array<string>|null     $defaults
+ * @return array<string>|froq\http\request\Segments
  */
-function segments(array $keys = null, $default = null): Segments|array
+function segments(array $keys = null, array $defaults = null): array|Segments
 {
-    return app()->request()->uri()->getSegments($key, $default);
+    return app()->request->segments($keys, $defaults);
 }
 
 /**
@@ -276,5 +235,5 @@ function segments(array $keys = null, $default = null): Segments|array
  */
 function redirect(string $to, int $code = Status::FOUND, array $headers = null, array $cookies = null): void
 {
-    app()->response()->redirect($to, $code, $headers, $cookies);
+    app()->response->redirect($to, $code, $headers, $cookies);
 }

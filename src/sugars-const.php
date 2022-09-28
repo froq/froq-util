@@ -6,31 +6,64 @@
 declare(strict_types=1);
 
 /**
- * For type-check purposes for null/void(undefined) refs.
+ * Nil: For null/void/undefined refs.
  */
-final class __null {} function null() { return new __null; }
-final class __void {} function void() { return new __void; }
+final class Nil {}
+
+/**
+ * Ref: For byref semantics.
+ */
+final class Ref {
+  public function __construct(
+    public mixed $data = nil
+  ) {}
+}
+
+function Nil(mixed &$ref = nil): Nil {
+  return $ref = new Nil();
+}
+function Ref(mixed $data = nil): Ref {
+  return new Ref($data);
+}
 
 /**
  * Nil/nils (null/null string).
- * @const null
  * @since 4.0
  */
 const nil = null, nils = '';
 
 /**
+ * Multi-byte encoding.
+ * @since 6.0
+ */
+const ENCODING = 'UTF-8';
+
+
+/**
+ * Number precision.
+ * @since 5.31
+ */
+const PRECISION = 14;
+
+
+/**
  * Cases (0/1 already defined as CASSE_LOWER/CASE_UPPER).
- * @const string
  * @since 4.19
  */
 const CASE_TITLE = 2, CASE_DASH  = 3,
       CASE_SNAKE = 4, CASE_CAMEL = 5;
 
 /**
- * Number precision.
- * @since 5.31
+ * Path info.
+ * @since 6.0
  */
-const NUMBER_PRECISION = 14;
+const PATHINFO_TYPE = 0;
+
+/**
+ * Namespace separator.
+ * @since 6.0
+ */
+const NAMESPACE_SEPARATOR = '\\';
 
 /**
  * Base-62 alphabet.

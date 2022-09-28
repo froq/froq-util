@@ -10,133 +10,107 @@ use froq\util\Strings;
 /**
  * Compare two strings, optionally by a locale.
  *
- * @param  string      $in1
- * @param  string      $in2
+ * @param  string      $string1
+ * @param  string      $string2
  * @param  string|null $locale
+ * @param  bool        $icase
  * @return int
  * @since  5.0
  */
-function string_compare(string $in1, string $in2, string $locale = null): int
+function string_compare(string $string1, string $string2, string $locale = null, bool $icase = false): int
 {
-    return is_null($locale) ? Strings::compare($in1, $in2)
-                            : Strings::compareLocale($in1, $in2, $locale);
+    return is_null($locale) ? Strings::compare($string1, $string2, $icase)
+                            : Strings::compareLocale($string1, $string2, $locale);
 }
 
 /**
- * Check whether given input contains given search.
+ * Check whether given string contains given search.
  *
- * @param  string $in
- * @param  string $src
- * @param  bool   $icase
+ * @param  string               $string
+ * @param  string|array<string> $search
+ * @param  bool                 $icase
  * @return bool
  * @since  3.0
  */
-function string_contains(string $in, string $src, bool $icase = false): bool
+function string_contains(string $string, string|array $search, bool $icase = false): bool
 {
-    return Strings::contains($in, $src, $icase);
+    return is_string($search) ? Strings::contains($string, $search, $icase);
+                              : Strings::containsAny($string, $search, $icase);
 }
 
 /**
- * Check whether given input contains any of given searches.
+ * Check whether given string starts with given search/searches.
  *
- * @param  string $in
- * @param  array  $srcs
- * @param  bool   $icase
- * @return bool
- * @since  3.0
- */
-function string_contains_any(string $in, array $srcs, bool $icase = false): bool
-{
-    return Strings::containsAny($in, $srcs, $icase);
-}
-
-/**
- * Check whether given input contains all given search.
- *
- * @param  string $in
- * @param  array  $srcs
- * @param  bool   $icase
- * @return bool
- * @since  3.0
- */
-function string_contains_all(string $in, array $srcs, bool $icase = false): bool
-{
-    return Strings::containsAll($in, $srcs, $icase);
-}
-
-/**
- * Check whether given input starts with given search/searches.
- *
- * @param  string               $in
+ * @param  string               $string
  * @param  string|array<string> $src
  * @return bool
  * @since  3.0
  */
-function string_starts_with(string $in, string|array $src, bool $icase = false, bool $mbyte = false): bool
+function string_starts_with(string $string, string|array $src, bool $icase = false, bool $mbyte = false): bool
 {
-    return is_string($src) ? Strings::startsWith($in, $src, $icase, $mbyte)
-                           : Strings::startsWithAny($in, $src, $icase, $mbyte);
+    return is_string($src) ? Strings::startsWith($string, $src, $icase, $mbyte)
+                           : Strings::startsWithAny($string, $src, $icase, $mbyte);
 }
 
 /**
- * Check whether given input ends with given search/searches.
+ * Check whether given string ends with given search/searches.
  *
- * @param  string               $in
+ * @param  string               $string
  * @param  string|array<string> $src
  * @return bool
  * @since  3.0
  */
-function string_ends_with(string $in, string|array $src, bool $icase = false, bool $mbyte = false): bool
+function string_ends_with(string $string, string|array $src, bool $icase = false, bool $mbyte = false): bool
 {
-    return is_string($src) ? Strings::endsWith($in, $src, $icase, $mbyte)
-                           : Strings::endsWithAny($in, $src, $icase, $mbyte);
+    return is_string($src) ? Strings::endsWith($string, $src, $icase, $mbyte)
+                           : Strings::endsWithAny($string, $src, $icase, $mbyte);
 }
 
 /**
- * Check whether given input encoding is UTF.
+ * Check whether given string encoding is UTF.
  *
- * @param  string $in
+ * @param  string $string
  * @param  int    $bits
  * @return bool
  * @since  4.0
  */
-function is_utf_string(string $in, int $bits = 8): bool
+function is_utf_string(string $string, int $bits = 8): bool
 {
-    return Strings::isUtf($in, $bits);
+    return Strings::isUtf($string, $bits);
 }
 
 /**
- * Check whether given input encoding is ASCII.
+ * Check whether given string encoding is ASCII.
  *
- * @param  string $in
+ * @param  string $string
  * @return bool
  * @since  4.0
  */
-function is_ascii_string(string $in): bool
+function is_ascii_string(string $string): bool
 {
-    return Strings::isAscii($in);
+    return Strings::isAscii($string);
 }
 
 /**
- * Check whether given input contains binary.
+ * Check whether given string contains binary.
  *
- * @param  string $in
+ * @param  string $string
  * @return bool
  * @since  4.0
  */
-function is_binary_string(string $in): bool
+function is_binary_string(string $string): bool
 {
-    return Strings::isBinary($in);
+    return Strings::isBinary($string);
 }
 
 /**
- * Check whether given input is base64-ed.
+ * Check whether given string is base64-ed.
  *
- * @param  string $in
+ * @param  string $string
  * @return bool
  * @since  4.0
  */
-function is_base64_string(string $in): bool
+function is_base64_string(string $string): bool
 {
-    return Strings::isBase64($in);
+    return Strings::isBase64($string);
 }
