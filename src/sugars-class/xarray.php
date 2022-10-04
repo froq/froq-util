@@ -54,14 +54,34 @@ class XArray implements Arrayable, Listable, Jsonable, Collectable, Iteratable, 
     // Access.
 
     /**
-     * Add an item.
+     * Add items.
      *
-     * @param  mixed $value
+     * @param  mixed ...$values
      * @return self
      */
-    public function add(mixed $value): self
+    public function add(mixed ...$values): self
     {
-        $this->data[] = $value;
+        foreach ($values as $value) {
+            $this->data[] = $value;
+        }
+
+        return $this;
+    }
+
+    /**
+     * Drop items.
+     *
+     * @param  mixed ...$values
+     * @return self
+     */
+    public function drop(mixed ...$values): self
+    {
+        foreach ($values as $value) {
+            $keys = array_keys($this->data, $value, true);
+            foreach ($keys as $key) {
+                unset($this->data[$key]);
+            }
+        }
 
         return $this;
     }
