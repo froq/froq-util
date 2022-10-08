@@ -902,18 +902,7 @@ class XArray implements Arrayable, Listable, Jsonable, Collectable, Iteratable, 
     {
         $data = $this->prepare($data);
 
-        // Swap bigger/smaller.
-        [$data1, $data2] = count($this->data) > count($data)
-            ? [$this->data, $data] : [$data, $this->data];
-
-        $data = [];
-
-        foreach ($data1 as $key => $value) {
-            in_array($value, $data2, $strict)
-                && $data[$key] = $value;
-        }
-
-        $this->data = $data;
+        $this->data = array_filter($this->data, fn($value) => in_array($value, $data, $strict));
 
         return $this;
     }
@@ -929,18 +918,7 @@ class XArray implements Arrayable, Listable, Jsonable, Collectable, Iteratable, 
     {
         $data = $this->prepare($data);
 
-        // Swap bigger/smaller.
-        [$data1, $data2] = count($this->data) > count($data)
-            ? [$this->data, $data] : [$data, $this->data];
-
-        $data = [];
-
-        foreach ($data1 as $key => $value) {
-            in_array($value, $data2, $strict)
-                || $data[$key] = $value;
-        }
-
-        $this->data = $data;
+        $this->data = array_filter($this->data, fn($value) => !in_array($value, $data, $strict));
 
         return $this;
     }
