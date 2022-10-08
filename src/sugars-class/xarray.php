@@ -183,10 +183,10 @@ class XArray implements Arrayable, Listable, Jsonable, Collectable, Iteratable, 
     }
 
     /**
-     * Put (for dotted notations).
+     * Put (good for dotted path notations).
      *
-     * @param  int|string|array $key
-     * @param  mixed            $value
+     * @param  int|string $key
+     * @param  mixed      $value
      * @return self
      */
     public function put(int|string $key, mixed $value): self
@@ -197,7 +197,7 @@ class XArray implements Arrayable, Listable, Jsonable, Collectable, Iteratable, 
     }
 
     /**
-     * Pull (for dotted notations).
+     * Pull (good for dotted path notations).
      *
      * @param  int|string|array $key
      * @param  mixed|null       $default
@@ -212,7 +212,7 @@ class XArray implements Arrayable, Listable, Jsonable, Collectable, Iteratable, 
     // Basic.
 
     /**
-     * Chunk tool.
+     * Chunk.
      *
      * @param  int  $length
      * @param  bool $keepKeys
@@ -226,7 +226,7 @@ class XArray implements Arrayable, Listable, Jsonable, Collectable, Iteratable, 
     }
 
     /**
-     * Concat tool.
+     * Concat.
      *
      * @param  mixed    $item
      * @param  mixed ...$items
@@ -240,7 +240,7 @@ class XArray implements Arrayable, Listable, Jsonable, Collectable, Iteratable, 
     }
 
     /**
-     * Slice tool.
+     * Slice.
      *
      * @param  int      $start
      * @param  int|null $end
@@ -255,7 +255,7 @@ class XArray implements Arrayable, Listable, Jsonable, Collectable, Iteratable, 
     }
 
     /**
-     * Splice tool.
+     * Splice.
      *
      * @param  int         $start
      * @param  int|null    $end
@@ -271,7 +271,7 @@ class XArray implements Arrayable, Listable, Jsonable, Collectable, Iteratable, 
     }
 
     /**
-     * Split tool.
+     * Split.
      *
      * @param  int  $length
      * @param  bool $keepKeys
@@ -285,7 +285,7 @@ class XArray implements Arrayable, Listable, Jsonable, Collectable, Iteratable, 
     }
 
     /**
-     * Join tool.
+     * Join.
      *
      * @param  string $glue
      * @return string
