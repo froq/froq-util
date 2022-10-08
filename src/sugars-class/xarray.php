@@ -324,10 +324,10 @@ class XArray implements Arrayable, Listable, Jsonable, Collectable, Iteratable, 
     /**
      * Union with given data applying unique check.
      *
-     * @param  array|self ...$data
+     * @param  iterable ...$data
      * @return self
      */
-    public function union(array|self ...$data): self
+    public function union(iterable ...$data): self
     {
         $this->data = array_union($this->data, ...$this->prepare($data));
 
@@ -894,22 +894,23 @@ class XArray implements Arrayable, Listable, Jsonable, Collectable, Iteratable, 
     /**
      * Like (mutual values).
      *
-     * @param  array|self $array
-     * @param  bool       $strict
+     * @param  iterable $data
+     * @param  bool     $strict
      * @return self
      */
-    public function like(array|self $array, bool $strict = true): self
+    public function like(iterable $data, bool $strict = true): self
     {
-        $array = $this->prepare($array);
+        $data = $this->prepare($data);
 
         // Swap bigger/smaller.
-        [$array1, $array2] = count($this->data) > count($array)
-            ? [$this->data, $array] : [$array, $this->data];
+        [$data1, $data2] = count($this->data) > count($data)
+            ? [$this->data, $data] : [$data, $this->data];
 
         $data = [];
 
-        foreach ($array1 as $key => $value) {
-            in_array($value, $array2, $strict) && $data[$key] = $value;
+        foreach ($data1 as $key => $value) {
+            in_array($value, $data2, $strict)
+                && $data[$key] = $value;
         }
 
         $this->data = $data;
@@ -920,22 +921,23 @@ class XArray implements Arrayable, Listable, Jsonable, Collectable, Iteratable, 
     /**
      * Unlike (non-mutual values).
      *
-     * @param  array|self $array
-     * @param  bool       $strict
+     * @param  iterable $data
+     * @param  bool     $strict
      * @return self
      */
-    public function unlike(array|self $array, bool $strict = true): self
+    public function unlike(iterable $data, bool $strict = true): self
     {
-        $array = $this->prepare($array);
+        $data = $this->prepare($data);
 
         // Swap bigger/smaller.
-        [$array1, $array2] = count($this->data) > count($array)
-            ? [$this->data, $array] : [$array, $this->data];
+        [$data1, $data2] = count($this->data) > count($data)
+            ? [$this->data, $data] : [$data, $this->data];
 
         $data = [];
 
-        foreach ($array1 as $key => $value) {
-            in_array($value, $array2, $strict) || $data[$key] = $value;
+        foreach ($data1 as $key => $value) {
+            in_array($value, $data2, $strict)
+                || $data[$key] = $value;
         }
 
         $this->data = $data;
@@ -946,19 +948,21 @@ class XArray implements Arrayable, Listable, Jsonable, Collectable, Iteratable, 
     /**
      * Diff.
      *
-     * @param  array|self    $array
+     * @param  iterable      $data
      * @param  callable|null $func
      * @param  bool          $assoc
      * @return self
      */
-    public function diff(array|self $array, callable $func = null, bool $assoc = false): self
+    public function diff(iterable $data, callable $func = null, bool $assoc = false): self
     {
-        $array = $this->prepare($array);
+        $data = $this->prepare($data);
 
         if ($func) {
-            $this->data = $assoc ? array_udiff_assoc($this->data, $array) : array_udiff($this->data, $array);
+            $this->data = $assoc ? array_udiff_assoc($this->data, $data)
+                                 : array_udiff($this->data, $data);
         } else {
-            $this->data = $assoc ? array_diff_assoc($this->data, $array) : array_diff($this->data, $array);
+            $this->data = $assoc ? array_diff_assoc($this->data, $data)
+                                 : array_diff($this->data, $data);
         }
 
         return $this;
@@ -967,18 +971,18 @@ class XArray implements Arrayable, Listable, Jsonable, Collectable, Iteratable, 
     /**
      * Diff-key.
      *
-     * @param  array|self    $array
+     * @param  iterable      $data
      * @param  callable|null $func
      * @return self
      */
-    public function diffKey(array|self $array, callable $func = null): self
+    public function diffKey(iterable $data, callable $func = null): self
     {
-        $array = $this->prepare($array);
+        $data = $this->prepare($data);
 
         if ($func) {
-            $this->data = array_diff_ukey($this->data, $array);
+            $this->data = array_diff_ukey($this->data, $data);
         } else {
-            $this->data = array_diff_key($this->data, $array);
+            $this->data = array_diff_key($this->data, $data);
         }
 
         return $this;
@@ -987,19 +991,21 @@ class XArray implements Arrayable, Listable, Jsonable, Collectable, Iteratable, 
     /**
      * Intersect.
      *
-     * @param  array|self    $array
+     * @param  iterable      $data
      * @param  callable|null $func
      * @param  bool          $assoc
      * @return self
      */
-    public function intersect(array|self $array, callable $func = null, bool $assoc = false): self
+    public function intersect(iterable $data, callable $func = null, bool $assoc = false): self
     {
-        $array = $this->prepare($array);
+        $data = $this->prepare($data);
 
         if ($func) {
-            $this->data = $assoc ? array_uintersect_assoc($this->data, $array) : array_uintersect($this->data, $array);
+            $this->data = $assoc ? array_uintersect_assoc($this->data, $data)
+                                 : array_uintersect($this->data, $data);
         } else {
-            $this->data = $assoc ? array_intersect_assoc($this->data, $array) : array_intersect($this->data, $array);
+            $this->data = $assoc ? array_intersect_assoc($this->data, $data)
+                                 : array_intersect($this->data, $data);
         }
 
         return $this;
@@ -1008,17 +1014,17 @@ class XArray implements Arrayable, Listable, Jsonable, Collectable, Iteratable, 
     /**
      * Intersect-key.
      *
-     * @param  array|self $array
+     * @param  iterable $data
      * @return self
      */
-    public function intersectKey(array|self $array): self
+    public function intersectKey(iterable $data): self
     {
-        $array = $this->prepare($array);
+        $data = $this->prepare($data);
 
         if ($func) {
-           $this->data = array_intersect_ukey($this->data, $array);
+           $this->data = array_intersect_ukey($this->data, $data);
         } else {
-           $this->data = array_intersect_key($this->data, $array);
+           $this->data = array_intersect_key($this->data, $data);
         }
 
         return $this;
@@ -1027,10 +1033,10 @@ class XArray implements Arrayable, Listable, Jsonable, Collectable, Iteratable, 
     /**
      * Merge.
      *
-     * @param  array|self ...$data
+     * @param  iterable ...$data
      * @return self
      */
-    public function merge(array|self ...$data): self
+    public function merge(iterable ...$data): self
     {
         $this->data = array_merge($this->data, ...$this->prepare($data));
 
@@ -1040,10 +1046,10 @@ class XArray implements Arrayable, Listable, Jsonable, Collectable, Iteratable, 
     /**
      * Merge recursive.
      *
-     * @param  array|self ...$data
+     * @param  iterable ...$data
      * @return self
      */
-    public function mergeRecursive(array|self ...$data): self
+    public function mergeRecursive(iterable ...$data): self
     {
         $this->data = array_merge_recursive($this->data, ...$this->prepare($data));
 
@@ -1053,10 +1059,10 @@ class XArray implements Arrayable, Listable, Jsonable, Collectable, Iteratable, 
     /**
      * Replace.
      *
-     * @param  array|self ...$data
+     * @param  iterable ...$data
      * @return self
      */
-    public function replace(array|self ...$data): self
+    public function replace(iterable ...$data): self
     {
         $this->data = array_replace($this->data, ...$this->prepare($data));
 
@@ -1066,10 +1072,10 @@ class XArray implements Arrayable, Listable, Jsonable, Collectable, Iteratable, 
     /**
      * Replace recursive.
      *
-     * @param  array|self ...$data
+     * @param  iterable ...$data
      * @return self
      */
-    public function replaceRecursive(array|self ...$data): self
+    public function replaceRecursive(iterable ...$data): self
     {
         $this->data = array_replace_recursive($this->data, ...$this->prepare($data));
 
@@ -1445,15 +1451,15 @@ class XArray implements Arrayable, Listable, Jsonable, Collectable, Iteratable, 
     /**
      * Prepare given data for some methods.
      */
-    private function prepare(array|self $data): array
+    private function prepare(iterable $data): array
     {
         foreach ($data as $i => $dat) {
             if ($dat instanceof self) {
                 $data[$i] = $dat->data;
             }
             // Variadic capture.
-            elseif (is_array($dat)) {
-                $data[$i] = $this->prepare($dat);
+            elseif (is_iterable($dat)) {
+                $data[$i] = iterator_to_array($dat);
             }
         }
         return $data;
