@@ -42,7 +42,7 @@ class Random
      */
     public function seed(int $seed = null): int
     {
-        if ($seed) {
+        if ($seed !== null) {
             $this->seed = ($seed ^ 0x5DEECE66D) & ((1 << 48) - 1);
         }
 
@@ -170,10 +170,12 @@ class Random
     }
 
     /**
-     * Get next number as int.
+     * Get next number.
      *
-     * @param  int $bits
-     * @return int
+     * Note about 48:
+     * When $bits = 8, returns <= 255.
+     * When $bits = 16, returns <= 65535.
+     * When $bits = 32, returns <= 4294967295 (2147483647 * 2 + 1).
      */
     private function next(int $bits): int
     {
