@@ -15,16 +15,22 @@ declare(strict_types=1);
  */
 class Options extends XArrayObject
 {
+    /** @var array */
+    private array $defaults = [];
+
     /**
      * Constructor.
      *
-     * @param  array|self|null $options
-     * @param  array|self|null $optionsDefault
-     * @param  bool            $map
+     * @param  array|null $options
+     * @param  array|null $defaults
+     * @param  bool       $map
      */
-    public function __construct(array|self|null $options, array|self|null $optionsDefault = null, bool $map = true)
+    public function __construct(array $options = null, array $defaults = null, bool $map = true)
     {
-        parent::__construct(array_options((array) $options, (array) $optionsDefault, map: $map));
+        if ($options || $defaults) {
+            $this->defaults = $defaults;
+            parent::__construct(array_options($options, $defaults, map: $map));
+        }
     }
 
     /**
@@ -74,6 +80,63 @@ class Options extends XArrayObject
     }
 
     /**
+     * Set defaults.
+     *
+     * @param  array $defaults
+     * @return self
+     */
+    public function setDefaults(array $defaults): self
+    {
+        $this->defaults = $defaults;
+
+        return $this;
+    }
+
+    /**
+     * Get defaults.
+     *
+     * @return array
+     */
+    public function getDefaults(): array
+    {
+        return $this->defaults;
+    }
+
+    /**
+     * Filter self data dropping unknown/undefined fields by given defaults or self defaults.
+     *
+     * @param  array|null $defaults
+     * @param  bool       $recursive
+     * @return self
+     */
+    public function filterDefaults(array $defaults = null, bool $recursive = false): self
+    {
+        $defaults ??= $this->defaults;
+
+        return $this->filterKeys(fn($key) => array_key_exists($key, $defaults), $recursive);
+    }
+
+    /**
+     * Resolve given options by self defaults.
+     *
+     * Note: With empty defaults, this method is useless.
+     *
+     * @param  array $options
+     * @return array
+     */
+    public function resolve(array $options): array
+    {
+        $array = [];
+
+        foreach (array_keys($this->defaults) as $key) {
+            $array[$key] = array_key_exists($key, $options)
+                ? $options[$key] : $this->defaults[$key];
+        }
+
+        return $array;
+    }
+
+    /**
      * Select an option item or many.
      *
      * @param  int|string|array $key
@@ -91,16 +154,5 @@ class Options extends XArrayObject
         $drop && $this->setData($array);
 
         return $value;
-    }
-
-    /**
-     * Filter default keys dropping unknown/undefined fields.
-     *
-     * @param  array $optionsDefault
-     * @return self
-     */
-    public function filterDefaultKeys(array $optionsDefault): self
-    {
-        return $this->filterKeys(fn($key) => array_key_exists($key, $optionsDefault));
     }
 }
