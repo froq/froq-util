@@ -358,7 +358,7 @@ class JsonObject extends PlainObject implements Arrayable, Jsonable, JsonSeriali
         $ret = [];
 
         foreach ($this as $key => $value) {
-            if ($deep && $value instanceof self) {
+            if ($deep && $value instanceof Arrayable) {
                 $value = $value->toArray(true);
             }
             $ret[$key] = $value;
@@ -372,7 +372,7 @@ class JsonObject extends PlainObject implements Arrayable, Jsonable, JsonSeriali
      */
     public function toJson(int $flags = 0): string
     {
-        return (string) json_encode($this, $flags);
+        return (string) json_encode($this->toArray(true), $flags);
     }
 
     /**

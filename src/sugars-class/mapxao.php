@@ -269,7 +269,7 @@ class XArrayObject extends ArrayObject implements Arrayable, Objectable, Jsonabl
         $ret = $this->getArrayCopy();
 
         if ($deep) foreach ($ret as $key => &$value) {
-            if ($value instanceof self) {
+            if ($value instanceof Arrayable) {
                 $value = $value->toArray(true);
             }
         }
@@ -285,7 +285,7 @@ class XArrayObject extends ArrayObject implements Arrayable, Objectable, Jsonabl
         $ret = $this->getArrayCopy();
 
         if ($deep) foreach ($ret as $key => &$value) {
-            if ($value instanceof self) {
+            if ($value instanceof Objectable) {
                 $value = $value->toObject(true);
             }
         }
