@@ -309,11 +309,8 @@ class LastError extends Error
 {
     use ErrorTrait;
 
-    /** Causing function name. */
-    private ?string $call = null;
-
-    /** Caused file/line info. */
-    private ?string $callPath = null;
+    /** Causing function data. */
+    private ?array $call = null;
 
     /**
      * Constructor.
@@ -327,8 +324,14 @@ class LastError extends Error
         if (!func_num_args()) {
             if ($error = get_error()) {
                 ['type' => $code, 'message' => $message] = $error;
-                $this->call = $error['function'];
-                $this->callPath = $error['file'] .':'. $error['line'];
+
+                // Fill call data.
+                $this->call = [
+                    'file' => $error['file'],
+                    'line' => $error['line'],
+                    'name' => $error['function'],
+                    'path' => $error['file'] .':'. $error['line'],
+                ];
             } else {
                 // Invalid call/throw.
                 [$code, $message] = [-1, 'No error'];
@@ -341,11 +344,41 @@ class LastError extends Error
     /**
      * Get call.
      *
-     * @return ?string
+     * @return ?array
      */
-    public function getCall(): ?string
+    public function getCall(): ?array
     {
         return $this->call;
+    }
+
+    /**
+     * Get call file.
+     *
+     * @return ?string
+     */
+    public function getCallFile(): ?string
+    {
+        return $this->call['file'] ?? null;
+    }
+
+    /**
+     * Get call line.
+     *
+     * @return ?int
+     */
+    public function getCallLine(): ?int
+    {
+        return $this->call['line'] ?? null;
+    }
+
+    /**
+     * Get call name.
+     *
+     * @return ?string
+     */
+    public function getCallName(): ?string
+    {
+        return $this->call['name'] ?? null;
     }
 
     /**
@@ -355,6 +388,6 @@ class LastError extends Error
      */
     public function getCallPath(): ?string
     {
-        return $this->callPath;
+        return $this->call['path'] ?? null;
     }
 }
