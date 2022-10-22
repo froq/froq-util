@@ -28,7 +28,7 @@ class Options extends XArrayObject
     public function __construct(array $options = null, array $defaults = null, bool $map = true)
     {
         if ($options || $defaults) {
-            $this->defaults = $defaults;
+            $this->defaults = $defaults ?? [];
             parent::__construct(array_options($options, $defaults, map: $map));
         }
     }
