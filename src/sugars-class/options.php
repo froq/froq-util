@@ -23,13 +23,19 @@ class Options extends XArrayObject
      *
      * @param  array|null $options
      * @param  array|null $defaults
-     * @param  bool       $map
+     * @param  bool       $map      Map string keys. @see array_options()
+     * @param  bool       $filter   Filter defaults. @see filterDefaults()
      */
-    public function __construct(array $options = null, array $defaults = null, bool $map = true)
+    public function __construct(array $options = null, array $defaults = null, bool $map = true, bool $filter = false)
     {
         if ($options || $defaults) {
             $this->defaults = $defaults ?? [];
+
             parent::__construct(array_options($options, $defaults, map: $map));
+
+            if ($filter && $defaults) {
+                $this->filterDefaults($defaults);
+            }
         }
     }
 
