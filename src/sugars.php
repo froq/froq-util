@@ -1708,6 +1708,11 @@ function set_object_vars(object $object, object|iterable $vars): object
         if (property_exists($object, (string) $name)) {
             $ref = new ReflectionProperty($object, $name);
             $ref->setValue($object, $value);
+        } elseif ($object instanceof stdClass) {
+            $object->$name = $value;
+        } elseif ($object instanceof ArrayAccess) {
+            // Both ArrayAccess & ArrayObject.
+            $object[$name] = $value;
         }
     }
 
