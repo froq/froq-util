@@ -1431,15 +1431,20 @@ class XArray implements Arrayable, Listable, Jsonable, Collectable, Iteratable, 
      */
     private function prepare(iterable $data): array
     {
+        if ($data instanceof Traversable) {
+            $data = iterator_to_array($data);
+        }
+
         foreach ($data as $i => $dat) {
             if ($dat instanceof self) {
                 $data[$i] = $dat->data;
             }
             // Variadic capture.
-            elseif (is_iterable($dat)) {
+            elseif ($dat instanceof Traversable) {
                 $data[$i] = iterator_to_array($dat);
             }
         }
+
         return $data;
     }
 }
