@@ -71,6 +71,17 @@ class Uuid implements Stringable
     }
 
     /**
+     * Get Uuid value as 20 to 22-length short ID in base62. Average chances are
+     * 22-length => 88%, 21-length => 10% 20-length => 02%
+     *
+     * @return string
+     */
+    public function toShortString(): string
+    {
+        return convert_base(str_replace('-', '', $this->value), 16, 62);
+    }
+
+    /**
      * Get Uuid value as hashed by length 16, 32, 40 or 64.
      *
      * @param  int  $length
@@ -200,7 +211,7 @@ class Uuid implements Stringable
             $bins[8] = chr(ord($bins[8]) & 0x3F | 0x80); // Variant.
         }
 
-        $uuid = vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($bins), 4));
+        $uuid = self::format(bin2hex($bins));
 
         $upper && $uuid = strtoupper($uuid);
         $plain && $uuid = str_replace('-', '', $uuid);
@@ -317,16 +328,25 @@ class Uuid implements Stringable
 
         $hash = hash($algo, $uuid);
 
-        if ($format) {
-            if (strlen($hash) != 32 || !ctype_xdigit($hash)) {
-                throw new UuidError('Format option for only 32-length UUIDs/GUIDs');
-            }
-
-            $hash = vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split($hash, 4));
-        }
-
-        $upper && $hash = strtoupper($hash);
+        $format && $hash = self::format($hash);
+        $upper  && $hash = strtoupper($hash);
 
         return $hash;
+    }
+
+    /**
+     * Format given hash.
+     *
+     * @param  string $hash
+     * @return string
+     * @throws UuidError
+     */
+    public static function format(string $hash): string
+    {
+        if (strlen($hash) != 32 || !ctype_xdigit($hash)) {
+            throw new UuidError('Format for only 32-length UUIDs/GUIDs');
+        }
+
+        return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split($hash, 4));
     }
 }
