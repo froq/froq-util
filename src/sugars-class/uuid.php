@@ -5,6 +5,8 @@
  */
 declare(strict_types=1);
 
+use froq\common\interface\Stringable;
+
 /**
  * A simple UUID/v4 class for working customized UUIDs.
  *
@@ -13,7 +15,7 @@ declare(strict_types=1);
  * @author  Kerem Güneş
  * @since   6.0
  */
-class Uuid implements Stringable
+class Uuid implements Stringable, \Stringable
 {
     /** Given or generated value. */
     public readonly string $value;
