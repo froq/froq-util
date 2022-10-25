@@ -324,6 +324,20 @@ trait MapSetTrait
     }
 
     /**
+     * Refine filtering given or null, "" and [] items as default.
+     *
+     * @param  array|null $items
+     * @return self
+     * @since  6.5
+     */
+    public function refine(array $items = null): self
+    {
+        $this->data = array_refine($this->data, $items);
+
+        return $this;
+    }
+
+    /**
      * Clear map/set.
      *
      * @return self
