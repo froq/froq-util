@@ -1222,7 +1222,7 @@ function preg_match_names(string $pattern, string $subject, array|null &$match, 
     $res = preg_match($pattern, $subject, $match, $flags, $offset);
 
     // Select string (named) keys.
-    $res && $match = array_filter($match, 'is_string', 2);
+    $match = array_filter($match, 'is_string', 2);
 
     return $res;
 }
@@ -1242,7 +1242,7 @@ function preg_match_all_names(string $pattern, string $subject, array|null &$mat
     $res = preg_match_all($pattern, $subject, $match, $flags, $offset);
 
     // Select string (named) keys.
-    $res && $match = array_filter($match, 'is_string', 2);
+    $match = array_filter($match, 'is_string', 2);
 
     return $res;
 }
