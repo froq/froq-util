@@ -1405,7 +1405,7 @@ function preg_error_message(int &$code = null, string $func = null, bool $clear 
 
     $error = error_get_last();
 
-    if ($code = $error['type']) {
+    if ($code =@ $error['type']) {
         $message = $error['message'];
         if ($message && strpfx($message, $func ?: 'preg_')) {
             // Clear last error.
