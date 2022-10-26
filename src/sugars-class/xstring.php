@@ -628,12 +628,16 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
      * @param  bool                 $icase
      * @param  int                  $limit
      * @param  int|null            &$count
+     * @param  bool                 $re @internal
      * @return self
      */
-    public function remove(string|array|RegExp $search, bool $icase = false, int $limit = -1, int &$count = null): self
+    public function remove(string|array|RegExp $search, bool $icase = false, int $limit = -1, int &$count = null,
+        bool $re = false): self
     {
         if ($search instanceof RegExp) {
             $this->data = $search->remove($this->data, $limit, $count);
+        } elseif ($re) {
+            $this->data = RegExp::fromPattern($search)->remove($this->data, $limit, $count);
         } else {
             $this->replace($search, '', $icase, $limit, $count);
         }
