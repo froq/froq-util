@@ -23,6 +23,7 @@ require 'sugars-class/state.php';
 require 'sugars-class/string-buffer.php';
 require 'sugars-class/trace.php';
 require 'sugars-class/type.php';
+require 'sugars-class/url.php';
 require 'sugars-class/uuid.php';
 require 'sugars-class/xarray.php';
 require 'sugars-class/xstring.php';

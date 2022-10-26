@@ -105,6 +105,15 @@ class LocaleError extends Error
 
 /**
  * @author Kerem Güneş
+ * @since  6.5
+ */
+class UrlError extends Error
+{
+    use ErrorTrait;
+}
+
+/**
+ * @author Kerem Güneş
  * @since  6.0
  */
 class UuidError extends Error
