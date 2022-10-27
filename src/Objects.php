@@ -402,13 +402,12 @@ final class Objects extends \StaticClass
 
             // Using name as key, since all names will be overridden internally in children.
             $ret[$propertyName] = [
-                'name'        => $propertyName,           'class'      => $propertyClass,
+                'name'        => $propertyName,         'class'      => $propertyClass,
                 'trait'       => $trait,
-                'type'        => $type,                   'nullable'   => $nullable,
-                'static'      => $property->isStatic(),   'dynamic'    => $property->isDynamic(),
-                'internal'    => $property->isInternal(), 'visibility' => $visibility,
-                'initialized' => $initialized,            'modifiers'  => $modifiers,
-                'reflection'  => $property,
+                'type'        => $type,                 'nullable'   => $nullable,
+                'static'      => $property->isStatic(), 'dynamic'    => $property->isDynamic(),
+                'visibility' => $visibility,            'initialized' => $initialized,
+                'modifiers'  => $modifiers,             'reflection'  => $property,
             ];
         }
 
@@ -543,12 +542,11 @@ final class Objects extends \StaticClass
 
             // Using method name as key, since all names will be overridden internally in children.
             $ret[$methodName] = [
-                'name'       => $methodName,           'class'      => $methodClass,
-                'trait'      => $trait,                'interface'  => $interface,
-                'return'     => $return,               'visibility' => $visibility,
-                'static'     => $method->isStatic(),   'final'      => $method->isFinal(),
-                'internal'   => $method->isInternal(), 'modifiers'  => $modifiers,
-                'parameters' => $parameters,
+                'name'       => $methodName,         'class'      => $methodClass,
+                'trait'      => $trait,              'interface'  => $interface,
+                'return'     => $return,             'visibility' => $visibility,
+                'static'     => $method->isStatic(), 'final'      => $method->isFinal(),
+                'modifiers'  => $modifiers,          'parameters' => $parameters,
                 'reflection' => $method,
             ];
         }
