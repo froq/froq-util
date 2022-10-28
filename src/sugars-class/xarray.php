@@ -304,11 +304,14 @@ class XArray implements Arrayable, Listable, Jsonable, Collectable, Iteratable, 
     {
         foreach ($data as $key => $value) {
             // Handle current iterable fields to keep as original.
-            if ($merge && is_iterable($value)) {
-                if (is_iterable($current = $this->get($key))) {
-                    $value = static::from($current)->update($value);
-                    $value = is_array($current) ? $value->array() : $value;
-                } unset($current);
+            // Eg: New "c" will be appended to old "c" item (xarray/array),
+            // instead of overwriting on old "c" item as "33".
+            // $x = xarray([...$a, 'c' => xarray($c)]);
+            // $x->update([...$b, 'c' => ['c' => 33]]);
+            if ($merge && is_iterable($value) && is_iterable($current = $this->get($key))) {
+                $value = static::from($current)->update($value);
+                $value = is_array($current) ? $value->array() : $value;
+                unset($current);
             }
 
             $this->set($key, $value);

@@ -310,11 +310,10 @@ trait MapSetTrait
     {
         foreach ($data as $key => $value) {
             // Handle current iterable fields to keep as original.
-            if ($merge && is_iterable($value)) {
-                if (is_iterable($current = $this->get($key))) {
-                    $value = static::from($current)->update($value);
-                    $value = is_array($current) ? $value->array() : $value;
-                } unset($current);
+            if ($merge && is_iterable($value) && is_iterable($current = $this->get($key))) {
+                $value = static::from($current)->update($value);
+                $value = is_array($current) ? $value->array() : $value;
+                unset($current);
             }
 
             $this->set($key, $value);
