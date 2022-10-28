@@ -1860,13 +1860,13 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     }
 
     /**
-     * Create a copy instance from self data and encoding.
+     * Get a copy instance.
      *
      * @return static
      */
     public function copy(): static
     {
-        return new static($this->data, $this->encoding);
+        return clone $this;
     }
 
     /**

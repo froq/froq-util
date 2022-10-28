@@ -494,13 +494,13 @@ class XNumber implements Stringable
     }
 
     /**
-     * Create a copy instance from self data and precision.
+     * Get a copy instance.
      *
      * @return static
      */
     public function copy(): static
     {
-        return new static($this->data, $this->precision);
+        return clone $this;
     }
 
     /**

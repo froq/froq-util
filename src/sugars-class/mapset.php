@@ -358,13 +358,13 @@ trait MapSetTrait
     }
 
     /**
-     * Get map/set data copy as a new static instance.
+     * Get a map/set copy instance.
      *
      * @return static
      */
     public function copy(): static
     {
-        return new static($this->data);
+        return clone $this;
     }
 
     /**

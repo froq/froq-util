@@ -766,13 +766,13 @@ class StringBuffer implements Stringable, IteratorAggregate, JsonSerializable, A
     }
 
     /**
-     * Create a copy instance from self data.
+     * Get a copy instance.
      *
      * @return static
      */
     public function copy(): static
     {
-        return new static($this->data, $this->encoding);
+        return clone $this;
     }
 
     /**

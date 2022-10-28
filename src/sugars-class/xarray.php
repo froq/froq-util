@@ -1256,13 +1256,13 @@ class XArray implements Arrayable, Listable, Jsonable, Collectable, Iteratable, 
     // Copy & inherit.
 
     /**
-     * Get data copy as a new static instance.
+     * Get a copy instance.
      *
      * @return static
      */
     public function copy(): static
     {
-        return new static($this->data);
+        return clone $this;
     }
 
     /**
