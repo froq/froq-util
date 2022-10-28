@@ -1845,7 +1845,7 @@ final class Arrays extends \StaticClass
         return array_shift($array) ?? $default;
     }
 
-     /**
+    /**
      * Choose an item from an array by given key(s).
      *
      * @param  array                        &$array
