@@ -33,7 +33,7 @@ class XNumber implements Stringable
      * Constructor.
      *
      * @param int|float|string $data
-     * @param int|bool|null    $precision
+     * @param int|bool|null    $precision @todo Use "true" type.
      */
     public function __construct(int|float|string $data, int|bool $precision = null)
     {
@@ -433,6 +433,80 @@ class XNumber implements Stringable
     }
 
     /**
+     * Equal checker.
+     *
+     * @param  int|float|string|self $data
+     * @param  int|null              $precision
+     * @return bool
+     * @since  6.6
+     */
+    public function isEqual(int|float|string|self $data, int $precision = null): bool
+    {
+        return Numbers::equals($this->data, $this->prepare($data, $precision), $precision);
+    }
+
+    /**
+     * Between checker.
+     *
+     * @param  int|float|string|self $min
+     * @param  int|float|string|self $max
+     * @return bool
+     * @since  6.6
+     */
+    public function isBetween(int|float|string|self $min, int|float|string|self $max): bool
+    {
+        return $this->data >= $this->prepare($min) && $this->data <= $this->prepare($max);
+    }
+
+    /**
+     * Less-than checker.
+     *
+     * @param  int|float|string|self $data
+     * @return bool
+     * @since  6.6
+     */
+    public function isLessThan(int|float|string|self $data): bool
+    {
+        return $this->data < $this->prepare($data);
+    }
+
+    /**
+     * Less-than-equal checker.
+     *
+     * @param  int|float|string|self $data
+     * @return bool
+     * @since  6.6
+     */
+    public function isLessThanEqual(int|float|string|self $data): bool
+    {
+        return $this->data <= $this->prepare($data);
+    }
+
+    /**
+     * Greater-than checker.
+     *
+     * @param  int|float|string|self $data
+     * @return bool
+     * @since  6.6
+     */
+    public function isGreaterThan(int|float|string|self $data): bool
+    {
+        return $this->data > $this->prepare($data);
+    }
+
+    /**
+     * Greater-than-equal checker.
+     *
+     * @param  int|float|string|self $data
+     * @return bool
+     * @since  6.6
+     */
+    public function isGreaterThanEqual(int|float|string|self $data): bool
+    {
+        return $this->data >= $this->prepare($data);
+    }
+
+    /**
      * Int caster.
      *
      * @return int
@@ -531,10 +605,10 @@ class XNumber implements Stringable
     /**
      * Prepare given data for some methods.
      */
-    private function prepare(int|float|string|self $data): int|float
+    private function prepare(int|float|string|self $data, int $precision = null): int|float
     {
         if (is_string($data)) {
-            return Numbers::convert($data, $this->precision);
+            return Numbers::convert($data, $precision ?? $this->precision);
         }
         if ($data instanceof self) {
             return $data->data;
@@ -547,7 +621,7 @@ class XNumber implements Stringable
  * XNumber initializer.
  *
  * @param  int|float|string $data
- * @param  int|bool|null    $precision
+ * @param  int|bool|null    $precision @todo Use "true" type.
  * @return XNumber
  */
 function xnumber(int|float|string $data = 0, int|bool $precision = null): XNumber

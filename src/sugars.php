@@ -1496,7 +1496,7 @@ function format_bool(mixed $input): string
  * Format an input as number.
  *
  * @param  int|float|string $input
- * @param  int|bool|null    $decimals
+ * @param  int|bool|null    $decimals @todo Use "true" type.
  * @param  string|null      $decimal_separator
  * @param  string|null      $thousand_separator
  * @return string|null

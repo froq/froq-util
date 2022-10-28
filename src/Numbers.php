@@ -28,7 +28,7 @@ final class Numbers extends \StaticClass
      * Convert.
      *
      * @param  int|float|string $input
-     * @param  int|bool|null    $precision
+     * @param  int|bool|null    $precision @todo Use "true" type.
      * @return int|float
      * @since  4.0
      */
