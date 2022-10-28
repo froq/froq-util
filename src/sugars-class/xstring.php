@@ -204,13 +204,13 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
      *
      * @param  int      $start
      * @param  int|null $length
-     * @return static
+     * @return self
      */
-    public function slice(int $start, int $length = null): static
+    public function slice(int $start, int $length = null): self
     {
-        $data = mb_substr($this->data, $start, $length, $this->encoding);
+        $this->data = mb_substr($this->data, $start, $length, $this->encoding);
 
-        return new static($data, $this->encoding);
+        return $this;
     }
 
     /**
@@ -221,26 +221,27 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
      * @param  bool        $icase
      * @param  bool        $last
      * @param  int         $offset
-     * @return static
+     * @return self
      */
-    public function sliceBefore(self|string $search, int $length = null, bool $icase = false, bool $last = false, int $offset = 0): static
+    public function sliceBefore(self|string $search, int $length = null, bool $icase = false, bool $last = false,
+        int $offset = 0): self
     {
         $index = $this->index($search, $icase, $last, $offset);
 
         if ($index !== null) {
-            $data = mb_substr($this->data, 0, $index, $this->encoding);
+            $this->data = mb_substr($this->data, 0, $index, $this->encoding);
             if ($length !== null) {
-                $data = ($length >= 0) ? mb_substr($data, 0, $length, $this->encoding)
-                    : mb_substr($data, $length, null, $this->encoding);
+                $this->data = ($length >= 0) ? mb_substr($this->data, 0, $length, $this->encoding)
+                    : mb_substr($this->data, $length, null, $this->encoding);
             }
         } else {
-            $data = ''; // Not found.
+            $this->data = ''; // Not found.
         }
 
-        return new static($data, $this->encoding);
+        return $this;
     }
 
-     /**
+    /**
      * Slice after.
      *
      * @param  self|string $search
@@ -248,23 +249,24 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
      * @param  bool        $icase
      * @param  bool        $last
      * @param  int         $offset
-     * @return static
+     * @return self
      */
-    public function sliceAfter(self|string $search, int $length = null, bool $icase = false, bool $last = false, int $offset = 0): static
+    public function sliceAfter(self|string $search, int $length = null, bool $icase = false, bool $last = false,
+        int $offset = 0): self
     {
         $index = $this->index($search, $icase, $last, $offset);
 
         if ($index !== null) {
-            $data = mb_substr($this->data, $index + mb_strlen($search, $this->encoding), null, $this->encoding);
+            $this->data = mb_substr($this->data, $index + mb_strlen($search, $this->encoding), null, $this->encoding);
             if ($length !== null) {
-                $data = ($length >= 0) ? mb_substr($data, 0, $length, $this->encoding)
-                    : mb_substr($data, $length, null, $this->encoding);
+                $this->data = ($length >= 0) ? mb_substr($this->data, 0, $length, $this->encoding)
+                    : mb_substr($this->data, $length, null, $this->encoding);
             }
         } else {
-            $data = ''; // Not found.
+            $this->data = ''; // Not found.
         }
 
-        return new static($data, $this->encoding);
+        return $this;
     }
 
     /**
