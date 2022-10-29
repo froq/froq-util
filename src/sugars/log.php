@@ -28,46 +28,42 @@ function logger(): Logger
  * Log an error message.
  *
  * @param  string|Throwable $message
- * @param  bool             $separate
  * @return bool
  */
-function log_error(string|Throwable $message, bool $separate = true): bool
+function log_error(string|Throwable $message): bool
 {
-    return app()->logger->logError($message, $separate);
+    return app()->logger->logError($message);
 }
 
 /**
  * Log a warning message.
  *
  * @param  string|Throwable $message
- * @param  bool             $separate
  * @return bool
  */
-function log_warn(string|Throwable $message, bool $separate = true): bool
+function log_warn(string|Throwable $message): bool
 {
-    return app()->logger->logWarn($message, $separate);
+    return app()->logger->logWarn($message);
 }
 
 /**
  * Log an info message.
  *
  * @param  string|Throwable $message
- * @param  bool             $separate
  * @return bool
  */
-function log_info(string|Throwable $message, bool $separate = true): bool
+function log_info(string|Throwable $message): bool
 {
-    return app()->logger->logInfo($message, $separate);
+    return app()->logger->logInfo($message);
 }
 
 /**
  * Log a debug message.
  *
  * @param  string|Throwable $message
- * @param  bool             $separate
  * @return bool
  */
-function log_debug(string|Throwable $message, bool $separate = true): bool
+function log_debug(string|Throwable $message): bool
 {
-    return app()->logger->logDebug($message, $separate);
+    return app()->logger->logDebug($message);
 }
