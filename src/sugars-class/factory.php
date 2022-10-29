@@ -207,7 +207,7 @@ class Factory
     {
         // Check for setter method.
         if (method_exists($object, $method = ('set' . $name))) {
-            $ref = new \ReflectionMethod($object, $method);
+            $ref = new ReflectionMethod($object, $method);
 
             // Call setter method chunking by argument count.
             $argsList = chunk($arguments, $ref->getNumberOfParameters());
@@ -216,7 +216,7 @@ class Factory
         }
         // Check for existence.
         elseif (property_exists($object, $name)) {
-            $ref = new \ReflectionProperty($object, $name);
+            $ref = new ReflectionProperty($object, $name);
 
             // Set property using first item
             $ref->setValue($object, first($arguments));
