@@ -147,18 +147,20 @@ final class Objects extends \StaticClass
     /**
      * Get real name if aliased.
      *
-     * @param  string $class
+     * @param  object|string $target
      * @return string
      * @since  6.0
      */
-    public static function getRealName(string $class): string
+    public static function getRealName(object|string $target): string
     {
-        $ref = self::reflect($class);
-        if ($ref && $ref->name != $class) {
+        $name = self::getName($target);
+
+        $ref = self::reflect($target);
+        if ($ref && $ref->name != $name) {
             return $ref->name;
         }
 
-        return $class;
+        return $name;
     }
 
     /**
