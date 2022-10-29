@@ -5,76 +5,8 @@
  */
 declare(strict_types=1);
 
-/**
- * A trait for property access and a proper string representation,
- * used by errors below.
- *
- * @author Kerem Güneş
- * @since  6.0
- */
-trait ErrorTrait
-{
-    /**
-     * Constructor.
-     *
-     * @param string|Throwable|null $message
-     * @param mixed|null            $messageParams
-     * @param int|null              $code
-     * @param Throwable|null        $previous
-     * @param Throwable|null        $cause          Not used.
-     */
-    public function __construct(string $message = null, mixed $messageParams = null, int $code = null,
-        Throwable $previous = null, /* Throwable $cause = null */)
-    {
-        // Formattable message with params.
-        if ($message && func_num_args() > 1) {
-            $message = format($message, ...array_values(
-                is_array($messageParams) || is_scalar($messageParams)
-                    ? (array) $messageParams : [$messageParams]
-            ));
-        }
-
-        parent::__construct((string) $message, (int) $code, $previous);
-    }
-
-    /**
-     * To get rid of calling get*() methods for those readonly properties.
-     */
-    public function __get(string $property): mixed
-    {
-        switch ($property) {
-            case 'trace':
-                return $this->getTrace();
-            case 'traceString':
-                return $this->getTraceAsString();
-        }
-
-        // Note: Subclasses must define properties as "protected".
-        if (property_exists($this, $property)) {
-            return $this->$property;
-        }
-
-        // Act as original.
-        $message = sprintf('Undefined property: %s::$%s', $this::class, $property);
-        trigger_error($message, E_USER_WARNING);
-
-        return null;
-    }
-
-    /**
-     * To get a proper string representation with code.
-     */
-    public function __toString(): string
-    {
-        $ret = trim(parent::__toString());
-
-        // Stack trace: ... => Trace: ...
-        $ret = preg_replace('~Stack trace:~', 'Trace:', $ret, 1);
-
-        // Error: ... => Error(123): ...
-        return preg_replace('~^([^: ]+):* (.+)~', '\1('. $this->code .'): \2', $ret, 1);
-    }
-}
+use froq\common\Error;
+use froq\common\trait\ThrowableTrait as ErrorTrait;
 
 /**
  * @author Kerem Güneş
