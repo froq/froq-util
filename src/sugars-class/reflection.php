@@ -13,9 +13,7 @@ declare(strict_types=1);
  * @see Type::$reflection & Type::reflect().
  */
 
-/**
- * Extensions.
- */
+// Extensions.
 // class XReflectionObject extends froq\reflection\ReflectionObject {}
 // class XReflectionClass extends froq\reflection\ReflectionClass {}
 // class XReflectionClassConstant extends froq\reflection\ReflectionClassConstant {}
@@ -34,9 +32,7 @@ class_alias(froq\reflection\ReflectionParameter::class, XReflectionParameter::cl
 class_alias(froq\reflection\ReflectionType::class, XReflectionType::class);
 
 
-/**
- * Additions.
- */
+// Additions.
 // class ReflectionTrait extends froq\reflection\ReflectionTrait {}
 // class ReflectionInterface extends froq\reflection\ReflectionInterface {}
 // class ReflectionNamespace extends froq\reflection\ReflectionNamespace {}

@@ -137,21 +137,21 @@ class XClass implements Stringable
     }
 
     /** @alias constantExists() */
-    public function hasConstant(string $name): bool
+    public function hasConstant(...$args)
     {
-        return $this->constantExists($name);
+        return $this->constantExists(...$args);
     }
 
     /** @alias propertyExists() */
-    public function hasProperty(string $name): bool
+    public function hasProperty(...$args)
     {
-        return $this->propertyExists($name);
+        return $this->propertyExists(...$args);
     }
 
     /** @alias methodExists() */
-    public function hasMethod(string $name): bool
+    public function hasMethod(...$args)
     {
-        return $this->methodExists($name);
+        return $this->methodExists(...$args);
     }
 
     /**
@@ -205,7 +205,7 @@ class XClass implements Stringable
      */
     public function getConstants(): array|null
     {
-        return $this->exists ? get_class_constants($this->name) : null;
+        return $this->exists ? get_class_constants($this->name, false) : null;
     }
 
     /**
@@ -215,7 +215,7 @@ class XClass implements Stringable
      */
     public function getProperties(): array|null
     {
-        return $this->exists ? get_class_properties($this->name) : null;
+        return $this->exists ? get_class_properties($this->name, false) : null;
     }
 
     /**
@@ -301,28 +301,33 @@ class XClass implements Stringable
         return is_class_of($this->name, $class, ...$classes);
     }
 
-    /** @alias extends() */
-    public function isSubclassOf(string $class, bool $parentOnly = false): bool
+    /**
+     * Subclass-of checker.
+     *
+     * @param  string $class
+     * @return bool
+     */
+    public function isSubclassOf(string $class): bool
     {
-        return $this->extends($class, $parentOnly);
+        return is_subclass_of($this->name, $class);
     }
 
     /** @alias extends() */
-    public function isExtenderOf(string $class, bool $parentOnly = false): bool
+    public function isExtenderOf(...$args)
     {
-        return $this->extends($class, $parentOnly);
+        return $this->extends(...$args);
     }
 
     /** @alias implements() */
-    public function isImplementerOf(string $interface): bool
+    public function isImplementerOf(...$args)
     {
-        return $this->implements($interface);
+        return $this->implements(...$args);
     }
 
     /** @alias uses() */
-    public function isUserOf(string $trait): bool
+    public function isUserOf(...$args)
     {
-        return $this->uses($trait);
+        return $this->uses(...$args);
     }
 
     /**
@@ -347,7 +352,58 @@ class XClass implements Stringable
     {
         try {
             return !$extended ? new ReflectionClass($this->name)
-                 : new XReflectionClass($this->name);
+                              : new XReflectionClass($this->name);
+        } catch (ReflectionException) {
+            return null;
+        }
+    }
+
+    /**
+     * Reflect a constant & return reflection, or null (error).
+     *
+     * @param  string $name
+     * @param  bool   $extended
+     * @return ReflectionClassConstant|XReflectionClassConstant|null
+     */
+    public function reflectConstant(string $name, bool $extended = false): ReflectionClassConstant|XReflectionClassConstant|null
+    {
+        try {
+            return !$extended ? new ReflectionClassConstant($this->name, $name)
+                              : new XReflectionClassConstant($this->name, $name);
+        } catch (ReflectionException) {
+            return null;
+        }
+    }
+
+    /**
+     * Reflect a property & return reflection, or null (error).
+     *
+     * @param  string $name
+     * @param  bool   $extended
+     * @return ReflectionProperty|XReflectionProperty|null
+     */
+    public function reflectProperty(string $name, bool $extended = false): ReflectionProperty|XReflectionProperty|null
+    {
+        try {
+            return !$extended ? new ReflectionProperty($this->name, $name)
+                              : new XReflectionProperty($this->name, $name);
+        } catch (ReflectionException) {
+            return null;
+        }
+    }
+
+    /**
+     * Reflect a method & return reflection, or null (error).
+     *
+     * @param  string $name
+     * @param  bool   $extended
+     * @return ReflectionMethod|XReflectionMethod|null
+     */
+    public function reflectMethod(string $name, bool $extended = false): ReflectionMethod|XReflectionMethod|null
+    {
+        try {
+            return !$extended ? new ReflectionMethod($this->name, $name)
+                              : new XReflectionMethod($this->name, $name);
         } catch (ReflectionException) {
             return null;
         }

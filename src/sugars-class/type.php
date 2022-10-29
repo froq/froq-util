@@ -21,6 +21,9 @@ final class Type implements Stringable
     /** @var mixed */
     public readonly mixed $var;
 
+    /** @var XReflectionType */
+    private readonly XReflectionType $reflection;
+
     /**
      * Constructor.
      *
@@ -167,6 +170,7 @@ final class Type implements Stringable
     /**
      * Resource check.
      *
+     * @param  string $type
      * @return bool
      */
     public function isResource(string $type = null): bool
@@ -174,7 +178,7 @@ final class Type implements Stringable
         if (!$type) {
             return is_resource($this->var);
         }
-        return is_resource($this->var) && get_resource_type($this->var) == $type;
+        return is_resource($this->var) && get_resource_type($this->var) === $type;
     }
 
     /**
@@ -238,6 +242,16 @@ final class Type implements Stringable
     }
 
     /**
+     * Closure check.
+     *
+     * @return bool
+     */
+    public function isClosure(): bool
+    {
+        return ($this->var instanceof Closure);
+    }
+
+    /**
      * Plain object check.
      *
      * @return bool
@@ -290,6 +304,7 @@ final class Type implements Stringable
     /**
      * Type-of check.
      *
+     * @param  string ...$classes
      * @return bool
      */
     public function isTypeOf(string ...$types): bool
@@ -300,6 +315,7 @@ final class Type implements Stringable
     /**
      * Class-of check.
      *
+     * @param  string ...$classes
      * @return bool
      */
     public function isClassOf(string ...$classes): bool
@@ -308,5 +324,29 @@ final class Type implements Stringable
             return false;
         }
         return is_class_of($this->var, ...$classes);
+    }
+
+    /**
+     * Subclass-of check.
+     *
+     * @param  string $class
+     * @return bool
+     */
+    public function isSubclassOf(string $class): bool
+    {
+        if (!is_object($this->var)) {
+            return false;
+        }
+        return is_subclass_of($this->var, $class);
+    }
+
+    /**
+     * Reflect & return reflection of self var type.
+     *
+     * @return XReflectionType
+     */
+    public function reflect(): XReflectionType
+    {
+        return $this->reflection ??= XReflectionType::of($this->var);
     }
 }
