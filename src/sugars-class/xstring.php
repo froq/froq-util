@@ -933,15 +933,15 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
 
         foreach ($data as $data) {
             $data = (string) $data;
-            $ok = (!$icase || $data === '') ? $this->data === $data
+            $okay = (!$icase || $data === '') ? $this->data === $data
                 : mb_stripos($this->data, $data, 0, $this->encoding) === 0;
 
-            if (!$ok) {
-                return false;
+            if ($okay) {
+                return true;
             }
         }
 
-        return true;
+        return false;
     }
 
     /**
