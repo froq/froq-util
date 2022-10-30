@@ -1030,7 +1030,7 @@ function get_trace(int $options = 0, int $limit = 0, int $index = null, string $
 
         if (isset($trace['class'])) {
             $trace['method']     = $trace['function'];
-            $trace['methodType'] = ($trace['type']  == '::') ? 'static' : 'non-static';
+            $trace['methodType'] = ($trace['type'] == '::') ? 'static' : 'non-static';
         }
         if (isset($stack[$i + 1]['function'])) {
             $trace['caller'] = $stack[$i + 1]['function'];
@@ -1188,7 +1188,15 @@ function getlocale(int $category = LC_ALL, string|array $default = null, bool $a
  */
 function preg_test(string $pattern, string $subject): bool
 {
-    return (bool) preg_match($pattern, $subject);
+    $res =@ preg_match($pattern, $subject);
+
+    // Act as original.
+    if ($res === false) {
+        $message = preg_error_message(func: 'preg_match');
+        trigger_error(sprintf('%s(): %s', __function__, $message), E_USER_WARNING);
+    }
+
+    return (bool) $res;
 }
 
 /**
@@ -1209,7 +1217,15 @@ function preg_remove(string|array $pattern, string|array $subject, int $limit = 
         $replace = array_fill(0, count($pattern), '');
     }
 
-    return preg_replace($pattern, $replace, $subject, $limit ?? -1, $count);
+    $res =@ preg_replace($pattern, $replace, $subject, $limit ?? -1, $count);
+
+    // Act as original.
+    if ($res === null) {
+        $message = preg_error_message(func: 'preg_replace');
+        trigger_error(sprintf('%s(): %s', __function__, $message), E_USER_WARNING);
+    }
+
+    return $res;
 }
 
 /**
@@ -1224,10 +1240,16 @@ function preg_remove(string|array $pattern, string|array $subject, int $limit = 
  */
 function preg_match_names(string $pattern, string $subject, array|null &$match, int $flags = 0, int $offset = 0): int|false
 {
-    $res = preg_match($pattern, $subject, $match, $flags, $offset);
+    $res =@ preg_match($pattern, $subject, $match, $flags, $offset);
 
-    // Select string (named) keys.
-    $match = array_filter($match, 'is_string', 2);
+    // Act as original.
+    if ($res === false) {
+        $message = preg_error_message(func: 'preg_match');
+        trigger_error(sprintf('%s(): %s', __function__, $message), E_USER_WARNING);
+    } else {
+        // Select string (named) keys.
+        $match = array_filter($match, 'is_string', 2);
+    }
 
     return $res;
 }
@@ -1244,10 +1266,16 @@ function preg_match_names(string $pattern, string $subject, array|null &$match, 
  */
 function preg_match_all_names(string $pattern, string $subject, array|null &$match, int $flags = 0, int $offset = 0): int|false
 {
-    $res = preg_match_all($pattern, $subject, $match, $flags, $offset);
+    $res =@ preg_match_all($pattern, $subject, $match, $flags, $offset);
 
-    // Select string (named) keys.
-    $match = array_filter($match, 'is_string', 2);
+    // Act as original.
+    if ($res === false) {
+        $message = preg_error_message(func: 'preg_match');
+        trigger_error(sprintf('%s(): %s', __function__, $message), E_USER_WARNING);
+    } else {
+        // Select string (named) keys.
+        $match = array_filter($match, 'is_string', 2);
+    }
 
     return $res;
 }
@@ -1317,7 +1345,12 @@ function sorted(array $array, callable|int $func = null, int $flags = 0, bool $a
  */
 function error_clear(int $code = null): void
 {
-    if ($code && $code !== get_error('type')) {
+    $error = error_get_last();
+    if (!$error) {
+        return;
+    }
+
+    if ($code && $code !== $error['type']) {
         return;
     }
 
