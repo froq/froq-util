@@ -36,13 +36,15 @@ final class Trace implements Stringable, Countable, IteratorAggregate, ArrayAcce
     /** @magic */
     public function __toString(): string
     {
-        $ret = []; $entry = null;
-        foreach ($this->getIterator() as $entry) {
-            $ret[] = format('#%s %s', $entry->index, $entry->call());
+        $ret = []; $index = 0;
+
+        foreach ($this as $index => $entry) {
+            $index = $entry->index ?? $index;
+            $ret[] = format('#%s %s', $index, $entry->call());
         }
 
-        // Dunno what does this actually..
-        $ret[] = format('#%s {main}', $entry?->index + 1);
+        // Append {main} to end as original.
+        $ret[] = format('#%s {main}', $index + 1);
 
         return join("\n", $ret);
     }
@@ -84,7 +86,7 @@ final class Trace implements Stringable, Countable, IteratorAggregate, ArrayAcce
      */
     public function getFirst(): TraceEntry|null
     {
-        $entry = first($this->stack) ?: null;
+        $entry = first($this->stack);
 
         return $entry ? new TraceEntry($entry) : null;
     }
@@ -96,7 +98,7 @@ final class Trace implements Stringable, Countable, IteratorAggregate, ArrayAcce
      */
     public function getLast(): TraceEntry|null
     {
-        $entry = last($this->stack) ?: null;
+        $entry = last($this->stack);
 
         return $entry ? new TraceEntry($entry) : null;
     }
@@ -125,7 +127,7 @@ final class Trace implements Stringable, Countable, IteratorAggregate, ArrayAcce
      */
     public function find(callable $func): TraceEntry|null
     {
-        foreach ($this->getIterator() as $entry) {
+        foreach ($this as $entry) {
             if ($func($entry)) {
                 return $entry;
             }
@@ -217,10 +219,16 @@ final class TraceEntry implements ArrayAccess
      * @param array    $data
      * @param int|null $index
      */
-    public function __construct(array $data)
+    public function __construct(array $data, int $index = null)
     {
+        // For throwable traces.
+        if ($data && !isset($data['method']) && isset($data['class'], $data['function'])) {
+            $data['method']     = $data['function'];
+            $data['methodType'] = ($data['type'] == '::') ? 'static' : 'non-static';
+        }
+
         $this->data  = $data;
-        $this->index = $data['#'] ?? null;
+        $this->index = $index ?? $data['#'] ?? null;
     }
 
     /** @magic */
@@ -312,9 +320,9 @@ final class TraceEntry implements ArrayAccess
     /**
      * Get file.
      *
-     * @return string
+     * @return string|null
      */
-    public function file(): string
+    public function file(): string|null
     {
         return $this->getField('file');
     }
@@ -322,9 +330,9 @@ final class TraceEntry implements ArrayAccess
     /**
      * Get line.
      *
-     * @return int
+     * @return int|null
      */
-    public function line(): int
+    public function line(): int|null
     {
         return $this->getField('line');
     }
@@ -362,9 +370,9 @@ final class TraceEntry implements ArrayAccess
     /**
      * Get call.
      *
-     * @return string
+     * @return string|null
      */
-    public function call(): string
+    public function call(): string|null
     {
         return $this->callPath(true);
     }
@@ -413,18 +421,22 @@ final class TraceEntry implements ArrayAccess
      * Get call path.
      *
      * @param  bool $full
-     * @return string
+     * @return string|null
      */
-    public function callPath(bool $full = false): string
+    public function callPath(bool $full = false): string|null
     {
         $ret = $this->getField('callPath');
+
+        if (!$ret && ($fields = $this->getFields(['file', 'line']))) {
+            $ret = join(':', $fields);
+        }
 
         if ($full) {
             [$class, $function, $type] = $this->getFields(['class', 'function', 'type']);
             if ($class) {
                 // Simple modification for Trace struct.
                 if ($class == 'Trace' && $function == '__construct') {
-                    $class = 'new Trace'; $function = $type = '';
+                    [$class, $function, $type] = ['new Trace', '', ''];
                 }
 
                 $ret .= ' => '. $class . $type . $function .'()';
@@ -449,9 +461,9 @@ final class TraceEntry implements ArrayAccess
     /**
      * Get function.
      *
-     * @return string
+     * @return string|null
      */
-    public function function(): string
+    public function function(): string|null
     {
         return $this->getField('function');
     }
