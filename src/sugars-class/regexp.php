@@ -493,6 +493,22 @@ class RegExp implements Stringable
     }
 
     /**
+     * Quote given input.
+     *
+     * @param  string                    $input
+     * @param  string|array<string>|null $delimiter
+     * @return string
+     */
+    public static function quote(string $input, string|array $delimiter = null): string
+    {
+        if (is_array($delimiter)) {
+            $delimiter = join($delimiter);
+        }
+
+        return preg_quote($input, $delimiter);
+    }
+
+    /**
      * Escape given input.
      *
      * Note: Sould not be used with `prepare()` method.
