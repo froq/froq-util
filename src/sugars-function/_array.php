@@ -782,7 +782,7 @@ function array_pluck(array &$array, int|string|array $key, mixed $default = null
 /** Additions. */
 
 /**
- * Check a value if exists with/without strict comparison, filling found key as ref-arg.
+ * Check a value if exists with/without strict comparison as default, filling found key as ref-arg.
  *
  * @param  mixed           $value
  * @param  array           $array

@@ -1541,7 +1541,7 @@ final class Arrays extends \StaticClass
         $values || throw new \ValueError('No value/values given');
 
         foreach ($values as $value) {
-            if (!array_value_exists($value, $array, true)) {
+            if (!array_value_exists($value, $array)) {
                 return false;
             }
         }
