@@ -294,6 +294,17 @@ class XArray implements Arrayable, Listable, Jsonable, Collectable, Iteratable, 
     }
 
     /**
+     * X-join.
+     *
+     * @param  string $glue
+     * @return XString
+     */
+    public function xjoin(string $glue = ''): XString
+    {
+        return new XString($this->join($glue));
+    }
+
+    /**
      * Update self data by given data.
      *
      * @param  iterable $data
