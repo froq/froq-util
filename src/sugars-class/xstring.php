@@ -549,6 +549,23 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     }
 
     /**
+     * Replace-callback, for callback replacement.
+     *
+     * @param  string|RegExp  $search
+     * @param  callable       $callback
+     * @param  int            $limit
+     * @param  int|null      &$count
+     * @param  array|int      $flags
+     * @param  string|null    $class
+     * @return self
+     */
+    public function replaceCallback(string|RegExp $search, callable $callback, int $limit = -1, int &$count = null,
+        int|array $flags = 0, string $class = null): self
+    {
+        return $this->replace($search, $callback, false, $limit, $count, $flags, $class, true);
+    }
+
+    /**
      * Replace-RegExp, for RegExp replacement.
      *
      * @param  string|RegExp    $search
