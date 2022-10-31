@@ -351,7 +351,15 @@ function replace(string|array $input, string|array $search, string|array|callabl
  */
 function grep(string $pattern, string $input, bool $named = false): string|array|null
 {
-    preg_match($pattern, $input, $match, PREG_UNMATCHED_AS_NULL);
+    $res =@ preg_match($pattern, $input, $match, PREG_UNMATCHED_AS_NULL);
+
+    // Act as original.
+    if ($res === false) {
+        $message = preg_error_message(func: 'preg_match');
+        trigger_error(sprintf('%s(): %s', __function__, $message), E_USER_WARNING);
+
+        return null;
+    }
 
     if (isset($match[1])) {
         $ret = $match[1];
@@ -374,15 +382,24 @@ function grep(string $pattern, string $input, bool $named = false): string|array
  * @param  string $input
  * @param  bool   $named
  * @param  bool   $uniform
- * @return array<string|null>|null
+ * @return array|null
  * @since  3.15, 5.0
  */
 function grep_all(string $pattern, string $input, bool $named = false, bool $uniform = false): array|null
 {
-    preg_match_all($pattern, $input, $match, PREG_UNMATCHED_AS_NULL);
+    $res =@ preg_match_all($pattern, $input, $match, PREG_UNMATCHED_AS_NULL);
+
+    // Act as original.
+    if ($res === false) {
+        $message = preg_error_message(func: 'preg_match');
+        trigger_error(sprintf('%s(): %s', __function__, $message), E_USER_WARNING);
+
+        return null;
+    }
 
     if (isset($match[1])) {
-        unset($match[0]); // Drop input.
+        // Drop input.
+        unset($match[0]);
 
         $ret = [];
 
