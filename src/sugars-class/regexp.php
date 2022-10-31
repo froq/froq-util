@@ -502,10 +502,13 @@ class RegExp implements Stringable
     public static function quote(string $input, string|array $delimiter = null): string
     {
         if (is_array($delimiter)) {
-            $delimiter = join($delimiter);
+            $input = preg_quote($input); // Regular chars.
+            $input = addcslashes($input, join($delimiter));
+        } else {
+            $input = preg_quote($input, $delimiter);
         }
 
-        return preg_quote($input, $delimiter);
+        return $input;
     }
 
     /**
@@ -513,16 +516,16 @@ class RegExp implements Stringable
      *
      * Note: Sould not be used with `prepare()` method.
      *
-     * @param  string $input
-     * @param  string $delimiter
+     * @param  string                    $input
+     * @param  string|array<string>|null $delimiter
      * @return string
      */
-    public static function escape(string $input, string $delimiter = ''): string
+    public static function escape(string $input, string|array $delimiter = null): string
     {
         $chars = "\r\n\t\v\f\0";
         $delim = self::DELIMITER;
 
-        $input = preg_quote($input, $delim . $delimiter);
+        $input = self::quote($input, $delimiter);
 
         // Prevent double escape of delim.
         if (!str_contains($input, '\\' . $delim)) {
@@ -543,12 +546,15 @@ class RegExp implements Stringable
      *
      * @param  string $source
      * @param  string $modifiers
+     * @param  bool   $quote
      * @return string
      */
-    public static function prepare(string $source, string $modifiers = ''): string
+    public static function prepare(string $source, string $modifiers = '', bool $quote = false): string
     {
         $chars = "\r\n\t\v\f\0";
         $delim = self::DELIMITER;
+
+        $quote && $source = self::quote($source);
 
         // Prevent double escape of delim.
         if (!str_contains($source, '\\' . $delim)) {

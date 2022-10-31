@@ -1037,7 +1037,8 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
         if (is_string($pattern)) {
             // Prepare single chars.
             if (strlen($pattern) == 1) {
-                $pattern = RegExp::prepare($pattern, 'u');
+                // @tome: See escape in sugars' split().
+                $pattern = RegExp::prepare($pattern, 'u', quote: true);
             }
             $pattern = RegExp::fromPattern($pattern);
         }
