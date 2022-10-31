@@ -121,7 +121,7 @@ class RegExp implements Stringable
         $ret =@ preg_filter($this->pattern, $replace, $input, $limit, $count);
 
         if ($ret === null) {
-            $this->processError();
+            $this->processError('preg_filter');
         }
 
         return $ret;
@@ -145,6 +145,7 @@ class RegExp implements Stringable
         $this->flagsCheck($flags);
 
         $callback = is_callable($replace);
+        $function = $callback ? 'preg_replace_callback' : 'preg_replace';
 
         // @cancel: Param $class added.
         // Append Map instance as second argument to given callback.
@@ -155,18 +156,34 @@ class RegExp implements Stringable
             $replace = fn($match) => $replace(new $class($match));
         }
 
-        $ret =@ $callback ? preg_replace_callback($this->pattern, $replace, $input, $limit, $count, $flags)
-            : preg_replace($this->pattern, $replace, $input, $limit, $count);
+        $ret =@ $callback ? $function($this->pattern, $replace, $input, $limit, $count, $flags)
+                          : $function($this->pattern, $replace, $input, $limit, $count);
 
         if ($ret === null) {
-            $this->processError();
+            $this->processError($function);
         }
 
         return $ret;
     }
 
     /**
-     * Perform a search & replace, passing RegExpMatch as callable argument.
+     * Perform a search & replace, passing array to callable argument.
+     *
+     * @param  string|array  $input
+     * @param  callable      $replace
+     * @param  int           $limit
+     * @param  int|null     &$count
+     * @param  array|int     $flags
+     * @return string|array|null
+     */
+    public function replaceCallback(string|array $input, callable $replace, int $limit = -1, int &$count = null,
+        int|array $flags = 0): string|array|null
+    {
+        return $this->replace($input, $replace, $limit, $count, $flags, null);
+    }
+
+    /**
+     * Perform a search & replace, passing RegExpMatch to callable argument.
      *
      * @param  string|array  $input
      * @param  callable      $replace
@@ -195,7 +212,7 @@ class RegExp implements Stringable
             $ret =@ preg_remove($this->pattern, $input, $limit, $count);
 
             if ($ret === null) {
-                $this->processError();
+                $this->processError('preg_remove');
             }
 
             return $ret;
@@ -207,7 +224,7 @@ class RegExp implements Stringable
             $ret =@ preg_remove($this->pattern, $input, $limit, $count);
 
             if ($ret === null) {
-                $this->processError();
+                $this->processError('preg_remove');
             } else {
                 $rets[] = $ret;
             }
@@ -235,7 +252,7 @@ class RegExp implements Stringable
         ));
 
         if ($ret === false) {
-            $this->processError();
+            $this->processError('preg_split');
             $ret = null;
         }
 
@@ -291,7 +308,7 @@ class RegExp implements Stringable
         $res =@ preg_match($this->pattern, $input, $ret, $flags, $offset);
 
         if ($res === false) {
-            $this->processError();
+            $this->processError('preg_match');
             $ret = null;
         }
 
@@ -315,7 +332,7 @@ class RegExp implements Stringable
         $res =@ preg_match_all($this->pattern, $input, $ret, $flags, $offset);
 
         if ($res === false) {
-            $this->processError();
+            $this->processError('preg_match_all');
             $ret = null;
         }
 
@@ -342,7 +359,7 @@ class RegExp implements Stringable
         $res =@ preg_match_names($this->pattern, $input, $ret, $flags, $offset);
 
         if ($res === false) {
-            $this->processError();
+            $this->processError('preg_match_names');
             $ret = null;
         }
 
@@ -366,7 +383,7 @@ class RegExp implements Stringable
         $res =@ preg_match_all_names($this->pattern, $input, $ret, $flags, $offset);
 
         if ($res === false) {
-            $this->processError();
+            $this->processError('preg_match_all_names');
             $ret = null;
         }
 
@@ -393,7 +410,7 @@ class RegExp implements Stringable
         $res =@ preg_match($this->pattern, $input, $ret, $flags, $offset);
 
         if ($res === false) {
-            $this->processError();
+            $this->processError('preg_match');
             $ret = null;
         } elseif ($ret) {
             $ret = array_filter_keys($ret, 'is_int')
@@ -418,7 +435,7 @@ class RegExp implements Stringable
         $ret = grep($this->pattern, $input, $named);
 
         if ($ret === null) {
-            $this->processError();
+            $this->processError('grep');
         }
 
         return $class ? new $class((array) $ret) : $ret;
@@ -440,7 +457,7 @@ class RegExp implements Stringable
         $ret = grep_all($this->pattern, $input, $named, $uniform);
 
         if ($ret === null) {
-            $this->processError();
+            $this->processError('grep_all');
         }
 
         return $class ? new $class((array) $ret) : $ret;
@@ -457,7 +474,7 @@ class RegExp implements Stringable
         $ret =@ preg_match($this->pattern, $input);
 
         if ($ret === false) {
-            $this->processError();
+            $this->processError('preg_match');
         }
 
         return (bool) $ret;
@@ -475,7 +492,7 @@ class RegExp implements Stringable
         $ret =@ preg_match($this->pattern, $input, $match, PREG_OFFSET_CAPTURE);
 
         if ($ret === false) {
-            $this->processError();
+            $this->processError('preg_match');
         }
 
         if ($ret && isset($match[0][1])) {
@@ -491,8 +508,9 @@ class RegExp implements Stringable
     }
 
     /**
-     * Escape pattern with/without delimiter.
-     * Note: Sould not be used with prepare().
+     * Escape given input.
+     *
+     * Note: Sould not be used with `prepare()` method.
      *
      * @param  string $input
      * @param  string $delimiter
@@ -500,16 +518,12 @@ class RegExp implements Stringable
      */
     public static function escape(string $input, string $delimiter = ''): string
     {
-        $input = preg_quote($input, $delimiter);
-
         $chars = "\r\n\t\v\f\0";
         $delim = self::DELIMITER;
 
-        if (!$delimiter || !str_contains($delimiter, $delim)) {
-            $chars .= $delim;
-        }
+        $input = preg_quote($input, $delim . $delimiter);
 
-        // Prevent double escape.
+        // Prevent double escape of delim.
         if (!str_contains($input, '\\' . $delim)) {
             $chars .= $delim;
         }
@@ -522,8 +536,9 @@ class RegExp implements Stringable
     }
 
     /**
-     * Prepare source as pattern with/without modifiers.
-     * Note: Sould not be used with escape().
+     * Prepare given source as pattern.
+     *
+     * Note: Sould not be used with `escape()` method.
      *
      * @param  string $source
      * @param  string $modifiers
@@ -534,13 +549,12 @@ class RegExp implements Stringable
         $chars = "\r\n\t\v\f\0";
         $delim = self::DELIMITER;
 
-        // Prevent double escape.
+        // Prevent double escape of delim.
         if (!str_contains($source, '\\' . $delim)) {
             $chars .= $delim;
         }
 
-        if (strpbrk($source, $chars) !== false
-            && !str_contains($modifiers, 'x')) {
+        if (strpbrk($source, $chars) !== false && !str_contains($modifiers, 'x')) {
             $source = addcslashes($source, $chars);
         }
 
