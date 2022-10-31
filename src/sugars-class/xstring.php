@@ -1018,7 +1018,7 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
      * @param  int $length
      * @return XArray
      */
-    public function xsplits(string $class, int $length = 1): XArray
+    public function xsplits(int $length = 1): XArray
     {
         return $this->splits($length, XArray::class);
     }
