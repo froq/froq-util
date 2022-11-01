@@ -170,7 +170,7 @@ final class Type implements Stringable
     /**
      * Resource check.
      *
-     * @param  string $type
+     * @param  string|null $type
      * @return bool
      */
     public function isResource(string $type = null): bool
