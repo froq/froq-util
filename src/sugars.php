@@ -1345,11 +1345,15 @@ function last(array $array): mixed
  * @param  callable|int|null $func
  * @param  int               $flags
  * @param  bool|null         $assoc
+ * @param  bool              $key
  * @return array
  * @since  5.41
  */
-function sorted(array $array, callable|int $func = null, int $flags = 0, bool $assoc = null): array
+function sorted(array $array, callable|int $func = null, int $flags = 0, bool $assoc = null, bool $key = false): array
 {
+    if ($key) {
+        return Arrays::sortKey($array, $func, $flags);
+    }
     return Arrays::sort($array, $func, $flags, $assoc);
 }
 
