@@ -41,8 +41,8 @@ final class Strings extends \StaticClass
                  : strcasecmp(mb_strtolower($string1, $encoding), mb_strtolower($string2, $encoding));
         } else {
             $ret = ($length !== null)
-                ? strncmp($string1, $string2, $length)
-                : strcmp($string1, $string2);
+                 ? strncmp($string1, $string2, $length)
+                 : strcmp($string1, $string2);
         }
 
         // Uniform result as 0, 1 or -1.
