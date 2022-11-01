@@ -427,8 +427,13 @@ final class TraceEntry implements ArrayAccess
     {
         $ret = $this->getField('callPath');
 
-        if (!$ret && ($fields = $this->getFields(['file', 'line']))) {
-            $ret = join(':', $fields);
+        if (!$ret) {
+            $fields = $this->getFields(['file', 'line']);
+            if (isset($fields[0], $fields[1])) {
+                $ret = join(':', $fields);
+            } else {
+                $ret = join(':', ['[internal function]', '']);
+            }
         }
 
         if ($full) {
