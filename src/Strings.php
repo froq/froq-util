@@ -44,7 +44,7 @@ final class Strings extends \StaticClass
         }
 
         // Uniform result as 0, 1 or -1.
-        return ($ret == 0) ? 0 : ($ret >= 1 ? 1 : -1);
+        return ($ret === 0) ? 0 : ($ret >= 1 ? 1 : -1);
     }
 
     /**
@@ -73,7 +73,7 @@ final class Strings extends \StaticClass
         }
 
         // Uniform result as 0, 1 or -1.
-        return ($ret == 0) ? 0 : ($ret >= 1 ? 1 : -1);
+        return ($ret === 0) ? 0 : ($ret >= 1 ? 1 : -1);
     }
 
     /**
@@ -316,7 +316,7 @@ final class Strings extends \StaticClass
         $stringLength    = mb_strlen($string, $encoding);
         $padStringLength = mb_strlen($padString, $encoding);
 
-        if (!$stringLength && ($padType == STR_PAD_RIGHT || $padType == STR_PAD_LEFT)) {
+        if (!$stringLength && ($padType === STR_PAD_RIGHT || $padType === STR_PAD_LEFT)) {
             $stringLength = 1; // @debug
         }
         if (!$padLength || !$padStringLength || $padLength <= $stringLength) {
@@ -325,13 +325,13 @@ final class Strings extends \StaticClass
 
         $return = '';
         $repeat = ~~ceil($stringLength - $padStringLength + $padLength);
-        if ($padType == STR_PAD_RIGHT) {
+        if ($padType === STR_PAD_RIGHT) {
             $return = $string . str_repeat($padString, $repeat);
             $return = mb_substr($return, 0, $padLength, $encoding);
-        } elseif ($padType == STR_PAD_LEFT) {
+        } elseif ($padType === STR_PAD_LEFT) {
             $return = str_repeat($padString, $repeat) . $string;
             $return = mb_substr($return, -$padLength, null, $encoding);
-        } elseif ($padType == STR_PAD_BOTH) {
+        } elseif ($padType === STR_PAD_BOTH) {
             $length = ($padLength - $stringLength) / 2;
             $repeat = ~~ceil($length / $padStringLength);
             $return = mb_substr(str_repeat($padString, $repeat), 0, ~~floor($length), $encoding)
