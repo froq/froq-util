@@ -949,12 +949,7 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
         is_array($data) || $data = [$data];
 
         foreach ($data as $data) {
-            $data = (string) $data;
-            if (
-                (!$icase || $data === '')
-                    ? $this->data === $data
-                    : str_compare($this->data, $data, icase: true) === 0
-            ) {
+            if (str_compare($this->data, (string) $data, $icase) === 0) {
                 return true;
             }
         }
