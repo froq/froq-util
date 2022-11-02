@@ -1528,7 +1528,7 @@ final class Arrays extends \StaticClass
     }
 
     /**
-     * Check whether given values exist in given array.
+     * Check whether any of given values exists in given array.
      *
      * @param  array    $array
      * @param  mixed ...$values
@@ -1541,16 +1541,16 @@ final class Arrays extends \StaticClass
         $values || throw new \ValueError('No value/values given');
 
         foreach ($values as $value) {
-            if (!array_value_exists($value, $array)) {
-                return false;
+            if (array_value_exists($value, $array)) {
+                return true;
             }
         }
 
-        return true;
+        return false;
     }
 
     /**
-     * Check whether given keys exist in given array.
+     * Check whether any of given keys exists in given array.
      *
      * @param  array         $array
      * @param  int|string ...$keys
@@ -1563,12 +1563,12 @@ final class Arrays extends \StaticClass
         $keys || throw new \ValueError('No key/keys given');
 
         foreach ($keys as $key) {
-            if (!array_key_exists($key, $array)) {
-                return false;
+            if (array_key_exists($key, $array)) {
+                return true;
             }
         }
 
-        return true;
+        return false;
     }
 
     /**
