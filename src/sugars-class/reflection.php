@@ -14,6 +14,7 @@ declare(strict_types=1);
  */
 
 // Extensions.
+// class XReflection extends froq\reflection\Reflection {}
 // class XReflectionObject extends froq\reflection\ReflectionObject {}
 // class XReflectionClass extends froq\reflection\ReflectionClass {}
 // class XReflectionClassConstant extends froq\reflection\ReflectionClassConstant {}
@@ -22,6 +23,7 @@ declare(strict_types=1);
 // class XReflectionFunction extends froq\reflection\ReflectionFunction {}
 // class XReflectionParameter extends froq\reflection\ReflectionParameter {}
 // class XReflectionType extends froq\reflection\ReflectionType {}
+class_alias(froq\reflection\Reflection::class, XReflection::class);
 class_alias(froq\reflection\ReflectionObject::class, XReflectionObject::class);
 class_alias(froq\reflection\ReflectionClass::class, XReflectionClass::class);
 class_alias(froq\reflection\ReflectionClassConstant::class, XReflectionClassConstant::class);
