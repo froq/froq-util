@@ -153,27 +153,25 @@ trait MapSetTrait
     }
 
     /**
-     * Check whether data contains given value/values.
+     * Check whether data contains any of given values.
      *
-     * @param  mixed    $value
      * @param  mixed ...$values
      * @return bool
      */
-    public function contains(mixed $value, mixed ...$values): bool
+    public function contains(mixed ...$values): bool
     {
-        return array_contains($this->data, $value, ...$values);
+        return array_contains($this->data, ...$values);
     }
 
     /**
-     * Check whether data contains given key/keys.
+     * Check whether data contains any of given keys.
      *
-     * @param  int|string    $key
      * @param  int|string ...$keys
      * @return bool
      */
-    public function containsKey(int|string $key, int|string ...$keys): bool
+    public function containsKey(int|string ...$keys): bool
     {
-        return array_contains_key($this->data, $key, ...$keys);
+        return array_contains_key($this->data, ...$keys);
     }
 
     /**

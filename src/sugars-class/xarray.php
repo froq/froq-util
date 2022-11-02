@@ -618,7 +618,7 @@ class XArray implements Arrayable, Listable, Jsonable, Collectable, Iteratable, 
     }
 
     /**
-     * Check whether given values exist.
+     * Check whether array contains any of given values.
      *
      * @param  mixed ...$values
      * @return bool
@@ -629,7 +629,7 @@ class XArray implements Arrayable, Listable, Jsonable, Collectable, Iteratable, 
     }
 
     /**
-     * Check whether given keys exist.
+     * Check whether array contains any of given keys.
      *
      * @param  int|string ...$keys
      * @return bool
