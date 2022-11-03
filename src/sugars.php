@@ -95,6 +95,7 @@ function filter(array $array, callable $func = null, bool $recursive = false, bo
  *
  * @param  array                 $array
  * @param  callable|string|array $func
+ * @param  bool                  $recursive
  * @param  bool                  $use_keys
  * @param  bool                  $keep_keys
  * @return array
