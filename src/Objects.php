@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace froq\util;
 
+use froq\common\interface\Clonable;
 use XReflectionObject, XReflectionClass;
 
 /**
@@ -709,8 +710,12 @@ final class Objects extends \StaticClass
      * @return object
      * @since  7.0
      */
-    public static function clone(object $target, bool $deep = false, array $skip = []): object
+    public static function clone(object $target, bool $deep = true, array $skip = []): object
     {
+        if ($target instanceof Clonable) {
+            return $target->clone();
+        }
+
         $oref  = new \ReflectionObject($target);
         $clone = $oref->newInstanceWithoutConstructor();
 
@@ -728,6 +733,8 @@ final class Objects extends \StaticClass
                         $tref = new \ReflectionClass($class);
                         if ($tref->isCloneable()) {
                             $value = clone $value;
+                        } elseif ($value instanceof Clonable) {
+                            $value = $value->clone();
                         }
                     } catch (\Throwable) {}
                 }
