@@ -1418,9 +1418,10 @@ final class Arrays extends \StaticClass
      * @param  array    $array
      * @param  callable $func
      * @param  bool     $recursive
+     * @param  bool     $list
      * @return array
      */
-    public static function apply(array $array, callable $func, bool $recursive = false): array
+    public static function apply(array $array, callable $func, bool $recursive = false, bool $list = false): array
     {
         foreach ($array as $key => $value) {
             if ($recursive && is_array($value)) {
@@ -1429,6 +1430,8 @@ final class Arrays extends \StaticClass
                 $array[$key] = $func($value, $key);
             }
         }
+
+        $list && $array = array_list($array);
 
         return $array;
     }

@@ -279,7 +279,7 @@ function http_build_cookie(string $name, string|null $value, array $options = nu
 
     $options = array_replace(
         array_pad_keys([], ['expires', 'path', 'domain', 'secure', 'httponly', 'samesite']),
-        array_map_keys((array) $options, 'strtolower')
+        array_map_keys('strtolower', (array) $options)
     );
 
     $cookie = rawurlencode($name) . '=';

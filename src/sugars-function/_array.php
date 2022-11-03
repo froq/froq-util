@@ -517,6 +517,15 @@ function array_filter_keys(array $array, callable $func, bool $recursive = false
 }
 
 /**
+ * @alias Arrays.map(keepKeys=true)
+ * @since 7.0
+ */
+function array_map_list(callable $func, array $array, bool $recursive = false, bool $use_keys = false): array
+{
+    return Arrays::map($array, $func, $recursive, $use_keys, false);
+}
+
+/**
  * @alias Arrays.map(recursive=true)
  * @since 5.1, 6.0
  */
@@ -529,7 +538,7 @@ function array_map_recursive(callable $func, array $array, bool $use_keys = fals
  * @alias Arrays.mapKeys()
  * @since 5.0, 6.0
  */
-function array_map_keys(array $array, callable $func, bool $recursive = false): array
+function array_map_keys(callable $func, array $array, bool $recursive = false): array
 {
     return Arrays::mapKeys($array, $func, $recursive);
 }
@@ -556,9 +565,9 @@ function array_reduce_keys(array $array, mixed $carry, callable $func = null, bo
  * @alias Arrays.apply()
  * @since 4.0, 6.0
  */
-function array_apply(array $array, callable $func, bool $recursive = false): array
+function array_apply(array $array, callable $func, bool $recursive = false, bool $list = false): array
 {
-    return Arrays::apply($array, $func, $recursive);
+    return Arrays::apply($array, $func, $recursive, $list);
 }
 
 /**
