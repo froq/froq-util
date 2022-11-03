@@ -7,7 +7,6 @@ declare(strict_types=1);
 
 namespace froq\util;
 
-use Reflection, ReflectionException;
 use XReflectionObject, XReflectionClass;
 
 /**
@@ -32,7 +31,7 @@ final class Objects extends \StaticClass
         try {
             return is_object($target) ? new XReflectionObject($target)
                  : new XReflectionClass($target);
-        } catch (ReflectionException) {
+        } catch (\ReflectionException) {
             return null;
         }
     }
@@ -238,7 +237,7 @@ final class Objects extends \StaticClass
                 continue;
             }
 
-            $modifiers = Reflection::getModifierNames($constant->getModifiers());
+            $modifiers = \Reflection::getModifierNames($constant->getModifiers());
             $interface = null;
             $class     = $constant->getDeclaringClass()->name;
 
@@ -699,5 +698,41 @@ final class Objects extends \StaticClass
         } catch (\Throwable) {
             return null;
         }
+    }
+
+    /**
+     * Clone.
+     *
+     * @param  object $target
+     * @param  bool   $deep
+     * @return object
+     * @since  7.0
+     */
+    public static function clone(object $target, bool $deep = false): object
+    {
+        $oref  = new \ReflectionObject($target);
+        $clone = $oref->newInstanceWithoutConstructor();
+
+        foreach ($oref->getProperties() as $property) {
+            $value = $property->getValue($target);
+
+            if ($deep) {
+                $tref = $property->getType();
+                if ($tref instanceof \ReflectionNamedType && !$tref->isBuiltin()) {
+                    $class = $tref->getName();
+                    try {
+                        $tref = new \ReflectionClass($class);
+                        if ($tref->isCloneable()) {
+                            $value = clone $value;
+                        }
+                    } catch (\Throwable) {}
+                }
+            }
+
+            $pref = new \ReflectionProperty($clone, $property->name);
+            $pref->setValue($clone, $value);
+        }
+
+        return $clone;
     }
 }
