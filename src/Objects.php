@@ -703,20 +703,24 @@ final class Objects extends \StaticClass
     /**
      * Clone.
      *
-     * @param  object $target
-     * @param  bool   $deep
+     * @param  object $target The target object.
+     * @param  bool   $deep   Clone all object properties.
+     * @param  array  $skip   List of properties to skip.
      * @return object
      * @since  7.0
      */
-    public static function clone(object $target, bool $deep = false): object
+    public static function clone(object $target, bool $deep = false, array $skip = []): object
     {
         $oref  = new \ReflectionObject($target);
         $clone = $oref->newInstanceWithoutConstructor();
 
+        // I use HashMap..
+        $skip = array_flip($skip);
+
         foreach ($oref->getProperties() as $property) {
             $value = $property->getValue($target);
 
-            if ($deep) {
+            if ($deep && !isset($skip[$property->name])) {
                 $tref = $property->getType();
                 if ($tref instanceof \ReflectionNamedType && !$tref->isBuiltin()) {
                     $class = $tref->getName();
