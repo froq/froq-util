@@ -175,6 +175,16 @@ class XArrayObject extends ArrayObject implements Arrayable, Objectable, Jsonabl
     }
 
     /**
+     * Empty.
+     *
+     * @return void
+     */
+    public function empty(): void
+    {
+        $this->setData([]);
+    }
+
+    /**
      * Sort.
      *
      * @param  int|null $func
