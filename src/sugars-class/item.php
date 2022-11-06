@@ -114,14 +114,14 @@ class Item implements Arrayable, Jsonable, Countable, IteratorAggregate, ArrayAc
     }
 
     /**
-     * Get key of given item.
+     * Get key of given item if found.
      *
      * @param  mixed $item
      * @param  bool  $strict
      * @param  bool  $last
-     * @return int|null
+     * @return int|string|null
      */
-    public function key(mixed $item, bool $strict = true, bool $last = false): int|null
+    public function key(mixed $item, bool $strict = true, bool $last = false): int|string|null
     {
         return array_search_key($this->data, $item, $strict, $last);
     }
