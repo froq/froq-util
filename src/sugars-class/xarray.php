@@ -789,6 +789,46 @@ class XArray implements Arrayable, Listable, Jsonable, Collectable, Iteratable, 
         return array_shift($this->data) ?? $default;
     }
 
+    /**
+     * Wrap.
+     *
+     * @param  mixed      $left
+     * @param  mixed|null $right
+     * @return self
+     */
+    public function wrap(mixed $left, mixed $right = null): self
+    {
+        $this->prepend($left)->append($right ?? $left);
+
+        return $this;
+    }
+
+    /**
+     * Unwrap.
+     *
+     * @param  mixed      $left
+     * @param  mixed|null $right
+     * @return self
+     */
+    public function unwrap(mixed $left, mixed $right = null): self
+    {
+        $right ??= $left;
+        $count = $this->count();
+
+        while ($count--) {
+            if ($this->first() === $left) {
+                $this->shift();
+                $count--; // Reduce.
+            }
+            if ($this->last() === $right) {
+                $this->pop();
+                $count--; // Reduce.
+            }
+        }
+
+        return $this;
+    }
+
     // Internal & addition.
 
     /**
