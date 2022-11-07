@@ -52,7 +52,7 @@ function array_set_all(array &$array, array $items): array
  * @alias Arrays.get(), Arrays.getAll()
  * @since 3.0, 6.0
  */
-function array_get(array &$array, int|string|array $key, mixed $default = null, bool $drop = false): mixed
+function &array_get(array &$array, int|string|array $key, mixed $default = null, bool $drop = false): mixed
 {
     if (is_array($key)) {
         return Arrays::getAll($array, $key, (array) $default, $drop);

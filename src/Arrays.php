@@ -228,7 +228,7 @@ final class Arrays extends \StaticClass
 
         foreach ($keys as $i => $key) {
             $default    = $defaults[$i] ?? null;
-            $values[$i] = self::get($array, $key, $default, $drop);
+            $values[$i] =& self::get($array, $key, $default, $drop);
         }
 
         return $values;
