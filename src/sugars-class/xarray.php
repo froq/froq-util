@@ -107,11 +107,12 @@ class XArray implements Arrayable, Listable, Jsonable, Collectable, Iteratable, 
      * @param  mixed|null $default
      * @return mixed
      */
-    public function get(int|string $key, mixed $default = null): mixed
+    public function &get(int|string $key, mixed $default = null): mixed
     {
         $this->keyCheck($key);
 
-        return $this->data[$key] ?? $default;
+        $value =& $this->data[$key] ?? $default;
+        return $value;
     }
 
     /**
