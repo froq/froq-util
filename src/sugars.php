@@ -362,12 +362,22 @@ function grep(string $pattern, string $input, bool $named = false): string|array
         return null;
     }
 
-    if (isset($match[1])) {
-        $ret = $match[1];
+    if (count($match) > 1) {
+        unset($match[0]);
 
         // For named capturing groups.
-        if ($named && $ret) {
-            $ret = array_filter($ret, 'is_string', 2);
+        if ($named) {
+            $ret = array_filter($match, fn($k) => is_string($k), 2);
+        } else {
+            $ret = array_filter($match, fn($v) => isset($v));
+        }
+
+        // Reset keys (to 0-N).
+        $ret = array_slice($ret, 0);
+
+        // Single return.
+        if (!$named && count($ret) == 1) {
+            $ret = current($ret);
         }
 
         return $ret;
@@ -398,43 +408,40 @@ function grep_all(string $pattern, string $input, bool $named = false, bool $uni
         return null;
     }
 
-    if (isset($match[1])) {
-        // Drop input.
+    if (count($match) > 1) {
         unset($match[0]);
 
-        $ret = [];
-
-        if (count($match) == 1) {
-            $ret = $match[1];
-        } else {
-            // Reduce empty matches.
-            $ret = array_apply($match, fn($m) => (
-                is_array($m) && count($m) == 1 ? $m[0] : $m
-            ));
-
-            // Useful for '~href="(.+?)"|">(.+?)</~' etc.
-            if ($uniform) {
-                foreach ($ret as &$re) {
-                    if (is_array($re)) {
-                        $re = array_filter($re, 'size');
-                        if (count($re) == 1) {
-                            $re = current($re);
-                        }
-                    }
-                } unset($re);
-            }
-
-            // Reset keys (to 0-N).
-            $ret = array_slice($ret, 0);
-        }
-
-        // Drop empty stuff.
-        $ret = array_filter($ret, 'size');
-
         // For named capturing groups.
-        if ($named && $ret) {
-            $ret = array_filter($ret, 'is_string', 2);
+        if ($named) {
+            $ret = array_filter($match, fn($k) => is_string($k), 2);
+        } else {
+            $ret = array_filter($match, fn($v) => isset($v));
         }
+
+        // Reduce moving sub matches up.
+        $ret = array_apply($ret, function ($re) {
+            if (is_array($re) && count($re) == 1) {
+                $re = current($re);
+            }
+            return $re;
+        });
+
+        // Useful for combining, for example:
+        // [$link, $text] = grep_all('~href="(.+?)"|>([^>]+?)<~u', $link, uniform: true);
+        if ($uniform) {
+            $ret = array_apply($ret, function ($re) {
+                if (is_array($re)) {
+                    $re = array_filter($re, 'size');
+                    if (count($re) == 1) {
+                        $re = current($re);
+                    }
+                }
+                return $re;
+            });
+        }
+
+        // Reset keys (to 0-N).
+        $ret = array_slice($ret, 0);
 
         return $ret;
     }
