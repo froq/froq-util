@@ -1123,6 +1123,42 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     }
 
     /**
+     * Match possible names.
+     *
+     * @param  string|RegExp $pattern
+     * @param  int|array     $flags
+     * @param  int           $offset
+     * @param  string|null   $class
+     * @return iterable|null
+     */
+    public function matchNames(string|RegExp $pattern, int|array $flags = 0, int $offset = 0, string $class = null): iterable|null
+    {
+        if (is_string($pattern)) {
+            $pattern = RegExp::fromPattern($pattern);
+        }
+
+        return $pattern->matchNames($this->data, $flags, $offset, $class);
+    }
+
+    /**
+     * Match all possible names.
+     *
+     * @param  string|RegExp $pattern
+     * @param  int|array     $flags
+     * @param  int           $offset
+     * @param  string|null   $class
+     * @return iterable|null
+     */
+    public function matchAllNames(string|RegExp $pattern, int|array $flags = 0, int $offset = 0, string $class = null): iterable|null
+    {
+        if (is_string($pattern)) {
+            $pattern = RegExp::fromPattern($pattern);
+        }
+
+        return $pattern->matchAllNames($this->data, $flags, $offset, $class);
+    }
+
+    /**
      * Find a possible match.
      *
      * @param  string|RegExp $pattern
