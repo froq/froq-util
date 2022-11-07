@@ -322,7 +322,7 @@ class RegExp implements Stringable
         }
 
         // Drop empty stuff.
-        $ret = array_filter($ret, 'count');
+        $ret && $ret = array_filter($ret, 'count');
 
         return $class ? new $class((array) $ret) : $ret;
     }
@@ -373,7 +373,7 @@ class RegExp implements Stringable
         }
 
         // Drop empty stuff.
-        $ret = array_filter($ret, 'count');
+        $ret && $ret = array_filter($ret, 'count');
 
         return $class ? new $class((array) $ret) : $ret;
     }
