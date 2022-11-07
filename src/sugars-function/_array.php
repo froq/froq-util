@@ -64,7 +64,7 @@ function &array_get(array &$array, int|string|array $key, mixed $default = null,
  * @alias Arrays.getAll()
  * @since 3.0, 6.0
  */
-function array_get_all(array &$array, array $keys, array $defaults = null, bool $drop = false): array
+function &array_get_all(array &$array, array $keys, array $defaults = null, bool $drop = false): array
 {
     return Arrays::getAll($array, $keys, $defaults, $drop);
 }

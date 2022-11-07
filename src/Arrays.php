@@ -222,7 +222,7 @@ final class Arrays extends \StaticClass
      * @param  bool               $drop
      * @return array
      */
-    public static function getAll(array &$array, array $keys, array $defaults = null, bool $drop = false): array
+    public static function &getAll(array &$array, array $keys, array $defaults = null, bool $drop = false): array
     {
         $values = [];
 
