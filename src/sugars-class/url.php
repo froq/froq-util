@@ -6,8 +6,7 @@
 declare(strict_types=1);
 
 use froq\common\interface\{Arrayable, Stringable};
-use froq\common\trait\{DataAccessTrait, DataAccessMagicTrait};
-use froq\collection\trait\{GetTrait, CountTrait, AccessTrait, AccessMagicTrait};
+use froq\collection\trait\{AccessTrait, AccessMagicTrait, CountTrait, GetTrait};
 
 /**
  * A URL class for working customized URLs.
