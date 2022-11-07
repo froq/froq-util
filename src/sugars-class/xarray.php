@@ -1502,14 +1502,26 @@ class XArray implements Arrayable, Listable, Jsonable, Collectable, Iteratable, 
 }
 
 /**
- * XArray initializer.
+ * XArray initializer, accepts a single iterable or multiple arguments as iterable.
  *
- * @param  iterable $data
+ * All examples are valid:
+ *
+ * ```
+ * $x = xarray(id: 1, name: 'Foo');
+ * $x = xarray(['id' => 1, 'name' => 'Foo']);
+ * $x = xarray([1, 'Foo']);
+ * $x = xarray(1, 'Foo');
+ * ```
+ *
+ * @param  mixed ...$data
  * @return XArray
  */
-function xarray(iterable $data = []): XArray
+function xarray(mixed ...$data): XArray
 {
-    return new XArray($data);
+    if (is_list($data) && count($data) === 1) {
+        $data = is_iterable($data[0]) ? $data[0] : [$data[0]];
+    }
+    return XArray::from($data);
 }
 
 /**
