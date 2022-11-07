@@ -171,7 +171,7 @@ final class Arrays extends \StaticClass
      * @param  bool        $drop
      * @return mixed|null
      */
-    public static function get(array &$array, int|string $key, mixed $default = null, bool $drop = false): mixed
+    public static function &get(array &$array, int|string $key, mixed $default = null, bool $drop = false): mixed
     {
         // Usage:
         // $array = ['a' => ['b' => ['c' => ['d' => 1, 'd.e' => '...']]]]
@@ -184,12 +184,12 @@ final class Arrays extends \StaticClass
 
         // Direct access.
         if (array_key_exists($key, $array) || is_int($key)) {
-            $value = $array[$key] ?? null;
+            $value =& $array[$key] ?? null;
             $drop && array_unset($array, $key);
         } else {
             // Direct access.
             if (!str_contains($key, '.')) {
-                $value = $array[$key] ?? null;
+                $value =& $array[$key] ?? null;
                 $drop && array_unset($array, $key);
             }
             // Path access (with dot notation).
@@ -198,17 +198,19 @@ final class Arrays extends \StaticClass
                 $key  = array_shift($keys);
 
                 if (!$keys) {
-                    $value = $array[$key] ?? null;
+                    $value =& $array[$key] ?? null;
                     $drop && array_unset($array, $key);
                 }
                 // Dig more..
                 elseif (isset($array[$key]) && is_array($array[$key])) {
-                    $value = self::get($array[$key], implode('.', $keys), $default, $drop);
+                    $value =& self::get($array[$key], implode('.', $keys), $default, $drop);
                 }
             }
         }
 
-        return $value ?? $default;
+        $value =& $value ?? $default;
+
+        return $value;
     }
 
     /**
