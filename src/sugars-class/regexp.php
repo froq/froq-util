@@ -67,7 +67,7 @@ class RegExp implements Stringable
      */
     public function __construct(string $source, string $modifiers = '', bool $throw = false)
     {
-        if ($modifiers != '') {
+        if ($modifiers !== '') {
             $modifiers = self::prepareModifiers($modifiers, $invalids);
             if (!$modifiers) {
                 throw new RegExpError('Invalid modifiers: %q', $invalids);
