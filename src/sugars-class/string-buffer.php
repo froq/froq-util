@@ -330,6 +330,21 @@ class StringBuffer implements Stringable, IteratorAggregate, JsonSerializable, A
     }
 
     /**
+     * @alias charAt()
+     */
+    public function chr(...$args)
+    {
+        return $this->charAt(...$args);
+    }
+    /**
+     * @alias charCodeAt()
+     */
+    public function ord(...$args)
+    {
+        return $this->charCodeAt(...$args);
+    }
+
+    /**
      * Get a code point or return null.
      *
      * @param  int  $index
@@ -338,7 +353,7 @@ class StringBuffer implements Stringable, IteratorAggregate, JsonSerializable, A
      */
     public function codePointAt(int $index, bool $hex = false): int|string|null
     {
-        return xstring($this->data, $this->encoding)->codePointAt($index, $hex);
+        return XString::fromChars($this->data, $this->encoding)->codePointAt($index, $hex);
     }
 
     /**
@@ -536,7 +551,7 @@ class StringBuffer implements Stringable, IteratorAggregate, JsonSerializable, A
      */
     public function indexOf(self|string $search, bool $icase = false, int $offset = 0): int|null
     {
-        return xstring($this->data, $this->encoding)->indexOf((string) $search, $icase, $offset);
+        return XString::fromChars($this->data, $this->encoding)->indexOf((string) $search, $icase, $offset);
     }
 
     /**
@@ -549,7 +564,7 @@ class StringBuffer implements Stringable, IteratorAggregate, JsonSerializable, A
      */
     public function lastIndexOf(self|string $search, bool $icase = false, int $offset = 0): int|null
     {
-        return xstring($this->data, $this->encoding)->lastIndexOf((string) $search, $icase, $offset);
+        return XString::fromChars($this->data, $this->encoding)->lastIndexOf((string) $search, $icase, $offset);
     }
 
     /**
@@ -808,6 +823,18 @@ class StringBuffer implements Stringable, IteratorAggregate, JsonSerializable, A
     public static function fromRandomBytes(int $length): static
     {
         return new static(str_split(random_bytes($length)));
+    }
+
+    /**
+     * Create an instance from given chars.
+     *
+     * @param  array       $chars
+     * @param  string|null $encoding
+     * @return static
+     */
+    public static function fromChars(array $chars, string|null $encoding = ''): static
+    {
+        return new static($chars, $encoding);
     }
 
     /**

@@ -26,19 +26,15 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     /**
      * Constructor.
      *
-     * @param string|array $data
-     * @param string|null  $encoding
+     * @param string|Stringable $data
+     * @param string|null       $encoding
      */
-    public function __construct(string|array $data = '', string|null $encoding = '')
+    public function __construct(string|Stringable $data = '', string|null $encoding = '')
     {
-        // When character sequence given.
-        is_array($data) && $data = join($data);
+        $this->data = (string) $data;
 
-        $this->data = $data;
-
-        if ($encoding !== '') {
-            $this->encoding = $encoding;
-        }
+        // Allow null (for internal encoding).
+        if ($encoding !== '') $this->encoding = $encoding;
     }
 
     /** @magic */
@@ -1937,11 +1933,11 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     /**
      * Create an instance from given data and encoding.
      *
-     * @param  string|array $data
-     * @param  string|null  $encoding
+     * @param  string|Stringable $data
+     * @param  string|null       $encoding
      * @return static
      */
-    public static function from(string|array $data, string|null $encoding = ''): static
+    public static function from(string|Stringable $data, string|null $encoding = ''): static
     {
         return new static($data, $encoding);
     }
@@ -1970,6 +1966,18 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     }
 
     /**
+     * Create an instance from given chars.
+     *
+     * @param  array       $chars
+     * @param  string|null $encoding
+     * @return static
+     */
+    public static function fromChars(array $chars, string|null $encoding = ''): static
+    {
+        return new static(join($chars), $encoding);
+    }
+
+    /**
      * Create an instance from given char codes.
      *
      * @param  int ...$codes
@@ -1995,11 +2003,11 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
 /**
  * XString initializer.
  *
- * @param  string|array $data
- * @param  string|null  $encoding
+ * @param  string|Stringable $data
+ * @param  string|null       $encoding
  * @return XString
  */
-function xstring(string|array $data = '', string|null $encoding = ''): XString
+function xstring(string|Stringable $data = '', string|null $encoding = ''): XString
 {
     return new XString($data, $encoding);
 }
