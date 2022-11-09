@@ -326,6 +326,21 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     }
 
     /**
+     * @alias charAt()
+     */
+    public function chr(...$args)
+    {
+        return $this->charAt(...$args);
+    }
+    /**
+     * @alias charCodeAt()
+     */
+    public function ord(...$args)
+    {
+        return $this->charCodeAt(...$args);
+    }
+
+    /**
      * Code point-at, like Javascript's codePointAt().
      *
      * @param  int  $index
