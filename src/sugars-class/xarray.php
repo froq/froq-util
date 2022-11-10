@@ -112,7 +112,7 @@ class XArray implements Arrayable, Listable, Jsonable, Collectable, Iteratable, 
         $this->keyCheck($key);
 
         // Breaking reference in such calls:
-        // $foo = $array->get('absent-field', new XArray());
+        // $foo = $array->get('absent-field', new Object());
         // $value =& $this->data[$key] ?? $default;
 
         if (isset($this->data[$key])) {

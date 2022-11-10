@@ -468,7 +468,7 @@ class Map implements Arrayable, Listable, Jsonable, Collectable, Iteratable, Ite
     }
 
     /** @magic */
-    public function __get(int|string|object $key): mixed
+    public function &__get(int|string|object $key): mixed
     {
         return $this->get($key);
     }
@@ -521,11 +521,17 @@ class Map implements Arrayable, Listable, Jsonable, Collectable, Iteratable, Ite
      * @param  mixed|null        $default
      * @return mixed
      */
-    public function get(int|string|object $key, mixed $default = null): mixed
+    public function &get(int|string|object $key, mixed $default = null): mixed
     {
         $this->keyCheck($key);
 
-        return $this->data[$key] ?? $default;
+        if (isset($this->data[$key])) {
+            $value =& $this->data[$key];
+        } else {
+            $value =& $default;
+        }
+
+        return $value;
     }
 
     /**
@@ -667,16 +673,17 @@ class Map implements Arrayable, Listable, Jsonable, Collectable, Iteratable, Ite
      */
     public function offsetSet(mixed $key, mixed $value): void
     {
-        // For calls like `items[] = item`.
-        $key ??= $this->count();
-
-        $this->set($key, $value);
+        if ($key === null) {
+            $this->add($value);
+        } else {
+            $this->set($key, $value);
+        }
     }
 
     /**
      * @inheritDoc ArrayAccess
      */
-    public function offsetGet(mixed $key): mixed
+    public function &offsetGet(mixed $key): mixed
     {
         return $this->get($key);
     }
@@ -709,7 +716,7 @@ class Map implements Arrayable, Listable, Jsonable, Collectable, Iteratable, Ite
      */
     protected function keyCheck(mixed &$key, bool $prepare = true): void
     {
-        if (is_string($key) && $key == '') {
+        if (is_string($key) && $key === '') {
             throw new KeyError('Empty key given');
         }
 
@@ -779,11 +786,17 @@ class Set implements Arrayable, Listable, Jsonable, Collectable, Iteratable, Ite
      * @param  mixed|null $default
      * @return mixed
      */
-    public function get(int $index, mixed $default = null): mixed
+    public function &get(int $index, mixed $default = null): mixed
     {
         $this->indexCheck($index);
 
-        return $this->data[$index] ?? $default;
+        if (isset($this->data[$index])) {
+            $value =& $this->data[$index];
+        } else {
+            $value =& $default;
+        }
+
+        return $value;
     }
 
     /**
@@ -924,16 +937,17 @@ class Set implements Arrayable, Listable, Jsonable, Collectable, Iteratable, Ite
      */
     public function offsetSet(mixed $index, mixed $value): void
     {
-        // For calls like `items[] = item`.
-        $index ??= $this->count();
-
-        $this->set($index, $value);
+        if ($index === null) {
+            $this->add($value);
+        } else {
+            $this->set($index, $value);
+        }
     }
 
     /**
      * @inheritDoc ArrayAccess
      */
-    public function offsetGet(mixed $index): mixed
+    public function &offsetGet(mixed $index): mixed
     {
         return $this->get($index);
     }
