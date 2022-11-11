@@ -600,7 +600,7 @@ function interface_extends(string $interface1, string $interface2, bool $parent_
 }
 
 /**
- * Get class name or short name.
+ * Get class name.
  *
  * @param  string|object $class
  * @param  bool          $short
@@ -616,6 +616,19 @@ function get_class_name(string|object $class, bool $short = false, bool $real = 
         $real   => Objects::getRealName($class),
         default => Objects::getName($class, $clean),
     };
+}
+
+/**
+ * Get class namespace.
+ *
+ * @param  string|object $class
+ * @param  bool          $baseOnly
+ * @return string
+ * @since  7.0
+ */
+function get_class_namespace(string|object $class, bool $baseOnly = false): string
+{
+    return Objects::getNamespace($class, $baseOnly);
 }
 
 /**
