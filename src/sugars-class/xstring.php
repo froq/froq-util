@@ -462,12 +462,18 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
             case MB_CASE_UPPER:
             case MB_CASE_UPPER_SIMPLE:
                 if ($index !== null) {
+                    // Some speed.
+                    if ($index === 0) {
+                        return $this->upperFirst($tr);
+                    }
+
                     $char = $this->char($index);
                     if ($char !== null) {
                         $char = new self($char, $this->encoding);
                         $char->case($case, null, $tr);
                         $this->splice($index, 1, $char->data);
                     }
+
                     return $this;
                 }
 
@@ -476,12 +482,18 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
             case MB_CASE_LOWER:
             case MB_CASE_LOWER_SIMPLE:
                 if ($index !== null) {
+                    // Some speed.
+                    if ($index === 0) {
+                        return $this->lowerFirst($tr);
+                    }
+
                     $char = $this->char($index);
                     if ($char !== null) {
                         $char = new self($char, $this->encoding);
                         $char->case($case, null, $tr);
                         $this->splice($index, 1, $char->data);
                     }
+
                     return $this;
                 }
 
