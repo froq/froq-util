@@ -201,7 +201,7 @@ class Factory
     /**
      * Set initiated object variables (properties).
      *
-     * @throws UndefinedPropertyError
+     * @throws Error
      */
     private function setObjectVar(object $object, string $name, array $arguments): void
     {
@@ -223,6 +223,9 @@ class Factory
             return;
         }
 
-        throw new UndefinedPropertyError($object, $name);
+        throw new Error(sprintf(
+            'No method set%s() or property $%s are defined in class %s',
+            $name, $name, $object::class
+        ));
     }
 }
