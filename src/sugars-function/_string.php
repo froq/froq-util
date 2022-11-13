@@ -230,6 +230,60 @@ function str_concat(string $string, string|Stringable ...$strings): string
 }
 
 /**
+ * Slice a string with multiple functionalities, before/after or simply do substring work, like `strsrt()`
+ * but dropping search character from return.
+ *
+ * Example:
+ * ```
+ * str_slice('jon@doo.com', '@', 'before' or true);          // jon
+ * str_slice('jon@doo.com', '@', 'before' or true, 1);       // on
+ * str_slice('jon@doo.com', '@', 'before' or true, [1, -1]); // o
+ * ```
+ *
+ * @param  string                $string
+ * @param  string|array|int|null $search_or_start
+ * @param  string|null           $before_or_after
+ * @param  array|int|null        $range
+ * @param  bool                  $icase
+ * @param  int                   $offset
+ * @return string
+ */
+function str_slice(string $string, string|array|int $search_or_start = null, string|bool $before_or_after = null,
+    array|int $range = null, bool $icase = false, int $offset = 0): string
+{
+    $length = null;
+    if ($range !== null) {
+        [$start, $end] = pad((array) $range, 2);
+        $length = $end;
+    }
+
+    if (is_int($search_or_start)) {
+        return mb_substr($string, $search_or_start, $length);
+    }
+
+    if ($search_or_start !== null) {
+        [$search, $directive] = pad((array) $search_or_start, 2);
+
+        // Default is -1 (after).
+        $directive ??= $before_or_after ?? -1;
+
+        $ret = match ($directive ??= $before_or_after) {
+             1, true, 'before' => strbcut($string, $search, null, $icase, $offset),
+            -1, false, 'after' => stracut($string, $search, null, $icase, $offset),
+            default            => '' // Invalid directive.
+        };
+    } else {
+        $ret = $string;
+    }
+
+    if ($range !== null) {
+        $ret = mb_substr($ret, $start, $end);
+    }
+
+    return $ret;
+}
+
+/**
  * Apply word-wrap on given string in multi-byte style.
  *
  * @param  string $string
