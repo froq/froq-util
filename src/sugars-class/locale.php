@@ -11,7 +11,7 @@ use froq\common\interface\Arrayable;
  * Locale class.
  *
  * @package global
- * @object  Locale
+ * @class   Locale
  * @author  Kerem Güneş
  * @since   6.0
  */
