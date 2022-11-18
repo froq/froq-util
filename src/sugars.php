@@ -443,6 +443,11 @@ function grep_all(string $pattern, string $input, bool $named = false, bool $uni
         // Reset keys (to 0-N).
         $ret = array_slice($ret, 0);
 
+        // Single return.
+        if (!$named && count($ret) == 1) {
+            $ret = (array) current($ret);
+        }
+
         return $ret;
     }
 
