@@ -70,7 +70,7 @@ class Package implements Arrayable, \Countable, \ArrayAccess
     }
 
     /**
-     * Unstore an item.
+     * Unpack an item.
      *
      * @param  string|int $key
      * @param  mixed|null $default
