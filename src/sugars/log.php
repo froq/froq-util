@@ -27,10 +27,10 @@ function logger(): Logger
 /**
  * Log an error message.
  *
- * @param  string|Throwable $message
+ * @param  string|Stringable $message
  * @return bool
  */
-function log_error(string|Throwable $message): bool
+function log_error(string|Stringable $message): bool
 {
     return app()->logger->logError($message);
 }
@@ -38,10 +38,10 @@ function log_error(string|Throwable $message): bool
 /**
  * Log a warning message.
  *
- * @param  string|Throwable $message
+ * @param  string|Stringable $message
  * @return bool
  */
-function log_warn(string|Throwable $message): bool
+function log_warn(string|Stringable $message): bool
 {
     return app()->logger->logWarn($message);
 }
@@ -49,10 +49,10 @@ function log_warn(string|Throwable $message): bool
 /**
  * Log an info message.
  *
- * @param  string|Throwable $message
+ * @param  string|Stringable $message
  * @return bool
  */
-function log_info(string|Throwable $message): bool
+function log_info(string|Stringable $message): bool
 {
     return app()->logger->logInfo($message);
 }
@@ -60,10 +60,10 @@ function log_info(string|Throwable $message): bool
 /**
  * Log a debug message.
  *
- * @param  string|Throwable $message
+ * @param  string|Stringable $message
  * @return bool
  */
-function log_debug(string|Throwable $message): bool
+function log_debug(string|Stringable $message): bool
 {
     return app()->logger->logDebug($message);
 }
