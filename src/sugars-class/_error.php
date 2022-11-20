@@ -125,11 +125,11 @@ class ReadonlyError extends Error
     {
         if (func_num_args() === 1) {
             parent::__construct(sprintf(
-                'Cannot modify readonly class %s', get_class_name($class)
+                'Cannot modify readonly class %s', get_class_name($class, escape: true)
             ));
         } else {
             parent::__construct(sprintf(
-                'Cannot modify readonly property %s::$%s', get_class_name($class), $property
+                'Cannot modify readonly property %s::$%s', get_class_name($class, escape: true), $property
             ));
         }
     }
@@ -192,7 +192,7 @@ class UndefinedConstantError extends Error
             ));
         } else {
             parent::__construct(sprintf(
-                'Undefined class constant %s::%s', get_class_name($class), $constant
+                'Undefined class constant %s::%s', get_class_name($class, escape: true), $constant
             ));
         }
     }
@@ -215,7 +215,7 @@ class UndefinedPropertyError extends Error
     public function __construct(string|object $class, string $property)
     {
         parent::__construct(sprintf(
-            'Undefined property %s::$%s', get_class_name($class), $property
+            'Undefined property %s::$%s', get_class_name($class, escape: true), $property
         ));
     }
 }
@@ -237,7 +237,7 @@ class UndefinedMethodError extends Error
     public function __construct(string|object $class, string $method)
     {
         parent::__construct(sprintf(
-            'Undefined method %s::%s()', get_class_name($class), $method
+            'Undefined method %s::%s()', get_class_name($class, escape: true), $method
         ));
     }
 }
