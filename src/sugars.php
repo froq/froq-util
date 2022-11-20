@@ -612,16 +612,16 @@ function interface_extends(string $interface1, string $interface2, bool $parent_
  * @param  string|object $class
  * @param  bool          $short
  * @param  bool          $real
- * @param  bool          $clean
+ * @param  bool          $escape
  * @return string
  * @since  5.0
  */
-function get_class_name(string|object $class, bool $short = false, bool $real = false, bool $clean = false): string
+function get_class_name(string|object $class, bool $short = false, bool $real = false, bool $escape = false): string
 {
     return match (true) {
-        $short  => Objects::getShortName($class, $clean),
+        $short  => Objects::getShortName($class, $escape),
         $real   => Objects::getRealName($class),
-        default => Objects::getName($class, $clean),
+        default => Objects::getName($class, $escape),
     };
 }
 

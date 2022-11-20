@@ -107,24 +107,15 @@ final class Objects extends \StaticClass
      * Get name.
      *
      * @param  object|string $target
-     * @param  bool          $clean
+     * @param  bool          $escape
      * @return string
      */
-    public static function getName(object|string $target, bool $clean = false): string
+    public static function getName(object|string $target, bool $escape = false): string
     {
         $name = is_object($target) ? $target::class : $target;
 
-        // Anons.
-        $clean && $name = str_replace("\0", "", $name);
-
-        // @cancel
-        // if (str_contains($name, '@')) {
-        //     $name = preg_replace(
-        //         '~(.+)@anonymous\0*(.+)\:(.+)\$.*~i',
-        //         '\1@anonymous@\2:\3',
-        //         $name
-        //     );
-        // }
+        // Anons (causes issues, eg: drops thrown stack traces).
+        $escape && $name = str_replace("\0", "\\0", $name);
 
         return $name;
     }
@@ -133,12 +124,12 @@ final class Objects extends \StaticClass
      * Get short name.
      *
      * @param  object|string $target
-     * @param  bool          $clean
+     * @param  bool          $escape
      * @return string
      */
-    public static function getShortName(object|string $target, bool $clean = false): string
+    public static function getShortName(object|string $target, bool $escape = false): string
     {
-        $name = self::getName($target, $clean);
+        $name = self::getName($target, $escape);
         $spos = strrpos($name, '\\');
 
         return substr($name, ($spos > 0 ? $spos + 1 : 0));
