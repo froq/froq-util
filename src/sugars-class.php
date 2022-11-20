@@ -31,7 +31,7 @@ require 'sugars-class/xnumber.php';
 require 'sugars-class/xclass.php';
 require 'sugars-class/xobject.php';
 
-// Extra autoload registry for "misc" classes.
+// Extra autoload registration for "misc" classes.
 spl_autoload_register(function (string $name): void {
     static $namespace = 'froq\util';
     if (str_starts_with($name, $namespace)) {
