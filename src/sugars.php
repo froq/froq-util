@@ -5,8 +5,10 @@
  */
 declare(strict_types=1);
 
-use froq\util\{Util, Arrays, Objects, Numbers, Strings};
-use froq\util\misc\System;
+use froq\util\{
+    Util, System, Arrays,
+    Objects, Numbers, Strings
+};
 
 // Load base stuff.
 require 'sugars-const.php';
