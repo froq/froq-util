@@ -123,7 +123,7 @@ class ReadonlyError extends Error
      */
     public function __construct(string|object $class, string $property = null)
     {
-        if (func_num_args() == 1) {
+        if (func_num_args() === 1) {
             parent::__construct(sprintf(
                 'Cannot modify readonly class %s', get_class_name($class)
             ));
