@@ -5,23 +5,38 @@
  */
 declare(strict_types=1);
 
-namespace froq\util\misc;
+namespace froq\util;
 
 /**
  * A class that provides a profiling interface via `run()` method printing
  * speed & memory peeks.
  *
- * @package froq\util\misc
- * @object  froq\util\misc\Runner
+ * @package froq\util
+ * @object  froq\util\Runner
  * @author  Kerem Güneş
  * @since   5.5
  */
 class Runner
 {
-    /** @var int, int */
-    private int $limit, $runs = 0;
+    /**
+     * Run limit.
+     *
+     * @var int
+     */
+    private int $limit = 0;
 
-    /** @var bool */
+    /**
+     * Total runs.
+     *
+     * @var int
+     */
+    private int $runs = 0;
+
+    /**
+     * Simple, without function call.
+     *
+     * @var bool
+     */
     private bool $simple;
 
     /**
@@ -29,12 +44,12 @@ class Runner
      *
      * @param  int  $limit
      * @param  bool $simple
-     * @throws froq\util\UtilException
+     * @throws ArgumentError
      */
     public function __construct(int $limit = 1000, bool $simple = false)
     {
         if ($limit < 1) {
-            throw new \ValueError('Min limit is 1, ' . $limit . ' given');
+            throw new \ArgumentError('Min limit is 1, %d given', $limit);
         }
 
         $this->limit  = $limit;
