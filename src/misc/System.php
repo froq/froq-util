@@ -1,17 +1,15 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-util
  */
-declare(strict_types=1);
-
-namespace froq\util\misc;
+namespace froq\util;
 
 /**
  * A static class for system related stuff.
  *
- * @package froq\util\misc
- * @object  froq\util\misc\System
+ * @package froq\util
+ * @object  froq\util\System
  * @author  Kerem Güneş
  * @since   6.0
  * @static
