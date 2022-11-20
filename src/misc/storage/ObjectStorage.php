@@ -1,19 +1,17 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-util
  */
-declare(strict_types=1);
-
-namespace froq\util\misc;
+namespace froq\util\storage;
 
 use froq\common\interface\Arrayable;
 
 /**
- * An extended SplObjectStorage class.
+ * An extended `SplObjectStorage` class.
  *
- * @package froq\util\misc
- * @object  froq\util\misc\ObjectStorage
+ * @package froq\util\storage
+ * @object  froq\util\storage\ObjectStorage
  * @author  Kerem Güneş
  * @since   6.0
  */
