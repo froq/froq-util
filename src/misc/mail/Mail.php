@@ -1,0 +1,338 @@
+<?php declare(strict_types=1);
+/**
+ * Copyright (c) 2015 · Kerem Güneş
+ * Apache License 2.0 · http://github.com/froq/froq-util
+ */
+namespace froq\util\mail;
+
+/**
+ * A simple mail class, utilizes `mail()` function.
+ *
+ * @package froq\util\mail
+ * @object  froq\util\mail\Mail
+ * @author  Kerem Güneş
+ * @since   7.0
+ */
+class Mail
+{
+    /**
+     * From address.
+     *
+     * @var string
+     */
+    private string $from;
+
+    /**
+     * To address.
+     *
+     * @var string
+     */
+    private string $to;
+
+    /**
+     * Reply-to address.
+     *
+     * @var string
+     */
+    private string $replyTo;
+
+    /**
+     * Subject..
+     *
+     * @var string
+     */
+    private string $subject;
+
+    /**
+     * Body.
+     *
+     * @var string
+     */
+    private string $body;
+
+    /**
+     * Map of headers.
+     *
+     * @var array<string, string>
+     */
+    private array $headers = [
+        'Content-Type'              => 'text/plain; charset=utf-8',
+        'Content-Transfer-Encoding' => 'quoted-printable',
+        'Message-Id'                => null, // To be set.
+        'MIME-Version'              => '1.0',
+        'X-Mailer'                  => 'Froq! Mail',
+    ];
+
+    /**
+     * Constructor.
+     *
+     * @param string|null $from
+     * @param string|null $to
+     */
+    public function __construct(string $from = null, string $to = null)
+    {
+        isset($from) && $this->setFrom($from);
+        isset($to)   && $this->addTo($to);
+    }
+
+    /**
+     * Set from address.
+     *
+     * @param  string $from
+     * @return self
+     * @causes froq\util\mail\MailException
+     */
+    public function setFrom(string $from): self
+    {
+        $this->checkAddress($from);
+
+        $this->from = $from;
+
+        return $this;
+    }
+
+    /**
+     * Get from address.
+     *
+     * @return string|null
+     */
+    public function getFrom(): string|null
+    {
+        return $this->from ?? null;
+    }
+
+    /**
+     * Add to address.
+     *
+     * @param  string $to
+     * @return self
+     * @causes froq\util\mail\MailException
+     */
+    public function addTo(string $to): self
+    {
+        $this->checkAddress($to);
+
+        $this->to = $this->prepareTo($to);
+
+        return $this;
+    }
+
+    /**
+     * Get to address.
+     *
+     * @return string|null
+     */
+    public function getTo(): string|null
+    {
+        return $this->to ?? null;
+    }
+
+    /**
+     * Add reply-to address.
+     *
+     * @param  string $replyTo
+     * @return self
+     * @causes froq\util\mail\MailException
+     */
+    public function addReplyTo(string $replyTo): self
+    {
+        $this->checkAddress($replyTo);
+
+        $this->replyTo = $this->prepareTo($replyTo);
+
+        return $this;
+    }
+
+    /**
+     * Get reply-to address.
+     *
+     * @return string|null
+     */
+    public function getReplyTo(): string|null
+    {
+        return $this->replyTo ?? null;
+    }
+
+    /**
+     * Set subject.
+     *
+     * @param  string $subject
+     * @return self
+     */
+    public function setSubject(string $subject): self
+    {
+        $this->subject = trim($subject);
+
+        return $this;
+    }
+
+    /**
+     * Get subject.
+     *
+     * @return string|null
+     */
+    public function getSubject(): string|null
+    {
+        return $this->subject ?? null;
+    }
+
+    /**
+     * Set body.
+     *
+     * @param  string $body
+     * @return self
+     */
+    public function setBody(string $body): self
+    {
+        $this->body = trim($body);
+
+        return $this;
+    }
+
+    /**
+     * Get body.
+     *
+     * @return string
+     */
+    public function getBody(): string|null
+    {
+        return $this->body ?? null;
+    }
+
+    /**
+     * Set header.
+     *
+     * @param  string $name
+     * @param  string $value
+     * @return self
+     */
+    public function setHeader(string $name, string $value): self
+    {
+        $this->headers[$name] = $value;
+
+        return $this;
+    }
+
+    /**
+     * Get header.
+     *
+     * @param  string $name
+     * @return string|null
+     */
+    public function getHeader(string $name): string|null
+    {
+        return $this->headers[$name] ?? $this->headers[lower($name)] ?? null;
+    }
+
+    /**
+     * Get headers.
+     *
+     * @return array
+     */
+    public function getHeaders(): array
+    {
+        return $this->headers;
+    }
+
+    /**
+     * Send.
+     *
+     * @todo Use "true" type.
+     * @return bool
+     * @throws froq\util\mail\MailException
+     */
+    public function send(): bool
+    {
+        [$from, $to, $subject, $body] = [
+            $this->getFrom()    ?: throw MailException::forEmptyFrom(),
+            $this->getTo()      ?: throw MailException::forEmptyTo(),
+            $this->getSubject() ?? throw MailException::forNullSubject(),
+            $this->getBody()    ?? throw MailException::forNullBody(),
+        ];
+
+        $subject = '=?UTF-8?Q?' . quoted_printable_encode($subject) . '?=';
+
+        if ($this->getHeader('Content-Transfer-Encoding') === 'quoted-printable') {
+            $body = quoted_printable_encode($body);
+        } elseif ($this->getHeader('Content-Transfer-Encoding') === 'base64') {
+            $body = wordwrap($body, 70, "\r\n", true);
+        } else {
+            $body = wordwrap($body, 70, "\r\n");
+        }
+
+        if ($this->getHeader('Message-Id') === null) {
+            $this->setHeader('Message-Id', vsprintf('<%s@%s>', $this->generateMessageId()));
+        }
+
+        $headers = $this->getHeaders();
+        $headers['From'] = $from;
+        if ($replyTo = $this->getReplyTo()) {
+            $headers['Reply-To'] = $replyTo;
+        }
+
+        $headers = filter($headers);
+
+        return @mail($to, $subject, $body, $headers) ?: throw MailException::forError();
+    }
+
+    /**
+     * Prepare given "to" address.
+     */
+    private function prepareTo(string $to): string
+    {
+        $tos = split(' *, *', (string) $this->getTo());
+
+        if (!array_contains($tos, $to)) {
+            $tos[] = $to;
+        }
+
+        return join(', ', $tos);
+    }
+
+    /**
+     * Check an address.
+     *
+     * @throws froq\util\mail\MailException
+     */
+    private function checkAddress(string &$address): void
+    {
+        // Trim& reduce spaces.
+        $address = preg_replace(
+            ['~^\s+|\s+$~', '~\s+~'], ['', ' '],
+            $address
+        );
+
+        if (str_contains($address, ',')) {
+            $addresses = [];
+
+            foreach (split(' *, *', $address) as $address) {
+                $this->checkAddress($address);
+                $addresses[] = $address;
+            }
+
+            $address = join(', ', $addresses);
+        } else {
+            // Eg: Jon Doo <jon@doo.com> or <jon@doo.com>
+            if (!$email = grep('~(?:.*?<(.+)>|(.+))~', $address)) {
+                throw MailException::forInvalidAddress($address);
+            }
+
+            // Validate but skip localhost stuff.
+            if (!str_ends_with($email, '@localhost')
+                && !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                throw MailException::forInvalidAddress($address);
+            }
+        }
+    }
+
+    /**
+     * Generate a message id with ad unique id & host name.
+     */
+    private function generateMessageId(): array
+    {
+        return [
+            gmdate('YmdHis') . '.' . suid(10, base: 16),
+            $_SERVER['SERVER_NAME'] ?? 'localhost'
+        ];
+    }
+}
