@@ -22,15 +22,15 @@ class PlainArrayObject extends PlainObject implements ArrayAccess
     }
 
     /** @inheritDoc ArrayAccess */
-    public function &offsetGet(mixed $name): mixed
-    {
-        return $this->$name;
-    }
-
-    /** @inheritDoc ArrayAccess */
     public function offsetSet(mixed $name, mixed $value): void
     {
         $this->$name = $value;
+    }
+
+    /** @inheritDoc ArrayAccess */
+    public function &offsetGet(mixed $name): mixed
+    {
+        return $this->$name;
     }
 
     /** @inheritDoc ArrayAccess */
