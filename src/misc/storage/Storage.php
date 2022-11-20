@@ -22,13 +22,23 @@ use froq\common\trait\DataAccessMagicOffsetTrait;
  */
 class Storage implements Arrayable, \Countable, \ArrayAccess
 {
-    /** For using access magic methods via offset methods. */
+    /**
+     * For using access magic methods via offset methods.
+     */
     use DataAccessMagicOffsetTrait;
 
-    /** @var string */
+    /**
+     * Instance ID.
+     *
+     * @var string
+     */
     private string $id;
 
-    /** @var array */
+    /**
+     * Storage data.
+     *
+     * @var array
+     */
     private static array $data = [];
 
     /**
