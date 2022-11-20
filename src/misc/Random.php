@@ -5,21 +5,25 @@
  */
 declare(strict_types=1);
 
-namespace froq\util\misc;
+namespace froq\util;
 
 /**
  * An RNG class that generates pseudorandom numbers, chars & bytes. This class is
  * highly inspired by java.util.Random class using its some same implementations.
  * @see https://docs.oracle.com/javase/8/docs/api/java/util/Random.html
  *
- * @package froq\util\misc
- * @object  froq\util\misc\Random
+ * @package froq\util
+ * @object  froq\util\Random
  * @author  Kerem Güneş
  * @since   5.0
  */
 class Random
 {
-    /** @var int */
+    /**
+     * Seed.
+     *
+     * @var int
+     */
     private int $seed;
 
     /**
