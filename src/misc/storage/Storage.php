@@ -1,11 +1,9 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-util
  */
-declare(strict_types=1);
-
-namespace froq\util\misc;
+namespace froq\util\storage;
 
 use froq\common\interface\Arrayable;
 use froq\common\trait\DataAccessMagicOffsetTrait;
@@ -17,8 +15,8 @@ use froq\common\trait\DataAccessMagicOffsetTrait;
  * Note: For dynamic usage, access magic or offset methods
  * must be used, otherwise store/unstore methods can be used.
  *
- * @package froq\util\misc
- * @object  froq\util\misc\Storage
+ * @package froq\util\storage
+ * @object  froq\util\storage\Storage
  * @author  Kerem Güneş
  * @since   6.0
  */
