@@ -349,4 +349,15 @@ final class Type implements Stringable
     {
         return $this->reflection ??= XReflectionType::of($this->var);
     }
+
+    /**
+     * Static initializer.
+     *
+     * @param  mixed $var
+     * @return Type
+     */
+    public static function of(mixed $var): Type
+    {
+        return new Type($var);
+    }
 }
