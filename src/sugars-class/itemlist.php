@@ -20,17 +20,30 @@ class ItemList implements Arrayable, Jsonable, Countable, IteratorAggregate, Arr
 {
     use CountTrait, EmptyTrait;
 
-    /** @var array */
+    /**
+     * Items data.
+     *
+     * @var array
+     */
     private array $data = [];
+
+    /**
+     * Items type to check.
+     *
+     * @var string|null
+     */
+    private string|null $type;
 
     /**
      * Constructor.
      *
-     * @param iterable $data
+     * @param iterable    $data
+     * @param string|null $type
      */
-    public function __construct(iterable $data = [])
+    public function __construct(iterable $data = [], string $type = null)
     {
         $data && $this->data = array_list([...$data]);
+        $this->type = $type;
     }
 
     /** @magic */
@@ -294,6 +307,7 @@ class ItemList implements Arrayable, Jsonable, Countable, IteratorAggregate, Arr
     public function offsetSet(mixed $index, mixed $item): void
     {
         $this->indexCheck($index);
+        $this->typeCheck($item);
 
         // For calls like `items[] = item`.
         $index ??= $this->count();
@@ -332,7 +346,25 @@ class ItemList implements Arrayable, Jsonable, Countable, IteratorAggregate, Arr
                 default  => $type,
             };
 
-            throw new KeyError('Invalid index %s for %s', [$indexRepr, $this::class]);
+            throw new KeyError(sprintf(
+                'Invalid index %s for %s',
+                $indexRepr, get_class_name($this, escape: true)
+            ));
+        }
+    }
+
+    /**
+     * Check type validity (if self type is not null).
+     *
+     * @throws TypeError
+     */
+    private function typeCheck(mixed $item): void
+    {
+        if ($this->type !== null && !is_type_of($item, $this->type)) {
+            throw new TypeError(sprintf(
+                'Invalid type %s for %s accepting only type of %s',
+                get_type($item), get_class_name($this, escape: true), $this->type
+            ));
         }
     }
 }
