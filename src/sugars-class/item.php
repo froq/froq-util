@@ -300,17 +300,17 @@ class Item implements Arrayable, Jsonable, Countable, IteratorAggregate, ArrayAc
     /**
      * @inheritDoc ArrayAccess
      */
-    public function offsetGet(mixed $key, mixed $default = null): mixed
+    public function offsetSet(mixed $key, mixed $item): void
     {
-        return $this->get($key, $default);
+        $this->set($key, $item);
     }
 
     /**
      * @inheritDoc ArrayAccess
      */
-    public function offsetSet(mixed $key, mixed $item): void
+    public function offsetGet(mixed $key, mixed $default = null): mixed
     {
-        $this->set($key, $item);
+        return $this->get($key, $default);
     }
 
     /**
