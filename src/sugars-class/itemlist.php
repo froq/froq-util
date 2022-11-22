@@ -360,7 +360,7 @@ class ItemList implements Arrayable, Jsonable, Countable, IteratorAggregate, Arr
      */
     private function typeCheck(mixed $item): void
     {
-        if ($this->type !== null && !is_type_of($item, $this->type)) {
+        if (isset($this->type) && !is_type_of($item, $this->type)) {
             throw new TypeError(sprintf(
                 'Invalid type %s for %s accepting only type of %s',
                 get_type($item), get_class_name($this, escape: true), $this->type
