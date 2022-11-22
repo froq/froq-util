@@ -13,18 +13,18 @@ use froq\util\Arrays;
  * @alias Arrays.isListArray()
  * @since 6.0
  */
-function is_list_array(array $array, bool $strict = true): bool
+function is_list_array(mixed $var, bool $strict = true): bool
 {
-    return Arrays::isListArray($array, $strict);
+    return is_array($var) && Arrays::isListArray($var, $strict);
 }
 
 /**
  * @alias Arrays.isAssocArray()
  * @since 6.0
  */
-function is_assoc_array(array $array): bool
+function is_assoc_array(mixed $var): bool
 {
-    return Arrays::isAssocArray($array);
+    return is_array($var) && Arrays::isAssocArray($var);
 }
 
 /**
