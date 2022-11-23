@@ -187,9 +187,7 @@ class UndefinedConstantError extends Error
     public function __construct(string|object|null $class, string $constant)
     {
         if ($class === null) {
-            parent::__construct(sprintf(
-                'Undefined constant %s', $constant
-            ));
+            parent::__construct(sprintf('Undefined constant %s', $constant));
         } else {
             parent::__construct(sprintf(
                 'Undefined class constant %s::%s', get_class_name($class, escape: true), $constant
