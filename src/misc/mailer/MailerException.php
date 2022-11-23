@@ -3,15 +3,15 @@
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-util
  */
-namespace froq\util\mail;
+namespace froq\util\mailer;
 
 /**
- * @package froq\util\mail
- * @object  froq\util\mail\MailException
+ * @package froq\util\mailer
+ * @object  froq\util\mailer\MailerException
  * @author  Kerem Güneş
  * @since   7.0
  */
-class MailException extends \froq\common\Exception
+class MailerException extends \froq\common\Exception
 {
     /**
      * Create for empty from.
@@ -76,6 +76,6 @@ class MailException extends \froq\common\Exception
             // and ob_start() does not work to hide this output.
             'cannot found "sendmail", probably not installed or misconfigured';
 
-        return new static('Mail error [%s]', $message);
+        return new static('Error [%s]', $message);
     }
 }

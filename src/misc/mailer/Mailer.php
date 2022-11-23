@@ -3,17 +3,17 @@
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-util
  */
-namespace froq\util\mail;
+namespace froq\util\mailer;
 
 /**
- * A simple mail class, utilizes `mail()` function.
+ * A simple mailer class, utilizes `mail()` function.
  *
- * @package froq\util\mail
- * @object  froq\util\mail\Mail
+ * @package froq\util\mailer
+ * @object  froq\util\mailer\Mailer
  * @author  Kerem Güneş
  * @since   7.0
  */
-class Mail
+class Mailer
 {
     /**
      * From address.
@@ -60,7 +60,7 @@ class Mail
         'Content-Transfer-Encoding' => 'quoted-printable',
         'Message-Id'                => null, // To be set.
         'MIME-Version'              => '1.0',
-        'X-Mailer'                  => 'Froq! Mail',
+        'X-Mailer'                  => 'Froq! Mailer',
     ];
 
     /**
@@ -80,7 +80,7 @@ class Mail
      *
      * @param  string $from
      * @return self
-     * @causes froq\util\mail\MailException
+     * @causes froq\util\mailer\MailerException
      */
     public function setFrom(string $from): self
     {
@@ -106,7 +106,7 @@ class Mail
      *
      * @param  string $to
      * @return self
-     * @causes froq\util\mail\MailException
+     * @causes froq\util\mailer\MailerException
      */
     public function addTo(string $to): self
     {
@@ -132,7 +132,7 @@ class Mail
      *
      * @param  string $replyTo
      * @return self
-     * @causes froq\util\mail\MailException
+     * @causes froq\util\mailer\MailerException
      */
     public function addReplyTo(string $replyTo): self
     {
@@ -239,15 +239,15 @@ class Mail
      *
      * @todo Use "true" type.
      * @return bool
-     * @throws froq\util\mail\MailException
+     * @throws froq\util\mailer\MailerException
      */
     public function send(): bool
     {
         [$from, $to, $subject, $body] = [
-            $this->getFrom()    ?: throw MailException::forEmptyFrom(),
-            $this->getTo()      ?: throw MailException::forEmptyTo(),
-            $this->getSubject() ?? throw MailException::forNullSubject(),
-            $this->getBody()    ?? throw MailException::forNullBody(),
+            $this->getFrom()    ?: throw MailerException::forEmptyFrom(),
+            $this->getTo()      ?: throw MailerException::forEmptyTo(),
+            $this->getSubject() ?? throw MailerException::forNullSubject(),
+            $this->getBody()    ?? throw MailerException::forNullBody(),
         ];
 
         $subject = '=?UTF-8?Q?' . quoted_printable_encode($subject) . '?=';
@@ -272,7 +272,7 @@ class Mail
 
         $headers = filter($headers);
 
-        return @mail($to, $subject, $body, $headers) ?: throw MailException::forError();
+        return @mail($to, $subject, $body, $headers) ?: throw MailerException::forError();
     }
 
     /**
@@ -292,7 +292,7 @@ class Mail
     /**
      * Check an address.
      *
-     * @throws froq\util\mail\MailException
+     * @throws froq\util\mailer\MailerException
      */
     private function checkAddress(string &$address): void
     {
@@ -314,13 +314,13 @@ class Mail
         } else {
             // Eg: Jon Doo <jon@doo.com> or <jon@doo.com>
             if (!$email = grep('~(?:.*?<(.+)>|(.+))~', $address)) {
-                throw MailException::forInvalidAddress($address);
+                throw MailerException::forInvalidAddress($address);
             }
 
             // Validate but skip localhost stuff.
             if (!str_ends_with($email, '@localhost')
                 && !filter_var($email, FILTER_VALIDATE_EMAIL)) {
-                throw MailException::forInvalidAddress($address);
+                throw MailerException::forInvalidAddress($address);
             }
         }
     }
