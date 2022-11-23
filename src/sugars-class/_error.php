@@ -172,6 +172,25 @@ class ReadonlyPropertyError extends ReadonlyError
 
 /**
  * @author Kerem Güneş
+ * @since  7.0
+ */
+class UndefinedClassError extends Error
+{
+    use ErrorTrait;
+
+    /**
+     * Constructor.
+     *
+     * @param string $class
+     */
+    public function __construct(string $class)
+    {
+        parent::__construct(sprintf('Undefined class %s', $class));
+    }
+}
+
+/**
+ * @author Kerem Güneş
  * @since  6.0
  */
 class UndefinedConstantError extends Error
