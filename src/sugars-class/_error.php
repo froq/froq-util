@@ -185,7 +185,7 @@ class UndefinedClassError extends Error
      */
     public function __construct(string $class)
     {
-        parent::__construct(sprintf('Undefined class %s', $class));
+        parent::__construct(sprintf('Undefined class: %s', $class));
     }
 }
 
@@ -206,10 +206,10 @@ class UndefinedConstantError extends Error
     public function __construct(string|object|null $class, string $constant)
     {
         if ($class === null) {
-            parent::__construct(sprintf('Undefined constant %s', $constant));
+            parent::__construct(sprintf('Undefined constant: %s', $constant));
         } else {
             parent::__construct(sprintf(
-                'Undefined class constant %s::%s', get_class_name($class, escape: true), $constant
+                'Undefined class constant: %s::%s', get_class_name($class, escape: true), $constant
             ));
         }
     }
@@ -232,7 +232,7 @@ class UndefinedPropertyError extends Error
     public function __construct(string|object $class, string $property)
     {
         parent::__construct(sprintf(
-            'Undefined property %s::$%s', get_class_name($class, escape: true), $property
+            'Undefined property: %s::$%s', get_class_name($class, escape: true), $property
         ));
     }
 }
@@ -254,7 +254,7 @@ class UndefinedMethodError extends Error
     public function __construct(string|object $class, string $method)
     {
         parent::__construct(sprintf(
-            'Undefined method %s::%s()', get_class_name($class, escape: true), $method
+            'Undefined method: %s::%s()', get_class_name($class, escape: true), $method
         ));
     }
 }
