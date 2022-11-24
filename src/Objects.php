@@ -7,10 +7,7 @@ declare(strict_types=1);
 
 namespace froq\util;
 
-use froq\reflection\{
-    ReflectionObject as XReflectionObject,
-    ReflectionClass as XReflectionClass
-};
+use XReflectionObject, XReflectionClass;
 
 /**
  * Objects.
