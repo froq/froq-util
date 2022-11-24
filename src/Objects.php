@@ -7,7 +7,6 @@ declare(strict_types=1);
 
 namespace froq\util;
 
-use froq\common\interface\Clonable;
 use XReflectionObject, XReflectionClass;
 
 /**
@@ -30,8 +29,7 @@ final class Objects extends \StaticClass
     public static function reflect(object|string $target): XReflectionObject|XReflectionClass|null
     {
         try {
-            return is_object($target) ? new XReflectionObject($target)
-                 : new XReflectionClass($target);
+            return is_object($target) ? new XReflectionObject($target) : new XReflectionClass($target);
         } catch (\ReflectionException) {
             return null;
         }
