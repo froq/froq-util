@@ -218,11 +218,12 @@ class ItemList implements Arrayable, Jsonable, Countable, IteratorAggregate, Arr
      * Refine filtering given or null, "" and [] items as default.
      *
      * @param  array|null $items
+     * @param  bool|null  $list
      * @return self
      */
-    public function refine(array $items = null): self
+    public function refine(array $items = null, bool $list = null): self
     {
-        $this->data = array_refine($this->data, $items);
+        $this->data = array_refine($this->data, $items, $list);
 
         return $this;
     }
@@ -230,12 +231,13 @@ class ItemList implements Arrayable, Jsonable, Countable, IteratorAggregate, Arr
     /**
      * Dedupe items applying unique check.
      *
-     * @param  bool $strict
+     * @param  bool      $strict
+     * @param  bool|null $list
      * @return self
      */
-    public function dedupe(bool $strict = true): self
+    public function dedupe(bool $strict = true, bool $list = null): self
     {
-        $this->data = array_dedupe($this->data, $strict);
+        $this->data = array_dedupe($this->data, $strict, $list);
 
         return $this;
     }

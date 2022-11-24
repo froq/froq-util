@@ -393,15 +393,16 @@ final class Arrays extends \StaticClass
      * Get "really" unique items with strict comparison as default since array_unique()
      * comparison non-strict (eg: 1 == '1' is true).
      *
-     * @param  array $array
-     * @param  bool  $strict
+     * @param  array     $array
+     * @param  bool      $strict
+     * @param  bool|null $list
      * @return 5.22, 5.25
      */
-    public static function dedupe(array $array, bool $strict = true): array
+    public static function dedupe(array $array, bool $strict = true, bool $list = null): array
     {
         $ret = [];
 
-        $list = array_is_list($array);
+        $list ??= array_is_list($array);
 
         foreach ($array as $key => $value) {
             in_array($value, $ret, $strict) || $ret[$key] = $value;
@@ -417,14 +418,15 @@ final class Arrays extends \StaticClass
      *
      * @param  array      $array
      * @param  array|null $values
+     * @param  bool|null  $list
      * @return array
      * @since  6.0
      */
-    public static function refine(array $array, array $values = null): array
+    public static function refine(array $array, array $values = null, bool $list = null): array
     {
         $func = self::makeFilterFunction(null, $values);
 
-        $list = array_is_list($array);
+        $list ??= array_is_list($array);
 
         $ret = array_filter($array, $func);
 
@@ -1176,6 +1178,7 @@ final class Arrays extends \StaticClass
      */
     public static function sortNatural(array $array, bool $icase = false): array
     {
+        // To act like other sort functions.
         $list = array_is_list($array);
 
         $icase ? natcasesort($array) : natsort($array);

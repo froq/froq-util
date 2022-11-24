@@ -324,12 +324,13 @@ trait MapSetTrait
      * Refine filtering given or null, "" and [] items as default.
      *
      * @param  array|null $items
+     * @param  bool|null  $list
      * @return self
      * @since  6.5
      */
-    public function refine(array $items = null): self
+    public function refine(array $items = null, bool $list = null): self
     {
-        $this->data = array_refine($this->data, $items);
+        $this->data = array_refine($this->data, $items, $list);
 
         return $this;
     }

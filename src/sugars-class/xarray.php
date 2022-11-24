@@ -359,12 +359,13 @@ class XArray implements Arrayable, Listable, Jsonable, Collectable, Iteratable, 
     /**
      * Dedupe values applying unique check.
      *
-     * @param  bool $strict
+     * @param  bool      $strict
+     * @param  bool|null $list
      * @return self
      */
-    public function dedupe(bool $strict = true): self
+    public function dedupe(bool $strict = true, bool $list = null): self
     {
-        $this->data = array_dedupe($this->data, $strict);
+        $this->data = array_dedupe($this->data, $strict, $list);
 
         return $this;
     }
@@ -373,11 +374,12 @@ class XArray implements Arrayable, Listable, Jsonable, Collectable, Iteratable, 
      * Refine filtering given or null, "" and [] items as default.
      *
      * @param  array|null $values
+     * @param  bool|null  $list
      * @return self
      */
-    public function refine(array $values = null): self
+    public function refine(array $values = null, bool $list = null): self
     {
-        $this->data = array_refine($this->data, $values);
+        $this->data = array_refine($this->data, $values, $list);
 
         return $this;
     }

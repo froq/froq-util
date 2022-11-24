@@ -169,18 +169,18 @@ function array_union(array $array1, array $array2, array ...$arrays): array
  * @alias Arrays.dedupe()
  * @since 5.25, 6.0
  */
-function array_dedupe(array $array, bool $strict = true): array
+function array_dedupe(array $array, bool $strict = true, bool $list = null): array
 {
-    return Arrays::dedupe($array, $strict);
+    return Arrays::dedupe($array, $strict, $list);
 }
 
 /**
  * @alias Arrays.refine()
  * @since 6.0
  */
-function array_refine(array $array, array $values = null): array
+function array_refine(array $array, array $values = null, bool $list = null): array
 {
-    return Arrays::refine($array, $values);
+    return Arrays::refine($array, $values, $list);
 }
 
 /**
