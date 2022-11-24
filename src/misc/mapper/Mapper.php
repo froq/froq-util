@@ -273,8 +273,8 @@ class Mapper
      */
     private function updateProperty(object $object, string $name, mixed $value): void
     {
-        // Use setter method, if exists.
-        if (method_exists($object, ($method = ('set' . $name)))) {
+        // Use setter method if exists.
+        if (method_exists($object, $method = 'set' . $name)) {
             $object->$method($value);
             return;
         }
@@ -419,6 +419,11 @@ class Mapper
     {
         $object ??= $this->object ?? throw MapperException::forNullObject();
 
+        // Use getter method if exists.
+        if ($name !== null && method_exists($object, $method = 'get' . $name)) {
+            return $object->$method();
+        }
+
         $data = [];
         $oref = new ReflectionObject($object);
 
@@ -434,7 +439,7 @@ class Mapper
 
         foreach ($prefs as $pref) {
             // Single property wanted.
-            if ($name && $name !== $pref->name) {
+            if ($name !== null && $name !== $pref->name) {
                 continue;
             }
 
@@ -465,8 +470,8 @@ class Mapper
         // Try to collect array-like object.
         $data = $data ?: $this->collectData($object);
 
+        // No such property exists.
         if ($name !== null && !array_key_exists($name, $data)) {
-            // No such property exists.
             $this->options['throw'] && throw MapperException::forUndefinedProperty($object, $name);
         }
 
