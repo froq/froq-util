@@ -253,7 +253,7 @@ class XClass implements Stringable
      */
     public function getParent(): string|null
     {
-        return $this->exists ? get_parent_class($this->name) : null;
+        return $this->exists ? Objects::getParent($this->name) : null;
     }
 
     /**
@@ -291,7 +291,7 @@ class XClass implements Stringable
      *
      * @return bool
      */
-    public function isValidName(): bool
+    public function hasValidName(): bool
     {
         // Not for anonyms.
         return preg_test('~^([\\\]?[a-z_][a-z0-9_\\\]*)$~i', $this->name);
@@ -302,9 +302,9 @@ class XClass implements Stringable
      *
      * @return bool
      */
-    public function isAliasName(): bool
+    public function hasAliasName(): bool
     {
-        return $this->name !== $this->reflect()?->name;
+        return $this->name !== ($this->reflect()?->name ?? $this->name);
     }
 
     /**
