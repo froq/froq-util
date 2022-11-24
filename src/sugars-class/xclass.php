@@ -55,21 +55,23 @@ class XClass implements Stringable
     /**
      * Get name.
      *
+     * @param  bool $escape
      * @return string
      */
-    public function getName(): string
+    public function getName(bool $escape = false): string
     {
-        return $this->name;
+        return Objects::getName($this->name, $escape);
     }
 
     /**
      * Get short name.
      *
+     * @param  bool $escape
      * @return string
      */
-    public function getShortName(): string
+    public function getShortName(bool $escape = false): string
     {
-        return Objects::getShortName($this->name);
+        return Objects::getShortName($this->name, $escape);
     }
 
     /**
@@ -91,6 +93,16 @@ class XClass implements Stringable
     public function getNamespace(bool $baseOnly = false): string
     {
         return Objects::getNamespace($this->name, $baseOnly);
+    }
+
+    /**
+     * Get type.
+     *
+     * @return string|null
+     */
+    public function getType(): string|null
+    {
+        return Objects::getType($this->name);
     }
 
     /**

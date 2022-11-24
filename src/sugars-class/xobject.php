@@ -33,6 +33,16 @@ class XObject extends XClass
     }
 
     /**
+     * Clone.
+     *
+     * @return object
+     */
+    public function clone(): object
+    {
+        return clone $this->object;
+    }
+
+    /**
      * Get id.
      *
      * @param  bool $withName
