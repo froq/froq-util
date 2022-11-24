@@ -276,7 +276,7 @@ class XClass implements Stringable
     public function isValidName(): bool
     {
         // Not for anonyms.
-        return preg_test('~^[a-z][a-z0-9\\\]+$~i', $this->name);
+        return preg_test('~^([\\\]?[a-z_][a-z0-9_\\\]*)$~i', $this->name);
     }
 
     /**
