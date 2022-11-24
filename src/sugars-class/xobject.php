@@ -33,17 +33,6 @@ class XObject extends XClass
     }
 
     /**
-     * Get vars.
-     *
-     * @return array
-     * @override
-     */
-    public function getVars(): array
-    {
-        return get_object_vars($this->object);
-    }
-
-    /**
      * Get id.
      *
      * @param  bool $withName

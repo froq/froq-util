@@ -195,6 +195,9 @@ class XClass implements Stringable
      */
     public function getVars(): array|null
     {
+        if ($this instanceof XObject) {
+            return get_object_vars($this->object);
+        }
         return $this->exists ? get_class_vars($this->name) : null;
     }
 
@@ -215,6 +218,9 @@ class XClass implements Stringable
      */
     public function getProperties(): array|null
     {
+        if ($this instanceof XObject) {
+            return get_class_properties($this->object, false);
+        }
         return $this->exists ? get_class_properties($this->name, false) : null;
     }
 
