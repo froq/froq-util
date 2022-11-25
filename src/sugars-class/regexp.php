@@ -729,7 +729,7 @@ class RegExpMatch extends Map
      */
     public function clean(): self
     {
-        return $this->filter(fn($v) => !equals($v, "", null));
+        return $this->filter(fn($v): bool => !equals($v, "", null));
     }
 
     /**
@@ -740,6 +740,6 @@ class RegExpMatch extends Map
      */
     public function clear(mixed ...$search): self
     {
-        return $this->filter(fn($v) => !equals($v, ...$search));
+        return $this->filter(fn($v): bool => !equals($v, ...$search));
     }
 }
