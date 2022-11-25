@@ -1441,7 +1441,7 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
 
         if ($allowed && is_string($allowed)) {
             $allowed = Set::fromSplit($allowed, '\s*,\s*')
-                ->map(fn($tag) => trim($tag, '<>'))
+                ->map(fn(string $tag): string => trim($tag, '<>'))
                 ->toArray();
         }
 
@@ -1463,7 +1463,7 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
 
         if ($allowed && is_string($allowed)) {
             $allowed = Set::fromSplit($allowed, '\s*,\s*')
-                ->map(fn($tag) => strtolower(trim($tag, '<>')))
+                ->map(fn(string $tag): string => strtolower(trim($tag, '<>')))
                 ->toArray();
         }
 
@@ -1997,7 +1997,7 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
      */
     public static function fromCharCode(int ...$codes): static
     {
-        return new static(array_map(fn($code) => Strings::chr($code), $codes));
+        return new static(join(array_map(fn(int $code): ?string => Strings::chr($code), $codes));
     }
 
     /**
@@ -2008,7 +2008,7 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
      */
     public static function fromCodePoint(int ...$codes): static
     {
-        return new static(array_map(fn($code) => Strings::chr($code), $codes));
+        return new static(join(array_map(fn(int $code): ?string => Strings::chr($code), $codes));
     }
 }
 
