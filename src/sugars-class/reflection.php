@@ -32,6 +32,7 @@ class_alias(froq\reflection\ReflectionMethod::class, XReflectionMethod::class);
 class_alias(froq\reflection\ReflectionFunction::class, XReflectionFunction::class);
 class_alias(froq\reflection\ReflectionParameter::class, XReflectionParameter::class);
 class_alias(froq\reflection\ReflectionType::class, XReflectionType::class);
+class_alias(froq\reflection\ReflectionAttribute::class, XReflectionAttribute::class);
 
 
 // Additions.
