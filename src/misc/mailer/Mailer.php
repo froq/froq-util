@@ -6,7 +6,10 @@
 namespace froq\util\mailer;
 
 /**
- * A simple mailer class, utilizes `mail()` function.
+ * A simple mailer class.
+ *
+ * Note: This class utilizes `mail()` function. So, if any complex mailing works needed,
+ * then an extended mailer tool should be used.
  *
  * @package froq\util\mailer
  * @object  froq\util\mailer\Mailer
