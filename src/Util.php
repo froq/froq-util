@@ -27,24 +27,26 @@ final /* fuckic static */ class Util extends \StaticClass
      */
     public static function loadSugar(string|array $name): void
     {
-        // Name list.
+        // List of names.
         if (is_array($name)) {
             foreach ($name as $nam) {
                 self::loadSugar($nam);
             }
         } else {
-            $file = sprintf(__dir__ . '/sugars/%s.php', $name);
+            $file = sprintf(__DIR__ . '/sugars/%s.php', $name);
             if (file_exists($file)) {
                 require_once $file;
                 return;
             }
 
             // Not exists.
-            $names = xglob(__dir__ . '/sugars/{*.php,extra/*.php}', GLOB_BRACE)
-                ->map(fn($file) => strsrc($file, 'extra/') ? 'extra/' . filename($file) : filename($file))
+            $names = xglob(__DIR__ . '/sugars/{*.php,extra/*.php}', GLOB_BRACE)
+                ->map(fn(string $file): string => (
+                    strsrc($file, 'extra/') ? 'extra/' . filename($file) : filename($file)
+                ))
                 ->array();
 
-            throw new UtilException('Invalid sugar name `%s` [valids: %A]', [$name, $names]);
+            throw new UtilException('Invalid sugar name %q [valids: %A]', [$name, $names]);
         }
     }
 
