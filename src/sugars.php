@@ -369,9 +369,9 @@ function grep(string $pattern, string $input, bool $named = false): string|array
 
         // For named capturing groups.
         if ($named) {
-            $ret = array_filter($match, fn($k) => is_string($k), 2);
+            $ret = array_filter($match, fn($k): bool => is_string($k), 2);
         } else {
-            $ret = array_filter($match, fn($v) => isset($v));
+            $ret = array_filter($match, fn($v): bool => $v !== null);
         }
 
         // Reset keys (to 0-N).
@@ -415,9 +415,9 @@ function grep_all(string $pattern, string $input, bool $named = false, bool $uni
 
         // For named capturing groups.
         if ($named) {
-            $ret = array_filter($match, fn($k) => is_string($k), 2);
+            $ret = array_filter($match, fn($k): bool => is_string($k), 2);
         } else {
-            $ret = array_filter($match, fn($v) => isset($v));
+            $ret = array_filter($match, fn($v): bool => $v !== null);
         }
 
         // Reduce moving sub matches up.
@@ -564,11 +564,11 @@ function convert_case(string $input, string|int $case, string $exploder = null, 
         CASE_DASH  => implode('-', explode($exploder, mb_strtolower($input))),
         CASE_SNAKE => implode('_', explode($exploder, mb_strtolower($input))),
         CASE_TITLE => implode($imploder ?? $exploder, array_map(
-            fn($s) => mb_ucfirst(trim($s)),
+            fn($s): string => mb_ucfirst(trim($s)),
             explode($exploder, mb_strtolower($input))
         )),
         CASE_CAMEL => mb_lcfirst(implode('', array_map(
-            fn($s) => mb_ucfirst(trim($s)),
+            fn($s): string => mb_ucfirst(trim($s)),
             explode($exploder, mb_strtolower($input))
         ))),
         // Invalid case.
@@ -699,12 +699,12 @@ function get_constant_name(mixed $value, string|array $name_prefix): string|null
     // Regular constants.
     if (is_string($name_prefix)) {
         return array_first(array_filter(array_keys(get_defined_constants(), $value, true),
-            fn($name) => str_starts_with($name, $name_prefix)));
+            fn($name): bool => str_starts_with($name, $name_prefix)));
     }
 
     // Class constants.
     return array_first(array_filter(array_keys(get_class_constants($name_prefix[0], false), $value, true),
-        fn($name) => str_starts_with($name, $name_prefix[1])));
+        fn($name): bool => str_starts_with($name, $name_prefix[1])));
 }
 
 /**
@@ -815,13 +815,13 @@ function get_unique_id(int $length = 14, int $base = 16, bool $upper = false, bo
     if (!$hrtime) {
         $id = explode('.', uniqid('', true))[0];
     } else {
-        $id = implode('', array_map('dechex', hrtime()));
+        $id = implode('', map(hrtime(), 'dechex'));
     }
 
     $ret = $id;
 
     // Convert non-hex ids.
-    if ($base != 16) {
+    if ($base !== 16) {
         $ret = '';
         foreach (str_split($id, 8) as $i) {
             $ret .= convert_base($i, 16, $base);
@@ -862,7 +862,7 @@ function get_random_id(int $length = 14, int $base = 16, bool $upper = false): s
         $id = bin2hex(random_bytes(4));
 
         // Convert non-hex ids.
-        $ret .= ($base == 16) ? $id : convert_base($id, 16, $base);
+        $ret .= ($base === 16) ? $id : convert_base($id, 16, $base);
     }
 
     $upper && $ret = strtoupper($ret);
@@ -882,21 +882,28 @@ function get_request_id(): string
     $parts[] = $_SERVER['SERVER_PORT'] ?? 0;
     $parts[] = $_SERVER['REMOTE_PORT'] ?? 0;
 
-    return join('-', array_map(fn($p) => dechex((int) $p), $parts));
+    return join('-', map($parts, fn($p): string => dechex((int) $p)));
 }
 
 /**
  * Get real path of given path.
  *
  * @param  string           $path
- * @param  string|bool|null $check True or "file", "dir".
+ * @param  string|bool|null $check True or "dir", "file". @todo Use "true" type.
  * @return string|null
  * @since  4.0
  */
 function get_real_path(string $path, string|bool $check = null): string|null
 {
-    if (trim($path) == '') {
+    if (trim($path) === '') {
         return null;
+    }
+
+    if ($check && !in_array($check, [true, 'dir', 'file'], true)) {
+        throw new ArgumentError(
+            'Invalid check directive %q [valids: true, dir, file]',
+            $check
+        );
     }
 
     // NULL-bytes issue.
@@ -904,9 +911,9 @@ function get_real_path(string $path, string|bool $check = null): string|null
         $path = str_replace("\0", "\\0", $path);
     }
 
-    // Validate existence of file/directory or file only.
-    static $check_path; $check_path ??= fn($c, $p) => (
-        $c === true ? file_exists($p) : ($c === 'file' ? is_file($p) : is_dir($p))
+    // Validate existence of directory / file or file only.
+    static $check_path; $check_path ??= fn($c, $p): bool => (
+        $c === true ? file_exists($p) : ($c === 'dir' ? is_dir($p) : is_file($p))
     );
 
     if ($ret = realpath($path)) {
@@ -918,41 +925,41 @@ function get_real_path(string $path, string|bool $check = null): string|null
 
     $ret = '';
     $sep = DIRECTORY_SEPARATOR;
-    $win = DIRECTORY_SEPARATOR == '\\';
+    $win = DIRECTORY_SEPARATOR === '\\';
 
     // Make path "foo" => "./foo" so prevent invalid returns.
-    if (!str_contains($path, $sep) || ($win && substr($path, 1, 2) != ':\\')) {
+    if (!str_contains($path, $sep) || ($win && substr($path, 1, 2) !== ':\\')) {
         $path = '.' . $sep . $path;
     }
 
     foreach (explode($sep, $path) as $i => $cur) {
         if ($i == 0) {
-            if ($cur == '~') { // Home path (eg: ~/Desktop).
+            if ($cur === '~') { // Home path (eg: ~/Desktop).
                 $ret = getenv('HOME') ?: '';
                 continue;
-            } elseif ($cur == '.' || $cur == '..') {
-                if ($ret == '') {
+            } elseif ($cur === '.' || $cur === '..') {
+                if ($ret === '') {
                     // @cancel
                     // $file = getcwd(); // Fallback.
                     // foreach (debug_backtrace(0) as $trace) {
                     //     // Search until finding the right path argument (sadly seems no way else
                     //     // for that when call stack is chaining from a function to another function).
-                    //     if (empty($trace['args'][0]) || $trace['args'][0] != $path) {
+                    //     if (empty($trace['args'][0]) || $trace['args'][0] !== $path) {
                     //         break;
                     //     }
                     //     $file = $trace['file'];
                     // }
 
                     $tmp = getcwd() . $sep . basename($path);
-                    $ret = ($cur == '.') ? dirname($tmp) : dirname(dirname($tmp));
+                    $ret = ($cur === '.') ? dirname($tmp) : dirname(dirname($tmp));
                 }
                 continue;
             }
         }
 
-        if ($cur == '' || $cur == '.') {
+        if ($cur === '' || $cur === '.') {
             continue;
-        } elseif ($cur == '..') {
+        } elseif ($cur === '..') {
             $ret = dirname($ret); // Up.
             continue;
         }
@@ -974,12 +981,12 @@ function get_real_path(string $path, string|bool $check = null): string|null
         );
 
         // Drop ending slashes.
-        if ($ret != PATH_SEPARATOR && $ret != DIRECTORY_SEPARATOR) {
+        if ($ret !== PATH_SEPARATOR && $ret !== DIRECTORY_SEPARATOR) {
             $ret = chop($ret, PATH_SEPARATOR . DIRECTORY_SEPARATOR);
         }
 
         // Fix leading slash for win.
-        if ($win && $ret[0] == $sep) {
+        if ($win && $ret[0] === $sep) {
             $ret = substr($ret, 1);
         }
     }
