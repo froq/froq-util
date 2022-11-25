@@ -711,7 +711,9 @@ final class Arrays extends \StaticClass
      */
     public static function include(array $array, array $keys): array
     {
-        return array_filter($array, fn($key) => in_array($key, $keys, true), 2);
+        return array_filter($array, fn(int|string $key): bool => (
+            in_array($key, $keys, true)
+        ), ARRAY_FILTER_USE_KEY);
     }
 
     /**
@@ -723,11 +725,13 @@ final class Arrays extends \StaticClass
      */
     public static function exclude(array $array, array $keys): array
     {
-        return array_filter($array, fn($key) => !in_array($key, $keys, true), 2);
+        return array_filter($array, fn(int|string $key): bool => (
+            !in_array($key, $keys, true)
+        ), ARRAY_FILTER_USE_KEY);
     }
 
     /**
-     * Split an array preserving string keys, not like array_chunk().
+     * Split an array preserving string keys, not like `array_chunk()`.
      *
      * @param  array  $array
      * @param  int    $length
@@ -784,7 +788,10 @@ final class Arrays extends \StaticClass
                 );
             });
         } else {
-            $ret = array_merge(...array_map(fn($value) => (array) $value, $array));
+            $ret = array_merge(...array_map(
+                fn(mixed $value): array => (array) $value,
+                $array
+            ));
         }
 
         return $ret;
@@ -993,27 +1000,31 @@ final class Arrays extends \StaticClass
     /**
      * Convert key cases to lower.
      *
-     * @param  array  $array
-     * @param  bool   $recursive
+     * @param  array $array
+     * @param  bool  $recursive
      * @return array
      * @since  6.0
      */
     public static function lowerKeys(array $array, bool $recursive = false): array
     {
-        return self::mapKeys($array, fn($key) => is_string($key) ? mb_strtolower($key) : $key, $recursive);
+        return self::mapKeys($array, fn(int|string $key): int|string => (
+            is_string($key) ? lower($key) : $key
+        ), $recursive);
     }
 
     /**
      * Convert key cases to upper.
      *
-     * @param  array  $array
-     * @param  bool   $recursive
+     * @param  array $array
+     * @param  bool  $recursive
      * @return array
      * @since  6.0
      */
     public static function upperKeys(array $array, bool $recursive = false): array
     {
-        return self::mapKeys($array, fn($key) => is_string($key) ? mb_strtoupper($key) : $key, $recursive);
+        return self::mapKeys($array, fn(int|string $key): int|string => (
+            is_string($key) ? upper($key) : $key
+        ), $recursive);
     }
 
     /**
@@ -1029,7 +1040,9 @@ final class Arrays extends \StaticClass
      */
     public static function convertKeys(array $array, string|int $case, string $exploder = null, string $imploder = null, bool $recursive = false): array
     {
-        return self::mapKeys($array, fn($key) => is_string($key) ? convert_case($key, $case, $exploder, $imploder) : $key, $recursive);
+        return self::mapKeys($array, fn(int|string $key): int|string => (
+            is_string($key) ? convert_case($key, $case, $exploder, $imploder) : $key
+        ), $recursive);
     }
 
     /**
@@ -1482,7 +1495,7 @@ final class Arrays extends \StaticClass
      */
     public static function average(array $array, bool $zeros = true): float
     {
-        $array = array_filter($array, fn($v) => (
+        $array = array_filter($array, fn($v): bool => (
             $zeros ? is_numeric($v) : is_numeric($v) && ($v > 0)
         ));
 
@@ -1707,7 +1720,7 @@ final class Arrays extends \StaticClass
     }
 
     /**
-     * Like array_push() but taking key/value pairs.
+     * Like `array_push()` but taking key/value pairs.
      *
      * @param  array &$array
      * @param  array $entry
@@ -1732,7 +1745,7 @@ final class Arrays extends \StaticClass
     }
 
     /**
-     * Like array_pop() but returning key/value pairs.
+     * Like `array_pop()` but returning key/value pairs.
      *
      * @param  array      &$array
      * @param  array|null $default
@@ -1751,7 +1764,7 @@ final class Arrays extends \StaticClass
     }
 
     /**
-     * Like array_unshift() but taking key/value pairs.
+     * Like `array_unshift()` but taking key/value pairs.
      *
      * @param  array &$array
      * @param  array $entry
@@ -1773,7 +1786,7 @@ final class Arrays extends \StaticClass
     }
 
     /**
-     * Like array_shift() but returning key/value pairs.
+     * Like `array_shift()` but returning key/value pairs.
      *
      * @param  array      &$array
      * @param  array|null $default
@@ -1797,7 +1810,7 @@ final class Arrays extends \StaticClass
     }
 
     /**
-     * Like array_push() but taking key/value arguments.
+     * Like `array_push()` but taking key/value arguments.
      *
      * @param  array  &$array
      * @param  string $key
@@ -1811,7 +1824,7 @@ final class Arrays extends \StaticClass
     }
 
     /**
-     * Like array_pop() but taking key argument.
+     * Like `array_pop()` but taking key argument.
      *
      * @param  array      &$array
      * @param  string     $key
@@ -1825,7 +1838,7 @@ final class Arrays extends \StaticClass
     }
 
     /**
-     * Like array_unshift() but more semantic.
+     * Like `array_unshift()` but more semantic.
      *
      * @param  array    &$array
      * @param  mixed    $value
@@ -1841,7 +1854,7 @@ final class Arrays extends \StaticClass
     }
 
     /**
-     * Like array_shift() but more semantic.
+     * Like `array_shift()` but more semantic.
      *
      * @param  array      &$array
      * @param  mixed|null $default
@@ -1935,7 +1948,7 @@ final class Arrays extends \StaticClass
             // Default filter values.
             $values ??= [null, "", []];
 
-            $func = fn($value) => !in_array($value, $values, true);
+            $func = fn($value): bool => !in_array($value, $values, true);
         }
 
         return $func;
@@ -1988,8 +2001,8 @@ final class Arrays extends \StaticClass
         // As as shortcut for reversed (-1) sorts actually.
         if (is_int($func)) {
             $func = match ($func) {
-                -1      => fn($a, $b) => $a > $b ? -1 : 1,
-                 1      => fn($a, $b) => $a < $b ? -1 : 1,
+                -1      => fn($a, $b): int => $a > $b ? -1 : 1,
+                 1      => fn($a, $b): int => $a < $b ? -1 : 1,
                 default => throw new \ValueError('Only 1, -1 accepted as int')
             };
         }
