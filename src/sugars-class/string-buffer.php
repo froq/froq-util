@@ -411,7 +411,7 @@ class StringBuffer implements Stringable, IteratorAggregate, JsonSerializable, A
      * Get all or some chars by given indexes.
      *
      * @param  int ...$indexes
-     * @return array
+     * @return array<string>
      */
     public function chars(int ...$indexes): array
     {
@@ -426,26 +426,28 @@ class StringBuffer implements Stringable, IteratorAggregate, JsonSerializable, A
      * Get all or some char codes by given indexes.
      *
      * @param  int ...$indexes
-     * @return array
+     * @return array<int>
      */
     public function charCodes(int ...$indexes): array
     {
-        $chars = $this->chars(...$indexes);
-
-        return array_map(fn($char) => Strings::ord($char), $chars);
+        return array_map(
+            fn(string $char): int => Strings::ord($char),
+            $this->chars(...$indexes)
+        );
     }
 
     /**
      * Get all or some code points by given indexes.
      *
      * @param  int ...$indexes
-     * @return array
+     * @return array<int>
      */
     public function codePoints(int ...$indexes): array
     {
-        $chars = $this->chars(...$indexes);
-
-        return array_map(fn($char) => xstring($char, $this->encoding)->codePointAt(0), $chars);
+        return array_map(
+            fn(string $char): int => xstring($char, $this->encoding)->codePointAt(0),
+            $this->chars(...$indexes)
+        );
     }
 
     /**
@@ -845,7 +847,7 @@ class StringBuffer implements Stringable, IteratorAggregate, JsonSerializable, A
      */
     public static function fromCharCode(int ...$codes): static
     {
-        return new static(array_map(fn($code) => Strings::chr($code), $codes));
+        return new static(array_map(fn(int $code): ?string => Strings::chr($code), $codes));
     }
 
     /**
@@ -856,6 +858,6 @@ class StringBuffer implements Stringable, IteratorAggregate, JsonSerializable, A
      */
     public static function fromCodePoint(int ...$codes): static
     {
-        return new static(array_map(fn($code) => Strings::chr($code), $codes));
+        return new static(array_map(fn(int $code): ?string => Strings::chr($code), $codes));
     }
 }
