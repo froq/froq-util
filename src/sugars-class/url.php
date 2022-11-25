@@ -46,8 +46,10 @@ class Url implements Arrayable, Stringable, \Stringable
                 }
 
                 // Filter valid keys & reformat.
-                $data = array_filter_keys($source,
-                    fn($key) => array_key_exists($key, $this->data));
+                $data = array_filter_keys($source, fn(int|string $key): bool => (
+                    array_key_exists($key, $this->data)
+                ));
+
                 $data && $data = http_parse_url(http_build_url($data));
             }
 
@@ -434,7 +436,9 @@ class UrlQuery implements Arrayable, Stringable, \Stringable, Countable, ArrayAc
                 $data = http_parse_query_string($source);
             } else {
                 $data = array_map_recursive(
-                    fn($value) => $this->normalizeValue($value), $source);
+                    fn(mixed $value): mixed => $this->normalizeValue($value),
+                    $source
+                );
             }
 
             $this->data = $data;
