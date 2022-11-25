@@ -86,19 +86,19 @@ class Runner
             // Free.
             unset($temp);
 
-            $formatRun = fn($v) => number_format($v, 0, '', ',');
-            $formatMemo = fn($v) => \froq\util\Util::formatBytes($v, 3);
+            $formatLimit = fn($v): string => number_format($v, 0, '', ',');
+            $formatBytes = fn($v): string => \froq\util\Util::formatBytes($v, 3);
 
             // Simple drops memory info.
             if ($simple) {
                 printf("run(%s)#%s: %F\n",
-                    $formatRun($this->limit), $this->runs, $endTime,
+                    $formatLimit($this->limit), $this->runs, $endTime,
                 );
             } else {
                 printf("run(%s)#%s: %F, memo: %s (%s - %s)\n",
-                    $formatRun($this->limit), $this->runs, $endTime,
-                    $formatMemo($endMemo - $startMemo),
-                    $formatMemo($endMemo), $formatMemo($startMemo),
+                    $formatLimit($this->limit), $this->runs, $endTime,
+                    $formatBytes($endMemo - $startMemo),
+                    $formatBytes($endMemo), $formatBytes($startMemo),
                 );
             }
         }
