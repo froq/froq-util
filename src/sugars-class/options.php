@@ -119,7 +119,10 @@ class Options extends XArrayObject
     {
         $defaults ??= $this->defaults;
 
-        return $this->filterKeys(fn($key) => array_key_exists($key, $defaults), $recursive);
+        return $this->filterKeys(
+            fn(int|string $key): bool => array_key_exists($key, $defaults),
+            $recursive
+        );
     }
 
     /**
