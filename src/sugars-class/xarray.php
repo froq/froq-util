@@ -966,7 +966,10 @@ class XArray implements Arrayable, Listable, Jsonable, Collectable, Iteratable, 
     {
         $data = $this->prepare($data);
 
-        $this->data = array_filter($this->data, fn($value) => in_array($value, $data, $strict));
+        $this->data = array_filter(
+            $this->data,
+            fn($value): bool => in_array($value, $data, $strict)
+        );
 
         return $this;
     }
@@ -982,7 +985,10 @@ class XArray implements Arrayable, Listable, Jsonable, Collectable, Iteratable, 
     {
         $data = $this->prepare($data);
 
-        $this->data = array_filter($this->data, fn($value) => !in_array($value, $data, $strict));
+        $this->data = array_filter(
+            $this->data,
+            fn($value): bool => !in_array($value, $data, $strict)
+        );
 
         return $this;
     }
