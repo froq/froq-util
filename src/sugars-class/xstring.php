@@ -1997,7 +1997,7 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
      */
     public static function fromCharCode(int ...$codes): static
     {
-        return new static(join(array_map(fn(int $code): ?string => Strings::chr($code), $codes));
+        return new static(join(array_map(fn(int $code): ?string => Strings::chr($code), $codes)));
     }
 
     /**
@@ -2008,7 +2008,7 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
      */
     public static function fromCodePoint(int ...$codes): static
     {
-        return new static(join(array_map(fn(int $code): ?string => Strings::chr($code), $codes));
+        return new static(join(array_map(fn(int $code): ?string => Strings::chr($code), $codes)));
     }
 }
 
