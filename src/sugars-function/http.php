@@ -38,9 +38,9 @@ function http_parse_query_string(string $query, bool $clean = false): array
 
     // Remove HTML tags.
     if ($clean) {
-        $data = array_apply($data, fn($v) => (
+        $data = array_apply($data, fn($v): bool => (
             is_string($v) ? preg_remove('~<(\w+)\b[^>]*/?>(?:.*?</\1>)?~isu', $v) : $v
-        ), true);
+        ), recursive: true);
     }
 
     return $data;
@@ -62,13 +62,13 @@ function http_build_query_string(array $data, bool $clean = false): string
 
     // Remove HTML tags.
     if ($clean) {
-        $data = array_apply($data, fn($v) => (
+        $data = array_apply($data, fn($v): bool => (
             is_string($v) ? preg_remove('~<(\w+)\b[^>]*/?>(?:.*?</\1>)?~isu', $v) : $v
-        ), true);
+        ), recursive: true);
     }
 
     // Fix skipped nulls by http_build_query() & empty strings of falses.
-    $data = array_apply($data, fn($v) => is_bool($v) ? (int) $v : (string) $v, true);
+    $data = array_apply($data, fn($v): bool => is_bool($v) ? (int) $v : (string) $v, true);
 
     $query = http_build_query($data, '', '&', PHP_QUERY_RFC3986);
 
