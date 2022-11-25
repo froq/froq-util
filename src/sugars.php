@@ -542,7 +542,10 @@ function convert_case(string $input, string|int $case, string $exploder = null, 
     if (is_string($case)) {
         $case_value = get_constant_value('CASE_' . strtoupper($case));
         if ($case_value === null) {
-            throw new ArgumentError('Invalid case %q, use lower,upper,dash,snake,title,camel', $case);
+            throw new ArgumentError(
+                'Invalid case %q [valids: lower,upper,dash,snake,title,camel]',
+                $case
+            );
         }
 
         $case = $case_value;
@@ -570,7 +573,8 @@ function convert_case(string $input, string|int $case, string $exploder = null, 
         ))),
         // Invalid case.
         default => throw new ArgumentError(
-            'Invalid case %q, use a case from 0..5 range', $case
+            'Invalid case %q, use a case from 0..5 range',
+            $case
         )
     };
 }
