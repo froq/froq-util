@@ -685,7 +685,7 @@ class Mapper
         // Eg: foo_bar or foo-bar => fooBar.
         return preg_replace_callback(
             '~(?<![_-])[_-]([a-z0-9]{1})~',
-            fn(array $m): string => ucfirst($m[1]),
+            fn($m): string => ucfirst($m[1]),
             $name
         );
     }
