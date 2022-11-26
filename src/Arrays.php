@@ -636,12 +636,12 @@ final class Arrays extends \StaticClass
         // Prevent trivial corruption from limit errors, but notice.
         if ($limit < 1) {
             throw new \ValueError(sprintf(
-                '%s(): Minimum limit must be 1, %s given', $limit
+                'Minimum limit must be 1, %s given', $limit
             ));
         } elseif ($limit > $count) {
             throw new \ValueError(sprintf(
-                '%s(): Maximum limit must not be greater than %s, given limit %s is '.
-                'exceeding count of given array(%s)', __method__, $count, $limit, $count
+                'Maximum limit must not be greater than %s, given limit %s is '.
+                'exceeding count of given array(%s)', $count, $limit, $count
             ));
         }
 
