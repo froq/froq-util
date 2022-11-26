@@ -166,7 +166,7 @@ class Json extends StaticClass
      */
     public static function isArray(?string $input): bool
     {
-        return self::detectType($input) == self::ARRAY;
+        return self::detectType($input) === self::ARRAY;
     }
 
     /**
@@ -177,7 +177,7 @@ class Json extends StaticClass
      */
     public static function isObject(?string $input): bool
     {
-        return self::detectType($input) == self::OBJECT;
+        return self::detectType($input) === self::OBJECT;
     }
 
     /**
@@ -189,7 +189,7 @@ class Json extends StaticClass
     public static function isStruct(?string $input): bool
     {
         return ($type = self::detectType($input))
-            && ($type == self::ARRAY || $type == self::OBJECT);
+            && ($type === self::ARRAY || $type === self::OBJECT);
     }
 
     /**
@@ -207,14 +207,14 @@ class Json extends StaticClass
               : null;
 
         return match (true) {
-            $wrap == '[]' => self::ARRAY,
-            $wrap == '{}' => self::OBJECT,
-            default       => null
+            $wrap === '[]' => self::ARRAY,
+            $wrap === '{}' => self::OBJECT,
+            default        => null
         };
     }
 
     /**
-     * Validate given input as JSON.
+     * Validate given input as JSON. @todo Use "json_validate()" function.
      *
      * @param  string|null     $input
      * @param  JsonError|null &$error
@@ -226,7 +226,7 @@ class Json extends StaticClass
         $error = $code = $message = null;
 
         // If '' or null input.
-        if ($input == null) {
+        if ($input === null) {
             $message = 'Empty/null input given';
         } else {
             json_decode($input);
@@ -238,7 +238,7 @@ class Json extends StaticClass
             $error = new JsonError($message, code: $code);
         }
 
-        return ($message == null);
+        return ($message === null);
     }
 }
 
@@ -255,6 +255,13 @@ use froq\common\interface\{Arrayable, Jsonable};
 class JsonObject extends PlainObject implements Arrayable, Jsonable, JsonSerializable, ArrayAccess
 {
     /**
+     * Array cache, for accelerating `get*()` methods.
+     *
+     * @var array
+     */
+    private static array $__ARRAY_CACHE = [];
+
+    /**
      * Constructor
      *
      * @param array|object|null $data
@@ -263,15 +270,29 @@ class JsonObject extends PlainObject implements Arrayable, Jsonable, JsonSeriali
     {
         if ($data) {
             foreach ($data as $key => $value) {
-                // Convert objects to JsonObject when available.
+                // Convert objects to JsonObject.
                 $value = $this->objectify($value);
 
                 // Simply set as dynamic var (no private).
-                try { $this->{$key} = $value; } catch (Error) {
-                    trigger_error(sprintf('Cannot set private property %s::$s', static::class, $key));
+                try { $this->{$key} = $value; } catch (Error $e) {
+                    trigger_error(format(
+                        'Cannot change property %S::$%s [error: %S]',
+                        $this::class, $key, $e->getMessage()
+                    ));
                 }
             }
         }
+    }
+
+    /**
+     * Destructor.
+     */
+    public function __destruct()
+    {
+        $id = spl_object_id($this);
+
+        // Drop this object from cache.
+        unset(self::$__ARRAY_CACHE[$id]);
     }
 
     /**
@@ -372,15 +393,15 @@ class JsonObject extends PlainObject implements Arrayable, Jsonable, JsonSeriali
      */
     public function toJson(int $flags = 0): string
     {
-        return (string) json_encode($this->toArray(true), $flags);
+        return json_encode($this->toArray(true), $flags);
     }
 
     /**
      * @inheritDoc JsonSerializable
      */
-    public function jsonSerialize(): static
+    public function jsonSerialize(): array
     {
-        return $this;
+        return $this->toArray(true);
     }
 
     /**
@@ -430,7 +451,7 @@ class JsonObject extends PlainObject implements Arrayable, Jsonable, JsonSeriali
 
         if ($json !== null) {
             $type = Json::detectType($json);
-            if ($type != Json::ARRAY && $type != Json::OBJECT) {
+            if ($type !== Json::ARRAY && $type !== Json::OBJECT) {
                 throw new JsonError('Given input must be a valid JSON struct');
             }
 
@@ -448,7 +469,10 @@ class JsonObject extends PlainObject implements Arrayable, Jsonable, JsonSeriali
      */
     private function arrayify(): array
     {
-        return $this->toArray();
+        $id = spl_object_id($this);
+
+        // This object is read-only, so caching seems ok.
+        return self::$__ARRAY_CACHE[$id] ??= $this->toArray();
     }
 
     /**
