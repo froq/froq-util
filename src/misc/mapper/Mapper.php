@@ -355,7 +355,7 @@ class Mapper
                 $listClass = MapperHelper::getListClass($pref->getAttributes());
                 if ($listClass !== null) {
                     $namespace ??= $pref->getDeclaringClass()->getNamespaceName();
-                    $resolved    = $this->getResolvedListClass('@var ' . $listClass, $namespace, $pref);
+                    $resolved    = $this->getResolvedListClass('@var ' . $listClass, $namespace, $pref, true);
                 }
             }
 
@@ -519,7 +519,7 @@ class Mapper
      *
      * @return array<string: class-name, bool: found-state>|null
      */
-    private function getResolvedClass(XReflectionType $tref, string $namespace = null): array|null
+    private function getResolvedClass(XReflectionType $tref, string $namespace): array|null
     {
         $resolved = $this->resolveClass($tref, $namespace);
 
@@ -527,7 +527,7 @@ class Mapper
     }
 
     /**
-     * Get resolving list class from given property annotation.
+     * Get resolving list class from given property annotation / attribute.
      *
      * Example: `Foo[]`, `array<Foo>` or `ItemList<Foo>` (same namespace).
      * Example: `acme\Foo[]`, `array<acme\Foo>` or `ItemList<acme\Foo>` (fully qualified).
@@ -537,18 +537,20 @@ class Mapper
      * in the same namespace of the mapped object or be typed as fully qualified in place.
      *
      * @return array<string: class-name, bool: found-state, ...>|null
-     * @throws froq\util\mapper\MapperException If annotation is like: 0[], 0<>, Foo<>, Foo<0> or int<>.
+     * @causes froq\util\mapper\MapperException If annotation / attribute is like: 0[], 0<>, Foo<>, Foo<0> or int<>.
      */
-    private function getResolvedListClass(string $doc, string $namespace = null, ReflectionProperty $pref = null): array|null
+    private function getResolvedListClass(string $doc, string $namespace, ReflectionProperty $pref, bool $isAttr = false): array|null
     {
         $type = grep('~@var +(?:(.+)<(.*)>|(.+)\[\])~', $doc);
 
         if ($type !== null) {
+            $meta = [$doc, 'type' => $isAttr ? 'attribute' : 'annotation'];
+
             // Valid: array<Foo>, invalid: int<Foo>.
             if (is_array($type) && strpbrk($doc, '<>')) {
                 $tref = new XReflectionType($type[0]);
                 if ($tref->isBuiltin() && !$tref->equals(['array', 'iterable'])) {
-                    $this->validateClass('', $pref); // '' is for error.
+                    $this->validateClass('', $meta, $pref); // '' is for error.
                 }
             }
 
@@ -561,7 +563,7 @@ class Mapper
 
             // Eg: Foo[] or array<Foo>
             if (is_string($type)) {
-                $this->validateClass($type, $pref);
+                $this->validateClass($type, $meta, $pref);
 
                 if ($resolved = $this->resolveClass($type, $namespace)) {
                     [$class, $found] = $resolved;
@@ -570,8 +572,8 @@ class Mapper
             }
             // Eg: FooList<Foo>
             else {
-                $this->validateClass($type[0], $pref);
-                $this->validateClass($type[1], $pref);
+                $this->validateClass($type[0], $meta, $pref);
+                $this->validateClass($type[1], $meta, $pref);
 
                 foreach ([
                     $this->resolveClass($type[0], $namespace), // List class.
@@ -592,7 +594,7 @@ class Mapper
      *
      * @return array<string: class-name, bool: found-state>|null
      */
-    private function resolveClass(string|XReflectionType $type, string $namespace = null): array|null
+    private function resolveClass(string|XReflectionType $type, string $namespace): array|null
     {
         $tref = is_string($type) ? new XReflectionType($type) : $type;
         $tkey = $tref->getName();
@@ -646,14 +648,14 @@ class Mapper
     }
 
     /**
-     * Validate a class name or throw a `MapperException` for invalid annotation.
+     * Validate a class name or throw a `MapperException` for invalid annotation / attribute.
      *
      * @throws froq\util\mapper\MapperException
      */
-    private function validateClass(string $class, ReflectionProperty $pref): void
+    private function validateClass(string $class, array $meta, ReflectionProperty $pref): void
     {
-        preg_test('~^([\\\]?[a-z_][a-z0-9_\\\]*)$~i', $class) ||
-            throw MapperException::forInvalidAnnotation($pref->getDocComment(), $pref->class, $pref->name);
+        preg_test('~^([\\\]?[a-z_][a-z0-9_\\\]*)$~i', $class)
+            || throw MapperException::forInvalidMeta($meta, $pref->class, $pref->name);
     }
 
     /**

@@ -37,8 +37,8 @@ class MapperException extends \froq\common\Exception
     public static function forAbsentTypedPropertyClass(string $class, object $object, string $property): static
     {
         return new static(
-            'Class %q not found for typed property %s::$%s',
-            [$class, get_class_name($object, escape: true), $property],
+            'Class %q not found for typed property %S::$%s',
+            [$class, $object::class, $property],
             cause: new \UndefinedClassError($class)
         );
     }
@@ -54,8 +54,8 @@ class MapperException extends \froq\common\Exception
     public static function forAbsentAnnotatedPropertyClass(string $class, object $object, string $property): static
     {
         return new static(
-            'Class %q not found for annotated property %s::$%s',
-            [$class, get_class_name($object, escape: true), $property],
+            'Class %q not found for annotated property %S::$%s',
+            [$class, $object::class, $property],
             cause: new \UndefinedClassError($class)
         );
     }
@@ -74,18 +74,18 @@ class MapperException extends \froq\common\Exception
     }
 
     /**
-     * Create for invalid annotation.
+     * Create for invalid annotation / attribute.
      *
-     * @param  string $doc
+     * @param  string $meta
      * @param  string $class
      * @param  string $property
      * @return static
      */
-    public static function forInvalidAnnotation(string $doc, string $class, string $property): static
+    public static function forInvalidMeta(array $meta, string $class, string $property): static
     {
         return new static(
-            'Invalid annotation %q on property %s::$%s',
-            [grep('~@var +([^ ]+)~', $doc), get_class_name($class, escape: true), $property]
+            'Invalid %s %q on property %S::$%s',
+            [$meta['type'], grep('~@var +([^\s]+)~', $meta[0]), $class, $property]
         );
     }
 }
