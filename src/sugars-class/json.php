@@ -5,8 +5,10 @@
  */
 declare(strict_types=1);
 
+use froq\common\interface\{Arrayable, Jsonable};
+
 /**
- * A static class which builds/parses JSON arrays/objects/strings safely.
+ * A static class, builds/parses JSON arrays/objects/strings safely.
  *
  * @package global
  * @class   Json
@@ -242,10 +244,8 @@ class Json extends StaticClass
     }
 }
 
-use froq\common\interface\{Arrayable, Jsonable};
-
 /**
- * A dynamic class which is mapped as JSON object including some utility methods.
+ * A dynamic class, mapped as JSON object including some utility methods.
  *
  * @package global
  * @class   JsonObject
@@ -489,5 +489,137 @@ class JsonObject extends PlainObject implements Arrayable, Jsonable, JsonSeriali
         }
 
         return $input;
+    }
+}
+
+/**
+ * JSON prettifier class for indenting JSON strings.
+ *
+ * @package global
+ * @class   JsonPrettifier
+ * @author  Kerem Güneş
+ * @since   7.0
+ */
+class JsonPrettifier
+{
+    /**
+     * Prettify.
+     *
+     * @param  string|Jsonable|JsonSerializable $json
+     * @param  string|int                       $indent
+     * @param  string                           $newLine
+     * @return string
+     * @throws JsonError
+     * @thanks https://github.com/ergebnis/json-printer
+     */
+    public static function prettify(string|Jsonable|JsonSerializable $json, string|int $indent = "  ", string $newLine = "\n"): string
+    {
+        if ($json instanceof Jsonable) {
+            $json = $json->toJson();
+        } elseif ($json instanceof JsonSerializable) {
+            $json = json_encode($json);
+        }
+
+        // When indentation is unavailable.
+        if (!$json || !strpbrk($json, '{[')) {
+            return $json;
+        }
+
+        // When indent given as size.
+        if (is_numeric($indent)) {
+            $indent = str_repeat(' ', (int) $indent);
+        }
+
+        if (!preg_test('~^( +|\t+)$~', $indent)) {
+            throw new JsonError('Invalid indent: %q', $indent);
+        }
+        if (!preg_test('~^(\r\n|\r|\n)$~', $newLine)) {
+            throw new JsonError('Invalid new-line: %q', $newLine);
+        }
+
+        // Indent options.
+        $indentString    = $indent;
+        $indentLevel     = 0;
+
+        // Loop variables.
+        $noEscape        = true;
+        $stringLiteral   = '';
+        $inStringLiteral = false;
+
+        // Indent macro, makes auto-indent by level.
+        $indent = function () use ($indentString, &$indentLevel) {
+            return str_repeat($indentString, $indentLevel);
+        };
+
+        // Formatted string.
+        $buffer = '';
+
+        for ($i = 0, $il = strlen($json); $i < $il; $i++) {
+            $char = $json[$i];
+
+            // Are we inside a quoted string literal?
+            if ($noEscape && $char === '"') {
+                $inStringLiteral = !$inStringLiteral;
+            }
+
+            // Collect characters if we are inside a quoted string literal.
+            if ($inStringLiteral) {
+                $stringLiteral .= $char;
+                $noEscape = ($char === '\\') ? !$noEscape : true;
+                continue;
+            }
+
+            // Process string literal if we are about to leave it.
+            if ($stringLiteral !== '') {
+                $buffer .= $stringLiteral . $char;
+                $stringLiteral = '';
+                continue;
+            }
+
+            // Ignore whitespace outside of string literal.
+            if ($char === ' ') {
+                continue;
+            }
+
+            // Ensure space after ":" character.
+            if ($char === ':') {
+                $buffer .= ': ';
+                continue;
+            }
+
+            // Output a new line after "," character and and indent the next line.
+            if ($char === ',') {
+                $buffer .= $char . $newLine . $indent();
+                continue;
+            }
+
+            // Output a new line after "{" and "[" and indent the next line.
+            if ($char === '{' || $char === '[') {
+                $indentLevel++;
+
+                $buffer .= $char . $newLine . $indent();
+                continue;
+            }
+
+            // Output a new line after "}" and "]" and indent the next line.
+            if ($char === '}' || $char === ']') {
+                $indentLevel--;
+
+                $temp = rtrim($buffer);
+                $last = $temp[-1];
+
+                // Collapse empty {} and [].
+                if ($last === '{' || $last === '[') {
+                    $buffer = $temp . $char;
+                    continue;
+                }
+
+                $buffer .= $newLine . $indent();
+            }
+
+            $buffer .= $char;
+        }
+
+        return $buffer;
     }
 }
