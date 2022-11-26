@@ -389,7 +389,7 @@ function file_mime(string $file): string|null
         if ($extension) {
             static $cache; // For some speed..
             if (empty($cache[$extension])) {
-                foreach (require __dir__ . '/../statics/mime.php' as $type => $extensions) {
+                foreach (require __DIR__ . '/../statics/mime.php' as $type => $extensions) {
                     if (in_array($extension, $extensions, true)) {
                         $cache[$extension] = $mime = $type;
                         break;
