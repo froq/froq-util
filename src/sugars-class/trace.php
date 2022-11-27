@@ -29,10 +29,11 @@ final class TraceStack implements Stringable, Countable, IteratorAggregate, Arra
      * @param int        $options
      * @param int        $limit
      * @param int        $slice
+     * @param bool       $reverse
      */
-    public function __construct(array $stack = null, int $options = 0, int $limit = 0, int $slice = 1)
+    public function __construct(array $stack = null, int $options = 0, int $limit = 0, int $slice = 1, bool $reverse = false)
     {
-        $stack ??= get_trace($options, $limit, slice: $slice);
+        $stack ??= get_trace($options, $limit, slice: $slice, reverse: $reverse);
 
         $this->stack = $stack;
     }

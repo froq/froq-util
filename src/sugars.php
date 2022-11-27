@@ -1051,18 +1051,20 @@ function get_path_info(string $path, string|int $component = null): string|array
  * @param  int|null    $index
  * @param  string|null $field
  * @param  int|null    $slice
+ * @param  bool        $reverse
  * @return mixed|null
  * @since  4.0
  */
-function get_trace(int $options = 0, int $limit = 0, int $index = null, string $field = null, int $slice = null): mixed
+function get_trace(int $options = 0, int $limit = 0, int $index = null, string $field = null, int $slice = null, bool $reverse = false): mixed
 {
-    $stack = debug_backtrace($options, limit: $limit ? $limit + 1 : 0);
+    $stack = debug_backtrace($options, $limit ? $limit + 1 : 0);
 
     // Drop self.
     array_shift($stack);
 
     // When slice wanted (@internal).
-    $slice && $stack = array_slice($stack, $slice);
+    $slice   && $stack = array_slice($stack, $slice);
+    $reverse && $stack = array_reverse($stack);
 
     foreach ($stack as $i => $trace) {
         $trace = [
