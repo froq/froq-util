@@ -154,6 +154,7 @@ final class TraceStack implements Stringable, Countable, IteratorAggregate, Arra
 
     /**
      * @inheritDoc IteratorAggregate
+     * @return     Generator<Trace>
      */
     public function getIterator(): Generator
     {
@@ -180,7 +181,7 @@ final class TraceStack implements Stringable, Countable, IteratorAggregate, Arra
 
     /**
      * @inheritDoc ArrayAccess
-     * @throws UnimplementedError
+     * @throws     UnimplementedError
      */
     public function offsetSet(mixed $index, mixed $_): never
     {
@@ -189,7 +190,7 @@ final class TraceStack implements Stringable, Countable, IteratorAggregate, Arra
 
     /**
      * @inheritDoc ArrayAccess
-     * @throws UnimplementedError
+     * @throws     UnimplementedError
      */
     public function offsetUnset(mixed $index): never
     {
@@ -198,7 +199,7 @@ final class TraceStack implements Stringable, Countable, IteratorAggregate, Arra
 }
 
 /**
- * An internal class for trace entries.
+ * An internal class for traces.
  *
  * @package global
  * @object  Trace
@@ -511,7 +512,7 @@ final class Trace implements ArrayAccess
 
     /**
      * @inheritDoc ArrayAccess
-     * @throws UnimplementedError
+     * @throws     UnimplementedError
      */
     public function offsetSet(mixed $key, mixed $_): never
     {
@@ -520,7 +521,7 @@ final class Trace implements ArrayAccess
 
     /**
      * @inheritDoc ArrayAccess
-     * @throws UnimplementedError
+     * @throws     UnimplementedError
      */
     public function offsetUnset(mixed $key): never
     {
