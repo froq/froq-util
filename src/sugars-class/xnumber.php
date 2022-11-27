@@ -5,6 +5,7 @@
  */
 declare(strict_types=1);
 
+use froq\common\interface\{Intable, Floatable, Numberable};
 use froq\util\Numbers;
 
 /**
@@ -15,7 +16,7 @@ use froq\util\Numbers;
  * @author  Kerem Güneş
  * @since   6.0
  */
-class XNumber implements Stringable
+class XNumber implements Intable, Floatable, Numberable, Stringable
 {
     /** Constants. */
     public final const PRECISION  = PRECISION,
@@ -507,9 +508,7 @@ class XNumber implements Stringable
     }
 
     /**
-     * Int caster.
-     *
-     * @return int
+     * @inheritDoc froq\common\interface\Intable
      */
     public function toInt(): int
     {
@@ -517,13 +516,19 @@ class XNumber implements Stringable
     }
 
     /**
-     * Float caster.
-     *
-     * @return float
+     * @inheritDoc froq\common\interface\Floatable
      */
     public function toFloat(): float
     {
         return $this->isValid() ? (float) $this->data : 0.0;
+    }
+
+    /**
+     * @inheritDoc froq\common\interface\Numberable
+     */
+    public function toNumber(): int|float
+    {
+        return $this->data;
     }
 
     /**
