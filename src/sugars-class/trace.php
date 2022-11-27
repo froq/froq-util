@@ -46,11 +46,11 @@ final class TraceStack implements Stringable, Countable, IteratorAggregate, Arra
 
         foreach ($this as $index => $trace) {
             $index = $trace->index ?? $index;
-            $ret[] = format('#%s %s', $index, $trace->call());
+            $ret[] = sprintf('#%d %s', $index, $trace->call());
         }
 
         // Append {main} to end as original.
-        $ret[] = format('#%s {main}', $index + 1);
+        $ret[] = sprintf('#%d {main}', $index + 1);
 
         return join("\n", $ret);
     }
@@ -195,8 +195,6 @@ final class TraceStack implements Stringable, Countable, IteratorAggregate, Arra
         throw new UnimplementedError();
     }
 }
-
-
 
 /**
  * An internal class for trace entries.
