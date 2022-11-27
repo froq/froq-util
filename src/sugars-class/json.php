@@ -252,7 +252,7 @@ class Json extends StaticClass
  * @author  Kerem Güneş
  * @since   5.0
  */
-class JsonObject extends PlainObject implements Arrayable, Jsonable, JsonSerializable, ArrayAccess
+class JsonObject extends stdClass implements Arrayable, Jsonable, JsonSerializable, ArrayAccess
 {
     /**
      * Array cache, for accelerating `get*()` methods.
@@ -274,7 +274,7 @@ class JsonObject extends PlainObject implements Arrayable, Jsonable, JsonSeriali
                 $value = $this->objectify($value);
 
                 // Simply set as dynamic var (no private).
-                try { $this->{$key} = $value; } catch (Error $e) {
+                try { $this->$key = $value; } catch (Error $e) {
                     trigger_error(format(
                         'Cannot change property %S::$%s [error: %S]',
                         $this::class, $key, $e->getMessage()

@@ -2,8 +2,6 @@
 // Load top class files.
 require 'sugars-class/_error.php';
 require 'sugars-class/_static.php';
-require 'sugars-class/plain-object.php';
-require 'sugars-class/plain-array-object.php';
 
 // Load other class files.
 require 'sugars-class/assert.php';
@@ -15,6 +13,7 @@ require 'sugars-class/locale.php';
 require 'sugars-class/mapset.php';
 require 'sugars-class/mapxao.php';
 require 'sugars-class/options.php';
+require 'sugars-class/plain-object.php';
 require 'sugars-class/reference.php';
 require 'sugars-class/reflection.php';
 require 'sugars-class/regexp.php';
