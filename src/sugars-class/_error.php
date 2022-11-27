@@ -5,116 +5,89 @@
  */
 declare(strict_types=1);
 
-use froq\common\Error;
-use froq\common\trait\ThrowableTrait as ErrorTrait;
-
 /**
  * @author Kerem Güneş
  * @since  5.25
  */
-class KeyError extends Error
-{
-    use ErrorTrait;
-}
+class KeyError extends froq\common\Error
+{}
 
 /**
  * @author Kerem Güneş
  * @since  6.0
  */
-class JsonError extends Error
-{
-    use ErrorTrait;
-}
+class JsonError extends froq\common\Error
+{}
 
 /**
  * @author Kerem Güneş
  * @since  6.0
  */
-class LocaleError extends Error
-{
-    use ErrorTrait;
-}
+class LocaleError extends froq\common\Error
+{}
 
 /**
  * @author Kerem Güneş
  * @since  6.5
  */
-class UrlError extends Error
-{
-    use ErrorTrait;
-}
+class UrlError extends froq\common\Error
+{}
 
 /**
  * @author Kerem Güneş
  * @since  6.0
  */
-class UuidError extends Error
-{
-    use ErrorTrait;
-}
+class UuidError extends froq\common\Error
+{}
 
 /**
  * @author Kerem Güneş
  * @since  6.0
  */
-class RegExpError extends Error
-{
-    use ErrorTrait;
-}
+class RegExpError extends froq\common\Error
+{}
 
 /**
  * @author Kerem Güneş
  * @since  6.0
  */
-class RangeError extends Error
-{
-    use ErrorTrait;
-}
+class RangeError extends froq\common\Error
+{}
 
 /**
  * @author Kerem Güneş
  * @since  6.0
  */
-class ArgumentError extends Error
-{
-    use ErrorTrait;
-}
+class ArgumentError extends froq\common\Error
+{}
 
 /**
  * @author Kerem Güneş
  * @since  6.0
  */
-class UnknownError extends Error
-{
-    use ErrorTrait;
-}
+class UnknownError extends froq\common\Error
+{}
 
 /**
  * @author Kerem Güneş
  * @since  6.0
  */
-class UnsupportedError extends Error
-{
-    use ErrorTrait;
-}
+class UnsupportedError extends froq\common\Error
+{}
 
 /**
  * @author Kerem Güneş
  * @since  6.0
  */
-class UnimplementedError extends Error
-{
-    use ErrorTrait;
-}
+class UnimplementedError extends froq\common\Error
+{}
 
 /**
  * @author Kerem Güneş
  * @since  6.0
  */
-class ReadonlyError extends Error
+class ReadonlyError extends froq\common\Error
 {
-    use ErrorTrait;
-
     /**
      * Constructor.
      *
@@ -174,10 +147,8 @@ class ReadonlyPropertyError extends ReadonlyError
  * @author Kerem Güneş
  * @since  7.0
  */
-class UndefinedClassError extends Error
+class UndefinedClassError extends froq\common\Error
 {
-    use ErrorTrait;
-
     /**
      * Constructor.
      *
@@ -193,10 +164,8 @@ class UndefinedClassError extends Error
  * @author Kerem Güneş
  * @since  6.0
  */
-class UndefinedConstantError extends Error
+class UndefinedConstantError extends froq\common\Error
 {
-    use ErrorTrait;
-
     /**
      * Constructor.
      *
@@ -219,10 +188,8 @@ class UndefinedConstantError extends Error
  * @author Kerem Güneş
  * @since  6.0
  */
-class UndefinedPropertyError extends Error
+class UndefinedPropertyError extends froq\common\Error
 {
-    use ErrorTrait;
-
     /**
      * Constructor.
      *
@@ -241,10 +208,8 @@ class UndefinedPropertyError extends Error
  * @author Kerem Güneş
  * @since  6.0
  */
-class UndefinedMethodError extends Error
+class UndefinedMethodError extends froq\common\Error
 {
-    use ErrorTrait;
-
     /**
      * Constructor.
      *
@@ -263,11 +228,14 @@ class UndefinedMethodError extends Error
  * @author Kerem Güneş
  * @since  6.0
  */
-class LastError extends Error
+class LastError extends froq\common\Error
 {
-    use ErrorTrait;
 
-    /** Causing function data. */
+    /**
+     * Causing function data.
+     *
+     * @var array|null
+     */
     private ?array $call = null;
 
     /**
