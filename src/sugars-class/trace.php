@@ -6,7 +6,7 @@
 declare(strict_types=1);
 
 /**
- * A class for playing with trace stacks in OOP-way.
+ * A class for playing with stack traces in OOP-way.
  *
  * @package global
  * @object  TraceStack
@@ -199,7 +199,7 @@ final class TraceStack implements Stringable, Countable, IteratorAggregate, Arra
 }
 
 /**
- * An internal class for traces.
+ * An internal class for stack frames.
  *
  * @package global
  * @object  Trace
