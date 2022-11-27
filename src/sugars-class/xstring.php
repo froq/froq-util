@@ -1659,13 +1659,12 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     /**
      * Format.
      *
-     * @param  mixed    $input
-     * @param  mixed ...$inputs
+     * @param  mixed ...$arguments
      * @return self
      */
-    public function format(mixed $input, mixed ...$inputs): self
+    public function format(mixed $input, mixed ...$arguments): self
     {
-        $this->data = format($this->data, $input, ...$inputs);
+        $this->data = format($this->data, ...$arguments);
 
         return $this;
     }

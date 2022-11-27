@@ -1519,62 +1519,87 @@ function preg_error_message(int &$code = null, string $func = null, bool $clear 
 }
 
 /**
- * Format for sprintf().
+ * Format like `sprintf()` but with additional specifiers.
+ *
+ * Specifiers: single-quote: %q, double-quote: %Q, integer: %i, type: %t bool: %b,
+ * join (with ','): %a, join (with ', '): %A, upper: %U lower: %L escape: %S and
+ * for float-to-string only: %s (eg: 1.0 => not 1 but 1.0)..
  *
  * @param  string   $format
- * @param  mixed    $input
- * @param  mixed ...$inputs
+ * @param  mixed ...$arguments
  * @return string
+ * @throws ArgumentError
  */
-function format(string $format, mixed $input, mixed ...$inputs): string
+function format(string $format, mixed ...$arguments): string
 {
-    $params = [$input, ...$inputs];
+    if (preg_match_all('~(?<!%)%[qQitbaAULSs]~', $format, $match)) {
+        $specifiers = $match[0];
 
-    // Convert special formats (quoted strings, int).
-    $format = str_replace(['%q', '%Q', '%i'], ["'%s'", '"%s"', '%d'], $format);
+        if (count($specifiers) !== count($arguments)) {
+            throw new ArgumentError(
+                'Arguments must contain %d items, %d given',
+                [count($specifiers), count($arguments)]
+            );
+        }
 
-    // Convert special formats (type, bool, array, upper, lower, escape).
-    if (preg_test('~%[tbaAULS]~', $format)) {
-        // Must find all for a proper param index re-set.
-        foreach (grep_all('~(%[a-zAULS])~', $format) as $i => $specifier) {
+        foreach ($specifiers as $i => $specifier) {
+            $offset = strpos($format, $specifier);
+
             switch ($specifier) {
-                case '%t': // Types.
-                    $format = substr_replace($format, '%s', strpos($format, '%t'), 2);
-                    if (array_key_exists($i, $params)) {
-                        $params[$i] = get_type($params[$i]);
-                    }
+                // Quoted strings.
+                case '%q': case '%Q':
+                    $repl = ($specifier === '%q') ? "'%s'" : '"%s"';
+                    $format = substr_replace($format, $repl, $offset, 2);
                     break;
-                case '%b': // Bools (as stringified bools, not 0/1).
-                    $format = substr_replace($format, '%s', strpos($format, '%b'), 2);
-                    if (array_key_exists($i, $params)) {
-                        $params[$i] = format_bool($params[$i]);
-                    }
+
+                // Integer (digit).
+                case '%i':
+                    $format = substr_replace($format, '%d', $offset, 2);
                     break;
-                case '%a': case '%A': // Arrays (as joinified items).
-                    $format = substr_replace($format, '%s', strpos($format, $specifier), 2);
-                    if (array_key_exists($i, $params)) {
-                        $separator  = ($specifier == '%a') ? ',' : ', ';
-                        $params[$i] = join($separator, (array) $params[$i]);
-                    }
+
+                // Types.
+                case '%t':
+                    $format = substr_replace($format, '%s', $offset, 2);
+                    $arguments[$i] = get_type($arguments[$i]);
                     break;
-                case '%U': case '%L': // Upper/Lower.
-                    $format = substr_replace($format, '%s', strpos($format, $specifier), 2);
-                    if (array_key_exists($i, $params)) {
-                        $function   = ($specifier == '%U') ? 'upper' : 'lower';
-                        $params[$i] = $function((string) $params[$i]);
-                    }
+
+                // Bools (as stringified bools, not 0/1).
+                case '%b':
+                    $format = substr_replace($format, '%s', $offset, 2);
+                    $arguments[$i] = format_bool($arguments[$i]);
                     break;
-                case '%S': // Escape (NULL-bytes only).
-                    $format = substr_replace($format, '%s', strpos($format, $specifier), 2);
-                    if (array_key_exists($i, $params)) {
-                        $params[$i] = str_replace("\0", "\\0", (string) $params[$i]);
+
+                // Arrays (as joinified items).
+                case '%a': case '%A':
+                    $format = substr_replace($format, '%s', $offset, 2);
+                    $separator = ($specifier === '%a') ? ',' : ', ';
+                    $arguments[$i] = join($separator, (array) $arguments[$i]);
+                    break;
+
+                // Upper/Lower case.
+                case '%U': case '%L':
+                    $format = substr_replace($format, '%s', $offset, 2);
+                    $function = ($specifier === '%U') ? 'upper' : 'lower';
+                    $arguments[$i] = $function((string) $arguments[$i]);
+                    break;
+
+                // Escape (NULL-bytes only).
+                case '%S':
+                    $format = substr_replace($format, '%s', $offset, 2);
+                    $arguments[$i] = str_replace("\0", "\\0", (string) $arguments[$i]);
+                    break;
+
+                // Proper float-to-string (eg: 1.0 => not 1 but 1.0).
+                case '%s':
+                    if ($arguments[$i] === 1.0) {
+                        $arguments[$i] = format_number($arguments[$i], true);
                     }
                     break;
             }
         }
     }
 
-    return vsprintf($format, $params);
+    return vsprintf($format, $arguments);
 }
 
 /**
