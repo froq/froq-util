@@ -10,7 +10,7 @@ use froq\encrypting\Generator;
 
 // Check dependencies.
 if (!class_exists(Generator::class, true)) {
-    throw new UtilException('Generate sugars dependent to `froq\encrypting` module but not found');
+    throw new UtilException('Generate sugars dependent to "froq\encrypting" module but not found');
 }
 
 /**

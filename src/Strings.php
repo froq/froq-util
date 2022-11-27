@@ -278,7 +278,7 @@ final class Strings extends \StaticClass
     {
         if ($length < 1) {
             throw new UtilException(
-                'Invalid length value `%s`, length must be minimun 1',
+                'Invalid length value %s, length must be minimun 1',
                 $length
             );
         }

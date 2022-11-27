@@ -59,7 +59,7 @@ function is_tmpdir(string $dir): bool
 {
     return is_dir($dir)
         && str_starts_with($dir, tmp() . DIRECTORY_SEPARATOR)
-        && realpath($dir) != tmp();
+        && realpath($dir) !== tmp();
 }
 
 /**
@@ -156,7 +156,7 @@ function mkfiletemp(string $prefix = '', int $mode = 0644): string|null
 function rmfiletemp(string $file): bool
 {
     if (!is_tmpnam($file)) {
-        trigger_error(sprintf('%s(): Cannot remove `%s` file that is out of %s directory or not exists',
+        trigger_error(sprintf('%s(): Cannot remove %s file, it\'s out of %s directory or not exists',
             __function__, $file, tmp()));
         return false;
     }
@@ -187,7 +187,7 @@ function mkdirtemp(string $prefix = '', int $mode = 0755): string|null
 function rmdirtemp(string $dir): bool
 {
     if (!is_tmpdir($dir)) {
-        trigger_error(sprintf('%s(): Cannot remove `%s` directory that is out of %s directory or not exists',
+        trigger_error(sprintf('%s(): Cannot remove %s directory, it\'s out of %s directory or not exists',
             __function__, $dir, tmp()));
         return false;
     }
@@ -361,7 +361,7 @@ function file_name(string $file, bool $with_ext = false): string|null
     // but using just a boolean here is more sexy..
     $ret = basename($file);
 
-    if ($ret == '.' || $ret == '..') {
+    if ($ret === '.' || $ret === '..') {
         return null;
     }
 
@@ -381,12 +381,12 @@ function file_name(string $file, bool $with_ext = false): string|null
  */
 function file_mime(string $file): string|null
 {
-    $mime = mime_content_type($file) ?: null;
+    $mime = (string) mime_content_type($file);
 
-    if (!$mime) {
+    if ($mime === '') {
         // Try with extension.
         $extension = file_extension($file, false);
-        if ($extension) {
+        if ($extension !== null) {
             static $cache; // For some speed..
             if (empty($cache[$extension])) {
                 foreach (require __dir__ . '/../statics/mime.php' as $type => $extensions) {
@@ -421,16 +421,16 @@ function file_extension(string $file, bool $with_dot = false, bool $lower = true
         return null;
     }
 
-    $ret = strrchr($info['basename'], '.');
+    $ret = (string) strrchr($info['basename'], '.');
 
-    if ($ret) {
+    if ($ret !== '') {
         $lower && $ret = strtolower($ret);
         if (!$with_dot) {
             $ret = ltrim($ret, '.');
         }
     }
 
-    return ($ret != '' && $ret != '.') ? $ret : null;
+    return ($ret !== '' && $ret !== '.') ? $ret : null;
 }
 
 /**
