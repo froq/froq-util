@@ -1756,8 +1756,8 @@ function func_has_arg(int|string $arg): bool
     if (is_string($arg)) {
         if (!empty($trace['args'])) {
             $ref = !empty($trace['class'])
-                ? new ReflectionCallable([$trace['class'], $trace['function']])
-                : new ReflectionCallable($trace['function']);
+                 ? new ReflectionCallable([$trace['class'], $trace['function']])
+                 : new ReflectionCallable($trace['function']);
 
             return array_key_exists($ref->getParameter($arg)?->getPosition(), $trace['args']);
         }
