@@ -8,3 +8,4 @@ require 'sugars-function/cast.php';
 require 'sugars-function/dump.php';
 require 'sugars-function/file.php';
 require 'sugars-function/http.php';
+require 'sugars-function/preg.php';
