@@ -1435,7 +1435,7 @@ function format(string $format, mixed ...$arguments): string
     if (preg_match_all('~(?<!%)%[qQitbaAULSs]~', $format, $match)) {
         $specifiers = $match[0];
 
-        if (count($specifiers) !== count($arguments)) {
+        if (count($specifiers) > count($arguments)) {
             throw new ArgumentError(
                 'Arguments must contain %d items, %d given',
                 [count($specifiers), count($arguments)]
