@@ -315,7 +315,7 @@ class Mapper
                     [$class, $found] = $resolved;
 
                     $found || throw MapperException::forAbsentTypedPropertyClass(
-                        $class, $object, property: $name, line: 317
+                        $class, $object, property: $name
                     );
 
                     $vobj = $this->getClassInstance($class, $ctor);
@@ -362,7 +362,7 @@ class Mapper
             if ($resolved !== null) {
                 foreach ($resolved as $class => $found) {
                     $found || throw MapperException::forAbsentAnnotatedPropertyClass(
-                        $class, $object, property: $name, line: 364
+                        $class, $object, property: $name
                     );
                 }
 

@@ -32,14 +32,13 @@ class MapperException extends \froq\common\Exception
      * @param  string   $class
      * @param  object   $object
      * @param  string   $property
-     * @param  int|null $line
      * @return static
      */
-    public static function forAbsentTypedPropertyClass(string $class, object $object, string $property, int $line = null): static
+    public static function forAbsentTypedPropertyClass(string $class, object $object, string $property): static
     {
         return new static(
             'Class %q not found for typed property %S::$%s',
-            [$class, $object::class, $property], cause: new \UndefinedClassError($class), line: $line
+            [$class, $object::class, $property], cause: new \UndefinedClassError($class)
         );
     }
 
@@ -49,14 +48,13 @@ class MapperException extends \froq\common\Exception
      * @param  string   $class
      * @param  object   $object
      * @param  string   $property
-     * @param  int|null $line
      * @return static
      */
-    public static function forAbsentAnnotatedPropertyClass(string $class, object $object, string $property, int $line = null): static
+    public static function forAbsentAnnotatedPropertyClass(string $class, object $object, string $property): static
     {
         return new static(
             'Class %q not found for annotated property %S::$%s',
-            [$class, $object::class, $property], cause: new \UndefinedClassError($class), line: $line
+            [$class, $object::class, $property], cause: new \UndefinedClassError($class)
         );
     }
 
