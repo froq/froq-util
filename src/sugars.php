@@ -11,8 +11,8 @@ use froq\util\{
 };
 
 // Load base stuff.
-require 'sugars-const.php';
 require 'sugars-class.php';
+require 'sugars-constant.php';
 require 'sugars-function.php';
 
 /**

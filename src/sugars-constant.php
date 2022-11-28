@@ -38,13 +38,11 @@ const nil = null, nils = '';
  */
 const ENCODING = 'UTF-8';
 
-
 /**
  * Number precision.
  * @since 5.31
  */
 const PRECISION = 14;
-
 
 /**
  * Cases (0/1 already defined as CASSE_LOWER/CASE_UPPER).
