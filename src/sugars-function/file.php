@@ -130,7 +130,7 @@ function rmfile(string $file): bool
         return false;
     }
 
-    return is_file($file) && unlink($file);
+    return unlink($file);
 }
 
 /**
@@ -161,7 +161,7 @@ function rmfiletemp(string $file): bool
         return false;
     }
 
-    return is_file($file) && unlink($file);
+    return unlink($file);
 }
 
 /**
