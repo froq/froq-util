@@ -218,7 +218,7 @@ final /* fuckic static */ class Util extends \StaticClass
     public static function makeArray(array|object|null $data, bool $deep = true): array
     {
         // Memoize maker function.
-        static $make; $make ??= function ($data) use (&$make, $deep) {
+        static $make; $make ??= function ($data) use (&$make, $deep): array {
             if ($data) {
                 if ($data instanceof \Traversable) {
                     if ($data instanceof \Generator) {
@@ -235,10 +235,10 @@ final /* fuckic static */ class Util extends \StaticClass
                 }
 
                 if ($deep) {
-                    $array = is_array($data);
+                    $isArray = is_array($data);
                     foreach ($data as $key => $value) {
                         $value = is_array($value) || is_object($value) ? $make($value) : $value;
-                        if ($array) {
+                        if ($isArray) {
                             $data[$key] = $value;
                         } else {
                             $data->$key = $value;
@@ -265,7 +265,7 @@ final /* fuckic static */ class Util extends \StaticClass
     public static function makeObject(array|object|null $data, bool $deep = true): object
     {
         // Memoize maker function.
-        static $make; $make ??= function ($data) use (&$make, $deep) {
+        static $make; $make ??= function ($data) use (&$make, $deep): object {
             if ($data) {
                 if ($data instanceof \Traversable) {
                     if ($data instanceof \Generator) {
@@ -282,10 +282,10 @@ final /* fuckic static */ class Util extends \StaticClass
                 }
 
                 if ($deep) {
-                    $array = is_array($data);
+                    $isArray = is_array($data);
                     foreach ($data as $key => $value) {
                         $value = is_array($value) || is_object($value) ? $make($value) : $value;
-                        if ($array) {
+                        if ($isArray) {
                             $data[$key] = $value;
                         } else {
                             $data->$key = $value;
