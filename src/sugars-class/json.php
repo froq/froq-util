@@ -547,7 +547,7 @@ class JsonPrettifier
         $inStringLiteral = false;
 
         // Indent macro, makes auto-indent by level.
-        $indent = function () use ($indentString, &$indentLevel) {
+        $indent = function () use ($indentString, &$indentLevel): string {
             return str_repeat($indentString, $indentLevel);
         };
 
