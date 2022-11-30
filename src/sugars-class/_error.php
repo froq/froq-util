@@ -231,11 +231,7 @@ class UndefinedMethodError extends froq\common\Error
 class LastError extends froq\common\Error
 {
 
-    /**
-     * Causing function data.
-     *
-     * @var array|null
-     */
+    /** Causing call info. */
     private ?array $call = null;
 
     /**
@@ -270,9 +266,9 @@ class LastError extends froq\common\Error
     /**
      * Get call.
      *
-     * @return ?array
+     * @return array|null
      */
-    public function getCall(): ?array
+    public function getCall(): array|null
     {
         return $this->call;
     }
@@ -280,9 +276,9 @@ class LastError extends froq\common\Error
     /**
      * Get call file.
      *
-     * @return ?string
+     * @return string|null
      */
-    public function getCallFile(): ?string
+    public function getCallFile(): string|null
     {
         return $this->call['file'] ?? null;
     }
@@ -290,9 +286,9 @@ class LastError extends froq\common\Error
     /**
      * Get call line.
      *
-     * @return ?int
+     * @return int|null
      */
-    public function getCallLine(): ?int
+    public function getCallLine(): int|null
     {
         return $this->call['line'] ?? null;
     }
@@ -300,9 +296,9 @@ class LastError extends froq\common\Error
     /**
      * Get call name.
      *
-     * @return ?string
+     * @return string|null
      */
-    public function getCallName(): ?string
+    public function getCallName(): string|null
     {
         return $this->call['name'] ?? null;
     }
@@ -310,9 +306,9 @@ class LastError extends froq\common\Error
     /**
      * Get call path.
      *
-     * @return ?string
+     * @return string|null
      */
-    public function getCallPath(): ?string
+    public function getCallPath(): string|null
     {
         return $this->call['path'] ?? null;
     }
