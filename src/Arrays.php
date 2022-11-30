@@ -943,22 +943,6 @@ final class Arrays extends \StaticClass
     }
 
     /**
-     * Search given value's last key.
-     *
-     * @param  array  $array
-     * @param  mixed  $value
-     * @param  bool   $strict
-     * @return int|string|null
-     * @since  5.5
-     */
-    public static function searchLastKey(array $array, mixed $value, bool $strict = true): int|string|null
-    {
-        $ret = array_search($value, array_reverse($array, true), $strict);
-
-        return ($ret !== false) ? $ret : null;
-    }
-
-    /**
      * Search given value returning all found keys.
      *
      * @param  array $array
