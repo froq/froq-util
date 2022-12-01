@@ -17,6 +17,10 @@ use froq\common\interface\Stringable;
  */
 class Uuid implements Stringable, \Stringable
 {
+    /** Nulls. */
+    public const NULL      = '00000000-0000-0000-0000-000000000000',
+                 NULL_HASH = '00000000000000000000000000000000';
+
     /** Given or generated value. */
     public readonly string $value;
 
@@ -142,7 +146,7 @@ class Uuid implements Stringable, \Stringable
      */
     public function isNull(): bool
     {
-        return hash_equals('00000000-0000-0000-0000-000000000000', $this->value);
+        return hash_equals(self::NULL_HASH, $this->value);
     }
 
     /**
@@ -152,7 +156,7 @@ class Uuid implements Stringable, \Stringable
      */
     public function isNullHash(): bool
     {
-        return hash_equals('00000000000000000000000000000000', $this->value);
+        return hash_equals(self::NULL_HASH, $this->value);
     }
 
     /**
@@ -345,7 +349,7 @@ class Uuid implements Stringable, \Stringable
      */
     public static function format(string $hash): string
     {
-        if (strlen($hash) != 32 || !ctype_xdigit($hash)) {
+        if (strlen($hash) !== 32 || !ctype_xdigit($hash)) {
             throw new UuidError('Format for only 32-length UUIDs/GUIDs');
         }
 
