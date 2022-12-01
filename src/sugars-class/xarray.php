@@ -1,9 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-util
  */
-declare(strict_types=1);
 
 use froq\common\interface\{Arrayable, Listable, Jsonable, Collectable, Iteratable, IteratableReverse};
 use froq\collection\trait\{SortTrait, FilterTrait, MapTrait, ReduceTrait, ApplyTrait, AggregateTrait,
@@ -17,14 +16,13 @@ use froq\collection\{Collection, CollectionInterface};
  * A class for playing with arrays in OOP-way.
  *
  * @package global
- * @object  XArray
+ * @class   XArray
  * @author  Kerem Güneş
  * @since   6.0
  */
 class XArray implements Arrayable, Listable, Jsonable, Collectable, Iteratable, IteratableReverse,
     Countable, Iterator, ArrayAccess
 {
-    /** Traits. */
     use SortTrait, FilterTrait, MapTrait, ReduceTrait, ApplyTrait, AggregateTrait,
         EachTrait, CountTrait, EmptyTrait, HasTrait, GetTrait, AccessTrait, AccessMagicTrait,
         FindTrait, FirstLastTrait, MinMaxTrait, CalcAverageTrait, CalcProductTrait, CalcSumTrait,
@@ -43,7 +41,9 @@ class XArray implements Arrayable, Listable, Jsonable, Collectable, Iteratable, 
         $data && $this->data = [...$data];
     }
 
-    /** @magic */
+    /**
+     * @magic
+     */
     public function __debugInfo(): array
     {
         return $this->data;

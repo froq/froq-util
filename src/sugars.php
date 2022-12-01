@@ -1,9 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-util
  */
-declare(strict_types=1);
 
 use froq\util\{
     Util, System, Arrays,
@@ -242,9 +241,9 @@ function splice(array|string $input, int $start, int $end = null, array|string $
  */
 function split(string $separator, string $input, int $limit = null, int $flags = null, RegExpError &$error = null): array
 {
-    if ($separator == '') {
+    if ($separator === '') {
         // Safe for binary strings.
-        $ret = strlen($input) == mb_strlen($input)
+        $ret = strlen($input) === mb_strlen($input)
              ? str_split($input) : mb_str_split($input);
 
         // Mind limit option.
@@ -255,7 +254,7 @@ function split(string $separator, string $input, int $limit = null, int $flags =
         }
     } else {
         // Escape null bytes, delimiter & special char typos.
-        $separator = strlen($separator) == 1 ? preg_quote($separator, '~')
+        $separator = strlen($separator) === 1 ? preg_quote($separator, '~')
             : str_replace(["\0", '~'], ['\0', '\~'], $separator);
 
         $ret = preg_split(
@@ -272,7 +271,7 @@ function split(string $separator, string $input, int $limit = null, int $flags =
     }
 
     // Fill error message if requested.
-    if (func_num_args() == 5) {
+    if (func_num_args() === 5) {
         $message = preg_error_message($code, 'preg_split');
         $message && $error = new RegExpError($message, code: $code);
     }
@@ -303,12 +302,12 @@ function unsplit(string $separator, array $input): string
  */
 function strip(string $input, string $characters = ''): string
 {
-    if ($characters == '') {
+    if ($characters === '') {
         return trim($input);
     }
 
     // RegExp: only ~..~ patterns accepted.
-    if (strlen($characters) >= 3 && $characters[0] == '~') {
+    if (strlen($characters) >= 3 && $characters[0] === '~') {
         $ruls = substr($characters, 1, ($pos = strrpos($characters, '~')) - 1);
         $mods = substr($characters, $pos + 1);
         return preg_replace(sprintf('~^%s|%s$~%s', $ruls, $ruls, $mods), '', $input);
@@ -332,7 +331,7 @@ function replace(string|array $input, string|array $search, string|array|callabl
 {
     if (is_string($input) && is_string($search)) {
         // RegExp: only ~..~ patterns accepted.
-        if (strlen($search) >= 3 && $search[0] == '~') {
+        if (strlen($search) >= 3 && $search[0] === '~') {
             return is_callable($replace)
                  ? preg_replace_callback($search, $replace, $input, $limit)
                  : preg_replace($search, $replace, $input, $limit);
@@ -378,7 +377,7 @@ function grep(string $pattern, string $input, bool $named = false): string|array
         $ret = array_slice($ret, 0);
 
         // Single return.
-        if (!$named && count($ret) == 1) {
+        if (!$named && count($ret) === 1) {
             $ret = current($ret);
         }
 
@@ -422,7 +421,7 @@ function grep_all(string $pattern, string $input, bool $named = false, bool $uni
 
         // Reduce moving sub matches up.
         $ret = array_apply($ret, function ($re) {
-            if (is_array($re) && count($re) == 1) {
+            if (is_array($re) && count($re) === 1) {
                 $re = current($re);
             }
             return $re;
@@ -434,7 +433,7 @@ function grep_all(string $pattern, string $input, bool $named = false, bool $uni
             $ret = array_apply($ret, function ($re) {
                 if (is_array($re)) {
                     $re = array_filter($re, 'size');
-                    if (count($re) == 1) {
+                    if (count($re) === 1) {
                         $re = current($re);
                     }
                 }
@@ -446,7 +445,7 @@ function grep_all(string $pattern, string $input, bool $named = false, bool $uni
         $ret = array_slice($ret, 0);
 
         // Single return.
-        if (!$named && count($ret) == 1) {
+        if (!$named && count($ret) === 1) {
             $ret = (array) current($ret);
         }
 
@@ -490,7 +489,7 @@ function convert_base(int|string $input, int|string $from, int|string $to): stri
     }
 
     $input = strval($input);
-    if (!$input || $from == $to) {
+    if (!$input || $from === $to) {
         return $input;
     }
 
@@ -521,7 +520,7 @@ function convert_base(int|string $input, int|string $from, int|string $to): stri
         $old_length = $new_length;
 
         $ret = $to[$div] . $ret;
-    } while ($new_length != 0);
+    } while ($new_length !== 0);
 
     return $ret;
 }
@@ -933,7 +932,7 @@ function get_real_path(string $path, string|bool $check = null): string|null
     }
 
     foreach (explode($sep, $path) as $i => $cur) {
-        if ($i == 0) {
+        if ($i === 0) {
             if ($cur === '~') { // Home path (eg: ~/Desktop).
                 $ret = getenv('HOME') ?: '';
                 continue;
@@ -1087,7 +1086,7 @@ function get_trace(int $options = 0, int $limit = 0, int $index = null, string $
 
         if (isset($trace['class'])) {
             $trace['method']     = $trace['function'];
-            $trace['methodType'] = ($trace['type'] == '::') ? 'static' : 'non-static';
+            $trace['methodType'] = ($trace['type'] === '::') ? 'static' : 'non-static';
         }
         if (isset($stack[$i + 1]['function'])) {
             $trace['caller'] = $stack[$i + 1]['function'];
@@ -1550,9 +1549,9 @@ function format_number(int|float|string $input, int|bool|null $decimals = 0, str
     $ret = number_format($input, (int) $decimals, $decimal_separator, $thousand_separator);
 
     // Append ".0" for eg: 1.0 & upper NAN/INF.
-    if (!$decimals && !is_int($input) && strlen($export) == 1) {
+    if (!$decimals && !is_int($input) && strlen($export) === 1) {
         $ret .= '.0';
-    } elseif ($ret == 'inf' || $ret == 'nan') {
+    } elseif ($ret === 'inf' || $ret === 'nan') {
         $ret = strtoupper($ret);
     }
 
@@ -2006,7 +2005,7 @@ function is_empty(mixed $var, mixed ...$vars): bool
             return true;
         }
 
-        if (is_object($var) && size($var) == 0) {
+        if (is_object($var) && size($var) === 0) {
             return true;
         }
     }

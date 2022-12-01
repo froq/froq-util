@@ -1,11 +1,11 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-util
  */
-declare(strict_types=1);
 
 use froq\util\UtilException;
+use froq\session\Session;
 use froq\App;
 
 // Check dependencies (all others already come with froq\App).

@@ -12,52 +12,28 @@ namespace froq\util\mailer;
  * then an extended mailer tool should be used.
  *
  * @package froq\util\mailer
- * @object  froq\util\mailer\Mailer
+ * @class   froq\util\mailer\Mailer
  * @author  Kerem Güneş
  * @since   7.0
  */
 class Mailer
 {
-    /**
-     * From address.
-     *
-     * @var string
-     */
+    /** From address. */
     private string $from;
 
-    /**
-     * To address.
-     *
-     * @var string
-     */
+    /** To address. */
     private string $to;
 
-    /**
-     * Reply-to address.
-     *
-     * @var string
-     */
+    /** Reply-to address. */
     private string $replyTo;
 
-    /**
-     * Subject..
-     *
-     * @var string
-     */
+    /** Subject. */
     private string $subject;
 
-    /**
-     * Body.
-     *
-     * @var string
-     */
+    /** Body. */
     private string $body;
 
-    /**
-     * Map of headers.
-     *
-     * @var array<string, string>
-     */
+    /** Map of headers. */
     private array $headers = [
         'Content-Type'              => 'text/plain; charset=utf-8',
         'Content-Transfer-Encoding' => 'quoted-printable',

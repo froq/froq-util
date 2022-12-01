@@ -1,9 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-util
  */
-declare(strict_types=1);
 
 /**
  * On-demand function used by http_parse_header().
@@ -18,7 +17,7 @@ declare(strict_types=1);
 function httpx_parse_header(string $header, string|int $case = null, bool $verbose = false): array
 {
     $header = trim($header);
-    if ($header == '') {
+    if ($header === '') {
         return [];
     }
 
@@ -39,7 +38,7 @@ function httpx_parse_header(string $header, string|int $case = null, bool $verbo
     // Normalize value.
     $value = preg_replace_callback('~\s*([;,\s]+)~', function ($m) {
         $char = $m[1][0];
-        return ($char == ';' || $char == ',') ? $char . ' ' : $char;
+        return ($char === ';' || $char === ',') ? $char . ' ' : $char;
     }, $value);
 
     $data = ['name' => $name, 'value' => $value];
@@ -82,13 +81,13 @@ function httpx_parse_header(string $header, string|int $case = null, bool $verbo
             if (preg_match('~([\w\-]+) +(.+)~', $value, $match)) {
                 [, $scheme, $params] = $match;
                 $detail = ['scheme' => $scheme, 'params' => '', 'parsed_params' => []];
-                if ($params != '') {
+                if ($params !== '') {
                     // Wrap all non-quoted stuff in quotes (not base64 stuff).
                     if (str_contains($params, ' ') || preg_test('~(\w+)=([^=]+)~', $params)) {
                         $params = preg_replace('~(\w+)=([^"]+?)(,|$)~', '\1="\2"\3', trim($params));
                     }
 
-                    if (!str_contains($params, ' ') && strtoupper($scheme) == 'BASIC') {
+                    if (!str_contains($params, ' ') && strtoupper($scheme) === 'BASIC') {
                         $temp = split(':', (string) base64_decode($params, true), 2);
                         if (array_filter($temp)) {
                             $parsed_params = array_compose(['user', 'pass'], $temp);
@@ -115,11 +114,11 @@ function httpx_parse_header(string $header, string|int $case = null, bool $verbo
 
         case 'CONTENT-TYPE':
         case 'CONTENT-DISPOSITION':
-            $pattern = ($name == 'CONTENT-TYPE') ? '~([^/]+/[^;]+)(?:; *(.+))?~' : '~([^;]+)(?:; *(.+))?~';
+            $pattern = ($name === 'CONTENT-TYPE') ? '~([^/]+/[^;]+)(?:; *(.+))?~' : '~([^;]+)(?:; *(.+))?~';
             if (preg_match($pattern, $value, $match)) {
                 [, $type, $params] = array_pad($match, 3, '');
                 $detail = ['type' => $type, 'params' => '', 'parsed_params' => []];
-                if ($params != '') {
+                if ($params !== '') {
                     // Wrap all non-quoted stuff in quotes.
                     if (str_contains($params, ' ') || preg_test('~(\w+)=([^"]+)~', $params)) {
                         $params = preg_replace('~(\w+)=([^"]+?)(\s|$)~', '\1="\2"\3', trim($params));
@@ -138,11 +137,11 @@ function httpx_parse_header(string $header, string|int $case = null, bool $verbo
         case 'CONTENT-RANGE':
             if (preg_match('~(\w+) +(?:(\*)/(\d+)|(\d+)-(\d+)/(\d+|\*))~', $value, $match)) {
                 $detail = ['unit' => $match[1]];
-                if (count($match) == 4) {
+                if (count($match) === 4) {
                     $detail['size']  = (int) $match[3];
                     $detail['range'] = $match[2];
                 } else {
-                    $detail['size']  = ($match[6] != '*') ? (int) $match[6] : '*';
+                    $detail['size']  = ($match[6] !== '*') ? (int) $match[6] : '*';
                     $detail['range'] = [(int) $match[4], (int) $match[5]];
                 }
             }
@@ -205,7 +204,7 @@ function httpx_parse_header(string $header, string|int $case = null, bool $verbo
         case 'IF-RANGE':
         case 'IF-MATCH':
         case 'IF-NONE-MATCH':
-            if ($name == 'IF-RANGE' && str_ends_with($value, 'GMT')) {
+            if ($name === 'IF-RANGE' && str_ends_with($value, 'GMT')) {
                 $detail = ['date' => $value, 'time' => strtotime($value)];
             } else {
                 $detail = ['etags' => split(' *, *', $value)];
@@ -249,8 +248,8 @@ function httpx_parse_header(string $header, string|int $case = null, bool $verbo
                         $range = array_slice($match, 1);
                         $detail['range'][$i] = join($range);
                         $detail['range_list'][$i] = [
-                            ($range[0] != '') ? (int) $range[0] : null,
-                            ($range[2] != '') ? (int) $range[2] : null,
+                            ($range[0] !== '') ? (int) $range[0] : null,
+                            ($range[2] !== '') ? (int) $range[2] : null,
                         ];
                     }
                 }

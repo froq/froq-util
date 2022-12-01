@@ -9,7 +9,7 @@ namespace froq\util;
  * A static class for system related stuff.
  *
  * @package froq\util
- * @object  froq\util\System
+ * @class   froq\util\System
  * @author  Kerem Güneş
  * @since   6.0
  * @static

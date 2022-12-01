@@ -1,9 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-util
  */
-declare(strict_types=1);
 
 use froq\common\interface\{Arrayable, Listable, Jsonable, Collectable, Iteratable, IteratableReverse};
 use froq\collection\trait\{SortTrait, FilterTrait, MapTrait, ReduceTrait, EachTrait, CountTrait, EmptyTrait,
@@ -16,14 +15,13 @@ use froq\collection\{Collection, CollectionInterface};
  * A trait used by Map/Set classes.
  *
  * @package global
- * @object  MapSetTrait
+ * @class   MapSetTrait
  * @author  Kerem Güneş
  * @since   5.35
  * @@internal
  */
 trait MapSetTrait
 {
-    /** Traits. */
     use SortTrait, FilterTrait, MapTrait, ReduceTrait, EachTrait, CountTrait, EmptyTrait,
         FindTrait, FirstLastTrait, MinMaxTrait, CalcAverageTrait, CalcProductTrait, CalcSumTrait,
         IteratorTrait, ToArrayTrait, ToListTrait, ToJsonTrait;
@@ -46,7 +44,9 @@ trait MapSetTrait
         }
     }
 
-    /** @magic */
+    /**
+     * @magic
+     */
     public function __debugInfo(): array
     {
         return $this->data;
@@ -140,13 +140,17 @@ trait MapSetTrait
         return array_pop($this->data);
     }
 
-    /** @alias unshift() */
+    /**
+     * @alias unshift()
+     */
     public function pushLeft(...$args)
     {
         return $this->unshift(...$args);
     }
 
-    /** @alias shift() */
+    /**
+     * @alias shift()
+     */
     public function popLeft()
     {
         return $this->shift();
@@ -453,7 +457,7 @@ trait MapSetTrait
  * A map class just like JavaScript's map but "a bit" extended.
  *
  * @package global
- * @object  Map
+ * @class   Map
  * @author  Kerem Güneş
  * @since   5.25
  */
@@ -462,25 +466,33 @@ class Map implements Arrayable, Listable, Jsonable, Collectable, Iteratable, Ite
 {
     use MapSetTrait;
 
-    /** @magic */
+    /**
+     * @magic
+     */
     public function __set(int|string|object $key, mixed $value): void
     {
         $this->set($key, $value);
     }
 
-    /** @magic */
+    /**
+     * @magic
+     */
     public function &__get(int|string|object $key): mixed
     {
         return $this->get($key);
     }
 
-    /** @magic */
+    /**
+     * @magic
+     */
     public function __isset(int|string|object $key): bool
     {
         return $this->has($key);
     }
 
-    /** @magic */
+    /**
+     * @magic
+     */
     public function __unset(int|string|object $key): void
     {
         $this->remove($key);
@@ -592,7 +604,9 @@ class Map implements Arrayable, Listable, Jsonable, Collectable, Iteratable, Ite
         return $ok;
     }
 
-    /** @alias remove() */
+    /**
+     * @alias remove()
+     */
     public function delete(int|string|object $key, mixed &$value = null): bool
     {
         return $this->remove($key, $value);
@@ -731,7 +745,7 @@ class Map implements Arrayable, Listable, Jsonable, Collectable, Iteratable, Ite
  * A set class just like JavaScript's set but "a bit" extended.
  *
  * @package global
- * @object  Set
+ * @class   Set
  * @author  Kerem Güneş
  * @since   5.25
  */
@@ -815,7 +829,7 @@ class Set implements Arrayable, Listable, Jsonable, Collectable, Iteratable, Ite
             unset($this->data[$index]);
 
             // Re-index if no last index dropped.
-            if ($index != $count - 1) {
+            if ($index !== $count - 1) {
                 $this->resetIndexes();
             }
         }
@@ -846,7 +860,7 @@ class Set implements Arrayable, Listable, Jsonable, Collectable, Iteratable, Ite
             unset($this->data[$index]);
 
             // Re-index if no last index dropped.
-            if ($index != $count - 1) {
+            if ($index !== $count - 1) {
                 $this->resetIndexes();
             }
         }
@@ -871,7 +885,9 @@ class Set implements Arrayable, Listable, Jsonable, Collectable, Iteratable, Ite
         return $ok;
     }
 
-    /** @alias remove() */
+    /**
+     * @alias remove()
+     */
     public function delete(mixed $value, int &$index = null): bool
     {
         return $this->remove($value, $index);
@@ -1000,7 +1016,7 @@ class Set implements Arrayable, Listable, Jsonable, Collectable, Iteratable, Ite
  * A dictionary class just like Python's dict but "a bit" extended.
  *
  * @package global
- * @object  Dict
+ * @class   Dict
  * @author  Kerem Güneş
  * @since   5.31
  */

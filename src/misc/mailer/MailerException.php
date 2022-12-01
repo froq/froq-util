@@ -7,7 +7,7 @@ namespace froq\util\mailer;
 
 /**
  * @package froq\util\mailer
- * @object  froq\util\mailer\MailerException
+ * @class   froq\util\mailer\MailerException
  * @author  Kerem Güneş
  * @since   7.0
  */

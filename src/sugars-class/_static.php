@@ -1,9 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-util
  */
-declare(strict_types=1);
 
 /**
  * An uninitializable static class that forbid initializations of the extender classes.
@@ -12,7 +11,7 @@ declare(strict_types=1);
  * Note: not abstract'ed, letting the error in constructor.
  *
  * @package global
- * @object  StaticClass
+ * @class   StaticClass
  * @author  Kerem Güneş
  * @since   4.0, 6.0
  */
@@ -25,7 +24,7 @@ class StaticClass
  * A trait entity which is able to forbid initialions on user object.
  *
  * @package global
- * @object  StaticClassTrait
+ * @class   StaticClassTrait
  * @author  Kerem Güneş
  * @since   4.3, 6.0
  */

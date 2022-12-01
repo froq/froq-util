@@ -1,9 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-util
  */
-declare(strict_types=1);
 
 use froq\util\Objects;
 
@@ -11,13 +10,13 @@ use froq\util\Objects;
  * A class for playing with objects in OOP-way.
  *
  * @package global
- * @object  XObject
+ * @class   XObject
  * @author  Kerem Güneş
  * @since   6.0
  */
 class XObject extends XClass
 {
-    /** @var object */
+    /** Target object. */
     public readonly object $object;
 
     /**
@@ -107,6 +106,6 @@ class XObject extends XClass
      */
     public function isEqualHashOf(object $object): bool
     {
-        return Objects::getSerializedHash($this->object) == Objects::getSerializedHash($object);
+        return Objects::getSerializedHash($this->object) === Objects::getSerializedHash($object);
     }
 }

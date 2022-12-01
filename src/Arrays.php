@@ -1,17 +1,15 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-util
  */
-declare(strict_types=1);
-
 namespace froq\util;
 
 /**
- * Arrays.
+ * Array utility class.
  *
  * @package froq\util
- * @object  froq\util\Arrays
+ * @class   froq\util\Arrays
  * @author  Kerem Güneş
  * @since   1.0
  * @static
@@ -660,7 +658,7 @@ final class Arrays extends \StaticClass
             $drop && array_unset($array, $key);
         }
 
-        if (count($ret) == 1) {
+        if (count($ret) === 1) {
             $ret = $pack ? [key($ret), current($ret)] : current($ret);
         }
 
@@ -1714,7 +1712,7 @@ final class Arrays extends \StaticClass
      */
     public static function pushEntry(array &$array, array $entry): array
     {
-        if (count($entry) != 2) {
+        if (count($entry) !== 2) {
             throw new \ValueError('Entry must contain key/value pairs');
         }
 
@@ -1758,7 +1756,7 @@ final class Arrays extends \StaticClass
      */
     public static function unshiftEntry(array &$array, array $entry): array
     {
-        if (count($entry) != 2) {
+        if (count($entry) !== 2) {
             throw new \ValueError('Entry must contain key/value pairs');
         }
 

@@ -1,9 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-util
  */
-declare(strict_types=1);
 
 use froq\common\interface\{Arrayable, Jsonable};
 use froq\collection\trait\{CountTrait, EmptyTrait};
@@ -12,7 +11,7 @@ use froq\collection\trait\{CountTrait, EmptyTrait};
  * A simple item list class with a list data container & access stuff.
  *
  * @package global
- * @object  ItemList
+ * @class   ItemList
  * @author  Kerem Güneş
  * @since   6.0
  */
@@ -20,18 +19,10 @@ class ItemList implements Arrayable, Jsonable, Countable, IteratorAggregate, Arr
 {
     use CountTrait, EmptyTrait;
 
-    /**
-     * Items data.
-     *
-     * @var array
-     */
+    /** Items list. */
     private array $data = [];
 
-    /**
-     * Items type to check.
-     *
-     * @var string|null
-     */
+    /** Items type to check. */
     private string|null $type;
 
     /**
@@ -46,7 +37,9 @@ class ItemList implements Arrayable, Jsonable, Countable, IteratorAggregate, Arr
         $data && $this->add(...$data);
     }
 
-    /** @magic */
+    /**
+     * @magic
+     */
     public function __debugInfo(): array
     {
         return $this->data;

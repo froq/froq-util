@@ -11,7 +11,7 @@ use froq\common\interface\Arrayable;
  * An extended `SplObjectStorage` class.
  *
  * @package froq\util\storage
- * @object  froq\util\storage\ObjectStorage
+ * @class   froq\util\storage\ObjectStorage
  * @author  Kerem Güneş
  * @since   6.0
  */

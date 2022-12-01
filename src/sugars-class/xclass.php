@@ -1,9 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-util
  */
-declare(strict_types=1);
 
 use froq\util\Objects;
 
@@ -11,16 +10,16 @@ use froq\util\Objects;
  * A class for playing with classes in OOP-way.
  *
  * @package global
- * @object  XClass
+ * @class   XClass
  * @author  Kerem Güneş
  * @since   6.0
  */
 class XClass implements Stringable
 {
-    /** @var string */
+    /** Target class. */
     public readonly string $name;
 
-    /** @var bool */
+    /** Exists state. */
     public readonly bool $exists;
 
     /**
@@ -40,13 +39,17 @@ class XClass implements Stringable
         }
     }
 
-    /** @magic */
+    /**
+     * @magic
+     */
     public function __toString(): string
     {
         return $this->name;
     }
 
-    /** @magic */
+    /**
+     * @magic
+     */
     public function __debugInfo(): array
     {
         return ['name' => $this->name];
@@ -148,19 +151,25 @@ class XClass implements Stringable
         return $this->exists && method_exists($this->name, $name);
     }
 
-    /** @alias constantExists() */
+    /**
+     * @alias constantExists()
+     */
     public function hasConstant(...$args)
     {
         return $this->constantExists(...$args);
     }
 
-    /** @alias propertyExists() */
+    /**
+     * @alias constantExists()
+     */
     public function hasProperty(...$args)
     {
         return $this->propertyExists(...$args);
     }
 
-    /** @alias methodExists() */
+    /**
+     * @alias constantExists()
+     */
     public function hasMethod(...$args)
     {
         return $this->methodExists(...$args);
@@ -330,19 +339,25 @@ class XClass implements Stringable
         return is_subclass_of($this->name, $class);
     }
 
-    /** @alias extends() */
+    /**
+     * @alias extends()
+     */
     public function isExtenderOf(...$args)
     {
         return $this->extends(...$args);
     }
 
-    /** @alias implements() */
+    /**
+     * @alias implements()
+     */
     public function isImplementerOf(...$args)
     {
         return $this->implements(...$args);
     }
 
-    /** @alias uses() */
+    /**
+     * @alias uses()
+     */
     public function isUserOf(...$args)
     {
         return $this->uses(...$args);

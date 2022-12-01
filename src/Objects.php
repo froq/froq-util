@@ -1,19 +1,15 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-util
  */
-declare(strict_types=1);
-
 namespace froq\util;
 
-use XReflectionObject, XReflectionClass;
-
 /**
- * Objects.
+ * Object utility class.
  *
  * @package froq\util
- * @object  froq\util\Objects
+ * @class   froq\util\Objects
  * @author  Kerem Güneş
  * @since   4.0
  * @static
@@ -26,10 +22,10 @@ final class Objects extends \StaticClass
      * @param  object|string $target
      * @return XReflectionObject|XReflectionClass|null
      */
-    public static function reflect(object|string $target): XReflectionObject|XReflectionClass|null
+    public static function reflect(object|string $target): \XReflectionObject|\XReflectionClass|null
     {
         try {
-            return is_object($target) ? new XReflectionObject($target) : new XReflectionClass($target);
+            return is_object($target) ? new \XReflectionObject($target) : new \XReflectionClass($target);
         } catch (\ReflectionException) {
             return null;
         }
@@ -145,7 +141,7 @@ final class Objects extends \StaticClass
         $name = self::getName($target);
 
         $ref = self::reflect($target);
-        if ($ref && $ref->name != $name) {
+        if ($ref && $ref->name !== $name) {
             return $ref->name;
         }
 
@@ -220,7 +216,7 @@ final class Objects extends \StaticClass
 
         $ret = [];
         foreach ($ref->getReflectionConstants() as $constant) {
-            if ($_name && $_name != $constant->name) {
+            if ($_name && $_name !== $constant->name) {
                 continue;
             }
             if (!$all && !$constant->isPublic()) {
@@ -368,7 +364,7 @@ final class Objects extends \StaticClass
             $propertyName  = $property->getName();
             $propertyClass = $property->getClass();
 
-            if ($_name && $_name != $propertyName) {
+            if ($_name && $_name !== $propertyName) {
                 continue;
             }
 
@@ -495,7 +491,7 @@ final class Objects extends \StaticClass
             $methodName  = $method->getName();
             $methodClass = $method->getClass();
 
-            if ($_name && $_name != $method->name) {
+            if ($_name && $_name !== $method->name) {
                 continue;
             }
 

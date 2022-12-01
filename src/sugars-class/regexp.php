@@ -1,27 +1,26 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-util
  */
-declare(strict_types=1);
 
 /**
  * A class for playing with regular expression stuff in OOP-way.
  *
  * @package global
- * @object  RegExp
+ * @class   RegExp
  * @author  Kerem Güneş
  * @since   6.0
  */
 class RegExp implements Stringable
 {
-    /** @const string */
+    /** Delimiter. */
     public final const DELIMITER = '~';
 
-    /** @const array<string> */
+    /** Modifiers. */
     public final const MODIFIERS = ['i', 'm', 's', 'u', 'x', 'A', 'D', 'S', 'U', 'J', 'X'];
 
-    /** @const int */
+    /** PREG constants. */
     public final const PATTERN_ORDER        = PREG_PATTERN_ORDER,
                        SET_ORDER            = PREG_SET_ORDER,
                        OFFSET_CAPTURE       = PREG_OFFSET_CAPTURE,
@@ -30,7 +29,7 @@ class RegExp implements Stringable
                        SPLIT_OFFSET_CAPTURE = PREG_SPLIT_OFFSET_CAPTURE,
                        UNMATCHED_AS_NULL    = PREG_UNMATCHED_AS_NULL;
 
-    /** @const int */
+    /** PREG error constants. */
     public final const ERROR_NONE            = PREG_NO_ERROR,
                        ERROR_INTERNAL        = PREG_INTERNAL_ERROR,
                        ERROR_BACKTRACK_LIMIT = PREG_BACKTRACK_LIMIT_ERROR,
@@ -39,22 +38,22 @@ class RegExp implements Stringable
                        ERROR_BAD_UTF8_OFFSET = PREG_BAD_UTF8_OFFSET_ERROR,
                        ERROR_JIT_STACKLIMIT  = PREG_JIT_STACKLIMIT_ERROR;
 
-    /** @var string */
+    /** Raw source. */
     public readonly string $source;
 
-    /** @var string */
+    /** Modifiers. */
     public readonly string $modifiers;
 
-    /** @var string */
+    /** Prepared pattern. */
     public readonly string $pattern;
 
-    /** @var bool */
+    /** Throw option. */
     public bool $throw = false;
 
-    /** @var RegExpError */
+    /** Error instance. */
     private RegExpError $error;
 
-    /** @var int */
+    /** Error code. */
     private int $errorCode;
 
     /**
@@ -80,7 +79,9 @@ class RegExp implements Stringable
         $this->throw     = $throw;
     }
 
-    /** @magic */
+    /**
+     * @magic
+     */
     public function __toString(): string
     {
         return $this->pattern;
@@ -706,7 +707,7 @@ class RegExp implements Stringable
  * A class for match stuff of RegExp class.
  *
  * @package global
- * @object  RegExpMatch
+ * @class   RegExpMatch
  * @author  Kerem Güneş
  * @since   6.0
  */

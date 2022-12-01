@@ -1,9 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-util
  */
-declare(strict_types=1);
 
 use froq\common\interface\{Arrayable, Objectable, Jsonable};
 use froq\collection\trait\GetTrait;
@@ -14,7 +13,7 @@ use froq\util\Arrays;
  * for Options & Attributes classes.
  *
  * @package global
- * @object  XArrayObject
+ * @class   XArrayObject
  * @author  Kerem Güneş
  * @since   6.0
  */
@@ -32,7 +31,9 @@ class XArrayObject extends ArrayObject implements Arrayable, Objectable, Jsonabl
         parent::__construct((array) $data, parent::ARRAY_AS_PROPS);
     }
 
-    /** @magic */
+    /**
+     * @magic
+     */
     public function __debugInfo(): array
     {
         return $this->getArrayCopy();

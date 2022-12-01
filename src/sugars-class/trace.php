@@ -1,25 +1,20 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-util
  */
-declare(strict_types=1);
 
 /**
  * A class for playing with stack traces in OOP-way.
  *
  * @package global
- * @object  TraceStack
+ * @class   TraceStack
  * @author  Kerem Güneş
  * @since   6.0
  */
 final class TraceStack implements Stringable, Countable, IteratorAggregate, ArrayAccess
 {
-    /**
-     * Stack data.
-     *
-     * @var array
-     */
+    /** Stack data. */
     public readonly array $stack;
 
     /**
@@ -202,25 +197,17 @@ final class TraceStack implements Stringable, Countable, IteratorAggregate, Arra
  * An internal class for stack frames.
  *
  * @package global
- * @object  Trace
+ * @class   Trace
  * @author  Kerem Güneş
  * @since   6.0
  * @internal
  */
 final class Trace implements ArrayAccess
 {
-    /**
-     * Trace data.
-     *
-     * @var array
-     */
+    /** Trace data. */
     public readonly array $data;
 
-    /**
-     * Trace index.
-     *
-     * @var int|null
-     */
+    /** Trace index. */
     public readonly int|null $index;
 
     /**

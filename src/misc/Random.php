@@ -11,17 +11,13 @@ namespace froq\util;
  * @see https://docs.oracle.com/javase/8/docs/api/java/util/Random.html
  *
  * @package froq\util
- * @object  froq\util\Random
+ * @class   froq\util\Random
  * @author  Kerem Güneş
  * @since   5.0
  */
 class Random
 {
-    /**
-     * Seed.
-     *
-     * @var int
-     */
+    /** Seed. */
     private int $seed;
 
     /**
@@ -65,7 +61,7 @@ class Random
         }
 
         // i.e. bound is a power of 2.
-        if (($bound & -$bound) == $bound) {
+        if (($bound & -$bound) === $bound) {
             return (int) (($bound * $this->next(31)) >> 31);
         }
 

@@ -1,9 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-util
  */
-declare(strict_types=1);
 
 use froq\common\interface\{Arrayable, Jsonable};
 
@@ -254,11 +253,7 @@ class Json extends StaticClass
  */
 class JsonObject extends stdClass implements Arrayable, Jsonable, JsonSerializable, ArrayAccess
 {
-    /**
-     * Array cache, for accelerating `get*()` methods.
-     *
-     * @var array
-     */
+    /** Array cache, for accelerating `get*()` methods. */
     private static array $__ARRAY_CACHE = [];
 
     /**
@@ -289,7 +284,7 @@ class JsonObject extends stdClass implements Arrayable, Jsonable, JsonSerializab
      */
     public function __destruct()
     {
-        $id = spl_object_id($this);
+        $id = get_object_id($this);
 
         // Drop this object from cache.
         unset(self::$__ARRAY_CACHE[$id]);
@@ -469,7 +464,7 @@ class JsonObject extends stdClass implements Arrayable, Jsonable, JsonSerializab
      */
     private function arrayify(): array
     {
-        $id = spl_object_id($this);
+        $id = get_object_id($this);
 
         // This object is read-only, so caching seems ok.
         return self::$__ARRAY_CACHE[$id] ??= $this->toArray();

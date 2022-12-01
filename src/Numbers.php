@@ -1,17 +1,15 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-util
  */
-declare(strict_types=1);
-
 namespace froq\util;
 
 /**
- * Numbers.
+ * Number utility class.
  *
  * @package froq\util
- * @object  froq\util\Numbers
+ * @class   froq\util\Numbers
  * @author  Kerem Güneş
  * @since   1.0
  * @static
@@ -19,10 +17,10 @@ namespace froq\util;
 final class Numbers extends \StaticClass
 {
     /** Constants. */
-    public const PRECISION  = PRECISION,
-                 EPSILON    = PHP_FLOAT_EPSILON,
-                 MAX_INT    = PHP_INT_MAX,
-                 MAX_FLOAT  = PHP_FLOAT_MAX;
+    public const PRECISION = PRECISION,
+                 EPSILON   = PHP_FLOAT_EPSILON,
+                 MAX_INT   = PHP_INT_MAX,
+                 MAX_FLOAT = PHP_FLOAT_MAX;
 
     /**
      * Convert.
@@ -196,12 +194,18 @@ final class Numbers extends \StaticClass
             // $ret = random_int($min, $max);
 
             srand();
-            $ret = ($min == 0 && $max == 1)
-                 ? rand(0, 1)                     // Just in case.
-                 : rand() % ($max - $min) + $min; // Prevent big numbers.
+
+            // Just in case.
+            if ($min === 0 && $max === 1) {
+                $ret = rand(0, 1);
+            } else {
+                // Prevent big numbers.
+                $ret = rand() % ($max - $min) + $min;
+            }
         } else {
             $max = $maxOrig ?? ($min + 1.0);
             $ret = lcg_value() * ($max - $min) + $min;
+
             if ($precision !== null) {
                 $ret = round($ret, $precision);
             }

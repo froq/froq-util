@@ -1,27 +1,26 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-util
  */
-declare(strict_types=1);
 
 /**
  * A class for playing with types in OOP-way.
  *
  * @package global
- * @object  Type
+ * @class   Type
  * @author  Kerem Güneş
  * @since   6.0
  */
 final class Type implements Stringable
 {
-    /** @var string */
+    /** Type name. */
     public readonly string $name;
 
-    /** @var mixed */
+    /** Reflected variable. */
     public readonly mixed $var;
 
-    /** @var XReflectionType */
+    /** Type reflection instance. */
     private readonly XReflectionType $reflection;
 
     /**
@@ -35,13 +34,17 @@ final class Type implements Stringable
         $this->var  = $var;
     }
 
-    /** @magic */
+    /**
+     * @magic
+     */
     public function __toString(): string
     {
         return $this->name;
     }
 
-    /** @magic */
+    /**
+     * @magic
+     */
     public function __debugInfo(): array
     {
         return ['name' => $this->name];

@@ -1,26 +1,23 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-util
  */
-declare(strict_types=1);
 
-use froq\common\{Error, Exception};
+use froq\common\interface\Thrownable;
+use froq\common\Exception;
 
 /**
  * An assert(ion) class with some utility methods.
  *
  * @package global
- * @object  Assert
+ * @class   Assert
  * @author  Kerem Güneş
  * @since   6.0
  */
 final class Assert
 {
-    /**
-     * Default exception class.
-     * @var string
-     **/
+    /** Default exception class. */
     private static string $exception = AssertException::class;
 
     /**
@@ -105,7 +102,7 @@ final class Assert
             }
 
             // Add cause for froq error/exception stuff.
-            if (!is_class_of($exception, Error::class, Exception::class)) {
+            if (is_class_of($exception, Thrownable::class)) {
                 $message = new $exception((string) $message, cause: new AssertException());
             } else {
                 $message = new $exception((string) $message);
@@ -261,49 +258,65 @@ final class Assert
         return self::check($assertion, $message);
     }
 
-    /** @alias check() */
+    /**
+     * @alias check()
+     */
     public static function ok(...$args)
     {
         return self::check(...$args);
     }
 
-    /** @alias checkTrue() */
+    /**
+     * @alias checkTrue()
+     */
     public static function true(...$args)
     {
         return self::checkTrue(...$args);
     }
 
-    /** @alias checkFalse() */
+    /**
+     * @alias checkFalse()
+     */
     public static function false(...$args)
     {
         return self::checkFalse(...$args);
     }
 
-    /** @alias checkEquals() */
+    /**
+     * @alias checkEquals()
+     */
     public static function equals(...$args)
     {
         return self::checkEquals(...$args);
     }
 
-    /** @alias checkType() */
+    /**
+     * @alias checkType()
+     */
     public static function type(...$args)
     {
         return self::checkType(...$args);
     }
 
-    /** @alias checkClass() */
+    /**
+     * @alias checkClass()
+     */
     public static function class(...$args)
     {
         return self::checkClass(...$args);
     }
 
-    /** @alias checkInstance() */
+    /**
+     * @alias checkInstance()
+     */
     public static function instance(...$args)
     {
         return self::checkInstance(...$args);
     }
 
-    /** @alias checkRegExp() */
+    /**
+     * @alias checkRegExp()
+     */
     public static function regExp(...$args)
     {
         return self::checkRegExp(...$args);
@@ -312,7 +325,7 @@ final class Assert
 
 /**
  * @package global
- * @object  AssertException
+ * @class   AssertException
  * @author  Kerem Güneş
  * @since   6.0
  */

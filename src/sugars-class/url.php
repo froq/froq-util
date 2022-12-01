@@ -1,9 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-util
  */
-declare(strict_types=1);
 
 use froq\common\interface\{Arrayable, Stringable};
 use froq\collection\trait\{AccessTrait, AccessMagicTrait, CountTrait, GetTrait};
@@ -12,7 +11,7 @@ use froq\collection\trait\{AccessTrait, AccessMagicTrait, CountTrait, GetTrait};
  * A URL class for working customized URLs.
  *
  * @package global
- * @object  Url
+ * @class   Url
  * @author  Kerem Güneş
  * @since   6.5
  */
@@ -81,7 +80,7 @@ class Url implements Arrayable, Stringable, \Stringable
     /**
      * @magic
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->toString();
     }
@@ -409,7 +408,7 @@ class Url implements Arrayable, Stringable, \Stringable
  * A URL-query class for working customized URL-queries.
  *
  * @package global
- * @object  UrlQuery
+ * @class   UrlQuery
  * @author  Kerem Güneş
  * @since   6.5
  */
@@ -448,7 +447,7 @@ class UrlQuery implements Arrayable, Stringable, \Stringable, Countable, ArrayAc
     /**
      * @magic
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->toString();
     }

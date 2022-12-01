@@ -1,9 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-util
  */
-declare(strict_types=1);
 
 use froq\util\Strings;
 
@@ -11,16 +10,16 @@ use froq\util\Strings;
  * A simple string buffer class, inpired by Java's StringBuffer.
  *
  * @package global
- * @object  StringBuffer
+ * @class   StringBuffer
  * @author  Kerem Güneş
  * @since   6.0
  */
 class StringBuffer implements Stringable, IteratorAggregate, JsonSerializable, ArrayAccess
 {
-    /** @var array */
+    /** Data. */
     protected array $data = [];
 
-    /** @var string|null */
+    /** Encoding. */
     protected string|null $encoding = 'UTF-8';
 
     /**
@@ -43,7 +42,9 @@ class StringBuffer implements Stringable, IteratorAggregate, JsonSerializable, A
         if ($encoding !== '') $this->encoding = $encoding;
     }
 
-    /** @magic */
+    /**
+     * @magic
+     */
     public function __toString(): string
     {
         return $this->toString();
@@ -177,7 +178,7 @@ class StringBuffer implements Stringable, IteratorAggregate, JsonSerializable, A
             $end = $end - $start;
         } else {
             $end = $end - $length;
-            if ($end == 0) {
+            if ($end === 0) {
                 $end = $length;
             }
         }
@@ -235,7 +236,7 @@ class StringBuffer implements Stringable, IteratorAggregate, JsonSerializable, A
             // Swap & free.
             [$replace, $temp] = [$temp, null];
 
-            if ($end && $end != count($replace)) {
+            if ($end !== null && $end !== count($replace)) {
                 $replace = array_pad($replace, $end, '');
             }
 
@@ -261,7 +262,7 @@ class StringBuffer implements Stringable, IteratorAggregate, JsonSerializable, A
             throw new ValueError('Argument $length cannot be negative');
         }
 
-        if ($length == 0) {
+        if ($length === 0) {
             $this->data = [];
         } elseif ($length < $this->getLength()) {
             $this->data = array_slice($this->data, 0, $length);
@@ -489,7 +490,7 @@ class StringBuffer implements Stringable, IteratorAggregate, JsonSerializable, A
         $string1 = $this->toString();
         foreach ($data as $data) {
             $string2 = is_array($data) ? join($data) : (string) $data;
-            if (str_compare($string1, $string2, $icase, encoding: $this->encoding) != 0) {
+            if (str_compare($string1, $string2, $icase, encoding: $this->encoding) !== 0) {
                 return false;
             }
         }

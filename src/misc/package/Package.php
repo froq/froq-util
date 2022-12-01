@@ -12,22 +12,15 @@ use froq\common\trait\{DataAccessMagicTrait, DataAccessTrait};
  * A class for packaging stuff dynamically.
  *
  * @package froq\util\package
- * @object  froq\util\package\Package
+ * @class   froq\util\package\Package
  * @author  Kerem Güneş
  * @since   6.0
  */
 class Package implements Arrayable, \Countable, \ArrayAccess
 {
-    /**
-     * For using access magic & offset methods.
-     */
     use DataAccessMagicTrait, DataAccessTrait;
 
-    /**
-     * Package data.
-     *
-     * @var array
-     */
+    /** Package data. */
     private array $data = [];
 
     /**

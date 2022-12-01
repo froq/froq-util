@@ -1,9 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-util
  */
-declare(strict_types=1);
 
 use froq\util\Util;
 
@@ -114,8 +113,11 @@ function get_url_fragment(string $url = null): string|null
  */
 function get_url_segment(int $i, string $url = null): string|null
 {
-    return (func_num_args() == 1) ? get_url_segments()[$i] ?? null
-                                  : get_url_segments($url)[$i] ?? null;
+    return (
+        func_num_args() === 1
+            ? get_url_segments()[$i] ?? null
+            : get_url_segments($url)[$i] ?? null
+    );
 }
 
 /**
@@ -128,6 +130,7 @@ function get_url_segment(int $i, string $url = null): string|null
 function get_url_segments(string $url = null): array|null
 {
     $path = func_num_args() ? get_url_path($url) : get_url_path();
+
     if (!$path) {
         return null;
     }

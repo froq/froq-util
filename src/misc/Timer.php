@@ -11,24 +11,16 @@ use froq\common\interface\Arrayable;
  * A timer class, just like a stopwatch.
  *
  * @package froq\util
- * @object  froq\util\Timer
+ * @class   froq\util\Timer
  * @author  Kerem Güneş
  * @since   6.0
  */
 class Timer implements Arrayable
 {
-    /**
-     * Start time.
-     *
-     * @var float|null
-     */
+    /** Start time. */
     private float|null $start = null;
 
-    /**
-     * Stop time.
-     *
-     * @var float|null
-     */
+    /** Stop time. */
     private float|null $stop = null;
 
     /**

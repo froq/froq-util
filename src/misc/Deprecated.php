@@ -9,7 +9,7 @@ namespace froq\util;
  * Deprecation trigger class.
  *
  * @package froq\util
- * @object  froq\util\Deprecated
+ * @class   froq\util\Deprecated
  * @author  Kerem Güneş
  * @since   7.0
  */

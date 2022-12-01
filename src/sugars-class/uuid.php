@@ -1,9 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-util
  */
-declare(strict_types=1);
 
 use froq\common\interface\Stringable;
 
@@ -11,7 +10,7 @@ use froq\common\interface\Stringable;
  * A simple UUID/v4 class for working customized UUIDs.
  *
  * @package global
- * @object  Uuid
+ * @class   Uuid
  * @author  Kerem Güneş
  * @since   6.0
  */
@@ -41,7 +40,7 @@ class Uuid implements Stringable, \Stringable
     /**
      * @magic
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->value;
     }

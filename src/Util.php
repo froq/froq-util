@@ -1,17 +1,15 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-util
  */
-declare(strict_types=1);
-
 namespace froq\util;
 
 /**
- * Util.
+ * Utility class.
  *
  * @package froq\util
- * @object  froq\util\Util
+ * @class   froq\util\Util
  * @author  Kerem Güneş
  * @since   1.0
  * @static
@@ -125,8 +123,10 @@ final /* fuckic static */ class Util extends \StaticClass
         }
 
         $url = $scheme . '://';
-        if ($port && !(($port == '80' && $scheme == 'http') ||
-                       ($port == '443' && $scheme == 'https'))) {
+        if ($port && !(
+            ((int) $port === 80 && $scheme === 'http') ||
+            ((int) $port === 443 && $scheme === 'https')
+        )) {
             $url .= $host . ':' . $port;
         } else {
             $url .= $host;
@@ -197,7 +197,7 @@ final /* fuckic static */ class Util extends \StaticClass
         $units = ['', 'K', 'M', 'G'];
 
         // Eg: 6.4M or 6.4MB => 6.4MB, 64M or 64MB => 64MB.
-        if (sscanf($bytes, '%f%c', $byte, $unit) == 2) {
+        if (sscanf($bytes, '%f%c', $byte, $unit) === 2) {
             $exp = array_search(strtoupper($unit), $units);
 
             return (int) ($byte * pow($base, $exp));

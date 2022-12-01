@@ -1,9 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-util
  */
-declare(strict_types=1);
 
 use froq\util\Strings;
 
@@ -11,16 +10,16 @@ use froq\util\Strings;
  * A class for playing with strings in OOP-way.
  *
  * @package global
- * @object  XString
+ * @class   XString
  * @author  Kerem Güneş
  * @since   6.0
  */
 class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayAccess
 {
-    /** @var string */
+    /** Data. */
     protected string $data;
 
-    /** @var string|null */
+    /** Encoding. */
     protected string|null $encoding = 'UTF-8';
 
     /**
@@ -37,7 +36,9 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
         if ($encoding !== '') $this->encoding = $encoding;
     }
 
-    /** @magic */
+    /**
+     * @magic
+     */
     public function __toString(): string
     {
         return $this->toString();
@@ -1072,7 +1073,7 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     {
         if (is_string($pattern)) {
             // Prepare single chars.
-            if (strlen($pattern) == 1) {
+            if (strlen($pattern) === 1) {
                 // @tome: See escape in sugars' split().
                 $pattern = RegExp::prepare($pattern, 'u', quote: true);
             }
@@ -1280,7 +1281,7 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     {
         $words = $this->split('~[^\p{L}\'\-]+~u');
 
-        return ($format == 0) ? count($words) : $words;
+        return ($format === 0) ? count($words) : $words;
     }
 
     /**
@@ -1476,7 +1477,7 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
                 $temp  = new DOMDocument();
                 $data .= $temp->saveXML($temp->importNode($node, true));
                 unset($temp);
-            } elseif ($node->nodeName == '#text') {
+            } elseif ($node->nodeName === '#text') {
                 $data .= $node->nodeValue;
             }
         }

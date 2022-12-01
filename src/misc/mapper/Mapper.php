@@ -22,38 +22,30 @@ class Mapper
 {
     /**
      * Target object.
-     *
-     * @var object
      */
     private object $object;
 
     /**
      * Mapping options.
-     *
-     * @var array
      */
     private array $options = [
         /**
          * Array of ignored properties.
-         * @var array<string>
          */
         'skip' => null,
 
         /**
          * For undefined property errors.
-         * @var bool
          */
         'throw' => false,
 
         /**
          * For casting properties to their types if defined with.
-         * @var bool
          */
         'cast' => false,
 
         /**
-         * For custom filtering skipped properties (must return false to skip).
-         * @var callable(string $name, mixed $value): bool
+         * For custom filter function skipped properties (must return false to skip).
          * @see froq\util\mapper\Mapper::isFiltered()
          */
         'filter' => null,

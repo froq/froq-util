@@ -1,10 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-util
  */
-declare(strict_types=1);
-
 
 /**
  * Check whether current env is local.
@@ -24,7 +22,7 @@ function is_local(): bool
  */
 function is_cli(): bool
 {
-    return (PHP_SAPI == 'cli');
+    return (PHP_SAPI === 'cli');
 }
 
 /**
@@ -34,7 +32,7 @@ function is_cli(): bool
  */
 function is_cli_server(): bool
 {
-    return (PHP_SAPI == 'cli-server');
+    return (PHP_SAPI === 'cli-server');
 }
 
 /**

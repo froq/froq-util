@@ -1,9 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-util
  */
-declare(strict_types=1);
 
 use froq\common\interface\{Arrayable, Jsonable};
 use froq\collection\trait\{CountTrait, EmptyTrait};
@@ -12,7 +11,7 @@ use froq\collection\trait\{CountTrait, EmptyTrait};
  * A simple item class with a key/value pair data container & access stuff.
  *
  * @package global
- * @object  Item
+ * @class   Item
  * @author  Kerem Güneş
  * @since   6.0
  */
@@ -20,7 +19,7 @@ class Item implements Arrayable, Jsonable, Countable, IteratorAggregate, ArrayAc
 {
     use CountTrait, EmptyTrait;
 
-    /** @var array */
+    /** Data. */
     private array $data = [];
 
     /**
@@ -33,31 +32,41 @@ class Item implements Arrayable, Jsonable, Countable, IteratorAggregate, ArrayAc
         $data && $this->data = [...$data];
     }
 
-    /** @magic */
+    /**
+     * @magic
+     */
     public function __debugInfo(): array
     {
         return $this->data;
     }
 
-    /** @magic */
+    /**
+     * @magic
+     */
     public function __isset(int|string $key): bool
     {
         return $this->has($key);
     }
 
-    /** @magic */
+    /**
+     * @magic
+     */
     public function __set(int|string $key, mixed $item): void
     {
         $this->set($key, $item);
     }
 
-    /** @magic */
+    /**
+     * @magic
+     */
     public function __get(int|string $key): mixed
     {
         return $this->get($key);
     }
 
-    /** @magic */
+    /**
+     * @magic
+     */
     public function __unset(int|string $key): void
     {
         $this->remove($key);

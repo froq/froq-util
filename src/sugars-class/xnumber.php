@@ -1,9 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-util
  */
-declare(strict_types=1);
 
 use froq\common\interface\{Intable, Floatable, Numberable};
 use froq\util\Numbers;
@@ -12,22 +11,22 @@ use froq\util\Numbers;
  * A class for playing with numbers in OOP-way.
  *
  * @package global
- * @object  XNumber
+ * @class   XNumber
  * @author  Kerem Güneş
  * @since   6.0
  */
 class XNumber implements Intable, Floatable, Numberable, Stringable
 {
     /** Constants. */
-    public final const PRECISION  = PRECISION,
-                       EPSILON    = PHP_FLOAT_EPSILON,
-                       MAX_INT    = PHP_INT_MAX,
-                       MAX_FLOAT  = PHP_FLOAT_MAX;
+    public final const PRECISION = PRECISION,
+                       EPSILON   = PHP_FLOAT_EPSILON,
+                       MAX_INT   = PHP_INT_MAX,
+                       MAX_FLOAT = PHP_FLOAT_MAX;
 
-    /** @var int|float */
+    /** Data. */
     protected int|float $data;
 
-    /** @var int|bool|null */
+    /** Precision. */
     protected int|bool|null $precision;
 
     /**
@@ -42,8 +41,10 @@ class XNumber implements Intable, Floatable, Numberable, Stringable
         $this->precision = $precision;
     }
 
-    /** @magic */
-    public function __toString()
+    /**
+     * @magic
+     */
+    public function __toString(): string
     {
         return $this->format();
     }
@@ -205,7 +206,9 @@ class XNumber implements Intable, Floatable, Numberable, Stringable
     {
         // @tome: A'nın % B'si kaçtır? https://hesaptablosu.net/yuzde-hesaplama/
         $data = round($this->data / 100 * abs($share), $precision);
-        if ($data == round($data)) {
+
+        // Normalize non-floats.
+        if ($data === round($data)) {
             $data = (int) $data;
         }
 
@@ -225,7 +228,9 @@ class XNumber implements Intable, Floatable, Numberable, Stringable
     {
         // @tome: A B'nin % kaçıdır? https://hesaptablosu.net/yuzde-hesaplama/
         $data = round($this->data * 100 / abs($share), $precision);
-        if ($data == round($data)) {
+
+        // Normalize non-floats.
+        if ($data === round($data)) {
             $data = (int) $data;
         }
 
@@ -245,7 +250,9 @@ class XNumber implements Intable, Floatable, Numberable, Stringable
     {
         // @tome: A'dan B'ye fark oranı (%) nedir? https://hesaptablosu.net/yuzde-hesaplama/
         $data = round((abs($share) - $this->data) * 100 / $this->data, $precision);
-        if ($data == round($data)) {
+
+        // Normalize non-floats.
+        if ($data === round($data)) {
             $data = (int) $data;
         }
 

@@ -10,31 +10,19 @@ namespace froq\util;
  * speed & memory peeks.
  *
  * @package froq\util
- * @object  froq\util\Runner
+ * @class   froq\util\Runner
  * @author  Kerem Güneş
  * @since   5.5
  */
 class Runner
 {
-    /**
-     * Run limit.
-     *
-     * @var int
-     */
+    /** Run limit. */
     private int $limit = 0;
 
-    /**
-     * Total runs.
-     *
-     * @var int
-     */
+    /** Total runs. */
     private int $runs = 0;
 
-    /**
-     * Simple, without function call.
-     *
-     * @var bool
-     */
+    /** Simple, without function call. */
     private bool $simple;
 
     /**

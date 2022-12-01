@@ -1,10 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-util
  */
-declare(strict_types=1);
-
 use froq\util\Strings;
 
 /**
@@ -340,12 +338,12 @@ function str_compare(string $string1, string $string2, bool $icase = false, int 
  */
 function mb_ucfirst(string $string, bool $tr = false, string $encoding = null): string
 {
-    if ($string == '') {
+    if ($string === '') {
         return '';
     }
 
     $first = mb_substr($string, 0, 1, $encoding);
-    if ($tr && $first == 'i') {
+    if ($tr && $first === 'i') {
         $first = 'İ';
     }
 
@@ -363,12 +361,12 @@ function mb_ucfirst(string $string, bool $tr = false, string $encoding = null): 
  */
 function mb_lcfirst(string $string, bool $tr = false, string $encoding = null): string
 {
-    if ($string == '') {
+    if ($string === '') {
         return '';
     }
 
     $first = mb_substr($string, 0, 1, $encoding);
-    if ($tr && $first == 'I') {
+    if ($tr && $first === 'I') {
         $first = 'ı';
     }
 
@@ -385,7 +383,7 @@ function mb_lcfirst(string $string, bool $tr = false, string $encoding = null): 
  */
 function mb_strrev(string $string, string $encoding = null): string
 {
-    if ($string == '') {
+    if ($string === '') {
         return '';
     }
 
@@ -425,7 +423,7 @@ function char_at(string $string, int $index, string $encoding = null): string|nu
 
     $char = mb_substr($string, $index, 1, $encoding);
 
-    return ($char != '') ? $char : null;
+    return ($char !== '') ? $char : null;
 }
 
 /**
@@ -445,5 +443,5 @@ function char_code_at(string $string, int $index, string $encoding = null): int|
 
     $char = mb_substr($string, $index, 1, $encoding);
 
-    return ($char != '') ? mb_ord($char, $encoding) : null;
+    return ($char !== '') ? mb_ord($char, $encoding) : null;
 }

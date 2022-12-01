@@ -1,15 +1,14 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-util
  */
-declare(strict_types=1);
 
 /**
  * A class for dynamic properties.
  *
  * @package global
- * @object  PlainObject
+ * @class   PlainObject
  * @author  Kerem Güneş
  * @since   6.0
  */
@@ -43,7 +42,7 @@ class PlainObject extends stdClass
  * A class for dynamic properties with array-access utility.
  *
  * @package global
- * @object  PlainArrayObject
+ * @class   PlainArrayObject
  * @author  Kerem Güneş
  * @since   6.0
  */
