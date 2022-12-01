@@ -146,7 +146,7 @@ class Uuid implements Stringable, \Stringable
      */
     public function isNull(): bool
     {
-        return hash_equals(self::NULL_HASH, $this->value);
+        return hash_equals(self::NULL, $this->value);
     }
 
     /**
