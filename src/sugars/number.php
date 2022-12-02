@@ -10,7 +10,7 @@ use froq\util\Numbers;
  * Make a number from given a numeric input.
  *
  * @param  int|float|string $input
- * @param  int|bool|null    $decimals
+ * @param  int|bool|null    $decimals @todo Use "true" type.
  * @return int|float
  * @since  3.0
  */
