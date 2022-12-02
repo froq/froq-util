@@ -13,62 +13,31 @@ namespace froq\util\mailer;
  */
 class MailerException extends \froq\common\Exception
 {
-    /**
-     * Create for empty from.
-     *
-     * @return static
-     */
     public static function forEmptyFrom(): static
     {
         return new static('Empty from, call setFrom()');
     }
 
-    /**
-     * Create for empty to.
-     *
-     * @return static
-     */
     public static function forEmptyTo(): static
     {
         return new static('Empty to, call addTo()');
     }
 
-    /**
-     * Create for null subject.
-     *
-     * @return static
-     */
     public static function forNullSubject(): static
     {
         return new static('Null subject, call setSubject()');
     }
 
-    /**
-     * Create for null body.
-     *
-     * @return static
-     */
     public static function forNullBody(): static
     {
         return new static('Null body, call setBody()');
     }
 
-    /**
-     * Create for invalid address.
-     *
-     * @param  string $address
-     * @return static
-     */
     public static function forInvalidAddress(string $address): static
     {
-        return new static('Invalid address: %q', $address);
+        return new static('Invalid address %q', $address);
     }
 
-    /**
-     * Create for error.
-     *
-     * @return static
-     */
     public static function forError(): static
     {
         $message = error_message(extract: true) ??

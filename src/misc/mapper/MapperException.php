@@ -13,11 +13,6 @@ namespace froq\util\mapper;
  */
 class MapperException extends \froq\common\Exception
 {
-    /**
-     * Create for null object.
-     *
-     * @return static
-     */
     public static function forNullObject(): static
     {
         return new static(
@@ -26,14 +21,6 @@ class MapperException extends \froq\common\Exception
         );
     }
 
-    /**
-     * Create for absent typed property class.
-     *
-     * @param  string   $class
-     * @param  object   $object
-     * @param  string   $property
-     * @return static
-     */
     public static function forAbsentTypedPropertyClass(string $class, object $object, string $property): static
     {
         return new static(
@@ -42,14 +29,6 @@ class MapperException extends \froq\common\Exception
         );
     }
 
-    /**
-     * Create for absent annotated property class.
-     *
-     * @param  string   $class
-     * @param  object   $object
-     * @param  string   $property
-     * @return static
-     */
     public static function forAbsentAnnotatedPropertyClass(string $class, object $object, string $property): static
     {
         return new static(
@@ -58,27 +37,12 @@ class MapperException extends \froq\common\Exception
         );
     }
 
-    /**
-     * Create for undefined property.
-     *
-     * @param  object $object
-     * @param  string $property
-     * @return static
-     */
     public static function forUndefinedProperty(object $object, string $property): static
     {
         $error = new \UndefinedPropertyError($object, $property);
         return new static($error->getMessage(), cause: $error);
     }
 
-    /**
-     * Create for invalid annotation / attribute.
-     *
-     * @param  string $meta
-     * @param  string $class
-     * @param  string $property
-     * @return static
-     */
     public static function forInvalidMeta(array $meta, string $class, string $property): static
     {
         return new static(
