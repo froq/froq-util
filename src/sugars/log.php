@@ -5,7 +5,7 @@
  */
 
 use froq\util\UtilException;
-use froq\logger\Logger;
+use froq\log\Logger;
 use froq\App;
 
 // Check dependencies (all others already come with froq\App).
