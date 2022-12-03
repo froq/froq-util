@@ -209,7 +209,7 @@ final /* fuckic static */ class Util extends \StaticClass
     /**
      * Make an array with given data input.
      *
-     * Note: must be used for arrays/iterables and stdClass or public var'ed objects.
+     * Note: This method must be used for arrays, iterables and stdClass or public var'ed objects.
      *
      * @param  array|object|null $data
      * @param  bool              $deep
@@ -257,7 +257,7 @@ final /* fuckic static */ class Util extends \StaticClass
     /**
      * Make an object with given data input.
      *
-     * Note: must be used for arrays/iterables and stdClass or public var'ed objects.
+     * Note: This method must be used for arrays, iterables and stdClass or public var'ed objects.
      *
      * @param  array|object|null $data
      * @param  bool              $deep
