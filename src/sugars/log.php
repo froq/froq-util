@@ -16,7 +16,7 @@ if (!class_exists(App::class, false)) {
 /**
  * Get app's logger.
  *
- * @return froq\logger\Logger.
+ * @return froq\log\Logger.
  */
 function logger(): Logger
 {
