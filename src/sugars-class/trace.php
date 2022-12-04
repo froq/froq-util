@@ -284,10 +284,7 @@ final class Trace implements ArrayAccess
      */
     public function getField(string $key, mixed $default = null): mixed
     {
-        // When ref'ed  "Cannot modify readonly property Trace::$data" error..
-        $data = $this->data;
-
-        return array_select($data, $key, $default);
+        return array_select($this->data, $key, $default);
     }
 
     /**
@@ -299,10 +296,7 @@ final class Trace implements ArrayAccess
      */
     public function getFields(array $keys, array $defaults = null): array
     {
-        // When ref'ed  "Cannot modify readonly property Trace::$data" error..
-        $data = $this->data;
-
-        return array_select($data, $keys, $defaults);
+        return array_select($this->data, $keys, $defaults);
     }
 
     /**

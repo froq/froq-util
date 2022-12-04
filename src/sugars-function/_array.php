@@ -754,18 +754,18 @@ function array_pop_left(array &$array, mixed $default = null): mixed
  * @alias Arrays.choose()
  * @since 6.0
  */
-function array_choose(array &$array, int|string|array $key, mixed $default = null, bool $drop = false): mixed
+function array_choose(array $array, int|string|array $key, mixed $default = null): mixed
 {
-    return Arrays::choose($array, $key, $default, $drop);
+    return Arrays::choose($array, $key, $default);
 }
 
 /**
  * @alias Arrays.select()
  * @since 5.0, 6.0
  */
-function array_select(array &$array, int|string|array $key, mixed $default = null, bool $drop = false, bool $combine = false): mixed
+function array_select(array $array, int|string|array $key, mixed $default = null, bool $combine = false): mixed
 {
-    return Arrays::select($array, $key, $default, $drop, $combine);
+    return Arrays::select($array, $key, $default, $combine);
 }
 
 /**

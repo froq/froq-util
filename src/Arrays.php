@@ -1785,7 +1785,7 @@ final class Arrays extends \StaticClass
             }
 
             // Keep assoc keys (do not modify).
-            return [$key, self::select($array, $key, drop: true)];
+            return [$key, self::get($array, $key, drop: true)];
         }
 
         return $default;
@@ -1816,7 +1816,7 @@ final class Arrays extends \StaticClass
      */
     public static function popKey(array &$array, int|string $key, mixed $default = null): mixed
     {
-        return self::select($array, $key, $default, drop: true);
+        return self::get($array, $key, $default, drop: true);
     }
 
     /**
@@ -1851,14 +1851,13 @@ final class Arrays extends \StaticClass
     /**
      * Choose an item from an array by given key(s).
      *
-     * @param  array                        &$array
+     * @param  array                        $array
      * @param  int|string|array<int|string> $key
      * @param  mixed|null                   $default
-     * @param  bool                         $drop
      * @return mixed|null
      * @since  6.0
      */
-    public static function choose(array &$array, int|string|array $key, mixed $default = null, bool $drop = false): mixed
+    public static function choose(array $array, int|string|array $key, mixed $default = null): mixed
     {
         if (!$array) {
             return $default;
@@ -1872,7 +1871,6 @@ final class Arrays extends \StaticClass
         foreach ((array) $key as $key) {
             if (isset($array[$key])) {
                 $value = $array[$key];
-                $drop && array_unset($array, $key);
                 break;
             }
         }
@@ -1883,15 +1881,14 @@ final class Arrays extends \StaticClass
     /**
      * Select item(s) from an array by given key(s), optionally combining keys/values.
      *
-     * @param  array                        &$array
+     * @param  array                        $array
      * @param  int|string|array<int|string> $key
      * @param  mixed|null                   $default
-     * @param  bool                         $drop
      * @param  bool                         $combine
      * @return mixed|null
      * @since  5.0, 6.0
      */
-    public static function select(array &$array, int|string|array $key, mixed $default = null, bool $drop = false, bool $combine = false): mixed
+    public static function select(array $array, int|string|array $key, mixed $default = null, bool $combine = false): mixed
     {
         if (!$array) {
             return $default;
@@ -1915,7 +1912,6 @@ final class Arrays extends \StaticClass
             }
         }
 
-        $drop && array_unset($array, ...$keys);
         $combine && $values = array_combine($keys, $values);
 
         return ($single && !$combine) ? $values[0] : $values;

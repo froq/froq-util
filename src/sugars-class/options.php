@@ -149,18 +149,11 @@ class Options extends XArrayObject
      *
      * @param  int|string|array $key
      * @param  mixed|null       $default
-     * @param  bool             $drop
      * @param  bool             $combine
      * @return mixed
      */
-    public function select(int|string|array $key, mixed $default = null, bool $drop = false, bool $combine = false): mixed
+    public function select(int|string|array $key, mixed $default = null, bool $combine = false): mixed
     {
-        $array = $this->getData();
-        $value = array_select($array, $key, $default, $drop, $combine);
-
-        // Update modified data.
-        $drop && $this->setData($array);
-
-        return $value;
+        return array_select($this->getData(), $key, $default, $combine);
     }
 }

@@ -240,13 +240,12 @@ class ItemList implements Arrayable, Jsonable, Countable, IteratorAggregate, Arr
      *
      * @param  int|array  $key
      * @param  mixed|null $default
-     * @param  bool       $drop
      * @param  bool       $combine
      * @return mixed
      */
-    public function select(int|array $key, mixed $default = null, bool $drop = false, bool $combine = false): mixed
+    public function select(int|array $key, mixed $default = null, bool $combine = false): mixed
     {
-        return array_select($this->data, $key, $default, $drop, $combine);
+        return array_select($this->data, $key, $default, $combine);
     }
 
     /**
