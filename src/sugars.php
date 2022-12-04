@@ -25,10 +25,10 @@ function sugar(string|array $name): void {
  * Yes man..
  */
 function equal($a, $b, ...$c): bool {
-    return ($a == $b) || ($c && in_array($a, [$b, ...$c]));
+    return ($a == $b) || ($c && in_array($a, $c));
 }
 function equals($a, $b, ...$c): bool {
-    return ($a === $b) || ($c && in_array($a, [$b, ...$c], true));
+    return ($a === $b) || ($c && in_array($a, $c, true));
 }
 
 /**
