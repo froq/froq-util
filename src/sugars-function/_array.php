@@ -769,21 +769,27 @@ function array_select(array $array, int|string|array $key, mixed $default = null
 }
 
 /**
- * @alias Arrays.select(drop=false)
- * @since 4.9, 6.0
- */
-function array_pick(array &$array, int|string|array $key, mixed $default = null, bool $combine = false): mixed
-{
-    return Arrays::select($array, $key, $default, false, $combine);
-}
-
-/**
- * @alias Arrays.select(drop=true)
- * @since 4.13, 6.0
+ * Pluck one or many items from given array.
+ *
+ * @param  array      &$array
+ * @param  array       $key
+ * @param  mixed|null  $default
+ * @param  bool        $combine
+ * @since  4.13, 6.0
+ * @return mixed
  */
 function array_pluck(array &$array, int|string|array $key, mixed $default = null, bool $combine = false): mixed
 {
-    return Arrays::select($array, $key, $default, true, $combine);
+    $ret = Arrays::select($array, $key, $default, true);
+
+    // Drop used keys.
+    $ret && Arrays::unset($array, ...array_keys($ret));
+
+    return (
+        is_array($key)
+            ? ($combine ? $ret : array_values($ret))
+            : ($combine ? $ret : array_first(array_values($ret)))
+    );
 }
 
 /** Additions. */
