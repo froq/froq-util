@@ -4,7 +4,7 @@
  * Apache License 2.0 · http://github.com/froq/froq-util
  */
 
-use froq\common\interface\{Arrayable, Listable, Jsonable, Collectable, Iteratable, IteratableReverse};
+use froq\common\interface\{Arrayable, Listable, Jsonable, Iteratable, IteratableReverse};
 use froq\collection\trait\{SortTrait, FilterTrait, MapTrait, ReduceTrait, EachTrait, CountTrait, EmptyTrait,
     FindTrait, FirstLastTrait, MinMaxTrait, CalcAverageTrait, CalcProductTrait, CalcSumTrait,
     IteratorTrait, ToArrayTrait, ToListTrait, ToJsonTrait};
@@ -452,8 +452,7 @@ trait MapSetTrait
  * @author  Kerem Güneş
  * @since   5.25
  */
-class Map implements Arrayable, Listable, Jsonable, Collectable, Iteratable, IteratableReverse,
-    Countable, Iterator, ArrayAccess
+class Map implements Arrayable, Listable, Jsonable, Iteratable, IteratableReverse, Countable, Iterator, ArrayAccess
 {
     use MapSetTrait;
 
@@ -740,8 +739,7 @@ class Map implements Arrayable, Listable, Jsonable, Collectable, Iteratable, Ite
  * @author  Kerem Güneş
  * @since   5.25
  */
-class Set implements Arrayable, Listable, Jsonable, Collectable, Iteratable, IteratableReverse,
-    Countable, Iterator, ArrayAccess
+class Set implements Arrayable, Listable, Jsonable, Iteratable, IteratableReverse, Countable, Iterator, ArrayAccess
 {
     use MapSetTrait;
 

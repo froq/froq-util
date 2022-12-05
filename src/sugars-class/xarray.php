@@ -4,7 +4,7 @@
  * Apache License 2.0 · http://github.com/froq/froq-util
  */
 
-use froq\common\interface\{Arrayable, Listable, Jsonable, Collectable, Iteratable, IteratableReverse};
+use froq\common\interface\{Arrayable, Listable, Jsonable, Iteratable, IteratableReverse};
 use froq\collection\trait\{SortTrait, FilterTrait, MapTrait, ReduceTrait, ApplyTrait, AggregateTrait,
     EachTrait, CountTrait, EmptyTrait, HasTrait, GetTrait, AccessTrait, AccessMagicTrait,
     FindTrait, FirstLastTrait, MinMaxTrait, CalcAverageTrait, CalcProductTrait, CalcSumTrait,
@@ -19,8 +19,7 @@ use froq\collection\iterator\{ArrayIterator, ReverseArrayIterator};
  * @author  Kerem Güneş
  * @since   6.0
  */
-class XArray implements Arrayable, Listable, Jsonable, Collectable, Iteratable, IteratableReverse,
-    Countable, Iterator, ArrayAccess
+class XArray implements Arrayable, Listable, Jsonable, Iteratable, IteratableReverse, Countable, Iterator, ArrayAccess
 {
     use SortTrait, FilterTrait, MapTrait, ReduceTrait, ApplyTrait, AggregateTrait,
         EachTrait, CountTrait, EmptyTrait, HasTrait, GetTrait, AccessTrait, AccessMagicTrait,
