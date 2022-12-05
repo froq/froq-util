@@ -9,7 +9,6 @@ use froq\collection\trait\{SortTrait, FilterTrait, MapTrait, ReduceTrait, EachTr
     FindTrait, FirstLastTrait, MinMaxTrait, CalcAverageTrait, CalcProductTrait, CalcSumTrait,
     IteratorTrait, ToArrayTrait, ToListTrait, ToJsonTrait};
 use froq\collection\iterator\{ArrayIterator, ReverseArrayIterator};
-use froq\collection\{Collection, CollectionInterface};
 
 /**
  * A trait used by Map/Set classes.
@@ -389,14 +388,6 @@ trait MapSetTrait
     public function copyFrom(self $that): static
     {
         return $this->update($that->data);
-    }
-
-    /**
-     * @inheritDoc froq\common\interface\Collectable
-     */
-    public function toCollection(): CollectionInterface
-    {
-        return new Collection($this->data);
     }
 
     /**

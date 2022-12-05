@@ -10,7 +10,6 @@ use froq\collection\trait\{SortTrait, FilterTrait, MapTrait, ReduceTrait, ApplyT
     FindTrait, FirstLastTrait, MinMaxTrait, CalcAverageTrait, CalcProductTrait, CalcSumTrait,
     IteratorTrait, ToArrayTrait, ToListTrait, ToJsonTrait};
 use froq\collection\iterator\{ArrayIterator, ReverseArrayIterator};
-use froq\collection\{Collection, CollectionInterface};
 
 /**
  * A class for playing with arrays in OOP-way.
@@ -1352,14 +1351,6 @@ class XArray implements Arrayable, Listable, Jsonable, Collectable, Iteratable, 
     public function copyFrom(self $that): static
     {
         return $this->update($that->data);
-    }
-
-    /**
-     * @inheritDoc froq\common\interface\Collectable
-     */
-    public function toCollection(): CollectionInterface
-    {
-        return new Collection($this->data);
     }
 
     /**
