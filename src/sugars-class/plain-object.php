@@ -46,8 +46,16 @@ class PlainObject extends stdClass
  * @author  Kerem Güneş
  * @since   6.0
  */
-class PlainArrayObject extends PlainObject implements ArrayAccess
+class PlainArrayObject extends PlainObject implements Countable, ArrayAccess
 {
+    /**
+     * @inheritDoc Countable
+     */
+    public function count(): int
+    {
+        return count((array) $this);
+    }
+
     /**
      * @inheritDoc ArrayAccess
      */
