@@ -6,7 +6,7 @@
 
 use froq\common\interface\{Arrayable, Stringable};
 use froq\common\trait\{DataAccessTrait, DataAccessMagicTrait};
-use froq\collection\trait\{CountTrait, GetTrait, FilterTrait, MapTrait};
+use froq\collection\trait\{CountTrait, EmptyTrait, GetTrait, FilterTrait, MapTrait};
 
 /**
  * A URL class for working customized URLs.
@@ -455,8 +455,8 @@ class UrlQuery implements Arrayable, Stringable, \Stringable, Countable, ArrayAc
     /** For ArrayAccess and __set(),__get() etc. */
     use DataAccessTrait, DataAccessMagicTrait;
 
-    /** For Countable and getInt(),getBool(),filter(),map() etc. */
-    use CountTrait, GetTrait, FilterTrait, MapTrait;
+    /** For Countable and empty(),getInt(),getBool(),filter(),map() etc. */
+    use CountTrait, EmptyTrait, GetTrait, FilterTrait, MapTrait;
 
     /** Data. */
     private array $data = [];
