@@ -183,14 +183,18 @@ function http_build_url(array $data): string
     }
 
     if (isset($data['queryParams'])) {
-        // Update query with query params.
         if (isset($data['query'])) {
+            // Update query with query params.
             $query = http_parse_query_string($data['query']);
             $query = array_replace_recursive($query, $data['queryParams']);
             $data['query'] = http_build_query_string($query);
         } else {
             $data['query'] = http_build_query_string($data['queryParams']);
         }
+    }
+
+    if (isset($data['query']) && is_array($data['query'])) {
+        $data['query'] = http_build_query_string($data['query']);
     }
 
     isset($data['path'])     && $url .= $data['path'];
