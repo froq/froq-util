@@ -506,9 +506,7 @@ class UrlQuery implements Arrayable, Stringable, \Stringable, Countable, ArrayAc
      */
     public function has(string $key): bool
     {
-        $value = $this->get($key);
-
-        return ($value !== null && $value !== '');
+        return isset($this->data[$key]);
     }
 
     /**
