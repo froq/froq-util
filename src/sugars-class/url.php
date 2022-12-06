@@ -5,7 +5,8 @@
  */
 
 use froq\common\interface\{Arrayable, Stringable};
-use froq\collection\trait\{AccessTrait, AccessMagicTrait, CountTrait, GetTrait};
+use froq\common\trait\{DataAccessTrait, DataAccessMagicTrait};
+use froq\collection\trait\{CountTrait, GetTrait, FilterTrait, MapTrait};
 
 /**
  * A URL class for working customized URLs.
@@ -17,7 +18,7 @@ use froq\collection\trait\{AccessTrait, AccessMagicTrait, CountTrait, GetTrait};
  */
 class Url implements Arrayable, Stringable, \Stringable
 {
-    /** Data (keys only). */
+    /** Components. */
     private array $data = [
         'origin', 'authority', 'scheme', 'host', 'port',
         'user', 'pass', 'path', 'query', 'fragment',
@@ -71,8 +72,8 @@ class Url implements Arrayable, Stringable, \Stringable
             // Set data fields via setters.
             foreach ($this->data as $key => $_) {
                 isset($data[$key])
-                    && ($method = 'set' . $key)
-                    && $this->$method($data[$key]);
+                && ($method = 'set' . $key)
+                && $this->$method($data[$key]);
             }
         }
     }
@@ -83,6 +84,43 @@ class Url implements Arrayable, Stringable, \Stringable
     public function __toString(): string
     {
         return $this->toString();
+    }
+
+    /**
+     * @magic
+     */
+    public function __debugInfo(): array
+    {
+        return $this->data;
+    }
+
+    /**
+     * @throws UrlError
+     * @magic
+     */
+    public function __set(string $name, mixed $value): void
+    {
+        if (array_key_exists($name, $this->data)) {
+            $setter = 'set' . $name;
+            $this->$setter($value);
+            return;
+        }
+
+        throw new UrlError('Invalid component: %q', $name);
+    }
+
+    /**
+     * @throws UrlError
+     * @magic
+     */
+    public function __get(string $name): mixed
+    {
+        if (array_key_exists($name, $this->data)) {
+            $getter = 'get' . $name;
+            return $this->$getter();
+        }
+
+        throw new UrlError('Invalid component: %q', $name);
     }
 
     /**
@@ -400,7 +438,7 @@ class Url implements Arrayable, Stringable, \Stringable
      */
     public static function parse(string $url, array $check = []): array
     {
-        return (new Url($url, $check))->toArray();
+        return (new self($url, $check))->toArray();
     }
 }
 
@@ -415,10 +453,10 @@ class Url implements Arrayable, Stringable, \Stringable
 class UrlQuery implements Arrayable, Stringable, \Stringable, Countable, ArrayAccess
 {
     /** For ArrayAccess and __set(),__get() etc. */
-    use AccessTrait, AccessMagicTrait;
+    use DataAccessTrait, DataAccessMagicTrait;
 
-    /** For Countable and getInt(),getBool() etc. */
-    use CountTrait, GetTrait;
+    /** For Countable and getInt(),getBool(),filter(),map() etc. */
+    use CountTrait, GetTrait, FilterTrait, MapTrait;
 
     /** Data. */
     private array $data = [];
@@ -426,7 +464,7 @@ class UrlQuery implements Arrayable, Stringable, \Stringable, Countable, ArrayAc
     /**
      * Constructor.
      *
-     * @param array|null $source
+     * @param string|array|null $source
      */
     public function __construct(string|array $source = null)
     {
@@ -453,35 +491,20 @@ class UrlQuery implements Arrayable, Stringable, \Stringable, Countable, ArrayAc
     }
 
     /**
+     * @magic
+     */
+    public function __debugInfo(): array
+    {
+        return $this->data;
+    }
+
+    /**
      * Check if a key was set & not null.
      *
      * @param  string $key
      * @return bool
      */
     public function has(string $key): bool
-    {
-        return isset($this->data[$key]);
-    }
-
-    /**
-     * Check if a key was set.
-     *
-     * @param  string $key
-     * @return bool
-     */
-    public function hasKey(string $key): bool
-    {
-        return array_key_exists($key, $this->data);
-    }
-
-    /**
-     * Check if a key was set & not empty "" or null, set ref'ed value with fetched value.
-     *
-     * @param  string       $key
-     * @param  string|null &$value
-     * @return bool
-     */
-    public function hasValue(string $key, string|null &$value = null): bool
     {
         $value = $this->get($key);
 
@@ -505,11 +528,11 @@ class UrlQuery implements Arrayable, Stringable, \Stringable, Countable, ArrayAc
     /**
      * Get an item (with dot notation).
      *
-     * @param  string     $key
-     * @param  mixed|null $default
+     * @param  string|array $key
+     * @param  mixed|null   $default
      * @return mixed
      */
-    public function get(string $key, mixed $default = null): mixed
+    public function get(string|array $key, mixed $default = null): mixed
     {
         $value = array_get($this->data, $key, $default);
 
@@ -519,10 +542,10 @@ class UrlQuery implements Arrayable, Stringable, \Stringable, Countable, ArrayAc
     /**
      * Remove an item (with dot notation).
      *
-     * @param  string $key
+     * @param  string|array $key
      * @return self
      */
-    public function remove(string $key): self
+    public function remove(string|array $key): self
     {
         array_remove($this->data, $key);
 
@@ -530,7 +553,7 @@ class UrlQuery implements Arrayable, Stringable, \Stringable, Countable, ArrayAc
     }
 
     /**
-     * Get a subquery as a UrlQuery or null.
+     * Get a subquery as a `UrlQuery` if it's an array or null.
      *
      * @param  string $key
      * @return UrlQuery|null
@@ -539,7 +562,7 @@ class UrlQuery implements Arrayable, Stringable, \Stringable, Countable, ArrayAc
     {
         $query = $this->get($key);
 
-        return $query ? new UrlQuery((array) $query) : null;
+        return is_array($query) ? new UrlQuery($query) : null;
     }
 
     /**
