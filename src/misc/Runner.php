@@ -95,19 +95,7 @@ class Runner
     }
 
     /**
-     * Create an instance with given limit.
-     *
-     * @param  int  $limit
-     * @param  bool $simple
-     * @return self
-     */
-    public static function limit(int $limit, bool $simple = false): self
-    {
-        return new self($limit, $simple);
-    }
-
-    /**
-     * Create an instance with/without given limit.
+     * Static initializer.
      *
      * @param  int  $limit
      * @param  bool $simple
