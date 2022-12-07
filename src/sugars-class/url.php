@@ -242,7 +242,7 @@ class Url implements Arrayable, Stringable, \Stringable
      */
     public function setHost(string $host, bool $ip = false): self
     {
-        if (!preg_test('~^(?:([\w\-\.]+))?([\w\-]+)\.([\w]+)$~', $host)) {
+        if (!preg_test('~^(?:([\w\-\.]+\.))?([\w\-]+)(?:\.([\w]+))?$~', $host)) {
             throw new UrlError('Invalid host: %q', $host);
         } elseif ($ip && ip2long($host) === false) {
             throw new UrlError('Invalid host IP: %q', $host);
@@ -548,19 +548,6 @@ class UrlQuery implements Arrayable, Stringable, \Stringable, Countable, ArrayAc
         array_remove($this->data, $key);
 
         return $this;
-    }
-
-    /**
-     * Get a subquery as a `UrlQuery` if it's an array or null.
-     *
-     * @param  string $key
-     * @return UrlQuery|null
-     */
-    public function query(string $key): UrlQuery|null
-    {
-        $query = $this->get($key);
-
-        return is_array($query) ? new UrlQuery($query) : null;
     }
 
     /**
