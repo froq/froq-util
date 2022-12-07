@@ -158,7 +158,7 @@ class Url implements Arrayable, Stringable, \Stringable
      */
     public function getOrigin(): string|null
     {
-        return $this->data['origin'] ?? null;
+        return $this->data['origin'];
     }
 
     /**
@@ -201,7 +201,7 @@ class Url implements Arrayable, Stringable, \Stringable
      */
     public function getAuthority(): string|null
     {
-        return $this->data['authority'] ?? null;
+        return $this->data['authority'];
     }
 
     /**
@@ -229,7 +229,7 @@ class Url implements Arrayable, Stringable, \Stringable
      */
     public function getScheme(): string|null
     {
-        return $this->data['scheme'] ?? null;
+        return $this->data['scheme'];
     }
 
     /**
@@ -260,7 +260,7 @@ class Url implements Arrayable, Stringable, \Stringable
      */
     public function getHost(): string|null
     {
-        return $this->data['host'] ?? null;
+        return $this->data['host'];
     }
 
     /**
@@ -287,7 +287,7 @@ class Url implements Arrayable, Stringable, \Stringable
      */
     public function getPort(): int|null
     {
-        return $this->data['port'] ?? null;
+        return $this->data['port'];
     }
 
     /**
@@ -310,7 +310,7 @@ class Url implements Arrayable, Stringable, \Stringable
      */
     public function getUser(): string|null
     {
-        return $this->data['user'] ?? null;
+        return $this->data['user'];
     }
 
     /**
@@ -333,7 +333,7 @@ class Url implements Arrayable, Stringable, \Stringable
      */
     public function getPass(): string|null
     {
-        return $this->data['pass'] ?? null;
+        return $this->data['pass'];
     }
 
     /**
@@ -359,7 +359,7 @@ class Url implements Arrayable, Stringable, \Stringable
      */
     public function getPath(): string|null
     {
-        return $this->data['path'] ?? null;
+        return $this->data['path'];
     }
 
     /**
@@ -386,7 +386,7 @@ class Url implements Arrayable, Stringable, \Stringable
      */
     public function getQuery(): UrlQuery|null
     {
-        return $this->data['query'] ?? null;
+        return $this->data['query'];
     }
 
     /**
@@ -409,7 +409,7 @@ class Url implements Arrayable, Stringable, \Stringable
      */
     public function getFragment(): string|null
     {
-        return $this->data['fragment'] ?? null;
+        return $this->data['fragment'];
     }
 
     /**
