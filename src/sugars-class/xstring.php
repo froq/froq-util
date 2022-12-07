@@ -547,14 +547,14 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     /**
      * Replace.
      *
-     * @param  string|array|RegExp    $search
-     * @param  string|array|callable  $replace
-     * @param  bool                   $icase
-     * @param  int                    $limit
+     * @param  string|array|RegExp   $search
+     * @param  string|array|callable $replace
+     * @param  bool                  $icase
+     * @param  int                   $limit
      * @param  int|null              &$count
-     * @param  int|array              $flags
-     * @param  string|null            $class
-     * @param  bool                   $re @internal
+     * @param  int|array             $flags
+     * @param  string|null           $class
+     * @param  bool                  $re @internal
      * @return self
      */
     public function replace(string|array|RegExp $search, string|array|callable $replace, bool $icase = false,
@@ -575,51 +575,18 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     /**
      * Replace-callback, for callback replacement.
      *
-     * @param  string|RegExp  $search
-     * @param  callable       $callback
-     * @param  int            $limit
+     * @param  string|RegExp $search
+     * @param  callable      $callback
+     * @param  int           $limit
      * @param  int|null      &$count
-     * @param  array|int      $flags
-     * @param  string|null    $class
+     * @param  array|int     $flags
+     * @param  string|null   $class
      * @return self
      */
     public function replaceCallback(string|RegExp $search, callable $callback, int $limit = -1, int &$count = null,
         int|array $flags = 0, string $class = null): self
     {
         return $this->replace($search, $callback, false, $limit, $count, $flags, $class, true);
-    }
-
-    /**
-     * Replace-RegExp, for RegExp replacement.
-     *
-     * @param  string|RegExp    $search
-     * @param  string|callable  $replace
-     * @param  int              $limit
-     * @param  int|null        &$count
-     * @param  int|array        $flags
-     * @param  string|null      $class
-     * @return self
-     */
-    public function replaceRegExp(string|RegExp $search, string|callable $replace, int $limit = -1, int &$count = null,
-        int|array $flags = 0, string $class = null): self
-    {
-        return $this->replace($search, $replace, false, $limit, $count, $flags, $class, true);
-    }
-
-    /**
-     * Replace-RegExpMatch, for RegExpMatch as callable argument.
-     *
-     * @param  string|RegExp $search
-     * @param  callable      $replace
-     * @param  int           $limit
-     * @param  int|null     &$count
-     * @param  int|array     $flags
-     * @return self
-     */
-    public function replaceRegExpMatch(string|RegExp $search, callable $replace, int $limit = -1, int &$count = null,
-        int|array $flags = 0): self
-    {
-        return $this->replace($search, $replace, false, $limit, $count, $flags, RegExpMatch::class, false);
     }
 
     /**
@@ -667,11 +634,11 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     /**
      * Remove.
      *
-     * @param  string|array|RegExp  $search
-     * @param  bool                 $icase
-     * @param  int                  $limit
+     * @param  string|array|RegExp $search
+     * @param  bool                $icase
+     * @param  int                 $limit
      * @param  int|null            &$count
-     * @param  bool                 $re @internal
+     * @param  bool                $re @internal
      * @return self
      */
     public function remove(string|array|RegExp $search, bool $icase = false, int $limit = -1, int &$count = null,
