@@ -110,14 +110,13 @@ class RegExp implements Stringable
     /**
      * Perform a search & replace.
      *
-     * @param  string|array  $input
-     * @param  string|array  $replace
-     * @param  int           $limit
-     * @param  int|null     &$count
-     * @return string|array|null
+     * @param  string   $input
+     * @param  string   $replace
+     * @param  int      $limit
+     * @param  int|null &$count
+     * @return string|null
      */
-    public function filter(string|array $input, string|array $replace, int $limit = -1, int &$count = null,
-        ): string|array|null
+    public function filter(string $input, string $replace, int $limit = -1, int &$count = null): string|null
     {
         $ret =@ preg_filter($this->pattern, $replace, $input, $limit, $count);
 
@@ -131,26 +130,22 @@ class RegExp implements Stringable
     /**
      * Perform a search & replace.
      *
-     * @param  string|array           $input
-     * @param  string|array|callable  $replace
-     * @param  int                    $limit
-     * @param  int|null              &$count
-     * @param  int|array              $flags
-     * @param  string|null            $class
-     * @return string|array|null
+     * @param  string          $input
+     * @param  string|callable $replace
+     * @param  int             $limit
+     * @param  int|null        &$count
+     * @param  int|array       $flags
+     * @param  string|null     $class
+     * @return string|null
      */
-    public function replace(string|array $input, string|array|callable $replace, int $limit = -1, int &$count = null,
-        int|array $flags = 0, string $class = null): string|array|null
+    public function replace(string $input, string|callable $replace, int $limit = -1, int &$count = null,
+        int|array $flags = 0, string $class = null): string|null
     {
         $this->classCheck($class);
         $this->flagsCheck($flags);
 
         $callback = is_callable($replace);
         $function = $callback ? 'preg_replace_callback' : 'preg_replace';
-
-        // @cancel: Param $class added.
-        // Append Map instance as second argument to given callback.
-        // $callback && $replace = fn($match) => $replace($match, new $class($match));
 
         // Send class instance as match argument when a class given.
         if ($callback && $class) {
@@ -168,18 +163,18 @@ class RegExp implements Stringable
     }
 
     /**
-     * Perform a search & replace, passing array to callable argument.
+     * Perform a search & callback replace.
      *
-     * @param  string|array  $input
-     * @param  callable      $callback
-     * @param  int           $limit
-     * @param  int|null     &$count
-     * @param  array|int     $flags
-     * @param  string|null   $class
-     * @return string|array|null
+     * @param  string      $input
+     * @param  callable    $callback
+     * @param  int         $limit
+     * @param  int|null    &$count
+     * @param  array|int   $flags
+     * @param  string|null $class
+     * @return string|null
      */
-    public function replaceCallback(string|array $input, callable $callback, int $limit = -1, int &$count = null,
-        int|array $flags = 0, string $class = null): string|array|null
+    public function replaceCallback(string $input, callable $callback, int $limit = -1, int &$count = null,
+        int|array $flags = 0, string $class = null): string|null
     {
         return $this->replace($input, $callback, $limit, $count, $flags, $class);
     }
@@ -187,12 +182,12 @@ class RegExp implements Stringable
     /**
      * Preform a remove.
      *
-     * @param  string|array  $input
-     * @param  int           $limit
-     * @param  int|null     &$count
-     * @return string|array|null
+     * @param  string   $input
+     * @param  int      $limit
+     * @param  int|null &$count
+     * @return string|null
      */
-    public function remove(string|array $input, int $limit = -1, int &$count = null): string|array|null
+    public function remove(string $input, int $limit = -1, int &$count = null): string|null
     {
         if (is_string($input)) {
             $ret =@ preg_remove($this->pattern, $input, $limit, $count);
