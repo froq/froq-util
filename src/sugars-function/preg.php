@@ -28,9 +28,9 @@ function preg_test(string $pattern, string $subject): bool
 /**
  * Perform a regular expression search & remove.
  *
- * @param  string|array  $pattern
- * @param  string|array  $subject
- * @param  int|null      $limit
+ * @param  string|array $pattern
+ * @param  string|array $subject
+ * @param  int|null     $limit
  * @param  int|null     &$count
  * @return string|array|null
  * @since  4.0
@@ -57,11 +57,11 @@ function preg_remove(string|array $pattern, string|array $subject, int $limit = 
 /**
  * Same as preg_match() but for only named capturing groups.
  *
- * @param  string      $pattern
- * @param  string      $subject
+ * @param  string     $pattern
+ * @param  string     $subject
  * @param  array|null &$match
- * @param  int         $flags
- * @param  int         $offset
+ * @param  int        $flags
+ * @param  int        $offset
  * @return int|false
  * @since  6.0
  */
@@ -84,11 +84,11 @@ function preg_match_names(string $pattern, string $subject, array|null &$match, 
 /**
  * Same as preg_match_all() but for only named capturing groups.
  *
- * @param  string      $pattern
- * @param  string      $subject
+ * @param  string     $pattern
+ * @param  string     $subject
  * @param  array|null &$match
- * @param  int         $flags
- * @param  int         $offset
+ * @param  int        $flags
+ * @param  int        $offset
  * @return int|false
  * @since  6.0
  */
