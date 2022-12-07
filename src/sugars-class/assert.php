@@ -4,9 +4,6 @@
  * Apache License 2.0 · http://github.com/froq/froq-util
  */
 
-use froq\common\interface\Thrownable;
-use froq\common\Exception;
-
 /**
  * An assert(ion) class with some utility methods.
  *
@@ -24,7 +21,7 @@ final class Assert
      * @param  bool                  $assertion
      * @param  string|Throwable|null $message
      * @return bool
-     * @throws Throwable|AssertException
+     * @throws Error|Exception|AssertException
      */
     public static function assert(bool $assertion, string|Throwable $message = null): bool
     {
@@ -33,7 +30,7 @@ final class Assert
                 $message = new AssertException($message);
             }
 
-            throw self::message($message);
+            throw $message;
         }
 
         return $assertion;
@@ -45,7 +42,7 @@ final class Assert
      * @param  mixed                 $input
      * @param  string|Throwable|null $message
      * @return bool
-     * @causes Throwable|AssertException
+     * @causes Error|Exception|AssertException
      */
     public static function true(mixed $input, string|Throwable $message = null): bool
     {
@@ -58,7 +55,7 @@ final class Assert
      * @param  mixed                 $input
      * @param  string|Throwable|null $message
      * @return bool
-     * @causes Throwable|AssertException
+     * @causes Error|Exception|AssertException
      */
     public static function false(mixed $input, string|Throwable $message = null): bool
     {
@@ -72,7 +69,7 @@ final class Assert
      * @param  mixed                 $inputs
      * @param  string|Throwable|null $message
      * @return bool
-     * @causes Throwable|AssertException
+     * @causes Error|Exception|AssertException
      */
     public static function equals(mixed $input, mixed $inputs, string|Throwable $message = null): bool
     {
@@ -88,7 +85,7 @@ final class Assert
      * @param  string                $type
      * @param  string|Throwable|null $message
      * @return bool
-     * @causes Throwable|AssertException
+     * @causes Error|Exception|AssertException
      */
     public static function type(mixed $input, string $type, string|Throwable $message = null): bool
     {
@@ -105,7 +102,7 @@ final class Assert
      * @param  string                $class
      * @param  string|Throwable|null $message
      * @return bool
-     * @causes Throwable|AssertException
+     * @causes Error|Exception|AssertException
      */
     public static function class(mixed $input, string $class, string|Throwable $message = null): bool
     {
@@ -121,7 +118,7 @@ final class Assert
      * @param  string                $class
      * @param  string|Throwable|null $message
      * @return bool
-     * @causes Throwable|AssertException
+     * @causes Error|Exception|AssertException
      */
     public static function instance(mixed $input, string|object $class, string|Throwable $message = null): bool
     {
@@ -137,7 +134,7 @@ final class Assert
      * @param  string                $pattern
      * @param  string|Throwable|null $message
      * @return bool
-     * @causes Throwable|AssertException
+     * @causes Error|Exception|AssertException
      */
     public static function regexp(string $input, string $pattern, string|Throwable $message = null): bool
     {
@@ -153,5 +150,5 @@ final class Assert
  * @author  Kerem Güneş
  * @since   6.0
  */
-class AssertException extends Exception {}
+class AssertException extends froq\common\Exception {}
 
