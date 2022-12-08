@@ -1003,25 +1003,30 @@ function get_real_path(string $path, string|bool $check = null): string|null
  */
 function get_path_info(string $path, string|int $component = null): string|array|null
 {
-    $path = get_real_path($path);
-    if (!$path) {
+    $orig = $path;
+
+    if (!$path = get_real_path($path)) {
         return null;
     }
     if (!$info = pathinfo($path)) {
         return null;
     }
 
+    // Really really, real path.
+    if ($realpath = realpath($path)) {
+        @ $filetype = filetype($orig) ?: filetype($path);
+    } else {
+        $realpath = $filetype = null;
+    }
+
     // Drop "" fields, put in order.
     $info = array_filter($info, 'strlen');
     $info = array_select($info, ['dirname', 'basename', 'filename', 'extension'], combine: true);
 
-    // Really really, real path.
-    $realpath = ($realpath = realpath($path)) !== false ? $realpath : null;
-
-    $ret = ['path' => $path, 'realpath' => $realpath, 'type' => $realpath ? filetype($path) : null] + $info;
+    $ret = ['path' => $path, 'realpath' => $realpath, 'type' => $filetype] + $info;
 
     if (is_dir($path)) {
-        $ret['filename'] = $ret['extension'] = null;
+        $ret['filename']  = $ret['extension'] = null;
     } else {
         $ret['filename']  = file_name($path, false);
         $ret['extension'] = file_extension($path, false);
