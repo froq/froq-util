@@ -932,7 +932,7 @@ function get_real_path(string $path, string|bool $check = null, bool $real = tru
         $path = '.' . $sep . $path;
     }
 
-    foreach (explode($sep, $path) as $i => $cur) {
+    foreach (split($sep, $path) as $i => $cur) {
         if ($i === 0) {
             if ($cur === '~') { // Home path (eg: ~/Desktop).
                 $ret = getenv('HOME') ?: '';
@@ -966,6 +966,11 @@ function get_real_path(string $path, string|bool $check = null, bool $real = tru
 
         // Prepend separator current.
         $ret .= $sep . $cur;
+    }
+
+    // For unix root stuff.
+    if ($ret === '' && $path === '/') {
+        $ret = '/';
     }
 
     if ($check && !$check_path($check, $ret)) {
