@@ -1016,7 +1016,7 @@ function get_path_info(string $path, string|int $component = null): string|array
     $info = array_select($info, ['dirname', 'basename', 'filename', 'extension'], combine: true);
 
     // Really really, real path.
-    $realpath = realpath($path);
+    $realpath = ($realpath = realpath($path)) !== false ? $realpath : null;
 
     $ret = ['path' => $path, 'realpath' => $realpath, 'type' => $realpath ? filetype($path) : null] + $info;
 
