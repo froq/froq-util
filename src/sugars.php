@@ -968,7 +968,7 @@ function get_real_path(string $path, string|bool $check = null, bool $real = tru
         $ret .= $sep . $cur;
     }
 
-    // For unix root stuff.
+    // For Unix root stuff.
     if ($ret === '' && $path === '/') {
         $ret = '/';
     }
@@ -978,12 +978,9 @@ function get_real_path(string $path, string|bool $check = null, bool $real = tru
     }
 
     // Normalize.
-    if ($ret) {
+    if ($ret !== '') {
         // Drop repeating separators.
-        $ret = preg_replace(
-            '~(['. preg_quote(PATH_SEPARATOR . DIRECTORY_SEPARATOR) .'])\1+~',
-            '\1', $ret
-        );
+        $ret = preg_replace('~(['. preg_quote(PATH_SEPARATOR . DIRECTORY_SEPARATOR) .'])\1+~', '\1', $ret);
 
         // Drop ending slashes.
         if ($ret !== PATH_SEPARATOR && $ret !== DIRECTORY_SEPARATOR) {
