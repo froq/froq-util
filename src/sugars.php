@@ -889,10 +889,11 @@ function get_request_id(): string
  *
  * @param  string           $path
  * @param  string|bool|null $check True or "dir", "file". @todo Use "true" type.
+ * @param  bool             $real @internal
  * @return string|null
  * @since  4.0
  */
-function get_real_path(string $path, string|bool $check = null): string|null
+function get_real_path(string $path, string|bool $check = null, bool $real = true): string|null
 {
     if (trim($path) === '') {
         return null;
@@ -915,7 +916,7 @@ function get_real_path(string $path, string|bool $check = null): string|null
         $c === true ? file_exists($p) : ($c === 'dir' ? is_dir($p) : is_file($p))
     );
 
-    if ($ret = realpath($path)) {
+    if ($real && ($ret = realpath($path))) {
         if ($check && !$check_path($check, $ret)) {
             return null;
         }
@@ -1005,7 +1006,7 @@ function get_path_info(string $path, string|int $component = null): string|array
 {
     $orig = $path;
 
-    if (!$path = get_real_path($path)) {
+    if (!$path = get_real_path($path, real: false)) {
         return null;
     }
     if (!$info = pathinfo($path)) {
