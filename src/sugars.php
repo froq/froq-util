@@ -1026,6 +1026,11 @@ function get_path_info(string $path, string|int $component = null): string|array
     $info = array_filter($info, 'strlen');
     $info = array_select($info, ['dirname', 'basename', 'filename', 'extension'], combine: true);
 
+    // Null if not real parent.
+    if ($info['dirname'] === $path && $filetype === 'dir') {
+        $info['dirname'] = null;
+    }
+
     $ret = ['path' => $path, 'realpath' => $realpath, 'type' => $filetype] + $info;
 
     if (is_dir($path)) {
