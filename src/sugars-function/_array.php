@@ -780,10 +780,14 @@ function array_select(array $array, int|string|array $key, mixed $default = null
  */
 function array_pluck(array &$array, int|string|array $key, mixed $default = null, bool $combine = false): mixed
 {
-    $ret = Arrays::select($array, $key, $default, true);
+    $ret = Arrays::select($array, $key, $default, combine: true);
 
     // Drop used keys.
     $ret && Arrays::unset($array, ...array_keys($ret));
+
+    if ($ret === null) {
+        return $ret;
+    }
 
     return (
         is_array($key)
