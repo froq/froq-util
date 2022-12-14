@@ -1588,10 +1588,10 @@ function slug(string $input, string $preserve = '', string $replace = '-'): stri
     $preserve && $preserve = preg_quote($preserve, '~');
     $replace  || $replace  = '-';
 
-    $out = preg_replace(['~[^\w'. $preserve . $replace .']+~', '~['. $replace .']+~'],
+    $ret = preg_replace(['~[^a-z0-9'. $preserve . $replace .']+~i', '~['. $replace .']+~'],
         $replace, strtr($input, $map));
 
-    return strtolower(trim($out, $replace));
+    return strtolower(trim($ret, $replace));
 }
 
 /**
