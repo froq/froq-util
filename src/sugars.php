@@ -968,9 +968,9 @@ function get_real_path(string $path, string|bool $check = null, bool $real = tru
         $ret .= $sep . $cur;
     }
 
-    // For Unix root stuff.
-    if ($ret === '' && $path === '/') {
-        $ret = '/';
+    // For root stuff (empty split).
+    if ($ret === '' && str_contains($path, $sep)) {
+        $ret = $sep;
     }
 
     if ($check && !$check_path($check, $ret)) {
@@ -1006,7 +1006,7 @@ function get_real_path(string $path, string|bool $check = null, bool $real = tru
  */
 function get_path_info(string $path, string|int $component = null): string|array|null
 {
-    $orig = $path;
+    $opath = $path;
 
     if (!$path = get_real_path($path, real: false)) {
         return null;
@@ -1017,7 +1017,7 @@ function get_path_info(string $path, string|int $component = null): string|array
 
     // Really really, real path.
     if ($realpath = realpath($path)) {
-        @ $filetype = filetype($orig) ?: filetype($path);
+        @ $filetype = filetype($opath) ?: filetype($path);
     } else {
         $realpath = $filetype = null;
     }
