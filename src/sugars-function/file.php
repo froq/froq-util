@@ -428,6 +428,32 @@ function filemime(...$args) { return file_mime(...$args); }
 function filestat(...$args) { return file_stat(...$args); }
 
 /**
+ * Make a directory, return its path.
+ *
+ * @param  string $dir
+ * @param  int    $mode
+ * @param  bool   $temp
+ * @param  bool   $recursive
+ * @param  bool   $check
+ * @return string|null
+ * @since  6.0
+ */
+function dirmake(string $dir, int $mode = DIR_MODE, bool $temp = false, bool $recursive = true, bool $check = true): string|null
+{
+    if (!$dir = get_real_path($odir = $dir)) {
+        trigger_error(format('%s(): No directory given', __FUNCTION__));
+        return null;
+    }
+
+    // Check existence.
+    if ($check && file_exists($dir)) {
+        return $dir;
+    }
+
+    return $temp ? tmpdir($odir, $mode) : (mkdir($dir, $mode, $recursive) ? $dir : null);
+}
+
+/**
  * Make a file, return its path.
  *
  * @param  string $file
@@ -492,59 +518,6 @@ function fmeta($fp): array|false
 function fsize($fp): int|false
 {
     return fstat($fp)['size'] ?? false;
-}
-
-/**
- * Get a directory size.
- *
- * @param  string $dir
- * @param  bool   $deep
- * @return int|null
- * @since  5.0
- */
-function dirsize(string $dir, bool $deep = true): int|null
-{
-    $dir = realpath($dir);
-    if (!$dir) {
-        return null;
-    }
-
-    $ret = 0;
-
-    foreach (glob(chop($dir, '/') . '/*') as $path) {
-        is_file($path) && $ret += filesize($path);
-        if ($deep) {
-            is_dir($path) && $ret += dirsize($path, $deep);
-        }
-    }
-
-    return $ret;
-}
-
-/**
- * Make a directory, return its path.
- *
- * @param  string $dir
- * @param  int    $mode
- * @param  bool   $temp
- * @param  bool   $recursive
- * @param  bool   $check
- * @return string|null
- * @since  6.0
- */
-function dirmake(string $dir, int $mode = DIR_MODE, bool $temp = false, bool $recursive = true, bool $check = true): string|null
-{
-    if (!$dir = get_real_path($odir = $dir)) {
-        trigger_error(format('%s(): No directory given', __FUNCTION__));
-        return null;
-    }
-
-    // Check existence.
-    if ($check && file_exists($dir)) {
-        return $dir;
-    }
-
-    return $temp ? tmpdir($odir, $mode) : (mkdir($dir, $mode, $recursive) ? $dir : null);
 }
 
 /**
