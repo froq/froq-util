@@ -5,6 +5,18 @@
  */
 
 /**
+ * Default dir mode.
+ * @since 7.0
+ */
+const DIR_MODE = 0755;
+
+/**
+ * Default file mode.
+ * @since 7.0
+ */
+const FILE_MODE = 0644;
+
+/**
  * Get system temporary directory.
  *
  * @return string
@@ -16,14 +28,14 @@ function tmp(): string
 }
 
 /**
- * Create a folder in system temporary directory.
+ * Create a directory in system temporary directory.
  *
  * @param  string $prefix
  * @param  int    $mode
  * @return string|null
  * @since  5.0
  */
-function tmpdir(string $prefix = '', int $mode = 0755): string|null
+function tmpdir(string $prefix = '', int $mode = DIR_MODE): string|null
 {
     // Prefix may become subdir here.
     $dir = tmp() . DIRECTORY_SEPARATOR . $prefix . suid();
@@ -39,7 +51,7 @@ function tmpdir(string $prefix = '', int $mode = 0755): string|null
  * @return string|null
  * @since  5.0
  */
-function tmpnam(string $prefix = '', int $mode = 0644): string|null
+function tmpnam(string $prefix = '', int $mode = FILE_MODE): string|null
 {
     // Prefix may become subdir here.
     $nam = tmp() . DIRECTORY_SEPARATOR . $prefix . suid();
@@ -75,38 +87,55 @@ function is_tmpnam(string $nam): bool
 }
 
 /**
- * Create a file with given file path.
+ * Make a file.
  *
  * @param  string $file
  * @param  int    $mode
  * @return bool
  * @since  4.0
  */
-function mkfile(string $file, int $mode = 0644): bool
+function mkfile(string $file, int $mode = FILE_MODE): bool
 {
-    $file = get_real_path($file);
-    if (!$file) {
-        trigger_error(sprintf('%s(): No file given', __function__));
+    if (!$file = get_real_path($file)) {
+        trigger_error(format('%s(): No file given', __FUNCTION__));
         return false;
     }
 
     if (is_dir($file)) {
-        trigger_error(sprintf('%s(): Cannot make file %s, it\'s a directory', __function__, $file));
+        trigger_error(format('%s(%s): Cannot make file: Is a directory', __FUNCTION__, $file));
         return false;
     }
     if (is_file($file)) {
-        trigger_error(sprintf('%s(): Cannot make file %s, it\'s already exist', __function__, $file));
+        trigger_error(format('%s(%s): Cannot make file: File exists', __FUNCTION__, $file));
         return false;
     }
 
     // Ensure directory.
-    if (!@dirmake($dir = dirname($file))) {
-        trigger_error(sprintf('%s(): Cannot make file directory %s [error: %s]', __function__, $dir,
-            error_message()));
+    if (!@dirmake(dirname($file))) {
+        trigger_error(format('%s(%s): Cannot make file directory: %s', __FUNCTION__, $file, (
+            strsrc($error = (string) error_message(extract: true), 'permission', true)
+                ? 'Permission denied' : $error
+        )));
         return false;
     }
 
-    return touch($file) && chmod($file, $mode);
+    if (!@touch($file)) {
+        trigger_error(format('%s(%s): Cannot make file: %s', __FUNCTION__, $file, (
+            strsrc($error = (string) error_message(extract: true), 'permission', true)
+                ? 'Permission denied' : $error
+        )));
+        return false;
+    }
+
+    if (!@chmod($file, $mode)) {
+        trigger_error(format('%s(%s): Cannot make file: %s', __FUNCTION__, $file, (
+            strsrc($error = (string) error_message(extract: true), 'permitted', true)
+                ? 'Permission denied' : $error
+        )));
+        return false;
+    }
+
+    return true;
 }
 
 /**
@@ -118,87 +147,22 @@ function mkfile(string $file, int $mode = 0644): bool
  */
 function rmfile(string $file): bool
 {
-    $file = get_real_path($file);
-    if (!$file) {
-        trigger_error(sprintf('%s(): No file given', __function__));
+    if (!$file = get_real_path($file)) {
+        trigger_error(format('%s(): No file given', __FUNCTION__));
         return false;
     }
 
     if (is_dir($file)) {
-        trigger_error(sprintf('%s(): Cannot remove %s, it\'s a directory', __function__, $file));
+        trigger_error(format('%s(%s): Cannot remove file: Is a directory', __FUNCTION__, $file));
         return false;
     }
 
-    return unlink($file);
-}
-
-/**
- * Create a file in temporary directory.
- *
- * @param  string $prefix
- * @param  int    $mode
- * @return string|null
- * @since  4.0
- */
-function mkfiletemp(string $prefix = '', int $mode = 0644): string|null
-{
-    return tmpnam($prefix, $mode);
-}
-
-/**
- * Remove a file from in temporary directory.
- *
- * @param  string $file
- * @return bool
- * @since  4.0
- */
-function rmfiletemp(string $file): bool
-{
-    if (!is_tmpnam($file)) {
-        trigger_error(sprintf('%s(): Cannot remove %s file, it\'s out of %s directory or not exists',
-            __function__, $file, tmp()));
+    if (!@unlink($file)) {
+        trigger_error(format('%s(%s): Cannot remove file: %s', __FUNCTION__, $file, error_message(extract: true)));
         return false;
     }
 
-    return unlink($file);
-}
-
-/**
- * Create a folder in system temporary directory.
- *
- * @param  string $prefix
- * @param  int    $mode
- * @since  4.0
- * @return string|null
- */
-function mkdirtemp(string $prefix = '', int $mode = 0755): string|null
-{
-    return tmpdir($prefix, $mode);
-}
-
-/**
- * Remove a folder from system temporary directory.
- *
- * @param  string $dir
- * @return bool
- * @since  4.0
- */
-function rmdirtemp(string $dir): bool
-{
-    if (!is_tmpdir($dir)) {
-        trigger_error(sprintf('%s(): Cannot remove %s directory, it\'s out of %s directory or not exists',
-            __function__, $dir, tmp()));
-        return false;
-    }
-
-    // Clean inside but not recursive.
-    if (is_dir($dir)) {
-        foreach (glob($dir . '/*') as $file) {
-            unlink($file);
-        }
-    }
-
-    return is_dir($dir) && rmdir($dir);
+    return true;
 }
 
 /**
@@ -210,25 +174,10 @@ function rmdirtemp(string $dir): bool
  * @return string|null
  * @since  4.0
  */
-function file_create(string $file, int $mode = 0644, bool $temp = false): string|null
+function file_create(string $file, int $mode = FILE_MODE, bool $temp = false): string|null
 {
-    if ($temp) { // Prefix=file.
-        return mkfiletemp($file, $mode);
-    }
-    return mkfile($file, $mode) ? $file : null;
-}
-
-/**
- * Create a temporary file.
- *
- * @param  string $prefix
- * @param  int    $mode
- * @return string|null
- * @since 4.0
- */
-function file_create_temp(string $prefix = '', int $mode = 0644): string|null
-{
-    return mkfiletemp($prefix, $mode);
+    return $temp ? tmpnam($file, $mode) // Prefix=file.
+                 : (mkfile($file, $mode) ? $file : null);
 }
 
 /**
@@ -237,97 +186,72 @@ function file_create_temp(string $prefix = '', int $mode = 0644): string|null
  * @alias rmfile()
  * @since 4.0
  */
-function file_remove(...$args)
+function file_remove(string $file): bool
 {
-    return rmfile(...$args);
+    return rmfile($file);
 }
 
 /**
- * Write a file contents.
- *
- * @alias file_put_contents()
- * @since 4.0
- */
-function file_write(...$args)
-{
-    $ret = file_put_contents(...$args);
-
-    return ($ret !== false) ? $ret : null;
-}
-
-/**
- * Read a file contents.
+ * Read a file.
  *
  * @alias file_get_contents()
  * @since 4.0
  */
-function file_read(...$args): string|null
+function file_read(string $file, int $offset = 0, int $length = null): string|null
 {
-    $ret = file_get_contents(...$args);
+    if (!$file = get_real_path($ofile = $file, check: true)) {
+        trigger_error(format('%s(%s): No such file', __FUNCTION__, $ofile));
+        return null;
+    }
+
+    if (is_dir($file)) {
+        trigger_error(format('%s(%s): Cannot read file: Is a directory', __FUNCTION__, $file));
+        return null;
+    }
+
+    $ret = file_get_contents($file, offset: $offset, length: $length);
 
     return ($ret !== false) ? $ret : null;
 }
 
 /**
- * Read a file output (buffer) contents.
+ * Write a file.
  *
- * @param  string     $file
- * @param  array|null $file_data
- * @return string|null
- * @since  4.0
+ * @alias file_put_contents()
+ * @since 4.0
  */
-function file_read_output(string $file, array $file_data = null): string|null
+function file_write(string $file, string $data, int $flags = 0): int|null
 {
-    if (!is_file($file)) {
-        trigger_error(sprintf('%s(): No file exists such %s', __function__, $file));
-        return null;
-    }
-    if (!str_ends_with($file, '.php')) {
-        trigger_error(sprintf('%s(): Cannot include non-PHP file such %s', __function__, $file));
+    if (!$file = get_real_path($file)) {
+        trigger_error(format('%s(): No file given', __FUNCTION__));
         return null;
     }
 
-    // Data, used in file.
-    $file_data && extract($file_data);
+    if (is_dir($file)) {
+        trigger_error(format('%s(%s): Cannot write file: Is a directory', __FUNCTION__, $file));
+        return null;
+    }
 
-    ob_start();
-    include $file;
-    return ob_get_clean();
-}
-
-/**
- * Read a file stream contents without modifing seek position.
- *
- * @param  resource &$handle
- * @return string|null
- * @since  5.0
- */
-function file_read_stream(&$handle): string|null
-{
-    $pos = ftell($handle);
-    $ret = stream_get_contents($handle, -1, 0);
-    fseek($handle, $pos);
+    $ret = file_put_contents($file, $data, flags: $flags);
 
     return ($ret !== false) ? $ret : null;
 }
 
 /**
- * Set a file contents, but no append.
+ * Set a file contents, without no append.
  *
  * @param  string $file
  * @param  string $contents
  * @param  int    $flags
- * @return int|null
+ * @return int|false
  * @since  4.0
  */
-function file_set_contents(string $file, string $contents, int $flags = 0): int|null
+function file_set_contents(string $file, string $contents, int $flags = 0): int|false
 {
-    // Because, setting entire file contents.
+    // Setting entire file contents.
     $flags && $flags &= ~FILE_APPEND;
 
-    $ret = file_put_contents($file, $contents, $flags);
-
-    return ($ret !== false) ? $ret : null;
+    return file_write($file, $contents, $flags) ?? false;
 }
 
 /**
@@ -336,13 +260,13 @@ function file_set_contents(string $file, string $contents, int $flags = 0): int|
  * @alias get_real_path()
  * @since 4.0
  */
-function file_path(...$args)
+function file_path(string $path, ...$args)
 {
-    return get_real_path(...$args);
+    return get_real_path($path, ...$args);
 }
 
 /**
- * Get file name, not base name.
+ * Get a file name, not base name.
  *
  * @param  string $file
  * @param  bool   $with_ext
@@ -372,7 +296,7 @@ function file_name(string $file, bool $with_ext = false): string|null
 }
 
 /**
- * Get file mime.
+ * Get a file mime.
  *
  * @param  string $file
  * @return string|null
@@ -380,15 +304,15 @@ function file_name(string $file, bool $with_ext = false): string|null
  */
 function file_mime(string $file): string|null
 {
-    $mime = (string) mime_content_type($file);
+    $mime = mime_content_type($file);
 
-    if ($mime === '') {
+    if ($mime === false) {
         // Try with extension.
-        $extension = file_extension($file, false);
+        $extension = file_extension($file);
         if ($extension !== null) {
             static $cache; // For some speed..
             if (empty($cache[$extension])) {
-                foreach (require __dir__ . '/../statics/mime.php' as $type => $extensions) {
+                foreach (require __DIR__ . '/../statics/mime.php' as $type => $extensions) {
                     if (in_array($extension, $extensions, true)) {
                         $cache[$extension] = $mime = $type;
                         break;
@@ -398,11 +322,74 @@ function file_mime(string $file): string|null
         }
     }
 
-    return $mime;
+    return $mime ?: null;
 }
 
 /**
- * Get file extension.
+ * Get a file (file, directory or link) stat.
+ *
+ * @param  string $file
+ * @return string|null
+ * @since  7.0
+ */
+function file_stat(string $file): array|null
+{
+    if (!$file = get_real_path($ofile = $file, check: true, real: false)) {
+        trigger_error(format('%s(%s): Failed to open stat: No such file or directory',
+            __FUNCTION__, $ofile));
+        return null;
+    }
+
+    clearstatcache(true, $file);
+
+    $ret = is_link($file) ? lstat($file) : stat($file);
+
+    // Not used.
+    // if ($ret) {
+    //     $mod = $ret['mode'];
+    //     if (is_link($file) && ($rfile = realpath($file))) {
+    //         $rmod = @fileperms($rfile);
+    //         if ($rmod !== false) {
+    //             $mod = $rmod;
+    //         }
+    //     }
+    //     // https://github.com/php/php-src/blob/master/ext/standard/filestat.c#L824
+    //     $rmask = $wmask = $xmask = 0;
+    //     if ($ret['uid'] === getmyuid()) {
+    //         [$rmask, $wmask, $xmask] = [0000400, 0000200, 0000100];
+    //     } elseif ($ret['gid'] === getmygid()) {
+    //         [$rmask, $wmask, $xmask] = [0000040, 0000020, 0000010];
+    //     } elseif (function_exists('posix_getgroups')) {
+    //         $mygid = getmygid();
+    //         foreach (posix_getgroups() as $gid) {
+    //             if ($mygid === $gid) {
+    //                 [$rmask, $wmask, $xmask] = [0000040, 0000020, 0000010];
+    //                 break;
+    //             }
+    //         }
+    //     }
+    //     $S_ISWTB = ($mod & $wmask) !== 0;
+    //     $S_ISRDB = ($mod & $rmask) !== 0;
+    //     $S_ISXTB = ($mod & $xmask) !== 0;
+    //     // https://github.com/openbsd/src/blob/master/sys/sys/stat.h
+    //     $S_ISLNK = is_link($file);
+    //     // https://php.net/stat#54999
+    //     // $S_ISLNK = (($mod & 0170000) === 0120000);
+    //     $S_ISREG = (($mod & 0170000) === 0100000);
+    //     $S_ISDIR = (($mod & 0170000) === 0040000);
+    //     $ret += [
+    //         // Type modes.
+    //         'is_link' => +$S_ISLNK, 'is_file' => +$S_ISREG, 'is_dir'  => +$S_ISDIR,
+    //         // Operation modes.
+    //         'is_readable' => +$S_ISWTB, 'is_writable' => +$S_ISRDB, 'is_executable' => +$S_ISXTB,
+    //     ];
+    // }
+
+    return $ret ?: null;
+}
+
+/**
+ * Get a file extension.
  *
  * @param  string $file
  * @param  bool   $with_dot
@@ -438,76 +425,73 @@ function file_extension(string $file, bool $with_dot = false, bool $lower = true
 function filepath(...$args) { return file_path(...$args); }
 function filename(...$args) { return file_name(...$args); }
 function filemime(...$args) { return file_mime(...$args); }
+function filestat(...$args) { return file_stat(...$args); }
 
 /**
- * Make a file.
+ * Make a file, return its path.
  *
  * @param  string $file
  * @param  int    $mode
+ * @param  bool   $temp
  * @param  bool   $check
- * @return bool
+ * @return string|null
  * @since  6.0
  */
-function filemake(string $file, int $mode = 0644, bool $check = true): bool
+function filemake(string $file, int $mode = FILE_MODE, bool $temp = false, bool $check = true): string|null
 {
-    $file = get_real_path($file);
-    if (!$file) {
-        trigger_error(sprintf('%s(): No file given', __function__));
-        return false;
+    if (!$file = get_real_path($ofile = $file)) {
+        trigger_error(format('%s(): No file given', __FUNCTION__));
+        return null;
     }
 
     // Check existence.
     if ($check && file_exists($file)) {
-        return true;
+        return $file;
     }
 
-    return touch($file) && chmod($file, $mode);
+    return $temp ? tmpnam($ofile, $mode) : (mkfile($file, $mode, $temp) ? $file : null);
 }
 
 /**
- * Read all contents a file handle without modifing seek offset.
- *
- * @alias file_read_stream()
+ * @alias stream_read_all()
  * @since 5.0
  */
-function freadall(&$fp): string|null
+function freadall($fp): string|false
 {
-    return file_read_stream($fp);
+    return stream_read_all($fp);
 }
 
 /**
- * Reset a file handle contents & set seek position to top.
- *
  * @alias stream_set_contents()
  * @since 4.0
  */
-function freset(&$fp, string $contents): int|null
+function freset($fp, string $contents): int|false
 {
-    return stream_set_contents($fp, $contents);
+    return stream_write_all($fp, $contents);
 }
 
 /**
- * Get a file handle metadata.
+ * Get a file stream metadata.
  *
  * @param  resource $fp
- * @return array|null
+ * @return array|false
  * @since  4.0
  */
-function fmeta($fp): array|null
+function fmeta($fp): array|false
 {
-    return stream_get_meta_data($fp) ?: null;
+    return stream_get_meta_data($fp);
 }
 
 /**
- * Get a file handle size.
+ * Get a file stream size.
  *
  * @param  resource $fp
- * @return int|null
+ * @return int|false
  * @since  5.0
  */
-function fsize($fp): int|null
+function fsize($fp): int|false
 {
-    return fstat($fp)['size'] ?? null;
+    return fstat($fp)['size'] ?? false;
 }
 
 /**
@@ -538,49 +522,86 @@ function dirsize(string $dir, bool $deep = true): int|null
 }
 
 /**
- * Make a directory.
+ * Make a directory, return its path.
  *
  * @param  string $dir
  * @param  int    $mode
+ * @param  bool   $temp
  * @param  bool   $recursive
  * @param  bool   $check
- * @return bool
+ * @return string|null
  * @since  6.0
  */
-function dirmake(string $dir, int $mode = 0755, bool $recursive = true, bool $check = true): bool
+function dirmake(string $dir, int $mode = DIR_MODE, bool $temp = false, bool $recursive = true, bool $check = true): string|null
 {
-    $dir = get_real_path($dir);
-    if (!$dir) {
-        trigger_error(sprintf('%s(): No directory given', __function__));
-        return false;
+    if (!$dir = get_real_path($odir = $dir)) {
+        trigger_error(format('%s(): No directory given', __FUNCTION__));
+        return null;
     }
 
     // Check existence.
     if ($check && file_exists($dir)) {
-        return true;
+        return $dir;
     }
 
-    return mkdir($dir, $mode, $recursive);
+    return $temp ? tmpdir($odir, $mode) : (mkdir($dir, $mode, $recursive) ? $dir : null);
 }
 
 /**
- * Reset a file/stream handle contents setting seek position to top.
- *
- * @param  resource &$handle
- * @param  string    $contents
- * @return int|null
- * @since  4.0
+ * @alias stream_write_all()
+ * @since 4.0
  */
-function stream_set_contents(&$handle, string $contents): int|null
+function stream_set_contents($stream, string $contents): int|false
 {
-    // Since handle stat size also pointer position is not changing even after ftruncate() for
-    // files (not "php://temp" etc), we rewind the handle. Without this, stats won't be resetted!
-    rewind($handle);
+    return stream_write_all($stream, $contents);
+}
 
-    // Empty, write & rewind.
-    ftruncate($handle, 0);
-    $ret = fwrite($handle, $contents);
-    rewind($handle);
+/**
+ * Read all stream contents, don't move pointer.
+ *
+ * @param  resource $stream
+ * @return string|false
+ * @since  7.0
+ */
+function stream_read_all($stream): string|false
+{
+    // Check whether stream writable.
+    if (@fread($stream, 1) === false) {
+        trigger_error(format('%s(): %s', __FUNCTION__, error_message(extract: true)));
+        return false;
+    }
 
-    return ($ret !== false) ? $ret : null;
+    $pos = ftell($stream) - 1; // -1: For read above.
+    $ret = stream_get_contents($stream, -1, 0);
+    fseek($stream, $pos);
+
+    return $ret;
+}
+
+/**
+ * Reset a stream contents truncating, move pointer to top.
+ *
+ * @param  resource $stream
+ * @param  string   $contents
+ * @return int|false
+ * @since  7.0
+ */
+function stream_write_all($stream, string $contents): int|false
+{
+    // Check whether stream writable.
+    if (@fwrite($stream, '.') === false) {
+        trigger_error(format('%s(): %s', __FUNCTION__, error_message(extract: true)));
+        return false;
+    }
+
+    // Since stream stat size also pointer position is not changing even after ftruncate() for
+    // files (not "php://temp" etc), we rewind the stream. Without this, stats won't be reset!
+    rewind($stream);
+
+    if ($ret = ftruncate($stream, 0)) {
+        $ret = fwrite($stream, $contents);
+        rewind($stream);
+    }
+
+    return $ret;
 }
