@@ -14,22 +14,16 @@ final class Nil {}
  */
 final class Ref {
   public function __construct(
-    public mixed $data = nil
+    public mixed $data = null
   ) {}
 }
 
-function Nil(mixed &$ref = nil): Nil {
-  return $ref = new Nil();
+function Nil(): Nil {
+  return new Nil();
 }
-function Ref(mixed $data = nil): Ref {
+function Ref(mixed $data = null): Ref {
   return new Ref($data);
 }
-
-/**
- * Nil/nils (null/null string).
- * @since 4.0
- */
-const nil = null, nils = '';
 
 /**
  * Multi-byte encoding.
