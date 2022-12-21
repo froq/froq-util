@@ -83,7 +83,6 @@ final /* fuckic static */ class Util extends \StaticClass
      *
      * @param  bool $safe
      * @return string|null
-     * @since  3.6
      */
     public static function getClientUserAgent(bool $safe = false): string|null
     {
@@ -214,7 +213,6 @@ final /* fuckic static */ class Util extends \StaticClass
      * @param  array|object|null $data
      * @param  bool              $deep
      * @return array
-     * @since  5.2
      */
     public static function makeArray(array|object|null $data, bool $deep = true): array
     {
@@ -262,7 +260,6 @@ final /* fuckic static */ class Util extends \StaticClass
      * @param  array|object|null $data
      * @param  bool              $deep
      * @return object
-     * @since  5.2
      */
     public static function makeObject(array|object|null $data, bool $deep = true): object
     {
