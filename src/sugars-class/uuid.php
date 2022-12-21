@@ -328,7 +328,7 @@ class Uuid implements Stringable, \Stringable
         static $algos = [16 => 'fnv1a64', 32 => 'md5', 40 => 'sha1', 64 => 'sha256'];
 
         $algo = $algos[$length]
-            ?? throw new UuidError('Invalid length: %s [valids: 16,32,40,64]', $length);
+            ?? throw new UuidError('Invalid length: %s [valids: %A]', [$length, array_keys($algos)]);
 
         $hash = hash($algo, $uuid);
 
