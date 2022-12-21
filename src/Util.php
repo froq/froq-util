@@ -49,7 +49,7 @@ final /* fuckic static */ class Util extends \StaticClass
     }
 
     /**
-     * Get client IP.
+     * Get client ip.
      *
      * @return string|null
      */
@@ -79,12 +79,12 @@ final /* fuckic static */ class Util extends \StaticClass
     }
 
     /**
-     * Get client user agent.
+     * Get client agent.
      *
      * @param  bool $safe
      * @return string|null
      */
-    public static function getClientUserAgent(bool $safe = false): string|null
+    public static function getClientAgent(bool $safe = true): string|null
     {
         // Possible header names.
         static $names = [
