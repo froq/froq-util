@@ -19,7 +19,7 @@ function preg_test(string $pattern, string $subject): bool
     // Act as original.
     if ($res === false) {
         $message = preg_error_message(func: 'preg_match');
-        trigger_error(sprintf('%s(): %s', __function__, $message), E_USER_WARNING);
+        trigger_error(sprintf('%s(): %s', __FUNCTION__, $message), E_USER_WARNING);
     }
 
     return (bool) $res;
@@ -48,7 +48,7 @@ function preg_remove(string|array $pattern, string|array $subject, int $limit = 
     // Act as original.
     if ($res === null) {
         $message = preg_error_message(func: 'preg_replace');
-        trigger_error(sprintf('%s(): %s', __function__, $message), E_USER_WARNING);
+        trigger_error(sprintf('%s(): %s', __FUNCTION__, $message), E_USER_WARNING);
     }
 
     return $res;
@@ -72,7 +72,7 @@ function preg_match_names(string $pattern, string $subject, array|null &$match, 
     // Act as original.
     if ($res === false) {
         $message = preg_error_message(func: 'preg_match');
-        trigger_error(sprintf('%s(): %s', __function__, $message), E_USER_WARNING);
+        trigger_error(sprintf('%s(): %s', __FUNCTION__, $message), E_USER_WARNING);
     } else {
         // Select string (named) keys.
         $match = array_filter($match, 'is_string', 2);
@@ -99,7 +99,7 @@ function preg_match_all_names(string $pattern, string $subject, array|null &$mat
     // Act as original.
     if ($res === false) {
         $message = preg_error_message(func: 'preg_match');
-        trigger_error(sprintf('%s(): %s', __function__, $message), E_USER_WARNING);
+        trigger_error(sprintf('%s(): %s', __FUNCTION__, $message), E_USER_WARNING);
     } else {
         // Select string (named) keys.
         $match = array_filter($match, 'is_string', 2);

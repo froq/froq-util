@@ -358,7 +358,7 @@ function grep(string $pattern, string $input, bool $named = false): string|array
     // Act as original.
     if ($res === false) {
         $message = preg_error_message(func: 'preg_match');
-        trigger_error(sprintf('%s(): %s', __function__, $message), E_USER_WARNING);
+        trigger_error(sprintf('%s(): %s', __FUNCTION__, $message), E_USER_WARNING);
 
         return null;
     }
@@ -404,7 +404,7 @@ function grep_all(string $pattern, string $input, bool $named = false, bool $uni
     // Act as original.
     if ($res === false) {
         $message = preg_error_message(func: 'preg_match');
-        trigger_error(sprintf('%s(): %s', __function__, $message), E_USER_WARNING);
+        trigger_error(sprintf('%s(): %s', __FUNCTION__, $message), E_USER_WARNING);
 
         return null;
     }
@@ -1540,7 +1540,7 @@ function format_number(int|float|string $input, int|bool|null $decimals = 0, str
 {
     if (is_string($input)) {
         if (!is_numeric($input)) {
-            trigger_error(sprintf('%s(): Invalid non-numeric input', __function__));
+            trigger_error(sprintf('%s(): Invalid non-numeric input', __FUNCTION__));
             return null;
         }
 
