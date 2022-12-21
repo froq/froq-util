@@ -3,7 +3,6 @@
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-util
  */
-
 use froq\common\interface\{Arrayable, Listable, Jsonable, Iteratable, IteratableReverse};
 use froq\collection\trait\{SortTrait, FilterTrait, MapTrait, ReduceTrait, ApplyTrait, AggregateTrait,
     EachTrait, CountTrait, EmptyTrait, HasTrait, GetTrait, AccessTrait, AccessMagicTrait,

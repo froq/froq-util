@@ -12,7 +12,7 @@
  * @author  Kerem Güneş
  * @since   6.0
  */
-final class Type implements Stringable
+class Type implements Stringable
 {
     /** Type name. */
     public readonly string $name;

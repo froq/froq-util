@@ -13,7 +13,7 @@
  * @since   6.0
  * @static
  */
-final class Assert
+class Assert
 {
     /**
      * Assert & throw given message/throwable optionally if assertion fails.

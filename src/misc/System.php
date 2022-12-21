@@ -14,7 +14,7 @@ namespace froq\util;
  * @since   6.0
  * @static
  */
-final class System extends \StaticClass
+class System extends \StaticClass
 {
     /**
      * Set an INI directive.

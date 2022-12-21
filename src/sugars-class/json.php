@@ -3,7 +3,6 @@
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-util
  */
-
 use froq\common\interface\{Arrayable, Jsonable};
 
 /**
@@ -20,12 +19,12 @@ class Json extends StaticClass
     public final const ARRAY = 1, OBJECT = 2;
 
     /** Build flags. */
-    public final const BUILD_FLAGS = JSON_PRESERVE_ZERO_FRACTION
-                                   | JSON_UNESCAPED_SLASHES
-                                   | JSON_UNESCAPED_UNICODE;
+    public const BUILD_FLAGS = JSON_PRESERVE_ZERO_FRACTION
+                             | JSON_UNESCAPED_SLASHES
+                             | JSON_UNESCAPED_UNICODE;
 
     /** Parse flags. */
-    public final const PARSE_FLAGS = JSON_BIGINT_AS_STRING;
+    public const PARSE_FLAGS = JSON_BIGINT_AS_STRING;
 
     /**
      * Build a JSON string.
@@ -50,7 +49,7 @@ class Json extends StaticClass
         }
 
         // Add default flags.
-        $flags |= self::BUILD_FLAGS;
+        $flags |= static::BUILD_FLAGS;
 
         $out = json_encode($data, flags: $flags);
 
@@ -107,7 +106,7 @@ class Json extends StaticClass
         $json = (string) $json;
 
         // Add default flags.
-        $flags |= self::PARSE_FLAGS;
+        $flags |= static::PARSE_FLAGS;
 
         if ($type) {
             switch ($type) {

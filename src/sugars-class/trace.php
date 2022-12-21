@@ -12,7 +12,7 @@
  * @author  Kerem Güneş
  * @since   6.0
  */
-final class TraceStack implements Stringable, Countable, IteratorAggregate, ArrayAccess
+class TraceStack implements Stringable, Countable, IteratorAggregate, ArrayAccess
 {
     /** Stack data. */
     public readonly array $stack;
@@ -202,7 +202,7 @@ final class TraceStack implements Stringable, Countable, IteratorAggregate, Arra
  * @since   6.0
  * @internal
  */
-final class Trace implements ArrayAccess
+class Trace implements ArrayAccess
 {
     /** Trace data. */
     public readonly array $data;
