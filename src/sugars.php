@@ -1027,17 +1027,16 @@ function get_path_info(string $path, string|int $component = null): string|array
     $info = array_select($info, ['dirname', 'basename', 'filename', 'extension'], combine: true);
 
     // Null if not real parent.
-    if ($info['dirname'] === $path && $filetype === 'dir') {
+    if ($info['dirname'] === $path && 'dir' === $filetype) {
         $info['dirname'] = null;
     }
 
     $ret = ['path' => $path, 'realpath' => $realpath, 'type' => $filetype] + $info;
 
     if (is_dir($path)) {
-        $ret['filename']  = $ret['extension'] = null;
+        $ret['filename'] = $ret['extension'] = null;
     } else {
-        $ret['filename']  = file_name($path, false);
-        $ret['extension'] = file_extension($path, false);
+        [$ret['filename'], $ret['extension']] = [file_name($path), file_extension($path)];
     }
 
     if ($component !== null) {
