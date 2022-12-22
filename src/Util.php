@@ -107,15 +107,15 @@ final /* fuckic static */ class Util extends \StaticClass
     }
 
     /**
-     * Get current URL.
+     * Get current url.
      *
      * @param  bool $withQuery
      * @return string|null
      */
     public static function getCurrentUrl(bool $withQuery = true): string|null
     {
-        @ ['REQUEST_SCHEME' => $scheme, 'SERVER_NAME' => $host,
-           'REQUEST_URI'    => $uri,    'SERVER_PORT' => $port]  = $_SERVER;
+        @['REQUEST_SCHEME' => $scheme, 'REQUEST_URI' => $uri,
+          'SERVER_NAME'    => $host,   'SERVER_PORT' => $port] = $_SERVER;
 
         if (!$scheme || !$host) {
             return null;

@@ -578,7 +578,7 @@ function http_parse_query(string $query, string $separator = '&', int $decoding 
 
     /** @thanks http://php.net/parse_str#119484 */
     foreach (explode($separator, $query) as $tmp) {
-        @ [$key, $value] = explode('=', $tmp, 2);
+        @[$key, $value] = explode('=', $tmp, 2);
 
         $key = (string) $key;
         if ($key === '') {

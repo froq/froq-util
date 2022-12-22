@@ -34,7 +34,7 @@ function response(mixed ...$args): Response
     $response = app()->response;
 
     if ($args) {
-        @ [$code, $content, $attributes, $headers, $cookies] = $args;
+        @[$code, $content, $attributes, $headers, $cookies] = $args;
 
         $code && $response->setStatus($code);
 
