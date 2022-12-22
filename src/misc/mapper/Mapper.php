@@ -628,7 +628,7 @@ class Mapper
             }
 
             // Special case of date/time stuff (interface, subclass or union).
-            if (is_equal_of($name, 'DateTime', 'DateTimeImmutable', 'DateTimeInterface')) {
+            if (equals($name, 'DateTime', 'DateTimeImmutable', 'DateTimeInterface')) {
                 return is_subclass_of($name, 'DateTimeInterface')
                      ? ($resolves[$tkey] = [$name     , true])  // DateTime, DateTimeImmutable.
                      : ($resolves[$tkey] = ['DateTime', true]); // DateTimeInterface.

@@ -1870,18 +1870,6 @@ function is_number(mixed $var): bool
 }
 
 /**
- * Check whether given input is a GdImage.
- *
- * @param  mixed $var
- * @return bool
- * @since  5.0
- */
-function is_image(mixed $var): bool
-{
-    return $var && ($var instanceof GdImage);
-}
-
-/**
  * Check whether given input is a stream.
  *
  * @param  mixed $var
@@ -1894,30 +1882,6 @@ function is_stream(mixed $var): bool
 }
 
 /**
- * Check whether given input is an iterator.
- *
- * @param  mixed $var
- * @return bool
- * @since  6.0
- */
-function is_iterator(mixed $var): bool
-{
-    return $var && ($var instanceof Traversable);
-}
-
-/**
- * Check whether given input is an enum.
- *
- * @param  mixed $var
- * @return bool
- * @since  6.0
- */
-function is_enum(mixed $var): bool
-{
-    return is_object($var) && enum_exists($var::class, false);
-}
-
-/**
  * Check whether given input is any type of given types.
  *
  * @param  mixed     $var
@@ -1927,7 +1891,7 @@ function is_enum(mixed $var): bool
  */
 function is_type_of(mixed $var, string ...$types): bool
 {
-    $var_type = strtolower(get_debug_type($var));
+    $var_type = get_debug_type($var);
 
     // Multiple at once.
     if ($types && str_contains($types[0], '|')) {
@@ -1940,13 +1904,12 @@ function is_type_of(mixed $var, string ...$types): bool
     }
 
     foreach ($types as $type) {
-        $type = strtolower($type);
         if (match ($type) {
             // Any/mixed.
             'any', 'mixed' => 1,
 
             // Sugar stuff.
-            'list', 'number', 'image', 'stream', 'iterator', 'enum'
+            'list', 'number', 'stream',
                 => ('is_' . $type)($var),
 
             // Primitive & internal stuff.
@@ -1957,25 +1920,6 @@ function is_type_of(mixed $var, string ...$types): bool
             // All others.
             default => ($var_type === $type) || ($var instanceof $type)
         }) {
-            return true;
-        }
-    }
-    return false;
-}
-
-/**
- * Check whether given search value equals to any of given values with strict comparison.
- *
- * @param  mixed    $value
- * @param  mixed ...$values
- * @return bool
- * @since  5.31
- */
-function is_equal_of(mixed $value, mixed ...$values): bool
-{
-    $search_value = $value;
-    foreach ($values as $value) {
-        if ($search_value === $value) {
             return true;
         }
     }

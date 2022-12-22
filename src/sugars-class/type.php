@@ -205,16 +205,6 @@ class Type implements Stringable
     }
 
     /**
-     * Image check.
-     *
-     * @return bool
-     */
-    public function isImage(): bool
-    {
-        return is_image($this->var);
-    }
-
-    /**
      * Stream check.
      *
      * @return bool
@@ -222,26 +212,6 @@ class Type implements Stringable
     public function isStream(): bool
     {
         return is_stream($this->var);
-    }
-
-    /**
-     * Iterator check.
-     *
-     * @return bool
-     */
-    public function isIterator(): bool
-    {
-        return is_iterator($this->var);
-    }
-
-    /**
-     * Enum check.
-     *
-     * @return bool
-     */
-    public function isEnum(): bool
-    {
-        return is_enum($this->var);
     }
 
     /**

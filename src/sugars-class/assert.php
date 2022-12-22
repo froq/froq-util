@@ -73,7 +73,7 @@ class Assert
      */
     public static function equals(mixed $input, mixed $inputs, string|Throwable $message = null): bool
     {
-        $assertion = is_equal_of($input, ...(is_array($inputs) ? $inputs : [$inputs]));
+        $assertion = equals($input, ...(is_array($inputs) ? $inputs : [$inputs]));
 
         return self::assert($assertion, $message);
     }
