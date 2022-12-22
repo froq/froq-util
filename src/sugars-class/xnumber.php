@@ -34,7 +34,7 @@ class XNumber implements Intable, Floatable, Numberable, Stringable
      * @param int|float|string $data
      * @param int|true         $precision
      */
-    public function __construct(int|float|string $data, int|true $precision = true)
+    public function __construct(int|float|string $data = 0, int|true $precision = true)
     {
         if (is_string($data)) {
             $data = Numbers::convert($data, $precision);
@@ -74,9 +74,9 @@ class XNumber implements Intable, Floatable, Numberable, Stringable
     /**
      * Format.
      *
-     * @param  int|true    $decimals
-     * @param  string|null $decimalSeparator
-     * @param  string|null $thousandSeparator
+     * @param  int|true|null $decimals
+     * @param  string|null   $decimalSeparator
+     * @param  string|null   $thousandSeparator
      * @return string
      */
     public function format(int|true $decimals = null, string $decimalSeparator = null, string $thousandSeparator = null): string

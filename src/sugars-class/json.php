@@ -214,9 +214,10 @@ class Json extends StaticClass
     }
 
     /**
-     * Validate given input as JSON. @todo Use "json_validate()" function.
+     * Validate given input as JSON.
      *
-     * @param  string|null     $input
+     * @todo   Use json_validate() function [PHP/8.3, https://wiki.php.net/rfc/json_validate].
+     * @param  string|null    $input
      * @param  JsonError|null &$error
      * @return bool
      * @since  6.0
