@@ -17,17 +17,20 @@ require 'sugars-function.php';
 /**
  * Sugar loader.
  */
-function sugar(string|array $name): void {
+function sugar(string|array $name): void
+{
     Util::loadSugar($name);
 }
 
 /**
  * Yes man..
  */
-function equal($a, $b, ...$c): bool {
+function equal($a, $b, ...$c): bool
+{
     return ($a == $b) || ($c && in_array($a, $c));
 }
-function equals($a, $b, ...$c): bool {
+function equals($a, $b, ...$c): bool
+{
     return ($a === $b) || ($c && in_array($a, $c, true));
 }
 
@@ -1878,7 +1881,7 @@ function is_number(mixed $var): bool
  */
 function is_stream(mixed $var): bool
 {
-    return $var && is_resource($var) && get_resource_type($var) === 'stream';
+    return is_resource($var) && get_resource_type($var) === 'stream';
 }
 
 /**
