@@ -216,11 +216,10 @@ class Mailer
     /**
      * Send.
      *
-     * @todo Use "true" type.
-     * @return bool
+     * @return true
      * @throws froq\util\mailer\MailerException
      */
-    public function send(): bool
+    public function send(): true
     {
         [$from, $to, $subject, $body] = [
             $this->getFrom()    ?: throw MailerException::forEmptyFrom(),
