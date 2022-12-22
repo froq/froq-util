@@ -1407,25 +1407,21 @@ function preg_error_message(int &$code = null, string $func = null, bool $clear 
         $message = ($code = preg_last_error()) ? preg_last_error_msg() : null;
 
         // Clear last error.
-        if ($clear && $message) {
-            preg_test('~~', '');
-        }
+        $clear && preg_test('~~', '');
 
         return $message;
     }
 
     $error = error_get_last();
 
-    if ($code =@ $error['type']) {
-        $message = $error['message'];
-        if ($message && strpfx($message, $func ?: 'preg_')) {
+    if (isset($error['type'], $error['message'])) {
+        ['type' => $code, 'message' => $message] = $error;
+
+        if (strpfx($message, $func ?: 'preg_')) {
             // Clear last error.
             $clear && error_clear_last();
 
-            $message = strsub($message, strpos($message, '):') + 3);
-            if ($message) {
-                return $message;
-            }
+            return strsub($message, strpos($message, '):') + 3);
         }
     }
 
