@@ -596,7 +596,7 @@ final class Objects extends \StaticClass
      */
     public static function getParents(object|string $target, bool $reverse = false): array|null
     {
-        $ret =@ class_parents($target);
+        $ret = @class_parents($target);
         if ($ret !== false) {
             $ret = array_keys($ret);
             $reverse && ($ret = array_reverse($ret));
@@ -615,7 +615,7 @@ final class Objects extends \StaticClass
     {
         // Note: this function does not follow real inheritance.
         // For example A,B,C,D order B->A, C->B, D->C return D,B,A,C.
-        $ret =@ class_implements($target);
+        $ret = @class_implements($target);
         if ($ret !== false) {
             $ret = array_keys($ret);
             $reverse && ($ret = array_reverse($ret));
@@ -633,7 +633,7 @@ final class Objects extends \StaticClass
      */
     public static function getTraits(object|string $target, bool $reverse = false, bool $all = true): array|null
     {
-        $ret =@ class_uses($target);
+        $ret = @class_uses($target);
         if ($ret !== false) {
             $ret = array_keys($ret);
             $reverse && ($ret = array_reverse($ret));

@@ -14,7 +14,7 @@
  */
 function preg_test(string $pattern, string $subject): bool
 {
-    $res =@ preg_match($pattern, $subject);
+    $res = @preg_match($pattern, $subject);
 
     // Act as original.
     if ($res === false) {
@@ -43,7 +43,7 @@ function preg_remove(string|array $pattern, string|array $subject, int $limit = 
         $replace = array_fill(0, count($pattern), '');
     }
 
-    $res =@ preg_replace($pattern, $replace, $subject, $limit ?? -1, $count);
+    $res = @preg_replace($pattern, $replace, $subject, $limit ?? -1, $count);
 
     // Act as original.
     if ($res === null) {
@@ -67,7 +67,7 @@ function preg_remove(string|array $pattern, string|array $subject, int $limit = 
  */
 function preg_match_names(string $pattern, string $subject, array|null &$match, int $flags = 0, int $offset = 0): int|false
 {
-    $res =@ preg_match($pattern, $subject, $match, $flags, $offset);
+    $res = @preg_match($pattern, $subject, $match, $flags, $offset);
 
     // Act as original.
     if ($res === false) {
@@ -94,7 +94,7 @@ function preg_match_names(string $pattern, string $subject, array|null &$match, 
  */
 function preg_match_all_names(string $pattern, string $subject, array|null &$match, int $flags = 0, int $offset = 0): int|false
 {
-    $res =@ preg_match_all($pattern, $subject, $match, $flags, $offset);
+    $res = @preg_match_all($pattern, $subject, $match, $flags, $offset);
 
     // Act as original.
     if ($res === false) {

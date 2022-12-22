@@ -95,7 +95,7 @@ class Deprecated
      */
     private static function trigger(string $message): void
     {
-        $trace =@ get_trace(slice: 2)[0];
+        $trace = @get_trace(slice: 2)[0];
         if (isset($trace['file'], $trace['line'])) {
             $message .= "\nCalled at: {$trace['file']}:{$trace['line']}\n";
         }

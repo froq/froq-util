@@ -356,7 +356,7 @@ function replace(string|array $input, string|array $search, string|array|callabl
  */
 function grep(string $pattern, string $input, bool $named = false): string|array|null
 {
-    $res =@ preg_match($pattern, $input, $match, PREG_UNMATCHED_AS_NULL);
+    $res = @preg_match($pattern, $input, $match, PREG_UNMATCHED_AS_NULL);
 
     // Act as original.
     if ($res === false) {
@@ -402,7 +402,7 @@ function grep(string $pattern, string $input, bool $named = false): string|array
  */
 function grep_all(string $pattern, string $input, bool $named = false, bool $uniform = false): array|null
 {
-    $res =@ preg_match_all($pattern, $input, $match, PREG_UNMATCHED_AS_NULL);
+    $res = @preg_match_all($pattern, $input, $match, PREG_UNMATCHED_AS_NULL);
 
     // Act as original.
     if ($res === false) {

@@ -118,7 +118,7 @@ class RegExp implements Stringable
      */
     public function filter(string $input, string $replace, int $limit = -1, int &$count = null): string|null
     {
-        $ret =@ preg_filter($this->pattern, $replace, $input, $limit, $count);
+        $ret = @preg_filter($this->pattern, $replace, $input, $limit, $count);
 
         if ($ret === null) {
             $this->processError('preg_filter');
@@ -152,7 +152,7 @@ class RegExp implements Stringable
             $replace = fn($match) => $replace(new $class($match));
         }
 
-        $ret =@ $callback ? $function($this->pattern, $replace, $input, $limit, $count, $flags)
+        $ret = @$callback ? $function($this->pattern, $replace, $input, $limit, $count, $flags)
                           : $function($this->pattern, $replace, $input, $limit, $count);
 
         if ($ret === null) {
@@ -190,7 +190,7 @@ class RegExp implements Stringable
     public function remove(string $input, int $limit = -1, int &$count = null): string|null
     {
         if (is_string($input)) {
-            $ret =@ preg_remove($this->pattern, $input, $limit, $count);
+            $ret = @preg_remove($this->pattern, $input, $limit, $count);
 
             if ($ret === null) {
                 $this->processError('preg_remove');
@@ -202,7 +202,7 @@ class RegExp implements Stringable
         $rets = null;
 
         foreach ($input as $input) {
-            $ret =@ preg_remove($this->pattern, $input, $limit, $count);
+            $ret = @preg_remove($this->pattern, $input, $limit, $count);
 
             if ($ret === null) {
                 $this->processError('preg_remove');
@@ -228,7 +228,7 @@ class RegExp implements Stringable
         $this->classCheck($class);
         $this->flagsCheck($flags);
 
-        $ret =@ preg_split($this->pattern, $input, $limit, flags: (
+        $ret = @preg_split($this->pattern, $input, $limit, flags: (
             $flags |= PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE // Always..
         ));
 
@@ -286,7 +286,7 @@ class RegExp implements Stringable
         $this->classCheck($class);
         $this->flagsCheck($flags);
 
-        $res =@ preg_match($this->pattern, $input, $ret, $flags, $offset);
+        $res = @preg_match($this->pattern, $input, $ret, $flags, $offset);
 
         if ($res === false) {
             $this->processError('preg_match');
@@ -310,7 +310,7 @@ class RegExp implements Stringable
         $this->classCheck($class);
         $this->flagsCheck($flags);
 
-        $res =@ preg_match_all($this->pattern, $input, $ret, $flags, $offset);
+        $res = @preg_match_all($this->pattern, $input, $ret, $flags, $offset);
 
         if ($res === false) {
             $this->processError('preg_match_all');
@@ -337,7 +337,7 @@ class RegExp implements Stringable
         $this->classCheck($class);
         $this->flagsCheck($flags);
 
-        $res =@ preg_match_names($this->pattern, $input, $ret, $flags, $offset);
+        $res = @preg_match_names($this->pattern, $input, $ret, $flags, $offset);
 
         if ($res === false) {
             $this->processError('preg_match_names');
@@ -361,7 +361,7 @@ class RegExp implements Stringable
         $this->classCheck($class);
         $this->flagsCheck($flags);
 
-        $res =@ preg_match_all_names($this->pattern, $input, $ret, $flags, $offset);
+        $res = @preg_match_all_names($this->pattern, $input, $ret, $flags, $offset);
 
         if ($res === false) {
             $this->processError('preg_match_all_names');
@@ -388,7 +388,7 @@ class RegExp implements Stringable
         $this->classCheck($class);
         $this->flagsCheck($flags);
 
-        $res =@ preg_match($this->pattern, $input, $ret, $flags, $offset);
+        $res = @preg_match($this->pattern, $input, $ret, $flags, $offset);
 
         if ($res === false) {
             $this->processError('preg_match');
@@ -452,7 +452,7 @@ class RegExp implements Stringable
      */
     public function test(string $input): bool
     {
-        $ret =@ preg_match($this->pattern, $input);
+        $ret = @preg_match($this->pattern, $input);
 
         if ($ret === false) {
             $this->processError('preg_match');
@@ -470,7 +470,7 @@ class RegExp implements Stringable
      */
     public function search(string $input, bool $unicode = true): int
     {
-        $ret =@ preg_match($this->pattern, $input, $match, PREG_OFFSET_CAPTURE);
+        $ret = @preg_match($this->pattern, $input, $match, PREG_OFFSET_CAPTURE);
 
         if ($ret === false) {
             $this->processError('preg_match');

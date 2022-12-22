@@ -45,7 +45,7 @@ final class Numbers extends \StaticClass
             return $input;
         }
 
-        $input =@ format_number($input, $precision ?? true);
+        $input = @format_number($input, $precision ?? true);
 
         if ($input !== null) {
             return match ($input) {
