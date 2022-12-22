@@ -26,17 +26,20 @@ class XNumber implements Intable, Floatable, Numberable, Stringable
     protected int|float $data;
 
     /** Precision. */
-    protected int|bool|null $precision;
+    protected int|true $precision;
 
     /**
      * Constructor.
      *
      * @param int|float|string $data
-     * @param int|bool|null    $precision @todo Use "true" type.
+     * @param int|true         $precision
      */
-    public function __construct(int|float|string $data, int|bool $precision = null)
+    public function __construct(int|float|string $data, int|true $precision = true)
     {
-        $this->data      = Numbers::convert($data, $precision);
+        if (is_string($data)) {
+            $data = Numbers::convert($data, $precision);
+        }
+        $this->data      = $data;
         $this->precision = $precision;
     }
 
@@ -71,12 +74,12 @@ class XNumber implements Intable, Floatable, Numberable, Stringable
     /**
      * Format.
      *
-     * @param  int|bool|null $decimals
-     * @param  string|null   $decimalSeparator
-     * @param  string|null   $thousandSeparator
+     * @param  int|true    $decimals
+     * @param  string|null $decimalSeparator
+     * @param  string|null $thousandSeparator
      * @return string
      */
-    public function format(int|bool $decimals = null, string $decimalSeparator = null, string $thousandSeparator = null): string
+    public function format(int|true $decimals = null, string $decimalSeparator = null, string $thousandSeparator = null): string
     {
         return format_number($this->data, $decimals ?? $this->precision, $decimalSeparator, $thousandSeparator);
     }
@@ -632,10 +635,10 @@ class XNumber implements Intable, Floatable, Numberable, Stringable
  * XNumber initializer.
  *
  * @param  int|float|string $data
- * @param  int|bool|null    $precision @todo Use "true" type.
+ * @param  int|true         $precision
  * @return XNumber
  */
-function xnumber(int|float|string $data = 0, int|bool $precision = null): XNumber
+function xnumber(int|float|string $data = 0, int|true $precision = true): XNumber
 {
     return new XNumber($data, $precision);
 }

@@ -26,36 +26,24 @@ final class Numbers extends \StaticClass
      * Convert.
      *
      * @param  int|float|string $input
-     * @param  int|bool|null    $precision @todo Use "true" type.
+     * @param  int|true         $precision
      * @return int|float
      * @since  4.0
      */
-    public static function convert(int|float|string $input, int|bool $precision = null): int|float
+    public static function convert(int|float|string $input, int|true $precision = true): int|float
     {
-        if (is_number($input)) {
-            if ($precision !== null) {
-                // Auto-detect precision.
-                if (is_true($precision)) {
-                    $precision = strlen(stracut(strval($input), '.'));
-                }
-
-                $input = round($input, (int) $precision);
-            }
-
-            return $input;
-        }
-
-        $input = @format_number($input, $precision ?? true);
+        $input = @format_number($input, $precision);
 
         if ($input !== null) {
             return match ($input) {
                 'NAN'   => NAN,
                 'INF'   => INF,
-                default => $input + 0,
+                default => $input + 0
             };
         }
 
-        return NAN; // Invalid, not a number.
+        // Invalid.
+        return NAN;
     }
 
     /**

@@ -891,12 +891,13 @@ function get_request_id(): string
  * Get real path of given path.
  *
  * @param  string           $path
- * @param  string|bool|null $check True or "dir", "file". @todo Use "true" type.
+ * @param  string|true|null $check Valids: true, "dir", "file".
  * @param  bool             $real @internal
  * @return string|null
+ * @throws ArgumentError
  * @since  4.0
  */
-function get_real_path(string $path, string|bool $check = null, bool $real = true): string|null
+function get_real_path(string $path, string|true $check = null, bool $real = true): string|null
 {
     if (trim($path) === '') {
         return null;
@@ -1502,7 +1503,7 @@ function format(string $format, mixed ...$arguments): string
                 // Proper float-to-string (eg: 1.0 => not 1 but 1.0).
                 case '%s':
                     if ($arguments[$i] === 1.0) {
-                        $arguments[$i] = format_number($arguments[$i], true);
+                        $arguments[$i] = '1.0';
                     }
                     break;
             }
@@ -1528,13 +1529,13 @@ function format_bool(mixed $input): string
  * Format an input as number.
  *
  * @param  int|float|string $input
- * @param  int|bool|null    $decimals @todo Use "true" type.
+ * @param  int|true         $decimals
  * @param  string|null      $decimal_separator
  * @param  string|null      $thousand_separator
  * @return string|null
  * @since  5.31
  */
-function format_number(int|float|string $input, int|bool|null $decimals = 0, string $decimal_separator = null, string $thousand_separator = null): string|null
+function format_number(int|float|string $input, int|true $decimals = 0, string $decimal_separator = null, string $thousand_separator = null): string|null
 {
     if (is_string($input)) {
         if (!is_numeric($input)) {
@@ -1548,7 +1549,7 @@ function format_number(int|float|string $input, int|bool|null $decimals = 0, str
     $export = var_export($input, true);
 
     // Auto-detect decimals.
-    if (is_true($decimals)) {
+    if ($decimals === true) {
         $decimals = strlen(stracut($export, '.'));
     }
 
@@ -1557,7 +1558,7 @@ function format_number(int|float|string $input, int|bool|null $decimals = 0, str
         $decimals = PRECISION;
     }
 
-    $ret = number_format($input, (int) $decimals, $decimal_separator, $thousand_separator);
+    $ret = number_format($input, $decimals, $decimal_separator, $thousand_separator);
 
     // Append ".0" for eg: 1.0 & upper NAN/INF.
     if (!$decimals && !is_int($input) && strlen($export) === 1) {

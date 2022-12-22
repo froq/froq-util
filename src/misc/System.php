@@ -26,15 +26,10 @@ class System extends \StaticClass
     public static function iniSet(string $option, int|float|string|bool|null $value): string|null
     {
         if ($value === false) {
-            $value = 'off';
+            $value = '0';
         } elseif (is_float($value)) {
-            $decimals = 1;
-            if ($remainds = strstr((string) $value, '.')) {
-                $decimals = strlen($remainds) - 1;
-            }
-            $value = format_number($value, $decimals, '.', '');
+            $value = format_number($value, true, '.', '');
         }
-
 
         $oldValue = ini_set($option, $value);
 
@@ -88,14 +83,10 @@ class System extends \StaticClass
         if ($value === false) {
             $value = '0';
         } elseif (is_float($value)) {
-            $decimals = 1;
-            if ($remainds = strstr((string) $value, '.')) {
-                $decimals = strlen($remainds) - 1;
-            }
-            $value = format_number($value, $decimals, '.', '');
+            $value = format_number($value, true, '.', '');
         }
 
-        return putenv($option .'='. $value);
+        return putenv($option . '=' . $value);
     }
 
     /**

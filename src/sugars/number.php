@@ -10,11 +10,11 @@ use froq\util\Numbers;
  * Make a number from given a numeric input.
  *
  * @param  int|float|string $input
- * @param  int|bool|null    $decimals @todo Use "true" type.
+ * @param  int|true         $decimals
  * @return int|float
  * @since  3.0
  */
-function number(int|float|string $input, int|bool $decimals = null): int|float
+function number(int|float|string $input, int|true $decimals = true): int|float
 {
     return Numbers::convert($input, $decimals);
 }
