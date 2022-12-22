@@ -528,9 +528,9 @@ class Map implements Arrayable, Listable, Jsonable, Iteratable, IteratableRevers
         $this->keyCheck($key);
 
         if (isset($this->data[$key])) {
-            $value =& $this->data[$key];
+            $value = &$this->data[$key];
         } else {
-            $value =& $default;
+            $value = &$default;
         }
 
         return $value;
@@ -794,9 +794,9 @@ class Set implements Arrayable, Listable, Jsonable, Iteratable, IteratableRevers
         $this->indexCheck($index);
 
         if (isset($this->data[$index])) {
-            $value =& $this->data[$index];
+            $value = &$this->data[$index];
         } else {
-            $value =& $default;
+            $value = &$default;
         }
 
         return $value;

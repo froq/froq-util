@@ -601,7 +601,7 @@ function http_parse_query(string $query, string $separator = '&', int $decoding 
             $keys = [$key];
         }
 
-        $target =& $data;
+        $target = &$data;
 
         foreach ($keys as $index) {
             if ($index === '') {
@@ -621,7 +621,7 @@ function http_parse_query(string $query, string $separator = '&', int $decoding 
                 $target[$index] = [$target[$index]];
             }
 
-            $target =& $target[$index];
+            $target = &$target[$index];
         }
 
         if (is_array($target)) {

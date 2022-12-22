@@ -110,12 +110,12 @@ class XArray implements Arrayable, Listable, Jsonable, Iteratable, IteratableRev
 
         // Breaking reference in such calls:
         // $foo = $array->get('absent-field', new Object());
-        // $value =& $this->data[$key] ?? $default;
+        // $value = &$this->data[$key] ?? $default;
 
         if (isset($this->data[$key])) {
-            $value =& $this->data[$key];
+            $value = &$this->data[$key];
         } else {
-            $value =& $default;
+            $value = &$default;
         }
 
         return $value;

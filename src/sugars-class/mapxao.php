@@ -81,9 +81,9 @@ class XArrayObject extends ArrayObject implements Arrayable, Objectable, Jsonabl
         /** @thanks https://php.net/arrayobject#125849 */
         $iter = $this->getIterator();
         if ($iter->offsetExists($key)) {
-            $value =& $iter[$key];
+            $value = &$iter[$key];
         } else {
-            $value =& $default;
+            $value = &$default;
         }
 
         return $value;

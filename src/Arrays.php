@@ -125,13 +125,13 @@ final class Arrays extends \StaticClass
                 }
                 // Path access (with dot notation).
                 else {
-                    $current =& $array;
+                    $current = &$array;
 
                     foreach ($keys as $key) {
                         if (isset($current[$key])) {
                             $current[$key] = (array) $current[$key];
                         }
-                        $current =& $current[$key];
+                        $current = &$current[$key];
                     }
 
                     $current = $value;
@@ -147,7 +147,7 @@ final class Arrays extends \StaticClass
      * Bridge method to set() for multiple items.
      *
      * @param  array &$array
-     * @param  array  $items
+     * @param  array $items
      * @return array
      * @since  4.0
      */
@@ -164,9 +164,9 @@ final class Arrays extends \StaticClass
      * Get an item form given array, with dot notation support for sub-array paths.
      *
      * @param  array      &$array
-     * @param  int|string  $key
-     * @param  mixed|null  $default
-     * @param  bool        $drop
+     * @param  int|string $key
+     * @param  mixed|null $default
+     * @param  bool       $drop
      * @return mixed|null
      */
     public static function &get(array &$array, int|string $key, mixed $default = null, bool $drop = false): mixed
@@ -176,18 +176,14 @@ final class Arrays extends \StaticClass
         // Arrays::get($array, 'a.b.c.d') => 1
         // Arrays::get($array, 'a.b.c.d.e') => '...'
 
-        if (!$array) {
-            return $default;
-        }
-
         // Direct access.
         if (array_key_exists($key, $array) || is_int($key)) {
-            $value =& $array[$key] ?? null;
+            $value = &$array[$key] ?? $default;
             $drop && array_unset($array, $key);
         } else {
             // Direct access.
             if (!str_contains($key, '.')) {
-                $value =& $array[$key] ?? null;
+                $value = &$array[$key] ?? $default;
                 $drop && array_unset($array, $key);
             }
             // Path access (with dot notation).
@@ -196,17 +192,17 @@ final class Arrays extends \StaticClass
                 $key  = array_shift($keys);
 
                 if (!$keys) {
-                    $value =& $array[$key] ?? null;
+                    $value = &$array[$key] ?? $default;
                     $drop && array_unset($array, $key);
                 }
                 // Dig more..
                 elseif (isset($array[$key]) && is_array($array[$key])) {
-                    $value =& self::get($array[$key], implode('.', $keys), $default, $drop);
+                    $value = &self::get($array[$key], implode('.', $keys), $default, $drop);
                 }
             }
         }
 
-        $value =& $value ?? $default;
+        $value = &$value ?? $default;
 
         return $value;
     }
@@ -215,9 +211,9 @@ final class Arrays extends \StaticClass
      * Bridge method to get() for multiple items. Useful in some times eg. list(..) = Arrays::getAll(..).
      *
      * @param  array             &$array
-     * @param  array<int|string>  $keys
-     * @param  array|null         $defaults
-     * @param  bool               $drop
+     * @param  array<int|string> $keys
+     * @param  array|null        $defaults
+     * @param  bool              $drop
      * @return array
      */
     public static function &getAll(array &$array, array $keys, array $defaults = null, bool $drop = false): array
@@ -226,7 +222,7 @@ final class Arrays extends \StaticClass
 
         foreach ($keys as $i => $key) {
             $default    = $defaults[$i] ?? null;
-            $values[$i] =& self::get($array, $key, $default, $drop);
+            $values[$i] = &self::get($array, $key, $default, $drop);
         }
 
         return $values;
@@ -236,8 +232,8 @@ final class Arrays extends \StaticClass
      * Pull an item from given array by a key.
      *
      * @param  array      &$array
-     * @param  int|string  $key
-     * @param  mixed|null  $default
+     * @param  int|string $key
+     * @param  mixed|null $default
      * @return mixed|null
      */
     public static function pull(array &$array, int|string $key, mixed $default = null): mixed
@@ -249,8 +245,8 @@ final class Arrays extends \StaticClass
      * Bridge method to get() for multiple items. Useful in some times eg. list(..) = Arrays::pullAll(..).
      *
      * @param  array             &$array
-     * @param  array<int|string>  $keys
-     * @param  array|null         $defaults
+     * @param  array<int|string> $keys
+     * @param  array|null        $defaults
      * @return array
      */
     public static function pullAll(array &$array, array $keys, array $defaults = null): array
@@ -262,7 +258,7 @@ final class Arrays extends \StaticClass
      * Remove an item from given array by a key.
      *
      * @param  array      &$array
-     * @param  int|string  $key
+     * @param  int|string $key
      * @return array
      * @since  4.0
      */
@@ -277,7 +273,7 @@ final class Arrays extends \StaticClass
      * Bridge method to remove() for multiple items.
      *
      * @param  array             &$array
-     * @param  array<int|string>  $keys
+     * @param  array<int|string> $keys
      * @return array
      * @since  4.0
      */
@@ -292,9 +288,9 @@ final class Arrays extends \StaticClass
      * Get one/many items from given array randomly.
      *
      * @param  array  &$array
-     * @param  int     $limit
-     * @param  bool    $pack
-     * @param  bool    $drop
+     * @param  int    $limit
+     * @param  bool   $pack
+     * @param  bool   $drop
      * @return mixed|null
      * @since  4.12
      */
@@ -307,8 +303,8 @@ final class Arrays extends \StaticClass
      * Pull one/many items from given array randomly.
      *
      * @param  array  &$array
-     * @param  int     $limit
-     * @param  bool    $pack
+     * @param  int    $limit
+     * @param  bool   $pack
      * @return mixed|null
      * @since  4.12
      */
@@ -321,7 +317,7 @@ final class Arrays extends \StaticClass
      * Pull one/many items from given array randomly.
      *
      * @param  array  &$array
-     * @param  int     $limit
+     * @param  int    $limit
      * @return array
      * @since  4.12
      */
@@ -582,8 +578,8 @@ final class Arrays extends \StaticClass
      * Swap two keys on given array.
      *
      * @param  array      &$array
-     * @param  int|string  $oldKey
-     * @param  int|string  $newKey
+     * @param  int|string $oldKey
+     * @param  int|string $newKey
      * @return array
      * @since  4.2
      */
@@ -601,8 +597,8 @@ final class Arrays extends \StaticClass
      * Swap two values on given array.
      *
      * @param  array &$array
-     * @param  mixed  $oldValue
-     * @param  mixed  $newValue
+     * @param  mixed $oldValue
+     * @param  mixed $newValue
      * @return array
      */
     public static function swapValue(array &$array, mixed $oldValue, mixed $newValue): array
@@ -618,9 +614,9 @@ final class Arrays extends \StaticClass
      * Randomize given array, optionally returning as [key,value] pairs.
      *
      * @param  array &$array
-     * @param  int    $limit
-     * @param  bool   $pack
-     * @param  bool   $drop
+     * @param  int   $limit
+     * @param  bool  $pack
+     * @param  bool  $drop
      * @return mixed|null
      * @throws ValueError
      */
@@ -1604,8 +1600,8 @@ final class Arrays extends \StaticClass
     /**
      * Delete given keys from given array if exist.
      *
-     * @param  array      &$array
-     * @param  int|string $keys
+     * @param  array         &$array
+     * @param  int|string ...$keys
      * @return array
      * @throws ValueError
      * @since  5.31, 6.0
