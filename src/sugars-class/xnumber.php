@@ -595,10 +595,10 @@ class XNumber implements Intable, Floatable, Numberable, Stringable
      * Static constructor.
      *
      * @param  int|float|string $data
-     * @param  bool|null        $precision
+     * @param  int|true         $precision
      * @return static
      */
-    public static function from(int|float|string $data, int|bool $precision = null): static
+    public static function from(int|float|string $data, int|true $precision = true): static
     {
         return new static($data, $precision);
     }
@@ -608,12 +608,15 @@ class XNumber implements Intable, Floatable, Numberable, Stringable
      *
      * @param  int|float|null $min
      * @param  int|float|null $max
-     * @param  int|null       $precision
+     * @param  int|true|null  $precision
      * @return static
      */
-    public static function fromRandom(int|float $min = null, int|float $max = null, int $precision = null): static
+    public static function fromRandom(int|float $min = null, int|float $max = null, int|true $precision = null): static
     {
-        return new static(Numbers::random($min, $max, $precision), $precision);
+        return new static(
+            Numbers::random($min, $max, $precision !== true ? $precision : null),
+            $precision !== null ? $precision : true
+        );
     }
 
     /**

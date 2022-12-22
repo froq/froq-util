@@ -194,9 +194,14 @@ final class Numbers extends \StaticClass
             $max = $maxOrig ?? ($min + 1.0);
             $ret = lcg_value() * ($max - $min) + $min;
 
-            if ($precision !== null) {
-                $ret = round($ret, $precision);
+            $precision ??= self::PRECISION;
+
+            // Prevent data corruptions.
+            if ($precision > self::PRECISION) {
+                $precision = self::PRECISION;
             }
+
+            $ret = round($ret, $precision);
         }
 
         return $ret;

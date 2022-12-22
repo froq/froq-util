@@ -1552,7 +1552,7 @@ function format_number(int|float|string $input, int|true $decimals = 0, string $
         $decimals = strlen(stracut($export, '.'));
     }
 
-    // Prevent corruptions.
+    // Prevent data corruptions.
     if ($decimals > PRECISION) {
         $decimals = PRECISION;
     }
