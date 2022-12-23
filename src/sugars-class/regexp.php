@@ -476,11 +476,14 @@ class RegExp implements Stringable
             $this->processError('preg_match');
         }
 
-        if ($ret && isset($match[0][1])) {
-            $offset = $match[0][1];
+        if (isset($match[0][0], $match[0][1])) {
+            [$found, $offset] = $match[0];
 
-            /** @thanks http://php.net/preg_match#106804 */
-            $unicode && $offset = strlen(utf8_decode(substr($input, 0, $offset)));
+            // For proper unicode check, "ui" modifiers must be used.
+            if ($unicode) {
+                $offset = str_contains($this->modifiers, 'i')
+                    ? mb_stripos($input, $found) : mb_strpos($input, $found);
+            }
 
             return $offset;
         }
