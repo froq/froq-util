@@ -17,8 +17,8 @@ class RegExp implements Stringable
     /** Delimiter. */
     public final const DELIMITER = '~';
 
-    /** Modifiers. */
-    public final const MODIFIERS = ['i', 'm', 's', 'u', 'x', 'A', 'D', 'S', 'U', 'J', 'X'];
+    /** Valid modifiers (@see http://php.net/manual/reference.pcre.pattern.modifiers.php). */
+    public final const MODIFIERS = ['i', 'm', 's', 'u', 'x', 'n', 'A', 'D', 'S', 'U', 'J', 'X'];
 
     /** PREG constants. */
     public final const PATTERN_ORDER        = PREG_PATTERN_ORDER,
@@ -59,8 +59,8 @@ class RegExp implements Stringable
     /**
      * Constructor.
      *
-     * @param  string $source    Plain RegExp source (without delimiter).
-     * @param  string $modifiers Valids: imsuxADSUJX.
+     * @param  string $source    Plain RegExp source (without delimiters).
+     * @param  string $modifiers Valids: imsuxnADSUJX.
      * @param  bool   $throw     False is silent mode.
      * @throws RegExpError
      */
@@ -568,10 +568,9 @@ class RegExp implements Stringable
     }
 
     /**
-     * Prepare modifiers.
-     * Valids: imsuxADSUJX (@see http://php.net/manual/en/reference.pcre.pattern.modifiers.php).
+     * Prepare modifiers, extract if any invalid.
      *
-     * @param  string       $modifiers
+     * @param  string      $modifiers
      * @param  string|null &$invalids
      * @return string|null
      */
