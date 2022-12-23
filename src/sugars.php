@@ -255,7 +255,7 @@ function split(string $separator, string $input, int $limit = null, int $flags =
             $res && $ret[] = join($res);
         }
     } else {
-        // Escape null bytes, delimiter & special char typos.
+        // Escape special char typos / null bytes and delimiter.
         $separator = strlen($separator) === 1 ? preg_quote($separator, '~')
             : str_replace(["\0", '~'], ['\0', '\~'], $separator);
 
@@ -267,12 +267,12 @@ function split(string $separator, string $input, int $limit = null, int $flags =
         ) ?: [];
     }
 
-    // Prevent 'undefined index ..' error.
+    // Block "undefined index .." error.
     if ($limit && $limit > count($ret)) {
         $ret = array_pad($ret, $limit, null);
     }
 
-    // Fill error message if requested.
+    // Fill error if requested.
     if (func_num_args() === 5) {
         $message = preg_error_message($code, 'preg_split');
         $message && $error = new RegExpError($message, code: $code);
