@@ -176,7 +176,7 @@ class System extends \StaticClass
         if (str_starts_with($osf, 'win')) {
             return ['id' => 'windows', 'type' => 'Windows', 'name' => 'Windows'];
         }
-        if (str_starts_with('osf', 'darwin')) {
+        if (str_starts_with($osf, 'darwin')) {
             return ['id' => 'darwin', 'type' => 'Darwin', 'name' => 'Darwin'];
         }
 
