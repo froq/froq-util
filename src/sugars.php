@@ -209,10 +209,10 @@ function slice(array|string $input, int $start, int $end = null, bool $keep_keys
 /**
  * Splice an array or string.
  *
- * @param  array|string       $input
- * @param  int                $start
- * @param  int|null           $end
- * @param  array|string|null  $replace
+ * @param  array|string      $input
+ * @param  int               $start
+ * @param  int|null          $end
+ * @param  array|string|null $replace
  * @param  array|string|null &$replaced
  * @return array|string
  * @since  6.0
@@ -233,10 +233,10 @@ function splice(array|string $input, int $start, int $end = null, array|string $
 /**
  * Split a string, with unicode style.
  *
- * @param  string            $separator
- * @param  string            $input
- * @param  int|null          $limit
- * @param  int|null          $flags
+ * @param  string           $separator
+ * @param  string           $input
+ * @param  int|null         $limit
+ * @param  int|null         $flags
  * @param  RegExpError|null &$error
  * @return array
  * @since  5.0
@@ -1334,9 +1334,9 @@ function error_clear(int $code = null): void
  * Get last error message with code, optionally formatted.
  *
  * @param  int|null &$code
- * @param  bool      $format
- * @param  bool      $extract
- * @param  bool      $clear
+ * @param  bool     $format
+ * @param  bool     $extract
+ * @param  bool     $clear
  * @return string|null
  * @since  4.17
  */
@@ -1375,7 +1375,7 @@ function error_message(int &$code = null, bool $format = false, bool $extract = 
  * Get JSON last error message with code if any, instead "No error".
  *
  * @param  int|null &$code
- * @param  bool      $clear
+ * @param  bool     $clear
  * @return string|null
  * @since  4.17
  */
@@ -1395,8 +1395,8 @@ function json_error_message(int &$code = null, bool $clear = false): string|null
  * Get PECL last error message with code if any, instead "No error".
  *
  * @param  int|null    &$code
- * @param  string|null  $func
- * @param  bool         $clear
+ * @param  string|null $func
+ * @param  bool        $clear
  * @return string|null
  * @since  4.17
  */
@@ -1407,7 +1407,9 @@ function preg_error_message(int &$code = null, string $func = null, bool $clear 
         $message = ($code = preg_last_error()) ? preg_last_error_msg() : null;
 
         // Clear last error.
-        $clear && preg_test('~~', '');
+        if ($clear && $message) {
+            preg_test('~~', '');
+        }
 
         return $message;
     }
@@ -1806,7 +1808,7 @@ function func_has_args(int|string ...$args): bool
 /**
  * Validate given input as JSON (@see https://wiki.php.net/rfc/json_validate).
  *
- * @param  string|null     $input
+ * @param  string|null    $input
  * @param  JsonError|null &$error
  * @return bool
  * @since  6.0
