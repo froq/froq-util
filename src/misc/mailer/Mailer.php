@@ -304,12 +304,12 @@ class Mailer
     }
 
     /**
-     * Generate a message id with ad unique id & host name.
+     * Generate a message id with a unique id & host name.
      */
     private function generateMessageId(): array
     {
         return [
-            gmdate('YmdHis') . '.' . suid(10, base: 16),
+            gmdate('YmdHis') . '.' . suid(10, base: 10),
             $_SERVER['SERVER_NAME'] ?? 'localhost'
         ];
     }
