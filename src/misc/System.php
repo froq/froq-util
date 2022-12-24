@@ -53,10 +53,7 @@ class System extends \StaticClass
         }
 
         if ($bool && !is_bool($value)) {
-            $value = $value && equals(
-                strtolower($value),
-                '1', 'on', 'yes', 'true'
-            );
+            $value = $value && equals(strtolower($value), '1', 'on', 'yes', 'true');
         }
 
         if (is_string($value) && is_numeric($value)) {
