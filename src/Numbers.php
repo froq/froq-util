@@ -143,6 +143,7 @@ final class Numbers extends \StaticClass
 
     /**
      * Check whether given input is unsigned.
+     *
      * @param  mixed $input
      * @return bool
      */
