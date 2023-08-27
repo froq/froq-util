@@ -157,11 +157,11 @@ class Item implements Arrayable, Jsonable, Countable, IteratorAggregate, ArrayAc
     /**
      * Sort.
      *
-     * @param  callable|null $func
-     * @param  int           $flags
+     * @param  callable|int|null $func
+     * @param  int               $flags
      * @return self
      */
-    public function sort(callable $func = null, int $flags = 0): self
+    public function sort(callable|int $func = null, int $flags = 0): self
     {
         $this->data = sorted($this->data, $func, $flags, assoc: true);
 
