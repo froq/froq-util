@@ -823,6 +823,30 @@ class XArray implements Arrayable, Listable, Jsonable, Iteratable, IteratableRev
         return $this;
     }
 
+    /**
+     * Use keys.
+     *
+     * @return self
+     */
+    public function useKeys(): self
+    {
+        $this->data = array_keys($this->data);
+
+        return $this;
+    }
+
+    /**
+     * Use values.
+     *
+     * @return self
+     */
+    public function useValues(): self
+    {
+        $this->data = array_values($this->data);
+
+        return $this;
+    }
+
     // Internal & addition.
 
     /**
@@ -833,6 +857,18 @@ class XArray implements Arrayable, Listable, Jsonable, Iteratable, IteratableRev
     public function flip(): self
     {
         $this->data = array_flip($this->data);
+
+        return $this;
+    }
+
+    /**
+     * Flip keys.
+     *
+     * @return self
+     */
+    public function flipKeys(): self
+    {
+        $this->data = array_keys($this->data);
 
         return $this;
     }
