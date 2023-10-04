@@ -37,12 +37,14 @@ require 'sugars-class/xobject.php';
 // Extra autoload registration for "misc" classes.
 spl_autoload_register(function (string $name): void {
     static $namespace = 'froq\util';
+
     if (str_starts_with($name, $namespace)) {
         $name = str_replace(
             NAMESPACE_SEPARATOR, DIRECTORY_SEPARATOR,
             substr($name, strlen($namespace) + 1)
         );
         $file = sprintf('%s/misc/%s.php', __DIR__, $name);
+
         if (is_file($file)) {
             require $file;
         }
