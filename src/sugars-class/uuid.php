@@ -78,11 +78,27 @@ class Uuid implements Stringable, \Stringable
      * Get Uuid value as 20/22-length short ID in Base-62.
      * Chances: 22-length: 88%, 21-length: 10%, 20-length: 02%.
      *
+     * Note: Argument `$pad` can be used for fixed 22-length returns.
+     *
+     * @param  string|true|null $pad True for padding with "0".
      * @return string
+     * @throws UuidError
      */
-    public function toShortString(): string
+    public function toShortString(string|true $pad = null): string
     {
-        return convert_base(str_replace('-', '', $this->value), 16, 62);
+        $ret = convert_base(str_replace('-', '', $this->value), 16, 62);
+
+        if ($pad !== null) {
+            $pad = ($pad === true) ? '0' : $pad;
+
+            if ($pad === '') {
+                throw new UuidError('Argument $pad cannot be empty string');
+            }
+
+            $ret = str_pad($ret, 22, $pad);
+        }
+
+        return $ret;
     }
 
     /**
