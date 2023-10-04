@@ -176,7 +176,7 @@ function rmfile(string $file): bool
  */
 function file_create(string $file, int $mode = FILE_MODE, bool $temp = false): string|null
 {
-    return $temp ? tmpnam($file, $mode) // Prefix=file.
+    return $temp ? tmpnam($file, $mode) // file=prefix.
                  : (mkfile($file, $mode) ? $file : null);
 }
 
@@ -329,7 +329,7 @@ function file_mime(string $file): string|null
  * Get a file (file, directory or link) stat.
  *
  * @param  string $file
- * @return string|null
+ * @return array|null
  * @since  7.0
  */
 function file_stat(string $file): array|null
