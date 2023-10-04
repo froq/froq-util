@@ -75,8 +75,8 @@ class Uuid implements Stringable, \Stringable
     }
 
     /**
-     * Get Uuid value as 20 to 22-length short ID in Base-62. Average chances are:
-     * 22-length => 88%, 21-length => 10%, 20-length => 02%.
+     * Get Uuid value as 20/22-length short ID in Base-62.
+     * Chances: 22-length: 88%, 21-length: 10%, 20-length: 02%.
      *
      * @return string
      */
