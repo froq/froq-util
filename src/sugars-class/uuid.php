@@ -100,7 +100,7 @@ class Uuid implements Stringable, \Stringable
      */
     public function toShortString(string|true $pad = null): string
     {
-        $ret = convert_base(str_replace('-', '', $this->value), 16, 62);
+        $ret = convert_base($this->toPlainString(), 16, 62);
 
         if ($pad !== null) {
             $pad = ($pad === true) ? '0' : $pad;
@@ -125,7 +125,7 @@ class Uuid implements Stringable, \Stringable
      */
     public function toHashString(int $length = 32, bool $format = false, bool $upper = false): string
     {
-        return self::hash($this->value, $length, $format, $upper);
+        return self::hash($this->toPlainString(), $length, $format, $upper);
     }
 
     /**
