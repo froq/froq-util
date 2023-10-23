@@ -174,6 +174,17 @@ class Uuid implements Stringable, \Stringable
     }
 
     /**
+     * Check whether given Uuid is equal to this value.
+     *
+     * @param  string|Uuid $uuid
+     * @return bool
+     */
+    public function isEqual(string|Uuid $uuid): bool
+    {
+        return self::equals($this->value, (string) $uuid);
+    }
+
+    /**
      * Check whether Uuid value is valid.
      *
      * @param  bool $strict
@@ -290,6 +301,18 @@ class Uuid implements Stringable, \Stringable
     public static function generateHash(int $length = 32, bool $format = false, bool $upper = false): string
     {
         return self::hash(self::generate(), $length, $format, $upper);
+    }
+
+    /**
+     * Verify equal states of given Uuid inputs.
+     *
+     * @param  string $uuidKnown
+     * @param  string $uuidUnknown
+     * @return bool
+     */
+    public static function equals(string $uuidKnown, string $uuidUnknown): bool
+    {
+        return hash_equals($uuidKnown, $uuidUnknown);
     }
 
     /**
