@@ -34,8 +34,8 @@ class Uuid implements Stringable, \Stringable
         // When value given.
         if (func_num_args() && isset($options['strict'])) {
             if ($options['strict'] && !self::validate((string) $value)) {
-                [$spec, $value] = ($value === null)
-                    ? ['%s', 'null'] : ['%q', $value];
+                [$spec, $value] = ($value === null) ? ['%s', 'null']
+                                                    : ['%q', $value];
 
                 throw new UuidError('Invalid UUID value: ' . $spec, $value);
             }
