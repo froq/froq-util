@@ -25,15 +25,29 @@ class Uuid implements Stringable, \Stringable
     /**
      * Constructor.
      *
-     * @param string|null $value
-     * @param bool     ...$options See generate().
+     * @param  string|Uuid|null $value
+     * @param  bool          ...$options See generate().
+     * @throws UuidError If options.strict is true and value is invalid.
      */
-    public function __construct(string $value = null, bool ...$options)
+    public function __construct(string|Uuid $value = null, bool ...$options)
     {
+        // When value given.
+        if (func_num_args() && isset($options['strict'])) {
+            if ($options['strict'] && !self::validate((string) $value)) {
+                [$spec, $value] = $value === null
+                    ? ['%s', 'null'] : ['%q', $value];
+
+                throw new UuidError('Invalid UUID value: ' . $spec, $value);
+            }
+
+            // Not used in generate().
+            unset($options['strict']);
+        }
+
         // Create if none given.
         $value ??= self::generate(...$options);
 
-        $this->value = $value;
+        $this->value = (string) $value;
     }
 
     /**
