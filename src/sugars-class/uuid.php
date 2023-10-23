@@ -16,8 +16,8 @@ use froq\common\interface\Stringable;
 class Uuid implements Stringable, \Stringable
 {
     /** Nulls. */
-    public const NULL      = '00000000-0000-0000-0000-000000000000',
-                 NULL_HASH = '00000000000000000000000000000000';
+    public final const NULL = '00000000-0000-0000-0000-000000000000',
+                       NULL_HASH = '00000000000000000000000000000000';
 
     /** Given or generated value. */
     public readonly string $value;
