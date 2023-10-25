@@ -148,8 +148,8 @@ class Uuid implements Stringable, \Stringable
     {
         $time = null;
 
-        // Extract usable part from value.
-        if (ctype_xdigit($sub = substr($this->value, 0, 8))) {
+        // Extract usable part from value (8-byte hex).
+        if (ctype_xdigit($sub = strcut($this->value, 8))) {
             $time = hexdec($sub);
         }
 
