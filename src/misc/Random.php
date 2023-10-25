@@ -136,11 +136,12 @@ class Random
     /**
      * Get next byte.
      *
+     * @param  bool $hex
      * @return string
      */
-    public function nextByte(): string
+    public function nextByte(bool $hex = false): string
     {
-        return $this->nextBytes(1, true);
+        return $this->nextBytes(1, true, $hex);
     }
 
     /**
