@@ -153,20 +153,31 @@ class Uuid implements Stringable, \Stringable
             $time = hexdec($sub);
         }
 
-        return ($time !== null && $time <= time()) ? $time : null;
+        // Validate extracted time.
+        if ($time !== null && $time <= time()) {
+            return $time;
+        }
+
+        return null;
     }
 
     /**
-     * Format UTC time if UUID was created by `withTime()` or option `time: true`.
+     * Get DateTime instance if UUID was created by `withTime()` or option `time: true`.
      *
-     * @param  string $format
-     * @return string|null
+     * @param  string $timezone
+     * @return DateTime|null
      */
-    public function formatTime(string $format = 'c'): string|null
+    public function getDateTime(string $timezone = 'UTC'): DateTime|null
     {
         $time = $this->getTime();
 
-        return ($time !== null) ? gmdate($format, $time) : null;
+        if ($time !== null) {
+            return (new DateTime)
+                ->setTimestamp($time)
+                ->setTimezone(new DateTimeZone($timezone));
+        }
+
+        return null;
     }
 
     /**
