@@ -168,6 +168,31 @@ class Random
     }
 
     /**
+     * Shuffle array.
+     *
+     * @param  array $array
+     * @return array
+     * @since  7.0
+     */
+    public static function shuffleArray(array $array): array
+    {
+        return (new \Random\Randomizer)->shuffleArray($array);
+    }
+
+    /**
+     * Shuffle string (unicode-safe).
+     *
+     * @param  string      $string
+     * @param  string|null $encoding
+     * @return string
+     * @since  7.0
+     */
+    public static function shuffleString(string $string, string $encoding = null): string
+    {
+        return join(self::shuffleArray(mb_str_split($string, encoding: $encoding)));
+    }
+
+    /**
      * Get next number.
      *
      * Note about 48:
