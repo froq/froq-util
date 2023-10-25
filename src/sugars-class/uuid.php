@@ -140,7 +140,7 @@ class Uuid implements Stringable, \Stringable
     }
 
     /**
-     * Get Unix time if UUID was created by `withTime()` or option `timed: true`.
+     * Get Unix time if UUID was created by `withTime()` or option `time: true`.
      *
      * @return int|null
      */
@@ -148,6 +148,7 @@ class Uuid implements Stringable, \Stringable
     {
         $time = null;
 
+        // Extract usable part from value.
         if (ctype_xdigit($sub = substr($this->value, 0, 8))) {
             $time = hexdec($sub);
         }
@@ -156,7 +157,7 @@ class Uuid implements Stringable, \Stringable
     }
 
     /**
-     * Format UTC time if UUID was created by `withTime()` or option `timed: true`.
+     * Format UTC time if UUID was created by `withTime()` or option `time: true`.
      *
      * @param  string $format
      * @return string|null
