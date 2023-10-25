@@ -148,22 +148,25 @@ class Random
      * Get next bytes.
      *
      * @param  int  $length
-     * @param  bool $join
+     * @param  bool $array
      * @param  bool $hex
      * @return string|array
+     * @throws ArgumentError
      */
-    public function nextBytes(int $length, bool $join = true, bool $hex = false): string|array
+    public function nextBytes(int $length, bool $array = false, bool $hex = false): string|array
     {
-        $ret = [];
-
-        while (count($ret) < $length) {
-            $res = unpack('C*', pack('L', $this->next(32)));
-            $res = array_map('chr', array_slice($res, 1));
-            $ret = array_slice([...$ret, ...$res], 0, $length);
+        if ($length < 1) {
+            throw new \ArgumentError('Invalid length: %s [min=1]', $length);
         }
 
-        $join && $ret = join($ret);
-        $hex  && $ret = $join ? bin2hex($ret) : array_map('bin2hex', $ret);
+        $ret = (new \Random\Randomizer)->getBytes($length);
+
+        if ($array) {
+            $ret = mb_str_split($ret);
+        }
+        if ($hex) {
+            $ret = $array ? array_map('bin2hex', $ret) : bin2hex($ret);
+        }
 
         return $ret;
     }
