@@ -6,7 +6,8 @@
 use froq\common\interface\Stringable;
 
 /**
- * A simple UUID/v4 class for working customized UUIDs.
+ * A simple UUID (v4) class for working customized or dated UUIDs/GUIDs and
+ * pseudorandom identifiers & identifier hashes.
  *
  * @package global
  * @class   Uuid
@@ -232,21 +233,22 @@ class Uuid implements Stringable, \Stringable
     }
 
     /**
-     * Generate a UUID.
+     * Generate a UUID (v4).
      *
-     * @param  bool $timed For Unix time prefix.
+     * @param  bool $time For Unix time prefix.
      * @param  bool $guid
      * @param  bool $upper
      * @param  bool $plain
      * @return string
      */
-    public static function generate(bool $timed = false, bool $guid = false, bool $upper = false, bool $plain = false): string
+    public static function generate(bool $time = false, bool $guid = false, bool $upper = false, bool $plain = false): string
     {
-        if (!$timed) {
-            // Full 16-random bytes.
+        if (!$time) {
             $bins = random_bytes(16);
         } else {
             // Unix time prefix & 12-random bytes.
+            // @tome: What about "2038 Problem" issue? Seems pack() will keep giving 4-byte bin
+            // (so 8-byte hex) until date of "2105-12-31", but probably I'll never see that date.
             $bins = strrev(pack('L', time())) . random_bytes(12);
         }
 
@@ -267,14 +269,14 @@ class Uuid implements Stringable, \Stringable
     /**
      * Generate a GUID.
      *
-     * @param  bool $timed
+     * @param  bool $time
      * @param  bool $upper
      * @param  bool $plain
      * @return string
      */
-    public static function generateGuid(bool $timed = false, bool $upper = false, bool $plain = false): string
+    public static function generateGuid(bool $time = false, bool $upper = false, bool $plain = false): string
     {
-        return self::generate($timed, true, $upper, $plain);
+        return self::generate($time, true, $upper, $plain);
     }
 
     /**

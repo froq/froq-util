@@ -1601,16 +1601,16 @@ function slug(string $input, string $preserve = '', string $replace = '-'): stri
 /**
  * Generate a UUID.
  *
- * @param  bool $timed For Unix time prefix.
+ * @param  bool $time For Unix time prefix.
  * @param  bool $guid
  * @param  bool $upper
  * @param  bool $plain
  * @return string
  * @since  5.0
  */
-function uuid(bool $timed = false, bool $guid = false, bool $upper = false, bool $plain = false): string
+function uuid(bool $time = false, bool $guid = false, bool $upper = false, bool $plain = false): string
 {
-    return Uuid::generate($timed, $guid, $upper, $plain);
+    return Uuid::generate($time, $guid, $upper, $plain);
 }
 
 /**
