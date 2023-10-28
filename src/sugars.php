@@ -1437,9 +1437,9 @@ function preg_error_message(int &$code = null, string $func = null, bool $clear 
 /**
  * Format like `sprintf()` but with additional specifiers.
  *
- * Specifiers: single-quote: %q, double-quote: %Q, integer: %i, type: %t bool: %b,
- * join (with ','): %a, join (with ', '): %A, upper: %U lower: %L escape: %S and
- * for float-to-string only: %s (eg: 1.0 => not 1 but 1.0)..
+ * Specifiers: single-quote: %q, double-quote: %Q, integer: %i, number: %n,
+ * type: %t, bool: %b, join(','): %a, join(', '): %A, upper: %U lower: %L
+ * escape: %S and for float-to-string only: %s (eg: 1.0 => not 1 but 1.0).
  *
  * @param  string   $format
  * @param  mixed ...$arguments
@@ -1448,7 +1448,7 @@ function preg_error_message(int &$code = null, string $func = null, bool $clear 
  */
 function format(string $format, mixed ...$arguments): string
 {
-    if (preg_match_all('~(?<!%)%[qQitbaAULSs]~', $format, $match)) {
+    if (preg_match_all('~(?<!%)%[qQintbaAULSs]~', $format, $match)) {
         $specifiers = $match[0];
 
         if (count($specifiers) > count($arguments)) {
@@ -1468,9 +1468,16 @@ function format(string $format, mixed ...$arguments): string
                     $format = substr_replace($format, $repl, $offset, 2);
                     break;
 
-                // Integer (digit).
+                // Integers (digits).
                 case '%i':
                     $format = substr_replace($format, '%d', $offset, 2);
+                    break;
+
+                // Numbers.
+                case '%n':
+                    $format = substr_replace($format, '%s', $offset, 2);
+                    $decimals = is_float($arguments[$i]) ? true : 0;
+                    $arguments[$i] = format_number((float) $arguments[$i], $decimals);
                     break;
 
                 // Types.
