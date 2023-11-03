@@ -1,9 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-util
  */
-declare(strict_types=1);
 
 /**
  * Nil: For null/void/undefined refs.
@@ -15,22 +14,16 @@ final class Nil {}
  */
 final class Ref {
   public function __construct(
-    public mixed $data = nil
+    public mixed $data = null
   ) {}
 }
 
-function Nil(mixed &$ref = nil): Nil {
-  return $ref = new Nil();
+function Nil(): Nil {
+  return new Nil();
 }
-function Ref(mixed $data = nil): Ref {
+function Ref(mixed $data = null): Ref {
   return new Ref($data);
 }
-
-/**
- * Nil/nils (null/null string).
- * @since 4.0
- */
-const nil = null, nils = '';
 
 /**
  * Multi-byte encoding.
@@ -38,13 +31,11 @@ const nil = null, nils = '';
  */
 const ENCODING = 'UTF-8';
 
-
 /**
  * Number precision.
  * @since 5.31
  */
 const PRECISION = 14;
-
 
 /**
  * Cases (0/1 already defined as CASSE_LOWER/CASE_UPPER).

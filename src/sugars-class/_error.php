@@ -1,120 +1,92 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-util
  */
-declare(strict_types=1);
-
-use froq\common\Error;
-use froq\common\trait\ThrowableTrait as ErrorTrait;
 
 /**
  * @author Kerem Güneş
  * @since  5.25
  */
-class KeyError extends Error
-{
-    use ErrorTrait;
-}
+class KeyError extends froq\common\Error
+{}
 
 /**
  * @author Kerem Güneş
  * @since  6.0
  */
-class JsonError extends Error
-{
-    use ErrorTrait;
-}
+class JsonError extends froq\common\Error
+{}
 
 /**
  * @author Kerem Güneş
  * @since  6.0
  */
-class LocaleError extends Error
-{
-    use ErrorTrait;
-}
+class LocaleError extends froq\common\Error
+{}
 
 /**
  * @author Kerem Güneş
  * @since  6.5
  */
-class UrlError extends Error
-{
-    use ErrorTrait;
-}
+class UrlError extends froq\common\Error
+{}
 
 /**
  * @author Kerem Güneş
  * @since  6.0
  */
-class UuidError extends Error
-{
-    use ErrorTrait;
-}
+class UuidError extends froq\common\Error
+{}
 
 /**
  * @author Kerem Güneş
  * @since  6.0
  */
-class RegExpError extends Error
-{
-    use ErrorTrait;
-}
+class RegExpError extends froq\common\Error
+{}
 
 /**
  * @author Kerem Güneş
  * @since  6.0
  */
-class RangeError extends Error
-{
-    use ErrorTrait;
-}
+class RangeError extends froq\common\Error
+{}
 
 /**
  * @author Kerem Güneş
  * @since  6.0
  */
-class ArgumentError extends Error
-{
-    use ErrorTrait;
-}
+class ArgumentError extends froq\common\Error
+{}
 
 /**
  * @author Kerem Güneş
  * @since  6.0
  */
-class UnknownError extends Error
-{
-    use ErrorTrait;
-}
+class UnknownError extends froq\common\Error
+{}
 
 /**
  * @author Kerem Güneş
  * @since  6.0
  */
-class UnsupportedError extends Error
-{
-    use ErrorTrait;
-}
+class UnsupportedError extends froq\common\Error
+{}
 
 /**
  * @author Kerem Güneş
  * @since  6.0
  */
-class UnimplementedError extends Error
-{
-    use ErrorTrait;
-}
+class UnimplementedError extends froq\common\Error
+{}
 
 /**
  * @author Kerem Güneş
  * @since  6.0
  */
-class ReadonlyError extends Error
+class ReadonlyError extends froq\common\Error
 {
-    use ErrorTrait;
-
     /**
      * Constructor.
      *
@@ -123,13 +95,13 @@ class ReadonlyError extends Error
      */
     public function __construct(string|object $class, string $property = null)
     {
-        if (func_num_args() == 1) {
+        if (func_num_args() === 1) {
             parent::__construct(sprintf(
-                'Cannot modify readonly class %s', get_class_name($class)
+                'Cannot modify readonly class %s', get_class_name($class, escape: true)
             ));
         } else {
             parent::__construct(sprintf(
-                'Cannot modify readonly property %s::$%s', get_class_name($class), $property
+                'Cannot modify readonly property %s::$%s', get_class_name($class, escape: true), $property
             ));
         }
     }
@@ -172,12 +144,27 @@ class ReadonlyPropertyError extends ReadonlyError
 
 /**
  * @author Kerem Güneş
+ * @since  7.0
+ */
+class UndefinedClassError extends froq\common\Error
+{
+    /**
+     * Constructor.
+     *
+     * @param string $class
+     */
+    public function __construct(string $class)
+    {
+        parent::__construct(sprintf('Undefined class: %s', $class));
+    }
+}
+
+/**
+ * @author Kerem Güneş
  * @since  6.0
  */
-class UndefinedConstantError extends Error
+class UndefinedConstantError extends froq\common\Error
 {
-    use ErrorTrait;
-
     /**
      * Constructor.
      *
@@ -187,12 +174,10 @@ class UndefinedConstantError extends Error
     public function __construct(string|object|null $class, string $constant)
     {
         if ($class === null) {
-            parent::__construct(sprintf(
-                'Undefined constant %s', $constant
-            ));
+            parent::__construct(sprintf('Undefined constant: %s', $constant));
         } else {
             parent::__construct(sprintf(
-                'Undefined class constant %s::%s', get_class_name($class), $constant
+                'Undefined class constant: %s::%s', get_class_name($class, escape: true), $constant
             ));
         }
     }
@@ -202,10 +187,8 @@ class UndefinedConstantError extends Error
  * @author Kerem Güneş
  * @since  6.0
  */
-class UndefinedPropertyError extends Error
+class UndefinedPropertyError extends froq\common\Error
 {
-    use ErrorTrait;
-
     /**
      * Constructor.
      *
@@ -215,7 +198,7 @@ class UndefinedPropertyError extends Error
     public function __construct(string|object $class, string $property)
     {
         parent::__construct(sprintf(
-            'Undefined property %s::$%s', get_class_name($class), $property
+            'Undefined property: %s::$%s', get_class_name($class, escape: true), $property
         ));
     }
 }
@@ -224,10 +207,8 @@ class UndefinedPropertyError extends Error
  * @author Kerem Güneş
  * @since  6.0
  */
-class UndefinedMethodError extends Error
+class UndefinedMethodError extends froq\common\Error
 {
-    use ErrorTrait;
-
     /**
      * Constructor.
      *
@@ -237,7 +218,7 @@ class UndefinedMethodError extends Error
     public function __construct(string|object $class, string $method)
     {
         parent::__construct(sprintf(
-            'Undefined method %s::%s()', get_class_name($class), $method
+            'Undefined method: %s::%s()', get_class_name($class, escape: true), $method
         ));
     }
 }
@@ -246,11 +227,10 @@ class UndefinedMethodError extends Error
  * @author Kerem Güneş
  * @since  6.0
  */
-class LastError extends Error
+class LastError extends froq\common\Error
 {
-    use ErrorTrait;
 
-    /** Causing function data. */
+    /** Causing call info. */
     private ?array $call = null;
 
     /**
@@ -285,9 +265,9 @@ class LastError extends Error
     /**
      * Get call.
      *
-     * @return ?array
+     * @return array|null
      */
-    public function getCall(): ?array
+    public function getCall(): array|null
     {
         return $this->call;
     }
@@ -295,9 +275,9 @@ class LastError extends Error
     /**
      * Get call file.
      *
-     * @return ?string
+     * @return string|null
      */
-    public function getCallFile(): ?string
+    public function getCallFile(): string|null
     {
         return $this->call['file'] ?? null;
     }
@@ -305,9 +285,9 @@ class LastError extends Error
     /**
      * Get call line.
      *
-     * @return ?int
+     * @return int|null
      */
-    public function getCallLine(): ?int
+    public function getCallLine(): int|null
     {
         return $this->call['line'] ?? null;
     }
@@ -315,9 +295,9 @@ class LastError extends Error
     /**
      * Get call name.
      *
-     * @return ?string
+     * @return string|null
      */
-    public function getCallName(): ?string
+    public function getCallName(): string|null
     {
         return $this->call['name'] ?? null;
     }
@@ -325,9 +305,9 @@ class LastError extends Error
     /**
      * Get call path.
      *
-     * @return ?string
+     * @return string|null
      */
-    public function getCallPath(): ?string
+    public function getCallPath(): string|null
     {
         return $this->call['path'] ?? null;
     }

@@ -1,26 +1,24 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-util
  */
-declare(strict_types=1);
-
 use froq\util\Strings;
 
 /**
  * A simple string buffer class, inpired by Java's StringBuffer.
  *
  * @package global
- * @object  StringBuffer
+ * @class   StringBuffer
  * @author  Kerem Güneş
  * @since   6.0
  */
 class StringBuffer implements Stringable, IteratorAggregate, JsonSerializable, ArrayAccess
 {
-    /** @var array */
+    /** Data. */
     protected array $data = [];
 
-    /** @var string|null */
+    /** Encoding. */
     protected string|null $encoding = 'UTF-8';
 
     /**
@@ -43,7 +41,9 @@ class StringBuffer implements Stringable, IteratorAggregate, JsonSerializable, A
         if ($encoding !== '') $this->encoding = $encoding;
     }
 
-    /** @magic */
+    /**
+     * @magic
+     */
     public function __toString(): string
     {
         return $this->toString();
@@ -177,7 +177,7 @@ class StringBuffer implements Stringable, IteratorAggregate, JsonSerializable, A
             $end = $end - $start;
         } else {
             $end = $end - $length;
-            if ($end == 0) {
+            if ($end === 0) {
                 $end = $length;
             }
         }
@@ -235,7 +235,7 @@ class StringBuffer implements Stringable, IteratorAggregate, JsonSerializable, A
             // Swap & free.
             [$replace, $temp] = [$temp, null];
 
-            if ($end && $end != count($replace)) {
+            if ($end !== null && $end !== count($replace)) {
                 $replace = array_pad($replace, $end, '');
             }
 
@@ -261,7 +261,7 @@ class StringBuffer implements Stringable, IteratorAggregate, JsonSerializable, A
             throw new ValueError('Argument $length cannot be negative');
         }
 
-        if ($length == 0) {
+        if ($length === 0) {
             $this->data = [];
         } elseif ($length < $this->getLength()) {
             $this->data = array_slice($this->data, 0, $length);
@@ -330,6 +330,21 @@ class StringBuffer implements Stringable, IteratorAggregate, JsonSerializable, A
     }
 
     /**
+     * @alias charAt()
+     */
+    public function chr(...$args)
+    {
+        return $this->charAt(...$args);
+    }
+    /**
+     * @alias charCodeAt()
+     */
+    public function ord(...$args)
+    {
+        return $this->charCodeAt(...$args);
+    }
+
+    /**
      * Get a code point or return null.
      *
      * @param  int  $index
@@ -338,7 +353,7 @@ class StringBuffer implements Stringable, IteratorAggregate, JsonSerializable, A
      */
     public function codePointAt(int $index, bool $hex = false): int|string|null
     {
-        return xstring($this->data, $this->encoding)->codePointAt($index, $hex);
+        return XString::fromChars($this->data, $this->encoding)->codePointAt($index, $hex);
     }
 
     /**
@@ -396,7 +411,7 @@ class StringBuffer implements Stringable, IteratorAggregate, JsonSerializable, A
      * Get all or some chars by given indexes.
      *
      * @param  int ...$indexes
-     * @return array
+     * @return array<string>
      */
     public function chars(int ...$indexes): array
     {
@@ -411,26 +426,28 @@ class StringBuffer implements Stringable, IteratorAggregate, JsonSerializable, A
      * Get all or some char codes by given indexes.
      *
      * @param  int ...$indexes
-     * @return array
+     * @return array<int>
      */
     public function charCodes(int ...$indexes): array
     {
-        $chars = $this->chars(...$indexes);
-
-        return array_map(fn($char) => Strings::ord($char), $chars);
+        return array_map(
+            fn(string $char): int => Strings::ord($char),
+            $this->chars(...$indexes)
+        );
     }
 
     /**
      * Get all or some code points by given indexes.
      *
      * @param  int ...$indexes
-     * @return array
+     * @return array<int>
      */
     public function codePoints(int ...$indexes): array
     {
-        $chars = $this->chars(...$indexes);
-
-        return array_map(fn($char) => xstring($char, $this->encoding)->codePointAt(0), $chars);
+        return array_map(
+            fn(string $char): int => xstring($char, $this->encoding)->codePointAt(0),
+            $this->chars(...$indexes)
+        );
     }
 
     /**
@@ -472,7 +489,7 @@ class StringBuffer implements Stringable, IteratorAggregate, JsonSerializable, A
         $string1 = $this->toString();
         foreach ($data as $data) {
             $string2 = is_array($data) ? join($data) : (string) $data;
-            if (str_compare($string1, $string2, $icase, encoding: $this->encoding) != 0) {
+            if (str_compare($string1, $string2, $icase, encoding: $this->encoding) !== 0) {
                 return false;
             }
         }
@@ -536,7 +553,7 @@ class StringBuffer implements Stringable, IteratorAggregate, JsonSerializable, A
      */
     public function indexOf(self|string $search, bool $icase = false, int $offset = 0): int|null
     {
-        return xstring($this->data, $this->encoding)->indexOf((string) $search, $icase, $offset);
+        return XString::fromChars($this->data, $this->encoding)->indexOf((string) $search, $icase, $offset);
     }
 
     /**
@@ -549,7 +566,7 @@ class StringBuffer implements Stringable, IteratorAggregate, JsonSerializable, A
      */
     public function lastIndexOf(self|string $search, bool $icase = false, int $offset = 0): int|null
     {
-        return xstring($this->data, $this->encoding)->lastIndexOf((string) $search, $icase, $offset);
+        return XString::fromChars($this->data, $this->encoding)->lastIndexOf((string) $search, $icase, $offset);
     }
 
     /**
@@ -811,6 +828,18 @@ class StringBuffer implements Stringable, IteratorAggregate, JsonSerializable, A
     }
 
     /**
+     * Create an instance from given chars.
+     *
+     * @param  array       $chars
+     * @param  string|null $encoding
+     * @return static
+     */
+    public static function fromChars(array $chars, string|null $encoding = ''): static
+    {
+        return new static($chars, $encoding);
+    }
+
+    /**
      * Create an instance from given char codes.
      *
      * @param  int ...$codes
@@ -818,7 +847,7 @@ class StringBuffer implements Stringable, IteratorAggregate, JsonSerializable, A
      */
     public static function fromCharCode(int ...$codes): static
     {
-        return new static(array_map(fn($code) => Strings::chr($code), $codes));
+        return new static(array_map(fn(int $code): ?string => Strings::chr($code), $codes));
     }
 
     /**
@@ -829,6 +858,6 @@ class StringBuffer implements Stringable, IteratorAggregate, JsonSerializable, A
      */
     public static function fromCodePoint(int ...$codes): static
     {
-        return new static(array_map(fn($code) => Strings::chr($code), $codes));
+        return new static(array_map(fn(int $code): ?string => Strings::chr($code), $codes));
     }
 }

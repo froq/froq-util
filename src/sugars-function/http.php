@@ -1,20 +1,17 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-util
  */
-declare(strict_types=1);
 
 /**
  * Default HTTP protocol.
- * @const string
  * @since 6.0
  */
 const HTTP_DEFAULT_PROTOCOL = 'HTTP/1.1';
 
 /**
  * Date format (https://tools.ietf.org/html/rfc7231#section-7.1.1.2).
- * @const string
  * @since 6.0
  */
 const HTTP_DATE_FORMAT = 'D, d M Y H:i:s \G\M\T';
@@ -30,7 +27,7 @@ const HTTP_DATE_FORMAT = 'D, d M Y H:i:s \G\M\T';
 function http_parse_query_string(string $query, bool $clean = false): array
 {
     $query = trim($query);
-    if ($query == '') {
+    if ($query === '') {
         return [];
     }
 
@@ -38,9 +35,9 @@ function http_parse_query_string(string $query, bool $clean = false): array
 
     // Remove HTML tags.
     if ($clean) {
-        $data = array_apply($data, fn($v) => (
+        $data = array_apply($data, fn($v): mixed => (
             is_string($v) ? preg_remove('~<(\w+)\b[^>]*/?>(?:.*?</\1>)?~isu', $v) : $v
-        ), true);
+        ), recursive: true);
     }
 
     return $data;
@@ -62,13 +59,13 @@ function http_build_query_string(array $data, bool $clean = false): string
 
     // Remove HTML tags.
     if ($clean) {
-        $data = array_apply($data, fn($v) => (
+        $data = array_apply($data, fn($v): mixed => (
             is_string($v) ? preg_remove('~<(\w+)\b[^>]*/?>(?:.*?</\1>)?~isu', $v) : $v
-        ), true);
+        ), recursive: true);
     }
 
     // Fix skipped nulls by http_build_query() & empty strings of falses.
-    $data = array_apply($data, fn($v) => is_bool($v) ? (int) $v : (string) $v, true);
+    $data = array_apply($data, fn($v): int|string => is_bool($v) ? (int) $v : (string) $v, true);
 
     $query = http_build_query($data, '', '&', PHP_QUERY_RFC3986);
 
@@ -90,7 +87,7 @@ function http_build_query_string(array $data, bool $clean = false): string
 function http_parse_url(string $url): array
 {
     $url = trim($url);
-    if ($url == '') {
+    if ($url === '') {
         return [];
     }
 
@@ -186,14 +183,18 @@ function http_build_url(array $data): string
     }
 
     if (isset($data['queryParams'])) {
-        // Update query with query params.
         if (isset($data['query'])) {
+            // Update query with query params.
             $query = http_parse_query_string($data['query']);
             $query = array_replace_recursive($query, $data['queryParams']);
             $data['query'] = http_build_query_string($query);
         } else {
             $data['query'] = http_build_query_string($data['queryParams']);
         }
+    }
+
+    if (isset($data['query']) && is_array($data['query'])) {
+        $data['query'] = http_build_query_string($data['query']);
     }
 
     isset($data['path'])     && $url .= $data['path'];
@@ -213,7 +214,7 @@ function http_build_url(array $data): string
 function http_parse_cookie(string $cookie): array
 {
     $cookie = trim($cookie);
-    if ($cookie == '') {
+    if ($cookie === '') {
         return [];
     }
 
@@ -226,7 +227,7 @@ function http_parse_cookie(string $cookie): array
         $component = trim($component);
         if ($component) {
             [$name, $value] = split('=', $component, 2);
-            if ($i == 0) {
+            if ($i === 0) {
                 $data['name'] = isset($name) ? rawurldecode($name) : $name;
                 $data['value'] = isset($value) ? rawurldecode($value) : $value;
                 continue;
@@ -272,14 +273,14 @@ function http_parse_cookie(string $cookie): array
 function http_build_cookie(string $name, string|null $value, array $options = null): string
 {
     $name = trim($name);
-    if ($name == '') {
+    if ($name === '') {
         trigger_error('Cookie name is empty');
         return '';
     }
 
     $options = array_replace(
         array_pad_keys([], ['expires', 'path', 'domain', 'secure', 'httponly', 'samesite']),
-        array_map_keys((array) $options, 'strtolower')
+        array_map_keys('strtolower', (array) $options)
     );
 
     $cookie = rawurlencode($name) . '=';
@@ -427,7 +428,7 @@ function http_build_headers(array $data, string|int $case = null): string
 function http_parse_header(string $header, string|int $case = null, bool $verbose = false): array
 {
     if (!function_exists('httpx_parse_header')) {
-        require 'httpx.php';
+        require 'internal/httpx.php';
     }
 
     return httpx_parse_header($header, $case, $verbose);
@@ -445,7 +446,7 @@ function http_parse_header(string $header, string|int $case = null, bool $verbos
 function http_build_header(string $name, string|null $value, string|int $case = null): string
 {
     $name = trim($name);
-    if ($name == '') {
+    if ($name === '') {
         return '';
     }
 
@@ -468,7 +469,7 @@ function http_parse_request_line(string $line): array
 {
     $line = trim($line);
 
-    if ($line && sscanf($line, "%s %s %[^\r\n]", $method, $uri, $protocol) == 3) {
+    if ($line && sscanf($line, "%s %s %[^\r\n]", $method, $uri, $protocol) === 3) {
         $protocol = trim($protocol);
         $version  = (float) substr($protocol, 5, 3);
 
@@ -492,7 +493,7 @@ function http_parse_response_line(string $line): array
 {
     $line = trim($line);
 
-    if ($line && sscanf($line, '%s %d', $protocol, $status) == 2) {
+    if ($line && sscanf($line, '%s %d', $protocol, $status) === 2) {
         $protocol = trim($protocol);
         $version  = (float) substr($protocol, 5, 3);
 
@@ -569,7 +570,7 @@ function http_date_verify(string $date): bool
 function http_parse_query(string $query, string $separator = '&', int $decoding = PHP_QUERY_RFC3986): array
 {
     $query = trim($query);
-    if ($query == '') {
+    if ($query === '') {
         return [];
     }
 
@@ -577,12 +578,14 @@ function http_parse_query(string $query, string $separator = '&', int $decoding 
 
     /** @thanks http://php.net/parse_str#119484 */
     foreach (explode($separator, $query) as $tmp) {
-        @ [$key, $value] = explode('=', $tmp, 2);
-        if ($key == '') {
+        @[$key, $value] = explode('=', $tmp, 2);
+
+        $key = (string) $key;
+        if ($key === '') {
             continue;
         }
 
-        if ($decoding == PHP_QUERY_RFC3986) {
+        if ($decoding === PHP_QUERY_RFC3986) {
             $key   = rawurldecode($key);
             $value = rawurldecode($value ?? '');
         } else {
@@ -598,10 +601,10 @@ function http_parse_query(string $query, string $separator = '&', int $decoding 
             $keys = [$key];
         }
 
-        $target =& $data;
+        $target = &$data;
 
         foreach ($keys as $index) {
-            if ($index == '') {
+            if ($index === '') {
                 if (isset($target)) {
                     if (is_array($target)) {
                         $ikeys  = array_filter(array_keys($target), 'is_int');
@@ -618,7 +621,7 @@ function http_parse_query(string $query, string $separator = '&', int $decoding 
                 $target[$index] = [$target[$index]];
             }
 
-            $target =& $target[$index];
+            $target = &$target[$index];
         }
 
         if (is_array($target)) {

@@ -1,10 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-util
  */
-declare(strict_types=1);
-
 use froq\common\interface\{Arrayable, Jsonable};
 use froq\collection\trait\{CountTrait, EmptyTrait};
 
@@ -12,7 +10,7 @@ use froq\collection\trait\{CountTrait, EmptyTrait};
  * A simple item list class with a list data container & access stuff.
  *
  * @package global
- * @object  ItemList
+ * @class   ItemList
  * @author  Kerem Güneş
  * @since   6.0
  */
@@ -20,20 +18,27 @@ class ItemList implements Arrayable, Jsonable, Countable, IteratorAggregate, Arr
 {
     use CountTrait, EmptyTrait;
 
-    /** @var array */
+    /** Items list. */
     private array $data = [];
+
+    /** Items type to check. */
+    private string|null $type;
 
     /**
      * Constructor.
      *
-     * @param iterable $data
+     * @param iterable    $data
+     * @param string|null $type
      */
-    public function __construct(iterable $data = [])
+    public function __construct(iterable $data = [], string $type = null)
     {
-        $data && $this->data = array_list([...$data]);
+        $this->type = $type;
+        $data && $this->add(...$data);
     }
 
-    /** @magic */
+    /**
+     * @magic
+     */
     public function __debugInfo(): array
     {
         return $this->data;
@@ -126,10 +131,11 @@ class ItemList implements Arrayable, Jsonable, Countable, IteratorAggregate, Arr
     /**
      * Sort.
      *
-     * @param  callable|null $func
+     * @param  callable|int|null $func
+     * @param  int               $flags
      * @return self
      */
-    public function sort(callable $func = null, int $flags = 0): self
+    public function sort(callable|int $func = null, int $flags = 0): self
     {
         $this->data = sorted($this->data, $func, $flags, assoc: false);
 
@@ -205,11 +211,12 @@ class ItemList implements Arrayable, Jsonable, Countable, IteratorAggregate, Arr
      * Refine filtering given or null, "" and [] items as default.
      *
      * @param  array|null $items
+     * @param  bool|null  $list
      * @return self
      */
-    public function refine(array $items = null): self
+    public function refine(array $items = null, bool $list = null): self
     {
-        $this->data = array_refine($this->data, $items);
+        $this->data = array_refine($this->data, $items, $list);
 
         return $this;
     }
@@ -217,12 +224,13 @@ class ItemList implements Arrayable, Jsonable, Countable, IteratorAggregate, Arr
     /**
      * Dedupe items applying unique check.
      *
-     * @param  bool $strict
+     * @param  bool      $strict
+     * @param  bool|null $list
      * @return self
      */
-    public function dedupe(bool $strict = true): self
+    public function dedupe(bool $strict = true, bool $list = null): self
     {
-        $this->data = array_dedupe($this->data, $strict);
+        $this->data = array_dedupe($this->data, $strict, $list);
 
         return $this;
     }
@@ -232,13 +240,12 @@ class ItemList implements Arrayable, Jsonable, Countable, IteratorAggregate, Arr
      *
      * @param  int|array  $key
      * @param  mixed|null $default
-     * @param  bool       $drop
      * @param  bool       $combine
      * @return mixed
      */
-    public function select(int|array $key, mixed $default = null, bool $drop = false, bool $combine = false): mixed
+    public function select(int|array $key, mixed $default = null, bool $combine = false): mixed
     {
-        return array_select($this->data, $key, $default, $drop, $combine);
+        return array_select($this->data, $key, $default, $combine);
     }
 
     /**
@@ -294,6 +301,7 @@ class ItemList implements Arrayable, Jsonable, Countable, IteratorAggregate, Arr
     public function offsetSet(mixed $index, mixed $item): void
     {
         $this->indexCheck($index);
+        $this->typeCheck($item);
 
         // For calls like `items[] = item`.
         $index ??= $this->count();
@@ -332,7 +340,25 @@ class ItemList implements Arrayable, Jsonable, Countable, IteratorAggregate, Arr
                 default  => $type,
             };
 
-            throw new KeyError('Invalid index %s for %s', [$indexRepr, $this::class]);
+            throw new KeyError(sprintf(
+                'Invalid index %s for %s',
+                $indexRepr, get_class_name($this, escape: true)
+            ));
+        }
+    }
+
+    /**
+     * Check type validity (if self type is not null).
+     *
+     * @throws TypeError
+     */
+    private function typeCheck(mixed $item): void
+    {
+        if (isset($this->type) && !is_type_of($item, $this->type)) {
+            throw new TypeError(sprintf(
+                'Invalid type %s for %s accepting only type of %s',
+                get_type($item), get_class_name($this, escape: true), $this->type
+            ));
         }
     }
 }

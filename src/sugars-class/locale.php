@@ -1,17 +1,15 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-util
  */
-declare(strict_types=1);
-
 use froq\common\interface\Arrayable;
 
 /**
  * Locale class.
  *
  * @package global
- * @object  Locale
+ * @class   Locale
  * @author  Kerem Güneş
  * @since   6.0
  */
@@ -86,7 +84,7 @@ class Locale implements Arrayable, Stringable
     /**
      * @magic
      */
-    public function __toString()
+    public function __toString(): string
     {
         $ret = $this->language;
 
@@ -269,7 +267,7 @@ class Locale implements Arrayable, Stringable
     {
         if (isset($info['language'])) {
             $info['language'] = (
-                strlen($info['language']) == 1 // Eg: C.
+                strlen($info['language']) === 1 // Eg: C.
                     ? strtoupper($info['language'])
                     : strtolower($info['language'])
             );
@@ -351,7 +349,7 @@ class Locale implements Arrayable, Stringable
             $category = $category->value;
         }
 
-        $locale = getlocale($category, null, array: $category == LC_ALL);
+        $locale = getlocale($category, null, array: $category === LC_ALL);
 
         // No locale or init.
         if (!$locale || !$init) {
@@ -381,7 +379,7 @@ class Locale implements Arrayable, Stringable
  * Locale category class.
  *
  * @package global
- * @object  LocaleCategory
+ * @class   LocaleCategory
  * @author  Kerem Güneş
  * @since   6.0
  */
@@ -429,7 +427,7 @@ class LocaleCategory implements Arrayable, Stringable
     /**
      * @magic
      */
-    public function __toString()
+    public function __toString(): string
     {
         return 'LC_' . $this->name;
     }
@@ -513,7 +511,7 @@ class LocaleCategory implements Arrayable, Stringable
  * Locale list class.
  *
  * @package global
- * @object  LocaleList
+ * @class   LocaleList
  * @author  Kerem Güneş
  * @since   6.0
  */
@@ -540,7 +538,7 @@ class LocaleList extends ItemList
  * Locale category list class.
  *
  * @package global
- * @object  LocaleCategoryList
+ * @class   LocaleCategoryList
  * @author  Kerem Güneş
  * @since   6.0
  */

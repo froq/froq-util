@@ -1,30 +1,29 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-util
  */
-declare(strict_types=1);
 
 /**
  * A class for factoring class instances dynamically.
  *
  * @package global
- * @object  Factory
+ * @class   Factory
  * @author  Kerem Güneş
  * @since   6.0
  */
 class Factory
 {
-    /** @var string */
+    /** Class name. */
     private string $class = '';
 
-    /** @var array */
+    /** Class constructor arguments. */
     private array $classArgs = [];
 
-    /** @var array */
+    /** Class variables. */
     private array $classVars = [];
 
-    /** @var array<string, object> */
+    /** Class instances. */
     private static array $instances = [];
 
     /**
@@ -201,7 +200,7 @@ class Factory
     /**
      * Set initiated object variables (properties).
      *
-     * @throws UndefinedPropertyError
+     * @throws Error
      */
     private function setObjectVar(object $object, string $name, array $arguments): void
     {
@@ -223,6 +222,9 @@ class Factory
             return;
         }
 
-        throw new UndefinedPropertyError($object, $name);
+        throw new Error(sprintf(
+            'No method set%s() or property $%s are defined in class %s',
+            $name, $name, $object::class
+        ));
     }
 }

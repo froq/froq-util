@@ -1,48 +1,52 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-util
  */
-declare(strict_types=1);
-
+use froq\common\interface\{Intable, Floatable, Numberable};
 use froq\util\Numbers;
 
 /**
  * A class for playing with numbers in OOP-way.
  *
  * @package global
- * @object  XNumber
+ * @class   XNumber
  * @author  Kerem Güneş
  * @since   6.0
  */
-class XNumber implements Stringable
+class XNumber implements Intable, Floatable, Numberable, Stringable
 {
     /** Constants. */
-    public final const PRECISION  = PRECISION,
-                       EPSILON    = PHP_FLOAT_EPSILON,
-                       MAX_INT    = PHP_INT_MAX,
-                       MAX_FLOAT  = PHP_FLOAT_MAX;
+    public final const PRECISION = PRECISION,
+                       EPSILON   = PHP_FLOAT_EPSILON,
+                       MAX_INT   = PHP_INT_MAX,
+                       MAX_FLOAT = PHP_FLOAT_MAX;
 
-    /** @var int|float */
+    /** Data. */
     protected int|float $data;
 
-    /** @var int|bool|null */
-    protected int|bool|null $precision;
+    /** Precision. */
+    protected int|true $precision;
 
     /**
      * Constructor.
      *
      * @param int|float|string $data
-     * @param int|bool|null    $precision @todo Use "true" type.
+     * @param int|true         $precision
      */
-    public function __construct(int|float|string $data, int|bool $precision = null)
+    public function __construct(int|float|string $data = 0, int|true $precision = true)
     {
-        $this->data      = Numbers::convert($data, $precision);
+        if (is_string($data)) {
+            $data = Numbers::convert($data, $precision);
+        }
+        $this->data      = $data;
         $this->precision = $precision;
     }
 
-    /** @magic */
-    public function __toString()
+    /**
+     * @magic
+     */
+    public function __toString(): string
     {
         return $this->format();
     }
@@ -70,12 +74,12 @@ class XNumber implements Stringable
     /**
      * Format.
      *
-     * @param  int|bool|null $decimals
+     * @param  int|true|null $decimals
      * @param  string|null   $decimalSeparator
      * @param  string|null   $thousandSeparator
      * @return string
      */
-    public function format(int|bool $decimals = null, string $decimalSeparator = null, string $thousandSeparator = null): string
+    public function format(int|true $decimals = null, string $decimalSeparator = null, string $thousandSeparator = null): string
     {
         return format_number($this->data, $decimals ?? $this->precision, $decimalSeparator, $thousandSeparator);
     }
@@ -204,7 +208,9 @@ class XNumber implements Stringable
     {
         // @tome: A'nın % B'si kaçtır? https://hesaptablosu.net/yuzde-hesaplama/
         $data = round($this->data / 100 * abs($share), $precision);
-        if ($data == round($data)) {
+
+        // Normalize non-floats.
+        if ($data === round($data)) {
             $data = (int) $data;
         }
 
@@ -224,7 +230,9 @@ class XNumber implements Stringable
     {
         // @tome: A B'nin % kaçıdır? https://hesaptablosu.net/yuzde-hesaplama/
         $data = round($this->data * 100 / abs($share), $precision);
-        if ($data == round($data)) {
+
+        // Normalize non-floats.
+        if ($data === round($data)) {
             $data = (int) $data;
         }
 
@@ -244,7 +252,9 @@ class XNumber implements Stringable
     {
         // @tome: A'dan B'ye fark oranı (%) nedir? https://hesaptablosu.net/yuzde-hesaplama/
         $data = round((abs($share) - $this->data) * 100 / $this->data, $precision);
-        if ($data == round($data)) {
+
+        // Normalize non-floats.
+        if ($data === round($data)) {
             $data = (int) $data;
         }
 
@@ -507,9 +517,7 @@ class XNumber implements Stringable
     }
 
     /**
-     * Int caster.
-     *
-     * @return int
+     * @inheritDoc froq\common\interface\Intable
      */
     public function toInt(): int
     {
@@ -517,13 +525,19 @@ class XNumber implements Stringable
     }
 
     /**
-     * Float caster.
-     *
-     * @return float
+     * @inheritDoc froq\common\interface\Floatable
      */
     public function toFloat(): float
     {
         return $this->isValid() ? (float) $this->data : 0.0;
+    }
+
+    /**
+     * @inheritDoc froq\common\interface\Numberable
+     */
+    public function toNumber(): int|float
+    {
+        return $this->data;
     }
 
     /**
@@ -581,10 +595,10 @@ class XNumber implements Stringable
      * Static constructor.
      *
      * @param  int|float|string $data
-     * @param  bool|null        $precision
+     * @param  int|true         $precision
      * @return static
      */
-    public static function from(int|float|string $data, int|bool $precision = null): static
+    public static function from(int|float|string $data, int|true $precision = true): static
     {
         return new static($data, $precision);
     }
@@ -594,12 +608,15 @@ class XNumber implements Stringable
      *
      * @param  int|float|null $min
      * @param  int|float|null $max
-     * @param  int|null       $precision
+     * @param  int|true|null  $precision
      * @return static
      */
-    public static function fromRandom(int|float $min = null, int|float $max = null, int $precision = null): static
+    public static function fromRandom(int|float $min = null, int|float $max = null, int|true $precision = null): static
     {
-        return new static(Numbers::random($min, $max, $precision), $precision);
+        return new static(
+            Numbers::random($min, $max, $precision !== true ? $precision : null),
+            $precision !== null ? $precision : true
+        );
     }
 
     /**
@@ -621,10 +638,10 @@ class XNumber implements Stringable
  * XNumber initializer.
  *
  * @param  int|float|string $data
- * @param  int|bool|null    $precision @todo Use "true" type.
+ * @param  int|true         $precision
  * @return XNumber
  */
-function xnumber(int|float|string $data = 0, int|bool $precision = null): XNumber
+function xnumber(int|float|string $data = 0, int|true $precision = true): XNumber
 {
     return new XNumber($data, $precision);
 }

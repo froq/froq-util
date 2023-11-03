@@ -1,29 +1,27 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-util
  */
-declare(strict_types=1);
-
-namespace froq\util\misc;
+namespace froq\util;
 
 use froq\common\interface\Arrayable;
 
 /**
- * A timer class just like a stopwatch.
+ * A timer class, just like a stopwatch.
  *
- * @package froq\util\misc
- * @object  froq\util\misc\Timer
+ * @package froq\util
+ * @class   froq\util\Timer
  * @author  Kerem Güneş
  * @since   6.0
  */
 class Timer implements Arrayable
 {
-    /** @var ?float */
-    private ?float $start = null;
+    /** Start time. */
+    private float|null $start = null;
 
-    /** @var ?float */
-    private ?float $stop = null;
+    /** Stop time. */
+    private float|null $stop = null;
 
     /**
      * Constructor.
@@ -62,9 +60,9 @@ class Timer implements Arrayable
     /**
      * Get start time or return null if not started yet.
      *
-     * @return ?float
+     * @return float|null
      */
-    public function getStart(): ?float
+    public function getStart(): float|null
     {
         return $this->start;
     }
@@ -72,9 +70,9 @@ class Timer implements Arrayable
     /**
      * Get stop time or return null if not stopped yet.
      *
-     * @return ?float
+     * @return float|null
      */
-    public function getStop(): ?float
+    public function getStop(): float|null
     {
         return $this->stop;
     }
@@ -82,9 +80,10 @@ class Timer implements Arrayable
     /**
      * Get (elapsed) time or return null if not started yet.
      *
-     * @return ?float
+     * @param  int $precision
+     * @return float|null
      */
-    public function getTime(int $precision = 10): ?float
+    public function getTime(int $precision = 10): float|null
     {
         if ($this->start === null) {
             return null;
@@ -103,7 +102,8 @@ class Timer implements Arrayable
      */
     public function reset(): self
     {
-        $this->start = $this->stop = null;
+        $this->start = null;
+        $this->stop  = null;
 
         return $this;
     }

@@ -1,36 +1,33 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-util
  */
-declare(strict_types=1);
-
-namespace froq\util\misc;
+namespace froq\util\storage;
 
 use froq\common\interface\Arrayable;
 use froq\common\trait\DataAccessMagicOffsetTrait;
 
 /**
- * A class for storing stuff dynamically or statically,
- * and can used as stand-alone or as a global storage.
+ * A class for storing stuff dynamically or statically, and can used as
+ * stand-alone or as a global storage.
  *
- * Note: For dynamic usage, access magic or offset methods
- * must be used, otherwise store/unstore methods can be used.
+ * Note: For dynamic usage, access magic or offset methods must be used,
+ * otherwise store/unstore methods can be used.
  *
- * @package froq\util\misc
- * @object  froq\util\misc\Storage
+ * @package froq\util\storage
+ * @class   froq\util\storage\Storage
  * @author  Kerem Güneş
  * @since   6.0
  */
 class Storage implements Arrayable, \Countable, \ArrayAccess
 {
-    /** For using access magic methods via offset methods. */
     use DataAccessMagicOffsetTrait;
 
-    /** @var string */
+    /** Instance ID. */
     private string $id;
 
-    /** @var array */
+    /** Storage data. */
     private static array $data = [];
 
     /**

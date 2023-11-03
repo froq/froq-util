@@ -1,25 +1,23 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-util
  */
-declare(strict_types=1);
-
-namespace froq\util\misc;
+namespace froq\util;
 
 /**
  * An RNG class that generates pseudorandom numbers, chars & bytes. This class is
  * highly inspired by java.util.Random class using its some same implementations.
  * @see https://docs.oracle.com/javase/8/docs/api/java/util/Random.html
  *
- * @package froq\util\misc
- * @object  froq\util\misc\Random
+ * @package froq\util
+ * @class   froq\util\Random
  * @author  Kerem Güneş
  * @since   5.0
  */
 class Random
 {
-    /** @var int */
+    /** Seed. */
     private int $seed;
 
     /**
@@ -63,7 +61,7 @@ class Random
         }
 
         // i.e. bound is a power of 2.
-        if (($bound & -$bound) == $bound) {
+        if (($bound & -$bound) === $bound) {
             return (int) (($bound * $this->next(31)) >> 31);
         }
 
@@ -138,35 +136,64 @@ class Random
     /**
      * Get next byte.
      *
+     * @param  bool $hex
      * @return string
      */
-    public function nextByte(): string
+    public function nextByte(bool $hex = false): string
     {
-        return $this->nextBytes(1, true);
+        return $this->nextBytes(1, true, $hex);
     }
 
     /**
      * Get next bytes.
      *
      * @param  int  $length
-     * @param  bool $join
+     * @param  bool $array
      * @param  bool $hex
      * @return string|array
+     * @throws ArgumentError
      */
-    public function nextBytes(int $length, bool $join = true, bool $hex = false): string|array
+    public function nextBytes(int $length, bool $array = false, bool $hex = false): string|array
     {
-        $ret = [];
-
-        while (count($ret) < $length) {
-            $res = unpack('C*', pack('L', $this->next(32)));
-            $res = array_map('chr', array_slice($res, 1));
-            $ret = array_slice([...$ret, ...$res], 0, $length);
+        if ($length < 1) {
+            throw new \ArgumentError('Invalid length: %s [min=1]', $length);
         }
 
-        $join && $ret = join($ret);
-        $hex  && $ret = $join ? bin2hex($ret) : array_map('bin2hex', $ret);
+        $ret = (new \Random\Randomizer)->getBytes($length);
+
+        if ($array) {
+            $ret = mb_str_split($ret);
+        }
+        if ($hex) {
+            $ret = $array ? array_map('bin2hex', $ret) : bin2hex($ret);
+        }
 
         return $ret;
+    }
+
+    /**
+     * Shuffle array.
+     *
+     * @param  array $array
+     * @return array
+     * @since  7.0
+     */
+    public static function shuffleArray(array $array): array
+    {
+        return (new \Random\Randomizer)->shuffleArray($array);
+    }
+
+    /**
+     * Shuffle string (unicode-safe).
+     *
+     * @param  string      $string
+     * @param  string|null $encoding
+     * @return string
+     * @since  7.0
+     */
+    public static function shuffleString(string $string, string $encoding = null): string
+    {
+        return join(self::shuffleArray(mb_str_split($string, encoding: $encoding)));
     }
 
     /**

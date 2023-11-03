@@ -1,10 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-util
  */
-declare(strict_types=1);
-
 use froq\util\Strings;
 
 /**
@@ -34,7 +32,7 @@ function string_compare(string $string1, string $string2, string $locale = null,
  */
 function string_contains(string $string, string|array $search, bool $icase = false): bool
 {
-    return is_string($search) ? Strings::contains($string, $search, $icase);
+    return is_string($search) ? Strings::contains($string, $search, $icase)
                               : Strings::containsAny($string, $search, $icase);
 }
 

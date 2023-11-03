@@ -1,33 +1,36 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-util
  */
-declare(strict_types=1);
-
-use froq\util\{Util, Arrays, Objects, Numbers, Strings};
-use froq\util\misc\System;
+use froq\util\{
+    Util, System, Arrays,
+    Objects, Numbers, Strings
+};
 
 // Load base stuff.
-require 'sugars-const.php';
 require 'sugars-class.php';
+require 'sugars-constant.php';
 require 'sugars-function.php';
 
 /**
  * Sugar loader.
  */
-function sugar(string|array $name): void {
+function sugar(string|array $name): void
+{
     Util::loadSugar($name);
 }
 
 /**
  * Yes man..
  */
-function equal($a, $b, ...$c): bool {
-    return ($a == $b) || ($c && in_array($a, [$b, ...$c]));
+function equal($a, $b, ...$c): bool
+{
+    return ($a == $b) || ($c && in_array($a, $c));
 }
-function equals($a, $b, ...$c): bool {
-    return ($a === $b) || ($c && in_array($a, [$b, ...$c], true));
+function equals($a, $b, ...$c): bool
+{
+    return ($a === $b) || ($c && in_array($a, $c, true));
 }
 
 /**
@@ -95,6 +98,7 @@ function filter(array $array, callable $func = null, bool $recursive = false, bo
  *
  * @param  array                 $array
  * @param  callable|string|array $func
+ * @param  bool                  $recursive
  * @param  bool                  $use_keys
  * @param  bool                  $keep_keys
  * @return array
@@ -205,10 +209,10 @@ function slice(array|string $input, int $start, int $end = null, bool $keep_keys
 /**
  * Splice an array or string.
  *
- * @param  array|string       $input
- * @param  int                $start
- * @param  int|null           $end
- * @param  array|string|null  $replace
+ * @param  array|string      $input
+ * @param  int               $start
+ * @param  int|null          $end
+ * @param  array|string|null $replace
  * @param  array|string|null &$replaced
  * @return array|string
  * @since  6.0
@@ -229,19 +233,19 @@ function splice(array|string $input, int $start, int $end = null, array|string $
 /**
  * Split a string, with unicode style.
  *
- * @param  string            $separator
- * @param  string            $input
- * @param  int|null          $limit
- * @param  int|null          $flags
+ * @param  string           $separator
+ * @param  string           $input
+ * @param  int|null         $limit
+ * @param  int|null         $flags
  * @param  RegExpError|null &$error
  * @return array
  * @since  5.0
  */
 function split(string $separator, string $input, int $limit = null, int $flags = null, RegExpError &$error = null): array
 {
-    if ($separator == '') {
+    if ($separator === '') {
         // Safe for binary strings.
-        $ret = strlen($input) == mb_strlen($input)
+        $ret = strlen($input) === mb_strlen($input)
              ? str_split($input) : mb_str_split($input);
 
         // Mind limit option.
@@ -251,8 +255,8 @@ function split(string $separator, string $input, int $limit = null, int $flags =
             $res && $ret[] = join($res);
         }
     } else {
-        // Escape null bytes, delimiter & special char typos.
-        $separator = strlen($separator) == 1 ? preg_quote($separator, '~')
+        // Escape special char typos / null bytes and delimiter.
+        $separator = strlen($separator) === 1 ? preg_quote($separator, '~')
             : str_replace(["\0", '~'], ['\0', '\~'], $separator);
 
         $ret = preg_split(
@@ -263,13 +267,13 @@ function split(string $separator, string $input, int $limit = null, int $flags =
         ) ?: [];
     }
 
-    // Prevent 'undefined index ..' error.
+    // Block "undefined index .." error.
     if ($limit && $limit > count($ret)) {
         $ret = array_pad($ret, $limit, null);
     }
 
-    // Fill error message if requested.
-    if (func_num_args() == 5) {
+    // Fill error if requested.
+    if (func_num_args() === 5) {
         $message = preg_error_message($code, 'preg_split');
         $message && $error = new RegExpError($message, code: $code);
     }
@@ -300,12 +304,12 @@ function unsplit(string $separator, array $input): string
  */
 function strip(string $input, string $characters = ''): string
 {
-    if ($characters == '') {
+    if ($characters === '') {
         return trim($input);
     }
 
     // RegExp: only ~..~ patterns accepted.
-    if (strlen($characters) >= 3 && $characters[0] == '~') {
+    if (strlen($characters) >= 3 && $characters[0] === '~') {
         $ruls = substr($characters, 1, ($pos = strrpos($characters, '~')) - 1);
         $mods = substr($characters, $pos + 1);
         return preg_replace(sprintf('~^%s|%s$~%s', $ruls, $ruls, $mods), '', $input);
@@ -329,7 +333,7 @@ function replace(string|array $input, string|array $search, string|array|callabl
 {
     if (is_string($input) && is_string($search)) {
         // RegExp: only ~..~ patterns accepted.
-        if (strlen($search) >= 3 && $search[0] == '~') {
+        if (strlen($search) >= 3 && $search[0] === '~') {
             return is_callable($replace)
                  ? preg_replace_callback($search, $replace, $input, $limit)
                  : preg_replace($search, $replace, $input, $limit);
@@ -351,22 +355,32 @@ function replace(string|array $input, string|array $search, string|array|callabl
  */
 function grep(string $pattern, string $input, bool $named = false): string|array|null
 {
-    $res =@ preg_match($pattern, $input, $match, PREG_UNMATCHED_AS_NULL);
+    $res = @preg_match($pattern, $input, $match, PREG_UNMATCHED_AS_NULL);
 
     // Act as original.
     if ($res === false) {
         $message = preg_error_message(func: 'preg_match');
-        trigger_error(sprintf('%s(): %s', __function__, $message), E_USER_WARNING);
+        trigger_error(sprintf('%s(): %s', __FUNCTION__, $message), E_USER_WARNING);
 
         return null;
     }
 
-    if (isset($match[1])) {
-        $ret = $match[1];
+    if (count($match) > 1) {
+        unset($match[0]);
 
         // For named capturing groups.
-        if ($named && $ret) {
-            $ret = array_filter($ret, 'is_string', 2);
+        if ($named) {
+            $ret = array_filter($match, fn($k): bool => is_string($k), 2);
+        } else {
+            $ret = array_filter($match, fn($v): bool => $v !== null);
+        }
+
+        // Reset keys (to 0-N).
+        $ret = array_slice($ret, 0);
+
+        // Single return.
+        if (!$named && count($ret) === 1) {
+            $ret = current($ret);
         }
 
         return $ret;
@@ -387,52 +401,54 @@ function grep(string $pattern, string $input, bool $named = false): string|array
  */
 function grep_all(string $pattern, string $input, bool $named = false, bool $uniform = false): array|null
 {
-    $res =@ preg_match_all($pattern, $input, $match, PREG_UNMATCHED_AS_NULL);
+    $res = @preg_match_all($pattern, $input, $match, PREG_UNMATCHED_AS_NULL);
 
     // Act as original.
     if ($res === false) {
         $message = preg_error_message(func: 'preg_match');
-        trigger_error(sprintf('%s(): %s', __function__, $message), E_USER_WARNING);
+        trigger_error(sprintf('%s(): %s', __FUNCTION__, $message), E_USER_WARNING);
 
         return null;
     }
 
-    if (isset($match[1])) {
-        // Drop input.
+    if (count($match) > 1) {
         unset($match[0]);
 
-        $ret = [];
-
-        if (count($match) == 1) {
-            $ret = $match[1];
+        // For named capturing groups.
+        if ($named) {
+            $ret = array_filter($match, fn($k): bool => is_string($k), 2);
         } else {
-            // Reduce empty matches.
-            $ret = array_apply($match, fn($m) => (
-                is_array($m) && count($m) == 1 ? $m[0] : $m
-            ));
-
-            // Useful for '~href="(.+?)"|">(.+?)</~' etc.
-            if ($uniform) {
-                foreach ($ret as &$re) {
-                    if (is_array($re)) {
-                        $re = array_filter($re, 'size');
-                        if (count($re) == 1) {
-                            $re = current($re);
-                        }
-                    }
-                } unset($re);
-            }
-
-            // Reset keys (to 0-N).
-            $ret = array_slice($ret, 0);
+            $ret = array_filter($match, fn($v): bool => $v !== null);
         }
 
-        // Drop empty stuff.
-        $ret = array_filter($ret, 'size');
+        // Reduce moving sub matches up.
+        $ret = array_apply($ret, function ($re) {
+            if (is_array($re) && count($re) === 1) {
+                $re = current($re);
+            }
+            return $re;
+        });
 
-        // For named capturing groups.
-        if ($named && $ret) {
-            $ret = array_filter($ret, 'is_string', 2);
+        // Useful for combining, for example:
+        // [$link, $text] = grep_all('~href="(.+?)"|>([^>]+?)<~u', $link, uniform: true);
+        if ($uniform) {
+            $ret = array_apply($ret, function ($re) {
+                if (is_array($re)) {
+                    $re = array_filter($re, 'size');
+                    if (count($re) === 1) {
+                        $re = current($re);
+                    }
+                }
+                return $re;
+            });
+        }
+
+        // Reset keys (to 0-N).
+        $ret = array_slice($ret, 0);
+
+        // Single return.
+        if (!$named && count($ret) === 1) {
+            $ret = (array) current($ret);
         }
 
         return $ret;
@@ -453,6 +469,11 @@ function grep_all(string $pattern, string $input, bool $named = false, bool $uni
  */
 function convert_base(int|string $input, int|string $from, int|string $to): string
 {
+    $input = strval($input);
+    if (!$input) {
+        return $input;
+    }
+
     // Try to use speed/power of GMP.
     if (is_int($from) && is_int($to) && extension_loaded('gmp')) {
         return gmp_strval(gmp_init($input, $from), $to);
@@ -474,8 +495,7 @@ function convert_base(int|string $input, int|string $from, int|string $to): stri
         $to = strcut($characters, $to);
     }
 
-    $input = strval($input);
-    if (!$input || $from == $to) {
+    if ($from === $to) {
         return $input;
     }
 
@@ -506,7 +526,7 @@ function convert_base(int|string $input, int|string $from, int|string $to): stri
         $old_length = $new_length;
 
         $ret = $to[$div] . $ret;
-    } while ($new_length != 0);
+    } while ($new_length !== 0);
 
     return $ret;
 }
@@ -527,20 +547,18 @@ function convert_case(string $input, string|int $case, string $exploder = null, 
     if (is_string($case)) {
         $case_value = get_constant_value('CASE_' . strtoupper($case));
         if ($case_value === null) {
-            throw new ArgumentError('Invalid case %q, use lower,upper,title,dash,snake,camel', $case);
+            throw new ArgumentError(
+                'Invalid case %q [valids: lower,upper,dash,snake,title,camel]',
+                $case
+            );
         }
 
         $case = $case_value;
     }
 
-    // Check valid cases.
-    if (!in_array($case, [CASE_LOWER, CASE_UPPER, CASE_TITLE, CASE_DASH, CASE_SNAKE, CASE_CAMEL], true)) {
-        throw new ArgumentError('Invalid case %q, use a case from 0..5 range', $case);
-    }
-
-    if ($case == CASE_LOWER) {
+    if ($case === CASE_LOWER) {
         return mb_strtolower($input);
-    } elseif ($case == CASE_UPPER) {
+    } elseif ($case === CASE_UPPER) {
         return mb_strtoupper($input);
     }
 
@@ -551,13 +569,18 @@ function convert_case(string $input, string|int $case, string $exploder = null, 
         CASE_DASH  => implode('-', explode($exploder, mb_strtolower($input))),
         CASE_SNAKE => implode('_', explode($exploder, mb_strtolower($input))),
         CASE_TITLE => implode($imploder ?? $exploder, array_map(
-            fn($s) => mb_ucfirst(trim($s)),
+            fn($s): string => mb_ucfirst(trim($s)),
             explode($exploder, mb_strtolower($input))
         )),
         CASE_CAMEL => mb_lcfirst(implode('', array_map(
-            fn($s) => mb_ucfirst(trim($s)),
+            fn($s): string => mb_ucfirst(trim($s)),
             explode($exploder, mb_strtolower($input))
         ))),
+        // Invalid case.
+        default => throw new ArgumentError(
+            'Invalid case %q, use a case from 0..5 range',
+            $case
+        )
     };
 }
 
@@ -592,22 +615,35 @@ function interface_extends(string $interface1, string $interface2, bool $parent_
 }
 
 /**
- * Get class name or short name.
+ * Get class name.
  *
  * @param  string|object $class
  * @param  bool          $short
  * @param  bool          $real
- * @param  bool          $clean
+ * @param  bool          $escape
  * @return string
  * @since  5.0
  */
-function get_class_name(string|object $class, bool $short = false, bool $real = false, bool $clean = false): string
+function get_class_name(string|object $class, bool $short = false, bool $real = false, bool $escape = false): string
 {
     return match (true) {
-        $short  => Objects::getShortName($class, $clean),
+        $short  => Objects::getShortName($class, $escape),
         $real   => Objects::getRealName($class),
-        default => Objects::getName($class, $clean),
+        default => Objects::getName($class, $escape),
     };
+}
+
+/**
+ * Get class namespace.
+ *
+ * @param  string|object $class
+ * @param  bool          $baseOnly
+ * @return string
+ * @since  7.0
+ */
+function get_class_namespace(string|object $class, bool $baseOnly = false): string
+{
+    return Objects::getNamespace($class, $baseOnly);
 }
 
 /**
@@ -668,12 +704,12 @@ function get_constant_name(mixed $value, string|array $name_prefix): string|null
     // Regular constants.
     if (is_string($name_prefix)) {
         return array_first(array_filter(array_keys(get_defined_constants(), $value, true),
-            fn($name) => str_starts_with($name, $name_prefix)));
+            fn($name): bool => str_starts_with($name, $name_prefix)));
     }
 
     // Class constants.
     return array_first(array_filter(array_keys(get_class_constants($name_prefix[0], false), $value, true),
-        fn($name) => str_starts_with($name, $name_prefix[1])));
+        fn($name): bool => str_starts_with($name, $name_prefix[1])));
 }
 
 /**
@@ -784,13 +820,13 @@ function get_unique_id(int $length = 14, int $base = 16, bool $upper = false, bo
     if (!$hrtime) {
         $id = explode('.', uniqid('', true))[0];
     } else {
-        $id = implode('', array_map('dechex', hrtime()));
+        $id = implode('', map(hrtime(), 'dechex'));
     }
 
     $ret = $id;
 
     // Convert non-hex ids.
-    if ($base != 16) {
+    if ($base !== 16) {
         $ret = '';
         foreach (str_split($id, 8) as $i) {
             $ret .= convert_base($i, 16, $base);
@@ -831,7 +867,7 @@ function get_random_id(int $length = 14, int $base = 16, bool $upper = false): s
         $id = bin2hex(random_bytes(4));
 
         // Convert non-hex ids.
-        $ret .= ($base == 16) ? $id : convert_base($id, 16, $base);
+        $ret .= ($base === 16) ? $id : convert_base($id, 16, $base);
     }
 
     $upper && $ret = strtoupper($ret);
@@ -851,21 +887,30 @@ function get_request_id(): string
     $parts[] = $_SERVER['SERVER_PORT'] ?? 0;
     $parts[] = $_SERVER['REMOTE_PORT'] ?? 0;
 
-    return join('-', array_map(fn($p) => dechex((int) $p), $parts));
+    return join('-', map($parts, fn($p): string => dechex((int) $p)));
 }
 
 /**
  * Get real path of given path.
  *
  * @param  string           $path
- * @param  string|bool|null $check True or "file", "dir".
+ * @param  string|true|null $check Valids: true, "dir", "file".
+ * @param  bool             $real @internal
  * @return string|null
+ * @throws ArgumentError
  * @since  4.0
  */
-function get_real_path(string $path, string|bool $check = null): string|null
+function get_real_path(string $path, string|true $check = null, bool $real = true): string|null
 {
-    if (trim($path) == '') {
+    if (trim($path) === '') {
         return null;
+    }
+
+    if ($check && !in_array($check, [true, 'dir', 'file'], true)) {
+        throw new ArgumentError(
+            'Invalid check directive %q [valids: true, dir, file]',
+            $check
+        );
     }
 
     // NULL-bytes issue.
@@ -873,12 +918,12 @@ function get_real_path(string $path, string|bool $check = null): string|null
         $path = str_replace("\0", "\\0", $path);
     }
 
-    // Validate existence of file/directory or file only.
-    static $check_path; $check_path ??= fn($c, $p) => (
-        $c === true ? file_exists($p) : ($c === 'file' ? is_file($p) : is_dir($p))
+    // Validate existence of directory / file or file only.
+    static $check_path; $check_path ??= fn($c, $p): bool => (
+        $c === true ? file_exists($p) : ($c === 'dir' ? is_dir($p) : is_file($p))
     );
 
-    if ($ret = realpath($path)) {
+    if ($real && ($ret = realpath($path))) {
         if ($check && !$check_path($check, $ret)) {
             return null;
         }
@@ -887,41 +932,41 @@ function get_real_path(string $path, string|bool $check = null): string|null
 
     $ret = '';
     $sep = DIRECTORY_SEPARATOR;
-    $win = DIRECTORY_SEPARATOR == '\\';
+    $win = DIRECTORY_SEPARATOR === '\\';
 
     // Make path "foo" => "./foo" so prevent invalid returns.
-    if (!str_contains($path, $sep) || ($win && substr($path, 1, 2) != ':\\')) {
+    if (!str_contains($path, $sep) || ($win && substr($path, 1, 2) !== ':\\')) {
         $path = '.' . $sep . $path;
     }
 
-    foreach (explode($sep, $path) as $i => $cur) {
-        if ($i == 0) {
-            if ($cur == '~') { // Home path (eg: ~/Desktop).
+    foreach (split($sep, $path) as $i => $cur) {
+        if ($i === 0) {
+            if ($cur === '~') { // Home path (eg: ~/Desktop).
                 $ret = getenv('HOME') ?: '';
                 continue;
-            } elseif ($cur == '.' || $cur == '..') {
-                if ($ret == '') {
+            } elseif ($cur === '.' || $cur === '..') {
+                if ($ret === '') {
                     // @cancel
                     // $file = getcwd(); // Fallback.
                     // foreach (debug_backtrace(0) as $trace) {
                     //     // Search until finding the right path argument (sadly seems no way else
                     //     // for that when call stack is chaining from a function to another function).
-                    //     if (empty($trace['args'][0]) || $trace['args'][0] != $path) {
+                    //     if (empty($trace['args'][0]) || $trace['args'][0] !== $path) {
                     //         break;
                     //     }
                     //     $file = $trace['file'];
                     // }
 
                     $tmp = getcwd() . $sep . basename($path);
-                    $ret = ($cur == '.') ? dirname($tmp) : dirname(dirname($tmp));
+                    $ret = ($cur === '.') ? dirname($tmp) : dirname(dirname($tmp));
                 }
                 continue;
             }
         }
 
-        if ($cur == '' || $cur == '.') {
+        if ($cur === '' || $cur === '.') {
             continue;
-        } elseif ($cur == '..') {
+        } elseif ($cur === '..') {
             $ret = dirname($ret); // Up.
             continue;
         }
@@ -930,25 +975,27 @@ function get_real_path(string $path, string|bool $check = null): string|null
         $ret .= $sep . $cur;
     }
 
+    // For root stuff (empty split).
+    if ($ret === '' && str_contains($path, $sep)) {
+        $ret = $sep;
+    }
+
     if ($check && !$check_path($check, $ret)) {
         return null;
     }
 
     // Normalize.
-    if ($ret) {
+    if ($ret !== '') {
         // Drop repeating separators.
-        $ret = preg_replace(
-            '~(['. preg_quote(PATH_SEPARATOR . DIRECTORY_SEPARATOR) .'])\1+~',
-            '\1', $ret
-        );
+        $ret = preg_replace('~(['. preg_quote(PATH_SEPARATOR . DIRECTORY_SEPARATOR) .'])\1+~', '\1', $ret);
 
         // Drop ending slashes.
-        if ($ret != PATH_SEPARATOR && $ret != DIRECTORY_SEPARATOR) {
+        if ($ret !== PATH_SEPARATOR && $ret !== DIRECTORY_SEPARATOR) {
             $ret = chop($ret, PATH_SEPARATOR . DIRECTORY_SEPARATOR);
         }
 
         // Fix leading slash for win.
-        if ($win && $ret[0] == $sep) {
+        if ($win && $ret[0] === $sep) {
             $ret = substr($ret, 1);
         }
     }
@@ -966,28 +1013,37 @@ function get_real_path(string $path, string|bool $check = null): string|null
  */
 function get_path_info(string $path, string|int $component = null): string|array|null
 {
-    $path = get_real_path($path);
-    if (!$path) {
+    $opath = $path;
+
+    if (!$path = get_real_path($path, real: false)) {
         return null;
     }
     if (!$info = pathinfo($path)) {
         return null;
     }
 
+    // Really really, real path.
+    if ($realpath = realpath($path)) {
+        @ $filetype = filetype($opath) ?: filetype($path);
+    } else {
+        $realpath = $filetype = null;
+    }
+
     // Drop "" fields, put in order.
     $info = array_filter($info, 'strlen');
     $info = array_select($info, ['dirname', 'basename', 'filename', 'extension'], combine: true);
 
-    // Really really, real path.
-    $realpath = realpath($path);
+    // Null if not real parent.
+    if ($info['dirname'] === $path && 'dir' === $filetype) {
+        $info['dirname'] = null;
+    }
 
-    $ret = ['path' => $path, 'realpath' => $realpath, 'type' => $realpath ? filetype($path) : null] + $info;
+    $ret = ['path' => $path, 'realpath' => $realpath, 'type' => $filetype] + $info;
 
     if (is_dir($path)) {
         $ret['filename'] = $ret['extension'] = null;
     } else {
-        $ret['filename']  = file_name($path, false);
-        $ret['extension'] = file_extension($path, false);
+        [$ret['filename'], $ret['extension']] = [file_name($path), file_extension($path)];
     }
 
     if ($component !== null) {
@@ -1013,18 +1069,20 @@ function get_path_info(string $path, string|int $component = null): string|array
  * @param  int|null    $index
  * @param  string|null $field
  * @param  int|null    $slice
+ * @param  bool        $reverse
  * @return mixed|null
  * @since  4.0
  */
-function get_trace(int $options = 0, int $limit = 0, int $index = null, string $field = null, int $slice = null): mixed
+function get_trace(int $options = 0, int $limit = 0, int $index = null, string $field = null, int $slice = null, bool $reverse = false): mixed
 {
-    $stack = debug_backtrace($options, limit: $limit ? $limit + 1 : 0);
+    $stack = debug_backtrace($options, $limit ? $limit + 1 : 0);
 
     // Drop self.
     array_shift($stack);
 
     // When slice wanted (@internal).
-    $slice && $stack = array_slice($stack, $slice);
+    $slice   && $stack = array_slice($stack, $slice);
+    $reverse && $stack = array_reverse($stack);
 
     foreach ($stack as $i => $trace) {
         $trace = [
@@ -1047,7 +1105,7 @@ function get_trace(int $options = 0, int $limit = 0, int $index = null, string $
 
         if (isset($trace['class'])) {
             $trace['method']     = $trace['function'];
-            $trace['methodType'] = ($trace['type'] == '::') ? 'static' : 'non-static';
+            $trace['methodType'] = ($trace['type'] === '::') ? 'static' : 'non-static';
         }
         if (isset($stack[$i + 1]['function'])) {
             $trace['caller'] = $stack[$i + 1]['function'];
@@ -1196,108 +1254,6 @@ function getlocale(int $category = LC_ALL, string|array $default = null, bool $a
 }
 
 /**
- * Perform a regular expression search returning a bool result.
- *
- * @param  string $pattern
- * @param  string $subject
- * @return bool
- * @since  4.0
- */
-function preg_test(string $pattern, string $subject): bool
-{
-    $res =@ preg_match($pattern, $subject);
-
-    // Act as original.
-    if ($res === false) {
-        $message = preg_error_message(func: 'preg_match');
-        trigger_error(sprintf('%s(): %s', __function__, $message), E_USER_WARNING);
-    }
-
-    return (bool) $res;
-}
-
-/**
- * Perform a regular expression search & remove.
- *
- * @param  string|array  $pattern
- * @param  string|array  $subject
- * @param  int|null      $limit
- * @param  int|null     &$count
- * @return string|array|null
- * @since  4.0
- */
-function preg_remove(string|array $pattern, string|array $subject, int $limit = null, int &$count = null): string|array|null
-{
-    if (is_string($pattern)) {
-        $replace = '';
-    } else {
-        $replace = array_fill(0, count($pattern), '');
-    }
-
-    $res =@ preg_replace($pattern, $replace, $subject, $limit ?? -1, $count);
-
-    // Act as original.
-    if ($res === null) {
-        $message = preg_error_message(func: 'preg_replace');
-        trigger_error(sprintf('%s(): %s', __function__, $message), E_USER_WARNING);
-    }
-
-    return $res;
-}
-
-/**
- * Same as preg_match() but for only named capturing groups.
- *
- * @param  string      $pattern
- * @param  string      $subject
- * @param  array|null &$match
- * @param  int         $flags
- * @param  int         $offset
- * @return int|false
- */
-function preg_match_names(string $pattern, string $subject, array|null &$match, int $flags = 0, int $offset = 0): int|false
-{
-    $res =@ preg_match($pattern, $subject, $match, $flags, $offset);
-
-    // Act as original.
-    if ($res === false) {
-        $message = preg_error_message(func: 'preg_match');
-        trigger_error(sprintf('%s(): %s', __function__, $message), E_USER_WARNING);
-    } else {
-        // Select string (named) keys.
-        $match = array_filter($match, 'is_string', 2);
-    }
-
-    return $res;
-}
-
-/**
- * Same as preg_match_all() but for only named capturing groups.
- *
- * @param  string      $pattern
- * @param  string      $subject
- * @param  array|null &$match
- * @param  int         $flags
- * @param  int         $offset
- * @return int|false
- */
-function preg_match_all_names(string $pattern, string $subject, array|null &$match, int $flags = 0, int $offset = 0): int|false
-{
-    $res =@ preg_match_all($pattern, $subject, $match, $flags, $offset);
-
-    // Act as original.
-    if ($res === false) {
-        $message = preg_error_message(func: 'preg_match');
-        trigger_error(sprintf('%s(): %s', __function__, $message), E_USER_WARNING);
-    } else {
-        // Select string (named) keys.
-        $match = array_filter($match, 'is_string', 2);
-    }
-
-    return $res;
-}
-
-/**
  * Get current value of given array (for the sake of current()) or given key's value if exists.
  *
  * @param  array           $array
@@ -1382,9 +1338,9 @@ function error_clear(int $code = null): void
  * Get last error message with code, optionally formatted.
  *
  * @param  int|null &$code
- * @param  bool      $format
- * @param  bool      $extract
- * @param  bool      $clear
+ * @param  bool     $format
+ * @param  bool     $extract
+ * @param  bool     $clear
  * @return string|null
  * @since  4.17
  */
@@ -1423,7 +1379,7 @@ function error_message(int &$code = null, bool $format = false, bool $extract = 
  * Get JSON last error message with code if any, instead "No error".
  *
  * @param  int|null &$code
- * @param  bool      $clear
+ * @param  bool     $clear
  * @return string|null
  * @since  4.17
  */
@@ -1443,8 +1399,8 @@ function json_error_message(int &$code = null, bool $clear = false): string|null
  * Get PECL last error message with code if any, instead "No error".
  *
  * @param  int|null    &$code
- * @param  string|null  $func
- * @param  bool         $clear
+ * @param  string|null $func
+ * @param  bool        $clear
  * @return string|null
  * @since  4.17
  */
@@ -1464,16 +1420,14 @@ function preg_error_message(int &$code = null, string $func = null, bool $clear 
 
     $error = error_get_last();
 
-    if ($code =@ $error['type']) {
-        $message = $error['message'];
-        if ($message && strpfx($message, $func ?: 'preg_')) {
+    if (isset($error['type'], $error['message'])) {
+        ['type' => $code, 'message' => $message] = $error;
+
+        if (strpfx($message, $func ?: 'preg_')) {
             // Clear last error.
             $clear && error_clear_last();
 
-            $message = strsub($message, strpos($message, '):') + 3);
-            if ($message) {
-                return $message;
-            }
+            return strsub($message, strpos($message, '):') + 3);
         }
     }
 
@@ -1481,62 +1435,94 @@ function preg_error_message(int &$code = null, string $func = null, bool $clear 
 }
 
 /**
- * Format for sprintf().
+ * Format like `sprintf()` but with additional specifiers.
+ *
+ * Specifiers: single-quote: %q, double-quote: %Q, integer: %i, number: %n,
+ * type: %t, bool: %b, join(','): %a, join(', '): %A, upper: %U lower: %L
+ * escape: %S and for float-to-string only: %s (eg: 1.0 => not 1 but 1.0).
  *
  * @param  string   $format
- * @param  mixed    $input
- * @param  mixed ...$inputs
+ * @param  mixed ...$arguments
  * @return string
+ * @throws ArgumentError
  */
-function format(string $format, mixed $input, mixed ...$inputs): string
+function format(string $format, mixed ...$arguments): string
 {
-    $params = [$input, ...$inputs];
+    if (preg_match_all('~(?<!%)%[qQintbaAULSs]~', $format, $match)) {
+        $specifiers = $match[0];
 
-    // Convert special formats (quoted strings, int).
-    $format = str_replace(['%q', '%Q', '%i'], ["'%s'", '"%s"', '%d'], $format);
+        if (count($specifiers) > count($arguments)) {
+            throw new ArgumentError(
+                'Arguments must contain %d items, %d given',
+                [count($specifiers), count($arguments)]
+            );
+        }
 
-    // Convert special formats (type, bool, array, upper, lower, escape).
-    if (preg_test('~%[tbaAULS]~', $format)) {
-        // Must find all for a proper param index re-set.
-        foreach (grep_all('~(%[a-zAULS])~', $format) as $i => $specifier) {
+        foreach ($specifiers as $i => $specifier) {
+            $offset = strpos($format, $specifier);
+
             switch ($specifier) {
-                case '%t': // Types.
-                    $format = substr_replace($format, '%s', strpos($format, '%t'), 2);
-                    if (array_key_exists($i, $params)) {
-                        $params[$i] = get_type($params[$i]);
-                    }
+                // Quoted strings.
+                case '%q': case '%Q':
+                    $repl = ($specifier === '%q') ? "'%s'" : '"%s"';
+                    $format = substr_replace($format, $repl, $offset, 2);
                     break;
-                case '%b': // Bools (as stringified bools, not 0/1).
-                    $format = substr_replace($format, '%s', strpos($format, '%b'), 2);
-                    if (array_key_exists($i, $params)) {
-                        $params[$i] = format_bool($params[$i]);
-                    }
+
+                // Integers (digits).
+                case '%i':
+                    $format = substr_replace($format, '%d', $offset, 2);
                     break;
-                case '%a': case '%A': // Arrays (as joinified items).
-                    $format = substr_replace($format, '%s', strpos($format, $specifier), 2);
-                    if (array_key_exists($i, $params)) {
-                        $separator  = ($specifier == '%a') ? ',' : ', ';
-                        $params[$i] = join($separator, (array) $params[$i]);
-                    }
+
+                // Numbers.
+                case '%n':
+                    $format = substr_replace($format, '%s', $offset, 2);
+                    $decimals = is_float($arguments[$i]) ? true : 0;
+                    $arguments[$i] = format_number((float) $arguments[$i], $decimals);
                     break;
-                case '%U': case '%L': // Upper/Lower.
-                    $format = substr_replace($format, '%s', strpos($format, $specifier), 2);
-                    if (array_key_exists($i, $params)) {
-                        $function   = ($specifier == '%U') ? 'upper' : 'lower';
-                        $params[$i] = $function((string) $params[$i]);
-                    }
+
+                // Types.
+                case '%t':
+                    $format = substr_replace($format, '%s', $offset, 2);
+                    $arguments[$i] = get_type($arguments[$i]);
                     break;
-                case '%S': // Escape (NULL-bytes only).
-                    $format = substr_replace($format, '%s', strpos($format, $specifier), 2);
-                    if (array_key_exists($i, $params)) {
-                        $params[$i] = str_replace("\0", "\\0", (string) $params[$i]);
+
+                // Bools (as stringified bools, not 0/1).
+                case '%b':
+                    $format = substr_replace($format, '%s', $offset, 2);
+                    $arguments[$i] = format_bool($arguments[$i]);
+                    break;
+
+                // Arrays (as joinified items).
+                case '%a': case '%A':
+                    $format = substr_replace($format, '%s', $offset, 2);
+                    $separator = ($specifier === '%a') ? ',' : ', ';
+                    $arguments[$i] = join($separator, (array) $arguments[$i]);
+                    break;
+
+                // Upper/Lower case.
+                case '%U': case '%L':
+                    $format = substr_replace($format, '%s', $offset, 2);
+                    $function = ($specifier === '%U') ? 'upper' : 'lower';
+                    $arguments[$i] = $function((string) $arguments[$i]);
+                    break;
+
+                // Escape (NULL-bytes only).
+                case '%S':
+                    $format = substr_replace($format, '%s', $offset, 2);
+                    $arguments[$i] = str_replace("\0", "\\0", (string) $arguments[$i]);
+                    break;
+
+                // Proper float-to-string (eg: 1.0 => not 1 but 1.0).
+                case '%s':
+                    if ($arguments[$i] === 1.0) {
+                        $arguments[$i] = '1.0';
                     }
                     break;
             }
         }
     }
 
-    return vsprintf($format, $params);
+    return vsprintf($format, $arguments);
 }
 
 /**
@@ -1555,17 +1541,17 @@ function format_bool(mixed $input): string
  * Format an input as number.
  *
  * @param  int|float|string $input
- * @param  int|bool|null    $decimals @todo Use "true" type.
+ * @param  int|true         $decimals
  * @param  string|null      $decimal_separator
  * @param  string|null      $thousand_separator
  * @return string|null
  * @since  5.31
  */
-function format_number(int|float|string $input, int|bool|null $decimals = 0, string $decimal_separator = null, string $thousand_separator = null): string|null
+function format_number(int|float|string $input, int|true $decimals = 0, string $decimal_separator = null, string $thousand_separator = null): string|null
 {
     if (is_string($input)) {
         if (!is_numeric($input)) {
-            trigger_error(sprintf('%s(): Invalid non-numeric input', __function__));
+            trigger_error(sprintf('%s(): Invalid non-numeric input', __FUNCTION__));
             return null;
         }
 
@@ -1575,21 +1561,21 @@ function format_number(int|float|string $input, int|bool|null $decimals = 0, str
     $export = var_export($input, true);
 
     // Auto-detect decimals.
-    if (is_true($decimals)) {
+    if ($decimals === true) {
         $decimals = strlen(stracut($export, '.'));
     }
 
-    // Prevent corruptions.
+    // Prevent data corruptions.
     if ($decimals > PRECISION) {
         $decimals = PRECISION;
     }
 
-    $ret = number_format($input, (int) $decimals, $decimal_separator, $thousand_separator);
+    $ret = number_format($input, $decimals, $decimal_separator, $thousand_separator);
 
     // Append ".0" for eg: 1.0 & upper NAN/INF.
-    if (!$decimals && !is_int($input) && strlen($export) == 1) {
+    if (!$decimals && !is_int($input) && strlen($export) === 1) {
         $ret .= '.0';
-    } elseif ($ret == 'inf' || $ret == 'nan') {
+    } elseif ($ret === 'inf' || $ret === 'nan') {
         $ret = strtoupper($ret);
     }
 
@@ -1613,25 +1599,25 @@ function slug(string $input, string $preserve = '', string $replace = '-'): stri
     $preserve && $preserve = preg_quote($preserve, '~');
     $replace  || $replace  = '-';
 
-    $out = preg_replace(['~[^\w'. $preserve . $replace .']+~', '~['. $replace .']+~'],
+    $ret = preg_replace(['~[^a-z0-9'. $preserve . $replace .']+~i', '~['. $replace .']+~'],
         $replace, strtr($input, $map));
 
-    return strtolower(trim($out, $replace));
+    return strtolower(trim($ret, $replace));
 }
 
 /**
  * Generate a UUID.
  *
- * @param  bool $timed For Unix time prefix.
+ * @param  bool $time For Unix time prefix.
  * @param  bool $guid
  * @param  bool $upper
  * @param  bool $plain
  * @return string
  * @since  5.0
  */
-function uuid(bool $timed = false, bool $guid = false, bool $upper = false, bool $plain = false): string
+function uuid(bool $time = false, bool $guid = false, bool $upper = false, bool $plain = false): string
 {
-    return Uuid::generate($timed, $guid, $upper, $plain);
+    return Uuid::generate($time, $guid, $upper, $plain);
 }
 
 /**
@@ -1793,8 +1779,8 @@ function func_has_arg(int|string $arg): bool
     if (is_string($arg)) {
         if (!empty($trace['args'])) {
             $ref = !empty($trace['class'])
-                ? new ReflectionCallable([$trace['class'], $trace['function']])
-                : new ReflectionCallable($trace['function']);
+                 ? new ReflectionCallable([$trace['class'], $trace['function']])
+                 : new ReflectionCallable($trace['function']);
 
             return array_key_exists($ref->getParameter($arg)?->getPosition(), $trace['args']);
         }
@@ -1833,7 +1819,7 @@ function func_has_args(int|string ...$args): bool
 /**
  * Validate given input as JSON (@see https://wiki.php.net/rfc/json_validate).
  *
- * @param  string|null     $input
+ * @param  string|null    $input
  * @param  JsonError|null &$error
  * @return bool
  * @since  6.0
@@ -1896,18 +1882,6 @@ function is_number(mixed $var): bool
 }
 
 /**
- * Check whether given input is a GdImage.
- *
- * @param  mixed $var
- * @return bool
- * @since  5.0
- */
-function is_image(mixed $var): bool
-{
-    return $var && ($var instanceof GdImage);
-}
-
-/**
  * Check whether given input is a stream.
  *
  * @param  mixed $var
@@ -1916,31 +1890,7 @@ function is_image(mixed $var): bool
  */
 function is_stream(mixed $var): bool
 {
-    return $var && is_resource($var) && get_resource_type($var) === 'stream';
-}
-
-/**
- * Check whether given input is an iterator.
- *
- * @param  mixed $var
- * @return bool
- * @since  6.0
- */
-function is_iterator(mixed $var): bool
-{
-    return $var && ($var instanceof Traversable);
-}
-
-/**
- * Check whether given input is an enum.
- *
- * @param  mixed $var
- * @return bool
- * @since  6.0
- */
-function is_enum(mixed $var): bool
-{
-    return is_object($var) && enum_exists($var::class, false);
+    return is_resource($var) && get_resource_type($var) === 'stream';
 }
 
 /**
@@ -1953,7 +1903,7 @@ function is_enum(mixed $var): bool
  */
 function is_type_of(mixed $var, string ...$types): bool
 {
-    $var_type = strtolower(get_debug_type($var));
+    $var_type = get_debug_type($var);
 
     // Multiple at once.
     if ($types && str_contains($types[0], '|')) {
@@ -1966,13 +1916,12 @@ function is_type_of(mixed $var, string ...$types): bool
     }
 
     foreach ($types as $type) {
-        $type = strtolower($type);
         if (match ($type) {
             // Any/mixed.
             'any', 'mixed' => 1,
 
             // Sugar stuff.
-            'list', 'number', 'image', 'stream', 'iterator', 'enum'
+            'list', 'number', 'stream',
                 => ('is_' . $type)($var),
 
             // Primitive & internal stuff.
@@ -1983,25 +1932,6 @@ function is_type_of(mixed $var, string ...$types): bool
             // All others.
             default => ($var_type === $type) || ($var instanceof $type)
         }) {
-            return true;
-        }
-    }
-    return false;
-}
-
-/**
- * Check whether given search value equals to any of given values with strict comparison.
- *
- * @param  mixed    $value
- * @param  mixed ...$values
- * @return bool
- * @since  5.31
- */
-function is_equal_of(mixed $value, mixed ...$values): bool
-{
-    $search_value = $value;
-    foreach ($values as $value) {
-        if ($search_value === $value) {
             return true;
         }
     }
@@ -2043,7 +1973,7 @@ function is_empty(mixed $var, mixed ...$vars): bool
             return true;
         }
 
-        if (is_object($var) && size($var) == 0) {
+        if (is_object($var) && size($var) === 0) {
             return true;
         }
     }

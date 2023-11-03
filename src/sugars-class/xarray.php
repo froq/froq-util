@@ -1,30 +1,25 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-util
  */
-declare(strict_types=1);
-
-use froq\common\interface\{Arrayable, Listable, Jsonable, Collectable, Iteratable, IteratableReverse};
+use froq\common\interface\{Arrayable, Listable, Jsonable, Iteratable, IteratableReverse};
 use froq\collection\trait\{SortTrait, FilterTrait, MapTrait, ReduceTrait, ApplyTrait, AggregateTrait,
     EachTrait, CountTrait, EmptyTrait, HasTrait, GetTrait, AccessTrait, AccessMagicTrait,
     FindTrait, FirstLastTrait, MinMaxTrait, CalcAverageTrait, CalcProductTrait, CalcSumTrait,
     IteratorTrait, ToArrayTrait, ToListTrait, ToJsonTrait};
 use froq\collection\iterator\{ArrayIterator, ReverseArrayIterator};
-use froq\collection\{Collection, CollectionInterface};
 
 /**
  * A class for playing with arrays in OOP-way.
  *
  * @package global
- * @object  XArray
+ * @class   XArray
  * @author  Kerem Güneş
  * @since   6.0
  */
-class XArray implements Arrayable, Listable, Jsonable, Collectable, Iteratable, IteratableReverse,
-    Countable, Iterator, ArrayAccess
+class XArray implements Arrayable, Listable, Jsonable, Iteratable, IteratableReverse, Countable, Iterator, ArrayAccess
 {
-    /** Traits. */
     use SortTrait, FilterTrait, MapTrait, ReduceTrait, ApplyTrait, AggregateTrait,
         EachTrait, CountTrait, EmptyTrait, HasTrait, GetTrait, AccessTrait, AccessMagicTrait,
         FindTrait, FirstLastTrait, MinMaxTrait, CalcAverageTrait, CalcProductTrait, CalcSumTrait,
@@ -43,7 +38,9 @@ class XArray implements Arrayable, Listable, Jsonable, Collectable, Iteratable, 
         $data && $this->data = [...$data];
     }
 
-    /** @magic */
+    /**
+     * @magic
+     */
     public function __debugInfo(): array
     {
         return $this->data;
@@ -107,11 +104,21 @@ class XArray implements Arrayable, Listable, Jsonable, Collectable, Iteratable, 
      * @param  mixed|null $default
      * @return mixed
      */
-    public function get(int|string $key, mixed $default = null): mixed
+    public function &get(int|string $key, mixed $default = null): mixed
     {
         $this->keyCheck($key);
 
-        return $this->data[$key] ?? $default;
+        // Breaking reference in such calls:
+        // $foo = $array->get('absent-field', new Object());
+        // $value = &$this->data[$key] ?? $default;
+
+        if (isset($this->data[$key])) {
+            $value = &$this->data[$key];
+        } else {
+            $value = &$default;
+        }
+
+        return $value;
     }
 
     /**
@@ -132,12 +139,11 @@ class XArray implements Arrayable, Listable, Jsonable, Collectable, Iteratable, 
      *
      * @param  int|string|array $key
      * @param  mixed|null       $default
-     * @param  bool             $drop
      * @return mixed
      */
-    public function choose(int|string|array $key, mixed $default = null, bool $drop = false): mixed
+    public function choose(int|string|array $key, mixed $default = null): mixed
     {
-        return array_choose($this->data, $key, $default, $drop);
+        return array_choose($this->data, $key, $default);
     }
 
     /**
@@ -145,26 +151,12 @@ class XArray implements Arrayable, Listable, Jsonable, Collectable, Iteratable, 
      *
      * @param  int|string|array $key
      * @param  mixed|null       $default
-     * @param  bool             $drop
      * @param  bool             $combine
      * @return mixed
      */
-    public function select(int|string|array $key, mixed $default = null, bool $drop = false, bool $combine = false): mixed
+    public function select(int|string|array $key, mixed $default = null, bool $combine = false): mixed
     {
-        return array_select($this->data, $key, $default, $drop, $combine);
-    }
-
-    /**
-     * Pick an item or items.
-     *
-     * @param  int|string|array $key
-     * @param  mixed|null       $default
-     * @param  bool             $combine
-     * @return mixed
-     */
-    public function pick(int|string|array $key, mixed $default = null, bool $combine = false): mixed
-    {
-        return array_pick($this->data, $key, $default, $combine);
+        return array_select($this->data, $key, $default, $combine);
     }
 
     /**
@@ -349,12 +341,13 @@ class XArray implements Arrayable, Listable, Jsonable, Collectable, Iteratable, 
     /**
      * Dedupe values applying unique check.
      *
-     * @param  bool $strict
+     * @param  bool      $strict
+     * @param  bool|null $list
      * @return self
      */
-    public function dedupe(bool $strict = true): self
+    public function dedupe(bool $strict = true, bool $list = null): self
     {
-        $this->data = array_dedupe($this->data, $strict);
+        $this->data = array_dedupe($this->data, $strict, $list);
 
         return $this;
     }
@@ -363,11 +356,12 @@ class XArray implements Arrayable, Listable, Jsonable, Collectable, Iteratable, 
      * Refine filtering given or null, "" and [] items as default.
      *
      * @param  array|null $values
+     * @param  bool|null  $list
      * @return self
      */
-    public function refine(array $values = null): self
+    public function refine(array $values = null, bool $list = null): self
     {
-        $this->data = array_refine($this->data, $values);
+        $this->data = array_refine($this->data, $values, $list);
 
         return $this;
     }
@@ -789,6 +783,70 @@ class XArray implements Arrayable, Listable, Jsonable, Collectable, Iteratable, 
         return array_shift($this->data) ?? $default;
     }
 
+    /**
+     * Wrap.
+     *
+     * @param  mixed      $left
+     * @param  mixed|null $right
+     * @return self
+     */
+    public function wrap(mixed $left, mixed $right = null): self
+    {
+        $this->prepend($left)->append($right ?? $left);
+
+        return $this;
+    }
+
+    /**
+     * Unwrap.
+     *
+     * @param  mixed      $left
+     * @param  mixed|null $right
+     * @return self
+     */
+    public function unwrap(mixed $left, mixed $right = null): self
+    {
+        $right ??= $left;
+        $count = $this->count();
+
+        while ($count--) {
+            if ($this->first() === $left) {
+                $this->shift();
+                $count--; // Reduce.
+            }
+            if ($this->last() === $right) {
+                $this->pop();
+                $count--; // Reduce.
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use keys.
+     *
+     * @return self
+     */
+    public function useKeys(): self
+    {
+        $this->data = array_keys($this->data);
+
+        return $this;
+    }
+
+    /**
+     * Use values.
+     *
+     * @return self
+     */
+    public function useValues(): self
+    {
+        $this->data = array_values($this->data);
+
+        return $this;
+    }
+
     // Internal & addition.
 
     /**
@@ -799,6 +857,18 @@ class XArray implements Arrayable, Listable, Jsonable, Collectable, Iteratable, 
     public function flip(): self
     {
         $this->data = array_flip($this->data);
+
+        return $this;
+    }
+
+    /**
+     * Flip keys.
+     *
+     * @return self
+     */
+    public function flipKeys(): self
+    {
+        $this->data = array_keys($this->data);
 
         return $this;
     }
@@ -914,7 +984,10 @@ class XArray implements Arrayable, Listable, Jsonable, Collectable, Iteratable, 
     {
         $data = $this->prepare($data);
 
-        $this->data = array_filter($this->data, fn($value) => in_array($value, $data, $strict));
+        $this->data = array_filter(
+            $this->data,
+            fn($value): bool => in_array($value, $data, $strict)
+        );
 
         return $this;
     }
@@ -930,7 +1003,10 @@ class XArray implements Arrayable, Listable, Jsonable, Collectable, Iteratable, 
     {
         $data = $this->prepare($data);
 
-        $this->data = array_filter($this->data, fn($value) => !in_array($value, $data, $strict));
+        $this->data = array_filter(
+            $this->data,
+            fn($value): bool => !in_array($value, $data, $strict)
+        );
 
         return $this;
     }
@@ -1312,14 +1388,6 @@ class XArray implements Arrayable, Listable, Jsonable, Collectable, Iteratable, 
     }
 
     /**
-     * @inheritDoc froq\common\interface\Collectable
-     */
-    public function toCollection(): CollectionInterface
-    {
-        return new Collection($this->data);
-    }
-
-    /**
      * @inheritDoc Iteratable
      */
     public function getIterator(): iterable
@@ -1462,14 +1530,26 @@ class XArray implements Arrayable, Listable, Jsonable, Collectable, Iteratable, 
 }
 
 /**
- * XArray initializer.
+ * XArray initializer, accepts a single iterable or multiple arguments as iterable.
  *
- * @param  iterable $data
+ * All examples are valid:
+ *
+ * ```
+ * $x = xarray(id: 1, name: 'Foo');
+ * $x = xarray(['id' => 1, 'name' => 'Foo']);
+ * $x = xarray([1, 'Foo']);
+ * $x = xarray(1, 'Foo');
+ * ```
+ *
+ * @param  mixed ...$data
  * @return XArray
  */
-function xarray(iterable $data = []): XArray
+function xarray(mixed ...$data): XArray
 {
-    return new XArray($data);
+    if (is_list($data) && count($data) === 1) {
+        $data = is_iterable($data[0]) ? $data[0] : [$data[0]];
+    }
+    return XArray::from($data);
 }
 
 /**

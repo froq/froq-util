@@ -1,9 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-util
  */
-declare(strict_types=1);
 
 /**
  * Encode HTML characters in given input.
@@ -156,7 +155,7 @@ function html_selected(mixed $input1, mixed $input2, bool $strict = false): stri
  */
 function html_compress(string $input): string
 {
-    if ($input == '') {
+    if ($input === '') {
         return '';
     }
 

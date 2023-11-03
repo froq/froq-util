@@ -1,21 +1,20 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-util
  */
-declare(strict_types=1);
 
 /**
- * A class for playing with traces in OOP-way.
+ * A class for playing with stack traces in OOP-way.
  *
  * @package global
- * @object  Trace
+ * @class   TraceStack
  * @author  Kerem Güneş
  * @since   6.0
  */
-final class Trace implements Stringable, Countable, IteratorAggregate, ArrayAccess
+class TraceStack implements Stringable, Countable, IteratorAggregate, ArrayAccess
 {
-    /** @var array */
+    /** Stack data. */
     public readonly array $stack;
 
     /**
@@ -25,40 +24,45 @@ final class Trace implements Stringable, Countable, IteratorAggregate, ArrayAcce
      * @param int        $options
      * @param int        $limit
      * @param int        $slice
+     * @param bool       $reverse
      */
-    public function __construct(array $stack = null, int $options = 0, int $limit = 0, int $slice = 1)
+    public function __construct(array $stack = null, int $options = 0, int $limit = 0, int $slice = 1, bool $reverse = false)
     {
-        $stack ??= get_trace($options, $limit, slice: $slice);
+        $stack ??= get_trace($options, $limit, slice: $slice, reverse: $reverse);
 
         $this->stack = $stack;
     }
 
-    /** @magic */
+    /**
+     * @magic
+     */
     public function __toString(): string
     {
-        $ret = []; $index = 0;
+        $ret = []; $index = -1;
 
-        foreach ($this as $index => $entry) {
-            $index = $entry->index ?? $index;
-            $ret[] = format('#%s %s', $index, $entry->call());
+        foreach ($this as $index => $trace) {
+            $index = $trace->index ?? $index;
+            $ret[] = sprintf('#%d %s', $index, $trace->call());
         }
 
         // Append {main} to end as original.
-        $ret[] = format('#%s {main}', $index + 1);
+        $ret[] = sprintf('#%d {main}', $index + 1);
 
         return join("\n", $ret);
     }
 
-    /** @magic */
+    /**
+     * @magic
+     */
     public function __debugInfo(): array
     {
         return $this->stack;
     }
 
     /**
-     * Check an entry.
+     * Check a trace.
      *
-     * @param  int  $index
+     * @param  int $index
      * @return bool
      */
     public function has(int $index): bool
@@ -67,40 +71,40 @@ final class Trace implements Stringable, Countable, IteratorAggregate, ArrayAcce
     }
 
     /**
-     * Get an entry.
+     * Get a trace.
      *
      * @param  int $index
-     * @return TraceEntry|null
+     * @return Trace|null
      */
-    public function get(int $index): TraceEntry|null
+    public function get(int $index): Trace|null
     {
-        $entry = value($this->stack, $index);
+        $trace = value($this->stack, $index);
 
-        return $entry ? new TraceEntry($entry) : null;
+        return $trace ? new Trace($trace) : null;
     }
 
     /**
-     * Get first entry.
+     * Get first trace.
      *
-     * @return TraceEntry|null
+     * @return Trace|null
      */
-    public function getFirst(): TraceEntry|null
+    public function getFirst(): Trace|null
     {
-        $entry = first($this->stack);
+        $trace = first($this->stack);
 
-        return $entry ? new TraceEntry($entry) : null;
+        return $trace ? new Trace($trace) : null;
     }
 
     /**
-     * Get last entry.
+     * Get last trace.
      *
-     * @return TraceEntry|null
+     * @return Trace|null
      */
-    public function getLast(): TraceEntry|null
+    public function getLast(): Trace|null
     {
-        $entry = last($this->stack);
+        $trace = last($this->stack);
 
-        return $entry ? new TraceEntry($entry) : null;
+        return $trace ? new Trace($trace) : null;
     }
 
     /**
@@ -120,29 +124,19 @@ final class Trace implements Stringable, Countable, IteratorAggregate, ArrayAcce
     }
 
     /**
-     * Find a trace entry that satisfies the provided callable.
+     * Find a trace that satisfies the provided callable.
      *
      * @param  callable $func
-     * @return TraceEntry|null
+     * @return Trace|null
      */
-    public function find(callable $func): TraceEntry|null
+    public function find(callable $func): Trace|null
     {
-        foreach ($this as $entry) {
-            if ($func($entry)) {
-                return $entry;
+        foreach ($this as $trace) {
+            if ($func($trace)) {
+                return $trace;
             }
         }
         return null;
-    }
-
-    /**
-     * Get a reversed trace.
-     *
-     * @return Trace
-     */
-    public function reverse(): Trace
-    {
-        return new Trace(array_reverse($this->stack));
     }
 
     /**
@@ -155,11 +149,12 @@ final class Trace implements Stringable, Countable, IteratorAggregate, ArrayAcce
 
     /**
      * @inheritDoc IteratorAggregate
-     */ #[ReturnTypeWillChange]
-    public function getIterator(): iterable
+     * @return     Generator<Trace>
+     */
+    public function getIterator(): Generator
     {
         foreach ($this->stack as $entry) {
-            yield new TraceEntry($entry);
+            yield new Trace($entry);
         }
     }
 
@@ -174,13 +169,14 @@ final class Trace implements Stringable, Countable, IteratorAggregate, ArrayAcce
     /**
      * @inheritDoc ArrayAccess
      */
-    public function offsetGet(mixed $index): TraceEntry|null
+    public function offsetGet(mixed $index): Trace|null
     {
         return $this->get($index);
     }
 
     /**
      * @inheritDoc ArrayAccess
+     * @throws     UnimplementedError
      */
     public function offsetSet(mixed $index, mixed $_): never
     {
@@ -189,6 +185,7 @@ final class Trace implements Stringable, Countable, IteratorAggregate, ArrayAcce
 
     /**
      * @inheritDoc ArrayAccess
+     * @throws     UnimplementedError
      */
     public function offsetUnset(mixed $index): never
     {
@@ -197,20 +194,20 @@ final class Trace implements Stringable, Countable, IteratorAggregate, ArrayAcce
 }
 
 /**
- * An internal class for Trace entries.
+ * An internal class for stack frames.
  *
  * @package global
- * @object  TraceEntry
+ * @class   Trace
  * @author  Kerem Güneş
  * @since   6.0
  * @internal
  */
-final class TraceEntry implements ArrayAccess
+class Trace implements ArrayAccess
 {
-    /** @var array */
+    /** Trace data. */
     public readonly array $data;
 
-    /** @var int|null */
+    /** Trace index. */
     public readonly int|null $index;
 
     /**
@@ -224,26 +221,33 @@ final class TraceEntry implements ArrayAccess
         // For throwable traces.
         if ($data && !isset($data['method']) && isset($data['class'], $data['function'])) {
             $data['method']     = $data['function'];
-            $data['methodType'] = ($data['type'] == '::') ? 'static' : 'non-static';
+            $data['methodType'] = ($data['type'] === '::') ? 'static' : 'non-static';
         }
 
         $this->data  = $data;
         $this->index = $index ?? $data['#'] ?? null;
     }
 
-    /** @magic */
+    /**
+     * @magic
+     */
     public function __debugInfo(): array
     {
         return $this->data;
     }
 
-    /** @magic */
+    /**
+     * @throws UnimplementedError
+     * @magic
+     */
     public function __set(string $key, mixed $_): never
     {
         throw new UnimplementedError();
     }
 
-    /** @magic */
+    /**
+     * @magic
+     */
     public function __get(string $key): mixed
     {
         return $this->get($key);
@@ -280,10 +284,7 @@ final class TraceEntry implements ArrayAccess
      */
     public function getField(string $key, mixed $default = null): mixed
     {
-        // When ref'ed  "Cannot modify readonly property TraceEntry::$data" error..
-        $data = $this->data;
-
-        return array_select($data, $key, $default);
+        return array_select($this->data, $key, $default);
     }
 
     /**
@@ -295,26 +296,7 @@ final class TraceEntry implements ArrayAccess
      */
     public function getFields(array $keys, array $defaults = null): array
     {
-        // When ref'ed  "Cannot modify readonly property TraceEntry::$data" error..
-        $data = $this->data;
-
-        return array_select($data, $keys, $defaults);
-    }
-
-    /**
-     * @alias getField()
-     */
-    public function field(...$args)
-    {
-        return $this->getField(...$args);
-    }
-
-    /**
-     * @alias getFields()
-     */
-    public function fields(...$args)
-    {
-        return $this->getFields(...$args);
+        return array_select($this->data, $keys, $defaults);
     }
 
     /**
@@ -439,9 +421,9 @@ final class TraceEntry implements ArrayAccess
         if ($full) {
             [$class, $function, $type] = $this->getFields(['class', 'function', 'type']);
             if ($class) {
-                // Simple modification for Trace struct.
-                if ($class == 'Trace' && $function == '__construct') {
-                    [$class, $function, $type] = ['new Trace', '', ''];
+                // Simple modification for TraceStack struct.
+                if ($class === 'TraceStack' && $function === '__construct') {
+                    [$class, $function, $type] = ['new TraceStack', '', ''];
                 }
 
                 $ret .= ' => '. $class . $type . $function .'()';
@@ -494,29 +476,6 @@ final class TraceEntry implements ArrayAccess
     }
 
     /**
-     * Extract.
-     *
-     * @param  array     $keys
-     * @param  mixed &...$vars
-     * @return int
-     */
-    public function extract(int|string|array $keys, mixed &...$vars): int
-    {
-        return array_extract($this->data, $keys, ...$vars);
-    }
-
-    /**
-     * Export.
-     *
-     * @param  mixed &...$vars
-     * @return int
-     */
-    public function export(mixed &...$vars): int
-    {
-        return array_export($this->data, ...$vars);
-    }
-
-    /**
      * @inheritDoc ArrayAccess
      */
     public function offsetExists(mixed $key): bool
@@ -534,6 +493,7 @@ final class TraceEntry implements ArrayAccess
 
     /**
      * @inheritDoc ArrayAccess
+     * @throws     UnimplementedError
      */
     public function offsetSet(mixed $key, mixed $_): never
     {
@@ -542,6 +502,7 @@ final class TraceEntry implements ArrayAccess
 
     /**
      * @inheritDoc ArrayAccess
+     * @throws     UnimplementedError
      */
     public function offsetUnset(mixed $key): never
     {

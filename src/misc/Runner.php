@@ -1,27 +1,28 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-util
  */
-declare(strict_types=1);
-
-namespace froq\util\misc;
+namespace froq\util;
 
 /**
  * A class that provides a profiling interface via `run()` method printing
  * speed & memory peeks.
  *
- * @package froq\util\misc
- * @object  froq\util\misc\Runner
+ * @package froq\util
+ * @class   froq\util\Runner
  * @author  Kerem Güneş
  * @since   5.5
  */
 class Runner
 {
-    /** @var int, int */
-    private int $limit, $runs = 0;
+    /** Run limit. */
+    private int $limit = 0;
 
-    /** @var bool */
+    /** Total runs. */
+    private int $runs = 0;
+
+    /** Simple, without function call. */
     private bool $simple;
 
     /**
@@ -29,12 +30,12 @@ class Runner
      *
      * @param  int  $limit
      * @param  bool $simple
-     * @throws froq\util\UtilException
+     * @throws ArgumentError
      */
     public function __construct(int $limit = 1000, bool $simple = false)
     {
         if ($limit < 1) {
-            throw new \ValueError('Min limit is 1, ' . $limit . ' given');
+            throw new \ArgumentError('Min limit is 1, %d given', $limit);
         }
 
         $this->limit  = $limit;
@@ -73,19 +74,19 @@ class Runner
             // Free.
             unset($temp);
 
-            $formatRun = fn($v) => number_format($v, 0, '', ',');
-            $formatMemo = fn($v) => \froq\util\Util::formatBytes($v, 3);
+            $formatLimit = fn($v): string => number_format($v, 0, '', ',');
+            $formatBytes = fn($v): string => \froq\util\Util::formatBytes($v, 3);
 
             // Simple drops memory info.
             if ($simple) {
                 printf("run(%s)#%s: %F\n",
-                    $formatRun($this->limit), $this->runs, $endTime,
+                    $formatLimit($this->limit), $this->runs, $endTime,
                 );
             } else {
                 printf("run(%s)#%s: %F, memo: %s (%s - %s)\n",
-                    $formatRun($this->limit), $this->runs, $endTime,
-                    $formatMemo($endMemo - $startMemo),
-                    $formatMemo($endMemo), $formatMemo($startMemo),
+                    $formatLimit($this->limit), $this->runs, $endTime,
+                    $formatBytes($endMemo - $startMemo),
+                    $formatBytes($endMemo), $formatBytes($startMemo),
                 );
             }
         }
@@ -94,19 +95,7 @@ class Runner
     }
 
     /**
-     * Create an instance with given limit.
-     *
-     * @param  int  $limit
-     * @param  bool $simple
-     * @return self
-     */
-    public static function limit(int $limit, bool $simple = false): self
-    {
-        return new self($limit, $simple);
-    }
-
-    /**
-     * Create an instance with/without given limit.
+     * Static initializer.
      *
      * @param  int  $limit
      * @param  bool $simple

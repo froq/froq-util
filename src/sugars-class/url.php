@@ -1,25 +1,23 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-util
  */
-declare(strict_types=1);
-
 use froq\common\interface\{Arrayable, Stringable};
 use froq\common\trait\{DataAccessTrait, DataAccessMagicTrait};
-use froq\collection\trait\{GetTrait, CountTrait, AccessTrait, AccessMagicTrait};
+use froq\collection\trait\{CountTrait, EmptyTrait, GetTrait, FilterTrait, MapTrait};
 
 /**
  * A URL class for working customized URLs.
  *
  * @package global
- * @object  Url
+ * @class   Url
  * @author  Kerem Güneş
  * @since   6.5
  */
 class Url implements Arrayable, Stringable, \Stringable
 {
-    /** Data (keys only). */
+    /** Components. */
     private array $data = [
         'origin', 'authority', 'scheme', 'host', 'port',
         'user', 'pass', 'path', 'query', 'fragment',
@@ -47,8 +45,10 @@ class Url implements Arrayable, Stringable, \Stringable
                 }
 
                 // Filter valid keys & reformat.
-                $data = array_filter_keys($source,
-                    fn($key) => array_key_exists($key, $this->data));
+                $data = array_filter_keys($source, fn(int|string $key): bool => (
+                    array_key_exists($key, $this->data)
+                ));
+
                 $data && $data = http_parse_url(http_build_url($data));
             }
 
@@ -71,8 +71,8 @@ class Url implements Arrayable, Stringable, \Stringable
             // Set data fields via setters.
             foreach ($this->data as $key => $_) {
                 isset($data[$key])
-                    && ($method = 'set' . $key)
-                    && $this->$method($data[$key]);
+                && ($method = 'set' . $key)
+                && $this->$method($data[$key]);
             }
         }
     }
@@ -80,9 +80,46 @@ class Url implements Arrayable, Stringable, \Stringable
     /**
      * @magic
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->toString();
+    }
+
+    /**
+     * @magic
+     */
+    public function __debugInfo(): array
+    {
+        return $this->data;
+    }
+
+    /**
+     * @throws UrlError
+     * @magic
+     */
+    public function __set(string $name, mixed $value): void
+    {
+        if (array_key_exists($name, $this->data)) {
+            $setter = 'set' . $name;
+            $this->$setter($value);
+            return;
+        }
+
+        throw new UrlError('Invalid component: %q', $name);
+    }
+
+    /**
+     * @throws UrlError
+     * @magic
+     */
+    public function __get(string $name): mixed
+    {
+        if (array_key_exists($name, $this->data)) {
+            $getter = 'get' . $name;
+            return $this->$getter();
+        }
+
+        throw new UrlError('Invalid component: %q', $name);
     }
 
     /**
@@ -120,7 +157,7 @@ class Url implements Arrayable, Stringable, \Stringable
      */
     public function getOrigin(): string|null
     {
-        return $this->data['origin'] ?? null;
+        return $this->data['origin'];
     }
 
     /**
@@ -163,7 +200,7 @@ class Url implements Arrayable, Stringable, \Stringable
      */
     public function getAuthority(): string|null
     {
-        return $this->data['authority'] ?? null;
+        return $this->data['authority'];
     }
 
     /**
@@ -191,7 +228,7 @@ class Url implements Arrayable, Stringable, \Stringable
      */
     public function getScheme(): string|null
     {
-        return $this->data['scheme'] ?? null;
+        return $this->data['scheme'];
     }
 
     /**
@@ -204,7 +241,7 @@ class Url implements Arrayable, Stringable, \Stringable
      */
     public function setHost(string $host, bool $ip = false): self
     {
-        if (!preg_test('~^(?:([\w\-\.]+))?([\w\-]+)\.([\w]+)$~', $host)) {
+        if (!preg_test('~^(?:([\w\-\.]+\.))?([\w\-]+)(?:\.([\w]+))?$~', $host)) {
             throw new UrlError('Invalid host: %q', $host);
         } elseif ($ip && ip2long($host) === false) {
             throw new UrlError('Invalid host IP: %q', $host);
@@ -222,7 +259,7 @@ class Url implements Arrayable, Stringable, \Stringable
      */
     public function getHost(): string|null
     {
-        return $this->data['host'] ?? null;
+        return $this->data['host'];
     }
 
     /**
@@ -249,7 +286,7 @@ class Url implements Arrayable, Stringable, \Stringable
      */
     public function getPort(): int|null
     {
-        return $this->data['port'] ?? null;
+        return $this->data['port'];
     }
 
     /**
@@ -272,7 +309,7 @@ class Url implements Arrayable, Stringable, \Stringable
      */
     public function getUser(): string|null
     {
-        return $this->data['user'] ?? null;
+        return $this->data['user'];
     }
 
     /**
@@ -295,7 +332,7 @@ class Url implements Arrayable, Stringable, \Stringable
      */
     public function getPass(): string|null
     {
-        return $this->data['pass'] ?? null;
+        return $this->data['pass'];
     }
 
     /**
@@ -321,7 +358,7 @@ class Url implements Arrayable, Stringable, \Stringable
      */
     public function getPath(): string|null
     {
-        return $this->data['path'] ?? null;
+        return $this->data['path'];
     }
 
     /**
@@ -348,7 +385,7 @@ class Url implements Arrayable, Stringable, \Stringable
      */
     public function getQuery(): UrlQuery|null
     {
-        return $this->data['query'] ?? null;
+        return $this->data['query'];
     }
 
     /**
@@ -371,7 +408,7 @@ class Url implements Arrayable, Stringable, \Stringable
      */
     public function getFragment(): string|null
     {
-        return $this->data['fragment'] ?? null;
+        return $this->data['fragment'];
     }
 
     /**
@@ -400,7 +437,7 @@ class Url implements Arrayable, Stringable, \Stringable
      */
     public static function parse(string $url, array $check = []): array
     {
-        return (new Url($url, $check))->toArray();
+        return (new self($url, $check))->toArray();
     }
 }
 
@@ -408,17 +445,17 @@ class Url implements Arrayable, Stringable, \Stringable
  * A URL-query class for working customized URL-queries.
  *
  * @package global
- * @object  UrlQuery
+ * @class   UrlQuery
  * @author  Kerem Güneş
  * @since   6.5
  */
 class UrlQuery implements Arrayable, Stringable, \Stringable, Countable, ArrayAccess
 {
     /** For ArrayAccess and __set(),__get() etc. */
-    use AccessTrait, AccessMagicTrait;
+    use DataAccessTrait, DataAccessMagicTrait;
 
-    /** For Countable and getInt(),getBool() etc. */
-    use CountTrait, GetTrait;
+    /** For Countable and empty(),getInt(),getBool(),filter(),map() etc. */
+    use CountTrait, EmptyTrait, GetTrait, FilterTrait, MapTrait;
 
     /** Data. */
     private array $data = [];
@@ -426,7 +463,7 @@ class UrlQuery implements Arrayable, Stringable, \Stringable, Countable, ArrayAc
     /**
      * Constructor.
      *
-     * @param array|null $source
+     * @param string|array|null $source
      */
     public function __construct(string|array $source = null)
     {
@@ -435,7 +472,9 @@ class UrlQuery implements Arrayable, Stringable, \Stringable, Countable, ArrayAc
                 $data = http_parse_query_string($source);
             } else {
                 $data = array_map_recursive(
-                    fn($value) => $this->normalizeValue($value), $source);
+                    fn(mixed $value): mixed => $this->normalizeValue($value),
+                    $source
+                );
             }
 
             $this->data = $data;
@@ -445,9 +484,17 @@ class UrlQuery implements Arrayable, Stringable, \Stringable, Countable, ArrayAc
     /**
      * @magic
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->toString();
+    }
+
+    /**
+     * @magic
+     */
+    public function __debugInfo(): array
+    {
+        return $this->data;
     }
 
     /**
@@ -459,31 +506,6 @@ class UrlQuery implements Arrayable, Stringable, \Stringable, Countable, ArrayAc
     public function has(string $key): bool
     {
         return isset($this->data[$key]);
-    }
-
-    /**
-     * Check if a key was set.
-     *
-     * @param  string $key
-     * @return bool
-     */
-    public function hasKey(string $key): bool
-    {
-        return array_key_exists($key, $this->data);
-    }
-
-    /**
-     * Check if a key was set & not empty "" or null, set ref'ed value with fetched value.
-     *
-     * @param  string       $key
-     * @param  string|null &$value
-     * @return bool
-     */
-    public function hasValue(string $key, string|null &$value = null): bool
-    {
-        $value = $this->get($key);
-
-        return ($value !== null && $value !== '');
     }
 
     /**
@@ -503,11 +525,11 @@ class UrlQuery implements Arrayable, Stringable, \Stringable, Countable, ArrayAc
     /**
      * Get an item (with dot notation).
      *
-     * @param  string     $key
-     * @param  mixed|null $default
+     * @param  string|array $key
+     * @param  mixed|null   $default
      * @return mixed
      */
-    public function get(string $key, mixed $default = null): mixed
+    public function get(string|array $key, mixed $default = null): mixed
     {
         $value = array_get($this->data, $key, $default);
 
@@ -517,27 +539,14 @@ class UrlQuery implements Arrayable, Stringable, \Stringable, Countable, ArrayAc
     /**
      * Remove an item (with dot notation).
      *
-     * @param  string $key
+     * @param  string|array $key
      * @return self
      */
-    public function remove(string $key): self
+    public function remove(string|array $key): self
     {
         array_remove($this->data, $key);
 
         return $this;
-    }
-
-    /**
-     * Get a subquery as a UrlQuery or null.
-     *
-     * @param  string $key
-     * @return UrlQuery|null
-     */
-    public function query(string $key): UrlQuery|null
-    {
-        $query = $this->get($key);
-
-        return $query ? new UrlQuery((array) $query) : null;
     }
 
     /**

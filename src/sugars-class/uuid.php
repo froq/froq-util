@@ -1,43 +1,60 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-util
  */
-declare(strict_types=1);
-
 use froq\common\interface\Stringable;
 
 /**
- * A simple UUID/v4 class for working customized UUIDs.
+ * A simple UUID (v4) class for working customized or dated UUIDs/GUIDs and
+ * pseudorandom identifiers & identifier hashes.
  *
  * @package global
- * @object  Uuid
+ * @class   Uuid
  * @author  Kerem Güneş
  * @since   6.0
  */
 class Uuid implements Stringable, \Stringable
 {
+    /** Nulls. */
+    public final const NULL = '00000000-0000-0000-0000-000000000000',
+                       NULL_HASH = '00000000000000000000000000000000';
+
     /** Given or generated value. */
     public readonly string $value;
 
     /**
      * Constructor.
      *
-     * @param string|null $value
-     * @param bool     ...$options See generate().
+     * @param  string|Uuid|null $value
+     * @param  bool          ...$options See generate().
+     * @throws UuidError If options.strict is true and value is invalid.
      */
-    public function __construct(string $value = null, bool ...$options)
+    public function __construct(string|Uuid $value = null, bool ...$options)
     {
+        // When value given.
+        if (func_num_args() && isset($options['strict'])) {
+            if ($options['strict'] && !self::validate((string) $value)) {
+                [$spec, $value] = ($value === null) ? ['%s', 'null']
+                                                    : ['%q', $value];
+
+                throw new UuidError('Invalid UUID value: ' . $spec, $value);
+            }
+
+            // Not used in generate().
+            unset($options['strict']);
+        }
+
         // Create if none given.
         $value ??= self::generate(...$options);
 
-        $this->value = $value;
+        $this->value = (string) $value;
     }
 
     /**
      * @magic
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->value;
     }
@@ -73,14 +90,30 @@ class Uuid implements Stringable, \Stringable
     }
 
     /**
-     * Get Uuid value as 20 to 22-length short ID in base62. Average chances are
-     * 22-length => 88%, 21-length => 10% 20-length => 02%
+     * Get Uuid value as 20/22-length short ID in Base-62.
+     * Chances: 22-length: 88%, 21-length: 10%, 20-length: 02%.
      *
+     * Note: Argument `$pad` can be used for fixed 22-length returns.
+     *
+     * @param  string|true|null $pad True for padding with "0".
      * @return string
+     * @throws UuidError
      */
-    public function toShortString(): string
+    public function toShortString(string|true $pad = null): string
     {
-        return convert_base(str_replace('-', '', $this->value), 16, 62);
+        $ret = convert_base($this->toPlainString(), 16, 62);
+
+        if ($pad !== null) {
+            $pad = ($pad === true) ? '0' : $pad;
+
+            if ($pad === '') {
+                throw new UuidError('Argument $pad cannot be empty string');
+            }
+
+            $ret = str_pad($ret, 22, $pad);
+        }
+
+        return $ret;
     }
 
     /**
@@ -93,7 +126,7 @@ class Uuid implements Stringable, \Stringable
      */
     public function toHashString(int $length = 32, bool $format = false, bool $upper = false): string
     {
-        return self::hash($this->value, $length, $format, $upper);
+        return self::hash($this->toPlainString(), $length, $format, $upper);
     }
 
     /**
@@ -107,7 +140,7 @@ class Uuid implements Stringable, \Stringable
     }
 
     /**
-     * Get Unix time if UUID was created by `withTime()` or option `timed: true`.
+     * Get Unix time if UUID was created by `withTime()` or option `time: true`.
      *
      * @return int|null
      */
@@ -115,24 +148,36 @@ class Uuid implements Stringable, \Stringable
     {
         $time = null;
 
-        if (ctype_xdigit($sub = substr($this->value, 0, 8))) {
+        // Extract usable part from value (8-byte hex).
+        if (ctype_xdigit($sub = strcut($this->value, 8))) {
             $time = hexdec($sub);
         }
 
-        return ($time !== null && $time <= time()) ? $time : null;
+        // Validate extracted time.
+        if ($time !== null && $time <= time()) {
+            return $time;
+        }
+
+        return null;
     }
 
     /**
-     * Format UTC time if UUID was created by `withTime()` or option `timed: true`.
+     * Get DateTime instance if UUID was created by `withTime()` or option `time: true`.
      *
-     * @param  string $format
-     * @return string|null
+     * @param  string $timezone
+     * @return DateTime|null
      */
-    public function formatTime(string $format = 'c'): string|null
+    public function getDateTime(string $timezone = 'UTC'): DateTime|null
     {
         $time = $this->getTime();
 
-        return ($time !== null) ? gmdate($format, $time) : null;
+        if ($time !== null) {
+            return (new DateTime)
+                ->setTimestamp($time)
+                ->setTimezone(new DateTimeZone($timezone));
+        }
+
+        return null;
     }
 
     /**
@@ -142,7 +187,7 @@ class Uuid implements Stringable, \Stringable
      */
     public function isNull(): bool
     {
-        return hash_equals('00000000-0000-0000-0000-000000000000', $this->value);
+        return hash_equals(self::NULL, $this->value);
     }
 
     /**
@@ -152,7 +197,18 @@ class Uuid implements Stringable, \Stringable
      */
     public function isNullHash(): bool
     {
-        return hash_equals('00000000000000000000000000000000', $this->value);
+        return hash_equals(self::NULL_HASH, $this->value);
+    }
+
+    /**
+     * Check whether given Uuid is equal to this value.
+     *
+     * @param  string|Uuid $uuid
+     * @return bool
+     */
+    public function isEqual(string|Uuid $uuid): bool
+    {
+        return self::equals($this->value, (string) $uuid);
     }
 
     /**
@@ -189,21 +245,22 @@ class Uuid implements Stringable, \Stringable
     }
 
     /**
-     * Generate a UUID.
+     * Generate a UUID (v4).
      *
-     * @param  bool $timed For Unix time prefix.
+     * @param  bool $time For Unix time prefix.
      * @param  bool $guid
      * @param  bool $upper
      * @param  bool $plain
      * @return string
      */
-    public static function generate(bool $timed = false, bool $guid = false, bool $upper = false, bool $plain = false): string
+    public static function generate(bool $time = false, bool $guid = false, bool $upper = false, bool $plain = false): string
     {
-        if (!$timed) {
-            // Full 16-random bytes.
+        if (!$time) {
             $bins = random_bytes(16);
         } else {
             // Unix time prefix & 12-random bytes.
+            // @tome: What about "2038 Problem" issue? Seems pack() will keep giving 4-byte bin
+            // (so 8-byte hex) until date of "2105-12-31", but probably I'll never see that date.
             $bins = strrev(pack('L', time())) . random_bytes(12);
         }
 
@@ -224,14 +281,14 @@ class Uuid implements Stringable, \Stringable
     /**
      * Generate a GUID.
      *
-     * @param  bool $timed
+     * @param  bool $time
      * @param  bool $upper
      * @param  bool $plain
      * @return string
      */
-    public static function generateGuid(bool $timed = false, bool $upper = false, bool $plain = false): string
+    public static function generateGuid(bool $time = false, bool $upper = false, bool $plain = false): string
     {
-        return self::generate($timed, true, $upper, $plain);
+        return self::generate($time, true, $upper, $plain);
     }
 
     /**
@@ -272,6 +329,18 @@ class Uuid implements Stringable, \Stringable
     public static function generateHash(int $length = 32, bool $format = false, bool $upper = false): string
     {
         return self::hash(self::generate(), $length, $format, $upper);
+    }
+
+    /**
+     * Verify equal states of given Uuid inputs.
+     *
+     * @param  string $uuidKnown
+     * @param  string $uuidUnknown
+     * @return bool
+     */
+    public static function equals(string $uuidKnown, string $uuidUnknown): bool
+    {
+        return hash_equals($uuidKnown, $uuidUnknown);
     }
 
     /**
@@ -326,7 +395,7 @@ class Uuid implements Stringable, \Stringable
         static $algos = [16 => 'fnv1a64', 32 => 'md5', 40 => 'sha1', 64 => 'sha256'];
 
         $algo = $algos[$length]
-            ?? throw new UuidError('Invalid length: %s [valids: 16,32,40,64]', $length);
+            ?? throw new UuidError('Invalid length: %s [valids: %A]', [$length, array_keys($algos)]);
 
         $hash = hash($algo, $uuid);
 
@@ -345,7 +414,7 @@ class Uuid implements Stringable, \Stringable
      */
     public static function format(string $hash): string
     {
-        if (strlen($hash) != 32 || !ctype_xdigit($hash)) {
+        if (strlen($hash) !== 32 || !ctype_xdigit($hash)) {
             throw new UuidError('Format for only 32-length UUIDs/GUIDs');
         }
 

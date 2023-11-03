@@ -1,23 +1,21 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-util
  */
-declare(strict_types=1);
-
 use froq\util\UtilException;
-use froq\logger\Logger;
+use froq\log\Logger;
 use froq\App;
 
 // Check dependencies (all others already come with froq\App).
 if (!class_exists(App::class, false)) {
-    throw new UtilException('Logger sugars dependent to `froq` module but not found');
+    throw new UtilException('Logger sugars dependent to "froq" module but not found');
 }
 
 /**
  * Get app's logger.
  *
- * @return froq\logger\Logger.
+ * @return froq\log\Logger.
  */
 function logger(): Logger
 {
@@ -27,10 +25,10 @@ function logger(): Logger
 /**
  * Log an error message.
  *
- * @param  string|Throwable $message
+ * @param  string|Stringable $message
  * @return bool
  */
-function log_error(string|Throwable $message): bool
+function log_error(string|Stringable $message): bool
 {
     return app()->logger->logError($message);
 }
@@ -38,10 +36,10 @@ function log_error(string|Throwable $message): bool
 /**
  * Log a warning message.
  *
- * @param  string|Throwable $message
+ * @param  string|Stringable $message
  * @return bool
  */
-function log_warn(string|Throwable $message): bool
+function log_warn(string|Stringable $message): bool
 {
     return app()->logger->logWarn($message);
 }
@@ -49,10 +47,10 @@ function log_warn(string|Throwable $message): bool
 /**
  * Log an info message.
  *
- * @param  string|Throwable $message
+ * @param  string|Stringable $message
  * @return bool
  */
-function log_info(string|Throwable $message): bool
+function log_info(string|Stringable $message): bool
 {
     return app()->logger->logInfo($message);
 }
@@ -60,10 +58,10 @@ function log_info(string|Throwable $message): bool
 /**
  * Log a debug message.
  *
- * @param  string|Throwable $message
+ * @param  string|Stringable $message
  * @return bool
  */
-function log_debug(string|Throwable $message): bool
+function log_debug(string|Stringable $message): bool
 {
     return app()->logger->logDebug($message);
 }

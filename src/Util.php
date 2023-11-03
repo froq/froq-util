@@ -1,17 +1,15 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-util
  */
-declare(strict_types=1);
-
 namespace froq\util;
 
 /**
- * Util.
+ * Utility class.
  *
  * @package froq\util
- * @object  froq\util\Util
+ * @class   froq\util\Util
  * @author  Kerem Güneş
  * @since   1.0
  * @static
@@ -27,29 +25,31 @@ final /* fuckic static */ class Util extends \StaticClass
      */
     public static function loadSugar(string|array $name): void
     {
-        // Name list.
+        // List of names.
         if (is_array($name)) {
             foreach ($name as $nam) {
                 self::loadSugar($nam);
             }
         } else {
-            $file = sprintf(__dir__ . '/sugars/%s.php', $name);
+            $file = sprintf(__DIR__ . '/sugars/%s.php', $name);
             if (file_exists($file)) {
                 require_once $file;
                 return;
             }
 
             // Not exists.
-            $names = xglob(__dir__ . '/sugars/{*.php,extra/*.php}', GLOB_BRACE)
-                ->map(fn($file) => strsrc($file, 'extra/') ? 'extra/' . filename($file) : filename($file))
+            $names = xglob(__DIR__ . '/sugars/{*.php,extra/*.php}', GLOB_BRACE)
+                ->map(fn(string $file): string => (
+                    strsrc($file, 'extra/') ? 'extra/' . filename($file) : filename($file)
+                ))
                 ->array();
 
-            throw new UtilException('Invalid sugar name `%s` [valids: %A]', [$name, $names]);
+            throw new UtilException('Invalid sugar name %q [valids: %A]', [$name, $names]);
         }
     }
 
     /**
-     * Get client IP.
+     * Get client ip.
      *
      * @return string|null
      */
@@ -79,13 +79,12 @@ final /* fuckic static */ class Util extends \StaticClass
     }
 
     /**
-     * Get client user agent.
+     * Get client agent.
      *
      * @param  bool $safe
      * @return string|null
-     * @since  3.6
      */
-    public static function getClientUserAgent(bool $safe = false): string|null
+    public static function getClientAgent(bool $safe = true): string|null
     {
         // Possible header names.
         static $names = [
@@ -108,23 +107,25 @@ final /* fuckic static */ class Util extends \StaticClass
     }
 
     /**
-     * Get current URL.
+     * Get current url.
      *
      * @param  bool $withQuery
      * @return string|null
      */
     public static function getCurrentUrl(bool $withQuery = true): string|null
     {
-        @ ['REQUEST_SCHEME' => $scheme, 'SERVER_NAME' => $host,
-           'REQUEST_URI'    => $uri,    'SERVER_PORT' => $port]  = $_SERVER;
+        @['REQUEST_SCHEME' => $scheme, 'REQUEST_URI' => $uri,
+          'SERVER_NAME'    => $host,   'SERVER_PORT' => $port] = $_SERVER;
 
         if (!$scheme || !$host) {
             return null;
         }
 
         $url = $scheme . '://';
-        if ($port && !(($port == '80' && $scheme == 'http') ||
-                       ($port == '443' && $scheme == 'https'))) {
+        if ($port && !(
+            ((int) $port === 80 && $scheme === 'http') ||
+            ((int) $port === 443 && $scheme === 'https')
+        )) {
             $url .= $host . ':' . $port;
         } else {
             $url .= $host;
@@ -195,7 +196,7 @@ final /* fuckic static */ class Util extends \StaticClass
         $units = ['', 'K', 'M', 'G'];
 
         // Eg: 6.4M or 6.4MB => 6.4MB, 64M or 64MB => 64MB.
-        if (sscanf($bytes, '%f%c', $byte, $unit) == 2) {
+        if (sscanf($bytes, '%f%c', $byte, $unit) === 2) {
             $exp = array_search(strtoupper($unit), $units);
 
             return (int) ($byte * pow($base, $exp));
@@ -206,17 +207,17 @@ final /* fuckic static */ class Util extends \StaticClass
 
     /**
      * Make an array with given data input.
-     * Note: must be used for arrays/iterables and stdClass or public var'ed objects.
+     *
+     * Note: This method must be used for arrays, iterables and stdClass or public var'ed objects.
      *
      * @param  array|object|null $data
      * @param  bool              $deep
      * @return array
-     * @since  5.2
      */
     public static function makeArray(array|object|null $data, bool $deep = true): array
     {
         // Memoize maker function.
-        static $make; $make ??= function ($data) use (&$make, $deep) {
+        static $make; $make ??= function ($data) use (&$make, $deep): array {
             if ($data) {
                 if ($data instanceof \Traversable) {
                     if ($data instanceof \Generator) {
@@ -233,10 +234,10 @@ final /* fuckic static */ class Util extends \StaticClass
                 }
 
                 if ($deep) {
-                    $array = is_array($data);
+                    $isArray = is_array($data);
                     foreach ($data as $key => $value) {
                         $value = is_array($value) || is_object($value) ? $make($value) : $value;
-                        if ($array) {
+                        if ($isArray) {
                             $data[$key] = $value;
                         } else {
                             $data->$key = $value;
@@ -253,17 +254,17 @@ final /* fuckic static */ class Util extends \StaticClass
 
     /**
      * Make an object with given data input.
-     * Note: must be used for arrays/iterables and stdClass or public var'ed objects.
+     *
+     * Note: This method must be used for arrays, iterables and stdClass or public var'ed objects.
      *
      * @param  array|object|null $data
      * @param  bool              $deep
      * @return object
-     * @since  5.2
      */
     public static function makeObject(array|object|null $data, bool $deep = true): object
     {
         // Memoize maker function.
-        static $make; $make ??= function ($data) use (&$make, $deep) {
+        static $make; $make ??= function ($data) use (&$make, $deep): object {
             if ($data) {
                 if ($data instanceof \Traversable) {
                     if ($data instanceof \Generator) {
@@ -280,10 +281,10 @@ final /* fuckic static */ class Util extends \StaticClass
                 }
 
                 if ($deep) {
-                    $array = is_array($data);
+                    $isArray = is_array($data);
                     foreach ($data as $key => $value) {
                         $value = is_array($value) || is_object($value) ? $make($value) : $value;
-                        if ($array) {
+                        if ($isArray) {
                             $data[$key] = $value;
                         } else {
                             $data->$key = $value;

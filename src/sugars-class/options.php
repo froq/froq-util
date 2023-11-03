@@ -1,21 +1,20 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-util
  */
-declare(strict_types=1);
 
 /**
  * A class for options related works.
  *
  * @package global
- * @object  Options
+ * @class   Options
  * @author  Kerem Güneş
  * @since   6.0
  */
 class Options extends XArrayObject
 {
-    /** @var array */
+    /** Defaults. */
     private array $defaults = [];
 
     /**
@@ -119,7 +118,10 @@ class Options extends XArrayObject
     {
         $defaults ??= $this->defaults;
 
-        return $this->filterKeys(fn($key) => array_key_exists($key, $defaults), $recursive);
+        return $this->filterKeys(
+            fn(int|string $key): bool => array_key_exists($key, $defaults),
+            $recursive
+        );
     }
 
     /**
@@ -147,18 +149,11 @@ class Options extends XArrayObject
      *
      * @param  int|string|array $key
      * @param  mixed|null       $default
-     * @param  bool             $drop
      * @param  bool             $combine
      * @return mixed
      */
-    public function select(int|string|array $key, mixed $default = null, bool $drop = false, bool $combine = false): mixed
+    public function select(int|string|array $key, mixed $default = null, bool $combine = false): mixed
     {
-        $array = $this->getData();
-        $value = array_select($array, $key, $default, $drop, $combine);
-
-        // Update modified data.
-        $drop && $this->setData($array);
-
-        return $value;
+        return array_select($this->getData(), $key, $default, $combine);
     }
 }

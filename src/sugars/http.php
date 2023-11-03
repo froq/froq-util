@@ -1,17 +1,15 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-util
  */
-declare(strict_types=1);
-
 use froq\util\UtilException;
 use froq\http\{Request, Response, request\Segments, response\Status};
 use froq\App;
 
 // Check dependencies (all others already come with froq\App).
 if (!class_exists(App::class, false)) {
-    throw new UtilException('Http sugars dependent to `froq` module but not found');
+    throw new UtilException('Http sugars dependent to "froq" module but not found');
 }
 
 /**
@@ -35,7 +33,7 @@ function response(mixed ...$args): Response
     $response = app()->response;
 
     if ($args) {
-        @ [$code, $content, $attributes, $headers, $cookies] = $args;
+        @[$code, $content, $attributes, $headers, $cookies] = $args;
 
         $code && $response->setStatus($code);
 

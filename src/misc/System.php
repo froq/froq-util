@@ -1,22 +1,20 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-util
  */
-declare(strict_types=1);
-
-namespace froq\util\misc;
+namespace froq\util;
 
 /**
  * A static class for system related stuff.
  *
- * @package froq\util\misc
- * @object  froq\util\misc\System
+ * @package froq\util
+ * @class   froq\util\System
  * @author  Kerem Güneş
  * @since   6.0
  * @static
  */
-final class System extends \StaticClass
+class System extends \StaticClass
 {
     /**
      * Set an INI directive.
@@ -28,15 +26,10 @@ final class System extends \StaticClass
     public static function iniSet(string $option, int|float|string|bool|null $value): string|null
     {
         if ($value === false) {
-            $value = 'off';
+            $value = '0';
         } elseif (is_float($value)) {
-            $decimals = 1;
-            if ($remainds = strstr((string) $value, '.')) {
-                $decimals = strlen($remainds) - 1;
-            }
-            $value = format_number($value, $decimals, '.', '');
+            $value = format_number($value, true, '.', '');
         }
-
 
         $oldValue = ini_set($option, $value);
 
@@ -60,10 +53,7 @@ final class System extends \StaticClass
         }
 
         if ($bool && !is_bool($value)) {
-            $value = $value && equals(
-                strtolower($value),
-                '1', 'on', 'yes', 'true'
-            );
+            $value = $value && equals(strtolower($value), '1', 'on', 'yes', 'true');
         }
 
         if (is_string($value) && is_numeric($value)) {
@@ -90,14 +80,10 @@ final class System extends \StaticClass
         if ($value === false) {
             $value = '0';
         } elseif (is_float($value)) {
-            $decimals = 1;
-            if ($remainds = strstr((string) $value, '.')) {
-                $decimals = strlen($remainds) - 1;
-            }
-            $value = format_number($value, $decimals, '.', '');
+            $value = format_number($value, true, '.', '');
         }
 
-        return putenv($option .'='. $value);
+        return putenv($option . '=' . $value);
     }
 
     /**
@@ -187,7 +173,7 @@ final class System extends \StaticClass
         if (str_starts_with($osf, 'win')) {
             return ['id' => 'windows', 'type' => 'Windows', 'name' => 'Windows'];
         }
-        if (str_starts_with('osf', 'darwin')) {
+        if (str_starts_with($osf, 'darwin')) {
             return ['id' => 'darwin', 'type' => 'Darwin', 'name' => 'Darwin'];
         }
 

@@ -1,29 +1,25 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-util
  */
-declare(strict_types=1);
-
-use froq\common\interface\{Arrayable, Listable, Jsonable, Collectable, Iteratable, IteratableReverse};
+use froq\common\interface\{Arrayable, Listable, Jsonable, Iteratable, IteratableReverse};
 use froq\collection\trait\{SortTrait, FilterTrait, MapTrait, ReduceTrait, EachTrait, CountTrait, EmptyTrait,
     FindTrait, FirstLastTrait, MinMaxTrait, CalcAverageTrait, CalcProductTrait, CalcSumTrait,
     IteratorTrait, ToArrayTrait, ToListTrait, ToJsonTrait};
 use froq\collection\iterator\{ArrayIterator, ReverseArrayIterator};
-use froq\collection\{Collection, CollectionInterface};
 
 /**
  * A trait used by Map/Set classes.
  *
  * @package global
- * @object  MapSetTrait
+ * @class   MapSetTrait
  * @author  Kerem Güneş
  * @since   5.35
  * @@internal
  */
 trait MapSetTrait
 {
-    /** Traits. */
     use SortTrait, FilterTrait, MapTrait, ReduceTrait, EachTrait, CountTrait, EmptyTrait,
         FindTrait, FirstLastTrait, MinMaxTrait, CalcAverageTrait, CalcProductTrait, CalcSumTrait,
         IteratorTrait, ToArrayTrait, ToListTrait, ToJsonTrait;
@@ -46,7 +42,9 @@ trait MapSetTrait
         }
     }
 
-    /** @magic */
+    /**
+     * @magic
+     */
     public function __debugInfo(): array
     {
         return $this->data;
@@ -140,13 +138,17 @@ trait MapSetTrait
         return array_pop($this->data);
     }
 
-    /** @alias unshift() */
+    /**
+     * @alias unshift()
+     */
     public function pushLeft(...$args)
     {
         return $this->unshift(...$args);
     }
 
-    /** @alias shift() */
+    /**
+     * @alias shift()
+     */
     public function popLeft()
     {
         return $this->shift();
@@ -324,12 +326,13 @@ trait MapSetTrait
      * Refine filtering given or null, "" and [] items as default.
      *
      * @param  array|null $items
+     * @param  bool|null  $list
      * @return self
      * @since  6.5
      */
-    public function refine(array $items = null): self
+    public function refine(array $items = null, bool $list = null): self
     {
-        $this->data = array_refine($this->data, $items);
+        $this->data = array_refine($this->data, $items, $list);
 
         return $this;
     }
@@ -384,14 +387,6 @@ trait MapSetTrait
     public function copyFrom(self $that): static
     {
         return $this->update($that->data);
-    }
-
-    /**
-     * @inheritDoc froq\common\interface\Collectable
-     */
-    public function toCollection(): CollectionInterface
-    {
-        return new Collection($this->data);
     }
 
     /**
@@ -452,34 +447,41 @@ trait MapSetTrait
  * A map class just like JavaScript's map but "a bit" extended.
  *
  * @package global
- * @object  Map
+ * @class   Map
  * @author  Kerem Güneş
  * @since   5.25
  */
-class Map implements Arrayable, Listable, Jsonable, Collectable, Iteratable, IteratableReverse,
-    Countable, Iterator, ArrayAccess
+class Map implements Arrayable, Listable, Jsonable, Iteratable, IteratableReverse, Countable, Iterator, ArrayAccess
 {
     use MapSetTrait;
 
-    /** @magic */
+    /**
+     * @magic
+     */
     public function __set(int|string|object $key, mixed $value): void
     {
         $this->set($key, $value);
     }
 
-    /** @magic */
-    public function __get(int|string|object $key): mixed
+    /**
+     * @magic
+     */
+    public function &__get(int|string|object $key): mixed
     {
         return $this->get($key);
     }
 
-    /** @magic */
+    /**
+     * @magic
+     */
     public function __isset(int|string|object $key): bool
     {
         return $this->has($key);
     }
 
-    /** @magic */
+    /**
+     * @magic
+     */
     public function __unset(int|string|object $key): void
     {
         $this->remove($key);
@@ -521,11 +523,17 @@ class Map implements Arrayable, Listable, Jsonable, Collectable, Iteratable, Ite
      * @param  mixed|null        $default
      * @return mixed
      */
-    public function get(int|string|object $key, mixed $default = null): mixed
+    public function &get(int|string|object $key, mixed $default = null): mixed
     {
         $this->keyCheck($key);
 
-        return $this->data[$key] ?? $default;
+        if (isset($this->data[$key])) {
+            $value = &$this->data[$key];
+        } else {
+            $value = &$default;
+        }
+
+        return $value;
     }
 
     /**
@@ -585,7 +593,9 @@ class Map implements Arrayable, Listable, Jsonable, Collectable, Iteratable, Ite
         return $ok;
     }
 
-    /** @alias remove() */
+    /**
+     * @alias remove()
+     */
     public function delete(int|string|object $key, mixed &$value = null): bool
     {
         return $this->remove($key, $value);
@@ -667,16 +677,17 @@ class Map implements Arrayable, Listable, Jsonable, Collectable, Iteratable, Ite
      */
     public function offsetSet(mixed $key, mixed $value): void
     {
-        // For calls like `items[] = item`.
-        $key ??= $this->count();
-
-        $this->set($key, $value);
+        if ($key === null) {
+            $this->add($value);
+        } else {
+            $this->set($key, $value);
+        }
     }
 
     /**
      * @inheritDoc ArrayAccess
      */
-    public function offsetGet(mixed $key): mixed
+    public function &offsetGet(mixed $key): mixed
     {
         return $this->get($key);
     }
@@ -709,7 +720,7 @@ class Map implements Arrayable, Listable, Jsonable, Collectable, Iteratable, Ite
      */
     protected function keyCheck(mixed &$key, bool $prepare = true): void
     {
-        if (is_string($key) && $key == '') {
+        if (is_string($key) && $key === '') {
             throw new KeyError('Empty key given');
         }
 
@@ -723,12 +734,11 @@ class Map implements Arrayable, Listable, Jsonable, Collectable, Iteratable, Ite
  * A set class just like JavaScript's set but "a bit" extended.
  *
  * @package global
- * @object  Set
+ * @class   Set
  * @author  Kerem Güneş
  * @since   5.25
  */
-class Set implements Arrayable, Listable, Jsonable, Collectable, Iteratable, IteratableReverse,
-    Countable, Iterator, ArrayAccess
+class Set implements Arrayable, Listable, Jsonable, Iteratable, IteratableReverse, Countable, Iterator, ArrayAccess
 {
     use MapSetTrait;
 
@@ -779,11 +789,17 @@ class Set implements Arrayable, Listable, Jsonable, Collectable, Iteratable, Ite
      * @param  mixed|null $default
      * @return mixed
      */
-    public function get(int $index, mixed $default = null): mixed
+    public function &get(int $index, mixed $default = null): mixed
     {
         $this->indexCheck($index);
 
-        return $this->data[$index] ?? $default;
+        if (isset($this->data[$index])) {
+            $value = &$this->data[$index];
+        } else {
+            $value = &$default;
+        }
+
+        return $value;
     }
 
     /**
@@ -801,7 +817,7 @@ class Set implements Arrayable, Listable, Jsonable, Collectable, Iteratable, Ite
             unset($this->data[$index]);
 
             // Re-index if no last index dropped.
-            if ($index != $count - 1) {
+            if ($index !== $count - 1) {
                 $this->resetIndexes();
             }
         }
@@ -832,7 +848,7 @@ class Set implements Arrayable, Listable, Jsonable, Collectable, Iteratable, Ite
             unset($this->data[$index]);
 
             // Re-index if no last index dropped.
-            if ($index != $count - 1) {
+            if ($index !== $count - 1) {
                 $this->resetIndexes();
             }
         }
@@ -857,7 +873,9 @@ class Set implements Arrayable, Listable, Jsonable, Collectable, Iteratable, Ite
         return $ok;
     }
 
-    /** @alias remove() */
+    /**
+     * @alias remove()
+     */
     public function delete(mixed $value, int &$index = null): bool
     {
         return $this->remove($value, $index);
@@ -924,16 +942,17 @@ class Set implements Arrayable, Listable, Jsonable, Collectable, Iteratable, Ite
      */
     public function offsetSet(mixed $index, mixed $value): void
     {
-        // For calls like `items[] = item`.
-        $index ??= $this->count();
-
-        $this->set($index, $value);
+        if ($index === null) {
+            $this->add($value);
+        } else {
+            $this->set($index, $value);
+        }
     }
 
     /**
      * @inheritDoc ArrayAccess
      */
-    public function offsetGet(mixed $index): mixed
+    public function &offsetGet(mixed $index): mixed
     {
         return $this->get($index);
     }
@@ -985,7 +1004,7 @@ class Set implements Arrayable, Listable, Jsonable, Collectable, Iteratable, Ite
  * A dictionary class just like Python's dict but "a bit" extended.
  *
  * @package global
- * @object  Dict
+ * @class   Dict
  * @author  Kerem Güneş
  * @since   5.31
  */

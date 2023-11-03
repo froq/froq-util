@@ -1,10 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-util
  */
-declare(strict_types=1);
-
 use froq\common\interface\{Arrayable, Objectable, Jsonable};
 use froq\collection\trait\GetTrait;
 use froq\util\Arrays;
@@ -14,7 +12,7 @@ use froq\util\Arrays;
  * for Options & Attributes classes.
  *
  * @package global
- * @object  XArrayObject
+ * @class   XArrayObject
  * @author  Kerem Güneş
  * @since   6.0
  */
@@ -32,7 +30,9 @@ class XArrayObject extends ArrayObject implements Arrayable, Objectable, Jsonabl
         parent::__construct((array) $data, parent::ARRAY_AS_PROPS);
     }
 
-    /** @magic */
+    /**
+     * @magic
+     */
     public function __debugInfo(): array
     {
         return $this->getArrayCopy();
@@ -46,7 +46,7 @@ class XArrayObject extends ArrayObject implements Arrayable, Objectable, Jsonabl
      */
     public function has(string|int $key): bool
     {
-        return parent::offsetExists($key);
+        return $this->offsetExists($key);
     }
 
     /**
@@ -72,9 +72,19 @@ class XArrayObject extends ArrayObject implements Arrayable, Objectable, Jsonabl
      */
     public function &get(string|int $key, mixed $default = null): mixed
     {
+        // Prevent recursions in loops with calls like, because of ref (&):
+        // foreach ($array as $i => $value) { $next = $arr[$i+1]; }
+        // if (!$this->offsetExists($key)) {
+        //     return $default;
+        // }
+
         /** @thanks https://php.net/arrayobject#125849 */
-        $iter  = $this->getIterator();
-        $value =& $iter[$key] ?? $default;
+        $iter = $this->getIterator();
+        if ($iter->offsetExists($key)) {
+            $value = &$iter[$key];
+        } else {
+            $value = &$default;
+        }
 
         return $value;
     }
@@ -172,6 +182,16 @@ class XArrayObject extends ArrayObject implements Arrayable, Objectable, Jsonabl
         foreach ($this as $key => $value) {
             $func($value, $key);
         }
+    }
+
+    /**
+     * Empty.
+     *
+     * @return void
+     */
+    public function empty(): void
+    {
+        $this->setData([]);
     }
 
     /**

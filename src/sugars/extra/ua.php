@@ -1,28 +1,20 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-util
  */
-declare(strict_types=1);
-
 use froq\util\Util;
 
 /**
  * Get user agent.
  *
- * @param  bool $cut
+ * @param  bool $safe
  * @return string|null
  */
-function get_user_agent(bool $cut = true): string|null
+function get_user_agent(bool $safe = true): string|null
 {
     static $ret;
-    $ret ??= Util::getClientUserAgent();
-
-    if ($ret && $cut) {
-        $ret = substr($ret, 0, 250); // Safe.
-    }
-
-    return $ret;
+    return $ret ??= Util::getClientAgent($safe);
 }
 
 /**
@@ -95,8 +87,8 @@ function is_tablet(): bool
     static $ret;
     return $ret ??= ($ua = get_user_agent()) && (
         preg_match('~tablet|ipad~i', $ua) || (
-               stripos($ua, 'silk') !== false
-            && stripos($ua, 'mobile') === false
+            stripos($ua, 'silk') !== false &&
+            stripos($ua, 'mobile') === false
         )
     );
 }

@@ -1,9 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-util
  */
-declare(strict_types=1);
 
 /**
  * Since these classes create & return (their) instances inside,
@@ -32,6 +31,7 @@ class_alias(froq\reflection\ReflectionMethod::class, XReflectionMethod::class);
 class_alias(froq\reflection\ReflectionFunction::class, XReflectionFunction::class);
 class_alias(froq\reflection\ReflectionParameter::class, XReflectionParameter::class);
 class_alias(froq\reflection\ReflectionType::class, XReflectionType::class);
+class_alias(froq\reflection\ReflectionAttribute::class, XReflectionAttribute::class);
 
 
 // Additions.

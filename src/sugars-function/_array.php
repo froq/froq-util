@@ -1,10 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-util
  */
-declare(strict_types=1);
-
 use froq\util\Arrays;
 
 /** Basics. */
@@ -13,18 +11,18 @@ use froq\util\Arrays;
  * @alias Arrays.isListArray()
  * @since 6.0
  */
-function is_list_array(array $array, bool $strict = true): bool
+function is_list_array(mixed $var, bool $strict = true): bool
 {
-    return Arrays::isListArray($array, $strict);
+    return is_array($var) && Arrays::isListArray($var, $strict);
 }
 
 /**
  * @alias Arrays.isAssocArray()
  * @since 6.0
  */
-function is_assoc_array(array $array): bool
+function is_assoc_array(mixed $var): bool
 {
-    return Arrays::isAssocArray($array);
+    return is_array($var) && Arrays::isAssocArray($var);
 }
 
 /**
@@ -52,7 +50,7 @@ function array_set_all(array &$array, array $items): array
  * @alias Arrays.get(), Arrays.getAll()
  * @since 3.0, 6.0
  */
-function array_get(array &$array, int|string|array $key, mixed $default = null, bool $drop = false): mixed
+function &array_get(array &$array, int|string|array $key, mixed $default = null, bool $drop = false): mixed
 {
     if (is_array($key)) {
         return Arrays::getAll($array, $key, (array) $default, $drop);
@@ -64,7 +62,7 @@ function array_get(array &$array, int|string|array $key, mixed $default = null, 
  * @alias Arrays.getAll()
  * @since 3.0, 6.0
  */
-function array_get_all(array &$array, array $keys, array $defaults = null, bool $drop = false): array
+function &array_get_all(array &$array, array $keys, array $defaults = null, bool $drop = false): array
 {
     return Arrays::getAll($array, $keys, $defaults, $drop);
 }
@@ -169,18 +167,18 @@ function array_union(array $array1, array $array2, array ...$arrays): array
  * @alias Arrays.dedupe()
  * @since 5.25, 6.0
  */
-function array_dedupe(array $array, bool $strict = true): array
+function array_dedupe(array $array, bool $strict = true, bool $list = null): array
 {
-    return Arrays::dedupe($array, $strict);
+    return Arrays::dedupe($array, $strict, $list);
 }
 
 /**
  * @alias Arrays.refine()
  * @since 6.0
  */
-function array_refine(array $array, array $values = null): array
+function array_refine(array $array, array $values = null, bool $list = null): array
 {
-    return Arrays::refine($array, $values);
+    return Arrays::refine($array, $values, $list);
 }
 
 /**
@@ -517,6 +515,15 @@ function array_filter_keys(array $array, callable $func, bool $recursive = false
 }
 
 /**
+ * @alias Arrays.map(keepKeys=true)
+ * @since 7.0
+ */
+function array_map_list(callable $func, array $array, bool $recursive = false, bool $use_keys = false): array
+{
+    return Arrays::map($array, $func, $recursive, $use_keys, false);
+}
+
+/**
  * @alias Arrays.map(recursive=true)
  * @since 5.1, 6.0
  */
@@ -529,7 +536,7 @@ function array_map_recursive(callable $func, array $array, bool $use_keys = fals
  * @alias Arrays.mapKeys()
  * @since 5.0, 6.0
  */
-function array_map_keys(array $array, callable $func, bool $recursive = false): array
+function array_map_keys(callable $func, array $array, bool $recursive = false): array
 {
     return Arrays::mapKeys($array, $func, $recursive);
 }
@@ -556,9 +563,9 @@ function array_reduce_keys(array $array, mixed $carry, callable $func = null, bo
  * @alias Arrays.apply()
  * @since 4.0, 6.0
  */
-function array_apply(array $array, callable $func, bool $recursive = false): array
+function array_apply(array $array, callable $func, bool $recursive = false, bool $list = false): array
 {
-    return Arrays::apply($array, $func, $recursive);
+    return Arrays::apply($array, $func, $recursive, $list);
 }
 
 /**
@@ -747,36 +754,46 @@ function array_pop_left(array &$array, mixed $default = null): mixed
  * @alias Arrays.choose()
  * @since 6.0
  */
-function array_choose(array &$array, int|string|array $key, mixed $default = null, bool $drop = false): mixed
+function array_choose(array $array, int|string|array $key, mixed $default = null): mixed
 {
-    return Arrays::choose($array, $key, $default, $drop);
+    return Arrays::choose($array, $key, $default);
 }
 
 /**
  * @alias Arrays.select()
  * @since 5.0, 6.0
  */
-function array_select(array &$array, int|string|array $key, mixed $default = null, bool $drop = false, bool $combine = false): mixed
+function array_select(array $array, int|string|array $key, mixed $default = null, bool $combine = false): mixed
 {
-    return Arrays::select($array, $key, $default, $drop, $combine);
+    return Arrays::select($array, $key, $default, $combine);
 }
 
 /**
- * @alias Arrays.select(drop=false)
- * @since 4.9, 6.0
- */
-function array_pick(array &$array, int|string|array $key, mixed $default = null, bool $combine = false): mixed
-{
-    return Arrays::select($array, $key, $default, false, $combine);
-}
-
-/**
- * @alias Arrays.select(drop=true)
- * @since 4.13, 6.0
+ * Pluck one or many items from given array.
+ *
+ * @param  array      &$array
+ * @param  array       $key
+ * @param  mixed|null  $default
+ * @param  bool        $combine
+ * @since  4.13, 6.0
+ * @return mixed
  */
 function array_pluck(array &$array, int|string|array $key, mixed $default = null, bool $combine = false): mixed
 {
-    return Arrays::select($array, $key, $default, true, $combine);
+    $ret = Arrays::select($array, $key, $default, combine: true);
+
+    // Drop used keys.
+    $ret && Arrays::unset($array, ...array_keys($ret));
+
+    if ($ret === null) {
+        return $ret;
+    }
+
+    return (
+        is_array($key)
+            ? ($combine ? $ret : array_values($ret))
+            : ($combine ? $ret : array_first(array_values($ret)))
+    );
 }
 
 /** Additions. */

@@ -1,47 +1,43 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-util
  */
-declare(strict_types=1);
-
 use froq\util\Strings;
 
 /**
  * A class for playing with strings in OOP-way.
  *
  * @package global
- * @object  XString
+ * @class   XString
  * @author  Kerem Güneş
  * @since   6.0
  */
 class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayAccess
 {
-    /** @var string */
+    /** Data. */
     protected string $data;
 
-    /** @var string|null */
+    /** Encoding. */
     protected string|null $encoding = 'UTF-8';
 
     /**
      * Constructor.
      *
-     * @param string|array $data
-     * @param string|null  $encoding
+     * @param string|Stringable $data
+     * @param string|null       $encoding
      */
-    public function __construct(string|array $data = '', string|null $encoding = '')
+    public function __construct(string|Stringable $data = '', string|null $encoding = '')
     {
-        // When character sequence given.
-        is_array($data) && $data = join($data);
+        $this->data = (string) $data;
 
-        $this->data = $data;
-
-        if ($encoding !== '') {
-            $this->encoding = $encoding;
-        }
+        // Allow null (for internal encoding).
+        if ($encoding !== '') $this->encoding = $encoding;
     }
 
-    /** @magic */
+    /**
+     * @magic
+     */
     public function __toString(): string
     {
         return $this->toString();
@@ -326,6 +322,21 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     }
 
     /**
+     * @alias charAt()
+     */
+    public function chr(...$args)
+    {
+        return $this->charAt(...$args);
+    }
+    /**
+     * @alias charCodeAt()
+     */
+    public function ord(...$args)
+    {
+        return $this->charCodeAt(...$args);
+    }
+
+    /**
      * Code point-at, like Javascript's codePointAt().
      *
      * @param  int  $index
@@ -451,12 +462,18 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
             case MB_CASE_UPPER:
             case MB_CASE_UPPER_SIMPLE:
                 if ($index !== null) {
+                    // Some speed.
+                    if ($index === 0) {
+                        return $this->upperFirst($tr);
+                    }
+
                     $char = $this->char($index);
                     if ($char !== null) {
                         $char = new self($char, $this->encoding);
                         $char->case($case, null, $tr);
                         $this->splice($index, 1, $char->data);
                     }
+
                     return $this;
                 }
 
@@ -465,12 +482,18 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
             case MB_CASE_LOWER:
             case MB_CASE_LOWER_SIMPLE:
                 if ($index !== null) {
+                    // Some speed.
+                    if ($index === 0) {
+                        return $this->lowerFirst($tr);
+                    }
+
                     $char = $this->char($index);
                     if ($char !== null) {
                         $char = new self($char, $this->encoding);
                         $char->case($case, null, $tr);
                         $this->splice($index, 1, $char->data);
                     }
+
                     return $this;
                 }
 
@@ -523,14 +546,14 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     /**
      * Replace.
      *
-     * @param  string|array|RegExp    $search
-     * @param  string|array|callable  $replace
-     * @param  bool                   $icase
-     * @param  int                    $limit
+     * @param  string|array|RegExp   $search
+     * @param  string|array|callable $replace
+     * @param  bool                  $icase
+     * @param  int                   $limit
      * @param  int|null              &$count
-     * @param  int|array              $flags
-     * @param  string|null            $class
-     * @param  bool                   $re @internal
+     * @param  int|array             $flags
+     * @param  string|null           $class
+     * @param  bool                  $re @internal
      * @return self
      */
     public function replace(string|array|RegExp $search, string|array|callable $replace, bool $icase = false,
@@ -551,51 +574,18 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     /**
      * Replace-callback, for callback replacement.
      *
-     * @param  string|RegExp  $search
-     * @param  callable       $callback
-     * @param  int            $limit
+     * @param  string|RegExp $search
+     * @param  callable      $callback
+     * @param  int           $limit
      * @param  int|null      &$count
-     * @param  array|int      $flags
-     * @param  string|null    $class
+     * @param  array|int     $flags
+     * @param  string|null   $class
      * @return self
      */
     public function replaceCallback(string|RegExp $search, callable $callback, int $limit = -1, int &$count = null,
         int|array $flags = 0, string $class = null): self
     {
         return $this->replace($search, $callback, false, $limit, $count, $flags, $class, true);
-    }
-
-    /**
-     * Replace-RegExp, for RegExp replacement.
-     *
-     * @param  string|RegExp    $search
-     * @param  string|callable  $replace
-     * @param  int              $limit
-     * @param  int|null        &$count
-     * @param  int|array        $flags
-     * @param  string|null      $class
-     * @return self
-     */
-    public function replaceRegExp(string|RegExp $search, string|callable $replace, int $limit = -1, int &$count = null,
-        int|array $flags = 0, string $class = null): self
-    {
-        return $this->replace($search, $replace, false, $limit, $count, $flags, $class, true);
-    }
-
-    /**
-     * Replace-RegExpMatch, for RegExpMatch as callable argument.
-     *
-     * @param  string|RegExp $search
-     * @param  callable      $replace
-     * @param  int           $limit
-     * @param  int|null     &$count
-     * @param  int|array     $flags
-     * @return self
-     */
-    public function replaceRegExpMatch(string|RegExp $search, callable $replace, int $limit = -1, int &$count = null,
-        int|array $flags = 0): self
-    {
-        return $this->replace($search, $replace, false, $limit, $count, $flags, RegExpMatch::class, false);
     }
 
     /**
@@ -643,11 +633,11 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     /**
      * Remove.
      *
-     * @param  string|array|RegExp  $search
-     * @param  bool                 $icase
-     * @param  int                  $limit
+     * @param  string|array|RegExp $search
+     * @param  bool                $icase
+     * @param  int                 $limit
      * @param  int|null            &$count
-     * @param  bool                 $re @internal
+     * @param  bool                $re @internal
      * @return self
      */
     public function remove(string|array|RegExp $search, bool $icase = false, int $limit = -1, int &$count = null,
@@ -948,8 +938,8 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     {
         is_array($data) || $data = [$data];
 
-        foreach ($data as $data) {
-            if (str_compare($this->data, (string) $data, $icase) === 0) {
+        foreach ($data as $dat) {
+            if (str_compare($this->data, (string) $dat, $icase) === 0) {
                 return true;
             }
         }
@@ -1049,7 +1039,7 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     {
         if (is_string($pattern)) {
             // Prepare single chars.
-            if (strlen($pattern) == 1) {
+            if (strlen($pattern) === 1) {
                 // @tome: See escape in sugars' split().
                 $pattern = RegExp::prepare($pattern, 'u', quote: true);
             }
@@ -1120,6 +1110,42 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
         }
 
         return $pattern->matchAll($this->data, $flags, $offset, $class);
+    }
+
+    /**
+     * Match possible names.
+     *
+     * @param  string|RegExp $pattern
+     * @param  int|array     $flags
+     * @param  int           $offset
+     * @param  string|null   $class
+     * @return iterable|null
+     */
+    public function matchNames(string|RegExp $pattern, int|array $flags = 0, int $offset = 0, string $class = null): iterable|null
+    {
+        if (is_string($pattern)) {
+            $pattern = RegExp::fromPattern($pattern);
+        }
+
+        return $pattern->matchNames($this->data, $flags, $offset, $class);
+    }
+
+    /**
+     * Match all possible names.
+     *
+     * @param  string|RegExp $pattern
+     * @param  int|array     $flags
+     * @param  int           $offset
+     * @param  string|null   $class
+     * @return iterable|null
+     */
+    public function matchAllNames(string|RegExp $pattern, int|array $flags = 0, int $offset = 0, string $class = null): iterable|null
+    {
+        if (is_string($pattern)) {
+            $pattern = RegExp::fromPattern($pattern);
+        }
+
+        return $pattern->matchAllNames($this->data, $flags, $offset, $class);
     }
 
     /**
@@ -1221,7 +1247,7 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     {
         $words = $this->split('~[^\p{L}\'\-]+~u');
 
-        return ($format == 0) ? count($words) : $words;
+        return ($format === 0) ? count($words) : $words;
     }
 
     /**
@@ -1382,7 +1408,7 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
 
         if ($allowed && is_string($allowed)) {
             $allowed = Set::fromSplit($allowed, '\s*,\s*')
-                ->map(fn($tag) => trim($tag, '<>'))
+                ->map(fn(string $tag): string => trim($tag, '<>'))
                 ->toArray();
         }
 
@@ -1404,7 +1430,7 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
 
         if ($allowed && is_string($allowed)) {
             $allowed = Set::fromSplit($allowed, '\s*,\s*')
-                ->map(fn($tag) => strtolower(trim($tag, '<>')))
+                ->map(fn(string $tag): string => strtolower(trim($tag, '<>')))
                 ->toArray();
         }
 
@@ -1417,7 +1443,7 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
                 $temp  = new DOMDocument();
                 $data .= $temp->saveXML($temp->importNode($node, true));
                 unset($temp);
-            } elseif ($node->nodeName == '#text') {
+            } elseif ($node->nodeName === '#text') {
                 $data .= $node->nodeValue;
             }
         }
@@ -1600,13 +1626,12 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     /**
      * Format.
      *
-     * @param  mixed    $input
-     * @param  mixed ...$inputs
+     * @param  mixed ...$arguments
      * @return self
      */
-    public function format(mixed $input, mixed ...$inputs): self
+    public function format(mixed $input, mixed ...$arguments): self
     {
-        $this->data = format($this->data, $input, ...$inputs);
+        $this->data = format($this->data, ...$arguments);
 
         return $this;
     }
@@ -1886,11 +1911,11 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     /**
      * Create an instance from given data and encoding.
      *
-     * @param  string|array $data
-     * @param  string|null  $encoding
+     * @param  string|Stringable $data
+     * @param  string|null       $encoding
      * @return static
      */
-    public static function from(string|array $data, string|null $encoding = ''): static
+    public static function from(string|Stringable $data, string|null $encoding = ''): static
     {
         return new static($data, $encoding);
     }
@@ -1919,6 +1944,18 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     }
 
     /**
+     * Create an instance from given chars.
+     *
+     * @param  array       $chars
+     * @param  string|null $encoding
+     * @return static
+     */
+    public static function fromChars(array $chars, string|null $encoding = ''): static
+    {
+        return new static(join($chars), $encoding);
+    }
+
+    /**
      * Create an instance from given char codes.
      *
      * @param  int ...$codes
@@ -1926,7 +1963,7 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
      */
     public static function fromCharCode(int ...$codes): static
     {
-        return new static(array_map(fn($code) => Strings::chr($code), $codes));
+        return new static(join(array_map(fn(int $code): ?string => Strings::chr($code), $codes)));
     }
 
     /**
@@ -1937,18 +1974,18 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
      */
     public static function fromCodePoint(int ...$codes): static
     {
-        return new static(array_map(fn($code) => Strings::chr($code), $codes));
+        return new static(join(array_map(fn(int $code): ?string => Strings::chr($code), $codes)));
     }
 }
 
 /**
  * XString initializer.
  *
- * @param  string|array $data
- * @param  string|null  $encoding
+ * @param  string|Stringable $data
+ * @param  string|null       $encoding
  * @return XString
  */
-function xstring(string|array $data = '', string|null $encoding = ''): XString
+function xstring(string|Stringable $data = '', string|null $encoding = ''): XString
 {
     return new XString($data, $encoding);
 }

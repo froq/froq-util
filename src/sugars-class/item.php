@@ -1,10 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-util
  */
-declare(strict_types=1);
-
 use froq\common\interface\{Arrayable, Jsonable};
 use froq\collection\trait\{CountTrait, EmptyTrait};
 
@@ -12,7 +10,7 @@ use froq\collection\trait\{CountTrait, EmptyTrait};
  * A simple item class with a key/value pair data container & access stuff.
  *
  * @package global
- * @object  Item
+ * @class   Item
  * @author  Kerem Güneş
  * @since   6.0
  */
@@ -20,7 +18,7 @@ class Item implements Arrayable, Jsonable, Countable, IteratorAggregate, ArrayAc
 {
     use CountTrait, EmptyTrait;
 
-    /** @var array */
+    /** Data. */
     private array $data = [];
 
     /**
@@ -33,31 +31,41 @@ class Item implements Arrayable, Jsonable, Countable, IteratorAggregate, ArrayAc
         $data && $this->data = [...$data];
     }
 
-    /** @magic */
+    /**
+     * @magic
+     */
     public function __debugInfo(): array
     {
         return $this->data;
     }
 
-    /** @magic */
+    /**
+     * @magic
+     */
     public function __isset(int|string $key): bool
     {
         return $this->has($key);
     }
 
-    /** @magic */
+    /**
+     * @magic
+     */
     public function __set(int|string $key, mixed $item): void
     {
         $this->set($key, $item);
     }
 
-    /** @magic */
+    /**
+     * @magic
+     */
     public function __get(int|string $key): mixed
     {
         return $this->get($key);
     }
 
-    /** @magic */
+    /**
+     * @magic
+     */
     public function __unset(int|string $key): void
     {
         $this->remove($key);
@@ -114,14 +122,14 @@ class Item implements Arrayable, Jsonable, Countable, IteratorAggregate, ArrayAc
     }
 
     /**
-     * Get key of given item.
+     * Get key of given item if found.
      *
      * @param  mixed $item
      * @param  bool  $strict
      * @param  bool  $last
-     * @return int|null
+     * @return int|string|null
      */
-    public function key(mixed $item, bool $strict = true, bool $last = false): int|null
+    public function key(mixed $item, bool $strict = true, bool $last = false): int|string|null
     {
         return array_search_key($this->data, $item, $strict, $last);
     }
@@ -149,11 +157,11 @@ class Item implements Arrayable, Jsonable, Countable, IteratorAggregate, ArrayAc
     /**
      * Sort.
      *
-     * @param  callable|null $func
-     * @param  int           $flags
+     * @param  callable|int|null $func
+     * @param  int               $flags
      * @return self
      */
-    public function sort(callable $func = null, int $flags = 0): self
+    public function sort(callable|int $func = null, int $flags = 0): self
     {
         $this->data = sorted($this->data, $func, $flags, assoc: true);
 
@@ -229,11 +237,12 @@ class Item implements Arrayable, Jsonable, Countable, IteratorAggregate, ArrayAc
      * Refine filtering given or null, "" and [] items as default.
      *
      * @param  array|null $items
+     * @param  bool|null  $list
      * @return self
      */
-    public function refine(array $items = null): self
+    public function refine(array $items = null, bool $list = null): self
     {
-        $this->data = array_refine($this->data, $items);
+        $this->data = array_refine($this->data, $items, $list);
 
         return $this;
     }
@@ -241,12 +250,13 @@ class Item implements Arrayable, Jsonable, Countable, IteratorAggregate, ArrayAc
     /**
      * Dedupe items applying unique check.
      *
-     * @param  bool $strict
+     * @param  bool      $strict
+     * @param  bool|null $list
      * @return self
      */
-    public function dedupe(bool $strict = true): self
+    public function dedupe(bool $strict = true, bool $list = null): self
     {
-        $this->data = array_dedupe($this->data, $strict);
+        $this->data = array_dedupe($this->data, $strict, $list);
 
         return $this;
     }
@@ -256,13 +266,12 @@ class Item implements Arrayable, Jsonable, Countable, IteratorAggregate, ArrayAc
      *
      * @param  int|string|array $key
      * @param  mixed|null       $default
-     * @param  bool             $drop
      * @param  bool             $combine
      * @return mixed
      */
-    public function select(int|string|array $key, mixed $default = null, bool $drop = false, bool $combine = false): mixed
+    public function select(int|string|array $key, mixed $default = null, bool $combine = false): mixed
     {
-        return array_select($this->data, $key, $default, $drop, $combine);
+        return array_select($this->data, $key, $default, $combine);
     }
 
     /**
@@ -300,17 +309,17 @@ class Item implements Arrayable, Jsonable, Countable, IteratorAggregate, ArrayAc
     /**
      * @inheritDoc ArrayAccess
      */
-    public function offsetGet(mixed $key, mixed $default = null): mixed
+    public function offsetSet(mixed $key, mixed $item): void
     {
-        return $this->get($key, $default);
+        $this->set($key, $item);
     }
 
     /**
      * @inheritDoc ArrayAccess
      */
-    public function offsetSet(mixed $key, mixed $item): void
+    public function offsetGet(mixed $key, mixed $default = null): mixed
     {
-        $this->set($key, $item);
+        return $this->get($key, $default);
     }
 
     /**

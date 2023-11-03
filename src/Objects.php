@@ -1,20 +1,15 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-util
  */
-declare(strict_types=1);
-
 namespace froq\util;
 
-use Reflection, ReflectionException;
-use XReflectionObject, XReflectionClass;
-
 /**
- * Objects.
+ * Object utility class.
  *
  * @package froq\util
- * @object  froq\util\Objects
+ * @class   froq\util\Objects
  * @author  Kerem Güneş
  * @since   4.0
  * @static
@@ -27,12 +22,11 @@ final class Objects extends \StaticClass
      * @param  object|string $target
      * @return XReflectionObject|XReflectionClass|null
      */
-    public static function reflect(object|string $target): XReflectionObject|XReflectionClass|null
+    public static function reflect(object|string $target): \XReflectionObject|\XReflectionClass|null
     {
         try {
-            return is_object($target) ? new XReflectionObject($target)
-                 : new XReflectionClass($target);
-        } catch (ReflectionException) {
+            return is_object($target) ? new \XReflectionObject($target) : new \XReflectionClass($target);
+        } catch (\ReflectionException) {
             return null;
         }
     }
@@ -107,24 +101,15 @@ final class Objects extends \StaticClass
      * Get name.
      *
      * @param  object|string $target
-     * @param  bool          $clean
+     * @param  bool          $escape
      * @return string
      */
-    public static function getName(object|string $target, bool $clean = false): string
+    public static function getName(object|string $target, bool $escape = false): string
     {
         $name = is_object($target) ? $target::class : $target;
 
-        // Anons.
-        $clean && $name = str_replace("\0", "", $name);
-
-        // @cancel
-        // if (str_contains($name, '@')) {
-        //     $name = preg_replace(
-        //         '~(.+)@anonymous\0*(.+)\:(.+)\$.*~i',
-        //         '\1@anonymous@\2:\3',
-        //         $name
-        //     );
-        // }
+        // Anons (causes issues, eg: drops thrown stack traces).
+        $escape && $name = str_replace("\0", "\\0", $name);
 
         return $name;
     }
@@ -133,12 +118,12 @@ final class Objects extends \StaticClass
      * Get short name.
      *
      * @param  object|string $target
-     * @param  bool          $clean
+     * @param  bool          $escape
      * @return string
      */
-    public static function getShortName(object|string $target, bool $clean = false): string
+    public static function getShortName(object|string $target, bool $escape = false): string
     {
-        $name = self::getName($target, $clean);
+        $name = self::getName($target, $escape);
         $spos = strrpos($name, '\\');
 
         return substr($name, ($spos > 0 ? $spos + 1 : 0));
@@ -156,7 +141,7 @@ final class Objects extends \StaticClass
         $name = self::getName($target);
 
         $ref = self::reflect($target);
-        if ($ref && $ref->name != $name) {
+        if ($ref && $ref->name !== $name) {
             return $ref->name;
         }
 
@@ -231,14 +216,14 @@ final class Objects extends \StaticClass
 
         $ret = [];
         foreach ($ref->getReflectionConstants() as $constant) {
-            if ($_name && $_name != $constant->name) {
+            if ($_name && $_name !== $constant->name) {
                 continue;
             }
             if (!$all && !$constant->isPublic()) {
                 continue;
             }
 
-            $modifiers = Reflection::getModifierNames($constant->getModifiers());
+            $modifiers = \Reflection::getModifierNames($constant->getModifiers());
             $interface = null;
             $class     = $constant->getDeclaringClass()->name;
 
@@ -379,7 +364,7 @@ final class Objects extends \StaticClass
             $propertyName  = $property->getName();
             $propertyClass = $property->getClass();
 
-            if ($_name && $_name != $propertyName) {
+            if ($_name && $_name !== $propertyName) {
                 continue;
             }
 
@@ -506,7 +491,7 @@ final class Objects extends \StaticClass
             $methodName  = $method->getName();
             $methodClass = $method->getClass();
 
-            if ($_name && $_name != $method->name) {
+            if ($_name && $_name !== $method->name) {
                 continue;
             }
 
@@ -611,7 +596,7 @@ final class Objects extends \StaticClass
      */
     public static function getParents(object|string $target, bool $reverse = false): array|null
     {
-        $ret =@ class_parents($target);
+        $ret = @class_parents($target);
         if ($ret !== false) {
             $ret = array_keys($ret);
             $reverse && ($ret = array_reverse($ret));
@@ -630,7 +615,7 @@ final class Objects extends \StaticClass
     {
         // Note: this function does not follow real inheritance.
         // For example A,B,C,D order B->A, C->B, D->C return D,B,A,C.
-        $ret =@ class_implements($target);
+        $ret = @class_implements($target);
         if ($ret !== false) {
             $ret = array_keys($ret);
             $reverse && ($ret = array_reverse($ret));
@@ -648,7 +633,7 @@ final class Objects extends \StaticClass
      */
     public static function getTraits(object|string $target, bool $reverse = false, bool $all = true): array|null
     {
-        $ret =@ class_uses($target);
+        $ret = @class_uses($target);
         if ($ret !== false) {
             $ret = array_keys($ret);
             $reverse && ($ret = array_reverse($ret));

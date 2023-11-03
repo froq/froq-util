@@ -1,26 +1,24 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-util
  */
-declare(strict_types=1);
-
 use froq\util\Objects;
 
 /**
  * A class for playing with classes in OOP-way.
  *
  * @package global
- * @object  XClass
+ * @class   XClass
  * @author  Kerem Güneş
  * @since   6.0
  */
 class XClass implements Stringable
 {
-    /** @var string */
+    /** Target class. */
     public readonly string $name;
 
-    /** @var bool */
+    /** Exists state. */
     public readonly bool $exists;
 
     /**
@@ -40,13 +38,17 @@ class XClass implements Stringable
         }
     }
 
-    /** @magic */
+    /**
+     * @magic
+     */
     public function __toString(): string
     {
         return $this->name;
     }
 
-    /** @magic */
+    /**
+     * @magic
+     */
     public function __debugInfo(): array
     {
         return ['name' => $this->name];
@@ -55,21 +57,23 @@ class XClass implements Stringable
     /**
      * Get name.
      *
+     * @param  bool $escape
      * @return string
      */
-    public function getName(): string
+    public function getName(bool $escape = false): string
     {
-        return $this->name;
+        return Objects::getName($this->name, $escape);
     }
 
     /**
      * Get short name.
      *
+     * @param  bool $escape
      * @return string
      */
-    public function getShortName(): string
+    public function getShortName(bool $escape = false): string
     {
-        return Objects::getShortName($this->name);
+        return Objects::getShortName($this->name, $escape);
     }
 
     /**
@@ -91,6 +95,16 @@ class XClass implements Stringable
     public function getNamespace(bool $baseOnly = false): string
     {
         return Objects::getNamespace($this->name, $baseOnly);
+    }
+
+    /**
+     * Get type.
+     *
+     * @return string|null
+     */
+    public function getType(): string|null
+    {
+        return Objects::getType($this->name);
     }
 
     /**
@@ -136,19 +150,25 @@ class XClass implements Stringable
         return $this->exists && method_exists($this->name, $name);
     }
 
-    /** @alias constantExists() */
+    /**
+     * @alias constantExists()
+     */
     public function hasConstant(...$args)
     {
         return $this->constantExists(...$args);
     }
 
-    /** @alias propertyExists() */
+    /**
+     * @alias constantExists()
+     */
     public function hasProperty(...$args)
     {
         return $this->propertyExists(...$args);
     }
 
-    /** @alias methodExists() */
+    /**
+     * @alias constantExists()
+     */
     public function hasMethod(...$args)
     {
         return $this->methodExists(...$args);
@@ -195,6 +215,9 @@ class XClass implements Stringable
      */
     public function getVars(): array|null
     {
+        if ($this instanceof XObject) {
+            return get_object_vars($this->object);
+        }
         return $this->exists ? get_class_vars($this->name) : null;
     }
 
@@ -215,6 +238,9 @@ class XClass implements Stringable
      */
     public function getProperties(): array|null
     {
+        if ($this instanceof XObject) {
+            return get_class_properties($this->object, false);
+        }
         return $this->exists ? get_class_properties($this->name, false) : null;
     }
 
@@ -235,7 +261,7 @@ class XClass implements Stringable
      */
     public function getParent(): string|null
     {
-        return $this->exists ? get_parent_class($this->name) : null;
+        return $this->exists ? Objects::getParent($this->name) : null;
     }
 
     /**
@@ -273,10 +299,10 @@ class XClass implements Stringable
      *
      * @return bool
      */
-    public function isValidName(): bool
+    public function hasValidName(): bool
     {
         // Not for anonyms.
-        return preg_test('~^[a-z][a-z0-9\\\]+$~i', $this->name);
+        return preg_test('~^([\\\]?[a-z_][a-z0-9_\\\]*)$~i', $this->name);
     }
 
     /**
@@ -284,9 +310,9 @@ class XClass implements Stringable
      *
      * @return bool
      */
-    public function isAliasName(): bool
+    public function hasAliasName(): bool
     {
-        return $this->name !== $this->reflect()?->name;
+        return $this->name !== ($this->reflect()?->name ?? $this->name);
     }
 
     /**
@@ -312,19 +338,25 @@ class XClass implements Stringable
         return is_subclass_of($this->name, $class);
     }
 
-    /** @alias extends() */
+    /**
+     * @alias extends()
+     */
     public function isExtenderOf(...$args)
     {
         return $this->extends(...$args);
     }
 
-    /** @alias implements() */
+    /**
+     * @alias implements()
+     */
     public function isImplementerOf(...$args)
     {
         return $this->implements(...$args);
     }
 
-    /** @alias uses() */
+    /**
+     * @alias uses()
+     */
     public function isUserOf(...$args)
     {
         return $this->uses(...$args);
@@ -346,11 +378,15 @@ class XClass implements Stringable
      * Reflect & return reflection, or null (error).
      *
      * @param  bool $extended
-     * @return ReflectionClass|XReflectionClass|null
+     * @return ReflectionClass|ReflectionObject|XReflectionClass|XReflectionObject|null
      */
-    public function reflect(bool $extended = false): ReflectionClass|XReflectionClass|null
+    public function reflect(bool $extended = false): ReflectionClass|ReflectionObject|XReflectionClass|XReflectionObject|null
     {
         try {
+            if ($this instanceof XObject) {
+                return !$extended ? new ReflectionObject($this->object)
+                                  : new XReflectionObject($this->object);
+            }
             return !$extended ? new ReflectionClass($this->name)
                               : new XReflectionClass($this->name);
         } catch (ReflectionException) {
@@ -368,6 +404,10 @@ class XClass implements Stringable
     public function reflectConstant(string $name, bool $extended = false): ReflectionClassConstant|XReflectionClassConstant|null
     {
         try {
+            if ($this instanceof XObject) {
+                return !$extended ? new ReflectionClassConstant($this->object, $name)
+                                  : new XReflectionClassConstant($this->object, $name);
+            }
             return !$extended ? new ReflectionClassConstant($this->name, $name)
                               : new XReflectionClassConstant($this->name, $name);
         } catch (ReflectionException) {
@@ -385,6 +425,10 @@ class XClass implements Stringable
     public function reflectProperty(string $name, bool $extended = false): ReflectionProperty|XReflectionProperty|null
     {
         try {
+            if ($this instanceof XObject) {
+                return !$extended ? new ReflectionProperty($this->object, $name)
+                                  : new XReflectionProperty($this->object, $name);
+            }
             return !$extended ? new ReflectionProperty($this->name, $name)
                               : new XReflectionProperty($this->name, $name);
         } catch (ReflectionException) {
@@ -402,6 +446,10 @@ class XClass implements Stringable
     public function reflectMethod(string $name, bool $extended = false): ReflectionMethod|XReflectionMethod|null
     {
         try {
+            if ($this instanceof XObject) {
+                return !$extended ? new ReflectionMethod($this->object, $name)
+                                  : new XReflectionMethod($this->object, $name);
+            }
             return !$extended ? new ReflectionMethod($this->name, $name)
                               : new XReflectionMethod($this->name, $name);
         } catch (ReflectionException) {

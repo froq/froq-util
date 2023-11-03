@@ -1,11 +1,9 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-util
  */
-declare(strict_types=1);
-
-namespace froq\util\misc;
+namespace froq\util\package;
 
 use froq\common\interface\Arrayable;
 use froq\common\trait\{DataAccessMagicTrait, DataAccessTrait};
@@ -13,17 +11,16 @@ use froq\common\trait\{DataAccessMagicTrait, DataAccessTrait};
 /**
  * A class for packaging stuff dynamically.
  *
- * @package froq\util\misc
- * @object  froq\util\misc\Package
+ * @package froq\util\package
+ * @class   froq\util\package\Package
  * @author  Kerem Güneş
  * @since   6.0
  */
 class Package implements Arrayable, \Countable, \ArrayAccess
 {
-    /** For using access magic & offset methods. */
     use DataAccessMagicTrait, DataAccessTrait;
 
-    /** @var array */
+    /** Package data. */
     private array $data = [];
 
     /**
@@ -70,7 +67,7 @@ class Package implements Arrayable, \Countable, \ArrayAccess
     }
 
     /**
-     * Unstore an item.
+     * Unpack an item.
      *
      * @param  string|int $key
      * @param  mixed|null $default
