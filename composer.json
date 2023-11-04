@@ -8,6 +8,7 @@
     "require": {
         "php": "^8.2",
         "ext-json": "*",
+        "ext-ctype": "*",
         "ext-mbstring": "*",
         "froq/froq-common": "^7.0"
     },
