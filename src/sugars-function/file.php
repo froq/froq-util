@@ -304,6 +304,11 @@ function file_name(string $file, bool $with_ext = false): string|null
  */
 function file_mime(string $file): string|null
 {
+    // Utilize file module.
+    if (class_exists('froq\file\mime\Mime')) {
+        return froq\file\mime\Mime::getType($file);
+    }
+
     $mime = mime_content_type($file);
 
     if ($mime === false) {
