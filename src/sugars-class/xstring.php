@@ -3,7 +3,7 @@
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-util
  */
-use froq\util\Strings;
+use froq\util\{Util, Strings};
 
 /**
  * A class for playing with strings in OOP-way.
@@ -1675,7 +1675,7 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
      */
     public function apply(callable $func, mixed ...$funcArgs): self
     {
-        $func = $func->bindTo($this, $this);
+        $func = Util::makeClosure($func, $this);
         $func(...$funcArgs);
 
         return $this;

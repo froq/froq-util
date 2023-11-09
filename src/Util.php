@@ -206,6 +206,26 @@ final /* fuckic static */ class Util extends \StaticClass
     }
 
     /**
+     * Make (or just ensure) a closure from given callable, and bind it to the given object.
+     *
+     * @param  callable    $func
+     * @param  object|null $bind
+     * @return Closure
+     */
+    public static function makeClosure(callable $func, object $bind = null): \Closure
+    {
+        // $func instanceof \Closure || $func = \Closure::fromCallable($func); // Oldie.
+        $func = $func(...); // @see https://php.net/manual/en/functions.first_class_callable_syntax
+
+        if ($bind) {
+            $func =@ $func->bindTo($bind, $bind) // If fails (eg: makeClosure("upper")).
+                  ?? $func->bindTo($bind);
+        }
+
+        return $func;
+    }
+
+    /**
      * Make an array with given data input.
      *
      * Note: This method must be used for arrays, iterables and stdClass or public var'ed objects.

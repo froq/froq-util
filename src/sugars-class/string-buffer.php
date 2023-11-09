@@ -3,7 +3,7 @@
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-util
  */
-use froq\util\Strings;
+use froq\util\{Util, Strings};
 
 /**
  * A simple string buffer class, inpired by Java's StringBuffer.
@@ -726,7 +726,7 @@ class StringBuffer implements Stringable, IteratorAggregate, JsonSerializable, A
      */
     public function apply(callable $func, mixed ...$funcArgs): self
     {
-        $func = $func->bindTo($this, $this);
+        $func = Util::makeClosure($func, $this);
         $func(...$funcArgs);
 
         return $this;
