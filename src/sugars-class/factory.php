@@ -223,7 +223,7 @@ class Factory
         }
 
         throw new Error(sprintf(
-            'No method set%s() or property $%s are defined in class %s',
+            'No method set%s() or property $%s is defined in class %s',
             $name, $name, $object::class
         ));
     }
