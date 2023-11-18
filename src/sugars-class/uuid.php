@@ -117,6 +117,16 @@ class Uuid implements Stringable, \Stringable
     }
 
     /**
+     * Get Uuid value as byte array.
+     *
+     * @return array
+     */
+    public function toByteArray(): array
+    {
+        return str_split(hex2bin($this->toPlainString()));
+    }
+
+    /**
      * Get Uuid value as hashed by length 16, 32, 40 or 64.
      *
      * @param  int  $length
@@ -127,16 +137,6 @@ class Uuid implements Stringable, \Stringable
     public function getHash(int $length = 32, bool $format = false, bool $upper = false): string
     {
         return self::hash($this->toPlainString(), $length, $format, $upper);
-    }
-
-    /**
-     * Get Uuid value as byte array.
-     *
-     * @return array
-     */
-    public function toByteArray(): array
-    {
-        return str_split(hex2bin($this->toPlainString()));
     }
 
     /**
