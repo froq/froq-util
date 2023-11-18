@@ -124,7 +124,7 @@ class Uuid implements Stringable, \Stringable
      * @param  bool $upper
      * @return string
      */
-    public function toHashString(int $length = 32, bool $format = false, bool $upper = false): string
+    public function getHash(int $length = 32, bool $format = false, bool $upper = false): string
     {
         return self::hash($this->toPlainString(), $length, $format, $upper);
     }
