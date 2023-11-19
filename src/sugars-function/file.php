@@ -480,7 +480,7 @@ function filemake(string $file, int $mode = FILE_MODE, bool $temp = false, bool 
         return $file;
     }
 
-    return $temp ? tmpnam($ofile, $mode) : (mkfile($file, $mode, $temp) ? $file : null);
+    return $temp ? tmpnam($ofile, $mode) : (mkfile($file, $mode) ? $file : null);
 }
 
 /**
