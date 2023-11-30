@@ -228,14 +228,14 @@ function str_concat(string $string, string|Stringable ...$strings): string
 }
 
 /**
- * Slice a string with multiple functionalities, before/after or simply do substring work, like `strsrt()`
+ * Slice a string with multiple functionalities, before/after or simply do substring work, like `strstr()`
  * but dropping search character from return.
  *
  * Example:
  * ```
- * str_slice('jon@doo.com', '@', 'before' or true);          // jon
- * str_slice('jon@doo.com', '@', 'before' or true, 1);       // on
- * str_slice('jon@doo.com', '@', 'before' or true, [1, -1]); // o
+ * str_slice('jon@doo.com', '@', 'before' or true);          => jon
+ * str_slice('jon@doo.com', '@', 'before' or true, 1);       => on
+ * str_slice('jon@doo.com', '@', 'before' or true, [1, -1]); => o
  * ```
  *
  * @param  string                $string
