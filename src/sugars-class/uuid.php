@@ -6,8 +6,8 @@
 use froq\common\interface\Stringable;
 
 /**
- * A simple UUID (v4) class for working customized or dated UUIDs/GUIDs and
- * pseudorandom identifiers & identifier hashes.
+ * A simple UUID (v4) class for working customized or time-prefixed UUIDs/GUIDs,
+ * and pseudo-random identifiers from Base-62 Alphabet.
  *
  * @package global
  * @class   Uuid
@@ -70,6 +70,16 @@ class Uuid implements Stringable, \Stringable
     }
 
     /**
+     * Get Uuid value as dash-freed.
+     *
+     * @return string
+     */
+    public function toHashString(): string
+    {
+        return str_replace('-', '', $this->value);
+    }
+
+    /**
      * Get Uuid value as upper-cased.
      *
      * @return string
@@ -77,16 +87,6 @@ class Uuid implements Stringable, \Stringable
     public function toUpperString(): string
     {
         return strtoupper($this->value);
-    }
-
-    /**
-     * Get Uuid value as dash-freed.
-     *
-     * @return string
-     */
-    public function toPlainString(): string
-    {
-        return str_replace('-', '', $this->value);
     }
 
     /**
@@ -101,7 +101,7 @@ class Uuid implements Stringable, \Stringable
      */
     public function toShortString(string|true $pad = null): string
     {
-        $ret = convert_base($this->toPlainString(), 16, 62);
+        $ret = convert_base($this->toHashString(), 16, 62);
 
         if ($pad !== null) {
             $pad = ($pad === true) ? '0' : $pad;
@@ -114,29 +114,6 @@ class Uuid implements Stringable, \Stringable
         }
 
         return $ret;
-    }
-
-    /**
-     * Get Uuid value as byte array.
-     *
-     * @return array
-     */
-    public function toByteArray(): array
-    {
-        return str_split(hex2bin($this->toPlainString()));
-    }
-
-    /**
-     * Get Uuid value as hashed by length 16, 32, 40 or 64.
-     *
-     * @param  int  $length
-     * @param  bool $format
-     * @param  bool $upper
-     * @return string
-     */
-    public function getHash(int $length = 32, bool $format = false, bool $upper = false): string
-    {
-        return self::hash($this->toPlainString(), $length, $format, $upper);
     }
 
     /**
@@ -249,11 +226,11 @@ class Uuid implements Stringable, \Stringable
      *
      * @param  bool $time For Unix time prefix.
      * @param  bool $guid
+     * @param  bool $hash
      * @param  bool $upper
-     * @param  bool $plain
      * @return string
      */
-    public static function generate(bool $time = false, bool $guid = false, bool $upper = false, bool $plain = false): string
+    public static function generate(bool $time = false, bool $guid = false, bool $hash = false, bool $upper = false): string
     {
         if (!$time) {
             $bins = random_bytes(16);
@@ -272,8 +249,8 @@ class Uuid implements Stringable, \Stringable
 
         $uuid = self::format(bin2hex($bins));
 
+        $hash  && $uuid = str_replace('-', '', $uuid);
         $upper && $uuid = strtoupper($uuid);
-        $plain && $uuid = str_replace('-', '', $uuid);
 
         return $uuid;
     }
@@ -282,13 +259,13 @@ class Uuid implements Stringable, \Stringable
      * Generate a GUID.
      *
      * @param  bool $time
+     * @param  bool $hash
      * @param  bool $upper
-     * @param  bool $plain
      * @return string
      */
-    public static function generateGuid(bool $time = false, bool $upper = false, bool $plain = false): string
+    public static function generateGuid(bool $time = false, bool $hash = false, bool $upper = false): string
     {
-        return self::generate($time, true, $upper, $plain);
+        return self::generate($time, true, $hash, $upper);
     }
 
     /**
@@ -315,20 +292,6 @@ class Uuid implements Stringable, \Stringable
         }
 
         return $ret;
-    }
-
-    /**
-     * Generate a UUID hash.
-     *
-     * @param  int  $length
-     * @param  bool $format
-     * @param  bool $upper
-     * @return string
-     * @causes UuidError
-     */
-    public static function generateHash(int $length = 32, bool $format = false, bool $upper = false): string
-    {
-        return self::hash(self::generate(), $length, $format, $upper);
     }
 
     /**
@@ -365,44 +328,6 @@ class Uuid implements Stringable, \Stringable
             '~^[a-f0-9]{8}-?[a-f0-9]{4}-?[a-f0-9]{4}-?[a-f0-9]{4}-?[a-f0-9]{12}$~i',
             $uuid
         );
-    }
-
-    /**
-     * Validate a hash by length.
-     *
-     * @param  string $hash
-     * @param  int    $length
-     * @return bool
-     */
-    public static function validateHash(string $hash, int $length): bool
-    {
-        // With given length.
-        return preg_test('~^[a-f0-9]{' . $length . '}$~i', $hash);
-    }
-
-    /**
-     * Hash a UUID by given length.
-     *
-     * @param  string $uuid
-     * @param  int    $length
-     * @param  bool   $format
-     * @param  bool   $upper
-     * @return string
-     * @throws UuidError
-     */
-    public static function hash(string $uuid, int $length, bool $format = false, bool $upper = false): string
-    {
-        static $algos = [16 => 'fnv1a64', 32 => 'md5', 40 => 'sha1', 64 => 'sha256'];
-
-        $algo = $algos[$length]
-            ?? throw new UuidError('Invalid length: %s [valids: %A]', [$length, array_keys($algos)]);
-
-        $hash = hash($algo, $uuid);
-
-        $format && $hash = self::format($hash);
-        $upper  && $hash = strtoupper($hash);
-
-        return $hash;
     }
 
     /**

@@ -1610,14 +1610,14 @@ function slug(string $input, string $preserve = '', string $replace = '-'): stri
  *
  * @param  bool $time For Unix time prefix.
  * @param  bool $guid
+ * @param  bool $hash
  * @param  bool $upper
- * @param  bool $plain
  * @return string
  * @since  5.0
  */
-function uuid(bool $time = false, bool $guid = false, bool $upper = false, bool $plain = false): string
+function uuid(bool $time = false, bool $guid = false, bool $hash = false, bool $upper = false): string
 {
-    return Uuid::generate($time, $guid, $upper, $plain);
+    return Uuid::generate($time, $guid, $hash, $upper);
 }
 
 /**
