@@ -141,31 +141,27 @@ class Random
      */
     public function nextByte(bool $hex = false): string
     {
-        return $this->nextBytes(1, true, $hex);
+        return $this->nextBytes(1, $hex);
     }
 
     /**
      * Get next bytes.
      *
      * @param  int  $length
-     * @param  bool $array
      * @param  bool $hex
      * @return string|array
      * @throws ArgumentError
      */
-    public function nextBytes(int $length, bool $array = false, bool $hex = false): string|array
+    public function nextBytes(int $length, bool $hex = false): string|array
     {
         if ($length < 1) {
             throw new \ArgumentError('Invalid length: %s [min=1]', $length);
         }
 
-        $ret = (new \Random\Randomizer)->getBytes($length);
+        $ret = random_bytes($length);
 
-        if ($array) {
-            $ret = mb_str_split($ret);
-        }
         if ($hex) {
-            $ret = $array ? array_map('bin2hex', $ret) : bin2hex($ret);
+            $ret = bin2hex($ret);
         }
 
         return $ret;
@@ -180,7 +176,9 @@ class Random
      */
     public static function shuffleArray(array $array): array
     {
-        return (new \Random\Randomizer)->shuffleArray($array);
+        $rr = new \Random\Randomizer();
+
+        return $rr->shuffleArray($array);
     }
 
     /**
@@ -193,7 +191,9 @@ class Random
      */
     public static function shuffleString(string $string, string $encoding = null): string
     {
-        return join(self::shuffleArray(mb_str_split($string, encoding: $encoding)));
+        $rr = new \Random\Randomizer();
+
+        return join($rr->shuffleArray(mb_str_split($string, 1, $encoding)));
     }
 
     /**

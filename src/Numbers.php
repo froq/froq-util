@@ -179,18 +179,7 @@ final class Numbers extends \StaticClass
         }
 
         if (is_int($min) && is_int($max)) {
-            // Interestingly ~50% slower (in some/what cases)..
-            // $ret = random_int($min, $max);
-
-            srand();
-
-            // Just in case.
-            if ($min === 0 && $max === 1) {
-                $ret = rand(0, 1);
-            } else {
-                // Prevent big numbers.
-                $ret = rand() % ($max - $min) + $min;
-            }
+            $ret = random_int($min, $max);
         } else {
             $max = $maxOrig ?? ($min + 1.0);
             $ret = lcg_value() * ($max - $min) + $min;

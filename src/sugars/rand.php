@@ -40,14 +40,19 @@ function rand_float(float $min = null, float $max = null, int $precision = null)
  */
 function rand_item(array $array, int|string &$key = null): mixed
 {
-    srand();
+    // No ValueError for [].
+    if (!$array) return null;
 
-    $key = array_rand($array);
-    if ($key === null) {
-        return null;
+    $rr = new \Random\Randomizer();
+
+    $idx = $rr->pickArrayKeys($array, 1)[0];
+
+    // When key wanted.
+    if (func_num_args() === 2) {
+        $key = $idx;
     }
 
-    return $array[$key];
+    return $array[$idx];
 }
 
 /**
@@ -61,23 +66,19 @@ function rand_item(array $array, int|string &$key = null): mixed
  */
 function rand_items(array $array, int $limit, array &$keys = null): array|null
 {
-    srand();
+    // No ValueError for [].
+    if (!$array) return null;
 
-    $ret  = [];
-    $len  = count($array);
-    $keys = null;
+    $rr = new \Random\Randomizer();
 
-    do {
-        $key = array_rand($array);
-        if ($key === null) {
-            return null;
+    $ret = array_slice($rr->shuffleArray($array), 0, $limit);
+
+    // When keys wanted.
+    if (func_num_args() === 3) {
+        foreach ($ret as $value) {
+            $keys[] = array_keys($array, $value, true)[0];
         }
-
-        $ret[$key] = $array[$key];
-        $retlen    = count($ret);
-    } while ($retlen < $limit && $retlen < $len);
-
-    $keys = array_keys($ret);
+    }
 
     return $ret;
 }

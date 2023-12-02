@@ -641,11 +641,8 @@ final class Arrays extends \StaticClass
 
         $ret = [];
 
-        // Ensure a new seed (@see https://wiki.php.net/rfc/object_scope_prng).
-        srand();
-
-        // Get & arrayify single keys (limit=1).
-        $keys = (array) array_rand($array, $limit);
+        // Pick some keys by given limit.
+        $keys = (new \Random\Randomizer)->pickArrayKeys($array, $limit);
 
         foreach ($keys as $key) {
             $pack ? $ret[$key] = $array[$key] : $ret[] = $array[$key];
@@ -672,14 +669,12 @@ final class Arrays extends \StaticClass
     {
         $assoc ??= self::isAssocArray($array);
 
-        // Ensure a new seed (@see https://wiki.php.net/rfc/object_scope_prng).
-        srand();
+        $rr = new \Random\Randomizer();
 
         if (!$assoc) {
-            shuffle($array);
+            $array = $rr->shuffleArray($array);
         } else {
-            $keys = array_keys($array);
-            shuffle($keys);
+            $keys = $rr->shuffleArray(array_keys($array));
 
             $temp = [];
             foreach ($keys as $key) {
