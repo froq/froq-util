@@ -197,8 +197,8 @@ class XArrayObject extends ArrayObject implements Arrayable, Objectable, Jsonabl
     /**
      * Sort.
      *
-     * @param  int|null $func
-     * @param  int      $flags
+     * @param  callable|int|null $func
+     * @param  int               $flags
      * @return self
      */
     public function sort(callable|int $func = null, int $flags = 0): self
