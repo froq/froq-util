@@ -7,7 +7,7 @@ use froq\common\interface\Stringable;
 
 /**
  * A simple UUID (v4) class for working customized or time-prefixed UUIDs/GUIDs,
- * and pseudo-random identifiers from Base-62 Alphabet.
+ * and pseudo-random identifiers generated in Base-62 Alphabet.
  *
  * @package global
  * @class   Uuid
@@ -60,7 +60,7 @@ class Uuid implements Stringable, \Stringable
     }
 
     /**
-     * Get Uuid value.
+     * Get this Uuid value.
      *
      * @return string
      */
@@ -70,27 +70,37 @@ class Uuid implements Stringable, \Stringable
     }
 
     /**
-     * Get Uuid value as dash-freed.
+     * Get this Uuid value as dash-freed.
      *
      * @return string
      */
     public function toHashString(): string
     {
-        return str_replace('-', '', $this->value);
+        return str_remove($this->value, '-');
     }
 
     /**
-     * Get Uuid value as upper-cased.
+     * Get this Uuid value as upper-cased.
      *
      * @return string
      */
     public function toUpperString(): string
     {
-        return strtoupper($this->value);
+        return str_upper($this->value);
     }
 
     /**
-     * Get Uuid value as 20/22-length short ID in Base-62.
+     * Get this Uuid value as upper-cased & dash-freed.
+     *
+     * @return string
+     */
+    public function toUpperHashString(): string
+    {
+        return str_upper(str_remove($this->value, '-'));
+    }
+
+    /**
+     * Get this Uuid value as 20/22-length short ID in Base-62.
      * Chances: 22-length: 88%, 21-length: 10%, 20-length: 02%.
      *
      * Note: Argument `$pad` can be used for fixed 22-length returns.
@@ -164,7 +174,7 @@ class Uuid implements Stringable, \Stringable
      */
     public function isNull(): bool
     {
-        return hash_equals(self::NULL, $this->value);
+        return self::equals(self::NULL, $this->value);
     }
 
     /**
@@ -174,7 +184,7 @@ class Uuid implements Stringable, \Stringable
      */
     public function isNullHash(): bool
     {
-        return hash_equals(self::NULL_HASH, $this->value);
+        return self::equals(self::NULL_HASH, $this->value);
     }
 
     /**
@@ -200,17 +210,6 @@ class Uuid implements Stringable, \Stringable
     }
 
     /**
-     * Create a Uuid instance with options.
-     *
-     * @param  bool ...$options See generate().
-     * @return Uuid
-     */
-    public static function withOptions(bool ...$options): Uuid
-    {
-        return new Uuid(self::generate(...$options));
-    }
-
-    /**
      * Create a Uuid instance with Unix time prefix.
      *
      * @param  bool ...$options See generate().
@@ -219,6 +218,17 @@ class Uuid implements Stringable, \Stringable
     public static function withTime(bool ...$options): Uuid
     {
         return new Uuid(self::generate(true, ...$options));
+    }
+
+    /**
+     * Create a Uuid instance with options.
+     *
+     * @param  bool ...$options See generate().
+     * @return Uuid
+     */
+    public static function withOptions(bool ...$options): Uuid
+    {
+        return new Uuid(self::generate(...$options));
     }
 
     /**
@@ -236,12 +246,12 @@ class Uuid implements Stringable, \Stringable
             $bins = random_bytes(16);
         } else {
             // Unix time prefix & 12-random bytes.
-            // @tome: What about "2038 Problem" issue? Seems pack() will keep giving 4-byte bin
-            // (so 8-byte hex) until date of "2105-12-31", but probably I'll never see that date.
+            // @tome: What about "2038 Problem" issue? Seems pack() will keep giving 4-byte bins
+            // (so 8-byte hexes) until then (2105-12-31), but probably I'll never see that date.
             $bins = strrev(pack('L', time())) . random_bytes(12);
         }
 
-        // Add signs: 4 (version) & 8, 9, A, B (variant), but GUID doesn't use them.
+        // Add signs: version(4) / variant(8,9,a,b), GUID doesn't use.
         if (!$guid) {
             $bins[6] = chr(ord($bins[6]) & 0x0F | 0x40); // Version.
             $bins[8] = chr(ord($bins[8]) & 0x3F | 0x80); // Variant.
@@ -249,8 +259,8 @@ class Uuid implements Stringable, \Stringable
 
         $uuid = self::format(bin2hex($bins));
 
-        $hash  && $uuid = str_replace('-', '', $uuid);
-        $upper && $uuid = strtoupper($uuid);
+        $hash  && $uuid = str_remove($uuid, '-');
+        $upper && $uuid = str_upper($uuid);
 
         return $uuid;
     }
@@ -303,6 +313,7 @@ class Uuid implements Stringable, \Stringable
      */
     public static function equals(string $uuidKnown, string $uuidUnknown): bool
     {
+        // Do a "timing-attack-safe" comparison.
         return hash_equals($uuidKnown, $uuidUnknown);
     }
 

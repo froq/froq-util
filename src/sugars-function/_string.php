@@ -328,6 +328,96 @@ function str_compare(string $string1, string $string2, bool $icase = false, int 
 }
 
 /**
+ * Remove search part(s) in given string (just to get rid of str_replace(), yes..).
+ *
+ * @param  string    $string
+ * @param  array     $search
+ * @param  int|null &$count
+ * @return string
+ * @since  7.4
+ */
+function str_remove(string $string, string|array $search, int &$count = null): string
+{
+    return str_replace($search, '', $string, $count);
+}
+
+/**
+ * Upperize given string (with unicode & Turkish characters support).
+ *
+ * @param  string      $string
+ * @param  bool        $multi
+ * @param  bool        $tr
+ * @param  string|null $encoding
+ * @return string
+ * @since  7.4
+ */
+function str_upper(string $string, bool $multi = false, bool $tr = false, string $encoding = null): string
+{
+    if ($string === '') {
+        return '';
+    }
+
+    // Damageable Turkish characters.
+    $tr && $string = str_replace(['ı', 'i'], ['I', 'İ'], $string);
+
+    return $multi ? mb_strtoupper($string, $encoding) : strtoupper($string);
+}
+
+/**
+ * Lowerize given string (with unicode & Turkish characters support).
+ *
+ * @param  string      $string
+ * @param  bool        $multi
+ * @param  bool        $tr
+ * @param  string|null $encoding
+ * @return string
+ * @since  7.4
+ */
+function str_lower(string $string, bool $multi = false, bool $tr = false, string $encoding = null): string
+{
+    if ($string === '') {
+        return '';
+    }
+
+    // Damageable Turkish characters.
+    $tr && $string = str_replace(['I', 'İ'], ['ı', 'i'], $string);
+
+    return $multi ? mb_strtolower($string, $encoding) : strtolower($string);
+}
+
+/**
+ * Titleize given string (with unicode & Turkish characters support).
+ *
+ * @param  string      $string
+ * @param  bool        $tr
+ * @param  string|null $encoding
+ * @return string
+ * @since  7.4
+ */
+function str_title(string $string, bool $tr = false, string $encoding = null): string
+{
+    if ($string === '') {
+        return '';
+    }
+
+    if (!$tr) {
+        return mb_convert_case($string, MB_CASE_TITLE_SIMPLE, $encoding);
+    }
+
+    // Fix damageable Turkish characters first.
+    $string = str_replace(['I', 'İ'], ['ı', 'i'], $string);
+
+    // Then lowerize all as expected.
+    $string = mb_strtolower($string, ENCODING);
+
+    foreach (explode(' ', $string) as $part) {
+        $parts[] = mb_ucfirst($part, true, ENCODING);
+    }
+
+    return implode(' ', $parts);
+}
+
+/**
  * Convert a multi-byte string's first character to upper-case.
  *
  * @param  string      $string
