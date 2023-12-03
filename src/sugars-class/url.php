@@ -62,17 +62,17 @@ class Url implements Arrayable, Stringable, \Stringable
             }
 
             // Check given fields.
-            foreach ($check as $key) {
-                isset($data[$key]) || throw new UrlError(
-                    'Invalid source: missing key %q', $key
+            foreach ($check as $field) {
+                isset($data[$field]) || throw new UrlError(
+                    'Invalid source: missing field %q', $field
                 );
             }
 
             // Set data fields via setters.
-            foreach ($this->data as $key => $_) {
-                isset($data[$key])
-                && ($method = 'set' . $key)
-                && $this->$method($data[$key]);
+            foreach ($this->data as $field => $_) {
+                isset($data[$field])
+                && ($method = 'set' . $field)
+                && $this->$method($data[$field]);
             }
         }
     }
