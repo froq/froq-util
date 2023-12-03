@@ -292,7 +292,7 @@ final class Strings extends \StaticClass
         $max = strlen($chars) - 1;
         $ret = '';
 
-        while (strlen($ret) < $length) {
+        while ($length--) {
             $ret .= $chars[random_int(0, $max)];
         }
 
