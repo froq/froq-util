@@ -571,21 +571,26 @@ class UrlQuery implements Arrayable, Stringable, \Stringable, Countable, ArrayAc
     }
 
     /**
-     * Normalize given value casting as string.
+     * Normalize given value as int|string recursively.
      */
     private function normalizeValue(mixed $value): mixed
     {
         if (is_bool($value)) {
-            $value = (int) $value;
+            $value = format_bool($value, true);
+        } elseif (is_number($value)) {
+            $value = format_number($value, true);
         }
+
         if (is_scalar($value)) {
             return (string) $value;
         }
+
         if (is_array($value)) {
-            foreach ($value as &$_value) {
-                $_value = $this->normalizeValue($_value);
+            foreach ($value as &$valu) {
+                $valu = $this->normalizeValue($valu);
             }
         }
+
         return  $value;
     }
 }

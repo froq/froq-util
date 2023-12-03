@@ -1529,12 +1529,16 @@ function format(string $format, mixed ...$arguments): string
  * Format an input as bool (yes).
  *
  * @param  mixed $input
+ * @param  bool  $numeric
  * @return string
  * @since  5.31
  */
-function format_bool(mixed $input): string
+function format_bool(mixed $input, bool $numeric = false): string
 {
-    return $input ? 'true' : 'false';
+    if (!$numeric) {
+        return $input ? 'true' : 'false';
+    }
+    return $input ? '1' : '0';
 }
 
 /**
