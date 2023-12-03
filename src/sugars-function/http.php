@@ -328,20 +328,14 @@ function http_parse_headers(string $headers, string|int $case = null): array
 
     $data = [];
 
-    $first_line = null;
-
-    // Pull request/status line.
-    if (preg_test('~^([A-Z]+.*HTTP/[0-9]+|HTTP/[0-9]+.*)~', $headers)) {
-        $first_line = substr($headers, 0, strpos($headers, "\r\n") ?: null);
-    }
-
-    if ($first_line !== null) {
-        $data[0] = $first_line;
-        $headers = substr($headers, strlen($first_line) + 1);
+    // Pull request/status line (eg: GET / HTTP/1.0 or HTTP/1.0 200 OK).
+    if (preg_test('~^([A-Z]+.*HTTP/[\d\.]+|HTTP/[\d\.]+.*)~', $headers)) {
+        $data[0] = substr($headers, 0, strpos($headers, "\r\n") ?: null);
+        $headers = substr($headers, strlen($data[0]) + 1);
     }
 
     // // run(1.000)#1: 0.123914, mem: 1688 (1120288-1118600) @cancel
-    // if (function_exists('iconv_mime_decode_headers___')) {
+    // if (function_exists('iconv_mime_decode_headers')) {
     //     $data = array_merge($data, iconv_mime_decode_headers($headers, 0, 'UTF-8') ?: []);
     // }
     // // run(1.000)#1: 0.029666, mem: 1736 (1071520-1069784)
@@ -389,8 +383,8 @@ function http_build_headers(array $data, string|int $case = null): string
     $headers = '';
 
     if (isset($data[0])) {
-        // Pull request/status line.
-        if (preg_test('~^([A-Z]+.+HTTP/[0-9]+|HTTP/[0-9]+.*)~', $data[0])) {
+        // Pull request/status line (eg: GET / HTTP/1.0 or HTTP/1.0 200 OK).
+        if (preg_test('~^([A-Z]+.*HTTP/[\d\.]+|HTTP/[\d\.]+.*)~', $data[0])) {
             $headers .= array_shift($data) . "\r\n";
         }
     }
