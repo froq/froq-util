@@ -414,9 +414,14 @@ class Url implements Arrayable, Stringable, \Stringable
     /**
      * @inheritDoc froq\common\interface\Arrayable
      */
-    public function toArray(): array
+    public function toArray(bool $deep = true): array
     {
-        return $this->data;
+        $data = $this->data;
+
+        // Handle query too, as array if not null.
+        $deep && $data['query'] = $data['query']?->toArray();
+
+        return $data;
     }
 
     /**
