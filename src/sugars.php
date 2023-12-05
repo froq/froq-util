@@ -1922,15 +1922,15 @@ function is_type_of(mixed $var, string ...$types): bool
     foreach ($types as $type) {
         if (match ($type) {
             // Any/mixed.
-            'any', 'mixed' => 1,
+            'any', 'mixed' => true,
 
             // Sugar stuff.
             'list', 'number', 'stream',
                 => ('is_' . $type)($var),
 
             // Primitive & internal stuff.
-            'int', 'float', 'string', 'bool', 'array', 'object', 'null',
-            'numeric', 'scalar', 'resource', 'iterable', 'callable', 'countable',
+            'int', 'float', 'string', 'bool', 'array', 'object', 'numeric', 'scalar',
+            'resource', 'iterable', 'callable', 'countable', 'null', 'true', 'false',
                 => ('is_' . $type)($var),
 
             // All others.
@@ -1939,6 +1939,7 @@ function is_type_of(mixed $var, string ...$types): bool
             return true;
         }
     }
+
     return false;
 }
 
