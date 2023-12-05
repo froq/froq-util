@@ -1977,7 +1977,7 @@ function is_empty(mixed $var, mixed ...$vars): bool
             return true;
         }
 
-        if (is_object($var) && size($var) === 0) {
+        if (is_object($var) && !size($var)) {
             return true;
         }
     }
