@@ -1924,13 +1924,13 @@ function is_type_of(mixed $var, string ...$types): bool
             // Any/mixed.
             'any', 'mixed' => true,
 
-            // Sugar stuff.
-            'list', 'number', 'stream',
+            // Sugar checkers.
+            'list', 'number', 'stream', 'true', 'false',
                 => ('is_' . $type)($var),
 
-            // Primitive & internal stuff.
-            'int', 'float', 'string', 'bool', 'array', 'object', 'numeric', 'scalar',
-            'resource', 'iterable', 'callable', 'countable', 'null', 'true', 'false',
+            // Primitive & internal checkers.
+            'int', 'float', 'string', 'bool', 'array', 'object', 'null',
+            'numeric', 'scalar', 'resource', 'iterable', 'callable', 'countable',
                 => ('is_' . $type)($var),
 
             // All others.
