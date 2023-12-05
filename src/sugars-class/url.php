@@ -418,8 +418,10 @@ class Url implements Arrayable, Stringable, \Stringable
     {
         $data = $this->data;
 
-        // Handle query too, as array if not null.
-        $deep && $data['query'] = $data['query']?->toArray();
+        // Handle query too.
+        if ($deep && $data['query']) {
+            $data['query'] = $data['query']->toArray();
+        }
 
         return $data;
     }
