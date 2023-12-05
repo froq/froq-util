@@ -1904,9 +1904,14 @@ function is_stream(mixed $var): bool
  * @param  string ...$types
  * @return bool
  * @since  5.0
+ * @throws ArgumentError
  */
 function is_type_of(mixed $var, string ...$types): bool
 {
+    if (!$types = array_filter($types)) {
+        throw new ArgumentError('No type(s) given to check');
+    }
+
     $var_type = get_debug_type($var);
 
     // Multiple at once.
@@ -1950,9 +1955,14 @@ function is_type_of(mixed $var, string ...$types): bool
  * @param  object|string ...$classes
  * @return bool
  * @since  5.31
+ * @throws ArgumentError
  */
 function is_class_of(string|object $class, string|object ...$classes): bool
 {
+    if (!$classs = array_filter($classs)) {
+        throw new ArgumentError('No class(es) given to check');
+    }
+
     $class1 = get_class_name($class);
 
     foreach ($classes as $class2) {
