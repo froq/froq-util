@@ -1953,12 +1953,15 @@ function is_type_of(mixed $var, string ...$types): bool
 function is_class_of(string|object $class, string|object ...$classes): bool
 {
     $class1 = get_class_name($class);
+
     foreach ($classes as $class2) {
         $class2 = get_class_name($class2);
+
         if (is_a($class1, $class2, true)) {
             return true;
         }
     }
+
     return false;
 }
 
