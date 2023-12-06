@@ -1908,9 +1908,8 @@ function is_stream(mixed $var): bool
  */
 function is_type_of(mixed $var, string ...$types): bool
 {
-    if (!$types = array_filter($types)) {
-        throw new ArgumentError('No type(s) given to check');
-    }
+    $types = array_filter($types)
+        ?: throw new ArgumentError('No type(s) given to check');
 
     $var_type = get_debug_type($var);
 
@@ -1959,9 +1958,8 @@ function is_type_of(mixed $var, string ...$types): bool
  */
 function is_class_of(string|object $class, string|object ...$classes): bool
 {
-    if (!$classs = array_filter($classs)) {
-        throw new ArgumentError('No class(es) given to check');
-    }
+    $classes = array_filter($classes)
+        ?: throw new ArgumentError('No class(es) given to check');
 
     $class1 = get_class_name($class);
 
