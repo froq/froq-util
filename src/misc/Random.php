@@ -126,7 +126,7 @@ class Random
 
         $ret = '';
 
-        while (strlen($ret) < $length) {
+        while ($length--) {
             $ret .= $chars[$this->nextInt($bound) - 1];
         }
 
