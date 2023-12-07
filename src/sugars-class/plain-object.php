@@ -3,6 +3,7 @@
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-util
  */
+use froq\common\interface\Arrayable;
 
 /**
  * A class for dynamic properties.
@@ -12,12 +13,12 @@
  * @author  Kerem Güneş
  * @since   6.0
  */
-class PlainObject extends stdClass
+class PlainObject extends stdClass implements Arrayable, IteratorAggregate
 {
     /**
      * Constructor.
      *
-     * @param mixed ...$properties
+     * @param mixed ...$properties Map of named arguments.
      */
     public function __construct(mixed ...$properties)
     {
@@ -36,10 +37,48 @@ class PlainObject extends stdClass
     {
         return $this->$name;
     }
+
+    /**
+     * Get list of vars.
+     *
+     * @return array
+     */
+    public function getVars(): array
+    {
+        return array_values($this->toArray());
+    }
+
+    /**
+     * Get list of var names.
+     *
+     * @return array
+     */
+    public function getVarNames(): array
+    {
+        return array_keys($this->toArray());
+    }
+
+    /**
+     * @inheritDoc froq\common\interface\Arrayable
+     */
+    public function toArray(): array
+    {
+        return (array) $this;
+    }
+
+    /**
+     * @inheritDoc IteratorAggregate
+     */
+    public function getIterator(): Traversable&Generator
+    {
+        foreach ($this->toArray() as $name => $value) {
+            yield $name => $value;
+        }
+    }
 }
 
 /**
- * A class for dynamic properties with array-access utility.
+ * A class for dynamic properties with array utilities.
  *
  * @package global
  * @class   PlainArrayObject
@@ -53,7 +92,7 @@ class PlainArrayObject extends PlainObject implements Countable, ArrayAccess
      */
     public function count(): int
     {
-        return count((array) $this);
+        return count($this->toArray());
     }
 
     /**
@@ -61,7 +100,7 @@ class PlainArrayObject extends PlainObject implements Countable, ArrayAccess
      */
     public function offsetExists(mixed $name): bool
     {
-        return property_exists($this, $name);
+        return isset($this->$name);
     }
 
     /**

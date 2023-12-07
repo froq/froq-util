@@ -21,7 +21,7 @@ class Reference extends PlainObject
      */
     public function clear(): void
     {
-        foreach ($this as $name => $_) {
+        foreach ($this->getVarNames() as $name) {
             unset($this->$name);
         }
     }

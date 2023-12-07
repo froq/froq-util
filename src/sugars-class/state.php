@@ -17,7 +17,7 @@ class State extends PlainArrayObject
     /**
      * Constructor.
      *
-     * @param mixed ...$states
+     * @param mixed ...$states Map of named arguments.
      * @override
      */
     public function __construct(mixed ...$states)
