@@ -61,10 +61,11 @@ class Runner
 
         $limit  = $this->limit;
         $simple = $this->simple;
+        $count  = 1;
 
         while ($limit--) {
             // Temp is for memory measurement only.
-            $simple || $temp = $func();
+            $simple || $temp = $func($count++);
         }
 
         if ($profile) {
