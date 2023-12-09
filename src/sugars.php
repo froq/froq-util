@@ -941,10 +941,13 @@ function get_real_path(string $path, string|true $check = null, bool $real = tru
 
     foreach (split($sep, $path) as $i => $cur) {
         if ($i === 0) {
-            if ($cur === '~') { // Home path (eg: ~/Desktop).
+            // Home path (eg: ~/Desktop => /home/kerem/Desktop).
+            if ($cur === '~') {
                 $ret = getenv('HOME') ?: '';
                 continue;
-            } elseif ($cur === '.' || $cur === '..') {
+            }
+            // Current / parent path.
+            elseif ($cur === '.' || $cur === '..') {
                 if ($ret === '') {
                     // @cancel
                     // $file = getcwd(); // Fallback.
@@ -965,13 +968,13 @@ function get_real_path(string $path, string|true $check = null, bool $real = tru
         }
 
         if ($cur === '' || $cur === '.') {
-            continue;
+            continue; // Current.
         } elseif ($cur === '..') {
-            $ret = dirname($ret); // Up.
+            $ret = dirname($ret); // Parent.
             continue;
         }
 
-        // Prepend separator current.
+        // Prepend separator.
         $ret .= $sep . $cur;
     }
 
@@ -989,7 +992,7 @@ function get_real_path(string $path, string|true $check = null, bool $real = tru
         // Drop repeating separators.
         $ret = preg_replace('~(['. preg_quote(PATH_SEPARATOR . DIRECTORY_SEPARATOR) .'])\1+~', '\1', $ret);
 
-        // Drop ending slashes.
+        // Drop ending separators.
         if ($ret !== PATH_SEPARATOR && $ret !== DIRECTORY_SEPARATOR) {
             $ret = chop($ret, PATH_SEPARATOR . DIRECTORY_SEPARATOR);
         }
