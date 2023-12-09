@@ -902,7 +902,7 @@ function get_request_id(): string
  */
 function get_real_path(string $path, string|true $check = null, bool $real = true): string|null
 {
-    if (trim($path) === '') {
+    if (str_empty($path)) {
         return null;
     }
 

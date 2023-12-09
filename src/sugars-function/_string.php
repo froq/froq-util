@@ -418,6 +418,18 @@ function str_title(string $string, bool $tr = false, string $encoding = null): s
 }
 
 /**
+ * Check if given string is empty after trimming it (for lazy devs).
+ *
+ * @param  string $string
+ * @return bool
+ * @since  7.6
+ */
+function str_empty(string $string): bool
+{
+    return trim($string) === '';
+}
+
+/**
  * Convert a multi-byte string's first character to upper-case.
  *
  * @param  string      $string
