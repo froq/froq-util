@@ -1953,8 +1953,8 @@ function is_type_of(mixed $var, string ...$types): bool
 /**
  * Check whether given class is any type of given class(es).
  *
- * @param  object|string    $class
- * @param  object|string ...$classes
+ * @param  string|object    $class
+ * @param  string|object ...$classes
  * @return bool
  * @since  5.31
  * @throws ArgumentError
