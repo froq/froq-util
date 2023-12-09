@@ -336,6 +336,7 @@ function file_mime(string $file): string|null
  * @param  string $file
  * @return array|null
  * @since  7.0
+ * @link   https://en.wikipedia.org/wiki/Stat_(system_call)
  */
 function file_stat(string $file): array|null
 {
