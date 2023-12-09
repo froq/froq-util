@@ -309,9 +309,9 @@ function file_mime(string $file): string|null
         return froq\file\mime\Mime::getType($file);
     }
 
-    $mime = mime_content_type($file);
+    $ret = mime_content_type($file);
 
-    if ($mime === false) {
+    if ($ret === false) {
         // Try with extension.
         $extension = file_extension($file);
         if ($extension !== null) {
@@ -319,7 +319,7 @@ function file_mime(string $file): string|null
             if (empty($cache[$extension])) {
                 foreach (require __DIR__ . '/../statics/mime.php' as $type => $extensions) {
                     if (in_array($extension, $extensions, true)) {
-                        $cache[$extension] = $mime = $type;
+                        $cache[$extension] = $ret = $type;
                         break;
                     }
                 }
@@ -327,7 +327,7 @@ function file_mime(string $file): string|null
         }
     }
 
-    return $mime ?: null;
+    return $ret ?: null;
 }
 
 /**
