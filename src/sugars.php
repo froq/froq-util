@@ -1440,9 +1440,14 @@ function preg_error_message(int &$code = null, string $func = null, bool $clear 
 /**
  * Format like `sprintf()` but with additional specifiers.
  *
- * Specifiers: single-quote: %q, double-quote: %Q, integer: %i, number: %n,
- * type: %t, bool: %b, join(','): %a, join(', '): %A, upper: %U lower: %L
- * escape: %S and for float-to-string only: %s (eg: 1.0 => not 1 but 1.0).
+ * Specifiers: %q single-quotes, %Q double-quotes, %i integer, %n number, %t type,
+ * %k backticks, %b bool, %a join(','), %A join(', '), %U upper %L lower,
+ * %S escape NULL-bytes, join arrays (','), fix floats (N.0).
+ *
+ * Example: format('a: %S | b: %S | c: %S, d: %k', "x\0y\0z", [1,2,3,4.0], 1.0, 'foo')
+ *   => 'a: x\0y\0z | b: 1,2,3,4.0 | c: 1.0, d: `foo`'
+ *
+ * Note: Multi-escaped formats are problematic (eg: 'a: %%S | b: %%%S').
  *
  * @param  string   $format
  * @param  mixed ...$arguments
@@ -1451,7 +1456,9 @@ function preg_error_message(int &$code = null, string $func = null, bool $clear 
  */
 function format(string $format, mixed ...$arguments): string
 {
-    if (preg_match_all('~(?<!%)%[qQintbaAULSs]~', $format, $match)) {
+    // @cancel: Argument indexes don't match with specifiers indexes.
+    // if (preg_match_all('~(?<!%)%[qQintkbaAULS]~', $format, $match)) {
+    if (preg_match_all('~(?<!%)%[a-zA-Z]~', $format, $match)) {
         $specifiers = $match[0];
 
         if (count($specifiers) > count($arguments)) {
@@ -1489,6 +1496,11 @@ function format(string $format, mixed ...$arguments): string
                     $arguments[$i] = get_type($arguments[$i]);
                     break;
 
+                // Backticks.
+                case '%k':
+                    $format = substr_replace($format, '`%s`', $offset, 2);
+                    break;
+
                 // Bools (as stringified bools, not 0/1).
                 case '%b':
                     $format = substr_replace($format, '%s', $offset, 2);
@@ -1499,7 +1511,10 @@ function format(string $format, mixed ...$arguments): string
                 case '%a': case '%A':
                     $format = substr_replace($format, '%s', $offset, 2);
                     $separator = ($specifier === '%a') ? ',' : ', ';
-                    $arguments[$i] = join($separator, (array) $arguments[$i]);
+                    // Handle each value mapping all.
+                    $arguments[$i] = join($separator, map((array) $arguments[$i], fn($v) => (
+                        is_type_of($v, 'string|float') ? format('%S', $v) : $v
+                    )));
                     break;
 
                 // Upper/Lower case.
@@ -1509,16 +1524,18 @@ function format(string $format, mixed ...$arguments): string
                     $arguments[$i] = $function((string) $arguments[$i]);
                     break;
 
-                // Escape (NULL-bytes only).
+                // Escape NULL-bytes, join arrays, fix floats (N.0).
                 case '%S':
                     $format = substr_replace($format, '%s', $offset, 2);
-                    $arguments[$i] = str_replace("\0", "\\0", (string) $arguments[$i]);
-                    break;
-
-                // Proper float-to-string (eg: 1.0 => not 1 but 1.0).
-                case '%s':
-                    if ($arguments[$i] === 1.0) {
-                        $arguments[$i] = '1.0';
+                    if (is_string($arguments[$i])) {
+                        $arguments[$i] = str_replace("\0", "\\0", $arguments[$i]);
+                    } elseif (is_array($arguments[$i])) {
+                        // Handle each value mapping all.
+                        $arguments[$i] = join(',', map($arguments[$i], fn($v) => (
+                            is_type_of($v, 'string|float') ? format('%S', $v) : $v
+                        )));
+                    } elseif (is_float($arguments[$i])) {
+                        $arguments[$i] = format_number($arguments[$i], decimals: true);
                     }
                     break;
             }
