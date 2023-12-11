@@ -107,4 +107,76 @@ class XObject extends XClass
     {
         return Objects::getSerializedHash($this->object) === Objects::getSerializedHash($object);
     }
+
+    /**
+     * @override
+     */
+    public function getVars(): array
+    {
+        return Objects::getVars($this->object);
+    }
+
+    /**
+     * @override
+     */
+    public function getVarNames(): array
+    {
+        return Objects::getVars($this->object, true);
+    }
+
+    /**
+     * @override
+     */
+    public function getProperties(): array
+    {
+        return Objects::getPropertyValues($this->object, false);
+    }
+
+    /**
+     * @override
+     */
+    public function reflect(bool $extended = false): ReflectionObject|XReflectionObject|null
+    {
+        try {
+            return !$extended ? new ReflectionObject($this->object) : new XReflectionObject($this->object);
+        } catch (ReflectionException) {
+            return null;
+        }
+    }
+
+    /**
+     * @override
+     */
+    public function reflectConstant(string $name, bool $extended = false): ReflectionClassConstant|XReflectionClassConstant|null
+    {
+        try {
+            return !$extended ? new ReflectionClassConstant(this->object, $name) : new XReflectionClassConstant(this->object, $name);
+        } catch (ReflectionException) {
+            return null;
+        }
+    }
+
+    /**
+     * @override
+     */
+    public function reflectProperty(string $name, bool $extended = false): ReflectionProperty|XReflectionProperty|null
+    {
+        try {
+            return !$extended ? new ReflectionProperty($this->object, $name) : new XReflectionProperty($this->object, $name);
+        } catch (ReflectionException) {
+            return null;
+        }
+    }
+
+    /**
+     * @override
+     */
+    public function reflectMethod(string $name, bool $extended = false): ReflectionMethod|XReflectionMethod|null
+    {
+        try {
+            return !$extended ? new ReflectionMethod($this->object, $name) : new XReflectionMethod($this->object, $name);
+        } catch (ReflectionException) {
+            return null;
+        }
+    }
 }

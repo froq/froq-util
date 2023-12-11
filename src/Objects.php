@@ -223,39 +223,31 @@ final class Objects extends \StaticClass
                 continue;
             }
 
-            $modifiers = \Reflection::getModifierNames($constant->getModifiers());
-            $interface = null;
-            $class     = $constant->getDeclaringClass()->name;
+            $constantName  = $constant->name;
+            $constantClass = $ref->name;
 
-            // Simply interface check for real definer.
-            if (interface_exists($class, false)) {
-                $interface = $class;
-                $class     = $constant->class;
-            }
+            // First definers.
+            $trait = array_find(
+                $ref->getTraits(),
+                fn(\ReflectionTrait $r): bool => $r->hasConstant($constantName)
+            );
+            $interface = array_find(
+                $ref->getInterfaces(),
+                fn(\ReflectionInterface $r): bool => $r->hasConstant($constantName)
+            );
 
-            // Nope..
-            // if ($interfaces = self::getInterfaces($constant->class)) {
-            //     foreach ($interfaces as $interfaceName) {
-            //         // Far enough, cos interfaces don't allow constant invisibility.
-            //         if (defined($interfaceName .'::'. $constant->name)) {
-            //             // Break, cos interfaces don't allow constant overriding.
-            //             $interface = $interfaceName;
-            //             break;
-            //         }
-            //     }
-            // }
+            $modifiers   = $constant->getModifierNames();
+            $visibility  = $constant->getVisibility();
 
-            // Sorry, but no method such getType()..
-            preg_match('~\[ (?<visibility>\w+) (?<type>\w+) .+ \]~', (string) $constant, $match);
-
-            $className = self::getName($class);
+            // Sorry, but no method such getType().. @todo: 8.3
+            preg_match('~\[ (\w+) (?<type>\w+) .+ \]~', (string) $constant, $match);
 
             // Using name as key, since all names will be overridden internally in children.
-            $ret[$constant->name] = [
-                'name'       => $constant->name,
+            $ret[$constantName] = [
+                'name'       => $constantName,         'class'     => $constantClass,
+                'trait'      => $trait?->name,         'interface' => $interface?->name,
                 'value'      => $constant->getValue(), 'type'      => $match['type'],
-                'class'      => $className,            'interface' => $interface,
-                'visibility' => $match['visibility'],  'modifiers' => $modifiers,
+                'visibility' => $visibility,           'modifiers' => $modifiers,
                 'reflection' => $constant,
             ];
         }
@@ -361,40 +353,37 @@ final class Objects extends \StaticClass
         $ret = [];
 
         foreach ($ref->getProperties($filter) as $property) {
-            $propertyName  = $property->getName();
-            $propertyClass = $property->getClass();
-
-            if ($_name && $_name !== $propertyName) {
+            if ($_name && $_name !== $property->name) {
                 continue;
             }
 
-            $type = $nullable = $trait = null;
+            $propertyName  = $property->name;
+            $propertyClass = $property->class;
 
+            // First definer.
+            $trait = array_find(
+                $ref->getTraits(),
+                fn(\ReflectionTrait $r): bool => $r->hasProperty($propertyName)
+            );
+
+            // Type & nullable.
             if ($propertyType = $property->getType()) {
                 $type     = $propertyType->getName();
                 $nullable = $propertyType->allowsNull();
             }
-            if ($traits = self::getTraits($propertyClass)) {
-                foreach ($traits as $traitName) {
-                    // No break, searching the real definer but not user trait.
-                    if (property_exists($traitName, $propertyName)) {
-                        $trait = $traitName;
-                    }
-                }
-            }
 
             $modifiers   = $property->getModifierNames();
             $visibility  = $property->getVisibility();
-            $initialized = is_object($target) && $property->isInitialized($target);
+            $initialized = $property->isInitialized(is_object($target) ? $target : null);
 
             // Using name as key, since all names will be overridden internally in children.
             $ret[$propertyName] = [
-                'name'        => $propertyName,         'class'      => $propertyClass,
-                'trait'       => $trait,
-                'type'        => $type,                 'nullable'   => $nullable,
-                'static'      => $property->isStatic(), 'dynamic'    => $property->isDynamic(),
-                'visibility' => $visibility,            'initialized' => $initialized,
-                'modifiers'  => $modifiers,             'reflection'  => $property,
+                'name'       => $propertyName,         'class'       => $propertyClass,
+                'trait'      => $trait?->name,
+                'type'       => $type ?? null,         'nullable'    => $nullable ?? true,
+                'static'     => $property->isStatic(), 'dynamic'     => $property->isDynamic(),
+                'visibility' => $visibility,           'initialized' => $initialized,
+                'modifiers'  => $modifiers,            'reflection'  => $property,
             ];
         }
 
@@ -488,12 +477,22 @@ final class Objects extends \StaticClass
         $ret = [];
 
         foreach ($ref->getMethods($filter) as $method) {
-            $methodName  = $method->getName();
-            $methodClass = $method->getClass();
-
             if ($_name && $_name !== $method->name) {
                 continue;
             }
+
+            $methodName  = $method->name;
+            $methodClass = $method->class;
+
+            // First definers.
+            $trait = array_find(
+                $ref->getTraits(),
+                fn(\ReflectionTrait $r): bool => $r->hasMethod($methodName)
+            );
+            $interface = array_find(
+                $ref->getInterfaces(),
+                fn(\ReflectionInterface $r): bool => $r->hasMethod($methodName)
+            );
 
             $return = null; $parameters = [];
 
@@ -522,15 +521,13 @@ final class Objects extends \StaticClass
                 }
             }
 
-            $modifiers   = $method->getModifierNames();
-            $visibility  = $method->getVisibility();
-            $trait       = last($method->getTraitNames());
-            $interface   = last($method->getInterfaceNames());
+            $modifiers  = $method->getModifierNames();
+            $visibility = $method->getVisibility();
 
             // Using method name as key, since all names will be overridden internally in children.
             $ret[$methodName] = [
                 'name'       => $methodName,         'class'      => $methodClass,
-                'trait'      => $trait,              'interface'  => $interface,
+                'trait'      => $trait?->name,       'interface'  => $interface?->name,
                 'return'     => $return,             'visibility' => $visibility,
                 'static'     => $method->isStatic(), 'final'      => $method->isFinal(),
                 'modifiers'  => $modifiers,          'parameters' => $parameters,
@@ -573,6 +570,7 @@ final class Objects extends \StaticClass
     {
         try {
             $ret = [];
+
             if (!$baseOnly) {
                 $ret[] = get_parent_class($target);
             } else {
@@ -582,8 +580,9 @@ final class Objects extends \StaticClass
                     $parent = get_parent_class($parent);
                 }
             }
-            return array_last($ret) ?: null;
-        } catch (\Throwable) {
+
+            return array_last($ret);
+        } catch (\Throwable) { // TypeError? WTF?
             return null;
         }
     }
@@ -597,11 +596,14 @@ final class Objects extends \StaticClass
     public static function getParents(object|string $target, bool $reverse = false): array|null
     {
         $ret = @class_parents($target);
+
         if ($ret !== false) {
             $ret = array_keys($ret);
             $reverse && ($ret = array_reverse($ret));
+
             return $ret;
         }
+
         return null;
     }
 
@@ -616,11 +618,14 @@ final class Objects extends \StaticClass
         // Note: this function does not follow real inheritance.
         // For example A,B,C,D order B->A, C->B, D->C return D,B,A,C.
         $ret = @class_implements($target);
+
         if ($ret !== false) {
             $ret = array_keys($ret);
             $reverse && ($ret = array_reverse($ret));
+
             return $ret;
         }
+
         return null;
     }
 
@@ -634,9 +639,11 @@ final class Objects extends \StaticClass
     public static function getTraits(object|string $target, bool $reverse = false, bool $all = true): array|null
     {
         $ret = @class_uses($target);
+
         if ($ret !== false) {
             $ret = array_keys($ret);
             $reverse && ($ret = array_reverse($ret));
+
             if ($all) {
                 foreach ((array) self::getParents($target) as $parent) {
                     $ret = array_merge($ret, (array) self::getTraits($parent, $reverse, true));
@@ -650,8 +657,10 @@ final class Objects extends \StaticClass
                     $ret = array_unique($ret);
                 }
             }
+
             return array_values($ret);
         }
+
         return null;
     }
 
@@ -680,6 +689,7 @@ final class Objects extends \StaticClass
     {
         try {
             $vars = is_object($target) ? get_object_vars($target) : get_class_vars($target);
+
             return $namesOnly ? array_keys($vars) : $vars;
         } catch (\Throwable) {
             return null;

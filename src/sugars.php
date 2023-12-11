@@ -650,42 +650,42 @@ function get_class_namespace(string|object $class, bool $baseOnly = false): stri
  * Get constants of given class/object, or return null if no such class.
  *
  * @param  string|object $class
- * @param  bool          $scope_check
+ * @param  bool          $scope
  * @param  bool          $assoc
  * @return array|null
  * @since  4.0
  */
-function get_class_constants(string|object $class, bool $scope_check = true, bool $assoc = true): array|null
+function get_class_constants(string|object $class, bool $scope = true, bool $assoc = true): array|null
 {
-    if ($scope_check) {
+    if ($scope) {
         $caller_class = debug_backtrace(2, 2)[1]['class'] ?? null;
         if ($caller_class) {
             $all = ($caller_class === Objects::getName($class));
         }
     }
 
-    return Objects::getConstantValues($class, ($all ?? !$scope_check), $assoc);
+    return Objects::getConstantValues($class, ($all ?? !$scope), $assoc);
 }
 
 /**
  * Get properties of given class/object, or return null if no such class.
  *
  * @param  string|object $class
- * @param  bool          $scope_check
+ * @param  bool          $scope
  * @param  bool          $assoc
  * @return array|null
  * @since  4.0
  */
-function get_class_properties(string|object $class, bool $scope_check = true, bool $assoc = true): array|null
+function get_class_properties(string|object $class, bool $scope = true, bool $assoc = true): array|null
 {
-    if ($scope_check) {
+    if ($scope) {
         $caller_class = debug_backtrace(2, 2)[1]['class'] ?? null;
         if ($caller_class) {
             $all = ($caller_class === Objects::getName($class));
         }
     }
 
-    return Objects::getPropertyValues($class, ($all ?? !$scope_check), $assoc);
+    return Objects::getPropertyValues($class, ($all ?? !$scope), $assoc);
 }
 
 /**
@@ -733,17 +733,17 @@ function get_constant_value(string $name, mixed $default = null): mixed
  *
  * @param  string|object $class
  * @param  string        $name
- * @param  bool          $scope_check
+ * @param  bool          $scope
  * @param  bool          $upper
  * @return bool
  * @since  4.0
  */
-function constant_exists(string|object $class, string $name, bool $scope_check = false, bool $upper = false): bool
+function constant_exists(string|object $class, string $name, bool $scope = false, bool $upper = false): bool
 {
     $class = Objects::getName($class);
     $upper && $name = strtoupper($name);
 
-    if ($scope_check) {
+    if ($scope) {
         $caller_class = debug_backtrace(2, 2)[1]['class'] ?? null;
         if ($caller_class) {
             return ($caller_class === $class || is_class_of($class, $caller_class))

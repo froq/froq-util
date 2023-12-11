@@ -18,7 +18,7 @@ class XClass implements Stringable
     /** Target class. */
     public readonly string $name;
 
-    /** Exists state. */
+    /** Existence state. */
     public readonly bool $exists;
 
     /**
@@ -108,7 +108,7 @@ class XClass implements Stringable
     }
 
     /**
-     * Exists state checker.
+     * Existence state checker.
      *
      * @return bool
      */
@@ -215,10 +215,17 @@ class XClass implements Stringable
      */
     public function getVars(): array|null
     {
-        if ($this instanceof XObject) {
-            return get_object_vars($this->object);
-        }
-        return $this->exists ? get_class_vars($this->name) : null;
+        return Objects::getVars($this->name);
+    }
+
+    /**
+     * Get var names.
+     *
+     * @return array|null
+     */
+    public function getVarNames(): array|null
+    {
+        return Objects::getVars($this->name, true);
     }
 
     /**
@@ -238,9 +245,6 @@ class XClass implements Stringable
      */
     public function getProperties(): array|null
     {
-        if ($this instanceof XObject) {
-            return get_class_properties($this->object, false);
-        }
         return $this->exists ? get_class_properties($this->name, false) : null;
     }
 
@@ -380,15 +384,10 @@ class XClass implements Stringable
      * @param  bool $extended
      * @return ReflectionClass|ReflectionObject|XReflectionClass|XReflectionObject|null
      */
-    public function reflect(bool $extended = false): ReflectionClass|ReflectionObject|XReflectionClass|XReflectionObject|null
+    public function reflect(bool $extended = false): ReflectionClass|XReflectionClass|null
     {
         try {
-            if ($this instanceof XObject) {
-                return !$extended ? new ReflectionObject($this->object)
-                                  : new XReflectionObject($this->object);
-            }
-            return !$extended ? new ReflectionClass($this->name)
-                              : new XReflectionClass($this->name);
+            return !$extended ? new ReflectionClass($this->name) : new XReflectionClass($this->name);
         } catch (ReflectionException) {
             return null;
         }
@@ -404,12 +403,7 @@ class XClass implements Stringable
     public function reflectConstant(string $name, bool $extended = false): ReflectionClassConstant|XReflectionClassConstant|null
     {
         try {
-            if ($this instanceof XObject) {
-                return !$extended ? new ReflectionClassConstant($this->object, $name)
-                                  : new XReflectionClassConstant($this->object, $name);
-            }
-            return !$extended ? new ReflectionClassConstant($this->name, $name)
-                              : new XReflectionClassConstant($this->name, $name);
+            return !$extended ? new ReflectionClassConstant($this->name, $name) : new XReflectionClassConstant($this->name, $name);
         } catch (ReflectionException) {
             return null;
         }
@@ -425,12 +419,7 @@ class XClass implements Stringable
     public function reflectProperty(string $name, bool $extended = false): ReflectionProperty|XReflectionProperty|null
     {
         try {
-            if ($this instanceof XObject) {
-                return !$extended ? new ReflectionProperty($this->object, $name)
-                                  : new XReflectionProperty($this->object, $name);
-            }
-            return !$extended ? new ReflectionProperty($this->name, $name)
-                              : new XReflectionProperty($this->name, $name);
+            return !$extended ? new ReflectionProperty($this->name, $name) : new XReflectionProperty($this->name, $name);
         } catch (ReflectionException) {
             return null;
         }
@@ -446,12 +435,7 @@ class XClass implements Stringable
     public function reflectMethod(string $name, bool $extended = false): ReflectionMethod|XReflectionMethod|null
     {
         try {
-            if ($this instanceof XObject) {
-                return !$extended ? new ReflectionMethod($this->object, $name)
-                                  : new XReflectionMethod($this->object, $name);
-            }
-            return !$extended ? new ReflectionMethod($this->name, $name)
-                              : new XReflectionMethod($this->name, $name);
+            return !$extended ? new ReflectionMethod($this->name, $name) : new XReflectionMethod($this->name, $name);
         } catch (ReflectionException) {
             return null;
         }
