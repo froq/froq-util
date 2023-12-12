@@ -127,9 +127,9 @@ class XObject extends XClass
     /**
      * @override
      */
-    public function getProperties(): array
+    public function getProperties(bool $namesOnly = false, bool $assoc = true): array
     {
-        return Objects::getPropertyValues($this->object, false);
+        return get_class_properties($this->object, false, $namesOnly, $assoc);
     }
 
     /**

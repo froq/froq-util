@@ -650,42 +650,44 @@ function get_class_namespace(string|object $class, bool $baseOnly = false): stri
  * Get constants of given class/object, or return null if no such class.
  *
  * @param  string|object $class
- * @param  bool          $scope
+ * @param  bool          $scope      For scope check.
+ * @param  bool          $names_only For names only.
  * @param  bool          $assoc
  * @return array|null
  * @since  4.0
  */
-function get_class_constants(string|object $class, bool $scope = true, bool $assoc = true): array|null
+function get_class_constants(string|object $class, bool $scope = true, bool $names_only = false, bool $assoc = true): array|null
 {
     if ($scope) {
-        $caller_class = debug_backtrace(2, 2)[1]['class'] ?? null;
-        if ($caller_class) {
-            $all = ($caller_class === Objects::getName($class));
-        }
+        $all = ($caller_class = debug_backtrace(2, 2)[1]['class'] ?? null)
+            && ($caller_class === Objects::getName($class));
+    } else {
+        $all = !$scope;
     }
 
-    return Objects::getConstantValues($class, ($all ?? !$scope), $assoc);
+    return $names_only ? Objects::getConstantNames($class, $all) : Objects::getConstantValues($class, $all, $assoc);
 }
 
 /**
  * Get properties of given class/object, or return null if no such class.
  *
  * @param  string|object $class
- * @param  bool          $scope
+ * @param  bool          $scope      For scope check.
+ * @param  bool          $names_only For names only.
  * @param  bool          $assoc
  * @return array|null
  * @since  4.0
  */
-function get_class_properties(string|object $class, bool $scope = true, bool $assoc = true): array|null
+function get_class_properties(string|object $class, bool $scope = true, bool $names_only = false, bool $assoc = true): array|null
 {
     if ($scope) {
-        $caller_class = debug_backtrace(2, 2)[1]['class'] ?? null;
-        if ($caller_class) {
-            $all = ($caller_class === Objects::getName($class));
-        }
+        $all = ($caller_class = debug_backtrace(2, 2)[1]['class'] ?? null)
+            && ($caller_class === Objects::getName($class));
+    } else {
+        $all = !$scope;
     }
 
-    return Objects::getPropertyValues($class, ($all ?? !$scope), $assoc);
+    return $names_only ? Objects::getPropertyNames($class, $all) : Objects::getPropertyValues($class, $all, $assoc);
 }
 
 /**

@@ -232,21 +232,25 @@ class XClass implements Stringable
     /**
      * Get constants.
      *
+     * @param  bool $namesOnly
+     * @param  bool $assoc
      * @return array|null
      */
-    public function getConstants(): array|null
+    public function getConstants(bool $namesOnly = false, bool $assoc = true): array|null
     {
-        return $this->exists ? get_class_constants($this->name, false) : null;
+        return $this->exists ? get_class_constants($this->name, false, $namesOnly, $assoc) : null;
     }
 
     /**
      * Get properties.
      *
+     * @param  bool $namesOnly
+     * @param  bool $assoc
      * @return array|null
      */
-    public function getProperties(): array|null
+    public function getProperties(bool $namesOnly = false, bool $assoc = true): array|null
     {
-        return $this->exists ? get_class_properties($this->name, false) : null;
+        return $this->exists ? get_class_properties($this->name, false, $namesOnly, $assoc) : null;
     }
 
     /**
