@@ -135,10 +135,12 @@ class XObject extends XClass
     /**
      * @override
      */
-    public function reflect(bool $extended = false): ReflectionObject|XReflectionObject|null
+    public function reflect(bool $extended = false)
+        : ReflectionObject|XReflectionObject|null
     {
         try {
-            return !$extended ? new ReflectionObject($this->object) : new XReflectionObject($this->object);
+            return !$extended ? new ReflectionObject($this->object)
+                : new XReflectionObject($this->object);
         } catch (ReflectionException) {
             return null;
         }
@@ -147,10 +149,12 @@ class XObject extends XClass
     /**
      * @override
      */
-    public function reflectConstant(string $name, bool $extended = false): ReflectionClassConstant|XReflectionClassConstant|null
+    public function reflectConstant(string $name, bool $extended = false)
+        : ReflectionClassConstant|XReflectionClassConstant|null
     {
         try {
-            return !$extended ? new ReflectionClassConstant(this->object, $name) : new XReflectionClassConstant(this->object, $name);
+            return !$extended ? new ReflectionClassConstant(this->object, $name)
+                : new XReflectionClassConstant(this->object, $name);
         } catch (ReflectionException) {
             return null;
         }
@@ -159,10 +163,12 @@ class XObject extends XClass
     /**
      * @override
      */
-    public function reflectProperty(string $name, bool $extended = false): ReflectionProperty|XReflectionProperty|null
+    public function reflectProperty(string $name, bool $extended = false)
+        : ReflectionProperty|XReflectionProperty|null
     {
         try {
-            return !$extended ? new ReflectionProperty($this->object, $name) : new XReflectionProperty($this->object, $name);
+            return !$extended ? new ReflectionProperty($this->object, $name)
+                : new XReflectionProperty($this->object, $name);
         } catch (ReflectionException) {
             return null;
         }
@@ -171,10 +177,12 @@ class XObject extends XClass
     /**
      * @override
      */
-    public function reflectMethod(string $name, bool $extended = false): ReflectionMethod|XReflectionMethod|null
+    public function reflectMethod(string $name, bool $extended = false)
+        : ReflectionMethod|XReflectionMethod|null
     {
         try {
-            return !$extended ? new ReflectionMethod($this->object, $name) : new XReflectionMethod($this->object, $name);
+            return !$extended ? new ReflectionMethod($this->object, $name)
+                : new XReflectionMethod($this->object, $name);
         } catch (ReflectionException) {
             return null;
         }

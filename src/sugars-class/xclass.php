@@ -18,7 +18,7 @@ class XClass implements Stringable
     /** Target class. */
     public readonly string $name;
 
-    /** Existence state. */
+    /** Exists state. */
     public readonly bool $exists;
 
     /**
@@ -108,7 +108,7 @@ class XClass implements Stringable
     }
 
     /**
-     * Existence state checker.
+     * Exists state checker.
      *
      * @return bool
      */
@@ -159,7 +159,7 @@ class XClass implements Stringable
     }
 
     /**
-     * @alias constantExists()
+     * @alias propertyExists()
      */
     public function hasProperty(...$args)
     {
@@ -167,7 +167,7 @@ class XClass implements Stringable
     }
 
     /**
-     * @alias constantExists()
+     * @alias methodExists()
      */
     public function hasMethod(...$args)
     {
@@ -177,13 +177,13 @@ class XClass implements Stringable
     /**
      * Extends state checker.
      *
-     * @param  string $parent
+     * @param  string $class      Class or interface (both).
      * @param  bool   $parentOnly
      * @return bool
      */
-    public function extends(string $parent, bool $parentOnly = false): bool
+    public function extends(string $class, bool $parentOnly = false): bool
     {
-        return $this->exists && class_extends($this->name, $parent, $parentOnly);
+        return $this->exists && class_extends($this->name, $class, $parentOnly);
     }
 
     /**
@@ -194,7 +194,8 @@ class XClass implements Stringable
      */
     public function implements(string $interface): bool
     {
-        return $this->exists && in_array($interface, (array) $this->getInterfaces(), true);
+        return $this->exists && is_a($this->name, $interface, true); // Faster.
+        // return $this->exists && in_array($interface, (array) $this->getInterfaces(), true);
     }
 
     /**
@@ -384,10 +385,12 @@ class XClass implements Stringable
      * @param  bool $extended
      * @return ReflectionClass|ReflectionObject|XReflectionClass|XReflectionObject|null
      */
-    public function reflect(bool $extended = false): ReflectionClass|XReflectionClass|null
+    public function reflect(bool $extended = false)
+        : ReflectionClass|XReflectionClass|null
     {
         try {
-            return !$extended ? new ReflectionClass($this->name) : new XReflectionClass($this->name);
+            return !$extended ? new ReflectionClass($this->name)
+                : new XReflectionClass($this->name);
         } catch (ReflectionException) {
             return null;
         }
@@ -400,10 +403,12 @@ class XClass implements Stringable
      * @param  bool   $extended
      * @return ReflectionClassConstant|XReflectionClassConstant|null
      */
-    public function reflectConstant(string $name, bool $extended = false): ReflectionClassConstant|XReflectionClassConstant|null
+    public function reflectConstant(string $name, bool $extended = false)
+        : ReflectionClassConstant|XReflectionClassConstant|null
     {
         try {
-            return !$extended ? new ReflectionClassConstant($this->name, $name) : new XReflectionClassConstant($this->name, $name);
+            return !$extended ? new ReflectionClassConstant($this->name, $name)
+                : new XReflectionClassConstant($this->name, $name);
         } catch (ReflectionException) {
             return null;
         }
@@ -416,10 +421,12 @@ class XClass implements Stringable
      * @param  bool   $extended
      * @return ReflectionProperty|XReflectionProperty|null
      */
-    public function reflectProperty(string $name, bool $extended = false): ReflectionProperty|XReflectionProperty|null
+    public function reflectProperty(string $name, bool $extended = false)
+        : ReflectionProperty|XReflectionProperty|null
     {
         try {
-            return !$extended ? new ReflectionProperty($this->name, $name) : new XReflectionProperty($this->name, $name);
+            return !$extended ? new ReflectionProperty($this->name, $name)
+                : new XReflectionProperty($this->name, $name);
         } catch (ReflectionException) {
             return null;
         }
@@ -432,10 +439,12 @@ class XClass implements Stringable
      * @param  bool   $extended
      * @return ReflectionMethod|XReflectionMethod|null
      */
-    public function reflectMethod(string $name, bool $extended = false): ReflectionMethod|XReflectionMethod|null
+    public function reflectMethod(string $name, bool $extended = false)
+        : ReflectionMethod|XReflectionMethod|null
     {
         try {
-            return !$extended ? new ReflectionMethod($this->name, $name) : new XReflectionMethod($this->name, $name);
+            return !$extended ? new ReflectionMethod($this->name, $name)
+                : new XReflectionMethod($this->name, $name);
         } catch (ReflectionException) {
             return null;
         }
