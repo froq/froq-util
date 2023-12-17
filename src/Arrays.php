@@ -176,14 +176,17 @@ final class Arrays extends \StaticClass
         // Arrays::get($array, 'a.b.c.d') => 1
         // Arrays::get($array, 'a.b.c.d.e') => '...'
 
+        // Ref as default (@important).
+        $value = &$default;
+
         // Direct access.
         if (array_key_exists($key, $array) || is_int($key)) {
-            $value = &$array[$key] ?? $default;
+            $value = &$array[$key];
             $drop && array_unset($array, $key);
         } else {
             // Direct access.
             if (!str_contains($key, '.')) {
-                $value = &$array[$key] ?? $default;
+                $value = &$array[$key];
                 $drop && array_unset($array, $key);
             }
             // Path access (with dot notation).
@@ -192,7 +195,7 @@ final class Arrays extends \StaticClass
                 $key  = array_shift($keys);
 
                 if (!$keys) {
-                    $value = &$array[$key] ?? $default;
+                    $value = &$array[$key];
                     $drop && array_unset($array, $key);
                 }
                 // Dig more..
@@ -201,8 +204,6 @@ final class Arrays extends \StaticClass
                 }
             }
         }
-
-        $value = &$value ?? $default;
 
         return $value;
     }
