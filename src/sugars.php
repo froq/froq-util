@@ -731,7 +731,7 @@ function get_constant_value(string $name, mixed $default = null): mixed
 }
 
 /**
- * Check a constant exists, or return null if no such class.
+ * Check if a class constant exists.
  *
  * @param  string|object $class
  * @param  string        $name
@@ -755,6 +755,23 @@ function constant_exists(string|object $class, string $name, bool $scope = false
     }
 
     return defined($class .'::'. $name) || Objects::hasConstant($class, $name);
+}
+
+/**
+ * Check if a class property initialized.
+ *
+ * @param  string|object $class
+ * @param  string        $name
+ * @return bool
+ * @causes ReflectionException Property $class::$name does not exist.
+ * @causes TypeError           Argument $object must be provided for instance properties.
+ * @since  7.8
+ */
+function property_initialized(string|object $class, string $name): bool
+{
+    $ref = new ReflectionProperty($class, $name);
+
+    return is_string($class) ? $ref->isInitialized() : $ref->isInitialized($class);
 }
 
 /**
