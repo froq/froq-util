@@ -176,8 +176,7 @@ final class Arrays extends \StaticClass
         // Arrays::get($array, 'a.b.c.d') => 1
         // Arrays::get($array, 'a.b.c.d.e') => '...'
 
-        // Ref as default (@important).
-        $value = &$default;
+        $value = null;
 
         // Direct access.
         if (array_key_exists($key, $array) || is_int($key)) {
@@ -203,6 +202,11 @@ final class Arrays extends \StaticClass
                     $value = &self::get($array[$key], implode('.', $keys), $default, $drop);
                 }
             }
+        }
+
+        // Ref'ed default (@important).
+        if ($value === null) {
+            $value = &$default;
         }
 
         return $value;
