@@ -18,10 +18,10 @@ use froq\common\interface\Arrayable;
 class Timer implements Arrayable
 {
     /** Start time. */
-    private float|null $start = null;
+    private ?float $start = null;
 
     /** Stop time. */
-    private float|null $stop = null;
+    private ?float $stop = null;
 
     /**
      * Constructor.
@@ -78,7 +78,7 @@ class Timer implements Arrayable
     }
 
     /**
-     * Get (elapsed) time or return null if not started yet.
+     * Get (elapsed/duration) time or return null if not started yet.
      *
      * @param  int $precision
      * @return float|null

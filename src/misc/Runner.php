@@ -6,8 +6,7 @@
 namespace froq\util;
 
 /**
- * A class that provides a profiling interface via `run()` method printing
- * speed & memory peeks.
+ * A class for running given callables, optionally printing time & memory peeks.
  *
  * @package froq\util
  * @class   froq\util\Runner
@@ -22,36 +21,47 @@ class Runner
     /** Total runs. */
     private int $runs = 0;
 
-    /** Simple, without function call. */
-    private bool $simple;
-
     /**
      * Constructor.
      *
-     * @param  int  $limit
-     * @param  bool $simple
+     * @param  int $limit
+     * @causes ArgumentError
+     */
+    public function __construct(int $limit = 1000)
+    {
+        $this->limit($limit);
+    }
+
+    /**
+     * Set/update limit.
+     *
+     * @param  int $limit
+     * @return self
      * @throws ArgumentError
      */
-    public function __construct(int $limit = 1000, bool $simple = false)
+    public function limit(int $limit): self
     {
         if ($limit < 1) {
             throw new \ArgumentError('Min limit is 1, %d given', $limit);
         }
 
-        $this->limit  = $limit;
-        $this->simple = $simple;
+        $this->limit = $limit;
+
+        return $this;
     }
 
     /**
-     * Run given function by self limit.
+     * Run given function.
      *
      * @param  callable $func
      * @param  bool     $profile
+     * @param  bool     $print
+     * @param  bool     $simple
      * @return self
      */
-    public function run(callable $func, bool $profile = true): self
+    public function run(callable $func, bool $profile = true, bool $print = true, bool $simple = false): self
     {
-        // Increase run(time)s.
+        // Increase runs.
         $this->runs += 1;
 
         if ($profile) {
@@ -59,12 +69,11 @@ class Runner
             $startTime = microtime(true);
         }
 
-        $limit  = $this->limit;
-        $simple = $this->simple;
-        $count  = 1;
+        $limit = $this->limit;
+        $count = 1;
 
         while ($limit--) {
-            // Temp is for memory measurement only.
+            // Temp is for memory measurement.
             $simple || $temp = $func($count++);
         }
 
@@ -75,35 +84,25 @@ class Runner
             // Free.
             unset($temp);
 
-            $formatLimit = fn($v): string => number_format($v, 0, '', ',');
-            $formatBytes = fn($v): string => \froq\util\Util::formatBytes($v, 3);
+            if ($print) {
+                $formatLimit = fn(int $v): string => number_format($v, 0, '', ',');
+                $formatBytes = fn(int $v): string => \froq\util\Util::formatBytes($v, 3);
 
-            // Simple drops memory info.
-            if ($simple) {
-                printf("run(%s)#%s: %F\n",
-                    $formatLimit($this->limit), $this->runs, $endTime,
-                );
-            } else {
-                printf("run(%s)#%s: %F, memo: %s (%s - %s)\n",
-                    $formatLimit($this->limit), $this->runs, $endTime,
-                    $formatBytes($endMemo - $startMemo),
-                    $formatBytes($endMemo), $formatBytes($startMemo),
-                );
+                // Drop memory info.
+                if ($simple) {
+                    printf("run(%s)#%s: %F\n",
+                        $formatLimit($this->limit), $this->runs, $endTime
+                    );
+                } else {
+                    printf("run(%s)#%s: %F, memo: %s (%s - %s)\n",
+                        $formatLimit($this->limit), $this->runs, $endTime,
+                        $formatBytes($endMemo - $startMemo),
+                        $formatBytes($endMemo), $formatBytes($startMemo)
+                    );
+                }
             }
         }
 
         return $this;
-    }
-
-    /**
-     * Static initializer.
-     *
-     * @param  int  $limit
-     * @param  bool $simple
-     * @return self
-     */
-    public static function init(int $limit = 1000, bool $simple = false): self
-    {
-        return new self($limit, $simple);
     }
 }
