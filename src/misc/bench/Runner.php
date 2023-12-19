@@ -3,13 +3,13 @@
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-util
  */
-namespace froq\util;
+namespace froq\util\bench;
 
 /**
- * A class for running given callables, optionally printing time & memory peeks.
+ * A class, runs given callables, optionally prints time & memory peeks.
  *
- * @package froq\util
- * @class   froq\util\Runner
+ * @package froq\util\bench
+ * @class   froq\util\bench\Runner
  * @author  Kerem Güneş
  * @since   5.5
  */

@@ -3,15 +3,15 @@
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-util
  */
-namespace froq\util;
+namespace froq\util\bench;
 
 use froq\common\interface\Arrayable;
 
 /**
  * A timer class, just like a stopwatch.
  *
- * @package froq\util
- * @class   froq\util\Timer
+ * @package froq\util\bench
+ * @class   froq\util\bench\Timer
  * @author  Kerem Güneş
  * @since   6.0
  */
