@@ -88,6 +88,7 @@ class ObjectStorage extends \SplObjectStorage implements Arrayable
 
     /**
      * Permissive offset getter, not throws `UnexpectedValueException`.
+     *
      * @override
      */
     public function offsetGet(mixed $object): mixed

@@ -9,8 +9,8 @@ use froq\common\interface\Arrayable;
 use froq\common\trait\DataAccessMagicOffsetTrait;
 
 /**
- * A class for storing stuff dynamically or statically, and can used as
- * stand-alone or as a global storage.
+ * A class for storing data dynamically or statically, and can be used
+ * as a stand-alone or global storage.
  *
  * Note: For dynamic usage, access magic or offset methods must be used,
  * otherwise store/unstore methods can be used.
