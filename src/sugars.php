@@ -1759,10 +1759,10 @@ function random_range(int $length, int|float $min = null, int|float $max = null,
  *
  * @param  object $object
  * @param  bool   $with_name
- * @return string
+ * @return int|string
  * @since  5.25
  */
-function get_object_id(object $object, bool $with_name = true): string
+function get_object_id(object $object, bool $with_name = true): int|string
 {
     return Objects::getId($object, $with_name);
 }

@@ -44,9 +44,9 @@ class ObjectStorage extends \SplObjectStorage implements Arrayable
      * Get id.
      *
      * @param  object $object
-     * @return string
+     * @return int|string
      */
-    public function getId(object $object): string
+    public function getId(object $object): int|string
     {
         return get_object_id($object, with_name: false);
     }

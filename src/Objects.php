@@ -36,11 +36,11 @@ final class Objects extends \StaticClass
      *
      * @param  object $target
      * @param  bool   $withName
-     * @return string
+     * @return int|string
      */
-    public static function getId(object $target, bool $withName = true): string
+    public static function getId(object $target, bool $withName = true): int|string
     {
-        $id = (string) spl_object_id($target);
+        $id = spl_object_id($target);
 
         return $withName ? $target::class .'#'. $id : $id;
     }
