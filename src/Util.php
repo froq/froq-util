@@ -237,7 +237,7 @@ final /* fuckic static */ class Util extends \StaticClass
     public static function makeArray(array|object|null $data, bool $deep = true): array
     {
         // Memoize maker function.
-        static $make; $make ??= function ($data) use (&$make, $deep): array {
+        static $make; $make ??= function ($data, $deep) use (&$make): array {
             if ($data) {
                 if ($data instanceof \Traversable) {
                     if ($data instanceof \Generator) {
@@ -247,7 +247,9 @@ final /* fuckic static */ class Util extends \StaticClass
                     } else {
                         // Rewind for keys after iteration.
                         $temp = iterator_to_array($data);
-                        $data->rewind();
+                        if (method_exists($data, 'rewind')) {
+                            $data->rewind();
+                        }
                         $data = $temp;
                         unset($temp);
                     }
@@ -256,7 +258,7 @@ final /* fuckic static */ class Util extends \StaticClass
                 if ($deep) {
                     $isArray = is_array($data);
                     foreach ($data as $key => $value) {
-                        $value = is_array($value) || is_object($value) ? $make($value) : $value;
+                        $value = is_array($value) || is_object($value) ? $make($value, true) : $value;
                         if ($isArray) {
                             $data[$key] = $value;
                         } else {
@@ -269,7 +271,7 @@ final /* fuckic static */ class Util extends \StaticClass
             return (array) $data;
         };
 
-        return $make($data);
+        return $make($data, $deep);
     }
 
     /**
@@ -284,7 +286,7 @@ final /* fuckic static */ class Util extends \StaticClass
     public static function makeObject(array|object|null $data, bool $deep = true): object
     {
         // Memoize maker function.
-        static $make; $make ??= function ($data) use (&$make, $deep): object {
+        static $make; $make ??= function ($data, $deep) use (&$make): object {
             if ($data) {
                 if ($data instanceof \Traversable) {
                     if ($data instanceof \Generator) {
@@ -294,7 +296,9 @@ final /* fuckic static */ class Util extends \StaticClass
                     } else {
                         // Rewind for keys after iteration.
                         $temp = iterator_to_array($data);
-                        $data->rewind();
+                        if (method_exists($data, 'rewind')) {
+                            $data->rewind();
+                        }
                         $data = $temp;
                         unset($temp);
                     }
@@ -303,7 +307,7 @@ final /* fuckic static */ class Util extends \StaticClass
                 if ($deep) {
                     $isArray = is_array($data);
                     foreach ($data as $key => $value) {
-                        $value = is_array($value) || is_object($value) ? $make($value) : $value;
+                        $value = is_array($value) || is_object($value) ? $make($value, true) : $value;
                         if ($isArray) {
                             $data[$key] = $value;
                         } else {
@@ -316,6 +320,6 @@ final /* fuckic static */ class Util extends \StaticClass
             return (object) $data;
         };
 
-        return $make($data);
+        return $make($data, $deep);
     }
 }
