@@ -623,7 +623,7 @@ final class Arrays extends \StaticClass
      * @param  bool  $pack
      * @param  bool  $drop
      * @return mixed|null
-     * @throws ValueError
+     * @throws ArgumentError
      */
     public static function random(array &$array, int $limit = 1, bool $pack = false, bool $drop = false): mixed
     {
@@ -632,16 +632,14 @@ final class Arrays extends \StaticClass
             return null;
         }
 
-        // Prevent trivial corruption from limit errors, but notice.
+        // Prevent trivial corruption from limit errors.
         if ($limit < 1) {
-            throw new \ValueError(sprintf(
-                'Minimum limit must be 1, %s given', $limit
-            ));
+            throw new \ArgumentError('Minimum limit must be 1, %s given', $limit);
         } elseif ($limit > $count) {
-            throw new \ValueError(sprintf(
+            throw new \ArgumentError(
                 'Maximum limit must not be greater than %s, given limit %s is '.
-                'exceeding count of given array(%s)', $count, $limit, $count
-            ));
+                'exceeding count of given array(%s)', [$count, $limit, $count]
+            );
         }
 
         $ret = [];
@@ -674,12 +672,10 @@ final class Arrays extends \StaticClass
     {
         $assoc ??= self::isAssocArray($array);
 
-        $rr = new \Random\Randomizer();
-
         if (!$assoc) {
-            $array = $rr->shuffleArray($array);
+            $array = (new \Random\Randomizer)->shuffleArray($array);
         } else {
-            $keys = $rr->shuffleArray(array_keys($array));
+            $keys = (new \Random\Randomizer)->shuffleArray(array_keys($array));
 
             $temp = [];
             foreach ($keys as $key) {
@@ -1486,12 +1482,12 @@ final class Arrays extends \StaticClass
      * @param  array         $array
      * @param  int|string ...$keys
      * @return bool
-     * @throws ValueError
+     * @throws ArgumentError
      * @since  4.0, 6.0
      */
     public static function isset(array $array, int|string ...$keys): bool
     {
-        $keys || throw new \ValueError('No key/keys given');
+        $keys || throw new \ArgumentError('No key/keys given');
 
         foreach ($keys as $key) {
             if (!isset($array[$key])) {
@@ -1508,12 +1504,12 @@ final class Arrays extends \StaticClass
      * @param  array         &$array
      * @param  int|string ...$keys
      * @return array
-     * @throws ValueError
+     * @throws ArgumentError
      * @since  4.0, 6.0
      */
     public static function unset(array &$array, int|string ...$keys): array
     {
-        $keys || throw new \ValueError('No key/keys given');
+        $keys || throw new \ArgumentError('No key/keys given');
 
         $list = array_is_list($array);
 
@@ -1532,12 +1528,12 @@ final class Arrays extends \StaticClass
      * @param  array    $array
      * @param  mixed ...$values
      * @return bool
-     * @throws ValueError
+     * @throws ArgumentError
      * @since  5.0, 6.0
      */
     public static function contains(array $array, mixed ...$values): bool
     {
-        $values || throw new \ValueError('No value/values given');
+        $values || throw new \ArgumentError('No value/values given');
 
         foreach ($values as $value) {
             if (array_value_exists($value, $array)) {
@@ -1554,12 +1550,12 @@ final class Arrays extends \StaticClass
      * @param  array         $array
      * @param  int|string ...$keys
      * @return bool
-     * @throws ValueError
+     * @throws ArgumentError
      * @since  5.3, 6.0
      */
     public static function containsKey(array $array, int|string ...$keys): bool
     {
-        $keys || throw new \ValueError('No key/keys given');
+        $keys || throw new \ArgumentError('No key/keys given');
 
         foreach ($keys as $key) {
             if (array_key_exists($key, $array)) {
@@ -1576,12 +1572,12 @@ final class Arrays extends \StaticClass
      * @param  array    &$array
      * @param  mixed ...$values
      * @return array
-     * @throws ValueError
+     * @throws ArgumentError
      * @since  5.0, 6.0
      */
     public static function delete(array &$array, mixed ...$values): array
     {
-        $values || throw new \ValueError('No value/values given');
+        $values || throw new \ArgumentError('No value/values given');
 
         $list = array_is_list($array);
 
@@ -1603,12 +1599,12 @@ final class Arrays extends \StaticClass
      * @param  array         &$array
      * @param  int|string ...$keys
      * @return array
-     * @throws ValueError
+     * @throws ArgumentError
      * @since  5.31, 6.0
      */
     public static function deleteKey(array &$array, int|string ...$keys): array
     {
-        $keys || throw new \ValueError('No key/keys given');
+        $keys || throw new \ArgumentError('No key/keys given');
 
         $list = array_is_list($array);
 
@@ -1627,12 +1623,12 @@ final class Arrays extends \StaticClass
      * @param  array    &$array
      * @param  mixed ...$values
      * @return array
-     * @throws ValueError
+     * @throws ArgumentError
      * @since  4.0, 6.0
      */
     public static function append(array &$array, mixed ...$values): array
     {
-        $values || throw new \ValueError('No value/values given');
+        $values || throw new \ArgumentError('No value/values given');
 
         array_push($array, ...$values);
 
@@ -1645,12 +1641,12 @@ final class Arrays extends \StaticClass
      * @param  array    &$array
      * @param  mixed ...$values
      * @return array
-     * @throws ValueError
+     * @throws ArgumentError
      * @since  4.0, 6.0
      */
     public static function prepend(array &$array, mixed ...$values): array
     {
-        $values || throw new \ValueError('No value/values given');
+        $values || throw new \ArgumentError('No value/values given');
 
         array_unshift($array, ...$values);
 
@@ -1663,15 +1659,15 @@ final class Arrays extends \StaticClass
      * @param  array    $array
      * @param  int|null $length
      * @return array
-     * @throws ValueError
+     * @throws ArgumentError
      */
     public static function list(array $array, int $length = null): array
     {
-        if (!$length) {
+        if ($length === null) {
             return array_values($array);
         }
-        if ($length < 0) {
-            throw new \ValueError('Argument $length must be greater than 0');
+        if ($length <= 0) {
+            throw new \ArgumentError('Argument $length must be greater than 0');
         }
 
         return ($length > count($array))
@@ -1703,18 +1699,18 @@ final class Arrays extends \StaticClass
      * @param  array &$array
      * @param  array $entry
      * @return array
-     * @throws ValueError
+     * @throws ArgumentError
      * @since  5.22, 6.0
      */
     public static function pushEntry(array &$array, array $entry): array
     {
         if (count($entry) !== 2) {
-            throw new \ValueError('Entry must contain key/value pairs');
+            throw new \ArgumentError('Entry must contain key/value pairs');
         }
 
         [$key, $value] = $entry;
 
-        // Drop old one, in case.
+        // Drop old one (in case).
         unset($array[$key]);
 
         $array[$key] = $value;
@@ -1747,13 +1743,13 @@ final class Arrays extends \StaticClass
      * @param  array &$array
      * @param  array $entry
      * @return array
-     * @throws ValueError
+     * @throws ArgumentError
      * @since  5.22, 6.0
      */
     public static function unshiftEntry(array &$array, array $entry): array
     {
         if (count($entry) !== 2) {
-            throw new \ValueError('Entry must contain key/value pairs');
+            throw new \ArgumentError('Entry must contain key/value pairs');
         }
 
         [$key, $value] = $entry;
@@ -1968,7 +1964,9 @@ final class Arrays extends \StaticClass
     }
 
     /**
-     * Make sort function.
+     * Make a sort function.
+     *
+     * @throws ValueError
      */
     private static function makeSortFunction(callable|int|null $func): callable|null
     {

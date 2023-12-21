@@ -118,12 +118,12 @@ class StringBuffer implements Stringable, IteratorAggregate, JsonSerializable, A
      * @param  int    $index
      * @param  string $data
      * @return self
-     * @throws ValueError
+     * @throws ArgumentError
      */
     public function insert(int $index, string $data): self
     {
         if ($index < 0 || $index > $this->getLength()) {
-            throw new ValueError('Argument $index cannot be negative, '.
+            throw new ArgumentError('Argument $index cannot be negative, '.
                 'greater than length ' . $this->getLength());
         }
 
@@ -143,12 +143,12 @@ class StringBuffer implements Stringable, IteratorAggregate, JsonSerializable, A
      * @param  int $start
      * @param  int $end
      * @return self
-     * @throws ValueError
+     * @throws ArgumentError
      */
     public function delete(int $start, int $end = 1): self
     {
         if ($start < 0 || $start > $end || $start > $this->getLength()) {
-            throw new ValueError('Argument $start cannot be negative, '.
+            throw new ArgumentError('Argument $start cannot be negative, '.
                 'greater than $end or length ' . $this->getLength());
         }
 
@@ -164,12 +164,12 @@ class StringBuffer implements Stringable, IteratorAggregate, JsonSerializable, A
      * @param  int    $end
      * @param  string $data
      * @return self
-     * @throws ValueError
+     * @throws ArgumentError
      */
     public function replace(int $start, int $end, string $data): self
     {
         if ($start < 0 || $start > $end || $start > $this->getLength()) {
-            throw new ValueError('Argument $start cannot be negative, '.
+            throw new ArgumentError('Argument $start cannot be negative, '.
                 'greater than $end or length ' . $this->getLength());
         }
 
@@ -253,12 +253,12 @@ class StringBuffer implements Stringable, IteratorAggregate, JsonSerializable, A
      *
      * @param  int $length
      * @return self
-     * @throws ValueError
+     * @throws ArgumentError
      */
     public function setLength(int $length): self
     {
         if ($length < 0) {
-            throw new ValueError('Argument $length cannot be negative');
+            throw new ArgumentError('Argument $length cannot be negative');
         }
 
         if ($length === 0) {

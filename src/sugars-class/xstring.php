@@ -834,13 +834,13 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
      * @param  int         $count
      * @param  bool        $append
      * @return self
-     * @throws ValueError
+     * @throws ArgumentError
      */
-    public function repeat(string $data = null, int $count, bool $append = false): self
+    public function repeat(string|null $data, int $count, bool $append = false): self
     {
         if ($append) {
             if ($data === null) {
-                throw new ValueError('No data given to append');
+                throw new ArgumentError('No data given to append');
             }
 
             $this->data .= str_repeat($data, $count);
