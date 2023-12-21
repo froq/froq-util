@@ -12,7 +12,6 @@ require 'sugars-class/_static.php';
 require 'sugars-class/assert.php';
 require 'sugars-class/factory.php';
 require 'sugars-class/item.php';
-require 'sugars-class/itemlist.php';
 require 'sugars-class/json.php';
 require 'sugars-class/locale.php';
 require 'sugars-class/mapset.php';
