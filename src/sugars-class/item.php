@@ -414,7 +414,10 @@ class ItemList implements Arrayable, Jsonable, Countable, IteratorAggregate, Arr
     public function drop(mixed ...$items): self
     {
         foreach ($items as $item) {
-            $this->offsetUnset($this->index($item));
+            // Clear all indexes with given value.
+            while (null !== ($index = $this->index($item))) {
+                $this->offsetUnset($index);
+            }
         }
 
         return $this;
