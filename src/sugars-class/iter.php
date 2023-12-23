@@ -158,12 +158,13 @@ class Iter implements Arrayable, Listable, Jsonable, Countable, IteratorAggregat
      *
      * @param  callable|null $func
      * @param  bool          $useKeys
+     * @param  bool          $keepKeys
      * @return self
      */
-    public function filter(callable $func = null, bool $useKeys = false): self
+    public function filter(callable $func = null, bool $useKeys = false, bool $keepKeys = true): self
     {
         $this->iter = new ArrayIterator(
-            filter($this->toArray(), $func, $flags, $assoc, $key)
+            filter($this->toArray(), $func, false, $useKeys, $keepKeys)
         );
 
         return $this;
@@ -179,7 +180,7 @@ class Iter implements Arrayable, Listable, Jsonable, Countable, IteratorAggregat
     public function map(callable $func, bool $useKeys = false): self
     {
         $this->iter = new ArrayIterator(
-            map($this->toArray(), $func, use_keys: $useKeys)
+            map($this->toArray(), $func, false, $useKeys)
         );
 
         return $this;
