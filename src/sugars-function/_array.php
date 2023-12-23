@@ -810,6 +810,11 @@ function array_pluck(array &$array, int|string|array $key, mixed $default = null
  */
 function array_value_exists(mixed $value, array $array, bool $strict = true, int|string &$key = null): bool
 {
+    // A piece of speed..
+    if (func_num_args() !== 4) {
+        return in_array($value, $array, $strict);
+    }
+
     $key = ($found = array_search($value, $array, $strict)) !== false ? $found : null;
 
     return ($key !== null);
@@ -820,23 +825,23 @@ function array_value_exists(mixed $value, array $array, bool $strict = true, int
 /**
  * Check whether given key is in given array.
  *
- * @param  int|string $key
  * @param  array      $array
+ * @param  int|string $key
  * @return bool
  */
-function is_array_key(int|string $key, array $array): bool
+function is_array_key(array $array, int|string $key): bool
 {
     return array_key_exists($key, $array);
 }
 
 /**
- * Check whether given value is in given array.
+ * Check whether given value is in given array (with strict search).
  *
- * @param  mixed $value
  * @param  array $array
+ * @param  mixed $value
  * @return bool
  */
-function is_array_value(mixed $value, array $array): bool
+function is_array_value(array $array, mixed $value): bool
 {
     return array_value_exists($value, $array);
 }
