@@ -110,8 +110,8 @@ class Iter implements Arrayable, Listable, Jsonable, Countable, IteratorAggregat
     /**
      * Move to next item.
      *
-     * Note: Method `getNext()` will do this move already, but in case,
-     * this method can be used if manual next call needed.
+     * Note: Method `getNext()` and `getNextEntry()` will do this move already,
+     * but in case, this method can be used where manual next calls are needed.
      *
      * @return void
      */
