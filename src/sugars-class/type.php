@@ -178,10 +178,8 @@ class Type implements Stringable
      */
     public function isResource(string $type = null): bool
     {
-        if (!$type) {
-            return is_resource($this->var);
-        }
-        return is_resource($this->var) && get_resource_type($this->var) === $type;
+        return ($type === null) ? is_resource($this->var) :
+            is_resource($this->var) && get_resource_type($this->var) === $type;
     }
 
     /**
@@ -293,10 +291,7 @@ class Type implements Stringable
      */
     public function isClassOf(string ...$classes): bool
     {
-        if (!is_object($this->var)) {
-            return false;
-        }
-        return is_class_of($this->var, ...$classes);
+        return is_object($this->var) && is_class_of($this->var, ...$classes);
     }
 
     /**
@@ -307,10 +302,7 @@ class Type implements Stringable
      */
     public function isSubclassOf(string $class): bool
     {
-        if (!is_object($this->var)) {
-            return false;
-        }
-        return is_subclass_of($this->var, $class);
+        return is_object($this->var) && is_subclass_of($this->var, $class);
     }
 
     /**
