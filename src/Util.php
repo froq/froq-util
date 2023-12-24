@@ -239,7 +239,9 @@ final /* fuckic static */ class Util extends \StaticClass
         // Memoize maker function.
         static $make; $make ??= function ($data, $deep) use (&$make): array {
             if ($data) {
-                if ($data instanceof \Traversable) {
+                if ($data instanceof \froq\common\interface\Arrayable) {
+                    $data = $data->toArray();
+                } elseif ($data instanceof \Traversable) {
                     if ($data instanceof \Generator) {
                         // Prevent "Cannot rewind a generator that was already run" error.
                         $data = (new \froq\collection\iterator\GeneratorIterator($data))
@@ -288,7 +290,9 @@ final /* fuckic static */ class Util extends \StaticClass
         // Memoize maker function.
         static $make; $make ??= function ($data, $deep) use (&$make): object {
             if ($data) {
-                if ($data instanceof \Traversable) {
+                if ($data instanceof \froq\common\interface\Arrayable) {
+                    $data = $data->toArray();
+                } elseif ($data instanceof \Traversable) {
                     if ($data instanceof \Generator) {
                         // Prevent "Cannot rewind a generator that was already run" error.
                         $data = (new \froq\collection\iterator\GeneratorIterator($data))
