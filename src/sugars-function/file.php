@@ -215,12 +215,12 @@ function file_read(string $file, int $offset = 0, int $length = null): string|nu
 }
 
 /**
- * Write a file.
+ * Write a file, with append option.
  *
  * @alias file_put_contents()
  * @since 4.0
  */
-function file_write(string $file, string $data, int $flags = 0): int|null
+function file_write(string $file, string $data, int $flags = 0, bool $append = false): int|null
 {
     if (!$file = get_real_path($file)) {
         trigger_error(format('%s(): No file given', __FUNCTION__));
@@ -232,13 +232,16 @@ function file_write(string $file, string $data, int $flags = 0): int|null
         return null;
     }
 
-    $ret = file_put_contents($file, $data, flags: $flags);
+    // Don't truncate file contents.
+    $append && $flags |= FILE_APPEND;
+
+    $ret = file_put_contents($file, $data, $flags);
 
     return ($ret !== false) ? $ret : null;
 }
 
 /**
- * Set a file contents, without no append.
+ * Set a file contents, without append option.
  *
  * @param  string $file
  * @param  string $contents
@@ -248,7 +251,7 @@ function file_write(string $file, string $data, int $flags = 0): int|null
  */
 function file_set_contents(string $file, string $contents, int $flags = 0): int|false
 {
-    // Setting entire file contents.
+    // Drop append option, truncate.
     $flags && $flags &= ~FILE_APPEND;
 
     return file_write($file, $contents, $flags) ?? false;
