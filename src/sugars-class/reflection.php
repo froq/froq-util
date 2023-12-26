@@ -22,6 +22,7 @@
 // class XReflectionFunction extends froq\reflection\ReflectionFunction {}
 // class XReflectionParameter extends froq\reflection\ReflectionParameter {}
 // class XReflectionType extends froq\reflection\ReflectionType {}
+// class XReflectionAttribute extends froq\reflection\ReflectionAttribute {}
 class_alias(froq\reflection\Reflection::class, XReflection::class);
 class_alias(froq\reflection\ReflectionObject::class, XReflectionObject::class);
 class_alias(froq\reflection\ReflectionClass::class, XReflectionClass::class);
@@ -37,9 +38,19 @@ class_alias(froq\reflection\ReflectionAttribute::class, XReflectionAttribute::cl
 // Additions.
 // class ReflectionTrait extends froq\reflection\ReflectionTrait {}
 // class ReflectionInterface extends froq\reflection\ReflectionInterface {}
-// class ReflectionNamespace extends froq\reflection\ReflectionNamespace {}
 // class ReflectionCallable extends froq\reflection\ReflectionCallable {}
+// class ReflectionNamespace extends froq\reflection\ReflectionNamespace {}
 class_alias(froq\reflection\ReflectionTrait::class, ReflectionTrait::class);
 class_alias(froq\reflection\ReflectionInterface::class, ReflectionInterface::class);
-class_alias(froq\reflection\ReflectionNamespace::class, ReflectionNamespace::class);
 class_alias(froq\reflection\ReflectionCallable::class, ReflectionCallable::class);
+class_alias(froq\reflection\ReflectionNamespace::class, ReflectionNamespace::class);
+
+// Additions aliases.
+// class XReflectionTrait extends froq\reflection\ReflectionTrait {}
+// class XReflectionInterface extends froq\reflection\ReflectionInterface {}
+// class XReflectionCallable extends froq\reflection\ReflectionCallable {}
+// class XReflectionNamespace extends froq\reflection\ReflectionNamespace {}
+class_alias(froq\reflection\ReflectionTrait::class, XReflectionTrait::class);
+class_alias(froq\reflection\ReflectionInterface::class, XReflectionInterface::class);
+class_alias(froq\reflection\ReflectionCallable::class, XReflectionCallable::class);
+class_alias(froq\reflection\ReflectionNamespace::class, XReflectionNamespace::class);
