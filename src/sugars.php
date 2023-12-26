@@ -1332,7 +1332,7 @@ function last(array $array): mixed
 function sorted(array $array, callable|int $func = null, int $flags = 0, bool $assoc = null, bool $key = false): array
 {
     return $key // Key sort.
-         ? Arrays::sortKey($array, $func, $flags);
+         ? Arrays::sortKey($array, $func, $flags)
          : Arrays::sort($array, $func, $flags, $assoc);
 }
 
