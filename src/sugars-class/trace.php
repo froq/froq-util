@@ -204,11 +204,11 @@ class TraceStack implements Stringable, Countable, IteratorAggregate, ArrayAcces
  */
 class Trace implements ArrayAccess
 {
-    /** Trace data. */
-    public readonly array $data;
-
     /** Trace index. */
     public readonly int|null $index;
+
+    /** Trace data. */
+    public readonly array $data;
 
     /**
      * Constructor.
@@ -224,8 +224,8 @@ class Trace implements ArrayAccess
             $data['methodType'] = ($data['type'] === '::') ? 'static' : 'non-static';
         }
 
-        $this->data  = $data;
         $this->index = $index ?? $data['#'] ?? null;
+        $this->data  = ['#' => $this->index] + $data;
     }
 
     /**
