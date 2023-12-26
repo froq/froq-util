@@ -1146,17 +1146,20 @@ function get_trace(int $options = 0, int $limit = 0, int $index = null, string $
 /**
  * Create a DateTime instance with/without when & where options.
  *
- * @param  int|float|string|null $when
+ * @param  string|int|float|null $when
  * @param  string|null           $where
  * @return DateTime
  * @since  4.25
  */
-function udate(int|float|string $when = null, string $where = null): DateTime
+function udate(string|int|float $when = null, string $where = null): DateTime
 {
     $when  ??= '';
     $where ??= System::defaultTimezone();
 
     switch (get_type($when)) {
+        case 'string': // Eg: 2012-09-12 23:42:53
+            $date = new DateTime($when, new DateTimeZone($where));
+            break;
         case 'int': // Eg: 1603339284
             $date = new DateTime('', new DateTimeZone($where));
             $date->setTimestamp($when);
@@ -1164,9 +1167,6 @@ function udate(int|float|string $when = null, string $where = null): DateTime
         case 'float': // Eg: 1603339284.221243
             $date = DateTime::createFromFormat('U.u', sprintf('%.6F', $when));
             $date->setTimezone(new DateTimeZone($where));
-            break;
-        case 'string': // Eg: 2012-09-12 23:42:53
-            $date = new DateTime($when, new DateTimeZone($where));
             break;
     }
 
@@ -1196,7 +1196,7 @@ function utime(bool $string = false): float|string
  */
 function ustime(bool $string = false): int|string
 {
-    $time = (int) (microtime(true) * 1000);
+    $time = intval(microtime(true) * 1000);
 
     return !$string ? $time : (string) $time;
 }
@@ -1212,23 +1212,23 @@ function ustime(bool $string = false): int|string
 function strtoitime(string $format, string|int $time = null): int
 {
     // Eg: "1 day" or "1D" (instead "60*60*24" or "86400").
-    if (preg_match_all('~([+-]?\d+)([smhDMY])~', $format, $match)) {
-        $format_list = null;
-        [, $numbers, $formats] = $match;
+    if (preg_match_all('~([+-]?\d+)([YMDhms])~', $format, $match)) {
+        [, $nums, $chars] = $match;
 
-        foreach ($formats as $i => $format) {
-            $format_list[] = match ($format) {
-                's' => $numbers[$i] . ' second',
-                'm' => $numbers[$i] . ' minute',
-                'h' => $numbers[$i] . ' hour',
-                'D' => $numbers[$i] . ' day',
-                'M' => $numbers[$i] . ' month',
-                'Y' => $numbers[$i] . ' year',
+        $formats = null;
+
+        foreach ($chars as $i => $char) {
+            $formats[] = match ($char) {
+                'Y' => $nums[$i] . ' year',
+                'M' => $nums[$i] . ' month',
+                'D' => $nums[$i] . ' day',
+                'h' => $nums[$i] . ' hour',
+                'm' => $nums[$i] . ' minute',
+                's' => $nums[$i] . ' second',
             };
         }
 
-        // Update format.
-        $format_list && $format = join(' ', $format_list);
+        $formats && $format = join(' ', $formats);
     }
 
     $time ??= time();
@@ -1286,9 +1286,11 @@ function getlocale(int $category = LC_ALL, string|array $default = null, bool $a
  */
 function value(array $array, int|string $key = null, mixed $default = null): mixed
 {
+    // When a key wanted.
     if (func_num_args() > 1) {
         return $array[$key] ?? $default;
     }
+
     return $array ? current($array) : null; // No falses.
 }
 
@@ -1317,10 +1319,10 @@ function last(array $array): mixed
 }
 
 /**
- * Sort an array without modifying input array.
+ * Sort an array values without modifying input array, or keys only.
  *
  * @param  array             $array
- * @param  callable|int|null $func
+ * @param  callable|int|null $func  Valid ints: 1 or -1.
  * @param  int               $flags
  * @param  bool|null         $assoc
  * @param  bool              $key
@@ -1329,10 +1331,9 @@ function last(array $array): mixed
  */
 function sorted(array $array, callable|int $func = null, int $flags = 0, bool $assoc = null, bool $key = false): array
 {
-    if ($key) {
-        return Arrays::sortKey($array, $func, $flags);
-    }
-    return Arrays::sort($array, $func, $flags, $assoc);
+    return $key // Key sort.
+         ? Arrays::sortKey($array, $func, $flags);
+         : Arrays::sort($array, $func, $flags, $assoc);
 }
 
 /**
