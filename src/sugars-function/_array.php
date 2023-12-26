@@ -769,12 +769,12 @@ function array_select(array $array, int|string|array $key, mixed $default = null
 }
 
 /**
- * Pluck one or many items from given array.
+ * Pluck one or many items from given array, modifying array.
  *
- * @param  array      &$array
- * @param  array       $key
- * @param  mixed|null  $default
- * @param  bool        $combine
+ * @param  array            &$array
+ * @param  int|string|array $key
+ * @param  mixed|null       $default
+ * @param  bool             $combine
  * @since  4.13, 6.0
  * @return mixed
  */
@@ -786,13 +786,13 @@ function array_pluck(array &$array, int|string|array $key, mixed $default = null
     $ret && Arrays::unset($array, ...array_keys($ret));
 
     if ($ret === null) {
-        return $ret;
+        return null;
     }
 
     return (
         is_array($key)
             ? ($combine ? $ret : array_values($ret))
-            : ($combine ? $ret : array_first(array_values($ret)))
+            : ($combine ? $ret : array_first($ret))
     );
 }
 
@@ -810,11 +810,6 @@ function array_pluck(array &$array, int|string|array $key, mixed $default = null
  */
 function array_value_exists(mixed $value, array $array, bool $strict = true, int|string &$key = null): bool
 {
-    // A piece of speed..
-    if (func_num_args() !== 4) {
-        return in_array($value, $array, $strict);
-    }
-
     $key = ($found = array_search($value, $array, $strict)) !== false ? $found : null;
 
     return ($key !== null);
