@@ -775,8 +775,8 @@ function array_select(array $array, int|string|array $key, mixed $default = null
  * @param  int|string|array $key
  * @param  mixed|null       $default
  * @param  bool             $combine
- * @since  4.13, 6.0
  * @return mixed
+ * @since  4.13, 6.0
  */
 function array_pluck(array &$array, int|string|array $key, mixed $default = null, bool $combine = false): mixed
 {
