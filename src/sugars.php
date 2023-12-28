@@ -1638,7 +1638,7 @@ function format_number(int|float|string $input, int|true $decimals = 0, string $
 function slug(string $input, string $preserve = '', string $replace = '-'): string
 {
     static $map;
-    $map ??= require 'statics/slug-map.php';
+    $map ??= require __DIR__ . '/etc/slug-map.php';
 
     $preserve && $preserve = preg_quote($preserve, '~');
     $replace  || $replace  = '-';
