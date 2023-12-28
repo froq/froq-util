@@ -437,7 +437,6 @@ final class Objects extends \StaticClass
      * @param  object|string $target
      * @param  string        $name
      * @return bool|null
-     * @since  5.0
      */
     public static function hasMethod(object|string $target, string $name): bool|null
     {
@@ -564,7 +563,6 @@ final class Objects extends \StaticClass
      * @param  object|string $target
      * @param  bool          $baseOnly
      * @return string|null
-     * @since  6.0
      */
     public static function getParent(object|string $target, bool $baseOnly = false): string|null
     {
