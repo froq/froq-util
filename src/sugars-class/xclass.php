@@ -387,7 +387,7 @@ class XClass implements Stringable
      * Reflect & return reflection, or null (error).
      *
      * @param  bool $extended
-     * @return ReflectionClass|ReflectionObject|XReflectionClass|XReflectionObject|null
+     * @return ReflectionClass|XReflectionClass|null
      */
     public function reflect(bool $extended = false)
         : ReflectionClass|XReflectionClass|null

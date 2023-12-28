@@ -153,8 +153,8 @@ class XObject extends XClass
         : ReflectionClassConstant|XReflectionClassConstant|null
     {
         try {
-            return !$extended ? new ReflectionClassConstant(this->object, $name)
-                : new XReflectionClassConstant(this->object, $name);
+            return !$extended ? new ReflectionClassConstant($this->object, $name)
+                : new XReflectionClassConstant($this->object, $name);
         } catch (ReflectionException) {
             return null;
         }
