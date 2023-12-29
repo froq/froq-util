@@ -1632,10 +1632,11 @@ function format_number(int|float|string $input, int|true $decimals = 0, string $
  * @param  string $input
  * @param  string $preserve
  * @param  string $replace
+ * @param  bool   $lower
  * @return string
  * @since  5.0
  */
-function slug(string $input, string $preserve = '', string $replace = '-'): string
+function slug(string $input, string $preserve = '', string $replace = '-', bool $lower = true): string
 {
     static $map;
     $map ??= require __DIR__ . '/etc/slug-map.php';
@@ -1646,7 +1647,9 @@ function slug(string $input, string $preserve = '', string $replace = '-'): stri
     $ret = preg_replace(['~[^a-z0-9'. $preserve . $replace .']+~i', '~['. $replace .']+~'],
         $replace, strtr($input, $map));
 
-    return strtolower(trim($ret, $replace));
+    $ret = trim($ret, $replace);
+
+    return $lower ? strtolower($ret) : $ret;
 }
 
 /**
