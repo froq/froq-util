@@ -180,7 +180,7 @@ function str_has_suffix(string $string, string|array $search, bool $icase = fals
  */
 function str_prefix(string $string, string $prefix): string
 {
-    return !str_has_prefix($string, $prefix) ? $prefix . $string : $string;
+    return !str_starts_with($string, $prefix) ? $prefix . $string : $string;
 }
 
 /**
@@ -193,7 +193,7 @@ function str_prefix(string $string, string $prefix): string
  */
 function str_suffix(string $string, string $suffix): string
 {
-    return !str_has_suffix($string, $suffix) ? $string . $suffix : $string;
+    return !str_ends_with($string, $suffix) ? $string . $suffix : $string;
 }
 
 /**
