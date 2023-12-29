@@ -187,7 +187,7 @@ function str_prefix(string $string, string $prefix): string
  * Ensure string ends with given suffix, append if not.
  *
  * @param  string $string
- * @param  string $prefix
+ * @param  string $suffix
  * @return string
  * @since  7.11
  */
