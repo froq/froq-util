@@ -5,18 +5,6 @@
  */
 
 /**
- * Default dir mode.
- * @since 7.0
- */
-const DIR_MODE = 0755;
-
-/**
- * Default file mode.
- * @since 7.0
- */
-const FILE_MODE = 0644;
-
-/**
  * Get system temporary directory.
  *
  * @return string
@@ -35,7 +23,7 @@ function tmp(): string
  * @return string|null
  * @since  5.0
  */
-function tmpdir(string $prefix = '', int $mode = DIR_MODE): string|null
+function tmpdir(string $prefix = '', int $mode = 0755): string|null
 {
     // Prefix may become subdir here.
     $dir = tmp() . DIRECTORY_SEPARATOR . $prefix . suid();
@@ -51,7 +39,7 @@ function tmpdir(string $prefix = '', int $mode = DIR_MODE): string|null
  * @return string|null
  * @since  5.0
  */
-function tmpnam(string $prefix = '', int $mode = FILE_MODE): string|null
+function tmpnam(string $prefix = '', int $mode = 0644): string|null
 {
     // Prefix may become subdir here.
     $nam = tmp() . DIRECTORY_SEPARATOR . $prefix . suid();
@@ -94,7 +82,7 @@ function is_tmpnam(string $nam): bool
  * @return bool
  * @since  4.0
  */
-function mkfile(string $file, int $mode = FILE_MODE): bool
+function mkfile(string $file, int $mode = 0644): bool
 {
     if (!$file = get_real_path($file)) {
         trigger_error(format('%s(): No file given', __FUNCTION__));
@@ -174,7 +162,7 @@ function rmfile(string $file): bool
  * @return string|null
  * @since  4.0
  */
-function file_create(string $file, int $mode = FILE_MODE, bool $temp = false): string|null
+function file_create(string $file, int $mode = 0644, bool $temp = false): string|null
 {
     return $temp ? tmpnam($file, $mode) // file=prefix.
                  : (mkfile($file, $mode) ? $file : null);
@@ -447,7 +435,7 @@ function filestat(...$args) { return file_stat(...$args); }
  * @return string|null
  * @since  6.0
  */
-function dirmake(string $dir, int $mode = DIR_MODE, bool $temp = false, bool $recursive = true, bool $check = true): string|null
+function dirmake(string $dir, int $mode = 0755, bool $temp = false, bool $recursive = true, bool $check = true): string|null
 {
     if (!$dir = get_real_path($odir = $dir)) {
         trigger_error(format('%s(): No directory given', __FUNCTION__));
@@ -472,7 +460,7 @@ function dirmake(string $dir, int $mode = DIR_MODE, bool $temp = false, bool $re
  * @return string|null
  * @since  6.0
  */
-function filemake(string $file, int $mode = FILE_MODE, bool $temp = false, bool $check = true): string|null
+function filemake(string $file, int $mode = 0644, bool $temp = false, bool $check = true): string|null
 {
     if (!$file = get_real_path($ofile = $file)) {
         trigger_error(format('%s(): No file given', __FUNCTION__));
