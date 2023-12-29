@@ -255,7 +255,7 @@ class Iter implements Arrayable, Listable, Jsonable, Countable, IteratorAggregat
     /**
      * @inheritDoc IteratorAggregate
      */
-    public function getIterator(): ArrayIterator
+    public function getIterator(): Iterator
     {
         return clone $this->iter;
     }
