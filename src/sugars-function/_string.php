@@ -171,6 +171,32 @@ function str_has_suffix(string $string, string|array $search, bool $icase = fals
 }
 
 /**
+ * Ensure string starts with given prefix, prepend if not.
+ *
+ * @param  string $string
+ * @param  string $prefix
+ * @return string
+ * @since  7.11
+ */
+function str_prefix(string $string, string $prefix): string
+{
+    return !str_has_prefix($string, $prefix) ? $prefix . $string : $string;
+}
+
+/**
+ * Ensure string ends with given suffix, append if not.
+ *
+ * @param  string $string
+ * @param  string $prefix
+ * @return string
+ * @since  7.11
+ */
+function str_suffix(string $string, string $suffix): string
+{
+    return !str_has_suffix($string, $suffix) ? $string . $suffix : $string;
+}
+
+/**
  * Randomize given string, return a subpart when length given.
  *
  * @param  string   $string
@@ -182,7 +208,7 @@ function str_rand(string $string, int $length = null): string
 {
     $tmp = array_shuffle(mb_str_split($string), false);
 
-    if ($length) {
+    if ($length !== null) {
         $tmp = array_slice($tmp, 0, abs($length));
     }
 
@@ -506,6 +532,18 @@ function mb_strrev(string $string, string $encoding = null): string
 function mb_str_pad(string $string, int $pad_length, string $pad_string = ' ', int $pad_type = STR_PAD_RIGHT, string $encoding = null): string
 {
     return Strings::pad($string, $pad_length, $pad_string, $pad_type, $encoding);
+}
+
+/**
+ * Shuffle given string in multi-byte style.
+ *
+ * @param  string $string
+ * @return string
+ * @since  7.11
+ */
+function mb_str_shuffle(string $string): string
+{
+    return str_rand($string);
 }
 
 /**
