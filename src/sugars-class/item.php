@@ -4,7 +4,7 @@
  * Apache License 2.0 · http://github.com/froq/froq-util
  */
 use froq\common\interface\{Arrayable, Jsonable};
-use froq\collection\trait\{CountTrait, EmptyTrait};
+use froq\collection\trait\{CountTrait, EmptyTrait, KeysValuesTrait, FirstLastTrait, ToArrayTrait, ToJsonTrait};
 
 /**
  * A simple item class with a key/value pair data container & access stuff.
@@ -16,9 +16,9 @@ use froq\collection\trait\{CountTrait, EmptyTrait};
  */
 class Item implements Arrayable, Jsonable, Countable, IteratorAggregate, ArrayAccess
 {
-    use CountTrait, EmptyTrait;
+    use CountTrait, EmptyTrait, KeysValuesTrait, FirstLastTrait, ToArrayTrait, ToJsonTrait;
 
-    /** Data. */
+    /** Data map. */
     private array $data = [];
 
     /**
@@ -132,26 +132,6 @@ class Item implements Arrayable, Jsonable, Countable, IteratorAggregate, ArrayAc
     public function key(mixed $item, bool $strict = true, bool $last = false): int|string|null
     {
         return array_search_key($this->data, $item, $strict, $last);
-    }
-
-    /**
-     * Get keys.
-     *
-     * @return array
-     */
-    public function keys(): array
-    {
-        return array_keys($this->data);
-    }
-
-    /**
-     * Get values.
-     *
-     * @return array
-     */
-    public function values(): array
-    {
-        return array_values($this->data);
     }
 
     /**
@@ -275,22 +255,6 @@ class Item implements Arrayable, Jsonable, Countable, IteratorAggregate, ArrayAc
     }
 
     /**
-     * @inheritDoc froq\common\interface\Arrayable
-     */
-    public function toArray(): array
-    {
-        return $this->data;
-    }
-
-    /**
-     * @inheritDoc froq\common\interface\Jsonable
-     */
-    public function toJson(int $flags = 0): string
-    {
-        return (string) json_encode($this->data, $flags);
-    }
-
-    /**
      * @inheritDoc IteratorAggregate
      */
     public function getIterator(): ArrayIterator
@@ -341,7 +305,7 @@ class Item implements Arrayable, Jsonable, Countable, IteratorAggregate, ArrayAc
  */
 class ItemList implements Arrayable, Jsonable, Countable, IteratorAggregate, ArrayAccess
 {
-    use CountTrait, EmptyTrait;
+    use CountTrait, EmptyTrait, KeysValuesTrait, FirstLastTrait, ToArrayTrait, ToJsonTrait;
 
     /** Items list. */
     private array $data = [];
@@ -574,22 +538,6 @@ class ItemList implements Arrayable, Jsonable, Countable, IteratorAggregate, Arr
     public function select(int|array $key, mixed $default = null, bool $combine = false): mixed
     {
         return array_select($this->data, $key, $default, $combine);
-    }
-
-    /**
-     * @inheritDoc froq\common\interface\Arrayable
-     */
-    public function toArray(): array
-    {
-        return $this->data;
-    }
-
-    /**
-     * @inheritDoc froq\common\interface\Jsonable
-     */
-    public function toJson(int $flags = 0): string
-    {
-        return (string) json_encode($this->data, $flags);
     }
 
     /**
