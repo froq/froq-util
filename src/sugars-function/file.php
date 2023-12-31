@@ -325,11 +325,12 @@ function file_mime(string $file): string|null
  * Get a file (file, directory or link) stat.
  *
  * @param  string $file
+ * @param  bool   $clear
  * @return array|null
  * @since  7.0
  * @link   https://en.wikipedia.org/wiki/Stat_(system_call)
  */
-function file_stat(string $file): array|null
+function file_stat(string $file, bool $clear = true): array|null
 {
     if (!$file = get_real_path($ofile = $file, check: true, real: false)) {
         trigger_error(format('%s(%s): Failed to open stat: No such file or directory',
@@ -337,7 +338,8 @@ function file_stat(string $file): array|null
         return null;
     }
 
-    clearstatcache(true, $file);
+    // For fresh results.
+    $clear && clearstatcache(true, $file);
 
     $ret = is_link($file) ? lstat($file) : stat($file);
 

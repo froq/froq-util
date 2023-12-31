@@ -942,6 +942,7 @@ function get_real_path(string $path, string|true $check = null, bool $real = tru
         $c === true ? file_exists($p) : ($c === 'dir' ? is_dir($p) : is_file($p))
     );
 
+    // Use realpath(), but return result if no check.
     if ($real && ($ret = realpath($path))) {
         if ($check && !$check_path($check, $ret)) {
             return null;
