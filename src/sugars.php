@@ -272,7 +272,7 @@ function split(string $separator, string $input, int $limit = null, int $flags =
         $ret = array_pad($ret, $limit, null);
     }
 
-    // Fill error if requested.
+    // Fill error if wanted.
     if (func_num_args() === 5) {
         $message = preg_error_message($code, 'preg_split');
         $message && $error = new RegExpError($message, code: $code);
@@ -954,9 +954,14 @@ function get_real_path(string $path, string|true $check = null, bool $real = tru
     $sep = DIRECTORY_SEPARATOR;
     $win = DIRECTORY_SEPARATOR === '\\';
 
-    // Make path "foo" => "./foo" so prevent invalid returns.
+    // Alter path "foo" => "./foo" to prevent invalid returns.
     if (!str_contains($path, $sep) || ($win && substr($path, 1, 2) !== ':\\')) {
         $path = '.' . $sep . $path;
+    }
+
+    // Fix "/." => "/" + cwd() returns.
+    if ($path[0] === $sep) {
+        $ret .= $sep;
     }
 
     foreach (split($sep, $path) as $i => $cur) {
@@ -968,6 +973,7 @@ function get_real_path(string $path, string|true $check = null, bool $real = tru
             }
             // Current / parent path.
             elseif ($cur === '.' || $cur === '..') {
+                // Set once.
                 if ($ret === '') {
                     // @cancel
                     // $file = getcwd(); // Fallback.
@@ -980,14 +986,16 @@ function get_real_path(string $path, string|true $check = null, bool $real = tru
                     //     $file = $trace['file'];
                     // }
 
+                    // Eg: "/var/www" + "/" + "a.php"
                     $tmp = getcwd() . $sep . basename($path);
-                    $ret = ($cur === '.') ? dirname($tmp) : dirname(dirname($tmp));
+                    $ret = dirname($tmp, levels: strlen($cur));
+                    unset($tmp);
                 }
                 continue;
             }
         }
 
-        if ($cur === '' || $cur === '.') {
+        if ($cur === '.') {
             continue; // Current.
         } elseif ($cur === '..') {
             $ret = dirname($ret); // Parent.
