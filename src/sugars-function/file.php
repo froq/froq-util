@@ -266,8 +266,8 @@ function file_path(string $path, ...$args)
  */
 function file_name(string $file, bool $with_ext = false): string|null
 {
-    // A directory is not a file.
-    if (str_ends_with($file, DIRECTORY_SEPARATOR)) {
+    // An empty input & a directory is not a file.
+    if (str_empty($file) || str_ends_with($file, DIRECTORY_SEPARATOR)) {
         return null;
     }
 
@@ -295,6 +295,14 @@ function file_name(string $file, bool $with_ext = false): string|null
  */
 function file_mime(string $file): string|null
 {
+    if (str_empty($file)) {
+        return null;
+    }
+
+    if (is_dir($file)) {
+        return 'directory';
+    }
+
     // Utilize file module.
     if (class_exists('froq\file\mime\Mime')) {
         return froq\file\mime\Mime::getType($file);
@@ -399,15 +407,20 @@ function file_stat(string $file, bool $clear = true, bool $check = true): array|
  */
 function file_extension(string $file, bool $with_dot = false, bool $lower = true): string|null
 {
-    $info = pathinfo($file);
-
-    // Function pathinfo() returns ".foo" for example "/some/path/.foo",
-    // and if $with_dot false then this function return ".", no baybe!
-    if (empty($info['filename']) || !isset($info['extension'])) {
+    // An empty input & a directory is not a file.
+    if (str_empty($file) || str_ends_with($file, DIRECTORY_SEPARATOR) || !str_contains($file, '.')) {
         return null;
     }
 
-    $ret = (string) strrchr($info['basename'], '.');
+    $info = array_filter(pathinfo($file), 'strlen');
+
+    // Function pathinfo() returns ".foo" for example "/some/path/.foo",
+    // and if $with_dot false then this function return ".", no baybe!
+    if (!isset($info['filename']) || !isset($info['extension'])) {
+        return null;
+    }
+
+    $ret = strrchr($info['basename'], '.');
 
     if ($ret !== '') {
         $lower && $ret = strtolower($ret);
