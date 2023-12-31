@@ -325,14 +325,15 @@ function file_mime(string $file): string|null
  * Get a file (file, directory or link) stat.
  *
  * @param  string $file
- * @param  bool   $clear
+ * @param  bool   $clear When needed to clear a file stat cache.
+ * @param  bool   $check When resolved files no need to be checked.
  * @return array|null
  * @since  7.0
  * @link   https://en.wikipedia.org/wiki/Stat_(system_call)
  */
-function file_stat(string $file, bool $clear = true): array|null
+function file_stat(string $file, bool $clear = true, bool $check = true): array|null
 {
-    if (!$file = get_real_path($ofile = $file, check: true, real: false)) {
+    if ($check && !$file = get_real_path($ofile = $file, check: true, real: false)) {
         trigger_error(format('%s(%s): Failed to open stat: No such file or directory',
             __FUNCTION__, $ofile));
         return null;
