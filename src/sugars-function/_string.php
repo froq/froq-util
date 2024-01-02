@@ -106,6 +106,7 @@ function stracut(string $string, string $search, int $length = null, bool $icase
  */
 function str_has(string $string, string|array $search, bool $icase = false): bool
 {
+    // Multi search.
     if (is_array($search)) {
         foreach ($search as $search) {
             if (str_has($string, (string) $search, $icase)) {
@@ -131,6 +132,7 @@ function str_has(string $string, string|array $search, bool $icase = false): boo
  */
 function str_has_prefix(string $string, string|array $search, bool $icase = false): bool
 {
+    // Multi search.
     if (is_array($search)) {
         foreach ($search as $search) {
             if (str_has_prefix($string, (string) $search, $icase)) {
@@ -156,6 +158,7 @@ function str_has_prefix(string $string, string|array $search, bool $icase = fals
  */
 function str_has_suffix(string $string, string|array $search, bool $icase = false): bool
 {
+    // Multi search.
     if (is_array($search)) {
         foreach ($search as $search) {
             if (str_has_suffix($string, (string) $search, $icase)) {
@@ -180,7 +183,7 @@ function str_has_suffix(string $string, string|array $search, bool $icase = fals
  */
 function str_prefix(string $string, string $prefix): string
 {
-    return !str_starts_with($string, $prefix) ? $prefix . $string : $string;
+    return str_starts_with($string, $prefix) ? $string : $prefix . $string;
 }
 
 /**
@@ -193,7 +196,7 @@ function str_prefix(string $string, string $prefix): string
  */
 function str_suffix(string $string, string $suffix): string
 {
-    return !str_ends_with($string, $suffix) ? $string . $suffix : $string;
+    return str_ends_with($string, $suffix) ? $string : $string . $suffix;
 }
 
 /**
@@ -203,16 +206,15 @@ function str_suffix(string $string, string $suffix): string
  * @param  int|null $length
  * @return string
  * @since  4.9
+ * @throws ArgumentError When length is less than 1.
  */
 function str_rand(string $string, int $length = null): string
 {
-    $tmp = array_shuffle(mb_str_split($string), false);
-
-    if ($length !== null) {
-        $tmp = array_slice($tmp, 0, abs($length));
+    if ($length !== null && $length < 1) {
+        throw new ArgumentError('Invalid length %s [min=1]', $length);
     }
 
-    return join($tmp);
+    return join(array_slice(array_shuffle(mb_str_split($string)), 0, $length));
 }
 
 /**
@@ -225,10 +227,15 @@ function str_rand(string $string, int $length = null): string
  * @param  bool   $chop
  * @return string|array
  * @since  5.31
+ * @throws ArgumentError When length is less than 1.
  */
 function str_chunk(string $string, int $length = 76, string $separator = "\r\n", bool $join = true, bool $chop = false): string|array
 {
-    $ret = array_chunk(mb_str_split($string), abs($length));
+    if ($length < 1) {
+        throw new ArgumentError('Invalid length %s [min=1]', $length);
+    }
+
+    $ret = array_chunk(mb_str_split($string), $length);
 
     if ($join) {
         $ret = array_reduce($ret, fn($s, $ss) => $s .= join($ss) . $separator);
