@@ -203,7 +203,7 @@ function concat(array|string $input, mixed ...$inputs): array|string
 function slice(array|string $input, int $start, int $end = null, bool $keep_keys = false): array|string
 {
     return is_array($input) ? array_slice($input, $start, $end, $keep_keys)
-         : mb_substr($input, $start, $end);
+         : str_slice($input, [$start, $end]);
 }
 
 /**

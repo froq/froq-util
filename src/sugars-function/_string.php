@@ -265,57 +265,51 @@ function str_concat(string $string, string|Stringable ...$strings): string
  * Slice a string with multiple functionalities, before/after or simply do substring work, like `strstr()`
  * but dropping search character from return.
  *
- * Example:
+ * Examples:
  * ```
- * str_slice('foo', ['o', true])  => 'f'
- * str_slice('foo', ['o', false]) => 'o'
- *
- * str_slice('jon@doo.com', '@', 'before' or true)          => jon
- * str_slice('jon@doo.com', '@', 'before' or true, 1)       => on
- * str_slice('jon@doo.com', '@', 'before' or true, [1, -1]) => o
+ * str_slice('Lorem', [0, 2])              => 'Lo'
+ * str_slice('Lorem', range: [0, 2])       => 'Lo'
+ * str_slice('Lorem', 'o', true)           => 'L'
+ * str_slice('Lorem', 'o', false)          => 'rem'
+ * str_slice('Lorem', 'o', true, [1, -1])  => 'ore'
+ * str_slice('Lorem', 'o', false, [1, -1]) => 'ore'
  * ```
  *
  * @param  string                $string
- * @param  string|int|array|null $search_or_start Search string or start offset.
- * @param  string|bool|null      $before_or_after Before/true, after/false (default=after, works if $search_or_start given).
- * @param  int|array|null        $length          Start offset or start-end range.
+ * @param  string|array|null     $search_or_range Search string or start-end range.
+ * @param  string|bool|null      $before_or_after Works if $search_or_range given (before|true, after|false, default=after).
+ * @param  int|array<int>|null   $range           Start-end range or just start offset.
  * @param  bool                  $icase
  * @param  int                   $offset
  * @return string
  */
-function str_slice(string $string, string|array|int $search_or_start = null, string|bool $before_or_after = null,
-    array|int $length = null, bool $icase = false, int $offset = 0): string
+function str_slice(string $string, string|array $search_or_range = null, string|bool $before_or_after = null,
+    int|array $range = null, bool $icase = false, int $offset = 0): string
 {
-    $start = $end = null;
-    if ($length !== null) {
-        [$start, $end] = pad((array) $length, 2);
-        $length = $end;
+    // Override $range when $search_or_range given as array,
+    // and set $search_or_range as NULL.
+    if ($search_or_range !== null || $range !== null) {
+        // Range given, swap & nullify.
+        if (is_array($search_or_range)) {
+            [$range, $search_or_range] = [$search_or_range, null];
+        }
+
+        [$start, $end] = pad((array) $range, 2);
+
+        if ($start !== null) {
+            return strsub($string, $start, $end);
+        }
+
+        if ($search_or_range !== null) {
+            return match ($before_or_after ?? false) {
+                true, 'before' => strbcut($string, $search_or_range, null, $icase, $offset),
+                false, 'after' => stracut($string, $search_or_range, null, $icase, $offset),
+                default        => '' // Invalid directive.
+            };
+        }
     }
 
-    if (is_int($search_or_start)) {
-        return strsub($string, $search_or_start, $length);
-    }
-
-    if ($search_or_start !== null) {
-        [$search, $directive] = pad((array) $search_or_start, 2);
-
-        // Default is false (after).
-        $directive ??= $before_or_after ?? false;
-
-        $ret = match ($directive) {
-            true, 'before' => strbcut($string, $search, null, $icase, $offset),
-            false, 'after' => stracut($string, $search, null, $icase, $offset),
-            default            => '' // Invalid directive.
-        };
-    } else {
-        $ret = $string;
-    }
-
-    if ($start !== null) {
-        $ret = strsub($ret, $start, $end);
-    }
-
-    return $ret;
+    return $string; // No-op.
 }
 
 /**
