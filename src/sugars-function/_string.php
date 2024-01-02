@@ -229,7 +229,8 @@ function str_rand(string $string, int $length = null): string
  * @since  5.31
  * @throws ArgumentError When length is less than 1.
  */
-function str_chunk(string $string, int $length = 76, string $separator = "\r\n", bool $join = true, bool $chop = false): string|array
+function str_chunk(string $string, int $length = 76, string $separator = "\r\n", bool $join = true,
+    bool $chop = false): string|array
 {
     if ($length < 1) {
         throw new ArgumentError('Invalid length %s [min=1]', $length);
@@ -266,49 +267,52 @@ function str_concat(string $string, string|Stringable ...$strings): string
  *
  * Example:
  * ```
- * str_slice('jon@doo.com', '@', 'before' or true);          => jon
- * str_slice('jon@doo.com', '@', 'before' or true, 1);       => on
- * str_slice('jon@doo.com', '@', 'before' or true, [1, -1]); => o
+ * str_slice('foo', ['o', true])  => 'f'
+ * str_slice('foo', ['o', false]) => 'o'
+ *
+ * str_slice('jon@doo.com', '@', 'before' or true)          => jon
+ * str_slice('jon@doo.com', '@', 'before' or true, 1)       => on
+ * str_slice('jon@doo.com', '@', 'before' or true, [1, -1]) => o
  * ```
  *
  * @param  string                $string
- * @param  string|array|int|null $search_or_start
- * @param  string|null           $before_or_after
- * @param  array|int|null        $range
+ * @param  string|int|array|null $search_or_start Search string or start offset.
+ * @param  string|bool|null      $before_or_after Before/true, after/false (default=after, works if $search_or_start given).
+ * @param  int|array|null        $length          Start offset or start-end range.
  * @param  bool                  $icase
  * @param  int                   $offset
  * @return string
  */
 function str_slice(string $string, string|array|int $search_or_start = null, string|bool $before_or_after = null,
-    array|int $range = null, bool $icase = false, int $offset = 0): string
+    array|int $length = null, bool $icase = false, int $offset = 0): string
 {
-    $length = null;
-    if ($range !== null) {
-        [$start, $end] = pad((array) $range, 2);
+    $start = $end = null;
+    if ($length !== null) {
+        [$start, $end] = pad((array) $length, 2);
         $length = $end;
     }
 
     if (is_int($search_or_start)) {
-        return mb_substr($string, $search_or_start, $length);
+        return strsub($string, $search_or_start, $length);
     }
 
     if ($search_or_start !== null) {
         [$search, $directive] = pad((array) $search_or_start, 2);
 
-        // Default is -1 (after).
-        $directive ??= $before_or_after ?? -1;
+        // Default is false (after).
+        $directive ??= $before_or_after ?? false;
 
-        $ret = match ($directive ??= $before_or_after) {
-             1, true, 'before' => strbcut($string, $search, null, $icase, $offset),
-            -1, false, 'after' => stracut($string, $search, null, $icase, $offset),
+        $ret = match ($directive) {
+            true, 'before' => strbcut($string, $search, null, $icase, $offset),
+            false, 'after' => stracut($string, $search, null, $icase, $offset),
             default            => '' // Invalid directive.
         };
     } else {
         $ret = $string;
     }
 
-    if ($range !== null) {
-        $ret = mb_substr($ret, $start, $end);
+    if ($start !== null) {
+        $ret = strsub($ret, $start, $end);
     }
 
     return $ret;
@@ -536,7 +540,8 @@ function mb_strrev(string $string, string $encoding = null): string
  * @return string
  * @since  6.0
  */
-function mb_str_pad(string $string, int $pad_length, string $pad_string = ' ', int $pad_type = STR_PAD_RIGHT, string $encoding = null): string
+function mb_str_pad(string $string, int $pad_length, string $pad_string = ' ', int $pad_type = STR_PAD_RIGHT,
+    string $encoding = null): string
 {
     return Strings::pad($string, $pad_length, $pad_string, $pad_type, $encoding);
 }
