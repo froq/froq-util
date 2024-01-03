@@ -135,6 +135,19 @@ class Item implements Arrayable, Jsonable, Countable, IteratorAggregate, ArrayAc
     }
 
     /**
+     * Call given function for each item.
+     *
+     * @param  callable $func
+     * @return self
+     */
+    public function each(callable $func): self
+    {
+        each($this->data, $func);
+
+        return $this;
+    }
+
+    /**
      * Sort.
      *
      * @param  callable|int|null $func
@@ -144,19 +157,6 @@ class Item implements Arrayable, Jsonable, Countable, IteratorAggregate, ArrayAc
     public function sort(callable|int $func = null, int $flags = 0): self
     {
         $this->data = sorted($this->data, $func, $flags, assoc: true);
-
-        return $this;
-    }
-
-    /**
-     * Call given function for each item.
-     *
-     * @param  callable $func
-     * @return self
-     */
-    public function each(callable $func): self
-    {
-        each($this->data, $func);
 
         return $this;
     }
@@ -421,6 +421,19 @@ class ItemList implements Arrayable, Jsonable, Countable, IteratorAggregate, Arr
     }
 
     /**
+     * Call given function for each item.
+     *
+     * @param  callable $func
+     * @return self
+     */
+    public function each(callable $func): self
+    {
+        each($this->data, $func);
+
+        return $this;
+    }
+
+    /**
      * Sort.
      *
      * @param  callable|int|null $func
@@ -430,19 +443,6 @@ class ItemList implements Arrayable, Jsonable, Countable, IteratorAggregate, Arr
     public function sort(callable|int $func = null, int $flags = 0): self
     {
         $this->data = sorted($this->data, $func, $flags, assoc: false);
-
-        return $this;
-    }
-
-    /**
-     * Call given function for each item.
-     *
-     * @param  callable $func
-     * @return self
-     */
-    public function each(callable $func): self
-    {
-        each($this->data, $func);
 
         return $this;
     }
