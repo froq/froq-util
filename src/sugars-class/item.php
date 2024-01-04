@@ -138,13 +138,11 @@ class Item implements Arrayable, Jsonable, Countable, IteratorAggregate, ArrayAc
      * Call given function for each item.
      *
      * @param  callable $func
-     * @return self
+     * @return void
      */
-    public function each(callable $func): self
+    public function each(callable $func): void
     {
         each($this->data, $func);
-
-        return $this;
     }
 
     /**
@@ -152,11 +150,12 @@ class Item implements Arrayable, Jsonable, Countable, IteratorAggregate, ArrayAc
      *
      * @param  callable|int|null $func
      * @param  int               $flags
+     * @param  bool              $key
      * @return self
      */
-    public function sort(callable|int $func = null, int $flags = 0): self
+    public function sort(callable|int $func = null, int $flags = 0, bool $key = false): self
     {
-        $this->data = sorted($this->data, $func, $flags, assoc: true);
+        $this->data = sorted($this->data, $func, $flags, true, $key);
 
         return $this;
     }
@@ -194,11 +193,12 @@ class Item implements Arrayable, Jsonable, Countable, IteratorAggregate, ArrayAc
      *
      * @param  mixed    $carry
      * @param  callable $func
+     * @param  bool     $right
      * @return mixed
      */
-    public function reduce(mixed $carry, callable $func): mixed
+    public function reduce(mixed $carry, callable $func, bool $right = false): mixed
     {
-        return array_reduce($this->data, $func, $carry);
+        return reduce($this->data, $carry, $func, $right);
     }
 
     /**
@@ -292,6 +292,17 @@ class Item implements Arrayable, Jsonable, Countable, IteratorAggregate, ArrayAc
     public function offsetUnset(mixed $key): void
     {
         $this->remove($key);
+    }
+
+    /**
+     * Static constructor.
+     *
+     * @param  mixed ...$data Map of named arguments.
+     * @return static
+     */
+    public static function of(mixed ...$data): static
+    {
+        return new static($data);
     }
 }
 
@@ -424,13 +435,11 @@ class ItemList implements Arrayable, Jsonable, Countable, IteratorAggregate, Arr
      * Call given function for each item.
      *
      * @param  callable $func
-     * @return self
+     * @return void
      */
     public function each(callable $func): self
     {
         each($this->data, $func);
-
-        return $this;
     }
 
     /**
@@ -438,11 +447,12 @@ class ItemList implements Arrayable, Jsonable, Countable, IteratorAggregate, Arr
      *
      * @param  callable|int|null $func
      * @param  int               $flags
+     * @param  bool              $key
      * @return self
      */
-    public function sort(callable|int $func = null, int $flags = 0): self
+    public function sort(callable|int $func = null, int $flags = 0, bool $key = false): self
     {
-        $this->data = sorted($this->data, $func, $flags, assoc: false);
+        $this->data = sorted($this->data, $func, $flags, false, $key);
 
         return $this;
     }
@@ -480,11 +490,12 @@ class ItemList implements Arrayable, Jsonable, Countable, IteratorAggregate, Arr
      *
      * @param  mixed    $carry
      * @param  callable $func
+     * @param  bool     $right
      * @return mixed
      */
-    public function reduce(mixed $carry, callable $func): mixed
+    public function reduce(mixed $carry, callable $func, bool $right = false): mixed
     {
-        return array_reduce($this->data, $func, $carry);
+        return reduce($this->data, $carry, $func, $right);
     }
 
     /**
@@ -599,6 +610,17 @@ class ItemList implements Arrayable, Jsonable, Countable, IteratorAggregate, Arr
 
         // Splice, because it resets indexes.
         array_splice($this->data, $index, 1);
+    }
+
+    /**
+     * Static constructor.
+     *
+     * @param  mixed ...$data List of items.
+     * @return static
+     */
+    public static function of(mixed ...$data): static
+    {
+        return new static($data);
     }
 
     /**

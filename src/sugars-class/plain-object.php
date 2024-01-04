@@ -3,7 +3,7 @@
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-util
  */
-use froq\common\interface\Arrayable;
+use froq\common\interface\{Arrayable, Objectable};
 
 /**
  * A class for dynamic properties.
@@ -13,7 +13,7 @@ use froq\common\interface\Arrayable;
  * @author  Kerem Güneş
  * @since   6.0
  */
-class PlainObject extends stdClass implements Arrayable, IteratorAggregate
+class PlainObject extends stdClass implements Arrayable, Objectable, IteratorAggregate
 {
     /**
      * Constructor.
@@ -63,17 +63,40 @@ class PlainObject extends stdClass implements Arrayable, IteratorAggregate
      */
     public function toArray(): array
     {
-        return (array) $this;
+        // Filter private/protected stuff.
+        return array_filter_keys((array) $this,
+            fn($key): bool => !str_contains((string) $key, "\0"));
+
+        // @cancel
+        // return (array) $this;
+    }
+
+    /**
+     * @inheritDoc froq\common\interface\Objectable
+     */
+    public function toObject(): object
+    {
+        return (object) $this->toArray();
     }
 
     /**
      * @inheritDoc IteratorAggregate
+     * @permissive
      */
-    public function getIterator(): Traversable&Generator
+    public function getIterator(): Iter|Iterator|Generator|Traversable
     {
-        foreach ($this->toArray() as $name => $value) {
-            yield $name => $value;
-        }
+        return new Iter($this->toArray());
+    }
+
+    /**
+     * Static constructor.
+     *
+     * @param  mixed ...$properties Map of named arguments.
+     * @return static
+     */
+    public static function of(mixed ...$properties): static
+    {
+        return new static(...$properties);
     }
 }
 

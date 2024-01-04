@@ -18,6 +18,7 @@ require 'sugars-class/locale.php';
 require 'sugars-class/mapset.php';
 require 'sugars-class/mapxao.php';
 require 'sugars-class/options.php';
+require 'sugars-class/plain-array.php';
 require 'sugars-class/plain-object.php';
 require 'sugars-class/reference.php';
 require 'sugars-class/reflection.php';

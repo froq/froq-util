@@ -50,13 +50,6 @@ class RegExpError extends froq\common\Error
  * @author Kerem Güneş
  * @since  6.0
  */
-class RangeError extends froq\common\Error
-{}
-
-/**
- * @author Kerem Güneş
- * @since  6.0
- */
 class ArgumentError extends froq\common\Error
 {}
 
@@ -96,13 +89,15 @@ class ReadonlyError extends froq\common\Error
     public function __construct(string|object $class, string $property = null)
     {
         if (func_num_args() === 1) {
-            parent::__construct(sprintf(
-                'Cannot modify readonly class %s', get_class_name($class, escape: true)
-            ));
+            parent::__construct(
+                'Cannot modify readonly class %s',
+                get_class_name($class, escape: true)
+            );
         } else {
-            parent::__construct(sprintf(
-                'Cannot modify readonly property %s::$%s', get_class_name($class, escape: true), $property
-            ));
+            parent::__construct(
+                'Cannot modify readonly property %s::$%s',
+                [get_class_name($class, escape: true), $property]
+            );
         }
     }
 }
@@ -155,7 +150,7 @@ class UndefinedClassError extends froq\common\Error
      */
     public function __construct(string $class)
     {
-        parent::__construct(sprintf('Undefined class: %s', $class));
+        parent::__construct('Undefined class: %s', $class);
     }
 }
 
@@ -174,11 +169,12 @@ class UndefinedConstantError extends froq\common\Error
     public function __construct(string|object|null $class, string $constant)
     {
         if ($class === null) {
-            parent::__construct(sprintf('Undefined constant: %s', $constant));
+            parent::__construct('Undefined constant: %s', $constant);
         } else {
-            parent::__construct(sprintf(
-                'Undefined class constant: %s::%s', get_class_name($class, escape: true), $constant
-            ));
+            parent::__construct(
+                'Undefined class constant: %s::%s',
+                [get_class_name($class, escape: true), $constant]
+            );
         }
     }
 }
@@ -197,9 +193,10 @@ class UndefinedPropertyError extends froq\common\Error
      */
     public function __construct(string|object $class, string $property)
     {
-        parent::__construct(sprintf(
-            'Undefined property: %s::$%s', get_class_name($class, escape: true), $property
-        ));
+        parent::__construct(
+            'Undefined property: %s::$%s',
+            [get_class_name($class, escape: true), $property]
+        );
     }
 }
 
@@ -217,9 +214,116 @@ class UndefinedMethodError extends froq\common\Error
      */
     public function __construct(string|object $class, string $method)
     {
-        parent::__construct(sprintf(
-            'Undefined method: %s::%s()', get_class_name($class, escape: true), $method
-        ));
+        parent::__construct(
+            'Undefined method: %s::%s()',
+            [get_class_name($class, escape: true), $method]
+        );
+    }
+}
+
+/**
+ * @author Kerem Güneş
+ * @since  6.0
+ */
+class RangeError extends froq\common\Error
+{
+    /**
+     * Constructor.
+     *
+     * @param string|null    $message
+     * @param int|float|null $code
+     * @param int|float|null $min
+     * @param int|float|null $max
+     */
+    public function __construct(string $message = null, int $code = null, int|float $min = null, int|float $max = null)
+    {
+        if ($message === null) {
+            $message = 'Invalid range';
+
+            if ($min !== null && $max !== null) {
+                $message .= format(': [min=%n, max=%n]', $min, $max);
+            } elseif ($min !== null) {
+                $message .= format(': [min=%n]', $min);
+            } elseif ($max !== null) {
+                $message .= format(': [max=%n]', $max);
+            }
+        }
+
+        parent::__construct($message, code: (int) $code);
+    }
+}
+
+/**
+ * @author Kerem Güneş
+ * @since  7.12
+ */
+class LengthError extends froq\common\Error
+{
+    /**
+     * Constructor.
+     *
+     * @param string|null $message
+     * @param int|null    $code
+     * @param int|null    $length
+     * @param int|null    $min
+     * @param int|null    $max
+     */
+    public function __construct(string $message = null, int $code = null, int $length = null, int $min = null, int $max = null)
+    {
+        if ($message === null) {
+            $message = 'Invalid length';
+
+            if ($length !== null) {
+                $message .= ' ' . $length;
+            }
+
+            if ($min !== null && $max !== null) {
+                $message .= format(' [min=%d, max=%d]', $min, $max);
+            } elseif ($min !== null) {
+                $message .= format(' [min=%d]', $min);
+            } elseif ($max !== null) {
+                $message .= format(' [max=%d]', $max);
+            }
+        }
+
+        parent::__construct($message, code: (int) $code);
+    }
+}
+
+/**
+ * @author Kerem Güneş
+ * @since  7.12
+ */
+class SizeError extends froq\common\Error
+{
+    /**
+     * Constructor.
+     *
+     * @param string|null $message
+     * @param int|null    $code
+     * @param int|null    $size
+     * @param int|null    $min
+     * @param int|null    $max
+     */
+    public function __construct(string $message = null, int $code = null, int $size = null, int $min = null, int $max = null)
+    {
+        if ($message === null) {
+            $message = 'Invalid size';
+
+            if ($size !== null) {
+                $message .= ' ' . $size;
+            }
+
+            if ($min !== null && $max !== null) {
+                $message .= format(' [min=%d, max=%d]', $min, $max);
+            } elseif ($min !== null) {
+                $message .= format(' [min=%d]', $min);
+            } elseif ($max !== null) {
+                $message .= format(' [max=%d]', $max);
+            }
+        }
+
+        parent::__construct($message, code: (int) $code);
     }
 }
 
@@ -259,7 +363,7 @@ class LastError extends froq\common\Error
             }
         }
 
-        parent::__construct((string) $message, (int) $code);
+        parent::__construct((string) $message, code: (int) $code);
     }
 
     /**

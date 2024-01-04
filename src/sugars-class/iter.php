@@ -254,8 +254,9 @@ class Iter implements Arrayable, Listable, Jsonable, Countable, IteratorAggregat
 
     /**
      * @inheritDoc IteratorAggregate
+     * @permissive
      */
-    public function getIterator(): Iterator
+    public function getIterator(): ArrayIterator|Iterator|Generator|Traversable
     {
         return clone $this->iter;
     }
@@ -290,6 +291,17 @@ class Iter implements Arrayable, Listable, Jsonable, Countable, IteratorAggregat
     public function offsetUnset(mixed $key): void
     {
         $this->iter->offsetUnset($key);
+    }
+
+    /**
+     * Static constructor.
+     *
+     * @param  mixed ...$values Map of named arguments.
+     * @return static
+     */
+    public static function of(mixed ...$values): static
+    {
+        return new static($values);
     }
 
     /**

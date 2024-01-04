@@ -3,7 +3,7 @@
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-util
  */
-use froq\util\{Util, Strings};
+use froq\util\Strings;
 
 /**
  * A simple string buffer class, inpired by Java's StringBuffer.
@@ -680,14 +680,29 @@ class StringBuffer implements Stringable, IteratorAggregate, JsonSerializable, A
     }
 
     /**
-     * Filter.
+     * Sort.
      *
-     * @param  callable $func
+     * @param  callable|int|null $func
+     * @param  int               $flags
+     * @param  bool              $key
      * @return self
      */
-    public function filter(callable $func): self
+    public function sort(callable|int $func = null, int $flags = 0, bool $key = false): self
     {
-        $this->data = array_filter_list($this->data, $func);
+        $this->data = sorted($this->data, $func, $flags, false, $key);
+
+        return $this;
+    }
+
+    /**
+     * Filter.
+     *
+     * @param  callable|null $func
+     * @return self
+     */
+    public function filter(callable $func = null): self
+    {
+        $this->data = filter($this->data, $func, keep_keys: false);
 
         return $this;
     }
@@ -700,7 +715,7 @@ class StringBuffer implements Stringable, IteratorAggregate, JsonSerializable, A
      */
     public function map(callable $func): self
     {
-        $this->data = array_map($func, $this->data);
+        $this->data = map($this->data, $func);
 
         return $this;
     }
@@ -710,15 +725,16 @@ class StringBuffer implements Stringable, IteratorAggregate, JsonSerializable, A
      *
      * @param  mixed    $carry
      * @param  callable $func
+     * @param  bool     $right
      * @return mixed
      */
-    public function reduce(mixed $carry, callable $func): mixed
+    public function reduce(mixed $carry, callable $func, bool $right = false): mixed
     {
-        return array_reduce($this->data, $func, $carry);
+        return reduce($this->data, $carry, $func, $right);
     }
 
     /**
-     * Apply interface to any action in.
+     * Apply given function binding this instance.
      *
      * @param  callable    $func
      * @param  mixed    ...$funcArgs
@@ -734,10 +750,10 @@ class StringBuffer implements Stringable, IteratorAggregate, JsonSerializable, A
 
     /**
      * @inheritDoc IteratorAggregate
-     */ #[ReturnTypeWillChange]
-    public function getIterator(): iterable
+     */
+    public function getIterator(): Generator
     {
-        for ($i = 0, $il = $this->getLength(); $i < $il; $i++) {
+        for ($i = 0, $il = $this->length(); $i < $il; $i++) {
             yield $i => $this->data[$i];
         }
     }

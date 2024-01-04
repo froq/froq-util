@@ -25,9 +25,9 @@ class XObject extends XClass
      */
     public function __construct(object $object)
     {
-        $this->object = $object;
-
         parent::__construct($object);
+
+        $this->object = $object;
     }
 
     /**
@@ -89,12 +89,12 @@ class XObject extends XClass
      * Equal-of checker.
      *
      * @param  object $object
-     * @param  bool   $strict
+     * @param  bool   $hash
      * @return bool
      */
-    public function isEqualOf(object $object, bool $strict = true): bool
+    public function isEqualOf(object $object, bool $hash = false): bool
     {
-        return ($strict ? $this->object === $object : $this->object == $object);
+        return Objects::equal($this->object, $object, $hash);
     }
 
     /**
@@ -105,7 +105,7 @@ class XObject extends XClass
      */
     public function isEqualHashOf(object $object): bool
     {
-        return Objects::getSerializedHash($this->object) === Objects::getSerializedHash($object);
+        return Objects::equal($this->object, $object, true);
     }
 
     /**

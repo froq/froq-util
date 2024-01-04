@@ -125,6 +125,24 @@ function reduce(array $array, mixed $carry, callable $func = null, bool $right =
 }
 
 /**
+ * Sort an array values without modifying input array, or keys only.
+ *
+ * @param  array             $array
+ * @param  callable|int|null $func  Valid ints: 1 or -1.
+ * @param  int               $flags
+ * @param  bool|null         $assoc Associative directive.
+ * @param  bool              $key   Sort by key directive.
+ * @return array
+ * @since  5.41
+ */
+function sorted(array $array, callable|int $func = null, int $flags = 0, bool $assoc = null, bool $key = false): array
+{
+    return $key // Key sort.
+         ? Arrays::sortKey($array, $func, $flags)
+         : Arrays::sort($array, $func, $flags, $assoc);
+}
+
+/**
  * Get size (length/count).
  *
  * @param  mixed<string|countable|object|null> $var
@@ -188,6 +206,20 @@ function concat(array|string $input, mixed ...$inputs): array|string
 {
     return is_array($input) ? array_concat($input, ...$inputs)
          : str_concat($input, ...$inputs);
+}
+
+/**
+ * Reverse.
+ *
+ * @param  array|string     $input
+ * @param  bool|string|null $keep_keys_or_encoding
+ * @return array|string
+ * @since  7.12
+ */
+function reverse(array|string $input, bool|string $keep_keys_or_encoding = null): array|string
+{
+    return is_array($input) ? array_reverse($input, (bool) $keep_keys_or_encoding)
+         : str_reverse($input, func_num_args() > 1 ? $keep_keys_or_encoding : null);
 }
 
 /**
@@ -1329,24 +1361,6 @@ function last(array $array): mixed
 }
 
 /**
- * Sort an array values without modifying input array, or keys only.
- *
- * @param  array             $array
- * @param  callable|int|null $func  Valid ints: 1 or -1.
- * @param  int               $flags
- * @param  bool|null         $assoc
- * @param  bool              $key
- * @return array
- * @since  5.41
- */
-function sorted(array $array, callable|int $func = null, int $flags = 0, bool $assoc = null, bool $key = false): array
-{
-    return $key // Key sort.
-         ? Arrays::sortKey($array, $func, $flags)
-         : Arrays::sort($array, $func, $flags, $assoc);
-}
-
-/**
  * Remove last error message with/without code.
  *
  * @param  int|null $code
@@ -1734,6 +1748,8 @@ function random_string(int $length, bool $puncted = false): string
 /**
  * Generate a random range by given length.
  *
+ * Note: This function is slow when `$length` is high and `$unique` is true.
+ *
  * @param  int            $length
  * @param  int|float|null $min
  * @param  int|float|null $max
@@ -1742,6 +1758,7 @@ function random_string(int $length, bool $puncted = false): string
  * @return array
  * @throws ArgumentError
  * @since  5.41
+ * @tofix  Optimise unique range performance.
  */
 function random_range(int $length, int|float $min = null, int|float $max = null, int $precision = null, bool $unique = true): array
 {

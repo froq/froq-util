@@ -1667,7 +1667,7 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     }
 
     /**
-     * Apply interface to any action in.
+     * Apply given function binding this instance.
      *
      * @param  callable    $func
      * @param  mixed    ...$funcArgs
@@ -1841,6 +1841,16 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     }
 
     /**
+     * Get data as StringBuffer.
+     *
+     * @return StringBuffer
+     */
+    public function toStringBuffer(): StringBuffer
+    {
+        return new StringBuffer($this->data, $this->encoding);
+    }
+
+    /**
      * @alias toString()
      */
     public function string()
@@ -1850,8 +1860,8 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
 
     /**
      * @inheritDoc IteratorAggregate
-     */ #[ReturnTypeWillChange]
-    public function getIterator(): iterable
+     */
+    public function getIterator(): Generator
     {
         for ($i = 0, $il = $this->length(); $i < $il; $i++) {
             yield $i => $this->char($i);

@@ -693,4 +693,105 @@ final class Objects extends \StaticClass
             return null;
         }
     }
+
+    /**
+     * Check if given objects are equal.
+     *
+     * @param  object $object1
+     * @param  object $object2
+     * @param  bool   $hash
+     * @return bool
+     */
+    public static function equal(object $object1, object $object2, bool $hash = false): bool
+    {
+        // Simple & life saving (prevents recursions).
+        if ($object1 === $object2) {
+            return true;
+        }
+
+        if ($hash) {
+            return hash_equals(
+                self::getSerializedHash($object1),
+                self::getSerializedHash($object2)
+            );
+        }
+
+        static $equal; // Memoize internal macro.
+        $equal ??= function ($a, $b) use (&$equal): bool {
+            // Check types.
+            if (gettype($a) !== gettype($b)) {
+                return false;
+            }
+
+            // Null, scalar (int, float, string, bool), resource.
+            if (($a === null || is_scalar($a) || is_resource($a)) &&
+                ($b === null || is_scalar($b) || is_resource($b))) {
+                if (is_number($a) && is_number($b)) {
+                    $c = \froq\util\Numbers::compare($a, $b);
+                    return ($c === 0);
+                }
+
+                if (is_string($a) && is_string($b)) {
+                    $c = \froq\util\Strings::compare($a, $b);
+                    return ($c === 0);
+                }
+
+                return ($a === $b);
+            }
+            // Objects.
+            elseif (is_object($a) && is_object($b)) {
+                // Go for a recursion.
+                return Objects::equal($a, $b);
+
+                // @cancel: Solved with "===" above.
+                // try {
+                //     // Exception: Serialization of '..@anonymous' isn't allowed.
+                //     $a = Objects::getSerializedHash($a);
+                //     $b = Objects::getSerializedHash($b);
+                //     return hash_equals($a, $b);
+                // } catch (\Throwable) {
+                //     return ($a === $b);
+                // }
+            }
+            // Arrays.
+            elseif (is_array($a) && is_array($b)) {
+                // Check sizes.
+                if (count($a) !== count($b)) {
+                    return false;
+                }
+
+                // Check items.
+                foreach ($a as $k => $v) {
+                    if (!is_array_key($b, $k)) {
+                        return false;
+                    }
+                    if (!$equal($b[$k], $v)) {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        };
+
+        if ($object1 instanceof $object2) {
+            $ref1 = self::reflect($object1);
+            $ref2 = self::reflect($object2);
+
+            foreach ($ref1->getProperties() as $prop1) {
+                $prop2 = $ref2->getProperty($prop1->name);
+
+                if (!$prop2) {
+                    return false;
+                }
+                if (!$equal($prop1->getValue(), $prop2->getValue())) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        return false;
+    }
 }

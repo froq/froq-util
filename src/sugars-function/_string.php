@@ -262,6 +262,20 @@ function str_concat(string $string, string|Stringable ...$strings): string
 }
 
 /**
+ * Reverse given string, with multi-byte option.
+ *
+ * @param  string           $string
+ * @param  string|bool|null $encoding True or encoding (eg: "UTF-8").
+ * @return string
+ * @since  7.12
+ */
+function str_reverse(string $string, string|bool $encoding = null): string
+{
+    return (func_num_args() === 1 || $encoding === false) // No multi-byte directive.
+         ? strrev($string) : mb_strrev($string, ($encoding !== true ? $encoding : null));
+}
+
+/**
  * Slice a string with multiple functionalities, before/after or simply do substring work, like `strstr()`
  * but dropping search character from return.
  *

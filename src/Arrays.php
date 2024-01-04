@@ -1363,10 +1363,8 @@ final class Arrays extends \StaticClass
             [$func, $carry] = [$carry, $func];
         }
 
-        // Reduce right option.
-        if ($right) {
-            $array = array_reverse($array, true);
-        }
+        // When right option provided.
+        $right && $array = array_reverse($array, true);
 
         $ret = $carry;
 
