@@ -219,7 +219,7 @@ function concat(array|string $input, mixed ...$inputs): array|string
 function reverse(array|string $input, bool|string $keep_keys_or_encoding = null): array|string
 {
     return is_array($input) ? array_reverse($input, (bool) $keep_keys_or_encoding)
-         : str_reverse($input, func_num_args() > 1 ? $keep_keys_or_encoding : null);
+         : (func_num_args() > 1 ? str_reverse($input, $keep_keys_or_encoding) : str_reverse($input));
 }
 
 /**

@@ -265,7 +265,7 @@ function str_concat(string $string, string|Stringable ...$strings): string
  * Reverse given string, with multi-byte option.
  *
  * @param  string           $string
- * @param  string|bool|null $encoding True or encoding (eg: "UTF-8").
+ * @param  string|bool|null $encoding True or encoding for multi-byte.
  * @return string
  * @since  7.12
  */
