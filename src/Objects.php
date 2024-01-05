@@ -236,8 +236,8 @@ final class Objects extends \StaticClass
                 fn(\ReflectionInterface $r): bool => $r->hasConstant($constantName)
             );
 
-            $modifiers   = $constant->getModifierNames();
-            $visibility  = $constant->getVisibility();
+            $modifiers  = $constant->getModifierNames();
+            $visibility = $constant->getVisibility();
 
             // Sorry, but no method such getType().. @todo: 8.3
             preg_match('~\[ (\w+) (?<type>\w+) .+ \]~', (string) $constant, $match);
@@ -567,19 +567,19 @@ final class Objects extends \StaticClass
     public static function getParent(object|string $target, bool $baseOnly = false): string|null
     {
         try {
-            $ret = [];
+            $rets = [];
 
             if (!$baseOnly) {
-                $ret[] = get_parent_class($target);
+                $rets[] = get_parent_class($target);
             } else {
                 $parent = get_parent_class($target);
                 while ($parent) {
-                    array_push($ret, $parent);
+                    $rets[] = $parent;
                     $parent = get_parent_class($parent);
                 }
             }
 
-            return array_last($ret);
+            return last($rets);
         } catch (\Throwable) { // TypeError? WTF?
             return null;
         }
@@ -589,6 +589,7 @@ final class Objects extends \StaticClass
      * Get parents.
      *
      * @param  object|string $target
+     * @param  bool          $reverse
      * @return array|null
      */
     public static function getParents(object|string $target, bool $reverse = false): array|null
@@ -597,7 +598,7 @@ final class Objects extends \StaticClass
 
         if ($ret !== false) {
             $ret = array_keys($ret);
-            $reverse && ($ret = array_reverse($ret));
+            $reverse && $ret = array_reverse($ret);
 
             return $ret;
         }
@@ -609,6 +610,7 @@ final class Objects extends \StaticClass
      * Get interfaces.
      *
      * @param  object|string $target
+     * @param  bool          $reverse
      * @return array|null
      */
     public static function getInterfaces(object|string $target, bool $reverse = false): array|null
@@ -619,7 +621,7 @@ final class Objects extends \StaticClass
 
         if ($ret !== false) {
             $ret = array_keys($ret);
-            $reverse && ($ret = array_reverse($ret));
+            $reverse && $ret = array_reverse($ret);
 
             return $ret;
         }
@@ -631,6 +633,7 @@ final class Objects extends \StaticClass
      * Get traits.
      *
      * @param  object|string $target
+     * @param  bool          $reverse
      * @param  bool          $all
      * @return array|null
      */
@@ -640,7 +643,7 @@ final class Objects extends \StaticClass
 
         if ($ret !== false) {
             $ret = array_keys($ret);
-            $reverse && ($ret = array_reverse($ret));
+            $reverse && $ret = array_reverse($ret);
 
             if ($all) {
                 foreach ((array) self::getParents($target) as $parent) {

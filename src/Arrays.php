@@ -1652,7 +1652,7 @@ final class Arrays extends \StaticClass
     }
 
     /**
-     * Convert an array to list with/without desired length.
+     * Convert an array to list array using values, optionally limit with desired length.
      *
      * @param  array    $array
      * @param  int|null $length
