@@ -251,15 +251,8 @@ function slice(array|string $input, int $start, int $end = null, bool $keep_keys
  */
 function splice(array|string $input, int $start, int $end = null, array|string $replace = null, array|string &$replaced = null): array|string
 {
-    $split  = is_array($input) ? $input : mb_str_split($input);
-    $splice = array_splice($split, $start, $end, (array) $replace);
-
-    $replaced = null;
-    if ($splice) {
-        $replaced = is_array($input) ? $splice : join($splice);
-    }
-
-    return is_array($input) ? $split : join($split);
+    return is_array($input) ? array_splice($input, $start, $end, (array) $replace)
+         : str_splice($input, $start, $end, $replace, $replaced);
 }
 
 /**
