@@ -17,7 +17,7 @@ use froq\util\Util;
  */
 class Profiler
 {
-    /** Marks map. */
+    /** Map of marks. */
     private static array $marks = [];
 
     /**
@@ -56,7 +56,7 @@ class Profiler
         $mark = new ProfileMark($id ??= uuid());
         $mark->start();
 
-        // Store.
+        // Store mark.
         self::$marks[$id] = $mark;
 
         return $id;
