@@ -940,19 +940,19 @@ function get_request_id(): string
  * @param  string           $path
  * @param  string|true|null $check Valids: true, "dir", "file".
  * @param  bool             $real @internal
- * @return string|null
+ * @return string|false|null
  * @throws ArgumentError
  * @since  4.0
  */
-function get_real_path(string $path, string|true $check = null, bool $real = true): string|null
+function get_real_path(string $path, string|true $check = null, bool $real = true): string|false|null
 {
     if (str_empty($path)) {
-        return null;
+        return false;
     }
 
     if ($check && !in_array($check, [true, 'dir', 'file'], true)) {
         throw new ArgumentError(
-            'Invalid check directive %q [valids: true, dir, file]',
+            'Invalid check directive %q [valids: true, "dir", "file"]',
             $check
         );
     }
@@ -1064,11 +1064,15 @@ function get_real_path(string $path, string|true $check = null, bool $real = tru
  *
  * @param  string          $path
  * @param  string|int|null $component
- * @return string|array|null
+ * @return string|array|false|null
  * @since  5.0
  */
-function get_path_info(string $path, string|int $component = null): string|array|null
+function get_path_info(string $path, string|int $component = null): string|array|false|null
 {
+    if (str_empty($path)) {
+        return false;
+    }
+
     $opath = $path;
 
     if (!$path = get_real_path($path, real: false)) {
