@@ -208,7 +208,7 @@ function file_read(string $file, int $offset = 0, int $length = null): string|nu
  * @alias file_put_contents()
  * @since 4.0
  */
-function file_write(string $file, string $data, int $flags = 0, bool $append = false): int|null
+function file_write(string $file, string $contents, int $flags = 0, bool $append = false): int|null
 {
     if (!$file = get_real_path($file)) {
         trigger_error(format('%s(): No file given', __FUNCTION__));
@@ -223,7 +223,7 @@ function file_write(string $file, string $data, int $flags = 0, bool $append = f
     // Don't truncate file contents.
     $append && $flags |= FILE_APPEND;
 
-    $ret = file_put_contents($file, $data, $flags);
+    $ret = file_put_contents($file, $contents, $flags);
 
     return ($ret !== false) ? $ret : null;
 }
