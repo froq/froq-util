@@ -1103,6 +1103,8 @@ function get_path_info(string $path, string|int $component = null): string|array
     // No filename & extension for dirs.
     if ($filetype === 'dir' || strsfx($opath, DIRECTORY_SEPARATOR) || strsfx($path, DIRECTORY_SEPARATOR)) {
         $ret['filename'] = $ret['extension'] = null;
+    } elseif ($filetype === 'link' && is_dir($path)) {
+        $ret['filename'] = $ret['extension'] = null;
     } else {
         [$ret['filename'], $ret['extension']] = [file_name($path), file_extension($path)];
     }
