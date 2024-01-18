@@ -11,8 +11,8 @@ require 'sugars-class/_static.php';
 // Load other class files.
 require 'sugars-class/assert.php';
 require 'sugars-class/factory.php';
-require 'sugars-class/item.php';
 require 'sugars-class/iter.php';
+require 'sugars-class/item.php';
 require 'sugars-class/json.php';
 require 'sugars-class/locale.php';
 require 'sugars-class/mapset.php';

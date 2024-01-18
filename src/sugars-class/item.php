@@ -4,7 +4,8 @@
  * Apache License 2.0 · http://github.com/froq/froq-util
  */
 use froq\common\interface\{Arrayable, Jsonable};
-use froq\collection\trait\{CountTrait, EmptyTrait, KeysValuesTrait, FirstLastTrait, ToArrayTrait, ToJsonTrait};
+use froq\collection\trait\{CountTrait, EmptyTrait, EachTrait, KeysValuesTrait, FirstLastTrait,
+    ToArrayTrait, ToJsonTrait};
 
 /**
  * A simple item class with a key/value pair data container & access stuff.
@@ -16,7 +17,7 @@ use froq\collection\trait\{CountTrait, EmptyTrait, KeysValuesTrait, FirstLastTra
  */
 class Item implements Arrayable, Jsonable, Countable, IteratorAggregate, ArrayAccess
 {
-    use CountTrait, EmptyTrait, KeysValuesTrait, FirstLastTrait, ToArrayTrait, ToJsonTrait;
+    use CountTrait, EmptyTrait, EachTrait, KeysValuesTrait, FirstLastTrait, ToArrayTrait, ToJsonTrait;
 
     /** Data map. */
     private array $data = [];
@@ -135,17 +136,6 @@ class Item implements Arrayable, Jsonable, Countable, IteratorAggregate, ArrayAc
     }
 
     /**
-     * Call given function for each item.
-     *
-     * @param  callable $func
-     * @return void
-     */
-    public function each(callable $func): void
-    {
-        each($this->data, $func);
-    }
-
-    /**
      * Sort.
      *
      * @param  callable|int|null $func
@@ -169,7 +159,7 @@ class Item implements Arrayable, Jsonable, Countable, IteratorAggregate, ArrayAc
      */
     public function filter(callable $func = null, bool $useKeys = false): self
     {
-        $this->data = filter($this->data, $func, use_keys: $useKeys);
+        $this->data = filter($this->data, $func, false, $useKeys);
 
         return $this;
     }
@@ -183,7 +173,7 @@ class Item implements Arrayable, Jsonable, Countable, IteratorAggregate, ArrayAc
      */
     public function map(callable $func, bool $useKeys = false): self
     {
-        $this->data = map($this->data, $func, use_keys: $useKeys);
+        $this->data = map($this->data, $func, false, $useKeys);
 
         return $this;
     }
@@ -217,12 +207,11 @@ class Item implements Arrayable, Jsonable, Countable, IteratorAggregate, ArrayAc
      * Refine filtering given or null, "" and [] items as default.
      *
      * @param  array|null $items
-     * @param  bool|null  $list
      * @return self
      */
-    public function refine(array $items = null, bool $list = null): self
+    public function refine(array $items = null): self
     {
-        $this->data = array_refine($this->data, $items, $list);
+        $this->data = array_refine($this->data, $items, false);
 
         return $this;
     }
@@ -230,13 +219,12 @@ class Item implements Arrayable, Jsonable, Countable, IteratorAggregate, ArrayAc
     /**
      * Dedupe items applying unique check.
      *
-     * @param  bool      $strict
-     * @param  bool|null $list
+     * @param  bool $strict
      * @return self
      */
-    public function dedupe(bool $strict = true, bool $list = null): self
+    public function dedupe(bool $strict = true): self
     {
-        $this->data = array_dedupe($this->data, $strict, $list);
+        $this->data = array_dedupe($this->data, $strict, false);
 
         return $this;
     }
@@ -256,10 +244,11 @@ class Item implements Arrayable, Jsonable, Countable, IteratorAggregate, ArrayAc
 
     /**
      * @inheritDoc IteratorAggregate
+     * @permissive
      */
-    public function getIterator(): ArrayIterator
+    public function getIterator(): Iter|Traversable
     {
-        return new ArrayIterator($this->data);
+        return new Iter($this->data);
     }
 
     /**
@@ -316,7 +305,7 @@ class Item implements Arrayable, Jsonable, Countable, IteratorAggregate, ArrayAc
  */
 class ItemList implements Arrayable, Jsonable, Countable, IteratorAggregate, ArrayAccess
 {
-    use CountTrait, EmptyTrait, KeysValuesTrait, FirstLastTrait, ToArrayTrait, ToJsonTrait;
+    use CountTrait, EmptyTrait, EachTrait, KeysValuesTrait, FirstLastTrait, ToArrayTrait, ToJsonTrait;
 
     /** Items list. */
     private array $data = [];
@@ -412,37 +401,6 @@ class ItemList implements Arrayable, Jsonable, Countable, IteratorAggregate, Arr
     }
 
     /**
-     * Get first item.
-     *
-     * @return mixed
-     */
-    public function first(): mixed
-    {
-        return first($this->data);
-    }
-
-    /**
-     * Get last item.
-     *
-     * @return mixed
-     */
-    public function last(): mixed
-    {
-        return last($this->data);
-    }
-
-    /**
-     * Call given function for each item.
-     *
-     * @param  callable $func
-     * @return void
-     */
-    public function each(callable $func): self
-    {
-        each($this->data, $func);
-    }
-
-    /**
      * Sort.
      *
      * @param  callable|int|null $func
@@ -466,7 +424,7 @@ class ItemList implements Arrayable, Jsonable, Countable, IteratorAggregate, Arr
      */
     public function filter(callable $func = null, bool $useKeys = false): self
     {
-        $this->data = filter($this->data, $func, use_keys: $useKeys, keep_keys: false);
+        $this->data = filter($this->data, $func, false, $useKeys, false);
 
         return $this;
     }
@@ -480,7 +438,7 @@ class ItemList implements Arrayable, Jsonable, Countable, IteratorAggregate, Arr
      */
     public function map(callable $func, bool $useKeys = false): self
     {
-        $this->data = map($this->data, $func, use_keys: $useKeys);
+        $this->data = map($this->data, $func, false, $useKeys);
 
         return $this;
     }
@@ -514,12 +472,11 @@ class ItemList implements Arrayable, Jsonable, Countable, IteratorAggregate, Arr
      * Refine filtering given or null, "" and [] items as default.
      *
      * @param  array|null $items
-     * @param  bool|null  $list
      * @return self
      */
-    public function refine(array $items = null, bool $list = null): self
+    public function refine(array $items = null): self
     {
-        $this->data = array_refine($this->data, $items, $list);
+        $this->data = array_refine($this->data, $items, true);
 
         return $this;
     }
@@ -527,13 +484,12 @@ class ItemList implements Arrayable, Jsonable, Countable, IteratorAggregate, Arr
     /**
      * Dedupe items applying unique check.
      *
-     * @param  bool      $strict
-     * @param  bool|null $list
+     * @param  bool $strict
      * @return self
      */
-    public function dedupe(bool $strict = true, bool $list = null): self
+    public function dedupe(bool $strict = true): self
     {
-        $this->data = array_dedupe($this->data, $strict, $list);
+        $this->data = array_dedupe($this->data, $strict, true);
 
         return $this;
     }
@@ -553,10 +509,11 @@ class ItemList implements Arrayable, Jsonable, Countable, IteratorAggregate, Arr
 
     /**
      * @inheritDoc IteratorAggregate
+     * @permissive
      */
-    public function getIterator(): ArrayIterator
+    public function getIterator(): Iter|Traversable
     {
-        return new ArrayIterator($this->data);
+        return new Iter($this->data);
     }
 
     /**
@@ -583,7 +540,7 @@ class ItemList implements Arrayable, Jsonable, Countable, IteratorAggregate, Arr
 
     /**
      * @inheritDoc ArrayAccess
-     * @causes     KeyError
+     * @causes     KeyError|TypeError
      */
     public function offsetSet(mixed $index, mixed $item): void
     {
@@ -591,7 +548,7 @@ class ItemList implements Arrayable, Jsonable, Countable, IteratorAggregate, Arr
         $this->typeCheck($item);
 
         // For calls like `items[] = item`.
-        $index ??= $this->count();
+        $index ??= count($this->data);
 
         // Splice, because it resets indexes.
         array_splice($this->data, $index, 1, [$item]);
@@ -652,7 +609,7 @@ class ItemList implements Arrayable, Jsonable, Countable, IteratorAggregate, Arr
      */
     private function typeCheck(mixed $item): void
     {
-        if (isset($this->type) && !is_type_of($item, $this->type)) {
+        if ($this->type !== null && !is_type_of($item, $this->type)) {
             throw new TypeError(sprintf(
                 'Invalid type %s for %s accepting only type of %s',
                 get_type($item), get_class_name($this, escape: true), $this->type

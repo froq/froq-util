@@ -83,7 +83,7 @@ class PlainObject extends stdClass implements Arrayable, Objectable, IteratorAgg
      * @inheritDoc IteratorAggregate
      * @permissive
      */
-    public function getIterator(): Iter|Iterator|Generator|Traversable
+    public function getIterator(): Iter|Traversable
     {
         return new Iter($this->toArray());
     }

@@ -265,7 +265,7 @@ class Type implements Stringable
 
         try {
             return is_string($this->var)
-                && ($pattern = RegExp::fromPattern($this->var, throw: true))
+                && ($pattern = RegExp::fromPattern($this->var, true))
                 && ($pattern->match('') !== null);
         } catch (RegExpError) {
             return false;
@@ -275,7 +275,7 @@ class Type implements Stringable
     /**
      * Type-of check.
      *
-     * @param  string ...$classes
+     * @param  string ...$types
      * @return bool
      */
     public function isTypeOf(string ...$types): bool

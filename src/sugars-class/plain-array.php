@@ -63,7 +63,7 @@ class PlainArray implements Arrayable, Jsonable, Countable, IteratorAggregate, A
      * @inheritDoc IteratorAggregate
      * @permissive
      */
-    public function getIterator(): Iter|Iterator|Generator|Traversable
+    public function getIterator(): Iter|Traversable
     {
         return new Iter($this->data);
     }
