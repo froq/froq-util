@@ -142,7 +142,7 @@ final /* fuckic static */ class Util extends \StaticClass
         if (($i = strpos($uri, '//')) === 0) {
             while (($uri[++$i] ?? '') === '/');
 
-            $uri = '/'. substr($uri, $i);
+            $uri = '/' . substr($uri, $i);
             $tmp = parse_url($uri) ?: [];
 
             // Yes, I'am maniac, give them back..
