@@ -251,8 +251,15 @@ function slice(array|string $input, int $start, int $end = null, bool $keep_keys
  */
 function splice(array|string $input, int $start, int $end = null, array|string $replace = null, array|string &$replaced = null): array|string
 {
-    return is_array($input) ? array_splice($input, $start, $end, (array) $replace)
-         : str_splice($input, $start, $end, $replace, $replaced);
+    if (is_array($input)) {
+        $replaced = (func_num_args() > 3)
+            ? array_splice($input, $start, $end, is_array($replace) ? $replace : [$replace])
+            : array_splice($input, $start, $end);
+
+        return $input; // Return modified input, not extracted part.
+    }
+
+    return str_splice($input, $start, $end, $replace, $replaced);
 }
 
 /**

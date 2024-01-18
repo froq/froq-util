@@ -336,22 +336,20 @@ function str_slice(string $string, string|array $search_or_range = null, string|
  * str_splice('Lorem', 1, 1, ['x', 'y']) => 'Lxyrem'
  * ```
  *
- * @param  string      $string
- * @param  int         $start
- * @param  int|null    $end
- * @param  array|null  $replace
- * @param  array|null &$replaced
+ * @param  string             $string
+ * @param  int                $start
+ * @param  int|null           $end
+ * @param  string|array|null  $replace
+ * @param  string|array|null &$replaced
  * @return string
  * @since  7.13
  */
 function str_splice(string $string, int $start, int $end = null, string|array $replace = null, string|array &$replaced = null): string
 {
-    $spt = mb_str_split($string);
-    $spc = array_splice($spt, $start, $end, (array) $replace);
+    $charlist = mb_str_split($string);
+    $replaced = array_splice($charlist, $start, $end, (array) $replace);
 
-    $replaced = $spc ? $spc : null;
-
-    return join($spt);
+    return join($charlist);
 }
 
 /**
