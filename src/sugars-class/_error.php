@@ -329,6 +329,13 @@ class SizeError extends froq\common\Error
 
 /**
  * @author Kerem Güneş
+ * @since  7.14
+ */
+class EnumError extends froq\common\Error
+{}
+
+/**
+ * @author Kerem Güneş
  * @since  6.0
  */
 class LastError extends froq\common\Error

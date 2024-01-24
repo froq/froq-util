@@ -619,7 +619,6 @@ class Map implements Arrayable, Listable, Jsonable, Iteratable, IteratableRevers
      *
      * @param  mixed $value
      * @return string|null
-     * @since  6.0
      */
     public function keyOf(mixed $value): string|null
     {
@@ -632,12 +631,23 @@ class Map implements Arrayable, Listable, Jsonable, Iteratable, IteratableRevers
      *
      * @param  mixed $value
      * @return string|null
-     * @since  6.0
      */
     public function lastKeyOf(mixed $value): string|null
     {
         return ($key = array_search_key($this->data, $value, last: true)) !== null
              ? (string) $key : null;
+    }
+
+    /**
+     * Get an item without ref, or return default.
+     *
+     * @param  int|string $key
+     * @param  mixed|null $default
+     * @return mixed
+     */
+    public function valueOf(int|string $key, mixed $default = null): mixed
+    {
+        return $this->get($key, $default);
     }
 
     /**
@@ -899,11 +909,33 @@ class Set implements Arrayable, Listable, Jsonable, Iteratable, IteratableRevers
      *
      * @param  mixed $value
      * @return int|null
-     * @since  6.0
      */
     public function indexOf(mixed $value): int|null
     {
         return array_search_key($this->data, $value);
+    }
+
+    /**
+     * Get last index of given value, or return null.
+     *
+     * @param  mixed $value
+     * @return int|null
+     */
+    public function lastIndexOf(mixed $value): int|null
+    {
+        return array_search_key($this->data, $value, last: true);
+    }
+
+    /**
+     * Get an item without ref, or return default.
+     *
+     * @param  int        $index
+     * @param  mixed|null $default
+     * @return mixed
+     */
+    public function valueOf(int $index, mixed $default = null): mixed
+    {
+        return $this->get($index, $default);
     }
 
     /**

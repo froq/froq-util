@@ -8,7 +8,7 @@ use froq\collection\trait\{CountTrait, EmptyTrait, EachTrait, KeysValuesTrait, F
     ToArrayTrait, ToJsonTrait};
 
 /**
- * A simple item class with a key/value pair data container & access stuff.
+ * A simple item class with a key/value data container & access stuff.
  *
  * @package global
  * @class   Item
@@ -133,6 +133,18 @@ class Item implements Arrayable, Jsonable, Countable, IteratorAggregate, ArrayAc
     public function key(mixed $item, bool $strict = true, bool $last = false): int|string|null
     {
         return array_search_key($this->data, $item, $strict, $last);
+    }
+
+    /**
+     * Get value of given key if found.
+     *
+     * @param  int|string $key
+     * @param  mixed|null $default
+     * @return mixed
+     */
+    public function value(int|string $key, mixed $default = null): mixed
+    {
+        return $this->data[$key] ?? $default;
     }
 
     /**
@@ -388,7 +400,7 @@ class ItemList implements Arrayable, Jsonable, Countable, IteratorAggregate, Arr
     }
 
     /**
-     * Get index of given item.
+     * Get index of given item if found.
      *
      * @param  mixed $item
      * @param  bool  $strict
@@ -398,6 +410,18 @@ class ItemList implements Arrayable, Jsonable, Countable, IteratorAggregate, Arr
     public function index(mixed $item, bool $strict = true, bool $last = false): int|null
     {
         return array_search_key($this->data, $item, $strict, $last);
+    }
+
+    /**
+     * Get value of given index if found.
+     *
+     * @param  int        $index
+     * @param  mixed|null $default
+     * @return mixed
+     */
+    public function value(int $index, mixed $default = null): mixed
+    {
+        return $this->data[$index] ?? $default;
     }
 
     /**

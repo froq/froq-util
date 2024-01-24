@@ -1303,6 +1303,18 @@ class XArray implements Arrayable, Listable, Jsonable, Iteratable, IteratableRev
     }
 
     /**
+     * Get an item without ref, or return default.
+     *
+     * @param  int|string $key
+     * @param  mixed|null $default
+     * @return mixed
+     */
+    public function valueOf(int|string $key, mixed $default = null): mixed
+    {
+        return $this->get($key, $default);
+    }
+
+    /**
      * Get item.
      *
      * @param  int|string $key
