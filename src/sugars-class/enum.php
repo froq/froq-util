@@ -65,7 +65,7 @@ class Enum
             'name'  => $this->unit->name,
             'value' => $this->unit->value,
             default => throw new EnumError(format(
-                'Undefined property %s:$%s',
+                'Undefined property %s::$%s',
                 get_class_name(static::class, escape: true), $name
             ))
         };
