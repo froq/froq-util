@@ -113,7 +113,7 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     }
 
     /**
-     * Sub-string for self.
+     * Sub string for self.
      *
      * @param  int      $start
      * @param  int|null $length
@@ -121,65 +121,63 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
      */
     public function sub(int $start, int $length = null): self
     {
-        $this->data = mb_substr($this->data, $start, $length, $this->encoding);
+        $this->data = $this->subs($start, $length);
 
         return $this;
     }
 
     /**
-     * Sub-string for return.
+     * Sub string for return.
      *
      * @param  int      $start
      * @param  int|null $length
      * @return string
      */
-    public function substr(int $start, int $length = null): string
+    public function subs(int $start, int $length = null): string
     {
         return mb_substr($this->data, $start, $length, $this->encoding);
     }
 
     /**
-     * Cut-string for self.
+     * Cut string for self.
      *
-     * @param  int      $start
-     * @param  int|null $length
+     * @param  int $length
      * @return self
      */
-    public function cut(int $start, int $length = null): self
+    public function cut(int $length): self
     {
-        $this->data = mb_strcut($this->data, $start, $length, $this->encoding);
+        $this->data = $this->cuts($length);
 
         return $this;
     }
 
     /**
-     * Cut-string for return.
+     * Cut string for return.
      *
-     * @param  int      $start
-     * @param  int|null $length
+     * @param  int $length
      * @return string
      */
-    public function cutstr(int $start, int $length = null): string
+    public function cuts(int $length): string
     {
-        return mb_strcut($this->data, $start, $length, $this->encoding);
+        return ($length >= 0) ? mb_substr($this->data, 0, $length, $this->encoding)
+                              : mb_substr($this->data, $length, null, $this->encoding);
     }
 
     /**
      * Splice.
      *
-     * @param  int          $start
-     * @param  int|null     $length
-     * @param  string|null  $replace
-     * @param  string|null &$replaced
+     * @param  int                $start
+     * @param  int|null           $length
+     * @param  string|array|null  $replace
+     * @param  string|array|null &$replaced
      * @return self
      */
-    public function splice(int $start, int $length = null, string $replace = null, string &$replaced = null): self
+    public function splice(int $start, int $length = null, string|array $replace = null, string|array &$replaced = null): self
     {
-        $data = mb_str_split($this->data, 1, $this->encoding);
-        $repl = array_splice($data, $start, $length, (array) $replace);
-        $repl && $replaced = join($repl);
+        $charlist = mb_str_split($this->data, 1, $this->encoding);
+        $replaced = array_splice($charlist, $start, $length, (array) $replace);
 
-        $this->data = join($data);
+        $this->data = join($charlist);
 
         // @cancel: Buggy.
         // $length ??= $this->length();
@@ -189,8 +187,8 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
         //         $start = 0;
         //     }
         // }
-        // $this->data = $this->substr(0, $start)
-        //     . $replace . $this->substr($start + $length);
+        // $this->data = $this->subs(0, $start)
+        //     . $replace . $this->subs($start + $length);
 
         return $this;
     }
@@ -256,7 +254,7 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
             $this->data = mb_substr($this->data, $index + mb_strlen($search, $this->encoding), null, $this->encoding);
             if ($length !== null) {
                 $this->data = ($length >= 0) ? mb_substr($this->data, 0, $length, $this->encoding)
-                    : mb_substr($this->data, $length, null, $this->encoding);
+                                             : mb_substr($this->data, $length, null, $this->encoding);
             }
         } else {
             $this->data = ''; // Not found.
@@ -282,7 +280,7 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     }
 
     /**
-     * Char, like substr() for single characters but returns null if index is exceeded.
+     * Char, for single characters but returns null if index is exceeded.
      *
      * @param  int $index
      * @return string|null
@@ -300,7 +298,7 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     }
 
     /**
-     * Char-at, like Javascript's charAt() but accepts negative indexes.
+     * Char-at, like String.charAt() in JavaScript but accepts negative indexes.
      *
      * @param  int $index
      * @return string|null
@@ -311,7 +309,7 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     }
 
     /**
-     * Char code-at, like Javascript's charCodeAt() but accepts negative indexes.
+     * Char code-at, like String.charCodeAt() in JavaScript but accepts negative indexes.
      *
      * @param  int $index
      * @return int|null
@@ -337,7 +335,7 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     }
 
     /**
-     * Code point-at, like Javascript's codePointAt().
+     * Code point-at, like String.codePointAt() in JavaScript.
      *
      * @param  int  $index
      * @param  bool $hex
@@ -388,7 +386,7 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     }
 
     /**
-     * Index-of, like Javascript's indexOf().
+     * Index-of, like String.indexOf() in JavaScript.
      *
      * @param  self|string $search
      * @param  bool        $icase
@@ -401,7 +399,7 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     }
 
     /**
-     * Last index-of, like Javascript's lastIndexOf().
+     * Last index-of, like String.lastIndexOf() in JavaScript.
      *
      * @param  self|string $search
      * @param  bool        $icase
@@ -589,7 +587,7 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     }
 
     /**
-     * Sub-string replace.
+     * Substring replace.
      *
      * @param  string   $replace
      * @param  int      $offset
@@ -604,7 +602,7 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     }
 
     /**
-     * Sub-string count.
+     * Substring count.
      *
      * @param  string   $search
      * @param  int      $offset
@@ -617,7 +615,7 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     }
 
     /**
-     * Sub-string compare.
+     * Substring compare.
      *
      * @param  string   $search
      * @param  int      $offset
@@ -1184,7 +1182,7 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     }
 
     /**
-     * Test, like Javascript's test.
+     * Test, like String.test() in JavaScript.
      *
      * @param  string|RegExp $pattern
      * @return bool
@@ -1199,7 +1197,7 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     }
 
     /**
-     * Search, like Javascript's search.
+     * Search, like String.search() in JavaScript.
      *
      * @param  string|RegExp $pattern
      * @return int
