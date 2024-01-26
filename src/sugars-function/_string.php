@@ -6,16 +6,18 @@
 use froq\util\Strings;
 
 /**
- * The ever most wanted functions (finally come with 8.0, but without case option).
+ * Most wanted functions (finally come with 8.0, but without case option).
+ *
  * @alias str_has(),str_has_prefix(),str_has_suffix()
  * @since 4.0
  */
-function strsrc(...$args) { return str_has(...$args);         } // Search.
-function strpfx(...$args) { return str_has_prefix(...$args);  } // Search prefix.
-function strsfx(...$args) { return str_has_suffix(...$args);  } // Search suffix.
+function strsrc(...$args): bool { return str_has(...$args);         } // Search.
+function strpfx(...$args): bool { return str_has_prefix(...$args);  } // Search prefix.
+function strsfx(...$args): bool { return str_has_suffix(...$args);  } // Search suffix.
 
 /**
- * Shorter stuff in multi-byte style.
+ * Shorter case converters in multi-byte style.
+ *
  * @alias mb_strtoupper(),mb_strtolower()
  * @since 3.0, 5.0
  */
@@ -23,7 +25,7 @@ function upper(string $string): string { return mb_strtoupper($string); }
 function lower(string $string): string { return mb_strtolower($string); }
 
 /**
- * Sub-string with given start/length in multi-byte style.
+ * Substring with given start/length in multi-byte style.
  *
  * @param  string   $string
  * @param  int      $start
@@ -272,7 +274,7 @@ function str_concat(string $string, string|Stringable ...$strings): string
 function str_reverse(string $string, string|bool $encoding = null): string
 {
     return (func_num_args() === 1 || $encoding === false) // No multi-byte directive.
-         ? strrev($string) : mb_strrev($string, ($encoding !== true ? $encoding : null));
+         ? strrev($string) : mb_strrev($string, $encoding !== true ? $encoding : null);
 }
 
 /**
@@ -413,16 +415,15 @@ function str_remove(string $string, string|array $search, int &$count = null): s
 }
 
 /**
- * Upperize given string (with unicode & Turkish characters support).
+ * Upperize given string (with multi-byte & Turkish characters support).
  *
- * @param  string      $string
- * @param  bool        $multi
- * @param  bool        $tr
- * @param  string|null $encoding
+ * @param  string           $string
+ * @param  bool             $tr
+ * @param  string|bool|null $encoding
  * @return string
  * @since  7.4
  */
-function str_upper(string $string, bool $multi = false, bool $tr = false, string $encoding = null): string
+function str_upper(string $string, bool $tr = false, string|bool $encoding = null): string
 {
     if ($string === '') {
         return '';
@@ -431,20 +432,19 @@ function str_upper(string $string, bool $multi = false, bool $tr = false, string
     // Damageable Turkish characters.
     $tr && $string = str_replace(['ı', 'i'], ['I', 'İ'], $string);
 
-    return $multi ? mb_strtoupper($string, $encoding) : strtoupper($string);
+    return $encoding ? mb_strtoupper($string, $encoding !== true ? $encoding : null) : strtoupper($string);
 }
 
 /**
- * Lowerize given string (with unicode & Turkish characters support).
+ * Lowerize given string (with multi-byte & Turkish characters support).
  *
- * @param  string      $string
- * @param  bool        $multi
- * @param  bool        $tr
- * @param  string|null $encoding
+ * @param  string           $string
+ * @param  bool             $tr
+ * @param  string|bool|null $encoding
  * @return string
  * @since  7.4
  */
-function str_lower(string $string, bool $multi = false, bool $tr = false, string $encoding = null): string
+function str_lower(string $string, bool $tr = false, string|bool $encoding = null): string
 {
     if ($string === '') {
         return '';
@@ -453,11 +453,11 @@ function str_lower(string $string, bool $multi = false, bool $tr = false, string
     // Damageable Turkish characters.
     $tr && $string = str_replace(['I', 'İ'], ['ı', 'i'], $string);
 
-    return $multi ? mb_strtolower($string, $encoding) : strtolower($string);
+    return $encoding ? mb_strtolower($string, $encoding !== true ? $encoding : null) : strtolower($string);
 }
 
 /**
- * Titleize given string (with unicode & Turkish characters support).
+ * Titleize given string (with multi-byte & Turkish characters support).
  *
  * @param  string      $string
  * @param  bool        $tr
@@ -501,7 +501,7 @@ function str_empty(string $string): bool
 }
 
 /**
- * Convert a multi-byte string's first character to upper-case.
+ * Convert first character of given string to upper-case in multi-byte style.
  *
  * @param  string      $string
  * @param  bool        $tr
@@ -524,7 +524,7 @@ function mb_ucfirst(string $string, bool $tr = false, string $encoding = null): 
 }
 
 /**
- * Convert a multi-byte string's first character to lower-case.
+ * Convert first character of given string to lower-case in multi-byte style.
  *
  * @param  string      $string
  * @param  bool        $tr
