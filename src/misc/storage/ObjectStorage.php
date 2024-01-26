@@ -18,13 +18,26 @@ use froq\common\interface\Arrayable;
 class ObjectStorage extends \SplObjectStorage implements Arrayable
 {
     /**
-     * Store an object with its info.
+     * Constructor.
      *
-     * @param  object $object
-     * @param  mixed  $info
+     * @param object ...$objects
+     * @missing
+     */
+    public function __construct(object ...$objects)
+    {
+        foreach ($objects as $object) {
+            parent::attach($object);
+        }
+    }
+
+    /**
+     * Store an object, optionally with info.
+     *
+     * @param  object     $object
+     * @param  mixed|null $info
      * @return void
      */
-    public function store(object $object, mixed $info): void
+    public function store(object $object, mixed $info = null): void
     {
         parent::attach($object, $info);
     }
@@ -87,7 +100,7 @@ class ObjectStorage extends \SplObjectStorage implements Arrayable
     }
 
     /**
-     * Permissive offset getter, not throws `UnexpectedValueException`.
+     * Permissive, no `UnexpectedValueException` throws.
      *
      * @override
      */
