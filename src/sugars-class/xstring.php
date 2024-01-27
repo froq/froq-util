@@ -415,7 +415,7 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
      * Upper (case).
      *
      * @param  int|null $index N-index stuff (kinda ucfirst/lcfirst).
-     * @param  bool     $tr    Turkish stuff.
+     * @param  bool     $tr    For Turkish characters.
      * @return self
      */
     public function upper(int $index = null, bool $tr = false): self
@@ -427,7 +427,7 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
      * Lower (case).
      *
      * @param  int|null $index N-index stuff (kinda ucfirst/lcfirst).
-     * @param  bool     $tr    Turkish stuff.
+     * @param  bool     $tr    For Turkish characters.
      * @return self
      */
     public function lower(int $index = null, bool $tr = false): self
@@ -438,7 +438,7 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     /**
      * Title (case).
      *
-     * @param  bool $tr Turkish stuff.
+     * @param  bool $tr For Turkish characters.
      * @return self
      */
     public function title(bool $tr = false): self
@@ -451,7 +451,7 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
      *
      * @param  int      $case
      * @param  int|null $index N-index stuff (kinda ucfirst/lcfirst, for upper/lower only).
-     * @param  bool     $tr    Turkish stuff.
+     * @param  bool     $tr    For Turkish characters.
      * @return self
      */
     public function case(int $case, int $index = null, bool $tr = false): self
