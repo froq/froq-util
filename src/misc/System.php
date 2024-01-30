@@ -193,4 +193,36 @@ class System extends \StaticClass
 
         return $ret;
     }
+
+    /**
+     * Read bytes from `/dev/urandom` device.
+     *
+     * @param  int $length
+     * @return string|null
+     * @throws Error
+     */
+    public static function urandom(int $length): string|null
+    {
+        if ($length < 1) {
+            throw new \Error('Argument $length must be greater than 0');
+        }
+
+        $fp = @fopen('/dev/urandom', 'rb');
+
+        if (!$fp) {
+            $error = error_message(extract: true) ?: 'Unknown error';
+            $fails = 'Failed to open stream: ';
+
+            if (strsrc($error, $fails)) {
+                $error = strsub($error, strlen($fails));
+            }
+
+            throw new \Error('Cannot open /dev/urandom: ' . $error);
+        }
+
+        $ret = @fread($fp, $length);
+        fclose($fp);
+
+        return ($ret !== false) ? $ret : null;
+    }
 }

@@ -3,15 +3,15 @@
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-util
  */
-namespace froq\util;
+namespace froq\util\random;
 
 /**
  * An RNG class that generates pseudorandom numbers, chars & bytes. This class is
- * highly inspired by java.util.Random class using its some same implementations.
+ * highly inspired by java.util.Random class and uses some same implementations.
  * @see https://docs.oracle.com/javase/8/docs/api/java/util/Random.html
  *
- * @package froq\util
- * @class   froq\util\Random
+ * @package froq\util\random
+ * @class   froq\util\random\Random
  * @author  Kerem Güneş
  * @since   5.0
  */
