@@ -17,7 +17,7 @@ namespace froq\util;
 final class Arrays extends \StaticClass
 {
     /**
-     * Check whether all keys are "int" in given array, or given array is a list when strict.
+     * Check if all keys are int in given array, or given array is a list when strict.
      *
      * @param  array $array
      * @param  bool  $strict
@@ -34,11 +34,12 @@ final class Arrays extends \StaticClass
                 return false;
             }
         }
+
         return true;
     }
 
     /**
-     * Check whether given array is an associative array.
+     * Check if given array is an associative array.
      *
      * @param  array $array
      * @return bool
@@ -54,11 +55,12 @@ final class Arrays extends \StaticClass
                 return true;
             }
         }
+
         return false;
     }
 
     /**
-     * Check whether all keys are "string" in given array.
+     * Check if all keys are string in given array.
      *
      * @param  array $array
      * @return bool
@@ -74,11 +76,12 @@ final class Arrays extends \StaticClass
                 return false;
             }
         }
+
         return true;
     }
 
     /**
-     * Check whether all values are "unique" in given array.
+     * Check if all values are unique in given array.
      *
      * @param  array $array
      * @param  bool  $strict
@@ -87,12 +90,14 @@ final class Arrays extends \StaticClass
     public static function isSetArray(array $array, bool $strict = true): bool
     {
         $search = array_shift($array);
+
         foreach ($array as $value) {
             if ($strict ? $search === $value : $search == $value) {
                 return false;
             }
             $search = $value;
         }
+
         return true;
     }
 
@@ -389,7 +394,7 @@ final class Arrays extends \StaticClass
     }
 
     /**
-     * Get "really" unique items with strict comparison as default since array_unique()
+     * Get REALLY unique items with strict comparison as default since array_unique()
      * comparison non-strict (eg: 1 == '1' is true).
      *
      * @param  array     $array
@@ -471,6 +476,7 @@ final class Arrays extends \StaticClass
                 return true;
             }
         }
+
         return false;
     }
 
@@ -488,6 +494,7 @@ final class Arrays extends \StaticClass
                 return false;
             }
         }
+
         return true;
     }
 
@@ -878,7 +885,7 @@ final class Arrays extends \StaticClass
     }
 
     /**
-     * Check whether given keys exist in given array.
+     * Check if given keys exist in given array.
      *
      * @param  array $array
      * @param  array $keys
@@ -896,7 +903,7 @@ final class Arrays extends \StaticClass
     }
 
     /**
-     * Check whether given values exist given array.
+     * Check if given values exist given array.
      *
      * @param  array $array
      * @param  array $values
@@ -1475,7 +1482,7 @@ final class Arrays extends \StaticClass
     }
 
     /**
-     * Check whether all given keys were set in given array.
+     * Check if all given keys were set in given array.
      *
      * @param  array         $array
      * @param  int|string ...$keys
@@ -1521,7 +1528,7 @@ final class Arrays extends \StaticClass
     }
 
     /**
-     * Check whether any of given values exists in given array.
+     * Check if any of given values exists in given array.
      *
      * @param  array    $array
      * @param  mixed ...$values
@@ -1543,7 +1550,7 @@ final class Arrays extends \StaticClass
     }
 
     /**
-     * Check whether any of given keys exists in given array.
+     * Check if any of given keys exists in given array.
      *
      * @param  array         $array
      * @param  int|string ...$keys
@@ -1950,7 +1957,7 @@ final class Arrays extends \StaticClass
             if (is_array($funcs)) {
                 return function ($value, $key = null) use ($funcs) {
                     foreach ($funcs as $func) {
-                        $value = ($key !== null) // If using keys.
+                        $value = ($key !== null) // If key passed.
                             ? $func($value, $key) : $func($value);
                     }
                     return $value;

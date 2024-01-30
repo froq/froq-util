@@ -1736,7 +1736,7 @@ function random(int|float $min = null, int|float $max = null, int $precision = n
  *
  * @param  float|null $min
  * @param  float|null $max
- * @param  int        $precision
+ * @param  int|null   $precision
  * @return float
  * @since  5.0
  */
