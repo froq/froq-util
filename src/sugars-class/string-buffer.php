@@ -661,6 +661,16 @@ class StringBuffer implements Stringable, IteratorAggregate, JsonSerializable, A
     }
 
     /**
+     * Get buffer data as XString.
+     *
+     * @return XString
+     */
+    public function toXString(): XString
+    {
+        return new XString(join($this->data), $this->encoding);
+    }
+
+    /**
      * @alias toString()
      */
     public function string()
@@ -811,11 +821,11 @@ class StringBuffer implements Stringable, IteratorAggregate, JsonSerializable, A
     /**
      * Create an instance from given data and encoding.
      *
-     * @param  string|array|int $data
-     * @param  string|null      $encoding
+     * @param  string|int|array<string> $data
+     * @param  string|null              $encoding
      * @return static
      */
-    public static function from(string|array|int $data, string|null $encoding = ''): static
+    public static function from(string|int|array $data, string|null $encoding = ''): static
     {
         return new static($data, $encoding);
     }
@@ -861,18 +871,7 @@ class StringBuffer implements Stringable, IteratorAggregate, JsonSerializable, A
      * @param  int ...$codes
      * @return static
      */
-    public static function fromCharCode(int ...$codes): static
-    {
-        return new static(array_map(fn(int $code): ?string => Strings::chr($code), $codes));
-    }
-
-    /**
-     * Create an instance from given code points.
-     *
-     * @param  int ...$codes
-     * @return static
-     */
-    public static function fromCodePoint(int ...$codes): static
+    public static function fromCharCodes(int ...$codes): static
     {
         return new static(array_map(fn(int $code): ?string => Strings::chr($code), $codes));
     }

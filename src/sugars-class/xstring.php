@@ -1769,6 +1769,16 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     }
 
     /**
+     * Hex data as hexadecimal string.
+     *
+     * @return string
+     */
+    public function toHex(): string
+    {
+        return bin2hex($this->data);
+    }
+
+    /**
      * Hash data as given algo string.
      *
      * @param  string $algo
@@ -1808,7 +1818,7 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
      * @param  string|null $class
      * @return iterable
      */
-    public function toBytes(string $class = null): iterable
+    public function toCharCodes(string $class = null): iterable
     {
         $data = [];
         for ($i = 0, $il = $this->length(); $i < $il; $i++) {
@@ -1969,18 +1979,7 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
      * @param  int ...$codes
      * @return static
      */
-    public static function fromCharCode(int ...$codes): static
-    {
-        return new static(join(array_map(fn(int $code): ?string => Strings::chr($code), $codes)));
-    }
-
-    /**
-     * Create an instance from given code points.
-     *
-     * @param  int ...$codes
-     * @return static
-     */
-    public static function fromCodePoint(int ...$codes): static
+    public static function fromCharCodes(int ...$codes): static
     {
         return new static(join(array_map(fn(int $code): ?string => Strings::chr($code), $codes)));
     }
