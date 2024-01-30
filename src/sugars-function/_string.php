@@ -631,3 +631,28 @@ function char_code_at(string $string, int $index, string $encoding = null): int|
 
     return ($char !== '') ? mb_ord($char, $encoding) : null;
 }
+
+/**
+ * As an ally of in_array() function.
+ *
+ * @param  string|array<string> $search
+ * @param  string               $string
+ * @param  bool                 $icase
+ * @param  string|null          $side One of: start, prefix, left or end, suffix, right.
+ * @return bool
+ * @since  7.15
+ * @throws ArgumentError
+ */
+function in_string(string|array $search, string $string, bool $icase = false, string $side = null): bool
+{
+    return match ($side) {
+        '', null
+            => str_has($string, $search, $icase),
+        'start', 'prefix', 'left'
+            => str_has_prefix($string, $search, $icase),
+        'end', 'suffix', 'right'
+            => str_has_suffix($string, $search, $icase),
+
+        default => throw new ArgumentError('Invalid side: %q', $side)
+    };
+}
