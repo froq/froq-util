@@ -62,7 +62,7 @@ class URandom implements \Stringable, \IteratorAggregate
     }
 
     /**
-     * Get data as byte array.
+     * Get data as ord array.
      *
      * @return array
      */
