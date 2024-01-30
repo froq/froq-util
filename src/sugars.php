@@ -891,7 +891,9 @@ function get_unique_id(int $length = 14, int $base = 16, bool $upper = false, bo
         $ret .= suid($length - $ret_length, $base);
     }
 
-    $upper && $ret = strtoupper($ret);
+    if ($upper && $base > 10) {
+        $ret = strtoupper($ret);
+    }
 
     return strcut($ret, $length);
 }
@@ -917,13 +919,15 @@ function get_random_id(int $length = 14, int $base = 16, bool $upper = false): s
     $ret = '';
 
     while ($length > strlen($ret)) {
-        $id = bin2hex(random_bytes(4));
+        $id = bin2hex(random_bytes(intdiv($length, 2)));
 
         // Convert non-hex ids.
         $ret .= ($base === 16) ? $id : convert_base($id, 16, $base);
     }
 
-    $upper && $ret = strtoupper($ret);
+    if ($upper && $base > 10) {
+        $ret = strtoupper($ret);
+    }
 
     return strcut($ret, $length);
 }
