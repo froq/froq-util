@@ -3,7 +3,6 @@
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-util
  */
-use froq\common\interface\{Intable, Floatable, Numberable};
 use froq\util\Numbers;
 
 /**
@@ -14,7 +13,7 @@ use froq\util\Numbers;
  * @author  Kerem Güneş
  * @since   6.0
  */
-class XNumber implements Intable, Floatable, Numberable, Stringable
+class XNumber implements Stringable
 {
     /** Constants. */
     public final const PRECISION = PRECISION,
@@ -74,14 +73,14 @@ class XNumber implements Intable, Floatable, Numberable, Stringable
     /**
      * Format.
      *
-     * @param  int|true|null $decimals
-     * @param  string|null   $decimalSeparator
-     * @param  string|null   $thousandSeparator
+     * @param  int|true|null $decs
+     * @param  string|null   $dsep
+     * @param  string|null   $tsep
      * @return string
      */
-    public function format(int|true $decimals = null, string $decimalSeparator = null, string $thousandSeparator = null): string
+    public function format(int|true $decs = null, string $dsep = null, string $tsep = null): string
     {
-        return format_number($this->data, $decimals ?? $this->precision, $decimalSeparator, $thousandSeparator);
+        return format_number($this->data, $decs ?? $this->precision, $dsep, $tsep);
     }
 
     /**
@@ -270,7 +269,7 @@ class XNumber implements Intable, Floatable, Numberable, Stringable
      */
     public function sign(): self
     {
-        $this->data = ($this->data > 0) ? -$this->data : $this->data;
+        $this->data = -abs($this->data);
 
         return $this;
     }
@@ -282,7 +281,7 @@ class XNumber implements Intable, Floatable, Numberable, Stringable
      */
     public function unsign(): self
     {
-        $this->data = ($this->data > 0) ? $this->data : -$this->data;
+        $this->data = abs($this->data);
 
         return $this;
     }
@@ -517,27 +516,33 @@ class XNumber implements Intable, Floatable, Numberable, Stringable
     }
 
     /**
-     * @inheritDoc froq\common\interface\Intable
-     */
-    public function toInt(): int
-    {
-        return $this->isValid() ? (int) $this->data : 0;
-    }
-
-    /**
-     * @inheritDoc froq\common\interface\Floatable
-     */
-    public function toFloat(): float
-    {
-        return $this->isValid() ? (float) $this->data : 0.0;
-    }
-
-    /**
-     * @inheritDoc froq\common\interface\Numberable
+     * Get number data.
+     *
+     * @return int|float
      */
     public function toNumber(): int|float
     {
         return $this->data;
+    }
+
+    /**
+     * Get number data as int.
+     *
+     * @return int|null
+     */
+    public function toInt(): int|null
+    {
+        return $this->isValid() ? intval($this->data) : null;
+    }
+
+    /**
+     * Get number data.
+     *
+     * @return float|null
+     */
+    public function toFloat(): float|null
+    {
+        return $this->isValid() ? floatval($this->data) : null;
     }
 
     /**
@@ -627,9 +632,11 @@ class XNumber implements Intable, Floatable, Numberable, Stringable
         if (is_string($data)) {
             return Numbers::convert($data, $precision ?? $this->precision);
         }
+
         if ($data instanceof self) {
             return $data->data;
         }
+
         return $data;
     }
 }
