@@ -38,6 +38,7 @@ class XNumber implements Stringable
         if (is_string($data)) {
             $data = Numbers::convert($data, $precision);
         }
+
         $this->data      = $data;
         $this->precision = $precision;
     }
@@ -127,14 +128,11 @@ class XNumber implements Stringable
      *
      * @param  int|float|string|self $data
      * @return self
+     * @causes DivisionByZeroError
      */
     public function div(int|float|string|self $data): self
     {
-        try {
-            $this->data /= $this->prepare($data);
-        } catch (DivisionByZeroError) {
-            $this->data = $this->data ? INF : NAN;
-        }
+        $this->data /= $this->prepare($data);
 
         return $this;
     }
@@ -144,10 +142,11 @@ class XNumber implements Stringable
      *
      * @param  int|float|string|self $data
      * @return self
+     * @causes DivisionByZeroError
      */
     public function intDiv(int|float|string|self $data): self
     {
-        $this->data = (int) $this->div($data)->data;
+        $this->data = (int) ($this->data / $this->prepare($data));
 
         return $this;
     }
@@ -170,14 +169,11 @@ class XNumber implements Stringable
      *
      * @param  int|float|string|self $data
      * @return self
+     * @causes DivisionByZeroError
      */
     public function mod(int|float|string|self $data): self
     {
-        try {
-            $this->data %= $this->prepare($data);
-        } catch (DivisionByZeroError) {
-            $this->data = NAN;
-        }
+        $this->data %= $this->prepare($data);
 
         return $this;
     }
