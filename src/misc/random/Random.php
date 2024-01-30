@@ -57,7 +57,7 @@ class Random
     public function nextInt(int $bound = PHP_INT_MAX): int
     {
         if ($bound < 1) {
-            throw new \ArgumentError('Invalid bound: %s [min=1]', $bound);
+            throw new \ArgumentError('Invalid bound %s [min=1]', $bound);
         }
 
         // i.e. bound is a power of 2.
@@ -116,9 +116,9 @@ class Random
     public function nextChars(int $length, int $base = 62): string
     {
         if ($length < 1) {
-            throw new \ArgumentError('Invalid length: %s [min=1]', $length);
+            throw new \ArgumentError('Invalid length %s [min=1]', $length);
         } elseif ($base < 2 || $base > 62) {
-            throw new \ArgumentError('Invalid base: %s [min=2, max=62]', $base);
+            throw new \ArgumentError('Invalid base %s [min=2, max=62]', $base);
         }
 
         $chars = strcut(BASE62_ALPHABET, $base);
@@ -155,7 +155,7 @@ class Random
     public function nextBytes(int $length, bool $hex = false): string|array
     {
         if ($length < 1) {
-            throw new \ArgumentError('Invalid length: %s [min=1]', $length);
+            throw new \ArgumentError('Invalid length %s [min=1]', $length);
         }
 
         $ret = random_bytes($length);

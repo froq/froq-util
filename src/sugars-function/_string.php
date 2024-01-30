@@ -653,6 +653,6 @@ function in_string(string|array $search, string $string, bool $icase = false, st
         'end', 'suffix', 'right'
             => str_has_suffix($string, $search, $icase),
 
-        default => throw new ArgumentError('Invalid side: %q', $side)
+        default => throw new ArgumentError('Invalid side %q', $side)
     };
 }

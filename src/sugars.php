@@ -516,13 +516,13 @@ function convert_base(int|string $input, int|string $from, int|string $to): stri
 
     if (is_int($from)) {
         if ($from < 2 || $from > 62) {
-            throw new ArgumentError('Invalid base %q for from [min=2, max=62]', $from);
+            throw new ArgumentError('Invalid from base %s [min=2, max=62]', $from);
         }
         $from = strcut($characters, $from);
     }
     if (is_int($to)) {
         if ($to < 2 || $to > 62) {
-            throw new ArgumentError('Invalid base %q for to [min=2, max=62]', $to);
+            throw new ArgumentError('Invalid to base %s [min=2, max=62]', $to);
         }
         $to = strcut($characters, $to);
     }
@@ -864,9 +864,9 @@ function get_error(string $field = null): mixed
 function get_unique_id(int $length = 14, int $base = 16, bool $upper = false, bool $hrtime = false): string
 {
     if ($length < 14 && $base < 17) {
-        throw new ArgumentError('Invalid length: %s [min=14]', $length);
+        throw new ArgumentError('Invalid length %s [min=14]', $length);
     } elseif ($base < 10 || $base > 62) {
-        throw new ArgumentError('Invalid base: %s [min=10 & max=62]', $base);
+        throw new ArgumentError('Invalid base %s [min=10, max=62]', $base);
     }
 
     // Grab 14-length hex from uniqid() or map hrtime() as hex.
@@ -909,9 +909,9 @@ function get_unique_id(int $length = 14, int $base = 16, bool $upper = false, bo
 function get_random_id(int $length = 14, int $base = 16, bool $upper = false): string
 {
     if ($length < 14 && $base < 17) {
-        throw new ArgumentError('Invalid length: %s [min=14]', $length);
+        throw new ArgumentError('Invalid length %s [min=14]', $length);
     } elseif ($base < 10 || $base > 62) {
-        throw new ArgumentError('Invalid base: %s [min=10 & max=62]', $base);
+        throw new ArgumentError('Invalid base %s [min=10, max=62]', $base);
     }
 
     $ret = '';
