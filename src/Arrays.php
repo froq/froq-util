@@ -677,6 +677,10 @@ final class Arrays extends \StaticClass
      */
     public static function shuffle(array $array, bool $assoc = null): array
     {
+        if (!$array) {
+            return $array;
+        }
+
         $assoc ??= self::isAssocArray($array);
 
         if (!$assoc) {
