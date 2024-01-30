@@ -1634,6 +1634,11 @@ function format_number(int|float|string $input, int|true $decimals = 0, string $
         $input += 0;
     }
 
+    // Some speed..
+    if (is_int($input) && $thousand_separator === '') {
+        return (string) $input;
+    }
+
     $export = var_export($input, true);
 
     // Auto-detect decimals.
