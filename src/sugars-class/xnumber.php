@@ -156,6 +156,7 @@ class XNumber implements Stringable
      *
      * @param  int|float|string|self $data
      * @return self
+     * @causes DivisionByZeroError
      */
     public function floatDiv(int|float|string|self $data): self
     {
@@ -184,6 +185,7 @@ class XNumber implements Stringable
      *
      * @param  int|float|string|self $data
      * @return self
+     * @causes DivisionByZeroError
      */
     public function floatMod(int|float|string|self $data): self
     {
