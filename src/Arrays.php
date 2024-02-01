@@ -1220,8 +1220,7 @@ final class Arrays extends \StaticClass
             if ($useKeys) {
                 foreach ($array as $key => $value) {
                     if (is_array($value)) {
-                        $ret[$key] = self::filter($value, $func, true, true, $keepKeys);
-                        continue;
+                        $value = self::filter($value, $func, true, true, $keepKeys);
                     }
 
                     $func($value, $key) && $ret[$key] = $value;
@@ -1229,8 +1228,7 @@ final class Arrays extends \StaticClass
             } else {
                 foreach ($array as $key => $value) {
                     if (is_array($value)) {
-                        $ret[$key] = self::filter($value, $func, true, false, $keepKeys);
-                        continue;
+                        $value = self::filter($value, $func, true, false, $keepKeys);
                     }
 
                     $func($value) && $ret[$key] = $value;
@@ -1267,8 +1265,7 @@ final class Arrays extends \StaticClass
 
         foreach ($array as $key => $value) {
             if ($recursive && is_array($value)) {
-                $ret[$key] = self::filterKeys($value, $func, true);
-                continue;
+                $value = self::filterKeys($value, $func, true);
             }
 
             $func($key) && $ret[$key] = $value;
@@ -1297,8 +1294,7 @@ final class Arrays extends \StaticClass
             if ($useKeys) {
                 foreach ($array as $key => $value) {
                     if (is_array($value)) {
-                        $ret[$key] = self::map($value, $func, true, true, $keepKeys);
-                        continue;
+                        $value = self::map($value, $func, true, true, $keepKeys);
                     }
 
                     $ret[$key] = $func($value, $key);
@@ -1306,8 +1302,7 @@ final class Arrays extends \StaticClass
             } else {
                 foreach ($array as $key => $value) {
                     if (is_array($value)) {
-                        $ret[$key] = self::map($value, $func, true, false, $keepKeys);
-                        continue;
+                        $value = self::map($value, $func, true, false, $keepKeys);
                     }
 
                     $ret[$key] = $func($value);
@@ -1348,8 +1343,7 @@ final class Arrays extends \StaticClass
             $key = $func($key);
 
             if ($recursive && is_array($value)) {
-                $ret[$key] = self::mapKeys($value, $func, true);
-                continue;
+                $value = self::mapKeys($value, $func, true);
             }
 
             $ret[$key] = $value;
