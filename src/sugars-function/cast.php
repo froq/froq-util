@@ -5,11 +5,33 @@
  */
 
 /**
- * Cast functions.
+ * Cast functions for scalars.
  */
-function int    (mixed $var) { return (int)    $var; }
-function float  (mixed $var) { return (float)  $var; }
-function string (mixed $var) { return (string) $var; }
-function bool   (mixed $var) { return (bool)   $var; }
-// function array  (mixed $var) { return (array)  $var; } :((
-function object (mixed $var) { return (object) $var; }
+function int    (mixed $var): int    { return (int)    $var; }
+function float  (mixed $var): float  { return (float)  $var; }
+function string (mixed $var): string { return (string) $var; }
+function bool   (mixed $var): bool   { return (bool)   $var; }
+
+// function array  (mixed $var) { return (array)  $var; } :(
+// function object (mixed $var) { return (object) $var; }
+
+/**
+ * Object caster (usefull for named arguments).
+ *
+ * @param  mixed ...$vars
+ * @return object
+ */
+function object(mixed ...$vars): object
+{
+    // For object(array) or object(1,2,..).
+    if (is_list($vars) && count($vars) === 1) {
+        $vars = current($vars);
+
+        // Drop [scalar] => ...
+        if (is_scalar($vars)) {
+            $vars = [$vars];
+        }
+    }
+
+    return (object) $vars;
+}
