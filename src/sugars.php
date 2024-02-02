@@ -706,6 +706,18 @@ function get_class_namespace(string|object $class, bool $baseOnly = false): stri
 }
 
 /**
+ * Get class file.
+ *
+ * @param  string|object $class
+ * @return string|false|null
+ * @since  7.0
+ */
+function get_class_file(string|object $class): string|false|null
+{
+    return Objects::getFile($class);
+}
+
+/**
  * Get constants of given class/object, or return null if no such class.
  *
  * @param  string|object $class

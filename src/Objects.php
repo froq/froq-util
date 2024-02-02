@@ -164,6 +164,17 @@ final class Objects extends \StaticClass
     }
 
     /**
+     * Get file (false if class is in core or extension, null if no class exists).
+     *
+     * @param  string $target
+     * @return string|false|null
+     */
+    public static function getFile(object|string $target): string|false|null
+    {
+        return self::reflect($target)?->getFileName();
+    }
+
+    /**
      * Has constant.
      *
      * @param  object|string $target

@@ -98,6 +98,16 @@ class XClass implements Stringable
     }
 
     /**
+     * Get file.
+     *
+     * @return string|false|null
+     */
+    public function getFile(): string|false|null
+    {
+        return Objects::getFile($this->name);
+    }
+
+    /**
      * Get type.
      *
      * @return string|null
