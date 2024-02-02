@@ -1986,7 +1986,7 @@ function is_stream(mixed $var): bool
 /**
  * Check if given input is a primitive (int|float|string|bool|true|false & array|null).
  *
- * Note: true|false is scalar (no mentions yet on http://php.net/is_scalar()).
+ * Note: true|false is scalar (no mentions yet on http://php.net/is_scalar).
  *
  * @param  mixed $var
  * @return bool
