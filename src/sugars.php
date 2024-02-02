@@ -59,7 +59,7 @@ function qo(...$args): object
 /**
  * Quick array/object export (with "x:$x, y:$y" notation).
  */
-function qx(array|object $iter, &...$vars): int
+function qx(array|object $iter, mixed &...$vars): int
 {
     return array_export((array) $iter, ...$vars);
 }
@@ -71,7 +71,7 @@ function qx(array|object $iter, &...$vars): int
  * ```
  * $user->data = unref($data)     // $data => null
  * [$id, $name] = unref(...$item) // $item => [null, null]
- * unref($someTempData)           // $someTempData => null (in case)
+ * unref($someTempData)           // $someTempData => null (why?)
  * ```
  *
  * @param  mixed &...$vars
