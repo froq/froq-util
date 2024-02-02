@@ -213,6 +213,16 @@ class Type implements Stringable
     }
 
     /**
+     * Primitive check.
+     *
+     * @return bool
+     */
+    public function isPrimitive(): bool
+    {
+        return is_primitive($this->var);
+    }
+
+    /**
      * Closure check.
      *
      * @return bool

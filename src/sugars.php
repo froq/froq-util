@@ -623,7 +623,6 @@ function convert_case(string $input, string|int $case, string $exploder = null, 
  * @param  string $class2
  * @param  bool   $parent_only
  * @return bool
- * @since  4.21
  */
 function class_extends(string $class1, string $class2, bool $parent_only = false): bool
 {
@@ -638,7 +637,6 @@ function class_extends(string $class1, string $class2, bool $parent_only = false
  * @param  string $interface2
  * @param  bool   $parent_only
  * @return bool
- * @since  5.31
  */
 function interface_extends(string $interface1, string $interface2, bool $parent_only = false): bool
 {
@@ -1471,7 +1469,7 @@ function preg_error_message(int &$code = null, string $func = null, bool $clear 
 
         // Clear last error.
         if ($clear && $message) {
-            preg_test('~~', '');
+            preg_match('~~', '');
         }
 
         return $message;
@@ -1908,7 +1906,7 @@ function func_has_args(int|string ...$args): bool
 }
 
 /**
- * Validate given input as JSON (@see https://wiki.php.net/rfc/json_validate).
+ * Validate given input as JSON (@see http://wiki.php.net/rfc/json_validate).
  *
  * @param  string|null    $input
  * @param  JsonError|null &$error
@@ -1949,7 +1947,7 @@ function env(string $name, mixed $default = null, bool $server = true): mixed
 }
 
 /**
- * Check whether given array is a list array.
+ * Check if given input is a list.
  *
  * @param  mixed $var
  * @return bool
@@ -1961,7 +1959,7 @@ function is_list(mixed $var): bool
 }
 
 /**
- * Check whether given input is a number.
+ * Check if given input is a number (int|float).
  *
  * @param  mixed $var
  * @return bool
@@ -1973,7 +1971,7 @@ function is_number(mixed $var): bool
 }
 
 /**
- * Check whether given input is a stream.
+ * Check if given input is a stream.
  *
  * @param  mixed $var
  * @return bool
@@ -1981,11 +1979,27 @@ function is_number(mixed $var): bool
  */
 function is_stream(mixed $var): bool
 {
+    // return get_debug_type($var) === 'resource (stream)';
     return is_resource($var) && get_resource_type($var) === 'stream';
 }
 
 /**
- * Check whether given input is any type of given types.
+ * Check if given input is a primitive (int|float|string|bool|true|false & array|null).
+ *
+ * Note: true|false is scalar (no mentions yet on http://php.net/is_scalar()).
+ *
+ * @param  mixed $var
+ * @return bool
+ * @since  5.0
+ */
+function is_primitive(mixed $var): bool
+{
+    // return is_scalar($var) || preg_match('~^(array|null)$~', get_debug_type($var));
+    return is_scalar($var) || is_array($var) || is_null($var);
+}
+
+/**
+ * Check if given input is any type of given types.
  *
  * @param  mixed     $var
  * @param  string ...$types
@@ -2035,12 +2049,12 @@ function is_type_of(mixed $var, string ...$types): bool
 }
 
 /**
- * Check whether given class is any type of given class(es).
+ * Check if given class is any type of given class(es).
  *
  * @param  string|object    $class
  * @param  string|object ...$classes
  * @return bool
- * @since  5.31
+ * @since  5.0
  * @throws ArgumentError
  */
 function is_class_of(string|object $class, string|object ...$classes): bool
@@ -2062,7 +2076,7 @@ function is_class_of(string|object $class, string|object ...$classes): bool
 }
 
 /**
- * Check empty state(s) of given input(s).
+ * Check if given input(s) is empty.
  *
  * @param  mixed    $var
  * @param  mixed ...$vars
@@ -2085,7 +2099,7 @@ function is_empty(mixed $var, mixed ...$vars): bool
 }
 
 /**
- * Check whether given input is true.
+ * Check if given input is true.
  *
  * @param  mixed $var
  * @return bool
@@ -2097,7 +2111,7 @@ function is_true(mixed $var): bool
 }
 
 /**
- * Check whether given input is false.
+ * Check if given input is false.
  *
  * @param  mixed $var
  * @return bool
