@@ -30,7 +30,7 @@ class XClass implements Stringable
     {
         if (is_string($class)) {
             $this->name   = $class;
-            // Help for autoloader & shortcut for methods.
+            // Help autoloader & shortcut for methods.
             $this->exists = class_exists($class, true);
         } else {
             $this->name   = $class::class;
@@ -104,7 +104,7 @@ class XClass implements Stringable
      */
     public function getFile(): string|false|null
     {
-        return Objects::getFile($this->name);
+        return $this->exists ? Objects::getFile($this->name) : null;
     }
 
     /**
@@ -114,7 +114,7 @@ class XClass implements Stringable
      */
     public function getType(): string|null
     {
-        return Objects::getType($this->name);
+        return $this->exists ? Objects::getType($this->name) : null;
     }
 
     /**
@@ -125,63 +125,6 @@ class XClass implements Stringable
     public function exists(): bool
     {
         return $this->exists;
-    }
-
-    /**
-     * Constant existence checker.
-     *
-     * @param  string $name
-     * @return bool
-     */
-    public function constantExists(string $name): bool
-    {
-        return $this->exists && constant_exists($this->name, $name);
-    }
-
-    /**
-     * Property existence checker.
-     *
-     * @param  string $name
-     * @return bool
-     */
-    public function propertyExists(string $name): bool
-    {
-        return $this->exists && property_exists($this->name, $name);
-    }
-
-    /**
-     * Method existence checker.
-     *
-     * @param  string $name
-     * @return bool
-     */
-    public function methodExists(string $name): bool
-    {
-        return $this->exists && method_exists($this->name, $name);
-    }
-
-    /**
-     * @alias constantExists()
-     */
-    public function hasConstant(...$args)
-    {
-        return $this->constantExists(...$args);
-    }
-
-    /**
-     * @alias propertyExists()
-     */
-    public function hasProperty(...$args)
-    {
-        return $this->propertyExists(...$args);
-    }
-
-    /**
-     * @alias methodExists()
-     */
-    public function hasMethod(...$args)
-    {
-        return $this->methodExists(...$args);
     }
 
     /**
@@ -226,7 +169,7 @@ class XClass implements Stringable
      */
     public function getVars(): array|null
     {
-        return Objects::getVars($this->name);
+        return $this->exists ? Objects::getVars($this->name) : null;
     }
 
     /**
@@ -236,7 +179,7 @@ class XClass implements Stringable
      */
     public function getVarNames(): array|null
     {
-        return Objects::getVars($this->name, true);
+        return $this->exists ? Objects::getVars($this->name, true) : null;
     }
 
     /**
@@ -314,13 +257,45 @@ class XClass implements Stringable
     }
 
     /**
-     * Valid name checker.
+     * Constant existence checker.
+     *
+     * @param  string $name
+     * @return bool
+     */
+    public function hasConstant(string $name): bool
+    {
+        return $this->exists && constant_exists($this->name, $name);
+    }
+
+    /**
+     * Property existence checker.
+     *
+     * @param  string $name
+     * @return bool
+     */
+    public function hasProperty(string $name): bool
+    {
+        return $this->exists && property_exists($this->name, $name);
+    }
+
+    /**
+     * Method existence checker.
+     *
+     * @param  string $name
+     * @return bool
+     */
+    public function hasMethod(string $name): bool
+    {
+        return $this->exists && method_exists($this->name, $name);
+    }
+
+    /**
+     * Valid name checker (not for anonyms).
      *
      * @return bool
      */
     public function hasValidName(): bool
     {
-        // Not for anonyms.
         return preg_test('~^([\\\]?[a-z_][a-z0-9_\\\]*)$~i', $this->name);
     }
 
