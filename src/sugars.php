@@ -65,6 +65,35 @@ function qx(array|object $iter, &...$vars): int
 }
 
 /**
+ * Unref given var(s), return their value(s).
+ *
+ * Example:
+ * ```
+ * $user->data = unref($data)     // $data => null
+ * [$id, $name] = unref(...$item) // $item => [null, null]
+ * unref($someTempData)           // $someTempData => null (in case)
+ * ```
+ *
+ * @param  mixed &...$vars
+ * @return mixed
+ */
+function unref(mixed &...$vars): mixed
+{
+    if (count($vars) === 1) {
+        $ret = $vars[0];
+        $vars[0] = null;
+    } else {
+        $ret = [];
+        foreach ($vars as $i => &$var) {
+            $ret[$i] = $var;
+            $var = null;
+        }
+    }
+
+    return $ret;
+}
+
+/**
  * Each wrapper for scoped function calls on given array or just for syntactic sugar.
  *
  * @param  array    $array
