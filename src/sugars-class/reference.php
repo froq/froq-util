@@ -37,18 +37,13 @@ class Reference extends PlainObject
  */
 class PlainReference
 {
-    /** Data reference. */
-    public mixed $data;
-
     /**
      * Constructor.
      *
-     * @param mixed $data
+     * @param mixed $data Data reference.
      */
-    public function __construct(mixed $data)
-    {
-        $this->data = $data;
-    }
+    public function __construct(public mixed $data)
+    {}
 }
 /**
  * A class for a readonly reference.
@@ -60,16 +55,11 @@ class PlainReference
  */
 class ReadonlyReference
 {
-    /** Data reference. */
-    public readonly mixed $data;
-
     /**
      * Constructor.
      *
-     * @param mixed $data
+     * @param mixed $data Data reference.
      */
-    public function __construct(mixed $data)
-    {
-        $this->data = $data;
-    }
+    public function __construct(public readonly mixed $data)
+    {}
 }
