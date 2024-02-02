@@ -28,6 +28,29 @@ class Reference extends PlainObject
 }
 
 /**
+ * A class for a plain reference.
+ *
+ * @package global
+ * @class   PlainReference
+ * @author  Kerem Güneş
+ * @since   6.0
+ */
+class PlainReference
+{
+    /** Data reference. */
+    public mixed $data;
+
+    /**
+     * Constructor.
+     *
+     * @param mixed $data
+     */
+    public function __construct(mixed $data)
+    {
+        $this->data = $data;
+    }
+}
+/**
  * A class for a readonly reference.
  *
  * @package global
