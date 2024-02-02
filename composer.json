@@ -10,7 +10,8 @@
         "ext-json": "*",
         "ext-ctype": "*",
         "ext-mbstring": "*",
-        "froq/froq-common": "^7.0"
+        "froq/froq-common": "^7.0",
+        "froq/froq-file": "^7.0"
     },
     "autoload": {
         "classmap": ["src/"],

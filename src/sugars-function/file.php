@@ -591,3 +591,23 @@ function stream_write_all($stream, string $contents): int|false
 
     return $ret;
 }
+
+use froq\file\{Directory, File, Path, Stat};
+
+/**
+ * Handy file system functions (port of froq\file).
+ */
+function xdir(string $path, array $options = null, bool $tmp = false): Directory {
+    $tmp && $path = tmpdir(prefix: $path);
+    return new Directory($path);
+}
+function xfile(string $path, array $options = null, bool $tmp = false): File {
+    $tmp && $path = tmpnam(prefix: $path);
+    return new File($path);
+}
+function xpath(string $path, bool $useRealPath = false): Path {
+    return new Path($path, $useRealPath);
+}
+function xstat(string $path): Stat {
+    return new Stat($path, $useRealPath);
+}
