@@ -1216,33 +1216,21 @@ final class Arrays extends \StaticClass
 
         $ret = [];
 
-        if ($recursive) {
-            if ($useKeys) {
-                foreach ($array as $key => $value) {
-                    if (is_array($value)) {
-                        $value = self::filter($value, $func, true, true, $keepKeys);
-                    }
-
-                    $func($value, $key) && $ret[$key] = $value;
+        if ($useKeys) {
+            foreach ($array as $key => $value) {
+                if ($recursive && is_array($value)) {
+                    $value = self::filter($value, $func, true, true, $keepKeys);
                 }
-            } else {
-                foreach ($array as $key => $value) {
-                    if (is_array($value)) {
-                        $value = self::filter($value, $func, true, false, $keepKeys);
-                    }
 
-                    $func($value) && $ret[$key] = $value;
-                }
+                $func($value, $key) && $ret[$key] = $value;
             }
         } else {
-            if ($useKeys) {
-                foreach ($array as $key => $value) {
-                    $func($value, $key) && $ret[$key] = $value;
+            foreach ($array as $key => $value) {
+                if ($recursive && is_array($value)) {
+                    $value = self::filter($value, $func, true, false, $keepKeys);
                 }
-            } else {
-                foreach ($array as $key => $value) {
-                    $func($value) && $ret[$key] = $value;
-                }
+
+                $func($value) && $ret[$key] = $value;
             }
         }
 
@@ -1261,7 +1249,7 @@ final class Arrays extends \StaticClass
      */
     public static function filterKeys(array $array, callable $func, bool $recursive = false): array
     {
-         $ret = [];
+        $ret = [];
 
         foreach ($array as $key => $value) {
             if ($recursive && is_array($value)) {
@@ -1286,37 +1274,17 @@ final class Arrays extends \StaticClass
      */
     public static function map(array $array, callable|string|array $func, bool $recursive = false, bool $useKeys = false, bool $keepKeys = true): array
     {
-        $func = self::makeMapFunction($func);
+        $func = self::makeMapFunction($func, $recursive);
 
         $ret = [];
 
-        if ($recursive) {
-            if ($useKeys) {
-                foreach ($array as $key => $value) {
-                    if (is_array($value)) {
-                        $value = self::map($value, $func, true, true, $keepKeys);
-                    }
-
-                    $ret[$key] = $func($value, $key);
-                }
-            } else {
-                foreach ($array as $key => $value) {
-                    if (is_array($value)) {
-                        $value = self::map($value, $func, true, false, $keepKeys);
-                    }
-
-                    $ret[$key] = $func($value);
-                }
+        if ($useKeys) {
+            foreach ($array as $key => $value) {
+                $ret[$key] = $func($value, $key);
             }
         } else {
-            if ($useKeys) {
-                foreach ($array as $key => $value) {
-                    $ret[$key] = $func($value, $key);
-                }
-            } else {
-                foreach ($array as $key => $value) {
-                    $ret[$key] = $func($value);
-                }
+            foreach ($array as $key => $value) {
+                $ret[$key] = $func($value);
             }
         }
 
@@ -1335,18 +1303,16 @@ final class Arrays extends \StaticClass
      */
     public static function mapKeys(array $array, callable|string|array $func, bool $recursive = false): array
     {
-        $func = self::makeMapFunction($func);
+        $func = self::makeMapFunction($func, $recursive);
 
         $ret = [];
 
         foreach ($array as $key => $value) {
-            $key = $func($key);
-
             if ($recursive && is_array($value)) {
                 $value = self::mapKeys($value, $func, true);
             }
 
-            $ret[$key] = $value;
+            $ret[$func($key)] = $value;
         }
 
         return $ret;
@@ -1930,7 +1896,7 @@ final class Arrays extends \StaticClass
     /**
      * Make map function.
      */
-    private static function makeMapFunction(callable|string|array $func): callable
+    private static function makeMapFunction(callable|string|array $func, bool $recursive = false): callable
     {
         if (!is_callable($func)) {
             $funcs = $func;
@@ -1961,6 +1927,13 @@ final class Arrays extends \StaticClass
                     return $value;
                 };
             }
+        }
+
+        if ($recursive) {
+            $call = $func;
+            $func = function ($value) use (&$func, $call) {
+                return is_array($value) ? array_map($func, $value) : call_user_func($call, $value);
+            };
         }
 
         return $func;
