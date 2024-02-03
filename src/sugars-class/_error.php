@@ -150,7 +150,7 @@ class UndefinedClassError extends froq\common\Error
      */
     public function __construct(string $class)
     {
-        parent::__construct('Undefined class: %s', $class);
+        parent::__construct('Undefined class %s', $class);
     }
 }
 
@@ -169,10 +169,10 @@ class UndefinedConstantError extends froq\common\Error
     public function __construct(string|object|null $class, string $constant)
     {
         if ($class === null) {
-            parent::__construct('Undefined constant: %s', $constant);
+            parent::__construct('Undefined constant %s', $constant);
         } else {
             parent::__construct(
-                'Undefined class constant: %s::%s',
+                'Undefined class constant %s::%s',
                 [get_class_name($class, escape: true), $constant]
             );
         }
@@ -194,7 +194,7 @@ class UndefinedPropertyError extends froq\common\Error
     public function __construct(string|object $class, string $property)
     {
         parent::__construct(
-            'Undefined property: %s::$%s',
+            'Undefined property %s::$%s',
             [get_class_name($class, escape: true), $property]
         );
     }
@@ -215,7 +215,7 @@ class UndefinedMethodError extends froq\common\Error
     public function __construct(string|object $class, string $method)
     {
         parent::__construct(
-            'Undefined method: %s::%s()',
+            'Undefined method %s::%s()',
             [get_class_name($class, escape: true), $method]
         );
     }
