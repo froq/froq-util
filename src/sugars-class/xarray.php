@@ -484,9 +484,9 @@ class XArray implements Arrayable, Listable, Jsonable, Iteratable, IteratableRev
     /**
      * Flat maker.
      *
-     * @param  bool   $keepKeys
-     * @param  bool   $fixKeys
-     * @param  bool   $multi
+     * @param  bool $keepKeys
+     * @param  bool $fixKeys
+     * @param  bool $multi
      * @return self
      */
     public function flat(bool $keepKeys = false, bool $fixKeys = false, bool $multi = true): self
