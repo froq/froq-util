@@ -353,6 +353,10 @@ final class Strings extends \StaticClass
      */
     public static function ord(string $chr): int|null
     {
+        if ($chr === '') {
+            return null;
+        }
+
         $ord0 = ord($chr[0]);
         if ($ord0 >= 0 && $ord0 <= 127) {
             return $ord0;
