@@ -419,7 +419,7 @@ class StringBuffer implements Stringable, IteratorAggregate, JsonSerializable, A
             return $this->data;
         }
 
-        return array_select($this->data, $indexes);
+        return array_select($this->data, $indexes, pad([], size($indexes)));
     }
 
     /**
@@ -430,10 +430,7 @@ class StringBuffer implements Stringable, IteratorAggregate, JsonSerializable, A
      */
     public function charCodes(int ...$indexes): array
     {
-        return array_map(
-            fn(string $char): int => Strings::ord($char),
-            $this->chars(...$indexes)
-        );
+        return XString::fromChars($this->chars(...$indexes), $this->encoding)->toCharCodes();
     }
 
     /**
@@ -444,10 +441,7 @@ class StringBuffer implements Stringable, IteratorAggregate, JsonSerializable, A
      */
     public function codePoints(int ...$indexes): array
     {
-        return array_map(
-            fn(string $char): int => xstring($char, $this->encoding)->codePointAt(0),
-            $this->chars(...$indexes)
-        );
+        return XString::fromChars($this->chars(...$indexes), $this->encoding)->toCodePoints();
     }
 
     /**
@@ -676,6 +670,28 @@ class StringBuffer implements Stringable, IteratorAggregate, JsonSerializable, A
     public function string()
     {
         return $this->toString();
+    }
+
+    /**
+     * Join.
+     *
+     * @param  string $glue
+     * @return string
+     */
+    public function join(string $glue = ''): string
+    {
+        return join($glue, $this->data);
+    }
+
+    /**
+     * X-join.
+     *
+     * @param  string $glue
+     * @return XString
+     */
+    public function xjoin(string $glue = ''): XString
+    {
+        return new XString($this->join($glue));
     }
 
     /**

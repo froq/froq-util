@@ -345,6 +345,7 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     {
         /** @thanks https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/codePointAt#polyfill */
         $point = null;
+
         $first = $this->charCodeAt($index);
         if ($first !== null) {
             if ($first >= 0xD800 && $first <= 0xDBFF && $this->length() > $index + 1) {
@@ -1813,7 +1814,7 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     }
 
     /**
-     * Get data as bytes.
+     * Get data as char codes.
      *
      * @param  string|null $class
      * @return iterable
@@ -1823,6 +1824,22 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
         $data = [];
         for ($i = 0, $il = $this->length(); $i < $il; $i++) {
             $data[] = $this->charCodeAt($i);
+        }
+
+        return $class ? new $class($data) : $data;
+    }
+
+    /**
+     * Get data as code points.
+     *
+     * @param  string|null $class
+     * @return iterable
+     */
+    public function toCodePoints(string $class = null): iterable
+    {
+        $data = [];
+        for ($i = 0, $il = $this->length(); $i < $il; $i++) {
+            $data[] = $this->codePointAt($i);
         }
 
         return $class ? new $class($data) : $data;
