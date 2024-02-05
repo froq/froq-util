@@ -181,16 +181,19 @@ final class Arrays extends \StaticClass
         // Arrays::get($array, 'a.b.c.d') => 1
         // Arrays::get($array, 'a.b.c.d.e') => '...'
 
+        // Ref copy (to prevent original array changes).
+        $copy = $array;
+
         $value = null;
 
         // Direct access.
-        if (array_key_exists($key, $array) || is_int($key)) {
-            $value = &$array[$key];
+        if (is_int($key) || array_key_exists($key, $copy)) {
+            $value = &$copy[$key];
             $drop && array_unset($array, $key);
         } else {
             // Direct access.
             if (!str_contains($key, '.')) {
-                $value = &$array[$key];
+                $value = &$copy[$key];
                 $drop && array_unset($array, $key);
             }
             // Path access (with dot notation).
@@ -199,7 +202,7 @@ final class Arrays extends \StaticClass
                 $key  = array_shift($keys);
 
                 if (!$keys) {
-                    $value = &$array[$key];
+                    $value = &$copy[$key];
                     $drop && array_unset($array, $key);
                 }
                 // Dig more..
@@ -1851,7 +1854,7 @@ final class Arrays extends \StaticClass
      */
     public static function select(array $array, int|string|array $key, mixed $default = null, bool $combine = false): mixed
     {
-        if (!$array) {
+        if (!$array && !$combine) {
             return $default;
         }
 
@@ -1876,6 +1879,35 @@ final class Arrays extends \StaticClass
         $combine && $values = array_combine($keys, $values);
 
         return ($single && !$combine) ? $values[0] : $values;
+    }
+
+    /**
+     * Pluck one or many items from given array, modifying array.
+     *
+     * @param  array            &$array
+     * @param  int|string|array $key
+     * @param  mixed|null       $default
+     * @param  bool             $combine
+     * @return mixed
+     * @since  4.13, 6.0
+     */
+    public static function pluck(array &$array, int|string|array $key, mixed $default = null, bool $combine = false): mixed
+    {
+        $ret = self::select($array, $key, $default, combine: true);
+
+        // Drop used keys.
+        $ret && self::unset($array, ...array_keys($ret));
+
+        // Nothing to combine.
+        if ($ret === null) {
+            return null;
+        }
+
+        return (
+            is_array($key)
+                ? ($combine ? $ret : array_values($ret))
+                : ($combine ? $ret : array_first($ret))
+        );
     }
 
     /**
