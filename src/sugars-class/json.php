@@ -253,19 +253,18 @@ class Json extends StaticClass
  */
 class JsonObject extends stdClass implements Arrayable, Jsonable, JsonSerializable, ArrayAccess
 {
-    /** Array cache, for accelerating `get*()` methods. */
+    /** For accelerating `get*()` methods. */
     private static array $__ARRAY_CACHE = [];
 
     /**
      * Constructor
      *
-     * @param array|object|null $data
+     * @param object|array|null $data
      */
-    public function __construct(array|object|null $data)
+    public function __construct(object|array|null $data)
     {
         if ($data) {
             foreach ($data as $key => $value) {
-                // Convert objects to JsonObject.
                 $value = $this->objectify($value);
 
                 // Simply set as dynamic var (no private).
@@ -388,7 +387,7 @@ class JsonObject extends stdClass implements Arrayable, Jsonable, JsonSerializab
      */
     public function toJson(int $flags = 0): string
     {
-        return json_encode($this->toArray(true), $flags);
+        return json_encode($this->toArray(), $flags);
     }
 
     /**
@@ -396,7 +395,7 @@ class JsonObject extends stdClass implements Arrayable, Jsonable, JsonSerializab
      */
     public function jsonSerialize(): array
     {
-        return $this->toArray(true);
+        return $this->toArray();
     }
 
     /**
@@ -417,6 +416,7 @@ class JsonObject extends stdClass implements Arrayable, Jsonable, JsonSerializab
 
     /**
      * @inheritDoc ArrayAccess
+     * @throws     UnimplementedError
      */
     public function offsetSet(mixed $key, mixed $_): never
     {
@@ -425,6 +425,7 @@ class JsonObject extends stdClass implements Arrayable, Jsonable, JsonSerializab
 
     /**
      * @inheritDoc ArrayAccess
+     * @throws     UnimplementedError
      */
     public function offsetUnset(mixed $key): never
     {
