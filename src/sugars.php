@@ -606,15 +606,15 @@ function convert_base(int|string $input, int|string $from, int|string $to): stri
 function convert_case(string $input, string|int $case, string $exploder = null, string $imploder = null): string
 {
     if (is_string($case)) {
-        $case_value = get_constant_value('CASE_' . strtoupper($case));
-        if ($case_value === null) {
-            throw new ArgumentError(
+        $case = match (strtolower($case)) {
+            'lower' => CASE_LOWER, 'upper' => CASE_UPPER,
+            'title' => CASE_TITLE, 'dash'  => CASE_DASH,
+            'snake' => CASE_SNAKE, 'camel' => CASE_CAMEL,
+            default => throw new ArgumentError(
                 'Invalid case %q [valids: lower,upper,dash,snake,title,camel]',
                 $case
-            );
-        }
-
-        $case = $case_value;
+            )
+        };
     }
 
     if ($case === CASE_LOWER) {
@@ -639,8 +639,9 @@ function convert_case(string $input, string|int $case, string $exploder = null, 
         ))),
         // Invalid case.
         default => throw new ArgumentError(
-            'Invalid case %q, use a case from 0..5 range',
-            $case
+            'Invalid case %q, use a valid constant: %A', [$case, array_flip(array_filter(
+                get_defined_constants(), fn($name) => str_starts_with($name, 'CASE_'), 2
+            ))]
         )
     };
 }
