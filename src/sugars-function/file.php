@@ -609,5 +609,5 @@ function xpath(string $path, bool $useRealPath = false): Path {
     return new Path($path, $useRealPath);
 }
 function xstat(string $path): Stat {
-    return new Stat($path, $useRealPath);
+    return new Stat($path);
 }
