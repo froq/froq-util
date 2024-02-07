@@ -868,7 +868,7 @@ class XArray implements Arrayable, Listable, Jsonable, Iteratable, IteratableRev
      */
     public function flipKeys(): self
     {
-        $this->data = array_keys($this->data);
+        $this->data = array_flip(array_keys($this->data));
 
         return $this;
     }
