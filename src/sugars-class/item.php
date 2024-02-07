@@ -368,6 +368,17 @@ class ItemList implements Arrayable, Jsonable, Countable, IteratorAggregate, Arr
     }
 
     /**
+     * Check an item.
+     *
+     * @param  mixed $item
+     * @return bool
+     */
+    public function has(mixed $item): bool
+    {
+        return $this->index($item) !== null;
+    }
+
+    /**
      * Add items.
      *
      * @param  mixed ...$items
