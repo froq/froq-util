@@ -333,7 +333,7 @@ class ItemList implements Arrayable, Jsonable, Countable, IteratorAggregate, Arr
      */
     public function __construct(iterable $data = [], string|array $type = null)
     {
-        $this->type = is_string($type) ? $type : join('|', $type);
+        $this->type = is_array($type) ? join('|', $type) : $type;
 
         $data && $this->add(...$data);
     }
