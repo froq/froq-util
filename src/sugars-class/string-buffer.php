@@ -575,9 +575,7 @@ class StringBuffer implements Stringable, IteratorAggregate, JsonSerializable, A
      */
     public function trim(string $characters = " \n\r\t\v\0"): self
     {
-        $this->trimLeft($characters)->trimRight($characters);
-
-        return $this;
+        return $this->trimLeft($characters)->trimRight($characters);
     }
 
     /**
