@@ -29,10 +29,10 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
      */
     public function __construct(string|Stringable $data = '', string|null $encoding = '')
     {
-        $this->data = (string) $data;
-
         // Allow null (for internal encoding).
         if ($encoding !== '') $this->encoding = $encoding;
+
+        $this->data = (string) $data;
     }
 
     /**
@@ -64,13 +64,39 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     }
 
     /**
-     * Length.
+     * Set length (shrink data size).
+     *
+     * @param  int $length
+     * @return self
+     * @throws ArgumentError
+     */
+    public function setLength(int $length): self
+    {
+        if ($length < 0) {
+            throw new ArgumentError('Argument $length cannot be negative');
+        }
+
+        $this->data = mb_substr($this->data, 0, $length, $this->encoding);
+
+        return $this;
+    }
+
+    /**
+     * Get length.
      *
      * @return int
      */
-    public function length(): int
+    public function getLength(): int
     {
         return mb_strlen($this->data, $this->encoding);
+    }
+
+    /**
+     * @alias getLength()
+     */
+    public function length()
+    {
+        return $this->getLength();
     }
 
     /**
@@ -180,9 +206,9 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
         $this->data = join($charlist);
 
         // @cancel: Buggy.
-        // $length ??= $this->length();
+        // $length ??= $this->getLength();
         // if ($start < 0) {
-        //     $start += $this->length();
+        //     $start += $this->getLength();
         //     if ($start < 0) {
         //         $start = 0;
         //     }
@@ -288,7 +314,7 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     public function char(int $index): string|null
     {
         // Exceeding nagetive indexes must return "", like positives.
-        if ($index < 0 && -$index > $this->length()) {
+        if ($index < 0 && -$index > $this->getLength()) {
             return null;
         }
 
@@ -348,7 +374,7 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
 
         $first = $this->charCodeAt($index);
         if ($first !== null) {
-            if ($first >= 0xD800 && $first <= 0xDBFF && $this->length() > $index + 1) {
+            if ($first >= 0xD800 && $first <= 0xDBFF && $this->getLength() > $index + 1) {
                 $second = $this->charCodeAt($index + 1);
                 if ($second >= 0xDC00 && $second <= 0xDFFF) {
                     $point = ($first - 0xD800) * 0x400 + $second - 0xDC00 + 0x10000;
@@ -500,7 +526,7 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
                 break;
             case MB_CASE_TITLE:
             case MB_CASE_TITLE_SIMPLE:
-                if ($tr) for ($i = 0, $il = $this->length(); $i < $il; $i++) {
+                if ($tr) for ($i = 0, $il = $this->getLength(); $i < $il; $i++) {
                     $char = $this->char($i);
                     if ($char === 'i') {
                         $this->splice($i, 1, 'İ');
@@ -1822,7 +1848,7 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     public function toCharCodes(string $class = null): iterable
     {
         $data = [];
-        for ($i = 0, $il = $this->length(); $i < $il; $i++) {
+        for ($i = 0, $il = $this->getLength(); $i < $il; $i++) {
             $data[] = $this->charCodeAt($i);
         }
 
@@ -1838,7 +1864,7 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     public function toCodePoints(string $class = null): iterable
     {
         $data = [];
-        for ($i = 0, $il = $this->length(); $i < $il; $i++) {
+        for ($i = 0, $il = $this->getLength(); $i < $il; $i++) {
             $data[] = $this->codePointAt($i);
         }
 
@@ -1884,11 +1910,31 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     }
 
     /**
+     * Get data as array.
+     *
+     * @return array
+     */
+    public function toArray(): array
+    {
+        return $this->splits();
+    }
+
+    /**
+     * Get data as XArray.
+     *
+     * @return XArray
+     */
+    public function toXArray(): XArray
+    {
+        return $this->xsplits();
+    }
+
+    /**
      * @inheritDoc IteratorAggregate
      */
-    public function getIterator(): Generator
+    public function getIterator(): Generator|Traversable
     {
-        for ($i = 0, $il = $this->length(); $i < $il; $i++) {
+        for ($i = 0, $il = $this->getLength(); $i < $il; $i++) {
             yield $i => $this->char($i);
         }
     }
@@ -1964,7 +2010,7 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
      */
     public static function fromRandom(int $length, bool $puncted = false): static
     {
-        return new static(random_string($length, $puncted));
+        return new static(random_string($length, $puncted), 'ascii');
     }
 
     /**
@@ -1975,7 +2021,7 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
      */
     public static function fromRandomBytes(int $length): static
     {
-        return new static(random_bytes($length));
+        return new static(random_bytes($length), 'ascii');
     }
 
     /**

@@ -29,16 +29,16 @@ class StringBuffer implements Stringable, IteratorAggregate, JsonSerializable, A
      */
     public function __construct(string|int|array $data = '', string|null $encoding = '')
     {
+        // Allow null (for internal encoding).
+        if ($encoding !== '') $this->encoding = $encoding;
+
         if ($data !== '' && $data !== 0 && $data !== []) {
             $this->data = match (get_type($data)) {
-                'string' => split('', $data),
+                'string' => mb_str_split($data, 1, $this->encoding),
                 'int'    => array_fill(0, $data, ''),
                 'array'  => array_map('strval', $data),
             };
         }
-
-        // Allow null (for internal encoding).
-        if ($encoding !== '') $this->encoding = $encoding;
     }
 
     /**
@@ -77,7 +77,7 @@ class StringBuffer implements Stringable, IteratorAggregate, JsonSerializable, A
      */
     public function add(string $data): self
     {
-        array_push($this->data, ...split('', $data));
+        array_push($this->data, ...mb_str_split($data, 1, $this->encoding));
 
         return $this;
     }
@@ -91,7 +91,7 @@ class StringBuffer implements Stringable, IteratorAggregate, JsonSerializable, A
     public function append(string ...$datas): self
     {
         foreach ($datas as $data) {
-            array_push($this->data, ...split('', $data));
+            array_push($this->data, ...mb_str_split($data, 1, $this->encoding));
         }
 
         return $this;
@@ -106,7 +106,7 @@ class StringBuffer implements Stringable, IteratorAggregate, JsonSerializable, A
     public function prepend(string ...$datas): self
     {
         foreach ($datas as $data) {
-            array_unshift($this->data, ...split('', $data));
+            array_unshift($this->data, ...mb_str_split($data, 1, $this->encoding));
         }
 
         return $this;
@@ -130,7 +130,7 @@ class StringBuffer implements Stringable, IteratorAggregate, JsonSerializable, A
         $left  = array_slice($this->data, 0, $index);
         $right = array_slice($this->data, $index, null);
 
-        array_push($left, ...split('', $data));
+        array_push($left, ...mb_str_split($data, 1, $this->encoding));
 
         $this->data = array_merge($left, $right);
 
@@ -182,7 +182,7 @@ class StringBuffer implements Stringable, IteratorAggregate, JsonSerializable, A
             }
         }
 
-        array_splice($this->data, $start, $end, split('', $data));
+        array_splice($this->data, $start, $end, mb_str_split($data, 1, $this->encoding));
 
         return $this;
     }
@@ -206,11 +206,11 @@ class StringBuffer implements Stringable, IteratorAggregate, JsonSerializable, A
      * @param  int|null $length
      * @return static
      */
-    public function slice(int $start, int $length = null): static
+    public function slice(int $start, int $length = null): self
     {
-        $data = array_slice($this->data, $start, $length);
+        $this->data = array_slice($this->data, $start, $length);
 
-        return new static($data, $this->encoding);
+        return $this;
     }
 
     /**
@@ -229,7 +229,7 @@ class StringBuffer implements Stringable, IteratorAggregate, JsonSerializable, A
 
             $temp = [];
             foreach ($replace as $data) {
-                $temp = [...$temp, ...split('', $data)];
+                $temp = [...$temp, ...mb_str_split($data, 1, $this->encoding)];
             }
 
             // Swap & free.
@@ -249,7 +249,7 @@ class StringBuffer implements Stringable, IteratorAggregate, JsonSerializable, A
     }
 
     /**
-     * Set length.
+     * Set length (shrink data size).
      *
      * @param  int $length
      * @return self
@@ -315,7 +315,7 @@ class StringBuffer implements Stringable, IteratorAggregate, JsonSerializable, A
      */
     public function charAt(int $index): string|null
     {
-        return ($char = $this->char($index)) !== null ? $char : null;
+        return $this->char($index);
     }
 
     /**
@@ -326,7 +326,7 @@ class StringBuffer implements Stringable, IteratorAggregate, JsonSerializable, A
      */
     public function charCodeAt(int $index): int|null
     {
-        return ($char = $this->char($index)) !== null ? Strings::ord($char) : null;
+        return Strings::ord($this->char($index) ?? '');
     }
 
     /**
@@ -419,7 +419,7 @@ class StringBuffer implements Stringable, IteratorAggregate, JsonSerializable, A
             return $this->data;
         }
 
-        return array_select($this->data, $indexes, pad([], size($indexes)));
+        return array_select($this->data, $indexes, array_pad([], count($indexes), null));
     }
 
     /**
@@ -478,17 +478,7 @@ class StringBuffer implements Stringable, IteratorAggregate, JsonSerializable, A
      */
     public function equals(self|string|array $data, bool $icase = false): bool
     {
-        is_array($data) || $data = [$data];
-
-        $string1 = $this->toString();
-        foreach ($data as $data) {
-            $string2 = is_array($data) ? join($data) : (string) $data;
-            if (str_compare($string1, $string2, $icase, encoding: $this->encoding) !== 0) {
-                return false;
-            }
-        }
-
-        return true;
+        return XString::fromChars($this->data, $this->encoding)->equals($data, $icase);
     }
 
     /**
@@ -500,17 +490,31 @@ class StringBuffer implements Stringable, IteratorAggregate, JsonSerializable, A
      */
     public function contains(self|string|array $search, bool $icase = false): bool
     {
-        is_array($search) || $search = [$search];
+        return XString::fromChars($this->data, $this->encoding)->contains($search, $icase);
+    }
 
-        $string1 = $this->toString();
-        foreach ($search as $search) {
-            $string2 = is_array($search) ? join($search) : (string) $search;
-            if (str_has($string1, $string2, $icase)) {
-                return true;
-            }
-        }
+    /**
+     * Starts-with checker.
+     *
+     * @param  self|string|array<self|string> $search
+     * @param  bool                           $icase
+     * @return bool
+     */
+    public function startsWith(self|string|array $search, bool $icase = false): bool
+    {
+        return XString::fromChars($this->data, $this->encoding)->startsWith($search, $icase);
+    }
 
-        return false;
+    /**
+     * Ends-with checker.
+     *
+     * @param  self|string|array<self|string> $search
+     * @param  bool                           $icase
+     * @return bool
+     */
+    public function endsWith(self|string|array $search, bool $icase = false): bool
+    {
+        return XString::fromChars($this->data, $this->encoding)->endsWith($search, $icase);
     }
 
     /**
@@ -584,6 +588,9 @@ class StringBuffer implements Stringable, IteratorAggregate, JsonSerializable, A
      */
     public function trimLeft(string $characters = " \n\r\t\v\0"): self
     {
+        // @cancel: Below is more performant.
+        // $this->data = XString::from($this->toString())->trimLeft()->toArray();
+
         $trimmed = null;
         for ($i = 0, $il = count($this->data); $i < $il; $i++) {
             if (!str_contains($characters, $this->data[$i])) {
@@ -591,7 +598,7 @@ class StringBuffer implements Stringable, IteratorAggregate, JsonSerializable, A
             }
 
             unset($this->data[$i]);
-            $trimmed = 1;
+            $trimmed = true;
         }
 
         // Reset indexes if trimmed.
@@ -608,6 +615,9 @@ class StringBuffer implements Stringable, IteratorAggregate, JsonSerializable, A
      */
     public function trimRight(string $characters = " \n\r\t\v\0"): self
     {
+        // @cancel: Below is more performant.
+        // $this->data = XString::from($this->toString())->trimRight()->toArray();
+
         $trimmed = null;
         for ($i = count($this->data) - 1; $i > -1; $i--) {
             if (!str_contains($characters, $this->data[$i])) {
@@ -615,7 +625,7 @@ class StringBuffer implements Stringable, IteratorAggregate, JsonSerializable, A
             }
 
             unset($this->data[$i]);
-            $trimmed = 1;
+            $trimmed = true;
         }
 
         // Reset indexes if trimmed.
@@ -645,34 +655,6 @@ class StringBuffer implements Stringable, IteratorAggregate, JsonSerializable, A
     }
 
     /**
-     * Get buffer data as string.
-     *
-     * @return string
-     */
-    public function toString(): string
-    {
-        return join($this->data);
-    }
-
-    /**
-     * Get buffer data as XString.
-     *
-     * @return XString
-     */
-    public function toXString(): XString
-    {
-        return new XString(join($this->data), $this->encoding);
-    }
-
-    /**
-     * @alias toString()
-     */
-    public function string()
-    {
-        return $this->toString();
-    }
-
-    /**
      * Join.
      *
      * @param  string $glue
@@ -692,6 +674,54 @@ class StringBuffer implements Stringable, IteratorAggregate, JsonSerializable, A
     public function xjoin(string $glue = ''): XString
     {
         return new XString($this->join($glue));
+    }
+
+    /**
+     * Get buffer data as string.
+     *
+     * @return string
+     */
+    public function toString(): string
+    {
+        return $this->join();
+    }
+
+    /**
+     * Get buffer data as XString.
+     *
+     * @return XString
+     */
+    public function toXString(): XString
+    {
+        return new XString($this->join(), $this->encoding);
+    }
+
+    /**
+     * @alias toString()
+     */
+    public function string()
+    {
+        return $this->toString();
+    }
+
+    /**
+     * Get buffer data as array.
+     *
+     * @return array
+     */
+    public function toArray(): array
+    {
+        return $this->data;
+    }
+
+    /**
+     * Get buffer data as XArray.
+     *
+     * @return XArray
+     */
+    public function toXArray(): XArray
+    {
+        return new XArray($this->data);
     }
 
     /**
@@ -777,9 +807,9 @@ class StringBuffer implements Stringable, IteratorAggregate, JsonSerializable, A
     /**
      * @inheritDoc IteratorAggregate
      */
-    public function getIterator(): Generator
+    public function getIterator(): Generator|Traversable
     {
-        for ($i = 0, $il = $this->length(); $i < $il; $i++) {
+        for ($i = 0, $il = $this->getLength(); $i < $il; $i++) {
             yield $i => $this->data[$i];
         }
     }
@@ -855,7 +885,7 @@ class StringBuffer implements Stringable, IteratorAggregate, JsonSerializable, A
      */
     public static function fromRandom(int $length, bool $puncted = false): static
     {
-        return new static(str_split(random_string($length, $puncted)));
+        return new static(str_split(random_string($length, $puncted)), 'ascii');
     }
 
     /**
@@ -866,7 +896,7 @@ class StringBuffer implements Stringable, IteratorAggregate, JsonSerializable, A
      */
     public static function fromRandomBytes(int $length): static
     {
-        return new static(str_split(random_bytes($length)));
+        return new static(str_split(random_bytes($length)), 'ascii');
     }
 
     /**
