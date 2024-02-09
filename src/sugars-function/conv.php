@@ -41,5 +41,5 @@ function alpdec(string $string, int $base = 62, bool $cast = true): int|string
 /**
  * Aliases for those weirdos.
  */
-function binhex(string $string): string       { bin2hex($string); }
-function hexbin(string $string): string|false { hex2bin($string); }
+function binhex(string $string): string       { return bin2hex($string); }
+function hexbin(string $string): string|false { return hex2bin($string); }
