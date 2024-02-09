@@ -17,7 +17,7 @@ function preg_test(string $pattern, string $subject): bool
     // Capturing to non-capturing.
     if (str_contains($pattern, '(')) {
         // When no "n" (PCRE_NO_AUTO_CAPTURE) modifier given.
-        $del = substr($pattern, 0, 1); // INT_MAX = for wierd errors.
+        $del = substr($pattern, 0, 1); // INT_MAX = for weird errors.
         $mod = substr($pattern, strrpos($pattern, $del) ?: PHP_INT_MAX);
 
         if (!str_contains($mod, 'n')) {
