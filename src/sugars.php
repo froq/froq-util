@@ -537,6 +537,9 @@ function convert_base(int|string $input, int|string $from, int|string $to): stri
 
     // Try to use speed/power of GMP.
     if (is_int($from) && is_int($to) && extension_loaded('gmp')) {
+        if (!ctype_alnum($input)) {
+            throw new ArgumentError('Invalid input %s', $input);
+        }
         return gmp_strval(gmp_init($input, $from), $to);
     }
 
