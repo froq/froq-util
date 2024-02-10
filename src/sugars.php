@@ -114,12 +114,14 @@ function each(array $array, callable $func): void
  * @param  bool          $recursive
  * @param  bool          $use_keys
  * @param  bool          $keep_keys
+ * @param  bool|null     $list Alias of $keep_keys.
  * @return array
  * @since  3.0, 5.0
  */
-function filter(array $array, callable $func = null, bool $recursive = false, bool $use_keys = false, bool $keep_keys = true): array
+function filter(array $array, callable $func = null, bool $recursive = false, bool $use_keys = false, bool $keep_keys = true,
+    bool $list = null): array
 {
-    return Arrays::filter($array, $func, $recursive, $use_keys, $keep_keys);
+    return Arrays::filter($array, $func, $recursive, $use_keys, (!$list ? $keep_keys : false));
 }
 
 /**
@@ -130,12 +132,14 @@ function filter(array $array, callable $func = null, bool $recursive = false, bo
  * @param  bool                  $recursive
  * @param  bool                  $use_keys
  * @param  bool                  $keep_keys
+ * @param  bool|null             $list Alias of $keep_keys.
  * @return array
  * @since  3.0, 5.0
  */
-function map(array $array, callable|string|array $func, bool $recursive = false, bool $use_keys = false, bool $keep_keys = true): array
+function map(array $array, callable|string|array $func, bool $recursive = false, bool $use_keys = false, bool $keep_keys = true,
+    bool $list = null): array
 {
-    return Arrays::map($array, $func, $recursive, $use_keys, $keep_keys);
+    return Arrays::map($array, $func, $recursive, $use_keys, (!$list ? $keep_keys : false));
 }
 
 /**
