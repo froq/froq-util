@@ -214,32 +214,16 @@ class Json extends StaticClass
     }
 
     /**
-     * Validate given input as JSON.
+     * Verify given input if a valid JSON.
      *
-     * @todo   Use json_validate() function [PHP/8.3, https://wiki.php.net/rfc/json_validate].
      * @param  string|null    $input
      * @param  JsonError|null &$error
      * @return bool
      * @since  6.0
      */
-    public static function validate(?string $input, JsonError &$error = null): bool
+    public static function verify(?string $input, JsonError &$error = null): bool
     {
-        $error = $code = $message = null;
-
-        // If '' or null input.
-        if ($input === null) {
-            $message = 'Empty/null input given';
-        } else {
-            json_decode($input);
-            $message = json_error_message($code, clear: true);
-        }
-
-        // If $error was passed on call.
-        if ($message && func_num_args() > 1) {
-            $error = new JsonError($message, code: $code);
-        }
-
-        return ($message === null);
+        return json_verify($input, $error);
     }
 }
 
@@ -522,8 +506,11 @@ class JsonPrettifier
         }
 
         // When indent given as size.
-        if (is_numeric($indent)) {
-            $indent = str_repeat(' ', (int) $indent);
+        if (is_int($indent)) {
+            if ($indent < 0) {
+                throw new ArgumentError('Argument $indent cannot be negative');
+            }
+            $indent = str_repeat(' ', $indent);
         }
 
         if (!preg_test('~^( +|\t+)$~', $indent)) {
