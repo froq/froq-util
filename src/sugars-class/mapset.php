@@ -615,14 +615,23 @@ class Map implements Arrayable, Listable, Jsonable, Iteratable, IteratableRevers
     /**
      * Run a callback for each item.
      *
-     * @param  callable $func
-     * @return void
+     * @param  callable    $func
+     * @param  mixed    ...$funcArgs
+     * @return self
      */
-    public function forEach(callable $func): void
+    public function forEach(callable $func, mixed ...$funcArgs): self
     {
         foreach ($this->data as $key => $value) {
-            $func($value, (string) $key, $this);
+            $ret = $func($value, (string) $key, $this, ...$funcArgs);
+
+            // Normally must return void, but when false
+            // returned, break this loop.
+            if ($ret === false) {
+                break;
+            }
         }
+
+        return $this;
     }
 
     /**
@@ -905,14 +914,23 @@ class Set implements Arrayable, Listable, Jsonable, Iteratable, IteratableRevers
     /**
      * Run a callback for each item.
      *
-     * @param  callable $func
-     * @return void
+     * @param  callable    $func
+     * @param  mixed    ...$funcArgs
+     * @return self
      */
-    public function forEach(callable $func): void
+    public function forEach(callable $func, mixed ...$funcArgs): self
     {
         foreach ($this->data as $index => $value) {
-            $func($value, $index, $this);
+            $ret = $func($value, $index, $this, ...$funcArgs);
+
+            // Normally must return void, but when false
+            // returned, break this loop.
+            if ($ret === false) {
+                break;
+            }
         }
+
+        return $this;
     }
 
     /**
