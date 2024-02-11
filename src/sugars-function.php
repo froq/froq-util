@@ -93,3 +93,13 @@ function reflect(object|string $target, string $type = null): Reflector|null
 
     return null;
 }
+
+/**
+ * Temporary function.
+ * @todo Remove as of 8.3
+ */
+if (!function_exists('json_validate')) {
+    function json_validate(string $json): bool {
+        return json_verify($json);
+    }
+}
