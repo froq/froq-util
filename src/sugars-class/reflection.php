@@ -38,19 +38,19 @@ class_alias(froq\reflection\ReflectionAttribute::class, XReflectionAttribute::cl
 // Additions.
 // class ReflectionTrait extends froq\reflection\ReflectionTrait {}
 // class ReflectionInterface extends froq\reflection\ReflectionInterface {}
-// class ReflectionCallable extends froq\reflection\ReflectionCallable {}
 // class ReflectionNamespace extends froq\reflection\ReflectionNamespace {}
+// class ReflectionCallable extends froq\reflection\ReflectionCallable {}
 class_alias(froq\reflection\ReflectionTrait::class, ReflectionTrait::class);
 class_alias(froq\reflection\ReflectionInterface::class, ReflectionInterface::class);
-class_alias(froq\reflection\ReflectionCallable::class, ReflectionCallable::class);
 class_alias(froq\reflection\ReflectionNamespace::class, ReflectionNamespace::class);
+class_alias(froq\reflection\ReflectionCallable::class, ReflectionCallable::class);
 
 // Additions aliases.
 // class XReflectionTrait extends froq\reflection\ReflectionTrait {}
 // class XReflectionInterface extends froq\reflection\ReflectionInterface {}
-// class XReflectionCallable extends froq\reflection\ReflectionCallable {}
 // class XReflectionNamespace extends froq\reflection\ReflectionNamespace {}
+// class XReflectionCallable extends froq\reflection\ReflectionCallable {}
 class_alias(froq\reflection\ReflectionTrait::class, XReflectionTrait::class);
 class_alias(froq\reflection\ReflectionInterface::class, XReflectionInterface::class);
-class_alias(froq\reflection\ReflectionCallable::class, XReflectionCallable::class);
 class_alias(froq\reflection\ReflectionNamespace::class, XReflectionNamespace::class);
+class_alias(froq\reflection\ReflectionCallable::class, XReflectionCallable::class);
