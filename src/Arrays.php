@@ -1192,14 +1192,15 @@ final class Arrays extends \StaticClass
     /**
      * Each wrapper for scoped function calls on given array or just for syntactic sugar.
      *
-     * @param  array    $array
-     * @param  callable $func
+     * @param  array       $array
+     * @param  callable    $func
+     * @param  mixed    ...$funcArgs
      * @return void
      */
-    public static function each(array $array, callable $func): void
+    public static function each(array $array, callable $func, mixed ...$funcArgs): void
     {
         foreach ($array as $key => $value) {
-            $func($value, $key);
+            $func($value, $key, ...$funcArgs);
         }
     }
 
