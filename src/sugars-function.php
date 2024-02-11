@@ -41,6 +41,17 @@ function reflect(object|string $target, string $type = null): Reflector|null
         return new XReflectionObject($target);
     }
 
+    // Blind tries.
+    if ($type === null) {
+        if (class_exists($target)) {
+            return new XReflectionClass($target);
+        }
+        if (function_exists($target)) {
+            return new XReflectionFunction($target);
+        }
+    }
+
+    // Type tries.
     switch ($type) {
         case 'class':
             return new XReflectionClass($target);
