@@ -155,6 +155,50 @@ trait MapSetTrait
     }
 
     /**
+     * Pluck key & return value if key was found.
+     *
+     * @param  int|string $key
+     * @param  mixed|null $default
+     * @return mixed
+     */
+    public function pluck(int|string $key, mixed $default = null): mixed
+    {
+        if (array_key_exists($key, $this->data)) {
+            $value = $this->data[$key];
+            unset($this->data[$key]);
+
+            if ($this instanceof Set) {
+                $this->resetIndexes();
+            }
+
+            return $value;
+        }
+
+        return $default;
+    }
+
+    /**
+     * Pluck value & return key if value was found.
+     *
+     * @param  mixed $value
+     * @return int|string|null
+     */
+    public function pluckValue(mixed $value): int|string|null
+    {
+        if (array_value_exists($value, $this->data, key: $key)) {
+            unset($this->data[$key]);
+
+            if ($this instanceof Set) {
+                $this->resetIndexes();
+            }
+
+            return $key;
+        }
+
+        return null;
+    }
+
+    /**
      * Check whether data contains any of given values.
      *
      * @param  mixed ...$values
@@ -605,6 +649,31 @@ class Map implements Arrayable, Listable, Jsonable, Iteratable, IteratableRevers
     }
 
     /**
+     * Replace a new key if old key exists.
+     *
+     * @param  int|string|object  $oldKey
+     * @param  int|string|object  $newKey
+     * @param  mixed              $newValue
+     * @param  mixed|null        &$oldValue
+     * @return bool
+     */
+    public function replaceKey(int|string|object $oldKey, int|string|object $newKey, mixed $newValue, mixed &$oldValue = null): bool
+    {
+        if ($ok = $this->has($oldKey)) {
+            // No need to re-key.
+            if ($oldKey === $newKey) {
+                $oldValue = $this->data[$this->prepareKey($oldKey)];
+            } else {
+                $oldValue = $this->pluck($this->prepareKey($oldKey));
+            }
+
+            $this->set($newKey, $newValue);
+        }
+
+        return $ok;
+    }
+
+    /**
      * @alias remove()
      */
     public function delete(int|string|object $key, mixed &$value = null): bool
@@ -896,8 +965,26 @@ class Set implements Arrayable, Listable, Jsonable, Iteratable, IteratableRevers
      */
     public function replace(mixed $oldValue, mixed $newValue, int &$index = null): bool
     {
-        if ($ok = $this->remove($oldValue, $index)) {
+        if ($ok = $this->has($oldValue, $index)) {
             $this->set($index, $newValue);
+        }
+
+        return $ok;
+    }
+
+    /**
+     * Replace a new index if old index exists.
+     *
+     * @param  int         $oldIndex
+     * @param  mixed       $newValue
+     * @param  mixed|null &$oldValue
+     * @return bool
+     */
+    public function replaceIndex(int $oldIndex, mixed $newValue, mixed &$oldValue = null): bool
+    {
+        if ($ok = $this->hasIndex($oldIndex)) {
+            $oldValue = $this->get($oldIndex);
+            $this->set($oldIndex, $newValue);
         }
 
         return $ok;
