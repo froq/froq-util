@@ -16,6 +16,7 @@ require 'sugars-function/file.php';
 require 'sugars-function/http.php';
 require 'sugars-function/json.php';
 require 'sugars-function/preg.php';
+require 'sugars-function/rand.php';
 
 /**
  * State initializer.

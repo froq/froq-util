@@ -3,10 +3,7 @@
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-util
  */
-use froq\util\{
-    Util, System, Arrays,
-    Objects, Numbers, Strings
-};
+use froq\util\{Util, System, Arrays, Objects};
 
 // Load base stuff.
 require 'sugars-class.php';
@@ -967,7 +964,7 @@ function get_random_id(int $length = 14, int $base = 16, bool $upper = false): s
     $ret = '';
 
     while ($length > strlen($ret)) {
-        $id = bin2hex(random_bytes(intdiv($length, 2)));
+        $id = random_xbytes($length);
 
         // Convert non-hex ids.
         $ret .= ($base === 16) ? $id : convert_base($id, 16, $base);
@@ -1767,87 +1764,6 @@ function uuid(bool $time = false, bool $guid = false, bool $hash = false, bool $
 function suid(int $length = 6, int $base = 62): string
 {
     return Uuid::generateSuid($length, $base);
-}
-
-/**
- * Generate a random number.
- *
- * @param  int|float|null $min
- * @param  int|float|null $max
- * @param  int|null       $precision
- * @return int|float
- * @since  5.14
- */
-function random(int|float $min = null, int|float $max = null, int $precision = null): int|float
-{
-    return Numbers::random($min, $max, $precision);
-}
-
-/**
- * Generate a random float, optionally with precision.
- *
- * @param  float|null $min
- * @param  float|null $max
- * @param  int|null   $precision
- * @return float
- * @since  5.0
- */
-function random_float(float $min = null, float $max = null, int $precision = null): float
-{
-    return Numbers::randomFloat($min, $max, $precision);
-}
-
-/**
- * Generate a random string, optionally puncted.
- *
- * @param  int  $length
- * @param  bool $puncted
- * @return string
- * @since  5.0
- */
-function random_string(int $length, bool $puncted = false): string
-{
-    return Strings::random($length, $puncted);
-}
-
-/**
- * Generate a random range by given length.
- *
- * Note: This function is slow when `$length` is high and `$unique` is true.
- *
- * @param  int            $length
- * @param  int|float|null $min
- * @param  int|float|null $max
- * @param  int|null       $precision
- * @param  bool           $unique
- * @return array
- * @throws ArgumentError
- * @since  5.41
- * @tofix  Optimise unique range performance.
- */
-function random_range(int $length, int|float $min = null, int|float $max = null, int $precision = null, bool $unique = true): array
-{
-    if ($length < 0) {
-        throw new ArgumentError('Negative length given');
-    }
-
-    $ret = [];
-
-    // Unique stack.
-    $uni = [];
-
-    while ($length--) {
-        $item = Numbers::random($min, $max, $precision);
-
-        // Provide unique-ness.
-        while ($unique && in_array($item, $ret, true) && !in_array($item, $uni, true)) {
-            $item = $uni[] = Numbers::random($min, $max, $precision);
-        }
-
-        $ret[] = $item;
-    }
-
-    return $ret;
 }
 
 /**
