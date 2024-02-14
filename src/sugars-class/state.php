@@ -113,6 +113,6 @@ class State extends PlainArrayObject
             $states = current($states);
         }
 
-        return $states;
+        return (array) $states;
     }
 }
