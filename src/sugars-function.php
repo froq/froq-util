@@ -32,67 +32,13 @@ function state(mixed ...$states): State
 /**
  * Reflection initializer.
  *
- * @param  object|string $target
+ * @param  string|object $target
  * @param  string|null   $type
  * @return Reflector|null
  */
-function reflect(object|string $target, string $type = null): Reflector|null
+function reflect(string|object $target, string $type = null): Reflector|null
 {
-    if (is_object($target)) {
-        return new XReflectionObject($target);
-    }
-
-    // Blind tries.
-    if ($type === null) {
-        if (class_exists($target)) {
-            return new XReflectionClass($target);
-        }
-        if (function_exists($target)) {
-            return new XReflectionFunction($target);
-        }
-    }
-
-    // Type tries.
-    switch ($type) {
-        case 'class':
-            return new XReflectionClass($target);
-        case 'function':
-            return new XReflectionFunction($target);
-
-        case 'trait':
-            return new ReflectionTrait($target);
-        case 'interface':
-            return new ReflectionInterface($target);
-        case 'namespace':
-            return new ReflectionNamespace($target);
-
-        case 'callable':
-            return new ReflectionCallable($target);
-
-        default:
-            // Eg: Foo@bar or Foo::bar
-            $target = replace($target, '@', '::');
-
-            switch ($type) {
-                case 'constant':
-                case 'class-constant':
-                    return new XReflectionClassConstant($target);
-                case 'property':
-                case 'class-property':
-                    return new XReflectionProperty($target);
-                case 'method':
-                case 'class-method':
-                    return new XReflectionMethod($target);
-                case 'class-namespace':
-                    $target = get_class_namespace($target);
-                    return new ReflectionNamespace($target);
-
-                default:
-                    throw new ArgumentError('Invalid type: %q', $type);
-            }
-    }
-
-    return null;
+    return XReflection::reflect($target, $type);
 }
 
 /**
