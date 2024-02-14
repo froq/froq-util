@@ -177,21 +177,49 @@ class System extends \StaticClass
             return ['id' => 'darwin', 'type' => 'Darwin', 'name' => 'Darwin'];
         }
 
-        $ret = [];
+        $res = self::exec('cat /etc/os-release', silent: true);
+
+        return reduce((array) $res[1], function ($ret, $info) {
+            $info = split('=', (string) $info, 2);
+            if (isset($info[0])) {
+                $key = lower($info[0]);
+                $value = trim((string) $info[1], '"');
+                $ret[$key] = $value;
+            }
+            return $ret;
+        });
+    }
+
+    /**
+     * Exec a command with/without arguments and options.
+     *
+     * @param  string       $program
+     * @param  string|array $arguments
+     * @param  bool         $escape
+     * @param  bool         $silent
+     * @return array
+     */
+    public static function exec(string $program, string|array $arguments = [], bool $escape = false, bool $silent = false): array
+    {
+        $arguments = (array) $arguments;
+
+        if ($escape && $arguments) {
+            $arguments = map($arguments, 'escapeshellarg');
+        }
+
+        $command = trim($program . ' ' . join(' ', $arguments));
+
+        if ($silent) {
+            $command .= ' 2>/dev/null';
+        }
+
+        $return = $result = $resultCode = null;
 
         try {
-            exec('cat /etc/os-release 2>/dev/null', $infos);
-            foreach ((array) $infos as $info) {
-                $info = split('=', (string) $info, 2);
-                if (isset($info[0])) {
-                    $key = strtolower($info[0]);
-                    $value = trim((string) $info[1], '"');
-                    $ret[$key] = $value;
-                }
-            }
+            $return = exec($command, $result, $resultCode);
         } catch (\Error) {}
 
-        return $ret;
+        return [$return, $result, $resultCode];
     }
 
     /**
