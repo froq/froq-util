@@ -199,30 +199,27 @@ class System extends \StaticClass
      *
      * @param  int $length
      * @return string|null
-     * @throws Error
+     * @throws ArgumentError|Error
      */
     public static function urandom(int $length): string|null
     {
         if ($length < 1) {
-            throw new \Error('Argument $length must be greater than 0');
+            throw new \ArgumentError('Argument $length must be greater than 0');
         }
 
-        $fp = @fopen('/dev/urandom', 'rb');
+        $ret = @file_get_contents('/dev/urandom', length: $length);
 
-        if (!$fp) {
-            $error = error_message(extract: true) ?: 'Unknown error';
-            $fails = 'Failed to open stream: ';
+        if ($ret === false) {
+            $error  = error_message(extract: true) ?: 'Unknown error';
+            $search = 'Failed to open stream: ';
 
-            if (strsrc($error, $fails)) {
-                $error = strsub($error, strlen($fails));
+            if (strsrc($error, $search)) {
+                $error = strsub($error, strlen($search));
             }
 
             throw new \Error('Cannot open /dev/urandom: ' . $error);
         }
 
-        $ret = @fread($fp, $length);
-        fclose($fp);
-
-        return ($ret !== false) ? $ret : null;
+        return $ret;
     }
 }
