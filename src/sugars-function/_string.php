@@ -355,40 +355,6 @@ function str_splice(string $string, int $start, int $end = null, string|array $r
 }
 
 /**
- * Pop a string if it contains any given separator.
- *
- * @param  string               $string
- * @param  string|array<string> $separator
- * @param  int|null             $limit
- * @return array
- * @since  7.20
- */
-function str_pop(string $string, string|array $separator, int $limit = null): array
-{
-    $ret = [];
-
-    if ($separator !== '' && $separator !== []) {
-        foreach ((array) $separator as $search) {
-            if (str_contains($string, (string) $search)) {
-                $ret = explode($search, $string, $limit ?? PHP_INT_MAX);
-                break;
-            }
-        }
-    }
-
-    if ($string !== '' && !$ret) {
-        $ret = [$string];
-    }
-
-    // Prevent "undefined index" error.
-    if ($limit && $limit > count($ret)) {
-        $ret = array_pad($ret, $limit, null);
-    }
-
-    return $ret;
-}
-
-/**
  * Apply word-wrap on given string in multi-byte style.
  *
  * @param  string $string
@@ -446,6 +412,40 @@ function str_compare(string $string1, string $string2, bool $icase = false, int 
 function str_remove(string $string, string|array $search, int &$count = null): string
 {
     return str_replace($search, '', $string, $count);
+}
+
+/**
+ * Pop a string if it contains any given separator.
+ *
+ * @param  string               $string
+ * @param  string|array<string> $separator
+ * @param  int|null             $limit
+ * @return array
+ * @since  7.20
+ */
+function str_pop(string $string, string|array $separator, int $limit = null): array
+{
+    $ret = [];
+
+    if ($separator !== '' && $separator !== []) {
+        foreach ((array) $separator as $search) {
+            if (str_contains($string, (string) $search)) {
+                $ret = explode($search, $string, $limit ?? PHP_INT_MAX);
+                break;
+            }
+        }
+    }
+
+    if ($string !== '' && !$ret) {
+        $ret = [$string];
+    }
+
+    // Prevent "undefined index" error.
+    if ($limit && $limit > count($ret)) {
+        $ret = array_pad($ret, $limit, null);
+    }
+
+    return $ret;
 }
 
 /**
