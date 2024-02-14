@@ -828,7 +828,7 @@ function constant_exists(string|object $class, string $name, bool $scope = false
             return ($caller_class === $class || is_class_of($class, $caller_class))
                 && Objects::hasConstant($class, $name);
         }
-        return defined($class .'::'. $name);
+        return defined($class .'::'. $name); // Direct check.
     }
 
     return defined($class .'::'. $name) || Objects::hasConstant($class, $name);
