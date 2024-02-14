@@ -357,9 +357,9 @@ function str_splice(string $string, int $start, int $end = null, string|array $r
 /**
  * Pop a string if it contains any given separator.
  *
- * @param  string       $string
- * @param  string|array $separator
- * @param  int|null     $limit
+ * @param  string               $string
+ * @param  string|array<string> $separator
+ * @param  int|null             $limit
  * @return array
  * @since  7.20
  */
@@ -367,14 +367,20 @@ function str_pop(string $string, string|array $separator, int $limit = null): ar
 {
     $ret = [];
 
-    foreach ((array) $separator as $search) {
-        if (str_contains($string, $search)) {
-            $ret = explode($search, $string, $limit ?? PHP_INT_MAX);
-            break;
+    if ($separator !== '' && $separator !== []) {
+        foreach ((array) $separator as $search) {
+            if (str_contains($string, (string) $search)) {
+                $ret = explode($search, $string, $limit ?? PHP_INT_MAX);
+                break;
+            }
         }
     }
 
-    // Block "undefined index .." error.
+    if ($string !== '' && !$ret) {
+        $ret = [$string];
+    }
+
+    // Prevent "undefined index" error.
     if ($limit && $limit > count($ret)) {
         $ret = array_pad($ret, $limit, null);
     }
