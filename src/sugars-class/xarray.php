@@ -275,28 +275,6 @@ class XArray implements Arrayable, Listable, Jsonable, Iteratable, IteratableRev
     }
 
     /**
-     * Join.
-     *
-     * @param  string $glue
-     * @return string
-     */
-    public function join(string $glue = ''): string
-    {
-        return join($glue, $this->data);
-    }
-
-    /**
-     * X-join.
-     *
-     * @param  string $glue
-     * @return XString
-     */
-    public function xjoin(string $glue = ''): XString
-    {
-        return new XString($this->join($glue));
-    }
-
-    /**
      * Update self data by given data.
      *
      * @param  iterable $data
@@ -1353,6 +1331,28 @@ class XArray implements Arrayable, Listable, Jsonable, Iteratable, IteratableRev
     public function format(string $format): string
     {
         return format($format, ...$this->data);
+    }
+
+    /**
+     * Join.
+     *
+     * @param  string $glue
+     * @return string
+     */
+    public function join(string $glue = ''): string
+    {
+        return join($glue, $this->data);
+    }
+
+    /**
+     * X-join.
+     *
+     * @param  string $glue
+     * @return XString
+     */
+    public function xjoin(string $glue = ''): XString
+    {
+        return new XString($this->join($glue));
     }
 
     // Copy & inherit.
