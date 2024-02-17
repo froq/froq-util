@@ -53,9 +53,6 @@ class RegExp implements Stringable
     /** Error instance. */
     private RegExpError $error;
 
-    /** Error code. */
-    private int $errorCode;
-
     /**
      * Constructor.
      *
@@ -95,16 +92,6 @@ class RegExp implements Stringable
     public function error(): RegExpError|null
     {
         return $this->error ?? null;
-    }
-
-    /**
-     * Get error code.
-     *
-     * @return int|null
-     */
-    public function errorCode(): int|null
-    {
-        return $this->errorCode ?? null;
     }
 
     /**
@@ -284,7 +271,7 @@ class RegExp implements Stringable
     public function match(string $input, int|array $flags = 0, int $offset = 0, string $class = null): iterable|null
     {
         $this->classCheck($class);
-        $this->flagsCheck($flags);
+        $this->flagsCheck($flags, true);
 
         $res = @preg_match($this->pattern, $input, $ret, $flags, $offset);
 
@@ -308,7 +295,7 @@ class RegExp implements Stringable
     public function matchAll(string $input, int|array $flags = 0, int $offset = 0, string $class = null): iterable|null
     {
         $this->classCheck($class);
-        $this->flagsCheck($flags);
+        $this->flagsCheck($flags, true);
 
         $res = @preg_match_all($this->pattern, $input, $ret, $flags, $offset);
 
@@ -335,7 +322,7 @@ class RegExp implements Stringable
     public function matchNames(string $input, int|array $flags = 0, int $offset = 0, string $class = null): iterable|null
     {
         $this->classCheck($class);
-        $this->flagsCheck($flags);
+        $this->flagsCheck($flags, true);
 
         $res = @preg_match_names($this->pattern, $input, $ret, $flags, $offset);
 
@@ -359,7 +346,7 @@ class RegExp implements Stringable
     public function matchAllNames(string $input, int|array $flags = 0, int $offset = 0, string $class = null): iterable|null
     {
         $this->classCheck($class);
-        $this->flagsCheck($flags);
+        $this->flagsCheck($flags, true);
 
         $res = @preg_match_all_names($this->pattern, $input, $ret, $flags, $offset);
 
@@ -386,7 +373,7 @@ class RegExp implements Stringable
     public function exec(string $input, int|array $flags = 0, int $offset = 0, string $class = null): iterable|null
     {
         $this->classCheck($class);
-        $this->flagsCheck($flags);
+        $this->flagsCheck($flags, true);
 
         $res = @preg_match($this->pattern, $input, $ret, $flags, $offset);
 
@@ -489,6 +476,18 @@ class RegExp implements Stringable
         }
 
         return -1;
+    }
+
+    /**
+     * Compile given source, return a matcher.
+     *
+     * @param  string $source
+     * @param  string $modifiers
+     * @return RegExpMatcher
+     */
+    public static function compile(string $source, string $modifiers = ''): RegExpMatcher
+    {
+        return new RegExpMatcher($source, $modifiers);
     }
 
     /**
@@ -642,7 +641,6 @@ class RegExp implements Stringable
     {
         if ($message = preg_error_message($code, $func, true)) {
             $this->error = new RegExpError($message, code: $code);
-            $this->errorCode = $code;
             if ($this->throw) {
                 throw $this->error;
             }
@@ -670,7 +668,7 @@ class RegExp implements Stringable
     /**
      * Flags check for array flags, to calculate when string[] given.
      */
-    private function flagsCheck(int|array|null &$flags): void
+    private function flagsCheck(int|array|null &$flags, bool $match = false): void
     {
         if ($flags && is_array($flags)) {
             $flagsSum = 0;
@@ -697,11 +695,62 @@ class RegExp implements Stringable
             // Update.
             $flags = $flagsSum;
         }
+
+        $match && $flags |= PREG_UNMATCHED_AS_NULL;
     }
 }
 
 /**
- * A class for match stuff of RegExp class.
+ * A class for matching stuff as RegExp's subclass.
+ *
+ * @package global
+ * @class   RegExpMatcher
+ * @author  Kerem Güneş
+ * @since   6.0
+ */
+class RegExpMatcher extends RegExp
+{
+    /**
+     * @param string $source
+     * @param string $modifiers
+     * @override
+     */
+    public function __construct(string $source, string $modifiers = '')
+    {
+        parent::__construct($source, $modifiers, throw: true);
+    }
+
+    /**
+     * Perform a find.
+     *
+     * @param  string    $input
+     * @param  array|int $flags
+     * @param  bool      $names
+     * @return RegExpMatch
+     */
+    public function find(string $input, int|array $flags = 0, bool $names = false): RegExpMatch|null
+    {
+        return !$names ? $this->match($input, $flags, class: RegExpMatch::class)
+                       : $this->matchNames($input, $flags, class: RegExpMatch::class);
+    }
+
+    /**
+     * Perform a find-all.
+     *
+     * @param  string    $input
+     * @param  array|int $flags
+     * @param  bool      $names
+     * @return RegExpMatch
+     */
+    public function findAll(string $input, int|array $flags = 0, bool $names = false): RegExpMatch|null
+    {
+        return !$names ? $this->matchAll($input, $flags, class: RegExpMatch::class)
+                       : $this->matchAllNames($input, $flags, class: RegExpMatch::class);
+    }
+}
+
+/**
+ * A class for matched stuff of RegExp class.
  *
  * @package global
  * @class   RegExpMatch
@@ -711,9 +760,8 @@ class RegExp implements Stringable
 class RegExpMatch extends Map
 {
     /**
-     * Constructor.
-     *
      * @param array $data
+     * @override
      */
     public function __construct(array $data)
     {
@@ -721,23 +769,13 @@ class RegExpMatch extends Map
     }
 
     /**
-     * Clean filtering "" and null values.
-     *
-     * @return self
-     */
-    public function clean(): self
-    {
-        return $this->filter(fn($v): bool => !equals($v, "", null));
-    }
-
-    /**
-     * Clear filtering given search values.
+     * Clean filtering '' and null values as default if none given.
      *
      * @param  mixed ...$search
      * @return self
      */
-    public function clear(mixed ...$search): self
+    public function clean(mixed ...$search): self
     {
-        return $this->filter(fn($v): bool => !equals($v, ...$search));
+        return $this->refine($search ?: ['', null]);
     }
 }
