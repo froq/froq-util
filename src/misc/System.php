@@ -67,8 +67,8 @@ class System extends \StaticClass
      * Set an ENV directive.
      *
      * @param string                     $option
-     * @param bool                       $server
      * @param int|float|string|bool|null $value
+     * @param bool                       $server For checking $_SERVER global.
      */
     public static function envSet(string $option, int|float|string|bool|null $value, bool $server = false): bool
     {
@@ -177,29 +177,32 @@ class System extends \StaticClass
             return ['id' => 'darwin', 'type' => 'Darwin', 'name' => 'Darwin'];
         }
 
-        $res = self::exec('cat /etc/os-release', silent: true);
+        $res = self::exec('cat', '/etc/os-release', silent: true);
 
-        return reduce((array) $res[1], function ($ret, $info) {
+        return reduce((array) $res->result, function ($ret, $info) {
             $info = split('=', (string) $info, 2);
+
             if (isset($info[0])) {
                 $key = lower($info[0]);
                 $value = trim((string) $info[1], '"');
                 $ret[$key] = $value;
             }
+
             return $ret;
         });
     }
 
     /**
-     * Exec a command with/without arguments and options.
+     * Execute a command with/without arguments and options.
      *
-     * @param  string       $program
-     * @param  string|array $arguments
-     * @param  bool         $escape
-     * @param  bool         $silent
-     * @return array
+     * @param  string         $program
+     * @param  string|array   $arguments
+     * @param  bool           $escape
+     * @param  bool           $silent
+     * @return object<?string, ?array, int, ?string>
+     * @throws ArgumentError|Error
      */
-    public static function exec(string $program, string|array $arguments = [], bool $escape = false, bool $silent = false): array
+    public static function exec(string $program, string|array $arguments = [], bool $escape = false, bool $silent = false): object
     {
         $arguments = (array) $arguments;
 
@@ -207,19 +210,30 @@ class System extends \StaticClass
             $arguments = map($arguments, 'escapeshellarg');
         }
 
-        $command = trim($program . ' ' . join(' ', $arguments));
+        $command = [
+            $program,
+            join(' ', $arguments),
+            '2>&1' // Redirect stderr > stdout.
+        ];
 
-        if ($silent) {
-            $command .= ' 2>/dev/null';
+        $command = join(' ', filter(map($command, 'trim')));
+
+        if (!$command) {
+            throw new \ArgumentError('Empty exec command');
         }
 
-        $return = $result = $resultCode = null;
+        $return = exec($command, $result, $resultCode);
 
-        try {
-            $return = exec($command, $result, $resultCode);
-        } catch (\Error) {}
+        if ($resultCode !== 0) {
+            if (!$silent) {
+                throw new \Error((string) $return, (int) $resultCode);
+            }
 
-        return [$return, $result, $resultCode];
+            // Use return as error & drop.
+            [$error, $return, $result] = [$return, null, null];
+        }
+
+        return object(return: $return, result: $result, resultCode: $resultCode, error: $error ?? null);
     }
 
     /**
