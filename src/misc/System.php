@@ -222,18 +222,18 @@ class System extends \StaticClass
             throw new \ArgumentError('Empty exec command');
         }
 
-        $return = exec($command, $result, $resultCode);
+        $return = exec($command, $result, $code);
 
-        if ($resultCode !== 0) {
+        if ($code !== 0) {
             if (!$silent) {
-                throw new \Error((string) $return, (int) $resultCode);
+                throw new \Error((string) $return, (int) $code);
             }
 
             // Use return as error & drop.
             [$error, $return, $result] = [$return, null, null];
         }
 
-        return object(return: $return, result: $result, resultCode: $resultCode, error: $error ?? null);
+        return object(return: $return, result: $result, code: $code, error: $error ?? null);
     }
 
     /**
