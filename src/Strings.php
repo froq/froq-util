@@ -284,10 +284,8 @@ final class Strings extends \StaticClass
         // As default.
         $chars = BASE62_ALPHABET;
 
-        // Add punctuation chars.
-        if ($puncted) {
-            $chars .= '!^+%&/\(){}[]<>=*?-_|$#.:,;';
-        }
+        // Add punctuation characters.
+        $puncted && $chars .= '!^+%&/\(){}[]<>=*?-_|$#.:,;~';
 
         $max = strlen($chars) - 1;
         $ret = '';
