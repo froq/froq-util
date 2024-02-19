@@ -222,16 +222,16 @@ function str_rand(string $string, int $length = null): string
 /**
  * Chunk given string properly in multi-byte style.
  *
- * @param  string $string
- * @param  int    $length
- * @param  string $separator
- * @param  bool   $join
- * @param  bool   $chop
+ * @param  string       $string
+ * @param  int          $length
+ * @param  string|false $separator
+ * @param  bool         $join
+ * @param  bool         $chop
  * @return string|array
  * @since  5.31
  * @throws ArgumentError When length is less than 1.
  */
-function str_chunk(string $string, int $length = 76, string $separator = "\r\n", bool $join = true,
+function str_chunk(string $string, int $length = 76, string|false $separator = "\r\n", bool $join = true,
     bool $chop = false): string|array
 {
     if ($length < 1) {
@@ -241,9 +241,12 @@ function str_chunk(string $string, int $length = 76, string $separator = "\r\n",
     $ret = array_chunk(mb_str_split($string), $length);
 
     if ($join) {
-        $ret = array_reduce($ret, fn($s, $ss) => $s .= join($ss) . $separator);
-        if ($chop) {
-            $ret = chop($ret, $separator);
+        $ret = array_map('join', $ret);
+
+        // Join chunks too.
+        if ($separator !== false) {
+            $ret = join($separator, $ret);
+            $chop || ($ret .= $separator);
         }
     }
 
