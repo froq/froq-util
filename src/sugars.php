@@ -533,7 +533,7 @@ function grep_all(string $pattern, string $input, bool $named = false, bool $uni
 function convert_base(int|string $input, int|string $from, int|string $to): string
 {
     $input = strval($input);
-    if (!$input) {
+    if ($input === '') {
         return $input;
     }
 

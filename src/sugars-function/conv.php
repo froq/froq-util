@@ -78,5 +78,5 @@ function alphex(string $alp): string|null
 /**
  * Aliases for those weirdos.
  */
-function binhex(string $string): string       { return bin2hex($string); }
-function hexbin(string $string): string|false { return hex2bin($string); }
+function binhex(string $bin): string       { return bin2hex($bin); }
+function hexbin(string $hex): string|false { return hex2bin($hex); }

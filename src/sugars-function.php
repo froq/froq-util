@@ -9,6 +9,7 @@ require 'sugars-function/_array.php';
 require 'sugars-function/_string.php';
 
 // Load other function files.
+require 'sugars-function/base.php';
 require 'sugars-function/cast.php';
 require 'sugars-function/conv.php';
 require 'sugars-function/dump.php';
