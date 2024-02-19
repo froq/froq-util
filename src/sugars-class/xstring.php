@@ -819,17 +819,17 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     /**
      * Chunk, like chunk_split() but unicode.
      *
-     * @param  int    $length
-     * @param  string $separator
-     * @param  bool   $join
-     * @param  bool   $chop
+     * @param  int          $length
+     * @param  string|false $separator
+     * @param  bool         $join
+     * @param  bool         $chop
      * @return self|array
      */
-    public function chunk(int $length = 76, string $separator = "\r\n", bool $join = true, bool $chop = false): self|array
+    public function chunk(int $length = 76, string|false $separator = "\r\n", bool $join = true, bool $chop = false): self|array
     {
         $chunk = str_chunk($this->data, $length, $separator, $join, $chop);
 
-        if ($join) {
+        if ($join && $separator !== false) {
             $this->data = $chunk;
 
             return $this;
@@ -1243,11 +1243,12 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
      *
      * @param  string $preserve
      * @param  string $replace
+     * @param  bool   $lower
      * @return string
      */
-    public function slug(string $preserve = '', string $replace = '-'): string
+    public function slug(string $preserve = '', string $replace = '-', bool $lower = true): string
     {
-        return slug($this->data, $preserve, $replace);
+        return slug($this->data, $preserve, $replace, $lower);
     }
 
     /**
@@ -1255,11 +1256,11 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
      *
      * @param  string    $format
      * @param  mixed  ...$vars
-     * @return int|array|null
+     * @return int|array
      */
-    public function scan(string $format, mixed &...$vars): int|array|null
+    public function scan(string $format, mixed &...$vars): int|array
     {
-        return sscanf($this->data, $format, ...$vars);
+        return str_scan($this->data, $format, ...$vars);
     }
 
     /**
@@ -1270,9 +1271,7 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
      */
     public function wordCount(int $format = 0): int|array
     {
-        $words = $this->split('~[^\p{L}\'\-]+~u');
-
-        return ($format === 0) ? count($words) : $words;
+        return str_wordcount($this->data, $format);
     }
 
     /**

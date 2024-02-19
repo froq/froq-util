@@ -358,6 +358,54 @@ function str_splice(string $string, int $start, int $end = null, string|array $r
 }
 
 /**
+ * Scan given string in a safe way.
+ *
+ * @param  string    $string
+ * @param  string    $format
+ * @param  mixed ...&$vars
+ * @return int|array
+ */
+function str_scan(string $string, string $format, mixed &...$vars): int|array
+{
+    $vars_count = $vars ? count($vars) : -1;
+    $spec_count = preg_match_all('~(?<!%)%[a-zA-Z]~', $format);
+
+    // ValueError: Variable is not assigned by any conversion specifiers.
+    if ($vars_count > -1 && $vars_count > $spec_count) {
+        $vars = array_slice($vars, 0, $spec_count);
+    }
+    // ValueError: Different numbers of variable names and field specifiers.
+    elseif ($vars_count > 0 && $vars_count < $spec_count) {
+        $vars = array_pad($vars, $spec_count, null);
+    }
+
+    return sscanf($string, $format, ...$vars);
+}
+
+/**
+ * Apply word-count on given string in multi-byte style.
+ *
+ * @param  string $string
+ * @param  int    $type
+ * @return int|array
+ */
+function str_wordcount(string $string, int $type = 0): int|array
+{
+    $tmp = preg_split('~[^\p{L}\'\-]+~u', $string, flags: PREG_SPLIT_NO_EMPTY);
+
+    return match ($type) {
+        default => $tmp,
+        0 => count($tmp),
+        // Map of words' count.
+        1 => reduce($tmp, function(?array $ret, string $word): ?array {
+            $ret[$word] ??= 0;
+            $ret[$word] += 1;
+            return $ret;
+        }) ?: [],
+    };
+}
+
+/**
  * Apply word-wrap on given string in multi-byte style.
  *
  * @param  string $string
@@ -374,13 +422,11 @@ function str_wordwrap(string $string, int $width = 75, string $break = "\n", boo
     }
 
     /** @thanks http://php.net/wordwrap#107570 */
-    $string = preg_replace(
+    return trim(preg_replace(
         '~(.{1,' . $width . '})(?:\s|$)|(.{' . $width . '})~uS',
         '\1\2' . $break,
         $string
-    );
-
-    return trim($string, $break);
+    ), $break);
 }
 
 /**
@@ -418,7 +464,8 @@ function str_remove(string $string, string|array $search, int &$count = null): s
 }
 
 /**
- * Pop a string if it contains any given separator.
+ * Pop a string if it contains any given separator, like explode() but with multi separator
+ * and a fixing limit options.
  *
  * @param  string               $string
  * @param  string|array<string> $separator
