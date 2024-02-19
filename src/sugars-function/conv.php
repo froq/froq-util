@@ -5,36 +5,74 @@
  */
 
 /**
- * Convert a decimal / decimal string to alphabetical string.
+ * Convert a decimal string to alphanumeric string.
  *
- * @param  int|string $decs
- * @param  int        $base
- * @return string
+ * @param  int|string $dec
+ * @return string|null
  */
-function decalp(int|string $decs, int $base = 62): string
+function decalp(int|string $dec): string|null
 {
-    $ret = convert_base($decs, 10, $base);
+    if (!ctype_digit((string) $dec)) {
+        trigger_error('decalp(): Invalid decimal input', E_USER_WARNING);
+        return null;
+    }
 
-    return $ret;
+    return convert_base($dec, 10, 62);
 }
 
 /**
- * Convert an alphabetical string to decimal / decimal string.
+ * Convert an alphanumeric string to decimal string.
  *
- * @param  string $alps
- * @param  int    $base
+ * @param  string $alp
  * @param  bool   $cast
- * @return int|string
+ * @return int|string|null
  */
-function alpdec(string $alps, int $base = 62, bool $cast = true): int|string
+function alpdec(string $alp, bool $cast = true): int|string|null
 {
-    $ret = convert_base($alps, $base, 10);
+    if (!ctype_alnum($alp)) {
+        trigger_error('alpdec(): Invalid alphanumeric input', E_USER_WARNING);
+        return null;
+    }
+
+    $ret = convert_base($alp, 62, 10);
 
     if ($cast && $ret <= PHP_INT_MAX) {
         $ret = (int) $ret;
     }
 
     return $ret;
+}
+
+/**
+ * Convert hexadecimal string to alphanumeric string.
+ *
+ * @param  string $hex
+ * @return string|null
+ */
+function hexalp(string $hex): string|null
+{
+    if (!ctype_xdigit($hex)) {
+        trigger_error('hexalp(): Invalid hexadecimal input', E_USER_WARNING);
+        return null;
+    }
+
+    return convert_base($hex, 16, 62);
+}
+
+/**
+ * Convert an alphanumeric string to hexadecimal string.
+ *
+ * @param  string $alp
+ * @return string|null
+ */
+function alphex(string $alp): string|null
+{
+    if (!ctype_alnum($alp)) {
+        trigger_error('alphex(): Invalid alphanumeric input', E_USER_WARNING);
+        return null;
+    }
+
+    return convert_base($alp, 62, 16);
 }
 
 /**
