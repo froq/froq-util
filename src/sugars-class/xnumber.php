@@ -514,6 +514,17 @@ class XNumber implements Stringable
     }
 
     /**
+     * Fix number data formatting it (like JavaScript's Number.toFixed()).
+     *
+     * @param  int $digits
+     * @return string
+     */
+    public function toFixed(int $digits = 0): string
+    {
+        return sprintf('%.*F', $digits, $this->data);
+    }
+
+    /**
      * Get number data.
      *
      * @return int|float

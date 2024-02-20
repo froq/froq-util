@@ -1297,7 +1297,7 @@ function ustime(bool $string = false): int|string
 {
     $time = intval(microtime(true) * 1000);
 
-    return !$string ? $time : (string) $time;
+    return !$string ? $time : sprintf('%-013s', $time);
 }
 
 /**
@@ -1375,7 +1375,7 @@ function getlocale(int $category = LC_ALL, string|array $default = null, bool $a
 }
 
 /**
- * Get current value of given array (for the sake of current()) or given key's value if exists.
+ * Get current value of given array (for the sake of key()) or given key's value if exists.
  *
  * @param  array           $array
  * @param  int|string|null $key

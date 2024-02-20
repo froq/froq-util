@@ -223,4 +223,37 @@ final class Numbers extends \StaticClass
     {
         return self::random($min, $max ?? ($min + 1.0), $precision);
     }
+
+    /**
+     * Safe int parsing.
+     *
+     * @param  string $input
+     * @param  int    $base
+     * @return int|null
+     */
+    public static function parseInt(string $input, int $base = 10): int|null
+    {
+        if ($base === 10) {
+            return is_numeric($input) ? intval($input, $base) : null;
+        }
+
+        try {
+            $num = convert_base($input, $base, 10);
+            return is_numeric($num) ? intval($num) : null;
+        } catch (\Throwable) { // Invalid (@see convert_base()).
+            return null;
+        }
+    }
+
+    /**
+     * Safe float parsing.
+     *
+     * @param  string $input
+     * @param  int    $base
+     * @return float|null
+     */
+    public static function parseFloat(string $input): float|null
+    {
+        return is_numeric($input) ? floatval($input) : null;
+    }
 }
