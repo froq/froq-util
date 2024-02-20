@@ -87,16 +87,17 @@ function random_range(int $length, int|float $min = null, int|float $max = null,
  *
  * @param  int|null $min
  * @param  int|null $max
+ * @param  bool     $big
  * @return int
  * @throws ArgumentError
  */
-function random_xint(int $min = null, int $max = null): int
+function random_xint(int $min = null, int $max = null, bool $big = true): int
 {
     $min ??= 0;
-    $max ??= PHP_INT_MAX;
+    $max ??= $big ? PHP_INT_MAX : getrandmax();
 
     if ($min > $max) {
-        throw new ArgumentError('Argument $min must be less than argument $max');
+        throw new ArgumentError('Argument $min must be less than $max');
     }
 
     return random_int($min, $max);
@@ -120,8 +121,9 @@ function random_xbytes(int $length): string
     } else {
         $ret = bin2hex(random_bytes(intdiv($length, 2)));
 
-        while ($length > strlen($ret)) {
-            $ret .= random_xbytes(2);
+        // Odd-length.
+        if ($length % 2) {
+            $ret .= random_xbytes(1);
         }
     }
 
