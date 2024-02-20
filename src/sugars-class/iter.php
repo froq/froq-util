@@ -26,8 +26,8 @@ class Iter implements Arrayable, Listable, Jsonable, Countable, IteratorAggregat
     public function __construct(iterable $iter)
     {
         // Since ArrayIterator methods are fast, such a getArrayCopy(), count() etc.,
-        // we use it here to utilise for speed (CachingIterator is slow, e.g. count()).
-        $this->iter = $iter = new ArrayIterator([...$iter]);
+        // we use it here to utilise (CachingIterator is slow, e.g. count()).
+        $this->iter = new ArrayIterator([...$iter]);
     }
 
     /**
@@ -52,7 +52,7 @@ class Iter implements Arrayable, Listable, Jsonable, Countable, IteratorAggregat
                 $this->iter->seek($offset);
             } catch (OutOfBoundsException $e) {
                 // Just throw error, as default.
-                $throw && throw new RangeError($e);
+                $throw && throw new RangeError($e->getMessage());
 
                 [$min, $max] = $this->getMinMaxKeys();
 

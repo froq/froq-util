@@ -231,7 +231,7 @@ class RangeError extends froq\common\Error
      * Constructor.
      *
      * @param string|null    $message
-     * @param int|float|null $code
+     * @param int|null       $code
      * @param int|float|null $min
      * @param int|float|null $max
      */
