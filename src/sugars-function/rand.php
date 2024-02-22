@@ -83,6 +83,52 @@ function random_range(int $length, int|float $min = null, int|float $max = null,
 }
 
 /**
+ * Generate a random char string by given length.
+ *
+ * @param  int  $length
+ * @param  int  $base
+ * @param  bool $upper
+ * @return string
+ */
+function random_chars(int $length, int $base = 62, bool $upper = false): string
+{
+    try {
+        $ret = suid($length, base: $base);
+    } catch (Throwable $e) {
+        throw new ArgumentError($e);
+    }
+
+    if ($upper && $base > 10) {
+        $ret = strtoupper($ret);
+    }
+
+    return $ret;
+}
+
+/**
+ * Generate a random digit string by given length.
+ *
+ * @param  int  $length
+ * @param  bool $hex
+ * @param  bool $upper
+ * @return string
+ */
+function random_digits(int $length, bool $hex = false, bool $upper = false): string
+{
+    try {
+        $ret = suid($length, base: $hex ? 16 : 10);
+    } catch (Throwable $e) {
+        throw new ArgumentError($e);
+    }
+
+    if ($upper && $hex) {
+        $ret = strtoupper($ret);
+    }
+
+    return $ret;
+}
+
+/**
  * Random int with optional min/max params.
  *
  * @param  int|null $min

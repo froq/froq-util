@@ -539,9 +539,16 @@ function convert_base(int|string $input, int|string $from, int|string $to): stri
 
     // Try to use speed/power of GMP.
     if (is_int($from) && is_int($to) && extension_loaded('gmp')) {
+        if ($from < 2 || $from > 62) {
+            throw new ArgumentError('Invalid from base %s [min=2, max=62]', $from);
+        }
+        if ($to < 2 || $to > 62) {
+            throw new ArgumentError('Invalid to base %s [min=2, max=62]', $to);
+        }
         if (!ctype_alnum($input)) {
             throw new ArgumentError('Invalid input %s', $input);
         }
+
         return gmp_strval(gmp_init($input, $from), $to);
     }
 
@@ -552,12 +559,14 @@ function convert_base(int|string $input, int|string $from, int|string $to): stri
         if ($from < 2 || $from > 62) {
             throw new ArgumentError('Invalid from base %s [min=2, max=62]', $from);
         }
+
         $from = strcut($characters, $from);
     }
     if (is_int($to)) {
         if ($to < 2 || $to > 62) {
             throw new ArgumentError('Invalid to base %s [min=2, max=62]', $to);
         }
+
         $to = strcut($characters, $to);
     }
 
@@ -923,9 +932,10 @@ function get_unique_id(int $length = 14, int $base = 16, bool $upper = false, bo
 
     $ret = $id;
 
-    // Convert non-hex ids.
+    // Convert non-hex.
     if ($base !== 16) {
         $ret = '';
+
         foreach (str_split($id, 8) as $i) {
             $ret .= convert_base($i, 16, $base);
         }
@@ -966,8 +976,12 @@ function get_random_id(int $length = 14, int $base = 16, bool $upper = false): s
     while ($length > strlen($ret)) {
         $id = random_xbytes($length);
 
-        // Convert non-hex ids.
-        $ret .= ($base === 16) ? $id : convert_base($id, 16, $base);
+        // Convert non-hex.
+        if ($base !== 16) {
+            $id = convert_base($id, 16, $base);
+        }
+
+        $ret .= $id;
     }
 
     if ($upper && $base > 10) {

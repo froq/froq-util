@@ -278,7 +278,7 @@ class Uuid implements Stringable, \Stringable
     }
 
     /**
-     * Generate a simple UID.
+     * Generate a simple UID (using Base-62 alphabet).
      *
      * @param  int $length
      * @param  int $base
@@ -288,9 +288,9 @@ class Uuid implements Stringable, \Stringable
     public static function generateSuid(int $length, int $base = 62): string
     {
         if ($length < 1) {
-            throw new UuidError('Invalid length: %s [min=1]', $length);
+            throw new UuidError('Invalid length %s [min=1]', $length);
         } elseif ($base < 2 || $base > 62) {
-            throw new UuidError('Invalid base: %s [min=2, max=62]', $base);
+            throw new UuidError('Invalid base %s [min=2, max=62]', $base);
         }
 
         $max = $base - 1;
