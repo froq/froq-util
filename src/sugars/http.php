@@ -4,7 +4,7 @@
  * Apache License 2.0 · http://github.com/froq/froq-util
  */
 use froq\util\UtilException;
-use froq\http\{Request, Response, request\Segments, response\Status};
+use froq\http\{Request, Response, response\Status};
 use froq\App;
 
 // Check dependencies (all others already come with froq\App).
@@ -199,7 +199,7 @@ function cookie_has(string|array $name): bool
 }
 
 /**
- * Get a URI segment.
+ * Get a segment param.
  *
  * @param  int|string  $key
  * @param  string|null $default
@@ -211,13 +211,13 @@ function segment(int|string $key, string $default = null): string|null
 }
 
 /**
- * Get all/many URI segments or Segments object.
+ * Get many segment params.
  *
  * @param  array<int|string>|null $keys
  * @param  array<string>|null     $defaults
- * @return array<string>|froq\http\request\Segments
+ * @return array<string>|null
  */
-function segments(array $keys = null, array $defaults = null): array|Segments
+function segments(array $keys = null, array $defaults = null): array|null
 {
     return app()->request->segments($keys, $defaults);
 }
