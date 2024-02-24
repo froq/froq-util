@@ -1870,7 +1870,13 @@ final class Arrays extends \StaticClass
         if ($single = !is_array($key)) {
             $values[] = $array[$key] ?? $default;
         } else {
-            $defaults = (array) $default;
+            // Defaults given with keys as map.
+            if ($default === null && !array_is_list($keys)) {
+                $defaults = array_values($keys);
+                $keys = array_keys($keys);
+            }
+
+            $defaults ??= (array) $default;
             foreach ($keys as $i => $key) {
                 $default    = $defaults[$i] ?? null;
                 $values[$i] = $array[$key]  ?? $default;
