@@ -115,8 +115,7 @@ class Url implements Arrayable, Stringable, \Stringable
     public function __get(string $name): mixed
     {
         if (array_key_exists($name, $this->data)) {
-            $getter = 'get' . $name;
-            return $this->$getter();
+            return $this->data[$name];
         }
 
         throw new UrlError('Invalid component: %q', $name);
