@@ -201,11 +201,11 @@ function cookie_has(string|array $name): bool
 /**
  * Get a segment param.
  *
- * @param  int|string  $key
- * @param  string|null $default
- * @return string|null
+ * @param  int|string $key
+ * @param  mixed|null $default
+ * @return mixed
  */
-function segment(int|string $key, string $default = null): string|null
+function segment(int|string $key, mixed $default = null): mixed
 {
     return app()->request->segment($key, $default);
 }
@@ -214,10 +214,10 @@ function segment(int|string $key, string $default = null): string|null
  * Get many segment params.
  *
  * @param  array<int|string>|null $keys
- * @param  array<string>|null     $defaults
- * @return array<string>|null
+ * @param  array|null             $defaults
+ * @return array
  */
-function segments(array $keys = null, array $defaults = null): array|null
+function segments(array $keys = null, array $defaults = null): array
 {
     return app()->request->segments($keys, $defaults);
 }
