@@ -1749,7 +1749,7 @@ function slug(string $input, string $preserve = '', string $replace = '-', bool 
 
     $ret = trim($ret, $replace);
 
-    return $lower ? strtolower($ret) : $ret;
+    return $lower ? lower($ret) : $ret;
 }
 
 /**
