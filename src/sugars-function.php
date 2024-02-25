@@ -12,6 +12,7 @@ require 'sugars-function/_string.php';
 require 'sugars-function/base.php';
 require 'sugars-function/cast.php';
 require 'sugars-function/conv.php';
+require 'sugars-function/date.php';
 require 'sugars-function/dump.php';
 require 'sugars-function/file.php';
 require 'sugars-function/http.php';
