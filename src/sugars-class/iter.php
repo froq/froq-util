@@ -323,3 +323,55 @@ class Iter implements Arrayable, Listable, Jsonable, Countable, IteratorAggregat
         return [$min, $max];
     }
 }
+
+/**
+ * Split iterator class.
+ *
+ * @package global
+ * @class   SplitIter
+ * @author  Kerem Güneş
+ * @since   7.10
+ */
+class SplitIter extends Iter
+{
+    /** RegExp pattern. */
+    public readonly string $pattern;
+
+    /** RegExp compile error. */
+    public readonly Error|null $error;
+
+    /**
+     * Constructor.
+     *
+     * @param string   $pattern
+     * @param string   $string
+     * @param int|null $limit
+     * @param int|null $flags
+     */
+    public function __construct(string $pattern, string $string, int $limit = null, int $flags = null,
+        array $options = null)
+    {
+        $this->pattern = $pattern;
+
+        try {
+            parent::__construct(
+                RegExp::fromPattern($pattern, true)
+                    ->split($string, $limit ?? -1, $flags ?? 0, null, $options)
+            );
+            $this->error = null;
+        } catch (RegExpError $e) {
+            parent::__construct([]);
+            $this->error = new Error($e->getMessage(), $e->getCode());
+        }
+    }
+
+    /**
+     * Create a SplitIter instance with options.
+     *
+     * @return SplitIter
+     */
+    public static function withOptions($pattern, $string, $limit = null, $flags = null, ...$options): SplitIter
+    {
+        return new SplitIter($pattern, $string, $limit, $flags, $options);
+    }
+}
