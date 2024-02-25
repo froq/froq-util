@@ -576,13 +576,13 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
      * @param  bool                  $icase
      * @param  int                   $limit
      * @param  int|null              &$count
-     * @param  int|array             $flags
+     * @param  int                   $flags
      * @param  string|null           $class
      * @param  bool                  $re @internal
      * @return self
      */
     public function replace(string|array|RegExp $search, string|array|callable $replace, bool $icase = false,
-        int $limit = -1, int &$count = null, int|array $flags = 0, string $class = null, bool $re = false): self
+        int $limit = -1, int &$count = null, int $flags = 0, string $class = null, bool $re = false): self
     {
         if ($search instanceof RegExp) {
             $this->data = $search->replace($this->data, $replace, $limit, $count, $flags, $class);
@@ -603,12 +603,12 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
      * @param  callable      $callback
      * @param  int           $limit
      * @param  int|null      &$count
-     * @param  array|int     $flags
+     * @param  int           $flags
      * @param  string|null   $class
      * @return self
      */
     public function replaceCallback(string|RegExp $search, callable $callback, int $limit = -1, int &$count = null,
-        int|array $flags = 0, string $class = null): self
+        int $flags = 0, string $class = null): self
     {
         return $this->replace($search, $callback, false, $limit, $count, $flags, $class, true);
     }
@@ -1056,11 +1056,13 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
      *
      * @param  string|RegExp $pattern
      * @param  int           $limit
-     * @param  int|array     $flags
+     * @param  int           $flags
      * @param  string|null   $class
+     * @param  array|null    $options
      * @return iterable|null
      */
-    public function split(string|RegExp $pattern, int $limit = -1, int|array $flags = 0, string $class = null): iterable|null
+    public function split(string|RegExp $pattern, int $limit = -1, int $flags = 0, string $class = null,
+        array $options = null): iterable|null
     {
         if (is_string($pattern)) {
             // Prepare single chars.
@@ -1071,7 +1073,7 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
             $pattern = RegExp::fromPattern($pattern);
         }
 
-        return $pattern->split($this->data, $limit, $flags, $class);
+        return $pattern->split($this->data, $limit, $flags, $class, $options);
     }
 
     /**
@@ -1080,12 +1082,13 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
      * @param  string|RegExp $pattern
      * @param  string        $class
      * @param  int           $limit
-     * @param  int|array     $flags
+     * @param  int           $flags
+     * @param  array|null    $options
      * @return iterable
      */
-    public function splitTo(string|RegExp $pattern, string $class, int $limit = -1, int|array $flags = 0): iterable
+    public function splitTo(string|RegExp $pattern, string $class, int $limit = -1, int $flags = 0, array $options = null): iterable
     {
-        return $this->split($pattern, $limit, $flags, $class);
+        return $this->split($pattern, $limit, $flags, $class, $options);
     }
 
     /**
@@ -1093,24 +1096,25 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
      *
      * @param  string|RegExp $pattern
      * @param  int           $limit
-     * @param  int|array     $flags
+     * @param  int           $flags
+     * @param  array|null    $options
      * @return XArray
      */
-    public function xsplit(string|RegExp $pattern, int $limit = -1, int|array $flags = 0): XArray
+    public function xsplit(string|RegExp $pattern, int $limit = -1, int $flags = 0, array $options = null): XArray
     {
-        return $this->split($pattern, $limit, $flags, XArray::class);
+        return $this->split($pattern, $limit, $flags, XArray::class, $options);
     }
 
     /**
      * Match possibles.
      *
      * @param  string|RegExp $pattern
-     * @param  int|array     $flags
+     * @param  int           $flags
      * @param  int           $offset
      * @param  string|null   $class
      * @return iterable|null
      */
-    public function match(string|RegExp $pattern, int|array $flags = 0, int $offset = 0, string $class = null): iterable|null
+    public function match(string|RegExp $pattern, int $flags = 0, int $offset = 0, string $class = null): iterable|null
     {
         if (is_string($pattern)) {
             $pattern = RegExp::fromPattern($pattern);
@@ -1123,12 +1127,12 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
      * Match all possibles.
      *
      * @param  string|RegExp $pattern
-     * @param  int|array     $flags
+     * @param  int           $flags
      * @param  int           $offset
      * @param  string|null   $class
      * @return iterable|null
      */
-    public function matchAll(string|RegExp $pattern, int|array $flags = 0, int $offset = 0, string $class = null): iterable|null
+    public function matchAll(string|RegExp $pattern, int $flags = 0, int $offset = 0, string $class = null): iterable|null
     {
         if (is_string($pattern)) {
             $pattern = RegExp::fromPattern($pattern);
@@ -1141,12 +1145,12 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
      * Match possible names.
      *
      * @param  string|RegExp $pattern
-     * @param  int|array     $flags
+     * @param  int           $flags
      * @param  int           $offset
      * @param  string|null   $class
      * @return iterable|null
      */
-    public function matchNames(string|RegExp $pattern, int|array $flags = 0, int $offset = 0, string $class = null): iterable|null
+    public function matchNames(string|RegExp $pattern, int $flags = 0, int $offset = 0, string $class = null): iterable|null
     {
         if (is_string($pattern)) {
             $pattern = RegExp::fromPattern($pattern);
@@ -1159,12 +1163,12 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
      * Match all possible names.
      *
      * @param  string|RegExp $pattern
-     * @param  int|array     $flags
+     * @param  int           $flags
      * @param  int           $offset
      * @param  string|null   $class
      * @return iterable|null
      */
-    public function matchAllNames(string|RegExp $pattern, int|array $flags = 0, int $offset = 0, string $class = null): iterable|null
+    public function matchAllNames(string|RegExp $pattern, int $flags = 0, int $offset = 0, string $class = null): iterable|null
     {
         if (is_string($pattern)) {
             $pattern = RegExp::fromPattern($pattern);

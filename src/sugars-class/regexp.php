@@ -121,15 +121,14 @@ class RegExp implements Stringable
      * @param  string|callable $replace
      * @param  int             $limit
      * @param  int|null        &$count
-     * @param  int|array       $flags
+     * @param  int             $flags
      * @param  string|null     $class
      * @return string|null
      */
-    public function replace(string $input, string|callable $replace, int $limit = -1, int &$count = null,
-        int|array $flags = 0, string $class = null): string|null
+    public function replace(string $input, string|callable $replace, int $limit = -1, int &$count = null, int $flags = 0,
+        string $class = null): string|null
     {
         $this->classCheck($class);
-        $this->flagsCheck($flags);
 
         $callback = is_callable($replace);
         $function = $callback ? 'preg_replace_callback' : 'preg_replace';
@@ -156,12 +155,12 @@ class RegExp implements Stringable
      * @param  callable    $callback
      * @param  int         $limit
      * @param  int|null    &$count
-     * @param  array|int   $flags
+     * @param  int         $flags
      * @param  string|null $class
      * @return string|null
      */
-    public function replaceCallback(string $input, callable $callback, int $limit = -1, int &$count = null,
-        int|array $flags = 0, string $class = null): string|null
+    public function replaceCallback(string $input, callable $callback, int $limit = -1, int &$count = null, int $flags = 0,
+        string $class = null): string|null
     {
         return $this->replace($input, $callback, $limit, $count, $flags, $class);
     }
@@ -206,18 +205,29 @@ class RegExp implements Stringable
      *
      * @param  string      $input
      * @param  int         $limit
-     * @param  int|array   $flags
+     * @param  int         $flags
      * @param  string|null $class
+     * @param  array|null  $options
      * @return iterable|null
      */
-    public function split(string $input, int $limit = -1, int|array $flags = 0, string $class = null): iterable|null
+    public function split(string $input, int $limit = -1, int $flags = 0, string $class = null, array $options = null): iterable|null
     {
         $this->classCheck($class);
-        $this->flagsCheck($flags);
 
-        $ret = @preg_split($this->pattern, $input, $limit, flags: (
-            $flags |= PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE // Always..
-        ));
+        // Default flags.
+        $flagsDefault = PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE;
+
+        if ($options) {
+            $options = array_options($options, ['empty' => false, 'capture' => true]);
+            if ($options['empty']) {
+                $flagsDefault &= ~PREG_SPLIT_NO_EMPTY;
+            }
+            if (!$options['capture']) {
+                $flagsDefault &= ~PREG_SPLIT_DELIM_CAPTURE;
+            }
+        }
+
+        $ret = @preg_split($this->pattern, $input, $limit, $flags |= $flagsDefault);
 
         if ($ret === false) {
             $this->processError('preg_split');
@@ -235,45 +245,46 @@ class RegExp implements Stringable
     /**
      * Perform a split for given iterable class.
      *
-     * @param  string    $input
-     * @param  string    $class
-     * @param  int       $limit
-     * @param  int|array $flags
+     * @param  string     $input
+     * @param  string     $class
+     * @param  int        $limit
+     * @param  int        $flags
+     * @param  array|null $options
      * @return iterable
      */
-    public function splitTo(string $input, string $class, int $limit = -1, int|array $flags = 0): iterable
+    public function splitTo(string $input, string $class, int $limit = -1, int $flags = 0, array $options = null): iterable
     {
-        return $this->split($input, $limit, $flags, $class);
+        return $this->split($input, $limit, $flags, $class, $options);
     }
 
     /**
      * Perform a split for XArray class.
      *
-     * @param  string    $input
-     * @param  int       $limit
-     * @param  int|array $flags
+     * @param  string     $input
+     * @param  int        $limit
+     * @param  int        $flags
+     * @param  array|null $options
      * @return XArray
      */
-    public function xsplit(string $input, int $limit = -1, int|array $flags = 0): XArray
+    public function xsplit(string $input, int $limit = -1, int $flags = 0, array $options = null): XArray
     {
-        return $this->split($input, $limit, $flags, XArray::class);
+        return $this->split($input, $limit, $flags, XArray::class, $options);
     }
 
     /**
      * Perform a match.
      *
      * @param  string      $input
-     * @param  int|array   $flags
+     * @param  int         $flags
      * @param  int         $offset
      * @param  string|null $class
      * @return iterable|null
      */
-    public function match(string $input, int|array $flags = 0, int $offset = 0, string $class = null): iterable|null
+    public function match(string $input, int $flags = 0, int $offset = 0, string $class = null): iterable|null
     {
         $this->classCheck($class);
-        $this->flagsCheck($flags, true);
 
-        $res = @preg_match($this->pattern, $input, $ret, $flags, $offset);
+        $res = @preg_match($this->pattern, $input, $ret, $flags |= PREG_UNMATCHED_AS_NULL, $offset);
 
         if ($res === false) {
             $this->processError('preg_match');
@@ -287,17 +298,16 @@ class RegExp implements Stringable
      * Perform a match-all.
      *
      * @param  string      $input
-     * @param  int|array   $flags
+     * @param  int         $flags
      * @param  int         $offset
      * @param  string|null $class
      * @return iterable|null
      */
-    public function matchAll(string $input, int|array $flags = 0, int $offset = 0, string $class = null): iterable|null
+    public function matchAll(string $input, int $flags = 0, int $offset = 0, string $class = null): iterable|null
     {
         $this->classCheck($class);
-        $this->flagsCheck($flags, true);
 
-        $res = @preg_match_all($this->pattern, $input, $ret, $flags, $offset);
+        $res = @preg_match_all($this->pattern, $input, $ret, $flags |= PREG_UNMATCHED_AS_NULL, $offset);
 
         if ($res === false) {
             $this->processError('preg_match_all');
@@ -314,17 +324,16 @@ class RegExp implements Stringable
      * Perform a match names.
      *
      * @param  string      $input
-     * @param  int|array   $flags
+     * @param  int         $flags
      * @param  int         $offset
      * @param  string|null $class
      * @return iterable|null
      */
-    public function matchNames(string $input, int|array $flags = 0, int $offset = 0, string $class = null): iterable|null
+    public function matchNames(string $input, int $flags = 0, int $offset = 0, string $class = null): iterable|null
     {
         $this->classCheck($class);
-        $this->flagsCheck($flags, true);
 
-        $res = @preg_match_names($this->pattern, $input, $ret, $flags, $offset);
+        $res = @preg_match_names($this->pattern, $input, $ret, $flags |= PREG_UNMATCHED_AS_NULL, $offset);
 
         if ($res === false) {
             $this->processError('preg_match_names');
@@ -338,17 +347,16 @@ class RegExp implements Stringable
      * Perform a match-all names.
      *
      * @param  string      $input
-     * @param  int|array   $flags
+     * @param  int         $flags
      * @param  int         $offset
      * @param  string|null $class
      * @return iterable|null
      */
-    public function matchAllNames(string $input, int|array $flags = 0, int $offset = 0, string $class = null): iterable|null
+    public function matchAllNames(string $input, int $flags = 0, int $offset = 0, string $class = null): iterable|null
     {
         $this->classCheck($class);
-        $this->flagsCheck($flags, true);
 
-        $res = @preg_match_all_names($this->pattern, $input, $ret, $flags, $offset);
+        $res = @preg_match_all_names($this->pattern, $input, $ret, $flags |= PREG_UNMATCHED_AS_NULL, $offset);
 
         if ($res === false) {
             $this->processError('preg_match_all_names');
@@ -365,17 +373,16 @@ class RegExp implements Stringable
      * Perform an exec.
      *
      * @param  string      $input
-     * @param  int|array   $flags
+     * @param  int         $flags
      * @param  int         $offset
      * @param  string|null $class
      * @return iterable|null
      */
-    public function exec(string $input, int|array $flags = 0, int $offset = 0, string $class = null): iterable|null
+    public function exec(string $input, int $flags = 0, int $offset = 0, string $class = null): iterable|null
     {
         $this->classCheck($class);
-        $this->flagsCheck($flags, true);
 
-        $res = @preg_match($this->pattern, $input, $ret, $flags, $offset);
+        $res = @preg_match($this->pattern, $input, $ret, $flags |= PREG_UNMATCHED_AS_NULL, $offset);
 
         if ($res === false) {
             $this->processError('preg_match');
@@ -664,40 +671,6 @@ class RegExp implements Stringable
             }
         }
     }
-
-    /**
-     * Flags check for array flags, to calculate when string[] given.
-     */
-    private function flagsCheck(int|array|null &$flags, bool $match = false): void
-    {
-        if ($flags && is_array($flags)) {
-            $flagsSum = 0;
-
-            foreach ($flags as $flag) {
-                if (is_string($flag)) {
-                    $constant = 'RegExp::' . strtoupper($flag);
-                    defined($constant) || throw new RegExpError(
-                        'No constant exists such %s',
-                        $constant
-                    );
-
-                    $flagsSum |= constant($constant);
-                } elseif (is_int($flag)) {
-                    $flagsSum |= $flag;
-                } else {
-                    throw new RegExpError(
-                        'Invalid flag type %t [valids: string,int]',
-                        $flag
-                    );
-                }
-            }
-
-            // Update.
-            $flags = $flagsSum;
-        }
-
-        $match && $flags |= PREG_UNMATCHED_AS_NULL;
-    }
 }
 
 /**
@@ -724,11 +697,11 @@ class RegExpMatcher extends RegExp
      * Perform a find.
      *
      * @param  string    $input
-     * @param  array|int $flags
+     * @param  int       $flags
      * @param  bool      $names
      * @return RegExpMatch
      */
-    public function find(string $input, int|array $flags = 0, bool $names = false): RegExpMatch|null
+    public function find(string $input, int $flags = 0, bool $names = false): RegExpMatch|null
     {
         return !$names ? $this->match($input, $flags, class: RegExpMatch::class)
                        : $this->matchNames($input, $flags, class: RegExpMatch::class);
@@ -738,11 +711,11 @@ class RegExpMatcher extends RegExp
      * Perform a find-all.
      *
      * @param  string    $input
-     * @param  array|int $flags
+     * @param  int       $flags
      * @param  bool      $names
      * @return RegExpMatch
      */
-    public function findAll(string $input, int|array $flags = 0, bool $names = false): RegExpMatch|null
+    public function findAll(string $input, int $flags = 0, bool $names = false): RegExpMatch|null
     {
         return !$names ? $this->matchAll($input, $flags, class: RegExpMatch::class)
                        : $this->matchAllNames($input, $flags, class: RegExpMatch::class);
