@@ -4,6 +4,8 @@
  * Apache License 2.0 · http://github.com/froq/froq-util
  */
 
+use froq\file\{Directory, File, Path, Stat};
+
 /**
  * Get system temporary directory.
  *
@@ -151,6 +153,31 @@ function rmfile(string $file): bool
     }
 
     return true;
+}
+
+/**
+ * Open a file.
+ *
+ * @param  string     $file
+ * @param  string     $mode
+ * @param  bool       $temp
+ * @param  array|null $options
+ * @return froq\file\File
+ */
+function file_open(string $file, string $mode = 'rb', bool $temp = false, array $options = null): File
+{
+    if ($temp) {
+        $options['temp'] = true;
+        $options['open'] = null;
+    }
+
+    $file = new File($file, $options);
+
+    if (empty($options['open'])) {
+        $file->open($mode);
+    }
+
+    return $file;
 }
 
 /**
@@ -591,8 +618,6 @@ function stream_write_all($stream, string $contents): int|false
 
     return $ret;
 }
-
-use froq\file\{Directory, File, Path, Stat};
 
 /**
  * Handy file system functions (port of froq\file).
