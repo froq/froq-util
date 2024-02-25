@@ -216,14 +216,37 @@ class Json extends StaticClass
     /**
      * Verify given input if a valid JSON.
      *
-     * @param  string|null    $input
+     * @param  ?string        $input
      * @param  JsonError|null &$error
      * @return bool
-     * @since  6.0
      */
     public static function verify(?string $input, JsonError &$error = null): bool
     {
         return json_verify($input, $error);
+    }
+
+    /**
+     * Prettify given input if a valid JSON.
+     *
+     * @param  ?string    $input
+     * @param  string|int $indent
+     * @return ?string
+     */
+    public static function prettify(?string $input, string|int $indent = 2): ?string
+    {
+        return json_prettify($input, $indent);
+    }
+
+    /**
+     * Normalize given input.
+     *
+     * @param  ?string    $input
+     * @param  string|int $indent
+     * @return ?string
+     */
+    public static function normalize(?string $input, string|int $indent = null): ?string
+    {
+        return json_normalize($input, $indent);
     }
 }
 
@@ -419,8 +442,8 @@ class JsonObject extends stdClass implements Arrayable, Jsonable, JsonSerializab
     /**
      * Parse given JSON as static instance.
      *
-     * @param  string|null $json
-     * @param  int|null    $flags
+     * @param  ?string $json
+     * @param  ?int    $flags
      * @return static
      * @throws JsonError
      * @since  6.0
@@ -508,8 +531,9 @@ class JsonPrettifier
         // When indent given as size.
         if (is_int($indent)) {
             if ($indent < 0) {
-                throw new ArgumentError('Argument $indent cannot be negative');
+                throw new JsonError('Argument $indent cannot be negative');
             }
+
             $indent = str_repeat(' ', $indent);
         }
 

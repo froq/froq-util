@@ -49,9 +49,10 @@ function json_serialize(mixed $data, bool|int $indent = false, JsonError &$error
  * @param  string|null    $json
  * @param  bool           $assoc
  * @param  JsonError|null &$error
+ * @param  bool           $normalize
  * @return mixed|null
  */
-function json_unserialize(string|null $json, bool $assoc = false, JsonError &$error = null): mixed
+function json_unserialize(string|null $json, bool $assoc = false, JsonError &$error = null, bool $normalize = false): mixed
 {
     $error = null;
 
@@ -65,6 +66,11 @@ function json_unserialize(string|null $json, bool $assoc = false, JsonError &$er
     try {
         $data = json_decode($json, $assoc, flags: JSON_DECODE_FLAGS|JSON_THROW_ON_ERROR);
     } catch (JsonException $e) {
+        // Last try with normalization.
+        if ($normalize) return json_unserialize(
+            json_normalize($json), $assoc, normalize: false
+        );
+
         $error = new JsonError($e->getMessage(), code: $e->getCode());
         return null;
     }
@@ -98,4 +104,83 @@ function json_verify(string|null $json, JsonError &$error = null): bool
     }
 
     return true;
+}
+
+/**
+ * JSON prettify.
+ *
+ * @param  string|null $json
+ * @param  string|int  $indent
+ * @return string|null
+ */
+function json_prettify(string|null $json, string|int $indent = 2): string|null
+{
+    return $json ? JsonPrettifier::prettify($json, $indent) : null;
+}
+
+/**
+ * JSON normalize.
+ *
+ * @param  string|null $json
+ * @param  string|int  $indent
+ * @return string|null
+ */
+function json_normalize(string|null $json, string|int $indent = null): string|null
+{
+    if ($json === null) {
+        return null;
+    }
+    if ($json === '') {
+        return '';
+    }
+
+    // Fix line comments.
+    if (str_contains($json, '//')) {
+        if ($lines = preg_split('~(\r?\n|\r)~', $json, -1, PREG_SPLIT_NO_EMPTY)) {
+            $temp = [];
+
+            foreach ($lines as $line) {
+                if (preg_match('~(?:["\]\}\w]+\s*,|[\[\{])(\s*//.*(?=[\r\n]|$))~', $line, $match)) {
+                    $line = substr($line, 0, -strlen($match[1]));
+
+                    $inside = preg_match('~[\[\{]\s*,?~', $line);
+
+                    // Somehow this skips above.
+                    if ($inside && preg_match('~(?:["\]\}\w]+|[\[\{])\s*,~', $line)) {
+                        $line = substr($line, 0, -1);
+                    }
+                }
+
+                if (($trim = trim($line)) && !str_starts_with($trim, '//')) {
+                    $temp[] = $line;
+                }
+            }
+
+            $json = join("\n", $temp);
+        }
+    }
+
+    // Fix trailing commas.
+    if (str_contains($json, ',')) {
+        if (preg_match_all('~,\s*([\}\]])~', $json, $matches, PREG_OFFSET_CAPTURE)) {
+            foreach ($matches[0] as $match) {
+                $repl = str_replace(',', '', $match[0]);
+
+                if (strlen($repl) > 1) {
+                    $repl = trim($repl,  ' ');
+                }
+
+                while (($pos = strpos($json, $match[0])) !== false) {
+                    $json = substr_replace($json, $repl, $pos, strlen($match[0]));
+                }
+            }
+        }
+    }
+
+    if ($indent) {
+        $json = preg_replace(['~[\r\n]~', '~ +~'], ' ', $json);
+        $json = json_prettify($json, $indent);
+    }
+
+    return $json;
 }
