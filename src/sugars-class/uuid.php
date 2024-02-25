@@ -135,8 +135,8 @@ class Uuid implements Stringable, \Stringable
         $time = null;
 
         // Extract usable part from value (8-byte hex).
-        if (ctype_xdigit($sub = strcut($this->value, 8))) {
-            $time = hexdec($sub);
+        if (ctype_xdigit($cut = strcut($this->value, 8))) {
+            $time = hexdec($cut);
         }
 
         // Validate extracted time.
@@ -150,20 +150,37 @@ class Uuid implements Stringable, \Stringable
     /**
      * Get DateTime instance if UUID was created by `withTime()` or option `time: true`.
      *
-     * @param  string $timezone
+     * @param  string|null $zone
      * @return DateTime|null
      */
-    public function getDateTime(string $timezone = 'UTC'): DateTime|null
+    public function getDateTime(string $zone = null): DateTime|null
     {
         $time = $this->getTime();
 
         if ($time !== null) {
-            return (new DateTime)
-                ->setTimestamp($time)
-                ->setTimezone(new DateTimeZone($timezone));
+            $datetime = new DateTime('', new DateTimeZone('UTC'));
+            $datetime->setTimestamp($time);
+
+            if ($zone !== null) {
+                $datetime->setTimezone(new DateTimeZone($zone));
+            }
+
+            return $ret;
         }
 
         return null;
+    }
+
+    /**
+     * Format time if UUID was created by `withTime()` or option `time: true`.
+     *
+     * @param  string      $format
+     * @param  string|null $zone
+     * @return string|null
+     */
+    public function formatTime(string $format, string $zone = null): string|null
+    {
+        return $this->getDateTime($zone)?->format($format);
     }
 
     /**
