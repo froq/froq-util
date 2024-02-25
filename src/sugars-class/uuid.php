@@ -165,7 +165,7 @@ class Uuid implements Stringable, \Stringable
                 $datetime->setTimezone(new DateTimeZone($zone));
             }
 
-            return $ret;
+            return $datetime;
         }
 
         return null;
