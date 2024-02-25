@@ -57,9 +57,11 @@ class Runner
      * @param  bool     $profile
      * @param  bool     $print
      * @param  bool     $simple
+     * @param  int|null $limit
      * @return self
      */
-    public function run(callable $func, bool $profile = true, bool $print = true, bool $simple = false): self
+    public function run(callable $func, bool $profile = true, bool $print = true, bool $simple = false,
+        int $limit = null): self
     {
         // Increase runs.
         $this->runs += 1;
@@ -69,7 +71,8 @@ class Runner
             $startTime = microtime(true);
         }
 
-        $limit = $this->limit;
+        $limit ??= $this->limit;
+        $rlimit = $limit;
         $count = 1;
 
         while ($limit--) {
@@ -91,11 +94,11 @@ class Runner
                 // Drop memory info.
                 if ($simple) {
                     printf("run(%s)#%s: %F\n",
-                        $formatLimit($this->limit), $this->runs, $endTime
+                        $formatLimit($rlimit), $this->runs, $endTime
                     );
                 } else {
                     printf("run(%s)#%s: %F, memo: %s (%s - %s)\n",
-                        $formatLimit($this->limit), $this->runs, $endTime,
+                        $formatLimit($rlimit), $this->runs, $endTime,
                         $formatBytes($endMemo - $startMemo),
                         $formatBytes($endMemo), $formatBytes($startMemo)
                     );
@@ -104,5 +107,23 @@ class Runner
         }
 
         return $this;
+    }
+
+    /**
+     * Static run method.
+     * @alias run()
+     */
+    public static function runs(...$args)
+    {
+        if (is_list($args)) {
+            $limit = last($args);
+            if (is_int($limit)) {
+                array_pop($args);
+            }
+        }
+
+        $args['limit'] = $limit ?? 1000;
+
+        return (new self)->run(...$args);
     }
 }
