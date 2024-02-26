@@ -792,10 +792,10 @@ final class Arrays extends \StaticClass
                 );
             });
         } else {
-            $ret = array_merge(...array_map(
+            $ret = [...array_map(
                 fn(mixed $value): array => (array) $value,
                 $array
-            ));
+            )];
         }
 
         return $ret;
