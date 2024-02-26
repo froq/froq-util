@@ -621,13 +621,13 @@ function stream_write_all($stream, string $contents): int|false
 /**
  * Handy file system functions (port of froq\file).
  */
-function xdir(string $path, array $options = null, bool $tmp = false): Directory {
+function xdir(string $path, bool $tmp = false, mixed ...$options): Directory {
     $tmp && $path = tmpdir(prefix: $path);
-    return new Directory($path);
+    return new Directory($path, $options);
 }
-function xfile(string $path, array $options = null, bool $tmp = false): File {
+function xfile(string $path, bool $tmp = false, mixed ...$options): File {
     $tmp && $path = tmpnam(prefix: $path);
-    return new File($path);
+    return new File($path, $options);
 }
 function xpath(string $path, bool $useRealPath = false): Path {
     return new Path($path, $useRealPath);
