@@ -3,14 +3,16 @@
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-util
  */
+use froq\util\Numbers;
 
 /**
  * Cast functions for scalars.
  */
-function int    (mixed $var): int    { return (int)    $var; }
-function float  (mixed $var): float  { return (float)  $var; }
-function string (mixed $var): string { return (string) $var; }
-function bool   (mixed $var): bool   { return (bool)   $var; }
+function int    (mixed $var): int       { return intval($var);    }
+function float  (mixed $var): float     { return floatval($var);  }
+function number (mixed $var): int|float { return numberval($var); }
+function string (mixed $var): string    { return strval($var);    }
+function bool   (mixed $var): bool      { return boolval($var);   }
 
 // function array  (mixed $var) { return (array)  $var; } :(
 // function object (mixed $var) { return (object) $var; }
@@ -34,4 +36,23 @@ function object(mixed ...$vars): object
     }
 
     return (object) $vars;
+}
+
+/**
+ * Number caster for both numeric (int/float) strings.
+ *
+ * @param  mixed $var
+ * @return int|float
+ */
+function numberval(mixed $var): int|float
+{
+    if (is_numeric($var)) {
+        $ret = Numbers::convert($var);
+
+        if (!is_nan($ret) && !is_infinite($ret)) {
+            return $ret;
+        }
+    }
+
+    return 0;
 }

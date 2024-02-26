@@ -6,19 +6,6 @@
 use froq\util\Numbers;
 
 /**
- * Make a number from given a numeric input.
- *
- * @param  int|float|string $input
- * @param  int|true         $precision
- * @return int|float
- * @since  3.0
- */
-function number(int|float|string $input, int|true $precision = true): int|float
-{
-    return Numbers::convert($input, $precision);
-}
-
-/**
  * Compare two numbers.
  *
  * @param  int|float $number1
