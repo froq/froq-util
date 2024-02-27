@@ -9,11 +9,12 @@ namespace froq\util;
  * Deprecation trigger class.
  *
  * @package froq\util
- * @class   froq\util\Deprecated
+ * @class   froq\util\Deprecater
  * @author  Kerem Güneş
  * @since   7.0
+ * @static
  */
-class Deprecated
+class Deprecater
 {
     /**
      * Trigger a deprecation message for given class.
