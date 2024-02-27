@@ -46,7 +46,7 @@ class TraceStack implements Stringable, Countable, IteratorAggregate, ArrayAcces
             }
 
             $index = $trace->index ?? $index;
-            $ret[] = sprintf('#%d %s', $index, $trace->call());
+            $ret[] = sprintf('#%d %s', $index, $trace->callPathFull());
         }
 
         // Append {main} to end as original.
@@ -359,16 +359,6 @@ class Trace implements ArrayAccess
     }
 
     /**
-     * Get call.
-     *
-     * @return string|null
-     */
-    public function call(): string|null
-    {
-        return $this->callPath(true);
-    }
-
-    /**
      * Get callee.
      *
      * @return string|null
@@ -446,6 +436,16 @@ class Trace implements ArrayAccess
         }
 
         return $ret;
+    }
+
+    /**
+     * Get full call path.
+     *
+     * @return string|null
+     */
+    public function callPathFull(): string|null
+    {
+        return $this->callPath(true);
     }
 
     /**
