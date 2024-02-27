@@ -131,12 +131,14 @@ class Debugger
      */
     public static function debugTraceString(Throwable $e, bool $dots = false): string
     {
-        $traces = (string) new TraceStack($e->getTrace());
+        $traces = new TraceStack($e->getTrace());
+
+        $ret = (string) $traces;
 
         if ($dots) {
-            $traces = str_replace(['\\', '::', '->'], '.', $traces);
+            $ret = str_replace(['\\', '::', '->'], '.', $ret);
         }
 
-        return $traces;
+        return $ret;
     }
 }
