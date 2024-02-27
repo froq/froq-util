@@ -30,7 +30,7 @@ class TraceStack implements Stringable, Countable, IteratorAggregate, ArrayAcces
     {
         $stack ??= get_trace($options, $limit, slice: $slice, reverse: $reverse);
 
-        $this->stack = $stack;
+        $this->stack = array_filter($stack);
     }
 
     /**
@@ -41,6 +41,10 @@ class TraceStack implements Stringable, Countable, IteratorAggregate, ArrayAcces
         $ret = []; $index = -1;
 
         foreach ($this as $index => $trace) {
+            if (empty($trace->data)) {
+                continue;
+            }
+
             $index = $trace->index ?? $index;
             $ret[] = sprintf('#%d %s', $index, $trace->call());
         }
@@ -224,8 +228,13 @@ class Trace implements ArrayAccess
             $data['methodType'] = ($data['type'] === '::') ? 'static' : 'non-static';
         }
 
-        $this->index = $index ?? $data['#'] ?? null;
-        $this->data  = ['#' => $this->index] + $data;
+        if ($data) {
+            $this->index = $index ?? $data['#'] ?? null;
+            $this->data  = ['#' => $this->index] + $data;
+        } else {
+            $this->index = null;
+            $this->data  = [];
+        }
     }
 
     /**
@@ -407,6 +416,10 @@ class Trace implements ArrayAccess
      */
     public function callPath(bool $full = false): string|null
     {
+        if (empty($this->data)) {
+            return null;
+        }
+
         $ret = $this->getField('callPath');
 
         if (!$ret) {
