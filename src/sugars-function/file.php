@@ -277,9 +277,9 @@ function file_set_contents(string $file, string $contents, int $flags = 0): int|
  * @alias get_real_path()
  * @since 4.0
  */
-function file_path(string $path, ...$args)
+function file_path(string $file, ...$args)
 {
-    return get_real_path($path, ...$args);
+    return get_real_path($file, ...$args);
 }
 
 /**
