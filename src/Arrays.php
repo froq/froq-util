@@ -1855,6 +1855,10 @@ final class Arrays extends \StaticClass
      */
     public static function select(array $array, int|string|array $key, mixed $default = null, bool $combine = false): mixed
     {
+        if ($default === null && is_array($key)) {
+            $default = array_pad([], count($key), null);
+        }
+
         if (!$array && !$combine) {
             return $default;
         }
