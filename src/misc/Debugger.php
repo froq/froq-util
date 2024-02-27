@@ -47,7 +47,7 @@ class Debugger
         $dots && $class = str_replace('\\', '.', $class);
 
         $ret = [
-            'string' => sprintf('%s(%s): %s @ %s', $class, $e->getCode(), $e->getMessage(), $path),
+            'string' => sprintf('%s(%s): %s @%s', $class, $e->getCode(), $e->getMessage(), $path),
             'class'  => $class, 'message'  => $e->getMessage(), 'code' => $e->getCode(),
             'path'   => $path,  'file'     => $e->getFile(),    'line' => $e->getLine(),
             'cause'  => $cause, 'previous' => $previous,
@@ -81,7 +81,7 @@ class Debugger
         $class = get_class_name($e, escape: true);
 
         $ret = sprintf(
-            "%s(%s): %s @ %s:%d\nTrace:\n%s",
+            "%s(%s): %s @%s:%d\nTrace:\n%s",
             $class, $e->getCode(), $e->getMessage(),
             $e->getFile(), $e->getLine(), self::debugTraceString($e, $dots)
         );
