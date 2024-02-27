@@ -1385,7 +1385,7 @@ function error_message(int &$code = null, bool $format = false, bool $extract = 
             default                         => 'ERROR'
         };
 
-        return vsprintf('%s(%d): %s @ %s:%d', array_select(
+        return vsprintf('%s(%d): %s @%s:%d', array_select(
             $error, ['name', 'type', 'message', 'file', 'line']
         ));
     }
