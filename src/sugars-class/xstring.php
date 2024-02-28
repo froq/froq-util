@@ -1369,26 +1369,16 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     /**
      * Interface to strpbrk(), but unicode.
      *
+     * Note: For "icase" multiple chars must be provided (eg: iİ).
+     *
      * @param  string $chars
-     * @param  bool   $icase
      * @return static
      */
-    public function find(string $chars, bool $icase = false): static
+    public function find(string $chars): static
     {
-        // Not like strpbrk(), reduce by given char order.
-        $data = '';
+        $data = strpbrk($this->data, $chars);
 
-        foreach (mb_str_split($chars, 1, $this->encoding) as $char) {
-            $start = $icase ? mb_stripos($this->data, $char, 0, $this->encoding)
-                            : mb_strpos($this->data, $char, 0, $this->encoding);
-
-            if ($start !== false) {
-                $data = mb_substr($this->data, $start, null, $this->encoding);
-                break;
-            }
-        }
-
-        return new static($data, $this->encoding);
+        return new static((string) $data, $this->encoding);
     }
 
     /**
