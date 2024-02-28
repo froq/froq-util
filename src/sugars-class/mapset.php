@@ -764,6 +764,26 @@ class Map implements Arrayable, Listable, Jsonable, Iteratable, IteratableRevers
     }
 
     /**
+     * Convert to Set.
+     *
+     * @return Set
+     */
+    public function toSet(): Set
+    {
+        return new Set($this->data);
+    }
+
+    /**
+     * Convert to XArray.
+     *
+     * @return XArray
+     */
+    public function toXArray(): XArray
+    {
+        return new XArray($this->data);
+    }
+
+    /**
      * @inheritDoc ArrayAccess
      */
     public function offsetExists(mixed $key): bool
@@ -1079,6 +1099,26 @@ class Set implements Arrayable, Listable, Jsonable, Iteratable, IteratableRevers
     }
 
     /**
+     * Convert to Map.
+     *
+     * @return Map
+     */
+    public function toMap(): Map
+    {
+        return new Map($this->data);
+    }
+
+    /**
+     * Convert to XArray.
+     *
+     * @return XArray
+     */
+    public function toXArray(): XArray
+    {
+        return new XArray($this->data);
+    }
+
+    /**
      * @inheritDoc ArrayAccess
      */
     public function offsetExists(mixed $index): bool
@@ -1115,7 +1155,7 @@ class Set implements Arrayable, Listable, Jsonable, Iteratable, IteratableRevers
     }
 
     /**
-     * Kind of an event callback for after sort, filter, map actions.
+     * Event callback for after sort, filter, map actions.
      *
      * @return void
      */
