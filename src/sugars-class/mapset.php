@@ -83,6 +83,16 @@ trait MapSetTrait
     }
 
     /**
+     * Shift.
+     *
+     * @return mixed
+     */
+    public function shift(): mixed
+    {
+        return array_shift($this->data);
+    }
+
+    /**
      * Unshift.
      *
      * @param  mixed $value
@@ -119,13 +129,11 @@ trait MapSetTrait
     }
 
     /**
-     * Shift.
-     *
-     * @return mixed
+     * @alias unshift()
      */
-    public function shift(): mixed
+    public function pushLeft(...$args)
     {
-        return array_shift($this->data);
+        return $this->unshift(...$args);
     }
 
     /**
@@ -136,14 +144,6 @@ trait MapSetTrait
     public function pop(): mixed
     {
         return array_pop($this->data);
-    }
-
-    /**
-     * @alias unshift()
-     */
-    public function pushLeft(...$args)
-    {
-        return $this->unshift(...$args);
     }
 
     /**
@@ -814,6 +814,7 @@ class Map implements Arrayable, Listable, Jsonable, Iteratable, IteratableRevers
      * Check key validity & prepare (as shortcut).
      *
      * @param  mixed &$key
+     * @param  bool   $prepare
      * @return void
      * @throws KeyError
      */
@@ -1114,16 +1115,6 @@ class Set implements Arrayable, Listable, Jsonable, Iteratable, IteratableRevers
     }
 
     /**
-     * Reset indexes for modifications.
-     *
-     * @return void
-     */
-    protected function resetIndexes(): void
-    {
-        $this->data = $this->values();
-    }
-
-    /**
      * Kind of an event callback for after sort, filter, map actions.
      *
      * @return void
@@ -1131,6 +1122,16 @@ class Set implements Arrayable, Listable, Jsonable, Iteratable, IteratableRevers
     protected function onDataChange(): void
     {
         $this->resetIndexes();
+    }
+
+    /**
+     * Reset indexes for modifications.
+     *
+     * @return void
+     */
+    protected function resetIndexes(): void
+    {
+        $this->data = array_list($this->data);
     }
 
     /**
