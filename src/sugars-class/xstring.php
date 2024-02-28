@@ -973,6 +973,19 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     }
 
     /**
+     * Includes checker.
+     *
+     * @param  self|string|array<self|string> $chars
+     * @return bool
+     */
+    public function includes(self|string|array $chars): bool
+    {
+        is_array($chars) || $chars = [$chars];
+
+        return strpbrk($this->data, join($chars)) !== false;
+    }
+
+    /**
      * Contains checker.
      *
      * @param  self|string|array<self|string> $search

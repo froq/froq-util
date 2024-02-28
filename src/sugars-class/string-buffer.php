@@ -482,6 +482,17 @@ class StringBuffer implements Stringable, IteratorAggregate, JsonSerializable, A
     }
 
     /**
+     * Includes checker.
+     *
+     * @param  self|string|array<self|string> $search
+     * @return bool
+     */
+    public function includes(self|string|array $search): bool
+    {
+        return XString::fromChars($this->data, $this->encoding)->includes($search);
+    }
+
+    /**
      * Contains checker.
      *
      * @param  self|string|array<self|string> $search
