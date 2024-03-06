@@ -202,6 +202,20 @@ function str_suffix(string $string, string $suffix): string
 }
 
 /**
+ * Test given string with given pattern.
+ *
+ * @param  string      $string
+ * @param  string      $pattern
+ * @param  string|null $modifiers
+ * @return bool
+ */
+function str_test(string $string, string $pattern, string $modifiers = null): bool
+{
+    return ($string === '' || $pattern === '') ? false
+         : preg_test(sprintf('~%s~%s', addcslashes($pattern, '~'), $modifiers), $string);
+}
+
+/**
  * Randomize given string, return a subpart when length given.
  *
  * @param  string   $string
