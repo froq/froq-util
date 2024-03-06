@@ -9,7 +9,7 @@
  * typed properties become problematic as these types conflict.
  * So here, we use class_alias() instead of extending bases.
  * Eg: XReflectionType::of() => froq\reflection\ReflectionType
- * @see Type::$reflection & Type::reflect().
+ * @see Type#reflection & Type#reflect()
  */
 
 // Extensions.
@@ -34,7 +34,6 @@ class_alias(froq\reflection\ReflectionParameter::class, XReflectionParameter::cl
 class_alias(froq\reflection\ReflectionType::class, XReflectionType::class);
 class_alias(froq\reflection\ReflectionAttribute::class, XReflectionAttribute::class);
 
-
 // Additions.
 // class ReflectionTrait extends froq\reflection\ReflectionTrait {}
 // class ReflectionInterface extends froq\reflection\ReflectionInterface {}
@@ -44,6 +43,7 @@ class_alias(froq\reflection\ReflectionTrait::class, ReflectionTrait::class);
 class_alias(froq\reflection\ReflectionInterface::class, ReflectionInterface::class);
 class_alias(froq\reflection\ReflectionNamespace::class, ReflectionNamespace::class);
 class_alias(froq\reflection\ReflectionCallable::class, ReflectionCallable::class);
+class_alias(froq\reflection\ReflectionClosure::class, ReflectionClosure::class);
 
 // Additions aliases.
 // class XReflectionTrait extends froq\reflection\ReflectionTrait {}
@@ -54,3 +54,4 @@ class_alias(froq\reflection\ReflectionTrait::class, XReflectionTrait::class);
 class_alias(froq\reflection\ReflectionInterface::class, XReflectionInterface::class);
 class_alias(froq\reflection\ReflectionNamespace::class, XReflectionNamespace::class);
 class_alias(froq\reflection\ReflectionCallable::class, XReflectionCallable::class);
+class_alias(froq\reflection\ReflectionClosure::class, XReflectionClosure::class);
