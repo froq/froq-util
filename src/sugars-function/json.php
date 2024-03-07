@@ -20,11 +20,11 @@ const JSON_ERROR_NULL  = 21;
  * JSON serialize.
  *
  * @param  mixed          $data
- * @param  bool|int       $indent
+ * @param  bool|int|null  $indent
  * @param  JsonError|null &$error
  * @return string|null
  */
-function json_serialize(mixed $data, bool|int $indent = false, JsonError &$error = null): string|null
+function json_serialize(mixed $data, bool|int $indent = null, JsonError &$error = null): string|null
 {
     $error = null;
 
