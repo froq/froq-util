@@ -22,11 +22,21 @@ const JSON_ERROR_NULL  = 21;
  * @param  mixed          $data
  * @param  bool|int|null  $indent
  * @param  JsonError|null &$error
+ * @param  string|null    $type
  * @return string|null
  */
-function json_serialize(mixed $data, bool|int $indent = null, JsonError &$error = null): string|null
+function json_serialize(mixed $data, bool|int $indent = null, JsonError &$error = null, string $type = null): string|null
 {
     $error = null;
+
+    if ($type) {
+        // For structs only.
+        $data = match ($type) {
+            'array'  => (array) $data,
+            'object' => (object) $data,
+            default  => $data,
+        };
+    }
 
     try {
         $json = json_encode($data, flags: JSON_ENCODE_FLAGS|JSON_THROW_ON_ERROR);
