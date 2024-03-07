@@ -128,6 +128,7 @@ class Random
 
         while ($length--) {
             $ret .= $chars[$this->nextInt($bound) - 1];
+            // $ret .= $chars[random_int(0, $bound - 2)]; // Slow.
         }
 
         return $ret;
@@ -159,6 +160,18 @@ class Random
         }
 
         $ret = random_bytes($length);
+
+        // @cancel
+        // $chars = range(0, 1024);
+        // $bound = count($chars) - 1;
+        // // $bound = 1024;
+
+        // $ret = '';
+
+        // while ($length--) {
+        //     $ret .= chr($chars[$this->nextInt($bound)]);
+        //     // $ret .= chr($bound - $this->nextInt($bound));
+        // }
 
         if ($hex) {
             $ret = bin2hex($ret);
