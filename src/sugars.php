@@ -1600,7 +1600,7 @@ function format_number(int|float|string $input, int|true $decs = 0, string $dsep
     }
 
     // Some speed..
-    if (is_int($input) && $tsep === '') {
+    if (is_int($input) && !$tsep) {
         return (string) $input;
     }
 
@@ -1616,10 +1616,10 @@ function format_number(int|float|string $input, int|true $decs = 0, string $dsep
         $decs = PRECISION;
     }
 
-    $ret = number_format($input, $decimals, $dsep, $tsep);
+    $ret = number_format($input, $decs, $dsep, $tsep);
 
     // Append ".0" for eg: 1.0 & upper NAN/INF.
-    if (!$decimals && !is_int($input) && strlen($export) === 1) {
+    if (!$decs && !is_int($input) && strlen($export) === 1) {
         $ret .= '.0';
     } elseif ($ret === 'inf' || $ret === 'nan') {
         $ret = strtoupper($ret);
