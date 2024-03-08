@@ -122,13 +122,12 @@ class Random
         }
 
         $chars = strcut(BASE62_ALPHABET, $base);
-        $bound = strlen($chars) + 1;
+        $bound = strlen($chars) - 1;
 
         $ret = '';
 
         while ($length--) {
-            $ret .= $chars[$this->nextInt($bound) - 1];
-            // $ret .= $chars[random_int(0, $bound - 2)]; // Slow.
+            $ret .= $chars[random_int(0, $bound)];
         }
 
         return $ret;
@@ -137,23 +136,25 @@ class Random
     /**
      * Get next byte.
      *
-     * @param  bool $hex
+     * @param  bool        $hex
+     * @param  string|null $algo
      * @return string
      */
-    public function nextByte(bool $hex = false): string
+    public function nextByte(bool $hex = false, string $algo = null): string
     {
-        return $this->nextBytes(1, $hex);
+        return $this->nextBytes(1, $hex, $algo);
     }
 
     /**
      * Get next bytes.
      *
-     * @param  int  $length
-     * @param  bool $hex
+     * @param  int         $length
+     * @param  bool        $hex
+     * @param  string|null $algo
      * @return string|array
      * @throws ArgumentError
      */
-    public function nextBytes(int $length, bool $hex = false): string|array
+    public function nextBytes(int $length, bool $hex = false, string $algo = null): string|array
     {
         if ($length < 1) {
             throw new \ArgumentError('Invalid length %s [min=1]', $length);
@@ -161,20 +162,14 @@ class Random
 
         $ret = random_bytes($length);
 
-        // @cancel
-        // $chars = range(0, 1024);
-        // $bound = count($chars) - 1;
-        // // $bound = 1024;
-
-        // $ret = '';
-
-        // while ($length--) {
-        //     $ret .= chr($chars[$this->nextInt($bound)]);
-        //     // $ret .= chr($bound - $this->nextInt($bound));
-        // }
-
         if ($hex) {
             $ret = bin2hex($ret);
+        } elseif ($algo !== null) {
+            if (!in_array($algo, hash_algos(), true)) {
+                throw new \ArgumentError('Invalid algo %q', $algo);
+            }
+
+            $ret = hash($algo, $ret);
         }
 
         return $ret;

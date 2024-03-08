@@ -4,6 +4,7 @@
  * Apache License 2.0 · http://github.com/froq/froq-util
  */
 use froq\common\interface\Stringable;
+use froq\util\random\{RandomHash, RandomSuid};
 
 /**
  * A simple UUID (v4) class for working customized or time-prefixed UUIDs/GUIDs,
@@ -295,29 +296,38 @@ class Uuid implements Stringable, \Stringable
     }
 
     /**
+     * Generate a random hash (using random_bytes() internally).
+     *
+     * @param  int    $length Random bytes length.
+     * @param  string $algo
+     * @param  bool   $upper
+     * @return string
+     * @throws UuidError
+     */
+    public static function generateHash(int $length = 20, string $algo = 'md5', bool $upper = false): string
+    {
+        try {
+            return (string) new RandomHash($length, $algo, $upper);
+        } catch (Throwable $e) {
+            throw new UuidError($e);
+        }
+    }
+
+    /**
      * Generate a simple UID (using Base-62 alphabet).
      *
-     * @param  int $length
+     * @param  int $length Random characters length.
      * @param  int $base
      * @return string
      * @throws UuidError
      */
     public static function generateSuid(int $length, int $base = 62): string
     {
-        if ($length < 1) {
-            throw new UuidError('Invalid length %s [min=1]', $length);
-        } elseif ($base < 2 || $base > 62) {
-            throw new UuidError('Invalid base %s [min=2, max=62]', $base);
+        try {
+            return (string) new RandomSuid($length, $base);
+        } catch (Throwable $e) {
+            throw new UuidError($e);
         }
-
-        $max = $base - 1;
-        $ret = '';
-
-        while ($length--) {
-            $ret .= BASE62_ALPHABET[random_int(0, $max)];
-        }
-
-        return $ret;
     }
 
     /**

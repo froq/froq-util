@@ -78,7 +78,11 @@ class RandomString implements \Stringable, \IteratorAggregate
     public function toString(int $base = null): string
     {
         if ($base !== null) {
-            $data = bin2hex($this->data);
+            $data = $this->data;
+
+            if (!$this instanceof RandomHash) {
+                $data = bin2hex($data);
+            }
 
             if ($base === 16) {
                 return $data;
@@ -88,6 +92,20 @@ class RandomString implements \Stringable, \IteratorAggregate
         }
 
         return $this->data;
+    }
+
+    /**
+     * Get data as hash string.
+     *
+     * @return string
+     */
+    public function toHashString(string $algo = 'md5'): string
+    {
+        if ($this instanceof RandomHash) {
+            return $this->data;
+        }
+
+        return hash($algo, $this->data);
     }
 
     /**
