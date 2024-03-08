@@ -1570,7 +1570,6 @@ function format(string $format, mixed ...$arguments): string
  * @param  mixed $input
  * @param  bool  $numeric
  * @return string
- * @since  5.31
  */
 function format_bool(mixed $input, bool $numeric = false): string
 {
@@ -1584,13 +1583,12 @@ function format_bool(mixed $input, bool $numeric = false): string
  * Format an input as number.
  *
  * @param  int|float|string $input
- * @param  int|true         $decimals
- * @param  string|null      $decimal_separator
- * @param  string|null      $thousand_separator
+ * @param  int|true         $decs
+ * @param  string|null      $dsep
+ * @param  string|null      $tsep
  * @return string|null
- * @since  5.31
  */
-function format_number(int|float|string $input, int|true $decimals = 0, string $decimal_separator = null, string $thousand_separator = null): string|null
+function format_number(int|float|string $input, int|true $decs = 0, string $dsep = null, string $tsep = null): string|null
 {
     if (is_string($input)) {
         if (!is_numeric($input)) {
@@ -1602,23 +1600,23 @@ function format_number(int|float|string $input, int|true $decimals = 0, string $
     }
 
     // Some speed..
-    if (is_int($input) && $thousand_separator === '') {
+    if (is_int($input) && $tsep === '') {
         return (string) $input;
     }
 
     $export = var_export($input, true);
 
     // Auto-detect decimals.
-    if ($decimals === true) {
-        $decimals = strlen(stracut($export, '.'));
+    if ($decs === true) {
+        $decs = strlen(stracut($export, '.'));
     }
 
     // Prevent data corruptions.
-    if ($decimals > PRECISION) {
-        $decimals = PRECISION;
+    if ($decs > PRECISION) {
+        $decs = PRECISION;
     }
 
-    $ret = number_format($input, $decimals, $decimal_separator, $thousand_separator);
+    $ret = number_format($input, $decimals, $dsep, $tsep);
 
     // Append ".0" for eg: 1.0 & upper NAN/INF.
     if (!$decimals && !is_int($input) && strlen($export) === 1) {
