@@ -1325,7 +1325,7 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
      */
     public function shuffle(): self
     {
-        $this->data = str_rand($this->data);
+        $this->data = mb_str_shuffle($this->data, $this->encoding);
 
         return $this;
     }

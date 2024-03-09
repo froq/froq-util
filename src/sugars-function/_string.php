@@ -222,15 +222,10 @@ function str_test(string $string, string $pattern, string $modifiers = null): bo
  * @param  int|null $length
  * @return string
  * @since  4.9
- * @throws ArgumentError When length is less than 1.
  */
 function str_rand(string $string, int $length = null): string
 {
-    if ($length !== null && $length < 1) {
-        throw new ArgumentError('Invalid length %s [min=1]', $length);
-    }
-
-    return join(array_slice(array_shuffle(mb_str_split($string)), 0, $length));
+    return mb_substr(mb_str_shuffle($string), 0, $length);
 }
 
 /**
@@ -681,13 +676,17 @@ function mb_str_pad(string $string, int $pad_length, string $pad_string = ' ', i
 /**
  * Shuffle given string in multi-byte style.
  *
- * @param  string $string
+ * @param  string      $string
+ * @param  string|null $encoding
  * @return string
  * @since  7.11
  */
-function mb_str_shuffle(string $string): string
+function mb_str_shuffle(string $string, string $encoding = null): string
 {
-    return str_rand($string);
+    return join(array_shuffle(
+        mb_str_split($string, 1, $encoding),
+        assoc: false
+    ));
 }
 
 /**

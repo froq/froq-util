@@ -681,7 +681,7 @@ final class Arrays extends \StaticClass
     public static function shuffle(array $array, bool $assoc = null): array
     {
         if (!$array) {
-            return $array;
+            return [];
         }
 
         $assoc ??= self::isAssocArray($array);
@@ -745,16 +745,16 @@ final class Arrays extends \StaticClass
      */
     public static function split(array $array, int $length, bool $keepKeys = false): array
     {
-        $ret = [];
-
         if (!$array) {
-            return $ret;
+            return [];
         }
 
         $chunks = array_chunk($array, $length, true);
         if ($keepKeys) {
             return $chunks;
         }
+
+        $ret = [];
 
         foreach ($chunks as $i => $chunk) {
             $j = 0;
