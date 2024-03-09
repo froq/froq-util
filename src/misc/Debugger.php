@@ -141,4 +141,42 @@ class Debugger
 
         return $ret;
     }
+
+    /**
+     * Make trace.
+     *
+     * @param  array|TraceStack|null $trace
+     * @param  int                   $slice
+     * @return TraceStack
+     */
+    public static function makeTrace(array|TraceStack $trace = null, int $slice = 1): TraceStack
+    {
+        if (is_array($trace)) {
+            $ret = new TraceStack($trace, slice: $slice);
+        } else {
+            $ret ??= new TraceStack(null, slice: $slice);
+        }
+
+        return $ret;
+    }
+
+    /**
+     * Print trace.
+     *
+     * @param  array|TraceStack|null $trace
+     * @param  int                   $slice
+     * @param  bool                  $return
+     * @return string|null
+     */
+    public static function printTrace(array|TraceStack $trace = null, int $slice = 3, bool $return = !false): string|null
+    {
+        $ret = (string) self::makeTrace($trace, slice: $slice);
+
+        if ($return) {
+            return $ret;
+        }
+
+        print $ret;
+        return null;
+    }
 }
