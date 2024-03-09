@@ -1655,14 +1655,13 @@ function slug(string $input, string $preserve = '', string $replace = '-', bool 
 }
 
 /**
- * Generate a UUID.
+ * Generate a universally UID.
  *
  * @param  bool $time For Unix time prefix.
  * @param  bool $guid
  * @param  bool $hash
  * @param  bool $upper
  * @return string
- * @since  5.0
  */
 function uuid(bool $time = false, bool $guid = false, bool $hash = false, bool $upper = false): string
 {
@@ -1672,14 +1671,25 @@ function uuid(bool $time = false, bool $guid = false, bool $hash = false, bool $
 /**
  * Generate a simple UID.
  *
- * @param  int $length
+ * @param  int $length Random characters length.
  * @param  int $base
  * @return string
- * @since  5.0
  */
 function suid(int $length = 6, int $base = 62): string
 {
     return Uuid::generateSuid($length, $base);
+}
+
+/**
+ * Generate a hashed UID.
+ *
+ * @param  int    $length Random bytes length.
+ * @param  string $algo
+ * @return string
+ */
+function huid(int $length = 20, string $algo = 'md5'): string
+{
+    return Uuid::generateHash($length, $algo);
 }
 
 /**

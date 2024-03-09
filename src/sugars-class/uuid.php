@@ -323,7 +323,7 @@ class Uuid implements Stringable, \Stringable
     public static function generateHash(int $length, string $algo = 'md5'): string
     {
         try {
-            return (new Random)->nextBytes($length, algo: $algo);
+            return (new Random)->nextBytes($length, false, $algo);
         } catch (Throwable $e) {
             throw new UuidError($e);
         }
