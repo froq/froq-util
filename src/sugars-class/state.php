@@ -57,9 +57,11 @@ class State extends PlainArrayObject
      * @param  mixed|null $default
      * @return mixed|null
      */
-    public function get(string $name, mixed $default = null): mixed
+    public function &get(string $name, mixed $default = null): mixed
     {
-        return $this->$name ?? $default;
+        $value = &$this->$name ?? $default;
+
+        return $value;
     }
 
     /**
@@ -73,6 +75,8 @@ class State extends PlainArrayObject
         foreach ($names as $name) {
             unset($this->$name);
         }
+
+        return $this;
     }
 
     /**
