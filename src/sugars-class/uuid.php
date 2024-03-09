@@ -4,7 +4,7 @@
  * Apache License 2.0 · http://github.com/froq/froq-util
  */
 use froq\common\interface\Stringable;
-use froq\util\random\{RandomHash, RandomSuid};
+use froq\util\random\Random;
 
 /**
  * A simple UUID (v4) class for working customized or time-prefixed UUIDs/GUIDs,
@@ -296,24 +296,6 @@ class Uuid implements Stringable, \Stringable
     }
 
     /**
-     * Generate a random hash (using random_bytes() internally).
-     *
-     * @param  int    $length Random bytes length.
-     * @param  string $algo
-     * @param  bool   $upper
-     * @return string
-     * @throws UuidError
-     */
-    public static function generateHash(int $length = 20, string $algo = 'md5', bool $upper = false): string
-    {
-        try {
-            return (string) new RandomHash($length, $algo, $upper);
-        } catch (Throwable $e) {
-            throw new UuidError($e);
-        }
-    }
-
-    /**
      * Generate a simple UID (using Base-62 alphabet).
      *
      * @param  int $length Random characters length.
@@ -324,7 +306,24 @@ class Uuid implements Stringable, \Stringable
     public static function generateSuid(int $length, int $base = 62): string
     {
         try {
-            return (string) new RandomSuid($length, $base);
+            return (new Random)->nextChars($length, $base);
+        } catch (Throwable $e) {
+            throw new UuidError($e);
+        }
+    }
+
+    /**
+     * Generate a random hash (using random_bytes() internally).
+     *
+     * @param  int    $length Random bytes length.
+     * @param  string $algo
+     * @return string
+     * @throws UuidError
+     */
+    public static function generateHash(int $length, string $algo = 'md5'): string
+    {
+        try {
+            return (new Random)->nextBytes($length, algo: $algo);
         } catch (Throwable $e) {
             throw new UuidError($e);
         }

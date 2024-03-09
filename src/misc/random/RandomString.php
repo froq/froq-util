@@ -5,6 +5,7 @@
  */
 namespace froq\util\random;
 
+use froq\common\interface\Stringable;
 use froq\util\Strings;
 
 /**
@@ -15,74 +16,27 @@ use froq\util\Strings;
  * @author  Kerem Güneş
  * @since   7.15
  */
-class RandomString implements \Stringable, \IteratorAggregate
+class RandomString extends AbstractRandomString implements Stringable
 {
-    /** Data holder. */
-    public readonly string $data;
-
     /**
-     * Constructor.
-     *
-     * @param int  $length
-     * @param bool $puncted
+     * @override
      */
     public function __construct(int $length, bool $puncted = false)
     {
-        $this->data = Strings::random($length, $puncted);
+        $data = Strings::random($length, $puncted);
+
+        parent::__construct($data);
     }
 
     /**
-     * @magic
-     */
-    public function __toString(): string
-    {
-        return $this->data;
-    }
-
-    /**
-     * Get data length.
-     *
-     * @return int
-     */
-    public function length(): int
-    {
-        return strlen($this->data);
-    }
-
-    /**
-     * Get data as array.
-     *
-     * @return array
-     */
-    public function toArray(): array
-    {
-        return str_split($this->data);
-    }
-
-    /**
-     * Get data as ord array.
-     *
-     * @return array
-     */
-    public function toOrdArray(): array
-    {
-        return array_map('ord', $this->toArray());
-    }
-
-    /**
-     * Get data as string.
-     *
-     * @param  int|null $base
-     * @return string
+     * @override
      */
     public function toString(int $base = null): string
     {
         if ($base !== null) {
             $data = $this->data;
 
-            if (!$this instanceof RandomHash) {
-                $data = bin2hex($data);
-            }
+            $data = bin2hex($data);
 
             if ($base === 16) {
                 return $data;
@@ -92,20 +46,6 @@ class RandomString implements \Stringable, \IteratorAggregate
         }
 
         return $this->data;
-    }
-
-    /**
-     * Get data as hash string.
-     *
-     * @return string
-     */
-    public function toHashString(string $algo = 'md5'): string
-    {
-        if ($this instanceof RandomHash) {
-            return $this->data;
-        }
-
-        return hash($algo, $this->data);
     }
 
     /**
@@ -139,26 +79,25 @@ class RandomString implements \Stringable, \IteratorAggregate
     }
 
     /**
-     * @inheritDoc IteratorAggregate
+     * Get data as hash string.
+     *
+     * @param  string $algo
+     * @return string
      */
-    public function getIterator(): \Iterator
+    public function toHashString(string $algo = 'md5'): string
     {
-        foreach ($this->toArray() as $i => $item) {
-            yield $i => $item;
-        }
+        return hash($algo, $this->data);
     }
 
     /**
-     * Static initializer.
-     *
-     * @param  string $data
-     * @return static
+     * @override
      */
-    public static function from(string $data): static
+    protected function passData(string $data): void
     {
-        $that = (new \XReflectionClass(static::class))->init();
-        $that->data = $data;
+        if ($data === '') {
+            throw new \ArgumentError('Empty data given');
+        }
 
-        return $that;
+        parent::__construct($data);
     }
 }

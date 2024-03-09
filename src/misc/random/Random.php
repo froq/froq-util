@@ -5,6 +5,9 @@
  */
 namespace froq\util\random;
 
+use Random\Randomizer;
+use Uuid;
+
 /**
  * An RNG class that generates pseudorandom numbers, chars & bytes. This class is
  * highly inspired by java.util.Random class and uses some same implementations.
@@ -50,11 +53,11 @@ class Random
     /**
      * Get next int.
      *
-     * @param  int $bound
+     * @param  int $bound Value of getrandmax().
      * @return int
      * @throws ArgumentError
      */
-    public function nextInt(int $bound = PHP_INT_MAX): int
+    public function nextInt(int $bound = INT_MAX_32): int
     {
         if ($bound < 1) {
             throw new \ArgumentError('Invalid bound %s [min=1]', $bound);
@@ -108,12 +111,13 @@ class Random
     /**
      * Get next chars.
      *
-     * @param  int $length
-     * @param  int $base
+     * @param  int         $length
+     * @param  int         $base
+     * @param  string|null $chars
      * @return string
      * @throws ArgumentError
      */
-    public function nextChars(int $length, int $base = 62): string
+    public function nextChars(int $length, int $base = 62, string $chars = null): string
     {
         if ($length < 1) {
             throw new \ArgumentError('Invalid length %s [min=1]', $length);
@@ -121,13 +125,20 @@ class Random
             throw new \ArgumentError('Invalid base %s [min=2, max=62]', $base);
         }
 
-        $chars = strcut(BASE62_ALPHABET, $base);
-        $bound = strlen($chars) - 1;
+        if ($chars !== null) {
+            $chars = trim($chars);
+            if ($chars === '') {
+                return '';
+            }
+        } else {
+            $chars = strcut(BASE62_ALPHABET, $base);
+        }
 
+        $max = strlen($chars) - 1;
         $ret = '';
 
         while ($length--) {
-            $ret .= $chars[random_int(0, $bound)];
+            $ret .= $chars[random_int(0, $max)];
         }
 
         return $ret;
@@ -165,14 +176,34 @@ class Random
         if ($hex) {
             $ret = bin2hex($ret);
         } elseif ($algo !== null) {
-            if (!in_array($algo, hash_algos(), true)) {
-                throw new \ArgumentError('Invalid algo %q', $algo);
-            }
-
             $ret = hash($algo, $ret);
         }
 
         return $ret;
+    }
+
+    /**
+     * Get next UUID with Unix time prefix.
+     *
+     * @param  bool $hash
+     * @param  bool $upper
+     * @return Uuid
+     */
+    public function nextUuid(bool $hash = false, bool $upper = false): Uuid
+    {
+        return Uuid::withOptions(time: true, hash: $hash, upper: $upper);
+    }
+
+    /**
+     * Get next GUID with Unix time prefix.
+     *
+     * @param  bool $hash
+     * @param  bool $upper
+     * @return Uuid
+     */
+    public function nextGuid(bool $hash = false, bool $upper = false): Uuid
+    {
+        return Uuid::withOptions(time: true, guid: true, hash: $hash, upper: $upper);
     }
 
     /**
@@ -184,7 +215,7 @@ class Random
      */
     public static function shuffleArray(array $array): array
     {
-        $rr = new \Random\Randomizer();
+        $rr = new Randomizer();
 
         return $rr->shuffleArray($array);
     }
@@ -199,7 +230,7 @@ class Random
      */
     public static function shuffleString(string $string, string $encoding = null): string
     {
-        $rr = new \Random\Randomizer();
+        $rr = new Randomizer();
 
         return join($rr->shuffleArray(mb_str_split($string, 1, $encoding)));
     }
@@ -212,7 +243,7 @@ class Random
      * When $bits = 16, returns <= 65535.
      * When $bits = 32, returns <= 4294967295 (2147483647 * 2 + 1).
      */
-    private function next(int $bits): int
+    protected function next(int $bits): int
     {
         $this->seed = (0xB + (int) ($this->seed * 0x5DEECE66D)) & ((1 << 48) - 1);
 

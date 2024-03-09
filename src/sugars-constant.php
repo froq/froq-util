@@ -42,6 +42,12 @@ const ENCODING = 'UTF-8';
 const PRECISION = 14;
 
 /**
+ * Int max for 32/64 bits.
+ */
+const INT_MAX_32 = 2147483647,
+      INT_MAX_64 = 9223372036854775807;
+
+/**
  * Cases (0/1 already defined as CASSE_LOWER/CASE_UPPER).
  */
 const CASE_TITLE = 2, CASE_DASH  = 3,

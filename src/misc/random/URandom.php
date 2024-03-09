@@ -17,148 +17,55 @@ use froq\util\System;
  * @author  Kerem Güneş
  * @since   7.15
  */
-class URandom implements \Stringable, \IteratorAggregate
+class URandom extends RandomString
 {
-    /** Data holder (raw binary). */
-    public readonly string $data;
-
     /**
-     * Constructor.
-     *
-     * @param  int $length
-     * @causes Error
+     * @override
      */
     public function __construct(int $length)
     {
-        $this->data = self::readBytes($length);
-    }
-
-    /**
-     * @magic
-     */
-    public function __toString(): string
-    {
-        return $this->data;
-    }
-
-    /**
-     * Get data length.
-     *
-     * @return int
-     */
-    public function length(): int
-    {
-        return strlen($this->data);
-    }
-
-    /**
-     * Get data as array.
-     *
-     * @return array
-     */
-    public function toArray(): array
-    {
-        return str_split($this->data);
-    }
-
-    /**
-     * Get data as ord array.
-     *
-     * @return array
-     */
-    public function toOrdArray(): array
-    {
-        return array_map('ord', $this->toArray());
-    }
-
-    /**
-     * Get data as string.
-     *
-     * @param  int|null $base
-     * @return string
-     */
-    public function toString(int $base = null): string
-    {
-        if ($base !== null) {
-            $data = bin2hex($this->data);
-
-            if ($base === 16) {
-                return $data;
-            }
-
-            return convert_base($data, 16, $base);
-        }
-
-        return $this->data;
-    }
-
-    /**
-     * Get data as hex string.
-     *
-     * @return string
-     */
-    public function toHexString(): string
-    {
-        return $this->toString(16);
-    }
-
-    /**
-     * Get data as URL (base62) string.
-     *
-     * @return string
-     */
-    public function toUrlString(): string
-    {
-        return $this->toString(62);
-    }
-
-    /**
-     * Get data as digit string.
-     *
-     * @return string
-     */
-    public function toDigitString(): string
-    {
-        return $this->toString(10);
-    }
-
-    /**
-     * @inheritDoc IteratorAggregate
-     */
-    public function getIterator(): \Iterator
-    {
-        foreach ($this->toArray() as $i => $item) {
-            yield $i => $item;
-        }
+        parent::passData(self::readBytes($length));
     }
 
     /**
      * Read.
      *
-     * @param  int $length
+     * @param  int  $length
+     * @param  bool $hex
      * @return string|null
      * @causes Error
      */
-    public static function read(int $length): string|null
+    public static function read(int $length, bool $hex = false): string|null
     {
-        return System::urandom($length);
+        $ret = System::urandom($length);
+
+        if ($hex && $ret !== null) {
+            $ret = bin2hex($ret);
+        }
+
+        return $ret;
     }
 
     /**
      * Read array.
      *
      * @param  int  $length
+     * @param  bool $hex
      * @param  bool $ord
      * @return array|null
      * @causes Error
      */
-    public static function readArray(int $length, bool $ord = false): array|null
+    public static function readArray(int $length, bool $hex = false, bool $ord = false): array|null
     {
         $ret = self::read($length);
 
         if ($ret !== null) {
             $ret = str_split($ret, 1);
-            $ord && $ret = array_map('ord', $ret);
+            if ($hex) {
+                $ret = array_map('bin2hex', $ret);
+            } elseif ($ord) {
+                $ret = array_map('ord', $ret);
+            }
         }
 
         return $ret;
@@ -167,25 +74,27 @@ class URandom implements \Stringable, \IteratorAggregate
     /**
      * Read bytes (safe-return).
      *
-     * @param  int $length
+     * @param  int  $length
+     * @param  bool $hex
      * @return string|null
      * @causes Error
      */
-    public static function readBytes(int $length): string
+    public static function readBytes(int $length, bool $hex = false): string
     {
-        return (string) self::read($length);
+        return (string) self::read($length, $hex);
     }
 
     /**
      * Read bytes array (safe-return).
      *
      * @param  int  $length
+     * @param  bool $hex
      * @param  bool $ord
-     * @return array|null
+     * @return array
      * @causes Error
      */
-    public static function readBytesArray(int $length, bool $ord = true): array
+    public static function readBytesArray(int $length, bool $hex = false, bool $ord = true): array
     {
-        return (array) self::readArray($length, $ord);
+        return (array) self::readArray($length, $hex, $ord);
     }
 }

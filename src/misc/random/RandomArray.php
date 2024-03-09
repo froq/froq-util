@@ -15,7 +15,7 @@ use froq\util\Arrays;
  * @author  Kerem Güneş
  * @since   7.15
  */
-class RandomArray implements \IteratorAggregate
+class RandomArray implements \Countable, \IteratorAggregate
 {
     /** Data holder. */
     public readonly array $data;
@@ -78,11 +78,19 @@ class RandomArray implements \IteratorAggregate
     }
 
     /**
+     * @inheritDoc Countable
+     */
+    public function count(): int
+    {
+        return $this->length();
+    }
+
+    /**
      * @inheritDoc IteratorAggregate
      */
     public function getIterator(): \Iterator
     {
-        foreach ($this->data as $i => $item) {
+        foreach ($this->toArray() as $i => $item) {
             yield $i => $item;
         }
     }

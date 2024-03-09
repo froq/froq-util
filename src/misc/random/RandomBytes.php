@@ -18,13 +18,8 @@ class RandomBytes extends RandomString
     /**
      * @override
      */
-    public readonly string $data;
-
-    /**
-     * @override
-     */
     public function __construct(int $length)
     {
-        $this->data = random_bytes($length);
+        parent::passData(random_bytes($length));
     }
 }
