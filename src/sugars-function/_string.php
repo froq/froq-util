@@ -590,7 +590,8 @@ function str_title(string $string, bool $tr = false, string $encoding = null): s
  */
 function str_empty(string $string): bool
 {
-    return trim($string) === '';
+    // Trim " " and "\t" only (no NULL-bytes trimmed).
+    return trim($string, "\x20\x09") === '';
 }
 
 /**
