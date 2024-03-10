@@ -292,28 +292,19 @@ final /* fuckic static */ class Util extends \StaticClass
         // Memoize maker function.
         static $make; $make ??= function ($data, $deep) use (&$make): array {
             if ($data) {
-                if ($data instanceof \froq\common\interface\Arrayable) {
+                if ($data instanceof Arrayable) {
                     $data = $data->toArray();
                 } elseif ($data instanceof \Traversable) {
-                    if ($data instanceof \Generator) {
-                        // Prevent "Cannot rewind a generator that was already run" error.
-                        $data = (new \froq\collection\iterator\GeneratorIterator($data))
-                            ->toArray();
-                    } else {
-                        // Rewind for keys after iteration.
-                        $temp = iterator_to_array($data);
-                        if (method_exists($data, 'rewind')) {
-                            $data->rewind();
-                        }
-                        $data = $temp;
-                        unset($temp);
-                    }
+                    $data = iterator_to_array($data);
                 }
 
                 if ($deep) {
                     $isArray = is_array($data);
+
                     foreach ($data as $key => $value) {
-                        $value = is_array($value) || is_object($value) ? $make($value, true) : $value;
+                        $value = is_array($value) || is_object($value)
+                            ? $make($value, true) : $value;
+
                         if ($isArray) {
                             $data[$key] = $value;
                         } else {
@@ -343,28 +334,19 @@ final /* fuckic static */ class Util extends \StaticClass
         // Memoize maker function.
         static $make; $make ??= function ($data, $deep) use (&$make): object {
             if ($data) {
-                if ($data instanceof \froq\common\interface\Arrayable) {
+                if ($data instanceof Arrayable) {
                     $data = $data->toArray();
                 } elseif ($data instanceof \Traversable) {
-                    if ($data instanceof \Generator) {
-                        // Prevent "Cannot rewind a generator that was already run" error.
-                        $data = (new \froq\collection\iterator\GeneratorIterator($data))
-                            ->toArray();
-                    } else {
-                        // Rewind for keys after iteration.
-                        $temp = iterator_to_array($data);
-                        if (method_exists($data, 'rewind')) {
-                            $data->rewind();
-                        }
-                        $data = $temp;
-                        unset($temp);
-                    }
+                    $data = iterator_to_array($data);
                 }
 
                 if ($deep) {
                     $isArray = is_array($data);
+
                     foreach ($data as $key => $value) {
-                        $value = is_array($value) || is_object($value) ? $make($value, true) : $value;
+                        $value = is_array($value) || is_object($value)
+                            ? $make($value, true) : $value;
+
                         if ($isArray) {
                             $data[$key] = $value;
                         } else {
