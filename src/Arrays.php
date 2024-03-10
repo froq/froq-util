@@ -1326,7 +1326,7 @@ final class Arrays extends \StaticClass
     {
         // When carry is a function.
         if (is_callable($carry)) {
-            [$func, $carry] = [$carry, $func];
+            [$func, $carry] = [$carry, null];
         }
 
         // When right option provided.
