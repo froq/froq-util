@@ -24,7 +24,7 @@ abstract class AbstractRandomNumber extends AbstractRandom implements \Stringabl
     }
 
     /**
-     * @magic
+     * @inheritDoc
      */
     public function __toString(): string
     {
@@ -32,9 +32,7 @@ abstract class AbstractRandomNumber extends AbstractRandom implements \Stringabl
     }
 
     /**
-     * Get data length.
-     *
-     * @return int
+     * @inheritDoc
      */
     public function length(): int
     {

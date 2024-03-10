@@ -3,7 +3,8 @@
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-util
  */
-use froq\util\{Util, Strings};
+use froq\common\interface\{Stringable, Arrayable, Lengthable};
+use froq\util\{Strings, Util};
 
 /**
  * A class for playing with strings in OOP-way.
@@ -13,7 +14,7 @@ use froq\util\{Util, Strings};
  * @author  Kerem Güneş
  * @since   6.0
  */
-class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayAccess
+class XString implements \Stringable, Stringable, Arrayable, Lengthable, IteratorAggregate, JsonSerializable, ArrayAccess
 {
     /** Data. */
     protected string $data;
@@ -89,14 +90,6 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     public function getLength(): int
     {
         return mb_strlen($this->data, $this->encoding);
-    }
-
-    /**
-     * @alias getLength()
-     */
-    public function length()
-    {
-        return $this->getLength();
     }
 
     /**
@@ -1888,9 +1881,7 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     }
 
     /**
-     * Get data as string.
-     *
-     * @return string
+     * @inheritDoc
      */
     public function toString(): string
     {
@@ -1898,8 +1889,6 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     }
 
     /**
-     * Get data as StringBuffer.
-     *
      * @return StringBuffer
      */
     public function toStringBuffer(): StringBuffer
@@ -1916,9 +1905,7 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     }
 
     /**
-     * Get data as array.
-     *
-     * @return array
+     * @inheritDoc
      */
     public function toArray(): array
     {
@@ -1926,13 +1913,19 @@ class XString implements Stringable, IteratorAggregate, JsonSerializable, ArrayA
     }
 
     /**
-     * Get data as XArray.
-     *
      * @return XArray
      */
     public function toXArray(): XArray
     {
         return $this->xsplits();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function length(): int
+    {
+        return $this->getLength();
     }
 
     /**

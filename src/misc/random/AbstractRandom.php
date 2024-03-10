@@ -5,6 +5,8 @@
  */
 namespace froq\util\random;
 
+use froq\common\interface\Lengthable;
+
 /**
  * Base ramdom class.
  *
@@ -13,7 +15,7 @@ namespace froq\util\random;
  * @author  Kerem Güneş
  * @since   7.15
  */
-abstract class AbstractRandom
+abstract class AbstractRandom implements Lengthable
 {
     /**
      * Constructor.

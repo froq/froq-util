@@ -5,6 +5,7 @@
  */
 namespace froq\util\random;
 
+use froq\common\interface\Arrayable;
 use froq\util\Arrays;
 
 /**
@@ -15,40 +16,16 @@ use froq\util\Arrays;
  * @author  Kerem Güneş
  * @since   7.15
  */
-class RandomArray implements \Countable, \IteratorAggregate
+class RandomArray extends AbstractRandom implements Arrayable, \Countable, \IteratorAggregate
 {
-    /** Data holder. */
-    public readonly array $data;
-
     /**
-     * Constructor.
-     *
-     * @param array $data
-     * @param bool  $shuffle
+     * @override
      */
     public function __construct(array $data, bool $shuffle = false)
     {
-        $this->data = $shuffle ? Arrays::shuffle($data) : $data;
-    }
+        $data = $shuffle ? Arrays::shuffle($data) : $data;
 
-    /**
-     * Get data length.
-     *
-     * @return int
-     */
-    public function length(): int
-    {
-        return count($this->data);
-    }
-
-    /**
-     * Get data as array.
-     *
-     * @return array
-     */
-    public function toArray(): array
-    {
-        return $this->data;
+        parent::__construct($data);
     }
 
     /**
@@ -75,6 +52,22 @@ class RandomArray implements \Countable, \IteratorAggregate
     public function pickOne(bool $pack = false): mixed
     {
         return $this->pick(1, $pack);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function length(): int
+    {
+        return count($this->data);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function toArray(): array
+    {
+        return $this->data;
     }
 
     /**
