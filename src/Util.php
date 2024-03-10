@@ -58,7 +58,7 @@ final /* fuckic static */ class Util extends \StaticClass
     public static function getClientIp(): string|null
     {
         if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-            $ips = split(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
+            $ips = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
             if ($ips) {
                 return end($ips);
             }
@@ -86,7 +86,7 @@ final /* fuckic static */ class Util extends \StaticClass
      * @param  bool $safe
      * @return string|null
      */
-    public static function getClientAgent(bool $safe = true): string|null
+    public static function getClientUa(bool $safe = true): string|null
     {
         // Possible header names.
         static $names = [
@@ -101,7 +101,7 @@ final /* fuckic static */ class Util extends \StaticClass
         foreach ($names as $name) {
             // Not using isset(), cos variables may be set but empty.
             if (!empty($_SERVER[$name])) {
-                return !$safe ? $_SERVER[$name] : substr($_SERVER[$name], 0, 255);
+                return $safe ? substr($_SERVER[$name], 0, 255) : $_SERVER[$name];
             }
         }
 

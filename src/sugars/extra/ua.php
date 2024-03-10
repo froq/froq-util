@@ -14,7 +14,7 @@ use froq\util\Util;
 function get_user_agent(bool $safe = true): string|null
 {
     static $ret;
-    return $ret ??= Util::getClientAgent($safe);
+    return $ret ??= Util::getClientUa($safe);
 }
 
 /**
