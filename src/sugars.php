@@ -182,17 +182,7 @@ function sorted(array $array, callable|int $func = null, int $flags = 0, bool $a
  */
 function size(mixed $var): int
 {
-    // Speed up, a bit..
-    if ($var === null || $var === '' || $var === []) {
-        return 0;
-    }
-
-    return match (true) {
-        is_string($var)    => mb_strlen($var),
-        is_countable($var) => count($var),
-        is_object($var)    => count(get_object_vars($var)),
-        default            => 0
-    };
+    return Util::sizeOf($var);
 }
 
 /**
@@ -1955,7 +1945,7 @@ function is_class_of(string|object $class, string|object ...$classes): bool
 }
 
 /**
- * Check if given input(s) is empty.
+ * Check if given var(s) is empty.
  *
  * @param  mixed    $var
  * @param  mixed ...$vars

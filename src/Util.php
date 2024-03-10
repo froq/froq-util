@@ -5,6 +5,8 @@
  */
 namespace froq\util;
 
+use froq\common\interface\{Lengthable, Sizable, Arrayable, Listable, Stringable};
+
 /**
  * Utility class.
  *
@@ -203,6 +205,57 @@ final /* fuckic static */ class Util extends \StaticClass
         }
 
         return (int) $bytes;
+    }
+
+    /**
+     * Get size of given var.
+     *
+     * Note: This methos must NOT be used for the related methods of interfaces below;
+     *
+     * Stringable, froq\common\interface\{Lengthable, Sizable, Arrayable, Listable, Stringable}.
+     *
+     * @param  mixed $var
+     * @return int
+     */
+    public static function sizeOf(mixed $var): int
+    {
+        // Speed up, a bit..
+        if ($var === null || $var === '' || $var === []) {
+            return 0;
+        }
+
+        switch (true) {
+            // Easy parts.
+            case is_string($var):
+                return mb_strlen($var);
+            case is_countable($var):
+                return count($var);
+
+            // Interfaces.
+            case ($var instanceof Lengthable):
+                return $var->length();
+            case ($var instanceof Sizable):
+                return $var->size();
+            case ($var instanceof Arrayable):
+                return count($var->toArray());
+            case ($var instanceof Listable):
+                return count($var->toList());
+            case ($var instanceof Stringable):
+                return mb_strlen($var->toString());
+            case ($var instanceof \Stringable):
+                return mb_strlen((string) $var);
+
+            // Last tries.
+            default:
+                // Cannot traverse an already closed generator.
+                if (is_iterable($var) && !$var instanceof \Generator) {
+                    return iterator_count($var);
+                }
+                if (is_object($var)) {
+                    return count(get_object_vars($var));
+                }
+                return 0;
+        }
     }
 
     /**
