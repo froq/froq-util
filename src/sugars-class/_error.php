@@ -20,13 +20,6 @@ class JsonError extends froq\common\Error
 
 /**
  * @author Kerem Güneş
- * @since  6.0
- */
-class LocaleError extends froq\common\Error
-{}
-
-/**
- * @author Kerem Güneş
  * @since  6.5
  */
 class UrlError extends froq\common\Error

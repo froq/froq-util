@@ -3,17 +3,19 @@
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-util
  */
+namespace froq\util\locale;
+
 use froq\common\interface\Arrayable;
 
 /**
  * Locale class.
  *
- * @package global
- * @class   Locale
+ * @package froq\util\locale
+ * @class   froq\util\locale\Locale
  * @author  Kerem Güneş
  * @since   6.0
  */
-class Locale implements Arrayable, Stringable
+class Locale implements Arrayable, \Stringable
 {
     /** To use for parse/validate. */
     public const PATTERN = '~^
@@ -47,7 +49,7 @@ class Locale implements Arrayable, Stringable
      * @param  string|null                    $currency
      * @param  string|int|LocaleCategory|null $category  @internal
      * @param  bool                           $normalize @internal
-     * @throws LocaleError
+     * @throws froq\util\locale\LocaleException
      */
     public function __construct(
         string $language, string $country = null,
@@ -57,7 +59,7 @@ class Locale implements Arrayable, Stringable
     {
         // Eg: C or en.
         if (!preg_test('~^[a-zA-Z]{1,3}$~', $language)) {
-            throw new LocaleError('Invalid language: %q', $language);
+            throw LocaleException::forInvalidLanguage($language);
         }
 
         if ($category !== null) {
@@ -302,10 +304,32 @@ class Locale implements Arrayable, Stringable
                     'category'  => $category,
                     'normalize' => false
                 ]);
-            } catch (LocaleError) {}
+            } catch (LocaleException) {}
         }
 
         return new LocaleList($items);
+    }
+
+    /**
+     * List languages.
+     *
+     * @param  string|null $prefix
+     * @return froq\util\locale\LocaleLanguages<LocaleLanguage>
+     */
+    public static function listLanguages(string $prefix = null): LocaleLanguages
+    {
+        return new LocaleLanguages(require __DIR__ . '/../../etc/locales.php', $prefix);
+    }
+
+    /**
+     * List language names.
+     *
+     * @param  string|null $prefix
+     * @return froq\util\locale\LocaleLanguageNames<string>
+     */
+    public static function listLanguageNames(string $prefix = null): LocaleLanguageNames
+    {
+        return new LocaleLanguageNames(require __DIR__ . '/../../etc/locales.php', $prefix);
     }
 
     /**
@@ -372,191 +396,5 @@ class Locale implements Arrayable, Stringable
             }
         }
         return new LocaleList($items);
-    }
-}
-
-/**
- * Locale category class.
- *
- * @package global
- * @class   LocaleCategory
- * @author  Kerem Güneş
- * @since   6.0
- */
-class LocaleCategory implements Arrayable, Stringable
-{
-    /** Type/value constants. */
-    public final const ALL      = LC_ALL,
-                       CTYPE    = LC_CTYPE,
-                       TIME     = LC_TIME,
-                       COLLATE  = LC_COLLATE,
-                       NUMERIC  = LC_NUMERIC,
-                       MONETARY = LC_MONETARY,
-                       MESSAGES = LC_MESSAGES;
-
-    /** Name, set by given value. */
-    public readonly string $name;
-
-    /** Value of this category. */
-    public readonly int $value;
-
-    /**
-     * Constructor.
-     *
-     * @param  int|string $category
-     * @throws LocaleError
-     */
-    public function __construct(int|string $category)
-    {
-        if (is_int($category)) {
-            $name  = self::map(true)[$category] ?? null;
-            $value = $category;
-        } else {
-            $name  = strtoupper($category);
-            $value = self::map()[$name] ?? null;
-        }
-
-        if (!isset($name, $value)) {
-            throw new LocaleError('Invalid category: %q', $category);
-        }
-
-        $this->name  = $name;
-        $this->value = $value;
-    }
-
-    /**
-     * @magic
-     */
-    public function __toString(): string
-    {
-        return 'LC_' . $this->name;
-    }
-
-    /**
-     * Get name.
-     *
-     * @return string
-     */
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    /**
-     * Get value.
-     *
-     * @return int
-     */
-    public function getValue(): int
-    {
-        return $this->value;
-    }
-
-    /**
-     * @inheritDoc froq\common\interface\Arrayable
-     */
-    public function toArray(): array
-    {
-        return ['name' => $this->name, 'value' => $this->value];
-    }
-
-    /**
-     * Create from given locale category.
-     *
-     * @param  int|string $category
-     * @return LocaleCategory
-     */
-    public static function from(int|string $category): LocaleCategory
-    {
-        // When LC_* constant given.
-        if (is_string($category) && strpfx($category, 'LC_', true)) {
-            $category = substr($category, 3);
-        }
-
-        return new LocaleCategory($category);
-    }
-
-    /**
-     * List all locale categories.
-     *
-     * @return LocaleCategoryList
-     */
-    public static function list(): LocaleCategoryList
-    {
-        $items = [];
-
-        foreach (self::map(true) as $name) {
-            $items[] = new self($name);
-        }
-
-        return new LocaleCategoryList($items);
-    }
-
-    /**
-     * Get constants map, creating for once.
-     *
-     * @param  bool $flip
-     * @return array
-     */
-    public static function map(bool $flip = false): array
-    {
-        static $map;
-        $map ??= get_class_constants(self::class, false);
-
-        return $flip ? array_flip($map) : $map;
-    }
-}
-
-/**
- * Locale list class.
- *
- * @package global
- * @class   LocaleList
- * @author  Kerem Güneş
- * @since   6.0
- */
-class LocaleList extends ItemList
-{
-    /**
-     * @override
-     */
-    public function toArray(bool $deep = false): array
-    {
-        $items = parent::toArray();
-
-        if ($deep) foreach ($items as &$item) {
-            if ($item instanceof Locale) {
-                $item = $item->toArray();
-            }
-        }
-
-        return $items;
-    }
-}
-
-/**
- * Locale category list class.
- *
- * @package global
- * @class   LocaleCategoryList
- * @author  Kerem Güneş
- * @since   6.0
- */
-class LocaleCategoryList extends ItemList
-{
-    /**
-     * @override
-     */
-    public function toArray(bool $deep = false): array
-    {
-        $items = parent::toArray();
-
-        if ($deep) foreach ($items as &$item) {
-            if ($item instanceof LocaleCategory) {
-                $item = $item->toArray();
-            }
-        }
-
-        return $items;
     }
 }
