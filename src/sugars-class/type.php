@@ -223,6 +223,28 @@ class Type implements Stringable
     }
 
     /**
+     * Arrayable check.
+     *
+     * @param  bool|null &$native
+     * @return bool
+     */
+    public function isArrayable(bool &$native = null): bool
+    {
+        return is_arrayable($this->var, $native);
+    }
+
+    /**
+     * Stringable check.
+     *
+     * @param  bool|null &$native
+     * @return bool
+     */
+    public function isStringable(bool &$native = null): bool
+    {
+        return is_stringable($this->var, $native);
+    }
+
+    /**
      * Closure check.
      *
      * @return bool

@@ -1848,7 +1848,6 @@ function is_number(mixed $var): bool
  */
 function is_stream(mixed $var): bool
 {
-    // return get_debug_type($var) === 'resource (stream)';
     return is_resource($var) && get_resource_type($var) === 'stream';
 }
 
@@ -1863,8 +1862,35 @@ function is_stream(mixed $var): bool
  */
 function is_primitive(mixed $var): bool
 {
-    // return is_scalar($var) || preg_match('~^(array|null)$~', get_debug_type($var));
     return is_scalar($var) || is_array($var) || is_null($var);
+}
+
+/**
+ * Check if given input is arrayable.
+ *
+ * @param  mixed     $var
+ * @param  bool|null &$native
+ * @return bool
+ * @since  7.0
+ */
+function is_arrayable(mixed $var, bool &$native = null): bool
+{
+    return ($native = is_iterable($var))
+        || ($var instanceof froq\common\interface\Arrayable);
+}
+
+/**
+ * Check if given input is stringable.
+ *
+ * @param  mixed     $var
+ * @param  bool|null &$native
+ * @return bool
+ * @since  7.0
+ */
+function is_stringable(mixed $var, bool &$native = null): bool
+{
+    return ($native = is_string($var) || $var instanceof Stringable)
+        || ($var instanceof froq\common\interface\Stringable);
 }
 
 /**
@@ -1899,7 +1925,7 @@ function is_type_of(mixed $var, string ...$types): bool
             'any', 'mixed' => true,
 
             // Sugar checkers.
-            'list', 'number', 'stream', 'true', 'false',
+            'list', 'number', 'stream', 'primitive', 'true', 'false',
                 => ('is_' . $type)($var),
 
             // Primitive & internal checkers.
@@ -1937,6 +1963,33 @@ function is_class_of(string|object $class, string|object ...$classes): bool
         $class2 = get_class_name($class2);
 
         if (is_a($class1, $class2, true)) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+/**
+ * Check if given var(s) is empty.
+ *
+ * @param  mixed    $var
+ * @param  mixed ...$vars
+ * @return bool
+ * @since  7.0
+ */
+function is_blank(mixed $var, mixed ...$vars): bool
+{
+    foreach ([$var, ...$vars] as $var) {
+        if ($var === null || $var === '' || $var === []) {
+            return true;
+        }
+
+        if (is_string($var) && trim($var, ' ') === '') {
+            return true;
+        }
+
+        if (is_object($var) && !size($var)) {
             return true;
         }
     }
