@@ -8,7 +8,7 @@ namespace froq\util;
 use Throwable, TraceStack;
 
 /**
- * Debugger class for throwables.
+ * Debugger class for throwables and traces.
  *
  * @package froq\util
  * @class   froq\util\Debugger
@@ -79,11 +79,14 @@ class Debugger
         $cause = $e->cause ?? null;
 
         $class = get_class_name($e, escape: true);
+        $path  = $e->getFile() .':'. $e->getLine();
+
+        $dots && $class = str_replace('\\', '.', $class);
 
         $ret = sprintf(
-            "%s(%s): %s @%s:%d\nTrace:\n%s",
-            $class, $e->getCode(), $e->getMessage(),
-            $e->getFile(), $e->getLine(), self::debugTraceString($e, $dots)
+            "%s(%s): %s @%s\nTrace:\n%s",
+            $class, $e->getCode(), $e->getMessage(), $path,
+            self::debugTraceString($e, $dots)
         );
 
         if ($cause instanceof Throwable) {
@@ -113,7 +116,7 @@ class Debugger
             $path = $trace->callPathFull();
 
             if ($dots) {
-                $path = str_replace(['\\', '::', '->'], '.', $path);
+                $path = str_replace(['\\', '->', '::'], '.', $path);
             }
 
             $ret[] = $path;
@@ -136,7 +139,7 @@ class Debugger
         $ret = (string) $stack;
 
         if ($dots) {
-            $ret = str_replace(['\\', '::', '->'], '.', $ret);
+            $ret = str_replace(['\\', '->', '::'], '.', $ret);
         }
 
         return $ret;
