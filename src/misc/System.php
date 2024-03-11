@@ -179,11 +179,11 @@ class System
 
         $res = self::exec('cat', '/etc/os-release', silent: true);
 
-        return reduce((array) $res->result, function ($ret, $info) {
+        return reduce((array) $res->result, [], function ($ret, $info) {
             $info = split('=', (string) $info, 2);
 
             if (isset($info[0])) {
-                $key = lower($info[0]);
+                $key = lower((string) $info[0]);
                 $value = trim((string) $info[1], '"');
                 $ret[$key] = $value;
             }
@@ -204,25 +204,26 @@ class System
      */
     public static function exec(string $program, string|array $arguments = [], bool $escape = false, bool $silent = false): object
     {
-        $arguments = (array) $arguments;
-
-        if ($escape && $arguments) {
-            $arguments = map($arguments, 'escapeshellarg');
+        if (!$program = trim($program)) {
+            throw new \ArgumentError('Argument $program cannot be empty');
         }
 
-        $command = [
-            $program,
-            join(' ', $arguments),
-            '2>&1' // Redirect stderr > stdout.
-        ];
+        $arguments = \Set::from((array) $arguments);
+        $arguments->map('strip')->filter('strlen');
 
-        $command = join(' ', filter(map($command, 'trim')));
-
-        if (!$command) {
-            throw new \ArgumentError('Empty exec command');
+        if ($escape && $arguments->count()) {
+            $arguments->map('escapeshellarg');
         }
 
-        $return = exec($command, $result, $code);
+        $command = \Set::from([
+            $program, $arguments->join(' '),
+            '2>&1' // Redirect stderr => stdout.
+        ]);
+
+        $command = $command->map('trim')->join(' ');
+
+        $return  = exec($command, $result, $code);
+        $error   = null;
 
         if ($code !== 0) {
             if (!$silent) {
@@ -233,7 +234,7 @@ class System
             [$error, $return, $result] = [$return, null, null];
         }
 
-        return object(return: $return, result: $result, code: $code, error: $error ?? null);
+        return object(return: $return, result: $result, code: $code, error: $error);
     }
 
     /**
