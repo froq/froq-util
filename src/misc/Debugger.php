@@ -105,11 +105,11 @@ class Debugger
      */
     public static function debugTracePath(Throwable $e, bool $dots = false): array
     {
-        $traces = new TraceStack($e->getTrace());
+        $stack = new TraceStack($e->getTrace());
 
         $ret = [];
 
-        foreach ($traces as $trace) {
+        foreach ($stack as $trace) {
             $path = $trace->callPathFull();
 
             if ($dots) {
@@ -131,9 +131,9 @@ class Debugger
      */
     public static function debugTraceString(Throwable $e, bool $dots = false): string
     {
-        $traces = new TraceStack($e->getTrace());
+        $stack = new TraceStack($e->getTrace());
 
-        $ret = (string) $traces;
+        $ret = (string) $stack;
 
         if ($dots) {
             $ret = str_replace(['\\', '::', '->'], '.', $ret);
@@ -145,16 +145,20 @@ class Debugger
     /**
      * Make trace.
      *
-     * @param  array|TraceStack|null $trace
-     * @param  int                   $slice
+     * @param  array|TraceStack|Throwable|null $stack
+     * @param  int                             $slice
      * @return TraceStack
      */
-    public static function makeTrace(array|TraceStack $trace = null, int $slice = 1): TraceStack
+    public static function makeTrace(array|TraceStack|Throwable $stack = null, int $slice = 1): TraceStack
     {
-        if (is_array($trace)) {
-            $ret = new TraceStack($trace, slice: $slice);
+        if ($stack instanceof Throwable) {
+            $stack = $stack->getTrace();
+        }
+
+        if (is_array($stack)) {
+            $ret = new TraceStack($stack, slice: $slice);
         } else {
-            $ret ??= new TraceStack(null, slice: $slice);
+            $ret = $stack ?: new TraceStack(null, slice: $slice);
         }
 
         return $ret;
@@ -163,14 +167,14 @@ class Debugger
     /**
      * Print trace.
      *
-     * @param  array|TraceStack|null $trace
-     * @param  int                   $slice
-     * @param  bool                  $return
+     * @param  array|TraceStack|Throwable|null $stack
+     * @param  int                             $slice
+     * @param  bool                            $return
      * @return string|null
      */
-    public static function printTrace(array|TraceStack $trace = null, int $slice = 3, bool $return = !false): string|null
+    public static function printTrace(array|TraceStack|Throwable $stack = null, int $slice = 3, bool $return = false): string|null
     {
-        $ret = (string) self::makeTrace($trace, slice: $slice);
+        $ret = (string) self::makeTrace($stack, slice: $slice);
 
         if ($return) {
             return $ret;
