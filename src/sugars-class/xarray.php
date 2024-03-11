@@ -1544,7 +1544,7 @@ class XArray implements Arrayable, Listable, Jsonable, Iteratable, IteratableRev
 /**
  * XArray initializer, accepts a single iterable or multiple arguments as iterable.
  *
- * All examples are valid:
+ * Examples:
  *
  * ```
  * $x = xarray(id: 1, name: 'Foo');

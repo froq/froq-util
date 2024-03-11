@@ -208,14 +208,14 @@ class System
             throw new \ArgumentError('Argument $program cannot be empty');
         }
 
-        $arguments = \Set::from((array) $arguments);
+        $arguments = xset((array) $arguments);
         $arguments->map('strip')->filter('strlen');
 
         if ($escape && $arguments->count()) {
             $arguments->map('escapeshellarg');
         }
 
-        $command = \Set::from([
+        $command = xset([
             $program, $arguments->join(' '),
             '2>&1' // Redirect stderr => stdout.
         ]);

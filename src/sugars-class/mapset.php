@@ -1252,3 +1252,53 @@ class Dict extends Map
         return new static(array_fill_keys($keys, $value));
     }
 }
+
+/**
+ * Map initializer, accepts a single iterable or multiple arguments as iterable.
+ *
+ * Examples:
+ * * ```
+ * $x = xmap(id: 1, name: 'Foo');
+ * $x = xmap(['id' => 1, 'name' => 'Foo']);
+ * $x = xmap([1, 'Foo']);
+ * $x = xmap(1, 'Foo');
+ * ```
+ *
+ * @param  mixed ...$data
+ * @return Map
+ */
+function xmap(mixed ...$data): Map
+{
+    if (is_list($data) && count($data) === 1) {
+        $data = is_iterable($data[0]) ? $data[0] : [$data[0]];
+    }
+    return new Map($data);
+}
+
+/**
+ * Set initializer. @see xmap()
+ *
+ * @param  mixed ...$data
+ * @return Set
+ */
+function xset(mixed ...$data): Set
+{
+    if (is_list($data) && count($data) === 1) {
+        $data = is_iterable($data[0]) ? $data[0] : [$data[0]];
+    }
+    return new Set($data);
+}
+
+/**
+ * Dict initializer. @see xmap()
+ *
+ * @param  mixed ...$data
+ * @return Dict
+ */
+function xdict(mixed ...$data): Dict
+{
+    if (is_list($data) && count($data) === 1) {
+        $data = is_iterable($data[0]) ? $data[0] : [$data[0]];
+    }
+    return new Dict($data);
+}
