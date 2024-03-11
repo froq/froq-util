@@ -348,15 +348,24 @@ function unsplit(string $separator, array $input): string
 }
 
 /**
- * Strip a string, with RegExp (~) option.
+ * Safe/extended stripper for strings and stringables.
  *
- * @param  string $input
+ * @param  mixed  $input
  * @param  string $characters
- * @return string
+ * @return string|array
  * @since  3.0, 5.0
  */
-function strip(string $input, string $characters = ''): string
+function strip(mixed $input, string $characters = ''): string|array
 {
+    if (is_array($input)) {
+        return map($input, fn($in) => strip($in, $characters));
+    }
+    if (!is_scalar($input) && !is_stringable($input)) {
+        return '';
+    }
+
+    $input = (string) $input;
+
     if ($characters === '') {
         return trim($input);
     }
