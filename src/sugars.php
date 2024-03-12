@@ -1607,21 +1607,21 @@ function format_number(int|float|string $input, int|true $decs = true, string $d
  * Format an input if scalar, else return null.
  *
  * @param  mixed    $input
- * @param  mixed ...$arguments
+ * @param  mixed ...$options
  * @return string|null
  */
-function format_scalar(mixed $input, mixed ...$arguments): string|null
+function format_scalar(mixed $input, mixed ...$options): string|null
 {
     switch (true) {
         case is_string($input):
             return $input;
         case is_number($input):
-            $defaults = is_list($arguments) ? [true] : ['decs' => true];
-            $arguments = array_options($arguments, $defaults, map: false);
+            $defaults = is_list($options) ? [true] : ['decs' => true];
+            $arguments = array_options($options, $defaults, map: false);
             return format_number($input, ...$arguments);
         case is_bool($input):
-            $defaults = is_list($arguments) ? [false] : ['numeric' => false];
-            $arguments = array_options($arguments, $defaults, map: false);
+            $defaults = is_list($options) ? [false] : ['numeric' => false];
+            $arguments = array_options($options, $defaults, map: false);
             return format_bool($input, ...$arguments);
         default:
             return null;
