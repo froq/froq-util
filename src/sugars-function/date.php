@@ -20,10 +20,10 @@ function datetime(string|int|float $when = null, string $where = null): DateTime
     switch (get_type($when)) {
         case 'string': // Eg: 2012-09-12 23:42:53
             return new DateTime($when, new DateTimeZone($where));
-        case 'int': // Eg: 1603339284
-            $date = new DateTime('', new DateTimeZone($where));
-            return $date->setTimestamp($when);
-        case 'float': // Eg: 1603339284.221243
+        case 'int':    // Eg: 1603339284
+            $date = DateTime::createFromFormat('U', sprintf('%010d', $when));
+            return $date->setTimezone(new DateTimeZone($where));
+        case 'float':  // Eg: 1603339284.221243
             $date = DateTime::createFromFormat('U.u', sprintf('%.6F', $when));
             return $date->setTimezone(new DateTimeZone($where));
     }
