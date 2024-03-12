@@ -687,13 +687,13 @@ function get_class_name(string|object $class, bool $short = false, bool $real = 
  * Get class namespace.
  *
  * @param  string|object $class
- * @param  bool          $baseOnly
+ * @param  bool          $base_only
  * @return string
  * @since  7.0
  */
-function get_class_namespace(string|object $class, bool $baseOnly = false): string
+function get_class_namespace(string|object $class, bool $base_only = false): string
 {
-    return Objects::getNamespace($class, $baseOnly);
+    return Objects::getNamespace($class, $base_only);
 }
 
 /**
