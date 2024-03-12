@@ -107,16 +107,16 @@ function each(array $array, callable $func, mixed ...$funcArgs): void
 /**
  * Filter, with some options.
  *
- * @param  array         $array
- * @param  callable|null $func
- * @param  bool          $recursive
- * @param  bool          $use_keys
- * @param  bool          $keep_keys
- * @param  bool|null     $list Alias of $keep_keys.
+ * @param  array                      $array
+ * @param  callable|string|array|null $func
+ * @param  bool                       $recursive
+ * @param  bool                       $use_keys
+ * @param  bool                       $keep_keys
+ * @param  bool|null                  $list Alias of $keep_keys.
  * @return array
  * @since  3.0, 5.0
  */
-function filter(array $array, callable $func = null, bool $recursive = false, bool $use_keys = false, bool $keep_keys = true,
+function filter(array $array, callable|string|array $func = null, bool $recursive = false, bool $use_keys = false, bool $keep_keys = true,
     bool $list = null): array
 {
     return Arrays::filter($array, $func, $recursive, $use_keys, ($list ? false : $keep_keys));

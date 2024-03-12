@@ -1205,9 +1205,14 @@ final class Arrays extends \StaticClass
      * @param  bool          $keepKeys
      * @return array
      */
-    public static function filter(array $array, callable $func = null, bool $recursive = false, bool $useKeys = false, bool $keepKeys = true): array
+    public static function filter(array $array, callable|string|array $func = null, bool $recursive = false, bool $useKeys = false, bool $keepKeys = true): array
     {
-        $func = self::makeFilterFunction($func);
+        $func = self::makeFilterFunction($func, null, $func && !is_callable($func));
+
+        // Multi filter.
+        if (is_array($func)) {
+            return self::filterMulti($array, $func, $recursive, $useKeys, $keepKeys);
+        }
 
         $ret = [];
 
@@ -1253,6 +1258,53 @@ final class Arrays extends \StaticClass
 
             $func($key) && $ret[$key] = $value;
         }
+
+        return $ret;
+    }
+
+    /**
+     * Filter multi.
+     *
+     * @param  array                $array
+     * @param  string|array<string> $funcs
+     * @param  bool                 $recursive
+     * @param  bool                 $useKeys
+     * @param  bool                 $keepKeys
+     * @return array
+     */
+    public static function filterMulti(array $array, string|array $funcs, bool $recursive = false, bool $useKeys = false, bool $keepKeys = true): array
+    {
+        $funcs = self::makeFilterFunction($funcs, null, true);
+
+        $ret = $array;
+
+        if ($useKeys) {
+            foreach ($funcs as $func) {
+                foreach ($ret as $key => &$value) {
+                    if ($recursive && is_array($value)) {
+                        $value = self::filterMulti($value, $funcs, true, true, $keepKeys);
+                    }
+
+                    if (!$func($value, $key)) {
+                        unset($ret[$key]);
+                    }
+                }
+            }
+        } else {
+            foreach ($funcs as $func) {
+                foreach ($ret as $key => &$value) {
+                    if ($recursive && is_array($value)) {
+                        $value = self::filterMulti($value, $funcs, true, false, $keepKeys);
+                    }
+
+                    if (!$func($value)) {
+                        unset($ret[$key]);
+                    }
+                }
+            }
+        }
+
+        $keepKeys || $ret = array_values($ret);
 
         return $ret;
     }
@@ -1913,22 +1965,36 @@ final class Arrays extends \StaticClass
     }
 
     /**
-     * Make filter function.
+     * Make a filter function.
      */
-    private static function makeFilterFunction(callable|null $func, array $values = null): callable
+    private static function makeFilterFunction(callable|string|array|null $func, array $values = null, bool $multi = false): callable|array
     {
-        if (is_null($func)) {
+        if (!is_callable($func)) {
             // Default filter values.
-            $values ??= [null, "", []];
+            $values ??= [null, '', []];
 
-            $func = fn($value): bool => !in_array($value, $values, true);
+            static $tester;
+            $tester ??= fn($value): bool => !in_array($value, $values, true);
+
+            if ($multi) {
+                if (is_string($func)) {
+                    // Multiple functions given.
+                    $func = explode('|', $func);
+                }
+            } else {
+                $func = $tester;
+            }
+        }
+
+        if ($multi) {
+            $func = is_array($func) ? $func : [$func];
         }
 
         return $func;
     }
 
     /**
-     * Make map function.
+     * Make a map function.
      */
     private static function makeMapFunction(callable|string|array $func, bool $recursive = false): callable
     {
@@ -1936,11 +2002,11 @@ final class Arrays extends \StaticClass
             $funcs = $func;
 
             if (is_string($func)) {
-                // When a built-in type given.
+                // A built-in type given.
                 static $types = '~^(?:int|float|string|bool|array|object|null)$~';
                 $type = $func;
 
-                // Provide a mapper using settype().
+                // Provide a mapper.
                 if (preg_test($types, $type)) {
                     return function ($value) use ($type) {
                         settype($value, $type);
@@ -1948,7 +2014,7 @@ final class Arrays extends \StaticClass
                     };
                 }
 
-                // When multiple functions given.
+                // Multiple functions given.
                 $funcs = explode('|', $func);
             }
 
