@@ -119,7 +119,7 @@ function each(array $array, callable $func, mixed ...$funcArgs): void
 function filter(array $array, callable $func = null, bool $recursive = false, bool $use_keys = false, bool $keep_keys = true,
     bool $list = null): array
 {
-    return Arrays::filter($array, $func, $recursive, $use_keys, (!$list ? $keep_keys : false));
+    return Arrays::filter($array, $func, $recursive, $use_keys, ($list ? false : $keep_keys));
 }
 
 /**
@@ -137,7 +137,7 @@ function filter(array $array, callable $func = null, bool $recursive = false, bo
 function map(array $array, callable|string|array $func, bool $recursive = false, bool $use_keys = false, bool $keep_keys = true,
     bool $list = null): array
 {
-    return Arrays::map($array, $func, $recursive, $use_keys, (!$list ? $keep_keys : false));
+    return Arrays::map($array, $func, $recursive, $use_keys, ($list ? false : $keep_keys));
 }
 
 /**
@@ -348,7 +348,7 @@ function unsplit(string $separator, array $input): string
 }
 
 /**
- * Safe/extended stripper for strings and stringables.
+ * Stripper for strings and arrays.
  *
  * @param  mixed  $input
  * @param  string $characters
@@ -360,50 +360,27 @@ function strip(mixed $input, string $characters = ''): string|array
     if (is_array($input)) {
         return map($input, fn($in) => strip($in, $characters));
     }
-    if (!is_scalar($input) && !is_stringable($input)) {
-        return '';
+    if (is_scalar($input)) {
+        $input = format_scalar($input);
     }
 
-    $input = (string) $input;
-
-    if ($characters === '') {
-        return trim($input);
-    }
-
-    // RegExp: only ~..~ patterns accepted.
-    if (strlen($characters) >= 3 && $characters[0] === '~') {
-        $ruls = substr($characters, 1, ($pos = strrpos($characters, '~')) - 1);
-        $mods = substr($characters, $pos + 1);
-        return preg_replace(sprintf('~^%s|%s$~%s', $ruls, $ruls, $mods), '', $input);
-    }
-
-    return trim($input, $characters);
+    return ($characters === '') ? trim((string) $input) : trim((string) $input, $characters);
 }
 
 /**
- * Replace something(s) on an array or string.
+ * Replacer for strings and arrays.
  *
- * @param  string|array          $input
- * @param  string|array          $search
- * @param  string|array|callable $replace
- * @param  bool                  $icase
- * @param  int                   $limit
+ * @param  string|array $input
+ * @param  string|array $search
+ * @param  string|array $replace
+ * @param  bool         $icase
+ * @param  int          $limit
  * @return string|array
  * @since  3.0, 6.0
  */
-function replace(string|array $input, string|array $search, string|array|callable $replace, bool $icase = false, int $limit = -1): string|array
+function replace(string|array $input, string|array $search, string|array $replace, bool $icase = false, int $limit = -1): string|array
 {
-    if (is_string($input) && is_string($search)) {
-        // RegExp: only ~..~ patterns accepted.
-        if (strlen($search) >= 3 && $search[0] === '~') {
-            return is_callable($replace)
-                 ? preg_replace_callback($search, $replace, $input, $limit)
-                 : preg_replace($search, $replace, $input, $limit);
-        }
-    }
-
-    return $icase ? str_ireplace($search, $replace, $input)
-                  : str_replace($search, $replace, $input);
+    return $icase ? str_ireplace($search, $replace, $input) : str_replace($search, $replace, $input);
 }
 
 /**
@@ -1504,8 +1481,7 @@ function format(string $format, mixed ...$arguments): string
                 // Numbers.
                 case '%n':
                     $format = substr_replace($format, '%s', $offset, 2);
-                    $decimals = is_float($arguments[$i]) ? true : 0;
-                    $arguments[$i] = format_number((float) $arguments[$i], $decimals);
+                    $arguments[$i] = format_number((float) $arguments[$i]);
                     break;
 
                 // Types.
@@ -1553,7 +1529,7 @@ function format(string $format, mixed ...$arguments): string
                             is_type_of($v, 'string|float') ? format('%S', $v) : $v
                         )));
                     } elseif (is_float($arguments[$i])) {
-                        $arguments[$i] = format_number($arguments[$i], decimals: true);
+                        $arguments[$i] = format_number($arguments[$i]);
                     }
                     break;
             }
@@ -1572,10 +1548,10 @@ function format(string $format, mixed ...$arguments): string
  */
 function format_bool(mixed $input, bool $numeric = false): string
 {
-    if (!$numeric) {
-        return $input ? 'true' : 'false';
+    if ($numeric) {
+        return $input ? '1' : '0';
     }
-    return $input ? '1' : '0';
+    return $input ? 'true' : 'false';
 }
 
 /**
@@ -1587,7 +1563,7 @@ function format_bool(mixed $input, bool $numeric = false): string
  * @param  string|null      $tsep
  * @return string|null
  */
-function format_number(int|float|string $input, int|true $decs = 0, string $dsep = null, string $tsep = null): string|null
+function format_number(int|float|string $input, int|true $decs = true, string $dsep = null, string $tsep = null): string|null
 {
     if (is_string($input)) {
         if (!is_numeric($input)) {
@@ -1625,6 +1601,31 @@ function format_number(int|float|string $input, int|true $decs = 0, string $dsep
     }
 
     return $ret;
+}
+
+/**
+ * Format an input if scalar, else return null.
+ *
+ * @param  mixed    $input
+ * @param  mixed ...$arguments
+ * @return string|null
+ */
+function format_scalar(mixed $input, mixed ...$arguments): string|null
+{
+    switch (true) {
+        case is_string($input):
+            return $input;
+        case is_number($input):
+            $defaults = is_list($arguments) ? [true] : ['decs' => true];
+            $arguments = array_options($arguments, $defaults, map: false);
+            return format_number($input, ...$arguments);
+        case is_bool($input):
+            $defaults = is_list($arguments) ? [false] : ['numeric' => false];
+            $arguments = array_options($arguments, $defaults, map: false);
+            return format_bool($input, ...$arguments);
+        default:
+            return null;
+    }
 }
 
 /**
