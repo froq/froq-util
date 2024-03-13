@@ -374,11 +374,10 @@ function strip(mixed $input, string $characters = ''): string|array
  * @param  string|array $search
  * @param  string|array $replace
  * @param  bool         $icase
- * @param  int          $limit
  * @return string|array
  * @since  3.0, 6.0
  */
-function replace(string|array $input, string|array $search, string|array $replace, bool $icase = false, int $limit = -1): string|array
+function replace(string|array $input, string|array $search, string|array $replace, bool $icase = false): string|array
 {
     return $icase ? str_ireplace($search, $replace, $input) : str_replace($search, $replace, $input);
 }
