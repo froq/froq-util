@@ -127,8 +127,9 @@ class Random
 
         if ($chars !== null) {
             $chars = trim($chars);
+
             if ($chars === '') {
-                return '';
+                throw new \ArgumentError('Empty chars given');
             }
         } else {
             $chars = strcut(BASE62_ALPHABET, $base);

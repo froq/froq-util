@@ -66,13 +66,13 @@ class XRandom
      * Get random bytes from (given string).
      *
      * @param  int    $length
-     * @param  string $from
+     * @param  string $chars
      * @return string
      */
-    public function getBytesFrom(int $length, string $from): string
+    public function getBytesFrom(int $length, string $chars): string
     {
-        return $this->isOldPhp() ? $this->random->nextChars($length, chars: $from)
-             : $this->randomizer->getBytesFromString($from, $length);
+        return $this->isOldPhp() ? $this->random->nextChars($length, chars: $chars)
+             : $this->randomizer->getBytesFromString($chars, $length);
     }
 
     /**
