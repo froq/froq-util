@@ -422,7 +422,7 @@ function http_build_headers(array $data, string|int $case = null): string
 function http_parse_header(string $header, string|int $case = null, bool $verbose = false): array
 {
     if (!function_exists('httpx_parse_header')) {
-        require 'internal/httpx.php';
+        require __DIR__ . '/internal/httpx.php';
     }
 
     return httpx_parse_header($header, $case, $verbose);

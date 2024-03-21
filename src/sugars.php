@@ -6,9 +6,9 @@
 use froq\util\{Util, System, Arrays, Objects};
 
 // Load base stuff.
-require 'sugars-class.php';
-require 'sugars-constant.php';
-require 'sugars-function.php';
+require __DIR__ . '/sugars-class.php';
+require __DIR__ . '/sugars-constant.php';
+require __DIR__ . '/sugars-function.php';
 
 /**
  * Sugar loader.
@@ -1639,7 +1639,7 @@ function format_scalar(mixed $input, mixed ...$options): string|null
  */
 function slug(string $input, string $preserve = '', string $replace = '-', bool $lower = true): string
 {
-    static $map; $map ??= require 'etc/slug-map.php';
+    static $map; $map ??= require __DIR__ . '/etc/slug-map.php';
 
     $preserve && $preserve = preg_quote($preserve, '~');
     $replace  || $replace  = '-';

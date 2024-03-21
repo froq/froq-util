@@ -5,20 +5,20 @@
  */
 
 // Load top function files.
-require 'sugars-function/_array.php';
-require 'sugars-function/_string.php';
+require __DIR__ . '/sugars-function/_array.php';
+require __DIR__ . '/sugars-function/_string.php';
 
 // Load other function files.
-require 'sugars-function/base.php';
-require 'sugars-function/cast.php';
-require 'sugars-function/conv.php';
-require 'sugars-function/date.php';
-require 'sugars-function/dump.php';
-require 'sugars-function/file.php';
-require 'sugars-function/http.php';
-require 'sugars-function/json.php';
-require 'sugars-function/preg.php';
-require 'sugars-function/rand.php';
+require __DIR__ . '/sugars-function/base.php';
+require __DIR__ . '/sugars-function/cast.php';
+require __DIR__ . '/sugars-function/conv.php';
+require __DIR__ . '/sugars-function/date.php';
+require __DIR__ . '/sugars-function/dump.php';
+require __DIR__ . '/sugars-function/file.php';
+require __DIR__ . '/sugars-function/http.php';
+require __DIR__ . '/sugars-function/json.php';
+require __DIR__ . '/sugars-function/preg.php';
+require __DIR__ . '/sugars-function/rand.php';
 
 /**
  * State initializer.
