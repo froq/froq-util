@@ -890,15 +890,15 @@ function get_error(string $field = null): mixed
  * @throws ArgumentError
  * @since  4.0
  */
-function get_unique_id(int $length = 14, int $base = 16, bool $upper = false, bool $hrtime = false): string
+function get_unique_id(int $length = 16, int $base = 16, bool $upper = false, bool $hrtime = false): string
 {
-    if ($length < 14 && $base < 17) {
-        throw new ArgumentError('Invalid length %s [min=14]', $length);
+    if ($length < 16 && $base < 17) {
+        throw new ArgumentError('Invalid length %s [min=16]', $length);
     } elseif ($base < 10 || $base > 62) {
         throw new ArgumentError('Invalid base %s [min=10, max=62]', $base);
     }
 
-    // Grab 14-length hex from uniqid() or map hrtime() as hex.
+    // Grab 16-length hex from uniqid() or map hrtime() as hex.
     if (!$hrtime) {
         $id = explode('.', uniqid('', true))[0];
     } else {
@@ -938,10 +938,10 @@ function get_unique_id(int $length = 14, int $base = 16, bool $upper = false, bo
  * @throws ArgumentError
  * @since  4.0
  */
-function get_random_id(int $length = 14, int $base = 16, bool $upper = false): string
+function get_random_id(int $length = 16, int $base = 16, bool $upper = false): string
 {
-    if ($length < 14 && $base < 17) {
-        throw new ArgumentError('Invalid length %s [min=14]', $length);
+    if ($length < 16 && $base < 17) {
+        throw new ArgumentError('Invalid length %s [min=16]', $length);
     } elseif ($base < 10 || $base > 62) {
         throw new ArgumentError('Invalid base %s [min=10, max=62]', $base);
     }
