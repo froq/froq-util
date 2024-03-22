@@ -24,8 +24,7 @@ class Runner
     /**
      * Constructor.
      *
-     * @param  int $limit
-     * @causes ArgumentError
+     * @param int $limit
      */
     public function __construct(int $limit = 1000)
     {

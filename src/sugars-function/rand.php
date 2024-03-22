@@ -129,6 +129,18 @@ function random_digits(int $length, bool $hex = false, bool $upper = false): str
 }
 
 /**
+ * Generate a random x-digit string by given length.
+ *
+ * @param  int  $length
+ * @param  bool $upper
+ * @return string
+ */
+function random_xdigits(int $length, bool $upper = false): string
+{
+    return random_digits($length, true, $upper);
+}
+
+/**
  * Random int with optional min/max params.
  *
  * @param  int|null $min

@@ -92,12 +92,12 @@ class RandomNumber extends AbstractRandomNumber implements Stringable
     protected function passData(int|float $data): void
     {
         if ($this instanceof RandomInt) {
-            is_int($data) || throw new \ArgumentError(
-                'Invalid data type float for %s', $this::class
+            is_int($data) || throw new RandomException(
+                'Invalid data type float for %S', $this::class
             );
         } elseif ($this instanceof RandomFloat) {
-            is_float($data) || throw new \ArgumentError(
-                'Invalid data type int for %s', $this::class
+            is_float($data) || throw new RandomException(
+                'Invalid data type int for %S', $this::class
             );
         }
 

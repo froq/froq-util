@@ -55,12 +55,12 @@ class Random
      *
      * @param  int $bound Value of getrandmax().
      * @return int
-     * @throws ArgumentError
+     * @throws froq\util\random\RandomException
      */
     public function nextInt(int $bound = INT_MAX_32): int
     {
         if ($bound < 1) {
-            throw new \ArgumentError('Invalid bound %s [min=1]', $bound);
+            throw RandomException::forInvalidBound($bound);
         }
 
         // i.e. bound is a power of 2.
@@ -115,21 +115,21 @@ class Random
      * @param  int         $base
      * @param  string|null $chars
      * @return string
-     * @throws ArgumentError
+     * @throws froq\util\random\RandomException
      */
     public function nextChars(int $length, int $base = 62, string $chars = null): string
     {
         if ($length < 1) {
-            throw new \ArgumentError('Invalid length %s [min=1]', $length);
+            throw RandomException::forInvalidLength($length);
         } elseif ($base < 2 || $base > 62) {
-            throw new \ArgumentError('Invalid base %s [min=2, max=62]', $base);
+            throw RandomException::forInvalidBase($base);
         }
 
         if ($chars !== null) {
             $chars = trim($chars);
 
             if ($chars === '') {
-                throw new \ArgumentError('Empty chars given');
+                throw RandomException::forEmptyChars();
             }
         } else {
             $chars = strcut(BASE62_ALPHABET, $base);
@@ -164,12 +164,12 @@ class Random
      * @param  bool        $hex
      * @param  string|null $algo
      * @return string|array
-     * @throws ArgumentError
+     * @throws froq\util\random\RandomException
      */
     public function nextBytes(int $length, bool $hex = false, string $algo = null): string|array
     {
         if ($length < 1) {
-            throw new \ArgumentError('Invalid length %s [min=1]', $length);
+            throw new RandomException('Invalid length %s [min=1]', $length);
         }
 
         $ret = random_bytes($length);

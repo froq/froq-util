@@ -65,7 +65,7 @@ abstract class AbstractRandomNumber extends AbstractRandom implements \Stringabl
      *
      * @param  int|float $data
      * @return void
-     * @throws ArgumentError
+     * @throws froq\util\random\RandomException
      */
     abstract protected function passData(int|float $data): void;
 }

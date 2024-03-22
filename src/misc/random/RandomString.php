@@ -95,7 +95,7 @@ class RandomString extends AbstractRandomString implements Stringable
     protected function passData(string $data): void
     {
         if ($data === '') {
-            throw new \ArgumentError('Empty data given');
+            throw new RandomException('Empty data given');
         }
 
         parent::__construct($data);

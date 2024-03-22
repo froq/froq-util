@@ -58,7 +58,7 @@ abstract class AbstractRandomString extends AbstractRandom implements \Stringabl
      *
      * @param  string $data
      * @return void
-     * @throws ArgumentError
+     * @throws froq\util\random\RandomException
      */
     abstract protected function passData(string $data): void;
 }
