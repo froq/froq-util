@@ -13,9 +13,9 @@ require __DIR__ . '/sugars-function.php';
 /**
  * Sugar loader.
  */
-function sugar(string|array $name): void
+function sugar(string ...$names): void
 {
-    Util::loadSugar($name);
+    Util::loadSugar(...$names);
 }
 
 /**

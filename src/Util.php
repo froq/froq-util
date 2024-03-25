@@ -21,22 +21,18 @@ final /* fuckic static */ class Util extends \StaticClass
     /**
      * Load sugar(s).
      *
-     * @param  string|array<string> $name
+     * @param  string    $name
+     * @param  string ...$names
      * @return void
      * @throws froq\util\UtilException
      */
-    public static function loadSugar(string|array $name): void
+    public static function loadSugar(string $name, string ...$names): void
     {
-        // List of names.
-        if (is_array($name)) {
-            foreach ($name as $nam) {
-                self::loadSugar($nam);
-            }
-        } else {
+        foreach ([$name, ...$names] as $name) {
             $file = sprintf(__DIR__ . '/sugars/%s.php', $name);
-            if (file_exists($file)) {
+            if (is_file($file)) {
                 require_once $file;
-                return;
+                continue;
             }
 
             // Not exists.
