@@ -80,12 +80,12 @@ class State extends PlainArrayObject
     }
 
     /**
-     * Reset (re-set) given states.
+     * Update given states.
      *
      * @param  mixed ...$states
      * @return self
      */
-    public function reset(mixed ...$states): self
+    public function update(mixed ...$states): self
     {
         // With no existence check.
         foreach ($this->prepare($states) as $name => $value) {
@@ -102,7 +102,7 @@ class State extends PlainArrayObject
      */
     public function clear(): void
     {
-        foreach ($this as $name => $_) {
+        foreach ($this->getVarNames() as $name) {
             unset($this->$name);
         }
     }
@@ -114,7 +114,7 @@ class State extends PlainArrayObject
     {
         // When no named params given.
         if ($states && is_list($states)) {
-            $states = current($states);
+            $states = first($states);
         }
 
         return (array) $states;

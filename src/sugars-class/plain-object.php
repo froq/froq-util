@@ -39,16 +39,6 @@ class PlainObject extends stdClass implements Arrayable, Objectable, IteratorAgg
     }
 
     /**
-     * Get list of vars.
-     *
-     * @return array
-     */
-    public function getVars(): array
-    {
-        return array_values($this->toArray());
-    }
-
-    /**
      * Get list of var names.
      *
      * @return array
@@ -56,6 +46,16 @@ class PlainObject extends stdClass implements Arrayable, Objectable, IteratorAgg
     public function getVarNames(): array
     {
         return array_keys($this->toArray());
+    }
+
+    /**
+     * Get list of var values.
+     *
+     * @return array
+     */
+    public function getVarValues(): array
+    {
+        return array_values($this->toArray());
     }
 
     /**
