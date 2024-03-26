@@ -206,6 +206,37 @@ function file_remove(string $file): bool
 }
 
 /**
+ * Load a file, with normal include or output buffer.
+ *
+ * @param  string     $file
+ * @param  array|null $file_data To use in included file.
+ * @param  bool       $ob        To Use Output Buffer or not.
+ * @return mixed
+ */
+function file_load(string $file, array $file_data = null, bool $ob = false): mixed
+{
+    if (!$file = get_real_path($ofile = $file, check: true)) {
+        trigger_error(format('%s(%s): No such file', __FUNCTION__, $ofile));
+        return null;
+    }
+
+    if (is_dir($file)) {
+        trigger_error(format('%s(%s): Cannot load file: Is a directory', __FUNCTION__, $file));
+        return null;
+    }
+
+    extract($file_data ?? []);
+
+    if (!$ob) {
+        return include $file;
+    }
+
+    ob_start();
+    include $file;
+    return ob_get_clean();
+}
+
+/**
  * Read a file.
  *
  * @alias file_get_contents()
