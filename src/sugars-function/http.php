@@ -636,3 +636,22 @@ function build_url(array $data): string
 {
     return http_build_url($data);
 }
+
+/**
+ * Polyfill.
+ * @thanks https://github.com/ralouphie/getallheaders/blob/develop/src/getallheaders.php
+ */
+if (!function_exists('getallheaders')) {
+    function getallheaders() {
+        $ret = [];
+
+        foreach ($_SERVER as $name => $value) {
+            if (str_starts_with((string) $name, 'HTTP_')) {
+                $name = convert_case(substr($name, 5), CASE_TITLE, '_', '-');
+                $ret[$name] = $value;
+            }
+        }
+
+        return $ret;
+    }
+}
