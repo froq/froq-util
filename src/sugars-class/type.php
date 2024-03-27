@@ -213,6 +213,16 @@ class Type implements Stringable
     }
 
     /**
+     * Closure check.
+     *
+     * @return bool
+     */
+    public function isClosure(): bool
+    {
+        return is_closure($this->var);
+    }
+
+    /**
      * Primitive check.
      *
      * @return bool
@@ -242,16 +252,6 @@ class Type implements Stringable
     public function isStringable(bool &$native = null): bool
     {
         return is_stringable($this->var, $native);
-    }
-
-    /**
-     * Closure check.
-     *
-     * @return bool
-     */
-    public function isClosure(): bool
-    {
-        return ($this->var instanceof Closure);
     }
 
     /**

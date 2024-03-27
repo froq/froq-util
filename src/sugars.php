@@ -1859,6 +1859,17 @@ function is_stream(mixed $var): bool
 }
 
 /**
+ * Check if given input is a closure.
+ *
+ * @param  mixed $var
+ * @return bool
+ */
+function is_closure(mixed $var): bool
+{
+    return is_object($var) && ($var instanceof Closure);
+}
+
+/**
  * Check if given input is a primitive (int|float|string|bool|true|false & array|null).
  *
  * Note: true|false is scalar (no mentions yet on http://php.net/is_scalar).
