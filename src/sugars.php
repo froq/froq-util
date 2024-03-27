@@ -1943,7 +1943,7 @@ function is_type_of(mixed $var, string ...$types): bool
             'any', 'mixed' => true,
 
             // Sugar checkers.
-            'list', 'number', 'stream', 'primitive', 'true', 'false',
+            'list', 'number', 'stream', 'closure', 'primitive', 'true', 'false',
                 => ('is_' . $type)($var),
 
             // Primitive & internal checkers.
