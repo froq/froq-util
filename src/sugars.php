@@ -974,11 +974,14 @@ function get_random_id(int $length = 16, int $base = 16, bool $upper = false): s
  */
 function get_request_id(): string
 {
-    $parts   = explode('.', utime(true) .'.'. ip2long($_SERVER['SERVER_ADDR'] ?? ''));
+    $parts = explode('.', utime(true) .'.'. ip2long(
+        $_SERVER['SERVER_ADDR'] ?? gethostbyname(gethostname())
+    ));
+
     $parts[] = $_SERVER['SERVER_PORT'] ?? 0;
     $parts[] = $_SERVER['REMOTE_PORT'] ?? 0;
 
-    return join('-', map($parts, fn($p): string => dechex((int) $p)));
+    return implode('-', map($parts, fn($p): string => dechex((int) $p)));
 }
 
 /**
