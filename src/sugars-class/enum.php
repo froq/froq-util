@@ -12,7 +12,7 @@
  * @author  Kerem Güneş
  * @since   7.14
  */
-class Enum
+class Enum implements Stringable
 {
     /**
      * Constant cache.
@@ -31,22 +31,24 @@ class Enum
      * @param  bool                       $check
      * @throws EnumError
      */
-    public function __construct(string|null $name, int|float|string|bool|null $value, bool $check = true)
+    public function __construct(string|null $name, int|float|string|bool|null $value = null, bool $check = false)
     {
-        // Just a trap.
-        if ($name === null) {
-            throw new EnumError('Null name given');
+        $name || throw new EnumError('Empty/null name given');
+
+        // Auto-detect value from given name.
+        if (func_num_args() === 1 && self::hasName($name)) {
+            $value = self::valueOf($name);
         }
 
         if ($check) {
             if (!self::hasName($name)) {
                 throw new EnumError(format('Undefined name %q', $name));
             } elseif (self::valueOf($name) !== $value) {
-                [$spec, $repl] = is_null($value) ? ['%s', 'null'] : (
-                    is_bool($value) ? ['%b', $value] : ['%q', $value]
+                throw new EnumError(
+                    ($value === null)
+                        ? format('Undefined name %q for value null', $name)
+                        : format('Undefined name %q for value %s', $name, new EnumUnit($name, $value))
                 );
-
-                throw new EnumError(format('Undefined name %q for value ' . $spec, $name, $repl));
             }
         }
 
@@ -54,8 +56,14 @@ class Enum
     }
 
     /**
-     * Accessor for unit properties.
-     *
+     * @magic
+     */
+    public function __toString()
+    {
+        return $this->unit->__toString();
+    }
+
+    /**
      * @throws EnumError
      * @magic
      */
@@ -65,8 +73,7 @@ class Enum
             'name'  => $this->unit->name,
             'value' => $this->unit->value,
             default => throw new EnumError(format(
-                'Undefined property %s::$%s',
-                get_class_name(static::class, escape: true), $name
+                'Undefined property %S::$%s', static::class, $name
             ))
         };
     }
@@ -254,11 +261,27 @@ class Enum
  * @author  Kerem Güneş
  * @since   7.14
  */
-class EnumUnit
+class EnumUnit implements Stringable
 {
+    /**
+     * @constructor
+     */
     public function __construct(
         public readonly string $name,
-        public readonly int|float|string|bool|null $value,
+        public readonly int|float|string|bool|null $value
     )
     {}
+
+    /**
+     * @magic
+     */
+    public function __toString(): string
+    {
+        return match (true) {
+            is_string($this->value) => $this->value,
+            is_number($this->value) => format_number($this->value, true, '.', ''),
+            is_bool($this->value)   => format_bool($this->value, false),
+            default                 => '', // Null.
+        };
+    }
 }
