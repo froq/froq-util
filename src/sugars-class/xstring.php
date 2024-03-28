@@ -28,7 +28,7 @@ class XString implements \Stringable, Stringable, Arrayable, Lengthable, Iterato
      * @param string|Stringable $data
      * @param string|null       $encoding
      */
-    public function __construct(string|Stringable $data = '', string|null $encoding = '')
+    public function __construct(string|\Stringable $data = '', string|null $encoding = '')
     {
         // Allow null (for internal encoding).
         if ($encoding !== '') $this->encoding = $encoding;
@@ -2032,7 +2032,7 @@ class XString implements \Stringable, Stringable, Arrayable, Lengthable, Iterato
      * @param  string|null       $encoding
      * @return static
      */
-    public static function from(string|Stringable $data, string|null $encoding = ''): static
+    public static function from(string|\Stringable $data, string|null $encoding = ''): static
     {
         return new static($data, $encoding);
     }
@@ -2091,7 +2091,7 @@ class XString implements \Stringable, Stringable, Arrayable, Lengthable, Iterato
  * @param  string|null       $encoding
  * @return XString
  */
-function xstring(string|Stringable $data = '', string|null $encoding = ''): XString
+function xstring(string|\Stringable $data = '', string|null $encoding = ''): XString
 {
     return new XString($data, $encoding);
 }
