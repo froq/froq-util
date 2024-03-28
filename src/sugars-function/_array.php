@@ -308,6 +308,24 @@ function array_split(array $array, int $length, bool $keep_keys = false): array
 }
 
 /**
+ * @alias Arrays.divide()
+ * @since 7.0
+ */
+function array_divide(array $array, int|string $offset): array
+{
+    return Arrays::divide($array, $offset);
+}
+
+/**
+ * @alias Arrays.insert()
+ * @since 7.0
+ */
+function array_insert(array $array, int|string $offset, array $entry): array
+{
+    return Arrays::insert($array, $offset, $entry);
+}
+
+/**
  * @alias Arrays.flat()
  * @since 4.0, 6.0
  */

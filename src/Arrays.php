@@ -769,6 +769,59 @@ final class Arrays extends \StaticClass
     }
 
     /**
+     * Divide an array as 2 parts by given offset.
+     *
+     * @param  array      $array
+     * @param  int|string $offset
+     * @return array
+     */
+    public static function divide(array $array, int|string $offset): array
+    {
+        if (!array_key_exists($offset, $array)) {
+            return [$array, []];
+        }
+
+        $left = $right = []; $found = null;
+
+        foreach ($array as $key => $value) {
+            if ($found === null) {
+                $left[$key] = $value;
+            } else {
+                $right[$key] = $value;
+            }
+
+            $found = $key === $offset;
+        }
+
+        if (array_is_list($array)) {
+            $left = array_values($left);
+            $right = array_values($right);
+        }
+
+        return [$left, $right];
+    }
+
+    /**
+     * Insert an entry or entries ito given array after given offset.
+     *
+     * @param  array      $array
+     * @param  int|string $offset
+     * @param  array      $entry
+     * @return array
+     */
+    public static function insert(array $array, int|string $offset, array $entry): array
+    {
+        [$left, $right] = self::divide($array, $offset);
+
+        if (array_is_list($array) || array_is_list($entry)) {
+            array_push($left, ...array_values($entry));
+            return array_merge($left, $right);
+        }
+
+        return array_replace($left, $entry) + $right;
+    }
+
+    /**
      * Flat given array.
      *
      * @param  array $array
