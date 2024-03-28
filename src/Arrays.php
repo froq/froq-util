@@ -784,13 +784,13 @@ final class Arrays extends \StaticClass
         $left = $right = []; $found = null;
 
         foreach ($array as $key => $value) {
-            if ($found === null) {
+            if (!$found) {
                 $left[$key] = $value;
             } else {
                 $right[$key] = $value;
             }
 
-            $found = $key === $offset;
+            $found = $found || $key === $offset;
         }
 
         if (array_is_list($array)) {
