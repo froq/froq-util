@@ -1184,7 +1184,7 @@ class XString implements \Stringable, Stringable, Arrayable, Lengthable, Iterato
     }
 
     /**
-     * Find a possible match.
+     * Grep.
      *
      * @param  string|RegExp $pattern
      * @param  bool          $named
@@ -1201,7 +1201,7 @@ class XString implements \Stringable, Stringable, Arrayable, Lengthable, Iterato
     }
 
     /**
-     * Find all possible matches.
+     * Grep all.
      *
      * @param  string|RegExp $pattern
      * @param  bool          $named
@@ -1216,6 +1216,43 @@ class XString implements \Stringable, Stringable, Arrayable, Lengthable, Iterato
         }
 
         return $pattern->grepAll($this->data, $named, $uniform, $class);
+    }
+
+    /**
+     * X-Grep all.
+     *
+     * @param  string|RegExp $pattern
+     * @param  bool          $named
+     * @return XString|XArray|null
+     */
+    public function xgrep(string|RegExp $pattern, bool $named = false): XString|XArray|null
+    {
+        $ret = $this->grep($pattern, $named);
+
+        return match (true) {
+            is_string($ret) => new XString($ret),
+            is_array($ret)  => new XArray($ret),
+            default         => null
+        };
+    }
+
+    /**
+     * X-Grep all.
+     *
+     * @param  string|RegExp $pattern
+     * @param  bool          $named
+     * @param  bool          $uniform
+     * @return XString|XArray|null
+     */
+    public function xgrepAll(string|RegExp $pattern, bool $named = false, bool $uniform = false): XString|XArray|null
+    {
+        $ret = $this->grepAll($pattern, $named, $uniform);
+
+        return match (true) {
+            is_string($ret) => new XString($ret),
+            is_array($ret)  => new XArray($ret),
+            default         => null
+        };
     }
 
     /**

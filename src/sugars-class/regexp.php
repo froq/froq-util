@@ -396,7 +396,7 @@ class RegExp implements Stringable
     }
 
     /**
-     * Find a possible match.
+     * Grep.
      *
      * @param  string      $input
      * @param  bool        $named
@@ -417,7 +417,7 @@ class RegExp implements Stringable
     }
 
     /**
-     * Find all possible matches.
+     * Grep all.
      *
      * @param  string      $input
      * @param  bool        $named
