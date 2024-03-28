@@ -275,6 +275,33 @@ class XArray implements Arrayable, Listable, Jsonable, Iteratable, IteratableRev
     }
 
     /**
+     * Divide.
+     *
+     * @param  int|string $offset
+     * @return self
+     */
+    public function divide(int|string $offset): self
+    {
+        $this->data = array_divide($this->data, $offset);
+
+        return $this;
+    }
+
+    /**
+     * Insert.
+     *
+     * @param  int|string $offset
+     * @param  array      $entry
+     * @return self
+     */
+    public function insert(int|string $offset, array $entry): self
+    {
+        $this->data = array_insert($this->data, $offset, $entry);
+
+        return $this;
+    }
+
+    /**
      * Update self data by given data.
      *
      * @param  iterable $data
