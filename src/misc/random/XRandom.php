@@ -132,11 +132,11 @@ class XRandom
     /**
      * Pick array keys.
      *
-     * @param  int   $count
      * @param  array $array
+     * @param  int   $count
      * @return array
      */
-    public function pickArrayKeys(int $count, array $array): array
+    public function pickArrayKeys(array $array, int $count): array
     {
         if (!$array) return [];
 
@@ -146,11 +146,11 @@ class XRandom
     /**
      * Pick array values.
      *
-     * @param  int   $count
      * @param  array $array
+     * @param  int   $count
      * @return array
      */
-    public function pickArrayValues(int $count, array $array): array
+    public function pickArrayValues(array $array, int $count): array
     {
         if (!$array) return [];
 
