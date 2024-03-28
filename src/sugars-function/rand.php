@@ -83,6 +83,29 @@ function random_range(int $length, int|float $min = null, int|float $max = null,
 }
 
 /**
+ * Generate a random hash string by given length.
+ *
+ * @param  int    $length
+ * @param  string $algo
+ * @param  bool   $upper
+ * @return string
+ */
+function random_hash(int $length, string $algo = 'md5', bool $upper = false): string
+{
+    try {
+        $ret = huid($length, $algo);
+    } catch (Throwable $e) {
+        throw new ArgumentError($e);
+    }
+
+    if ($upper) {
+        $ret = strtoupper($ret);
+    }
+
+    return $ret;
+}
+
+/**
  * Generate a random char string by given length.
  *
  * @param  int  $length
@@ -93,7 +116,7 @@ function random_range(int $length, int|float $min = null, int|float $max = null,
 function random_chars(int $length, int $base = 62, bool $upper = false): string
 {
     try {
-        $ret = suid($length, base: $base);
+        $ret = suid($length, $base);
     } catch (Throwable $e) {
         throw new ArgumentError($e);
     }
@@ -116,7 +139,7 @@ function random_chars(int $length, int $base = 62, bool $upper = false): string
 function random_digits(int $length, bool $hex = false, bool $upper = false): string
 {
     try {
-        $ret = suid($length, base: $hex ? 16 : 10);
+        $ret = suid($length, $hex ? 16 : 10);
     } catch (Throwable $e) {
         throw new ArgumentError($e);
     }
@@ -152,7 +175,7 @@ function random_xdigits(int $length, bool $upper = false): string
 function random_xint(int $min = null, int $max = null, bool $big = true): int
 {
     $min ??= 0;
-    $max ??= $big ? PHP_INT_MAX : getrandmax();
+    $max ??= $big ? INT_MAX_64 : INT_MAX_32;
 
     if ($min > $max) {
         throw new ArgumentError('Argument $min must be less than $max');
