@@ -33,12 +33,17 @@ function response(mixed ...$args): Response
     $response = app()->response;
 
     if ($args) {
-        @[$code, $content, $attributes, $headers, $cookies] = $args;
+        [$code, $content, $attributes] = pad($args, 3);
 
         $code && $response->setStatus($code);
 
+        $headers = $cookies = null;
+
         if (count($args) >= 3) {
             $response->setBody($content, $attributes);
+
+            $headers = $args[3] ?? null;
+            $cookies = $args[4] ?? null;
         }
 
         $headers && $response->setHeaders($headers);
