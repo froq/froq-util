@@ -969,6 +969,8 @@ function get_random_id(int $length = 16, int $base = 16, bool $upper = false): s
 /**
  * Get request id.
  *
+ * Format: seconds - microseconds, server ip - server port - remote port.
+ *
  * @return string
  * @since  4.0
  */
@@ -981,7 +983,7 @@ function get_request_id(): string
     $parts[] = $_SERVER['SERVER_PORT'] ?? 0;
     $parts[] = $_SERVER['REMOTE_PORT'] ?? 0;
 
-    return implode('-', map($parts, fn($p): string => dechex((int) $p)));
+    return vsprintf('%x-%x-%x-%x-%x', $parts);
 }
 
 /**
