@@ -113,13 +113,15 @@ function each(array $array, callable $func, mixed ...$funcArgs): void
  * @param  bool                       $use_keys
  * @param  bool                       $keep_keys
  * @param  bool|null                  $list Alias of $keep_keys.
+ * @param  bool                       $key  Filter keys directive.
  * @return array
  * @since  3.0, 5.0
  */
-function filter(array $array, callable|string|array $func = null, bool $recursive = false, bool $use_keys = false, bool $keep_keys = true,
-    bool $list = null): array
+function filter(array $array, callable|string|array $func = null, bool $recursive = false, bool $use_keys = false, bool $keep_keys = true, bool $list = null, bool $key = false): array
 {
-    return Arrays::filter($array, $func, $recursive, $use_keys, ($list ? false : $keep_keys));
+    return $key // Filter keys.
+         ? Arrays::filterKeys($array, $func, $recursive)
+         : Arrays::filter($array, $func, $recursive, $use_keys, ($list ? false : $keep_keys));
 }
 
 /**
@@ -131,13 +133,16 @@ function filter(array $array, callable|string|array $func = null, bool $recursiv
  * @param  bool                  $use_keys
  * @param  bool                  $keep_keys
  * @param  bool|null             $list Alias of $keep_keys.
+ * @param  bool                  $key  Map keys directive.
  * @return array
  * @since  3.0, 5.0
  */
 function map(array $array, callable|string|array $func, bool $recursive = false, bool $use_keys = false, bool $keep_keys = true,
-    bool $list = null): array
+    bool $list = null, bool $key = false): array
 {
-    return Arrays::map($array, $func, $recursive, $use_keys, ($list ? false : $keep_keys));
+    return $key // Map keys.
+         ? Arrays::mapKeys($array, $func, $recursive)
+         : Arrays::map($array, $func, $recursive, $use_keys, ($list ? false : $keep_keys));
 }
 
 /**
@@ -146,13 +151,16 @@ function map(array $array, callable|string|array $func, bool $recursive = false,
  * @param  array         $array
  * @param  mixed         $carry
  * @param  callable|null $func
- * @param  bool          $right
+ * @param  bool          $right Reduce right directive.
+ * @param  bool          $key   Reduce keys directive.
  * @return mixed
  * @since  4.0, 5.0
  */
-function reduce(array $array, mixed $carry, callable $func = null, bool $right = false): mixed
+function reduce(array $array, mixed $carry, callable $func = null, bool $right = false, bool $key = false): mixed
 {
-    return Arrays::reduce($array, $carry, $func, $right);
+    return $key // Reduce keys.
+        ? Arrays::reduceKeys($array, $carry, $func, $right)
+        : Arrays::reduce($array, $carry, $func, $right);
 }
 
 /**
@@ -168,7 +176,7 @@ function reduce(array $array, mixed $carry, callable $func = null, bool $right =
  */
 function sorted(array $array, callable|int $func = null, int $flags = 0, bool $assoc = null, bool $key = false): array
 {
-    return $key // Key sort.
+    return $key // Sort keys.
          ? Arrays::sortKey($array, $func, $flags)
          : Arrays::sort($array, $func, $flags, $assoc);
 }
