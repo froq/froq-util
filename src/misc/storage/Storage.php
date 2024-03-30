@@ -26,10 +26,10 @@ class Storage implements Arrayable, \Countable, \ArrayAccess, \IteratorAggregate
     use DataAccessMagicOffsetTrait;
 
     /** Instance ID. */
-    private string $id;
+    protected string $id;
 
     /** Storage data. */
-    private static array $data = [];
+    protected static array $data = [];
 
     /**
      * Constructor.

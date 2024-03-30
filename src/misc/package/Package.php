@@ -22,7 +22,7 @@ class Package implements Arrayable, \Countable, \ArrayAccess, \IteratorAggregate
     use DataAccessMagicTrait, DataAccessTrait;
 
     /** Package data. */
-    private array $data = [];
+    protected array $data = [];
 
     /**
      * Constructor.
