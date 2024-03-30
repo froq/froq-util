@@ -7,6 +7,7 @@ namespace froq\util\storage;
 
 use froq\common\interface\Arrayable;
 use froq\common\trait\DataAccessMagicOffsetTrait;
+use Iter, Traversable;
 
 /**
  * A class for storing data dynamically or statically, and can be used
@@ -20,7 +21,7 @@ use froq\common\trait\DataAccessMagicOffsetTrait;
  * @author  Kerem Güneş
  * @since   6.0
  */
-class Storage implements Arrayable, \Countable, \ArrayAccess
+class Storage implements Arrayable, \Countable, \ArrayAccess, \IteratorAggregate
 {
     use DataAccessMagicOffsetTrait;
 
@@ -125,6 +126,15 @@ class Storage implements Arrayable, \Countable, \ArrayAccess
     public function count(): int
     {
         return count(self::$data[$this->id]);
+    }
+
+    /**
+     * @inheritDoc IteratorAggregate
+     * @permissive
+     */
+    public function getIterator(): Iter|Traversable
+    {
+        return new Iter(self::$data[$this->id]);
     }
 
     /**

@@ -21,13 +21,13 @@ class Iter implements Arrayable, Listable, Jsonable, Countable, IteratorAggregat
     /**
      * Constructor.
      *
-     * @param iterable $iter
+     * @param iterable $data
      */
-    public function __construct(iterable $iter)
+    public function __construct(iterable $data)
     {
         // Since ArrayIterator methods are fast, such a getArrayCopy(), count() etc.,
         // we use it here to utilise (CachingIterator is slow, e.g. count()).
-        $this->iter = new ArrayIterator([...$iter]);
+        $this->iter = new ArrayIterator([...$data]);
     }
 
     /**
@@ -123,13 +123,13 @@ class Iter implements Arrayable, Listable, Jsonable, Countable, IteratorAggregat
     /**
      * Append items.
      *
-     * @param  mixed ...$values
+     * @param  mixed ...$items
      * @return self
      */
-    public function append(mixed ...$values): self
+    public function append(mixed ...$items): self
     {
-        foreach ($values as $value) {
-            $this->iter->append($value);
+        foreach ($items as $item) {
+            $this->iter->append($item);
         }
 
         return $this;
@@ -296,12 +296,12 @@ class Iter implements Arrayable, Listable, Jsonable, Countable, IteratorAggregat
     /**
      * Static constructor.
      *
-     * @param  mixed ...$values Map of named arguments.
+     * @param  mixed ...$data Map of named arguments.
      * @return static
      */
-    public static function of(mixed ...$values): static
+    public static function of(mixed ...$data): static
     {
-        return new static($values);
+        return new static($data);
     }
 
     /**

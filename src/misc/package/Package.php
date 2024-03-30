@@ -7,6 +7,7 @@ namespace froq\util\package;
 
 use froq\common\interface\Arrayable;
 use froq\common\trait\{DataAccessMagicTrait, DataAccessTrait};
+use Iter, Traversable;
 
 /**
  * A class for packaging stuff dynamically.
@@ -16,7 +17,7 @@ use froq\common\trait\{DataAccessMagicTrait, DataAccessTrait};
  * @author  Kerem Güneş
  * @since   6.0
  */
-class Package implements Arrayable, \Countable, \ArrayAccess
+class Package implements Arrayable, \Countable, \ArrayAccess, \IteratorAggregate
 {
     use DataAccessMagicTrait, DataAccessTrait;
 
@@ -96,5 +97,14 @@ class Package implements Arrayable, \Countable, \ArrayAccess
     public function count(): int
     {
         return count($this->data);
+    }
+
+    /**
+     * @inheritDoc IteratorAggregate
+     * @permissive
+     */
+    public function getIterator(): Iter|Traversable
+    {
+        return new Iter($this->data);
     }
 }
