@@ -364,10 +364,10 @@ trait MapSetTrait
     public function update(iterable $data, bool $merge = true): self
     {
         foreach ($data as $key => $value) {
-            // Handle current iterable fields to keep as original.
+            // @see XArray.update()
             if ($merge && is_iterable($value) && is_iterable($current = $this->get($key))) {
-                $value = static::from($current)->update($value);
-                $value = is_array($current) ? $value->array() : $value;
+                $value = static::from($current)->update($value, true);
+                $value = is_array($current) ? $value->data : $value;
                 unset($current);
             }
 

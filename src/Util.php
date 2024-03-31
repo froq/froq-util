@@ -39,8 +39,7 @@ final /* fuckic static */ class Util extends \StaticClass
             $names = xglob(__DIR__ . '/sugars/{*.php,extra/*.php}', GLOB_BRACE)
                 ->map(fn(string $file): string => (
                     strsrc($file, 'extra/') ? 'extra/' . filename($file) : filename($file)
-                ))
-                ->array();
+                ))->toArray();
 
             throw new UtilException('Invalid sugar name %q [valids: %A]', [$name, $names]);
         }
