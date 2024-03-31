@@ -531,7 +531,50 @@ class ItemList implements Arrayable, Jsonable, Countable, IteratorAggregate, Arr
     }
 
     /**
-     * Select items.
+     * Slice.
+     *
+     * @param  int      $start
+     * @param  int|null $end
+     * @return self
+     */
+    public function slice(int $start, int $end = null): self
+    {
+        $this->data = array_slice($this->data, $start, $end);
+
+        return $this;
+    }
+
+    /**
+     * Splice.
+     *
+     * @param  int         $start
+     * @param  int|null    $end
+     * @param  mixed|null  $replace
+     * @param  mixed|null &$replaced
+     * @return self
+     */
+    public function splice(int $start, int $end = null, mixed $replace = null, mixed &$replaced = null): self
+    {
+        $replaced = array_splice($this->data, $start, $end, $replace);
+
+        return $this;
+    }
+
+    /**
+     * Split.
+     *
+     * @param  int $length
+     * @return self
+     */
+    public function split(int $length): self
+    {
+        $this->data = array_split($this->data, $length, $keepKeys);
+
+        return $this;
+    }
+
+    /**
+     * Select.
      *
      * @param  int|array  $key
      * @param  mixed|null $default
