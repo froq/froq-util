@@ -118,10 +118,9 @@ class Runner
             $limit = last($args);
             if (is_int($limit)) {
                 array_pop($args);
+                $args['limit'] = $limit;
             }
         }
-
-        $args['limit'] = $limit ?? 1000;
 
         return (new self)->run(...$args);
     }
