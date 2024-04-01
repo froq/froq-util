@@ -264,13 +264,13 @@ function http_parse_cookie(string $cookie): array
 /**
  * Build cookie.
  *
- * @param  string      $name
- * @param  string|null $value
- * @param  array|null  $options
+ * @param  string          $name
+ * @param  string|int|null $value
+ * @param  array|null      $options
  * @return string
  * @since  4.0, 6.0
  */
-function http_build_cookie(string $name, string|null $value, array $options = null): string
+function http_build_cookie(string $name, string|int|null $value, array $options = null): string
 {
     $name = trim($name);
     if ($name === '') {
@@ -432,12 +432,12 @@ function http_parse_header(string $header, string|int $case = null, bool $verbos
  * Build header.
  *
  * @param  string          $name
- * @param  string|null     $value
+ * @param  string|int|null $value
  * @param  string|int|null $case
  * @return string
  * @since  6.0
  */
-function http_build_header(string $name, string|null $value, string|int $case = null): string
+function http_build_header(string $name, string|int|null $value, string|int $case = null): string
 {
     $name = trim($name);
     if ($name === '') {
