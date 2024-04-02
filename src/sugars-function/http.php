@@ -288,7 +288,7 @@ function http_build_cookie(string $name, string|int|null $value, array $options 
     if ($value === '' || $value === null || $options['expires'] < 0) {
         $cookie .= sprintf('n/a; Expires=%s', http_date(0));
     } else {
-        $cookie .= rawurlencode($value);
+        $cookie .= rawurlencode((string) $value);
 
         // Must be given in-seconds format.
         if (isset($options['expires'])) {
