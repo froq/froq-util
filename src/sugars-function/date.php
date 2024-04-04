@@ -30,6 +30,18 @@ function datetime(string|int|float $when = null, string $where = null): DateTime
 }
 
 /**
+ * Get current Unix timestamp with milliseconds.
+ *
+ * @param  bool $string
+ * @return int
+ * @since  7.0
+ */
+function millitime(): int
+{
+    return intval(microtime(true) * 1000);
+}
+
+/**
  * Get current Unix timestamp with microseconds as float or string.
  *
  * @param  bool $string
@@ -52,7 +64,7 @@ function utime(bool $string = false): float|string
  */
 function ustime(bool $string = false): int|string
 {
-    $time = intval(microtime(true) * 1000);
+    $time = millitime();
 
     return !$string ? $time : sprintf('%-013s', $time);
 }
