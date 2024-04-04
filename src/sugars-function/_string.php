@@ -523,7 +523,10 @@ function str_upper(string $string, bool $tr = false, string|bool $encoding = nul
     }
 
     // Damageable Turkish characters.
-    $tr && $string = str_replace(['ı', 'i'], ['I', 'İ'], $string);
+    if ($tr) {
+        $string = str_replace(['ı', 'i'], ['I', 'İ'], $string);
+        $encoding = ENCODING;
+    }
 
     return $encoding ? mb_strtoupper($string, $encoding !== true ? $encoding : null) : strtoupper($string);
 }
@@ -544,7 +547,10 @@ function str_lower(string $string, bool $tr = false, string|bool $encoding = nul
     }
 
     // Damageable Turkish characters.
-    $tr && $string = str_replace(['I', 'İ'], ['ı', 'i'], $string);
+    if ($tr) {
+        $string = str_replace(['I', 'İ'], ['ı', 'i'], $string);
+        $encoding = ENCODING;
+    }
 
     return $encoding ? mb_strtolower($string, $encoding !== true ? $encoding : null) : strtolower($string);
 }
@@ -610,8 +616,11 @@ function mb_ucfirst(string $string, bool $tr = false, string $encoding = null): 
     }
 
     $first = mb_substr($string, 0, 1, $encoding);
-    if ($tr && $first === 'i') {
-        $first = 'İ';
+    if ($tr) {
+        $encoding = ENCODING;
+        if ($first === 'i') {
+            $first = 'İ';
+        }
     }
 
     return mb_strtoupper($first, $encoding) . mb_substr($string, 1, null, $encoding);
@@ -633,8 +642,11 @@ function mb_lcfirst(string $string, bool $tr = false, string $encoding = null): 
     }
 
     $first = mb_substr($string, 0, 1, $encoding);
-    if ($tr && $first === 'I') {
-        $first = 'ı';
+    if ($tr) {
+        $encoding = ENCODING;
+        if ($first === 'I') {
+            $first = 'ı';
+        }
     }
 
     return mb_strtolower($first, $encoding) . mb_substr($string, 1, null, $encoding);
