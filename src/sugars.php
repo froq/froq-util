@@ -378,15 +378,18 @@ function strip(mixed $input, string $characters = ''): string|array
 /**
  * Replacer for strings and arrays.
  *
- * @param  string|array $input
- * @param  string|array $search
- * @param  string|array $replace
- * @param  bool         $icase
+ * @param  string|array        $input
+ * @param  string|array|RegExp $search
+ * @param  string|array        $replace
+ * @param  bool                $icase
  * @return string|array
  * @since  3.0, 6.0
  */
-function replace(string|array $input, string|array $search, string|array $replace, bool $icase = false): string|array
+function replace(string|array $input, string|array|RegExp $search, string|array $replace, bool $icase = false): string|array
 {
+    if ($search instanceof RegExp) {
+        return preg_replace($search->pattern, $replace, $input);
+    }
     return $icase ? str_ireplace($search, $replace, $input) : str_replace($search, $replace, $input);
 }
 
