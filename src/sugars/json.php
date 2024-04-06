@@ -56,5 +56,5 @@ function is_json_object($input) {
     return Json::isObject($input);
 }
 function is_json_struct($input) {
-    return Json::isValidStruct($input);
+    return Json::isStruct($input);
 }
