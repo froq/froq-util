@@ -349,21 +349,33 @@ class ItemList implements Arrayable, Jsonable, Countable, IteratorAggregate, Arr
     /**
      * Get an item.
      *
-     * @param  int $index
+     * @param  int|callable $offset
      * @return mixed
      */
-    public function item(int $index): mixed
+    public function item(int|callable $offset): mixed
     {
-        return $this->data[$index] ?? null;
+        if (is_callable($offset)) {
+            return array_find($this->data, $offset);
+        }
+
+        return $this->data[$offset] ?? null;
     }
 
     /**
      * Get all items.
      *
+     * @param  array|callable|null $offsets
      * @return array
      */
-    public function items(): array
+    public function items(array|callable $offsets = null): array
     {
+        if (is_array($offsets)) {
+            return array_select($this->data, $offsets);
+        }
+        if (is_callable($offsets)) {
+            return array_find_all($this->data, $offsets);
+        }
+
         return $this->data;
     }
 
