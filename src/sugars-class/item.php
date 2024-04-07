@@ -4,7 +4,7 @@
  * Apache License 2.0 · http://github.com/froq/froq-util
  */
 use froq\common\interface\{Arrayable, Jsonable};
-use froq\collection\trait\{CountTrait, EmptyTrait, EachTrait, KeysValuesTrait, FirstLastTrait, FindTrait,
+use froq\collection\trait\{CountTrait, EmptyTrait, EachTrait, KeysValuesTrait, FirstLastTrait,
     ToArrayTrait, ToJsonTrait};
 
 /**
@@ -17,7 +17,7 @@ use froq\collection\trait\{CountTrait, EmptyTrait, EachTrait, KeysValuesTrait, F
  */
 class Item implements Arrayable, Jsonable, Countable, IteratorAggregate, ArrayAccess
 {
-    use CountTrait, EmptyTrait, EachTrait, KeysValuesTrait, FirstLastTrait, FindTrait, ToArrayTrait, ToJsonTrait;
+    use CountTrait, EmptyTrait, EachTrait, KeysValuesTrait, FirstLastTrait, ToArrayTrait, ToJsonTrait;
 
     /** Data map. */
     private array $data = [];
@@ -317,7 +317,7 @@ class Item implements Arrayable, Jsonable, Countable, IteratorAggregate, ArrayAc
  */
 class ItemList implements Arrayable, Jsonable, Countable, IteratorAggregate, ArrayAccess
 {
-    use CountTrait, EmptyTrait, EachTrait, KeysValuesTrait, FirstLastTrait, FindTrait, ToArrayTrait, ToJsonTrait;
+    use CountTrait, EmptyTrait, EachTrait, KeysValuesTrait, FirstLastTrait, ToArrayTrait, ToJsonTrait;
 
     /** Items list. */
     private array $data = [];
