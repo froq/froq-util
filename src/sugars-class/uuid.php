@@ -62,41 +62,25 @@ class Uuid implements Stringable, \Stringable
     /**
      * Get this Uuid value.
      *
+     * @param  int|null $base
      * @return string
      */
-    public function toString(): string
+    public function toString(int $base = null): string
     {
-        return $this->value;
+        return ($base === null) ? $this->value
+             : convert_base($this->toHashString(), 16, $base);
     }
 
     /**
      * Get this Uuid value as dash-freed.
      *
+     * @param  string|null $algo
      * @return string
      */
-    public function toHashString(): string
+    public function toHashString(string $algo = null): string
     {
-        return str_remove($this->value, '-');
-    }
-
-    /**
-     * Get this Uuid value as upper-cased.
-     *
-     * @return string
-     */
-    public function toUpperString(): string
-    {
-        return str_upper($this->value);
-    }
-
-    /**
-     * Get this Uuid value as upper-cased & dash-freed.
-     *
-     * @return string
-     */
-    public function toUpperHashString(): string
-    {
-        return str_upper(str_remove($this->value, '-'));
+        return ($algo === null) ? str_remove($this->value, '-')
+             : hash($algo, str_remove($this->value, ''));
     }
 
     /**
@@ -111,7 +95,7 @@ class Uuid implements Stringable, \Stringable
      */
     public function toShortString(string|true $pad = null): string
     {
-        $ret = convert_base($this->toHashString(), 16, 62);
+        $ret = $this->toString(62);
 
         if ($pad !== null) {
             $pad = ($pad === true) ? '0' : $pad;

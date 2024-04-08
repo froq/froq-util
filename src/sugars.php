@@ -522,6 +522,9 @@ function convert_base(int|string $input, int|string $from, int|string $to): stri
     if ($input === '') {
         return $input;
     }
+    if ($from === $to) {
+        return $input;
+    }
 
     // Try to use speed/power of GMP.
     if (is_int($from) && is_int($to) && extension_loaded('gmp')) {
@@ -554,10 +557,6 @@ function convert_base(int|string $input, int|string $from, int|string $to): stri
         }
 
         $to = strcut($characters, $to);
-    }
-
-    if ($from === $to) {
-        return $input;
     }
 
     [$input_length, $from_base_length, $to_base_length]
