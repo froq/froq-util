@@ -1353,12 +1353,17 @@ class XArray implements Arrayable, Listable, Jsonable, Iteratable, IteratableRev
      * Get items, optionally with keys.
      *
      * @param  array<int|string>|null $keys
+     * @param  callable|null          $map
      * @param  bool                   $combine
      * @return array
      */
-    public function all(array $keys = null, bool $combine = false): array
+    public function all(array $keys = null, callable $map = null, bool $combine = false): array
     {
         $items = $this->items($keys);
+
+        if ($map !== null) {
+            $items = array_map($map, $items);
+        }
 
         return $combine ? $items : array_values($items);
     }
