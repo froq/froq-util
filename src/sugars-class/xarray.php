@@ -1343,9 +1343,11 @@ class XArray implements Arrayable, Listable, Jsonable, Iteratable, IteratableRev
         }
 
         $items = [];
+
         foreach ($keys as $key) {
             $items[$key] = $this->get($key);
         }
+
         return $items;
     }
 
