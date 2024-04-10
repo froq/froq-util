@@ -255,6 +255,7 @@ trait MapSetTrait
      *
      * @param  int $length
      * @return self
+     * @since  7.0
      */
     public function cut(int $length): self
     {
