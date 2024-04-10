@@ -253,8 +253,7 @@ trait MapSetTrait
     /**
      * Cut.
      *
-     * @param  int  $length
-     * @param  bool $keepKeys
+     * @param  int $length
      * @return self
      */
     public function cut(int $length): self
