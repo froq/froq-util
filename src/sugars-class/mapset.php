@@ -251,6 +251,20 @@ trait MapSetTrait
     }
 
     /**
+     * Cut.
+     *
+     * @param  int  $length
+     * @param  bool $keepKeys
+     * @return self
+     */
+    public function cut(int $length): self
+    {
+        $this->data = array_slice($this->data, 0, $length, $this instanceof Map);
+
+        return $this;
+    }
+
+    /**
      * Chunk tool.
      *
      * @param  int $length

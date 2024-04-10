@@ -202,6 +202,20 @@ class XArray implements Arrayable, Listable, Jsonable, Iteratable, IteratableRev
     // Basic.
 
     /**
+     * Cut.
+     *
+     * @param  int  $length
+     * @param  bool $keepKeys
+     * @return self
+     */
+    public function cut(int $length, bool $keepKeys = false): self
+    {
+        $this->data = array_slice($this->data, 0, $length, $keepKeys);
+
+        return $this;
+    }
+
+    /**
      * Chunk.
      *
      * @param  int  $length
