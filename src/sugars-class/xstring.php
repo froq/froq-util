@@ -1468,7 +1468,7 @@ class XString implements \Stringable, Stringable, Arrayable, Lengthable, Iterato
         $decode && $this->htmlDecode();
 
         if ($allowed && is_string($allowed)) {
-            $allowed = Set::fromSplit($allowed, '\s*,\s*')
+            $allowed = Set::fromSplit('\s*,\s*', $allowed)
                 ->map(fn(string $tag): string => trim($tag, '<>'))
                 ->toArray();
         }
@@ -1490,7 +1490,7 @@ class XString implements \Stringable, Stringable, Arrayable, Lengthable, Iterato
         $decode && $this->htmlDecode();
 
         if ($allowed && is_string($allowed)) {
-            $allowed = Set::fromSplit($allowed, '\s*,\s*')
+            $allowed = Set::fromSplit('\s*,\s*', $allowed)
                 ->map(fn(string $tag): string => strtolower(trim($tag, '<>')))
                 ->toArray();
         }

@@ -1502,13 +1502,13 @@ class XArray implements Arrayable, Listable, Jsonable, Iteratable, IteratableRev
     /**
      * Static constructor from a string & split pattern.
      *
-     * @param  string   $string
      * @param  string   $pattern
+     * @param  string   $string
      * @param  int|null $limit
      * @param  int|null $flags
      * @return static
      */
-    public static function fromSplit(string $string, string $pattern, int $limit = null, int $flags = null): static
+    public static function fromSplit(string $pattern, string $string, int $limit = null, int $flags = null): static
     {
         return new static(split($pattern, $string, $limit, $flags));
     }
@@ -1623,7 +1623,7 @@ function xarray(mixed ...$data): XArray
  */
 function xsplit(string $pattern, string $string, int $limit = null, int $flags = null): XArray
 {
-    return XArray::fromSplit($string, $pattern, $limit, $flags);
+    return XArray::fromSplit($pattern, $string, $limit, $flags);
 }
 
 /**

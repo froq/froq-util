@@ -485,14 +485,14 @@ trait MapSetTrait
     /**
      * Static constructor from a string & split pattern.
      *
-     * @param  string   $string
      * @param  string   $pattern
+     * @param  string   $string
      * @param  int|null $limit
      * @param  int|null $flags
      * @return static
      * @since  6.0
      */
-    public static function fromSplit(string $string, string $pattern, int $limit = null, int $flags = null): static
+    public static function fromSplit(string $pattern, string $string, int $limit = null, int $flags = null): static
     {
         return new static(split($pattern, $string, $limit, $flags));
     }
