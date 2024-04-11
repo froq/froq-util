@@ -35,7 +35,7 @@ class XArray implements Arrayable, Listable, Jsonable, Iteratable, IteratableRev
      */
     public function __construct(iterable $data = [])
     {
-        $data && $this->data = [...$data];
+        $data && $this->data = iterator_to_array($data);
     }
 
     /**

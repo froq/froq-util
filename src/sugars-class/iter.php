@@ -27,7 +27,7 @@ class Iter implements Arrayable, Listable, Jsonable, Countable, IteratorAggregat
     {
         // Since ArrayIterator methods are fast, such a getArrayCopy(), count() etc.,
         // we use it here to utilise (CachingIterator is slow, e.g. count()).
-        $this->iter = new ArrayIterator([...$data]);
+        $this->iter = new ArrayIterator(iterator_to_array($data));
     }
 
     /**

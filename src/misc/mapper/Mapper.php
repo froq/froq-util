@@ -479,9 +479,9 @@ class Mapper
             case ($object instanceof Arrayable):
                 return $object->toArray();
             case ($object instanceof \Traversable):
-                return [...$object];
+                return iterator_to_array($object);
             case ($object instanceof \IteratorAggregate):
-                return [...$object->getIterator()];
+                return iterator_to_array($object->getIterator());
             case ($object instanceof \stdClass):
                 return get_object_vars($object);
             default:
@@ -659,7 +659,7 @@ class Mapper
             case is_array($value):
                 return $value;
             case is_iterable($value):
-                return [...$value];
+                return iterator_to_array($value);
             case ($value instanceof \stdClass):
                 return get_object_vars($value);
             default:

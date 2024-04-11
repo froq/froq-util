@@ -32,7 +32,7 @@ class PlainArray implements Arrayable, Jsonable, Countable, IteratorAggregate, A
      */
     public function __construct(iterable $data = [], bool $readOnly = null)
     {
-        $this->data = [...$data];
+        $this->data = iterator_to_array($data);
         $this->readOnly = $readOnly;
     }
 
