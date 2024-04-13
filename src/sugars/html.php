@@ -189,9 +189,10 @@ function html_compress(string $input): string
     // Remove comments.
     $input = preg_remove('~<!--(.*?)-->~sm', $input);
 
+    // @cancel: Corrupting irrelavant spaces.
     // Remove tag spaces (not inner spaces, eg: "Text <b>bold</b>").
-    $input = preg_replace('~<(\w[\w-]*)(.*?)>\s+~sm', '<\1\2>', $input);
-    $input = preg_replace('~\s*</(\w[\w-]*)>\s*~sm', '</\1>', $input);
+    // $input = preg_replace('~<(\w[\w-]*)(.*?)>\s+~sm', '<\1\2>', $input);
+    // $input = preg_replace('~\s*</(\w[\w-]*)>\s*~sm', '</\1>', $input);
 
     // Textarea "\n" problem.
     $textarea_templ = '%{textarea-' . time() . '}';
