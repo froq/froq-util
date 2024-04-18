@@ -126,17 +126,13 @@ class Random
         }
 
         if ($chars !== null) {
-            $chars = trim($chars);
-
-            if ($chars === '') {
-                throw RandomException::forEmptyChars();
-            }
+            $chars = trim($chars) ?: throw RandomException::forEmptyChars();
         } else {
             $chars = strcut(BASE62_ALPHABET, $base);
         }
 
-        $max = strlen($chars) - 1;
         $ret = '';
+        $max = strlen($chars) - 1;
 
         while ($length--) {
             $ret .= $chars[random_int(0, $max)];

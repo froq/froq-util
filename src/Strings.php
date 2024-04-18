@@ -287,8 +287,8 @@ final class Strings extends \StaticClass
         // Add punctuation characters.
         $puncted && $chars .= '!^+%&/\(){}[]<>=*?-_|$#.:,;~';
 
-        $max = strlen($chars) - 1;
         $ret = '';
+        $max = strlen($chars) - 1;
 
         while ($length--) {
             $ret .= $chars[random_int(0, $max)];
