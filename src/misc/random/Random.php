@@ -156,13 +156,13 @@ class Random
     /**
      * Get next bytes.
      *
-     * @param  int         $length
-     * @param  bool        $hex
-     * @param  string|null $algo
+     * @param  int             $length
+     * @param  bool            $hex
+     * @param  string|int|null $algo
      * @return string|array
      * @throws froq\util\random\RandomException
      */
-    public function nextBytes(int $length, bool $hex = false, string $algo = null): string|array
+    public function nextBytes(int $length, bool $hex = false, string|int $algo = null): string|array
     {
         if ($length < 1) {
             throw new RandomException('Invalid length %s [min=1]', $length);
@@ -173,7 +173,16 @@ class Random
         if ($hex) {
             $ret = bin2hex($ret);
         } elseif ($algo !== null) {
+            $base = null;
+            if (is_int($algo)) {
+                [$base, $algo] = [$algo, 'md5'];
+            }
+
             $ret = hash($algo, $ret);
+
+            if ($base && $base <> 16) {
+                $ret = convert_base($ret, 16, $base);
+            }
         }
 
         return $ret;

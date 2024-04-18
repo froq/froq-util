@@ -132,27 +132,27 @@ function end_session(): bool|null
 }
 
 /**
- * Generate a CSRF token for a form.
+ * Generate a CSRF token for a key.
  *
- * @param  string $form
- * @param  string $token
+ * @param  string     $key
+ * @param  string|int $algo
  * @return bool|null
  * @since  5.0
  */
-function generate_csrf_token(string $form): string|null
+function generate_csrf_token(string $key, string|int $algo = 'md5'): string|null
 {
-    return app()->session?->generateCsrfToken($form);
+    return app()->session?->generateCsrfToken($key, $algo);
 }
 
 /**
- * Validate a CSRF token for a form.
+ * Validate a CSRF token for a key.
  *
- * @param  string $form
+ * @param  string $key
  * @param  string $token
  * @return bool|null
  * @since  5.0
  */
-function validate_csrf_token(string $form, string $token): bool|null
+function validate_csrf_token(string $key, string $token): bool|null
 {
-    return app()->session?->validateCsrfToken($form, $token);
+    return app()->session?->validateCsrfToken($key, $token);
 }

@@ -299,12 +299,12 @@ class Uuid implements Stringable, \Stringable
     /**
      * Generate a random hash (using random_bytes() internally).
      *
-     * @param  int    $length Random bytes length.
-     * @param  string $algo
+     * @param  int        $length Random bytes length.
+     * @param  string|int $algo   Algo or base.
      * @return string
      * @throws UuidError
      */
-    public static function generateHash(int $length, string $algo = 'md5'): string
+    public static function generateHash(int $length, string|int $algo = 'md5'): string
     {
         try {
             return (new Random)->nextBytes($length, false, $algo);
