@@ -155,6 +155,7 @@ function html_selected(mixed $input1, mixed $input2, bool $strict = false): stri
  */
 function html_compress(string $input): string
 {
+    $input = trim($input);
     if ($input === '') {
         return '';
     }
@@ -195,21 +196,29 @@ function html_compress(string $input): string
     // $input = preg_replace('~\s*</(\w[\w-]*)>\s*~sm', '</\1>', $input);
 
     // Textarea "\n" problem.
-    $textarea_templ = '%{textarea-' . time() . '}';
-    $textarea_found = preg_match_all('~(<textarea(.*?)>.*?</textarea>)~sm', $input, $matches);
+    $reduce_spaces = fn($s) => preg_replace('~\s+~', ' ', $s);
 
-    if ($textarea_found) {
+    preg_match_all('~(<textarea(.*?)>(.*)?</textarea>)~sm', $input, $matches);
+
+    if ($matches) {
+        $temp = 'textarea@' . huid();
+
         foreach ($matches[0] as $match) {
-            $input = str_replace($match, $textarea_templ, $input);
+            $input = str_replace($match, $temp, $input);
         }
     }
 
-    // Reduce white spaces.
-    $input = preg_replace('~\s+~', ' ', $input);
+    $input = $reduce_spaces($input);
 
-    if ($textarea_found) {
-        foreach ($matches[0] as $match) {
-            $input = preg_replace("~{$textarea_templ}~", $match, $input, 1);
+    if ($matches) {
+        foreach ($matches[0] as $i => $_) {
+            $textarea = sprintf(
+                '<textarea%s>%s</textarea>',
+                $reduce_spaces($matches[2][$i]),
+                $matches[3][$i]
+            );
+
+            $input = preg_replace("~{$temp}~", $textarea, $input, 1);
         }
     }
 
