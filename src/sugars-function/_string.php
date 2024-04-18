@@ -202,6 +202,32 @@ function str_suffix(string $string, string $suffix): string
 }
 
 /**
+ * Ensure string not starts with given prefix, drop if not.
+ *
+ * @param  string $string
+ * @param  string $prefix
+ * @return string
+ * @since  7.11
+ */
+function str_unprefix(string $string, string $prefix): string
+{
+    return !str_starts_with($string, $prefix) ? $string : substr($string, strlen($prefix));
+}
+
+/**
+ * Ensure string not ends with given suffix, drop if not.
+ *
+ * @param  string $string
+ * @param  string $suffix
+ * @return string
+ * @since  7.11
+ */
+function str_unsuffix(string $string, string $suffix): string
+{
+    return !str_ends_with($string, $suffix) ? $string : substr($string, 0, -strlen($suffix));
+}
+
+/**
  * Test given string with given pattern.
  *
  * @param  string      $string
