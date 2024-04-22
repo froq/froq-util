@@ -2023,19 +2023,16 @@ final class Arrays extends \StaticClass
     private static function makeFilterFunction(callable|string|array|null $func, array $values = null, bool $multi = false): callable|array
     {
         if (!is_callable($func)) {
-            // Default filter values.
-            $values ??= [null, '', []];
-
-            static $tester;
-            $tester ??= fn($value): bool => !in_array($value, $values, true);
-
             if ($multi) {
                 if (is_string($func)) {
                     // Multiple functions given.
                     $func = explode('|', $func);
                 }
             } else {
-                $func = $tester;
+                // Default filter values.
+                $values ??= [null, '', []];
+
+                $func = fn($value): bool => !in_array($value, $values, true);
             }
         }
 
