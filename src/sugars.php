@@ -1695,11 +1695,11 @@ function suid(int $length = 6, int $base = 62): string
 /**
  * Generate a hashed UID.
  *
- * @param  int    $length Random bytes length.
- * @param  string $algo
+ * @param  int        $length Random bytes length.
+ * @param  string|int $algo   Algo or base.
  * @return string
  */
-function huid(int $length = 20, string $algo = 'md5'): string
+function huid(int $length = 20, string|int $algo = 'md5'): string
 {
     return Uuid::generateHash($length, $algo);
 }
