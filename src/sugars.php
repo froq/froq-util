@@ -190,7 +190,7 @@ function sorted(array $array, callable|int $func = null, int $flags = 0, bool $a
  */
 function size(mixed $var): int
 {
-    return Util::sizeOf($var);
+    return Util::size($var);
 }
 
 /**

@@ -203,16 +203,16 @@ final /* fuckic static */ class Util extends \StaticClass
     }
 
     /**
-     * Get size of given var.
+     * Get a var size.
      *
-     * Note: This methos must NOT be used for the related methods of interfaces below;
+     * Note: This method must NOT be used for the related methods of interfaces below;
      *
      * Stringable, froq\common\interface\{Lengthable, Sizable, Arrayable, Listable, Stringable}.
      *
      * @param  mixed $var
      * @return int
      */
-    public static function sizeOf(mixed $var): int
+    public static function size(mixed $var): int
     {
         // Speed up, a bit..
         if ($var === null || $var === '' || $var === []) {
@@ -249,8 +249,9 @@ final /* fuckic static */ class Util extends \StaticClass
                 if (is_object($var)) {
                     return count(get_object_vars($var));
                 }
-                return 0;
         }
+
+        return 0;
     }
 
     /**
