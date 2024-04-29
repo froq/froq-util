@@ -40,7 +40,6 @@ class Json extends StaticClass
             switch ($type) {
                 case self::ARRAY:
                     $data = (array) $data;
-                    $data = array_values($data); // Fix keys & use values.
                     break;
                 case self::OBJECT:
                     $data = (object) $data;
