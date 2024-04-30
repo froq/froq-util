@@ -179,7 +179,6 @@ class Random
             }
 
             $ret = hash($algo, $ret);
-
             if ($base && $base <> 16) {
                 $ret = convert_base($ret, 16, $base);
             }
