@@ -144,11 +144,11 @@ class Random
     /**
      * Get next byte.
      *
-     * @param  bool        $hex
-     * @param  string|null $algo
+     * @param  bool            $hex
+     * @param  string|int|null $algo
      * @return string
      */
-    public function nextByte(bool $hex = false, string $algo = null): string
+    public function nextByte(bool $hex = false, string|int $algo = null): string
     {
         return $this->nextBytes(1, $hex, $algo);
     }
