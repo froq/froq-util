@@ -211,7 +211,7 @@ function str_suffix(string $string, string $suffix): string
  */
 function str_unprefix(string $string, string $prefix): string
 {
-    return !str_starts_with($string, $prefix) ? $string : substr($string, strlen($prefix));
+    return str_starts_with($string, $prefix) ? mb_substr($string, mb_strlen($prefix)) : $string;
 }
 
 /**
@@ -224,7 +224,7 @@ function str_unprefix(string $string, string $prefix): string
  */
 function str_unsuffix(string $string, string $suffix): string
 {
-    return !str_ends_with($string, $suffix) ? $string : substr($string, 0, -strlen($suffix));
+    return str_ends_with($string, $suffix) ? mb_substr($string, 0, -mb_strlen($suffix)) : $string;
 }
 
 /**
