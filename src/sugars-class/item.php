@@ -204,6 +204,18 @@ class Item implements Arrayable, Jsonable, Countable, IteratorAggregate, ArrayAc
     }
 
     /**
+     * Aggregate.
+     *
+     * @param  callable   $func
+     * @param  array|null $carry
+     * @return array
+     */
+    public function aggregate(callable $func, array $carry = null): array
+    {
+        return aggregate($this->data, $func, $carry);
+    }
+
+    /**
      * Reverse.
      *
      * @return self
@@ -502,6 +514,18 @@ class ItemList implements Arrayable, Jsonable, Countable, IteratorAggregate, Arr
     public function reduce(mixed $carry, callable $func, bool $right = false): mixed
     {
         return reduce($this->data, $carry, $func, $right);
+    }
+
+    /**
+     * Aggregate.
+     *
+     * @param  callable   $func
+     * @param  array|null $carry
+     * @return array
+     */
+    public function aggregate(callable $func, array $carry = null): array
+    {
+        return aggregate($this->data, $func, $carry);
     }
 
     /**

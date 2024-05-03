@@ -164,6 +164,20 @@ function reduce(array $array, mixed $carry, callable $func = null, bool $right =
 }
 
 /**
+ * Aggregate an array.
+ *
+ * @param  array      $array
+ * @param  callable   $func
+ * @param  array|null $carry
+ * @return array
+ * @since  7.44
+ */
+function aggregate(array $array, callable $func, array $carry = null): array
+{
+    return Arrays::aggregate($array, $func, $carry);
+}
+
+/**
  * Sort an array values without modifying input array, or keys only.
  *
  * @param  array             $array
