@@ -149,10 +149,11 @@ function generate_csrf_token(string $key, string|int $algo = 'md5'): string|null
  *
  * @param  string $key
  * @param  string $token
+ * @param  bool   $drop
  * @return bool|null
  * @since  5.0
  */
-function validate_csrf_token(string $key, string $token): bool|null
+function validate_csrf_token(string $key, string $token, bool $drop = false): bool|null
 {
-    return app()->session?->validateCsrfToken($key, $token);
+    return app()->session?->validateCsrfToken($key, $token, $drop);
 }
