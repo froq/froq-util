@@ -161,31 +161,28 @@ function html_compress(string $input): string
     }
 
     // Styles.
-    if (str_contains($input, '<style>')) {
-        $input = preg_replace_callback('~<style>(.*?)</style>~sm', function ($match) {
-            $content = $match[1];
+    $input = preg_replace_callback('~<style(.*?)>(.*?)</style>~sm', function ($match) {
+        $content = trim($match[2]);
 
-            // Remove doc comments.
-            $content = preg_remove('~(?<![\'"])/\*(.*?)\*/~sm', $content);
+        // Remove doc comments.
+        $content = preg_remove('~(?<![\'"])/\*(.*?)\*/~sm', $content);
 
-            return '<style>' . trim($content) . '</style>';
-        }, $input);
-    }
+        return '<style>' . trim($content) . '</style>';
+        return sprintf('<style%s>%s</style>', $match[1], trim($content));
+    }, $input);
 
     // Scripts.
-    if (str_contains($input, '<script>')) {
-        $input = preg_replace_callback('~(<script>(.*?)</script>)~sm', function ($match) {
-            $content = trim($match[2]);
+    $input = preg_replace_callback('~<script(.*?)>(.*?)</script>~sm', function ($match) {
+        $content = trim($match[2]);
 
-            // Remove doc comments.
-            $content = preg_remove('~(?<![\'"])/\*(.*?)\*/~sm', $content);
+        // Remove doc comments.
+        $content = preg_remove('~(?<![\'"])/\*(.*?)\*/~sm', $content);
 
-            // Remove line comments (but keep "http://" etc).
-            $content = preg_remove('~(?<![\'":])//(?:([^\r\n]+)|(.*?)[\r\n])$~sm', $content);
+        // Remove line comments (but keep "http://" etc).
+        $content = preg_remove('~(?<![\'":])//(?:([^\r\n]+)|(.*?)[\r\n])$~sm', $content);
 
-            return '<script>' . trim($content) . '</script>';
-        }, $input);
-    }
+        return sprintf('<script%s>%s</script>', $match[1], trim($content));
+    }, $input);
 
     // Remove comments.
     $input = preg_remove('~<!--(.*?)-->~sm', $input);
