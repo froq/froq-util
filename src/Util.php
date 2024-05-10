@@ -114,6 +114,11 @@ final /* fuckic static */ class Util extends \StaticClass
         @['REQUEST_SCHEME' => $scheme, 'REQUEST_URI' => $uri,
           'SERVER_NAME'    => $host,   'SERVER_PORT' => $port] = $_SERVER;
 
+        // In case it's empty.
+        if ($host === '' || $host === null) {
+            $host = $_SERVER['SERVER_ADDR'] ?? null;
+        }
+
         if (!$scheme || !$host) {
             return null;
         }
