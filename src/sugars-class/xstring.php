@@ -1290,12 +1290,13 @@ class XString implements \Stringable, Stringable, Arrayable, Lengthable, Iterato
      *
      * @param  string $preserve
      * @param  string $replace
+     * @param  bool   $trim
      * @param  bool   $lower
      * @return string
      */
-    public function slug(string $preserve = '', string $replace = '-', bool $lower = true): string
+    public function slug(string $preserve = '', string $replace = '-', bool $trim = true, bool $lower = true): string
     {
-        return slug($this->data, $preserve, $replace, $lower);
+        return slug($this->data, $preserve, $replace, $trim, $lower);
     }
 
     /**

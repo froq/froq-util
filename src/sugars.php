@@ -1662,22 +1662,23 @@ function format_scalar(mixed $input, mixed ...$options): string|null
  * @param  string $input
  * @param  string $preserve
  * @param  string $replace
+ * @param  bool   $trim
  * @param  bool   $lower
  * @return string
  * @since  5.0
  */
-function slug(string $input, string $preserve = '', string $replace = '-', bool $lower = true): string
+function slug(string $input, string $preserve = '', string $replace = '-', bool $trim = true, bool $lower = true): string
 {
     static $map; $map ??= require __DIR__ . '/etc/slug-map.php';
 
-    $preserve && $preserve = preg_quote($preserve, '~');
-    $replace  || $replace  = '-';
+    if ($preserve !== '') $preserve = preg_quote($preserve, '~');
 
     $ret = preg_replace('~[^a-z0-9'. $preserve .']+~i', $replace, strtr($input, $map));
 
-    $ret = trim($ret, $preserve . $replace);
+    $trim  && $ret = trim($ret, $preserve . $replace);
+    $lower && $ret = lower($ret);
 
-    return $lower ? lower($ret) : $ret;
+    return $ret;
 }
 
 /**
