@@ -156,9 +156,9 @@ class Random
     /**
      * Get next bytes.
      *
-     * @param  int             $length
-     * @param  bool            $hex
-     * @param  string|int|null $algo
+     * @param  int             $length Random bytes length.
+     * @param  bool            $hex    Discards $algo option.
+     * @param  string|int|null $algo   Algo or base to convert.
      * @return string|array
      * @throws froq\util\random\RandomException
      */
