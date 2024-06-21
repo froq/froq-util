@@ -234,11 +234,11 @@ class RangeError extends froq\common\Error
             $message = 'Invalid range';
 
             if ($min !== null && $max !== null) {
-                $message .= format(': [min=%n, max=%n]', $min, $max);
+                $message .= format(' [min=%n, max=%n]', $min, $max);
             } elseif ($min !== null) {
-                $message .= format(': [min=%n]', $min);
+                $message .= format(' [min=%n]', $min);
             } elseif ($max !== null) {
-                $message .= format(': [max=%n]', $max);
+                $message .= format(' [max=%n]', $max);
             }
         }
 
