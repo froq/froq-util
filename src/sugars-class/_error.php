@@ -43,6 +43,13 @@ class RegExpError extends froq\common\Error
  * @author Kerem Güneş
  * @since  6.0
  */
+class CallError extends froq\common\Error
+{}
+
+/**
+ * @author Kerem Güneş
+ * @since  6.0
+ */
 class ArgumentError extends froq\common\Error
 {}
 
