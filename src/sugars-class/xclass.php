@@ -219,11 +219,12 @@ class XClass implements Stringable
     /**
      * Get parent.
      *
+     * @param  bool $top
      * @return string|null
      */
-    public function getParent(): string|null
+    public function getParent(bool $top = false): string|null
     {
-        return $this->exists ? Objects::getParent($this->name) : null;
+        return $this->exists ? Objects::getParent($this->name, $top) : null;
     }
 
     /**
