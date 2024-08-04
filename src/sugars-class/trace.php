@@ -206,7 +206,7 @@ class TraceStack implements Stringable, Countable, IteratorAggregate, ArrayAcces
  * @since   6.0
  * @internal
  */
-class Trace implements ArrayAccess
+class Trace implements Stringable, ArrayAccess
 {
     /** Trace index. */
     public readonly int|null $index;
@@ -235,6 +235,14 @@ class Trace implements ArrayAccess
             $this->index = null;
             $this->data  = [];
         }
+    }
+
+    /**
+     * @magic
+     */
+    public function __toString(): string
+    {
+        return sprintf('#%d %s', $this->id, $this->callPathFull());
     }
 
     /**
