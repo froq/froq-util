@@ -245,6 +245,6 @@ class Console
         $datetime = new \DateTime('', new \DateTimeZone($timezone));
 
         // Use local date like CLI Server.
-        return $datetime->format('[D M d H:i:s Y]');
+        return $datetime->format('[D M j H:i:s Y]');
     }
 }
