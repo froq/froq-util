@@ -59,7 +59,7 @@ class Item implements Arrayable, Jsonable, Countable, IteratorAggregate, ArrayAc
     /**
      * @magic
      */
-    public function __get(int|string $key): mixed
+    public function &__get(int|string $key): mixed
     {
         return $this->get($key);
     }
@@ -104,9 +104,15 @@ class Item implements Arrayable, Jsonable, Countable, IteratorAggregate, ArrayAc
      * @param  mixed|null $default
      * @return mixed
      */
-    public function get(int|string $key, mixed $default = null): mixed
+    public function &get(int|string $key, mixed $default = null): mixed
     {
-        return $this->data[$key] ?? $default;
+        if (isset($this->data[$key])) {
+            $value = &$this->data[$key];
+        } else {
+            $value = &$default;
+        }
+
+        return $value;
     }
 
     /**
@@ -294,7 +300,7 @@ class Item implements Arrayable, Jsonable, Countable, IteratorAggregate, ArrayAc
     /**
      * @inheritDoc ArrayAccess
      */
-    public function offsetGet(mixed $key, mixed $default = null): mixed
+    public function &offsetGet(mixed $key, mixed $default = null): mixed
     {
         return $this->get($key, $default);
     }
