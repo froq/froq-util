@@ -26,7 +26,7 @@ class ObjectStorage extends \SplObjectStorage implements Arrayable
     public function __construct(object ...$objects)
     {
         foreach ($objects as $object) {
-            parent::attach($object);
+            $this->attach($object);
         }
     }
 
@@ -39,7 +39,7 @@ class ObjectStorage extends \SplObjectStorage implements Arrayable
      */
     public function store(object $object, mixed $info = null): void
     {
-        parent::attach($object, $info);
+        $this->attach($object, $info);
     }
 
     /**
@@ -50,7 +50,14 @@ class ObjectStorage extends \SplObjectStorage implements Arrayable
      */
     public function unstore(object $object): void
     {
-        parent::detach($object);
+        $this->detach($object);
+    }
+
+    public function empty(): void
+    {
+        foreach ($this as $object) {
+            $this->detach($object);
+        }
     }
 
     /**
