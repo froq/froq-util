@@ -107,12 +107,12 @@ class Item implements Arrayable, Jsonable, Countable, IteratorAggregate, ArrayAc
     public function &get(int|string $key, mixed $default = null): mixed
     {
         if (isset($this->data[$key])) {
-            $value = &$this->data[$key];
+            $item = &$this->data[$key];
         } else {
-            $value = &$default;
+            $item = &$default;
         }
 
-        return $value;
+        return $item;
     }
 
     /**
@@ -136,8 +136,8 @@ class Item implements Arrayable, Jsonable, Countable, IteratorAggregate, ArrayAc
      */
     public function update(iterable $data): self
     {
-        foreach ($data as $key => $value) {
-            $this->set($key, $value);
+        foreach ($data as $key => $item) {
+            $this->set($key, $item);
         }
 
         return $this;
