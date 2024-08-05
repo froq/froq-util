@@ -129,6 +129,21 @@ class Item implements Arrayable, Jsonable, Countable, IteratorAggregate, ArrayAc
     }
 
     /**
+     * Update items.
+     *
+     * @param  iterable $data
+     * @return self
+     */
+    public function update(iterable $data): self
+    {
+        foreach ($data as $key => $value) {
+            $this->set($key, $value);
+        }
+
+        return $this;
+    }
+
+    /**
      * Get key of given item if found.
      *
      * @param  mixed $item
