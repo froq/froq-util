@@ -73,12 +73,23 @@ class Item implements Arrayable, Jsonable, Countable, IteratorAggregate, ArrayAc
     }
 
     /**
-     * Check an item.
+     * Check an item key set.
      *
      * @param  int|string $key
      * @return bool
      */
     public function has(int|string $key): bool
+    {
+        return isset($this->data[$key]);
+    }
+
+    /**
+     * Check an item key exists.
+     *
+     * @param  int|string $key
+     * @return bool
+     */
+    public function hasKey(int|string $key): bool
     {
         return array_key_exists($key, $this->data);
     }
@@ -415,12 +426,14 @@ class ItemList implements Arrayable, Jsonable, Countable, IteratorAggregate, Arr
     /**
      * Check an item.
      *
-     * @param  mixed $item
+     * @param  mixed    $item
+     * @param  bool     $strict
+     * @param  int|null &$key
      * @return bool
      */
-    public function has(mixed $item): bool
+    public function has(mixed $item, bool $strict = true, int &$key = null): bool
     {
-        return $this->index($item) !== null;
+        return array_value_exists($item, $this->data, $strict, $key);
     }
 
     /**
@@ -660,7 +673,7 @@ class ItemList implements Arrayable, Jsonable, Countable, IteratorAggregate, Arr
     {
         $this->indexCheck($index);
 
-        return array_key_exists($index, $this->data);
+        return isset($this->data[$index]);
     }
 
     /**
