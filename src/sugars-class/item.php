@@ -470,6 +470,52 @@ class ItemList implements Arrayable, Jsonable, Countable, IteratorAggregate, Arr
     }
 
     /**
+     * Push.
+     *
+     * @param  mixed    $item
+     * @param  mixed ...$items
+     * @return self
+     */
+    public function push(mixed $item, mixed ...$items): self
+    {
+        array_push($this->data, $item, ...$items);
+        return $this;
+    }
+
+    /**
+     * Push left.
+     *
+     * @param  mixed    $item
+     * @param  mixed ...$items
+     * @return self
+     */
+    public function pushLeft(mixed $item, mixed ...$items): self
+    {
+        array_unshift($this->data, $item, ...$items);
+        return $this;
+    }
+
+    /**
+     * Pop.
+     *
+     * @return mixed
+     */
+    public function pop(): mixed
+    {
+        return array_pop($this->data);
+    }
+
+    /**
+     * Pop left.
+     *
+     * @return mixed
+     */
+    public function popLeft(): mixed
+    {
+        return array_shift($this->data);
+    }
+
+    /**
      * Get index of given item if found.
      *
      * @param  mixed $item
