@@ -108,6 +108,16 @@ class XClass implements Stringable
     }
 
     /**
+     * Get directory.
+     *
+     * @return string|false|null
+     */
+    public function getDirectory(): string|false|null
+    {
+        return $this->exists ? Objects::getDirectory($this->name) : null;
+    }
+
+    /**
      * Get type.
      *
      * @return string|null

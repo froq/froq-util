@@ -80,7 +80,7 @@ final class Objects extends \StaticClass
     /**
      * Get type.
      *
-     * @param  string|object $target
+     * @param  object|string $target
      * @return string|null
      * @since  6.0
      */
@@ -166,12 +166,23 @@ final class Objects extends \StaticClass
     /**
      * Get file (false if class is in core or extension, null if no class exists).
      *
-     * @param  string $target
+     * @param  object|string $target
      * @return string|false|null
      */
     public static function getFile(object|string $target): string|false|null
     {
         return self::reflect($target)?->getFileName();
+    }
+
+    /**
+     * Get directory (false if class is in core or extension, null if no class exists).
+     *
+     * @param  object|string $target
+     * @return string|false|null
+     */
+    public static function getDirectory(object|string $target): string|false|null
+    {
+        return self::reflect($target)?->getDirectoryName();
     }
 
     /**
