@@ -77,9 +77,9 @@ function json_unserialize(string|null $json, bool $assoc = false, JsonError &$er
         $data = json_decode($json, $assoc, flags: JSON_DECODE_FLAGS|JSON_THROW_ON_ERROR);
     } catch (JsonException $e) {
         // Last try with normalization.
-        if ($normalize) return json_unserialize(
-            json_normalize($json), $assoc, normalize: false
-        );
+        if ($normalize) {
+            return json_unserialize(json_normalize($json), $assoc, $error, false);
+        }
 
         $error = new JsonError($e->getMessage(), code: $e->getCode());
         return null;
