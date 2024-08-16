@@ -36,7 +36,7 @@ class Enum implements Stringable
         $name || throw new EnumError('Empty/null name given');
 
         // Auto-detect value from given name.
-        if (func_num_args() === 1 && self::hasName($name)) {
+        if ($value === null && self::hasName($name)) {
             $value = self::valueOf($name);
         }
 
@@ -60,7 +60,7 @@ class Enum implements Stringable
      */
     public function __toString()
     {
-        return $this->unit->__toString();
+        return (string) $this->unit;
     }
 
     /**
