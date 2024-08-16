@@ -26,6 +26,11 @@ function Ref(mixed $data = null): Ref {
 }
 
 /**
+ * Nil, alt of null (for defaults etc).
+ */
+const nil = new Nil();
+
+/**
  * Multi-byte encoding.
  */
 const ENCODING = 'UTF-8';
