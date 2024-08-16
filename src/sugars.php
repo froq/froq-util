@@ -67,7 +67,7 @@ function qx(array|object $iter, mixed &...$vars): int
  * Example:
  * ```
  * $user->data = unref($data)     // $data => null
- * [$id, $name] = unref(...$item) // $item => [null, null]
+ * [$id, $name] = unref(...$data) // $data => [null, null]
  * unref($someTempData)           // $someTempData => null (why?)
  * ```
  *
