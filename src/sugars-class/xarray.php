@@ -135,6 +135,22 @@ class XArray implements Arrayable, Listable, Jsonable, Iteratable, IteratableRev
     }
 
     /**
+     * Repose an item replacing with an entry.
+     *
+     * @param  int|string $key
+     * @param  array      $entry Expects key,value pairs.
+     * @return self
+     */
+    public function repose(int|string $key, array $entry): self
+    {
+        unset($this->data[$key]);
+
+        $this->data[$entry[0]] = $entry[1];
+
+        return $this;
+    }
+
+    /**
      * Choose an item.
      *
      * @param  int|string|array $key
@@ -1475,6 +1491,26 @@ class XArray implements Arrayable, Listable, Jsonable, Iteratable, IteratableRev
     public function getReverseIterator(): iterable
     {
         return new ReverseArrayIterator($this->data);
+    }
+
+    /**
+     * Convert to Map.
+     *
+     * @return Map
+     */
+    public function toMap(): Map
+    {
+        return new Map($this);
+    }
+
+    /**
+     * Convert to Set.
+     *
+     * @return Set
+     */
+    public function toSet(): Set
+    {
+        return new Set($this);
     }
 
     // Static.
