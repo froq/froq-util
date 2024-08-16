@@ -25,12 +25,6 @@ function Ref(mixed $data = null): Ref {
   return new Ref($data);
 }
 
-// /**
-//  * Loop control refs for break & continue.
-//  */
-// const LOOP_STOP = new Nil();
-// const LOOP_PASS = new Nil();
-
 /**
  * Multi-byte encoding.
  */
