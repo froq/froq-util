@@ -37,8 +37,8 @@ if (!function_exists('prd')) {
     }
 }
 if (!function_exists('prj')) {
-    function prj($s, $e=0) {
-        echo json_serialize($s, 2), "\n";
+    function prj($s, $e=0, $i=2) {
+        echo json_serialize($s, $i), "\n";
         $e && exit;
     }
 }
