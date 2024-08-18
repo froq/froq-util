@@ -612,11 +612,12 @@ function convert_base(int|string $input, int|string $from, int|string $to): stri
  * @param  string|int  $case
  * @param  string|null $exploder
  * @param  string|null $imploder
+ * @param  string|null $reduce
  * @return string
  * @throws ArgumentError
  * @since  4.26
  */
-function convert_case(string $input, string|int $case, string $exploder = null, string $imploder = null): string
+function convert_case(string $input, string|int $case, string $exploder = null, string $imploder = null, string $reduce = null): string
 {
     if (is_string($case)) {
         $case = match (strtolower($case)) {
@@ -630,11 +631,12 @@ function convert_case(string $input, string|int $case, string $exploder = null, 
         };
     }
 
-    if ($case === CASE_LOWER) {
-        return mb_strtolower($input);
-    } elseif ($case === CASE_UPPER) {
-        return mb_strtoupper($input);
-    }
+    // Reduce given char(s) if repeating more then 2 times.
+    $reduce && $input = preg_replace('~[' . preg_quote($reduce, '~') . ']{2,}~', $reduce, $input);
+
+    // Shortcut for lower & upper cases.
+    if ($case === CASE_LOWER) return mb_strtolower($input);
+    if ($case === CASE_UPPER) return mb_strtoupper($input);
 
     // Set default split char.
     $exploder = ($exploder !== null && $exploder !== '') ? $exploder : ' ';
