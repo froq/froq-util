@@ -237,8 +237,25 @@ function str_unsuffix(string $string, string $suffix): string
  */
 function str_test(string $string, string $pattern, string $modifiers = null): bool
 {
-    return ($string === '' || $pattern === '') ? false
-         : preg_test(sprintf('~%s~%s', addcslashes($pattern, '~'), $modifiers), $string);
+    return ($string === '' || $pattern === '') ? false : (
+        preg_test(sprintf('~%s~%s', addcslashes($pattern, '~'), $modifiers), $string)
+    );
+}
+
+/**
+ * Match given string with given pattern.
+ *
+ * @param  string      $string
+ * @param  string      $pattern
+ * @param  string|null $modifiers
+ * @return array
+ */
+function str_match(string $string, string $pattern, string $modifiers = null): array
+{
+    return ($string === '' || $pattern === '') ? null : (
+        preg_match(sprintf('~%s~%s', addcslashes($pattern, '~'), $modifiers), $string, $match)
+            ? $match : []
+    );
 }
 
 /**
