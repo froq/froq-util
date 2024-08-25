@@ -68,11 +68,9 @@ class Url implements Arrayable, Stringable, \Stringable
                 );
             }
 
-            // Set data fields via setters.
+            // Call __set() to set fields.
             foreach ($this->data as $field => $_) {
-                isset($data[$field])
-                && ($method = 'set' . $field)
-                && $this->$method($data[$field]);
+                isset($data[$field]) && ($this->$field = $data[$field]);
             }
         }
     }
