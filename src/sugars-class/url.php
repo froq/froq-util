@@ -342,8 +342,9 @@ class Url implements Arrayable, Stringable, \Stringable
      */
     public function setPath(string $path): self
     {
-        // Reduce slashes.
-        $path = preg_replace('~(?<!:)/{2,}~', '/', $path);
+        // @cancel
+        // // Reduce slashes.
+        // $path = preg_replace('~(?<!:)/{2,}~', '/', $path);
 
         $this->data['path'] = $path;
 

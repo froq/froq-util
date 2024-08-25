@@ -131,10 +131,11 @@ function http_parse_url(string $url): array
     isset($data['host']) && $authority .= $data['host'];
     isset($data['port']) && $authority .= ':' . $data['port'];
 
-    // Reducing path slashes.
-    if (isset($data['path'])) {
-        $data['path'] = preg_replace('~(?<!:)/{2,}~', '/', $data['path']);
-    }
+    // @cancel
+    // // Reducing path slashes.
+    // if (isset($data['path'])) {
+    //     $data['path'] = preg_replace('~(?<!:)/{2,}~', '/', $data['path']);
+    // }
 
     // Parse query params.
     if (isset($data['query'])) {
