@@ -1404,6 +1404,30 @@ function error_message(int &$code = null, bool $format = false, bool $extract = 
 }
 
 /**
+ * Get/set "display_errors" INI option (for the sake of error_reporting()).
+ *
+ * @param  string|int|bool|null $option
+ * @return bool|null
+ */
+function error_displaying(string|int|bool|null $option = null): bool|null
+{
+    $value = func_num_args() ? ini_set('display_errors', $option)
+                             : ini_get('display_errors');
+
+    if (is_string($value)) {
+        $value = strtolower($value);
+        if (equals($value, 'on', 'yes', 'true')) {
+            return true;
+        }
+        if (equals($value, 'off', 'no', 'false')) {
+            return false;
+        }
+    }
+
+    return ($value !== false) ? !!$value : null;
+}
+
+/**
  * Get JSON last error message with code if any, instead "No error".
  *
  * @param  int|null &$code
