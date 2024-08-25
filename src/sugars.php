@@ -737,8 +737,8 @@ function get_class_file(string|object $class): string|false|null
  * Get constants of given class/object, or return null if no such class.
  *
  * @param  string|object $class
- * @param  bool          $scope      For scope check.
- * @param  bool          $names_only For names only.
+ * @param  bool          $scope
+ * @param  bool          $names_only
  * @param  bool          $assoc
  * @return array|null
  * @since  4.0
@@ -759,8 +759,8 @@ function get_class_constants(string|object $class, bool $scope = true, bool $nam
  * Get properties of given class/object, or return null if no such class.
  *
  * @param  string|object $class
- * @param  bool          $scope      For scope check.
- * @param  bool          $names_only For names only.
+ * @param  bool          $scope
+ * @param  bool          $names_only
  * @param  bool          $assoc
  * @return array|null
  * @since  4.0

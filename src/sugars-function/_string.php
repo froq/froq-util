@@ -178,53 +178,61 @@ function str_has_suffix(string $string, string|array $search, bool $icase = fals
 /**
  * Ensure string starts with given prefix, prepend if not.
  *
- * @param  string $string
- * @param  string $prefix
+ * @param  string     $string
+ * @param  string     $prefix
+ * @param  bool|null &$modified
  * @return string
  * @since  7.11
  */
-function str_prefix(string $string, string $prefix): string
+function str_prefix(string $string, string $prefix, bool &$modified = null): string
 {
-    return str_starts_with($string, $prefix) ? $string : $prefix . $string;
+    return ($modified = !str_starts_with($string, $prefix))
+         ? $prefix . $string : $string;
 }
 
 /**
  * Ensure string ends with given suffix, append if not.
  *
- * @param  string $string
- * @param  string $suffix
+ * @param  string     $string
+ * @param  string     $suffix
+ * @param  bool|null &$modified
  * @return string
  * @since  7.11
  */
-function str_suffix(string $string, string $suffix): string
+function str_suffix(string $string, string $suffix, bool &$modified = null): string
 {
-    return str_ends_with($string, $suffix) ? $string : $string . $suffix;
+    return ($modified = !str_ends_with($string, $suffix))
+         ? $string . $suffix : $string;
 }
 
 /**
  * Ensure string not starts with given prefix, drop if not.
  *
- * @param  string $string
- * @param  string $prefix
+ * @param  string     $string
+ * @param  string     $prefix
+ * @param  bool|null &$modified
  * @return string
  * @since  7.11
  */
-function str_unprefix(string $string, string $prefix): string
+function str_unprefix(string $string, string $prefix, bool &$modified = null): string
 {
-    return str_starts_with($string, $prefix) ? mb_substr($string, mb_strlen($prefix)) : $string;
+    return ($modified = str_starts_with($string, $prefix))
+         ? mb_substr($string, mb_strlen($prefix)) : $string;
 }
 
 /**
  * Ensure string not ends with given suffix, drop if not.
  *
- * @param  string $string
- * @param  string $suffix
+ * @param  string     $string
+ * @param  string     $suffix
+ * @param  bool|null &$modified
  * @return string
  * @since  7.11
  */
-function str_unsuffix(string $string, string $suffix): string
+function str_unsuffix(string $string, string $suffix, bool &$modified = null): string
 {
-    return str_ends_with($string, $suffix) ? mb_substr($string, 0, -mb_strlen($suffix)) : $string;
+    return ($modified = str_ends_with($string, $suffix))
+         ? mb_substr($string, 0, -mb_strlen($suffix)) : $string;
 }
 
 /**
@@ -432,6 +440,23 @@ function str_scan(string $string, string $format, mixed &...$vars): int|array
     }
 
     return sscanf($string, $format, ...$vars);
+}
+
+/**
+ * Safe (sub) string count.
+ *
+ * @param  string $string
+ * @param  string $search
+ * @param  int    $offset
+ * @return int|null
+ */
+function str_count(string $string, string $search, int $offset = 0): int|null
+{
+    if ($string === '' || $search === '') {
+        return null;
+    }
+
+    return substr_count($string, $search, $offset);
 }
 
 /**
