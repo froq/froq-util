@@ -206,6 +206,64 @@ function file_remove(string $file): bool
 }
 
 /**
+ * Copy a file safely, copy() alternative.
+ *
+ * @param  string $file
+ * @param  string $to
+ * @param  bool   $check
+ * @return bool
+ */
+function file_copy(string $file, string $to, bool $check = false): bool
+{
+    if (!$file = get_real_path($ofile = $file, check: true)) {
+        trigger_error(format('%s(%s): No such file', __FUNCTION__, $ofile));
+        return false;
+    }
+
+    if ($check && file_exists($to)) {
+        trigger_error(format('%s(%s,%s): To file already exists', __FUNCTION__, $ofile, $to));
+        return false;
+    }
+
+    if (copy($file, $to)) {
+        return true;
+    }
+
+    // Failing sometimes, somehow..
+    if (is_file($to) && copy($file, $tmp = tmpnam())) {
+        if (unlink($to) && copy($tmp, $to)) {
+            unlink($tmp); // Drop temp file.
+            return true;
+        }
+    }
+
+    return false;
+}
+
+/**
+ * Move a file safely, rename() alternative.
+ *
+ * @param  string $file
+ * @param  string $to
+ * @param  bool   $check
+ * @return bool
+ */
+function file_move(string $file, string $to, bool $check = false): bool
+{
+    if (!$file = get_real_path($ofile = $file, check: true)) {
+        trigger_error(format('%s(%s): No such file', __FUNCTION__, $ofile));
+        return false;
+    }
+
+    if ($check && file_exists($to)) {
+        trigger_error(format('%s(%s,%s): To file already exists', __FUNCTION__, $ofile, $to));
+        return false;
+    }
+
+    return rename($file, $to);
+}
+
+/**
  * Load a file, with normal include or output buffer.
  *
  * @param  string     $file
