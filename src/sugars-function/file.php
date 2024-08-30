@@ -3,7 +3,7 @@
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-util
  */
-use froq\file\{Directory, File, Path, Stat};
+use froq\file\{Directory, File, TempFile, Path, Stat};
 
 /**
  * Get system temporary directory.
@@ -161,22 +161,17 @@ function rmfile(string $file): bool
  * @param  string     $mode
  * @param  bool       $temp
  * @param  array|null $options
- * @return froq\file\File
+ * @return froq\file\{File|TempFile}
  */
-function file_open(string $file, string $mode = 'rb', bool $temp = false, array $options = null): File
+function file_open(string $file, string $mode = 'rb', bool $temp = false, array $options = null): File|TempFile
 {
     if ($temp) {
-        $options['temp'] = true;
-        $options['open'] = null;
+        $options['prefix'] = $file;
+        return new TempFile(true, $options);
     }
 
-    $file = new File($file, $options);
-
-    if (empty($options['open'])) {
-        $file->open($mode);
-    }
-
-    return $file;
+    $options['open'] = $mode;
+    return new File($file, $options);
 }
 
 /**
