@@ -5,6 +5,8 @@
  */
 namespace froq\util\bench;
 
+use froq\util\Util;
+
 /**
  * A class, runs given callables, optionally prints time & memory peeks.
  *
@@ -71,12 +73,15 @@ class Runner
         }
 
         $limit ??= $this->limit;
-        $rlimit = $limit;
         $count = 1;
 
         while ($limit--) {
-            // Temp is for memory measurement.
+            // Temp is for memory peek or to break this loop.
             $simple || $temp = $func($count++);
+
+            if ($temp === false) {
+                break;
+            }
         }
 
         if ($profile) {
@@ -88,16 +93,18 @@ class Runner
 
             if ($print) {
                 $formatLimit = fn(int $v): string => number_format($v, 0, '', ',');
-                $formatBytes = fn(int $v): string => \froq\util\Util::formatBytes($v, 3);
+                $formatBytes = fn(int $v): string => Util::formatBytes($v, 3);
 
                 // Drop memory info.
                 if ($simple) {
                     printf("run(%s)#%s: %F\n",
-                        $formatLimit($rlimit), $this->runs, $endTime
+                        $formatLimit($count - 1),
+                        $this->runs, $endTime
                     );
                 } else {
                     printf("run(%s)#%s: %F, memo: %s (%s - %s)\n",
-                        $formatLimit($rlimit), $this->runs, $endTime,
+                        $formatLimit($count - 1),
+                        $this->runs, $endTime,
                         $formatBytes($endMemo - $startMemo),
                         $formatBytes($endMemo), $formatBytes($startMemo)
                     );
