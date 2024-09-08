@@ -368,15 +368,27 @@ class XClass implements Stringable
     }
 
     /**
-     * Create a new instance this class.
+     * Create an instance of this class with constructor.
      *
      * @param  mixed ...$args
      * @return object
-     * @causes Error|Exception
+     * @causes Exception
      */
     public function init(mixed ...$args): object
     {
-        return new $this->name(...$args);
+        return Objects::init($this->name, ...$args);
+    }
+
+    /**
+     * Create an instance of this class without constructor.
+     *
+     * @param  mixed ...$vars
+     * @return object
+     * @causes Exception
+     */
+    public function sample(mixed ...$vars): object
+    {
+        return Objects::sample($this->name, ...$vars);
     }
 
     /**

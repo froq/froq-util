@@ -1783,19 +1783,7 @@ function get_object_hash(object $object, bool $with_name = true, bool $with_reha
  */
 function set_object_vars(object $object, array $vars): object
 {
-    foreach ($vars as $name => $value) {
-        if (property_exists($object, (string) $name)) {
-            $ref = new ReflectionProperty($object, $name);
-            $ref->setValue($object, $value);
-        } elseif ($object instanceof stdClass) {
-            $object->$name = $value;
-        } elseif ($object instanceof ArrayAccess) {
-            // Both ArrayAccess & ArrayObject.
-            $object[$name] = $value;
-        }
-    }
-
-    return $object;
+    return Objects::setVars($object, $vars);
 }
 
 /**

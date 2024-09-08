@@ -20,13 +20,21 @@ final class Objects extends \StaticClass
      * Reflect.
      *
      * @param  object|string $target
+     * @param  bool          $throw
      * @return XReflectionObject|XReflectionClass|null
+     * @throws UtilException
      */
-    public static function reflect(object|string $target): \XReflectionObject|\XReflectionClass|null
+    public static function reflect(object|string $target, bool $throw = false)
+        : \XReflectionObject|\XReflectionClass|null
     {
         try {
-            return is_object($target) ? new \XReflectionObject($target) : new \XReflectionClass($target);
-        } catch (\ReflectionException) {
+            return is_object($target)
+                 ? new \XReflectionObject($target)
+                 : new \XReflectionClass($target);
+        } catch (\Throwable $e) {
+            if ($throw) {
+                throw new UtilException($e);
+            }
             return null;
         }
     }
@@ -690,14 +698,33 @@ final class Objects extends \StaticClass
     /**
      * Set vars.
      *
-     * @param object $target
-     * @param array  $vars
+     * @param  object $target
+     * @param  array  $vars
      * @return object
+     * @throws UtilException
      * @since  6.0
      */
     public static function setVars(object $target, array $vars): object
     {
-        return set_object_vars($target, $vars);
+        if ($vars) {
+            if (!Arrays::isMapArray($vars)) {
+                throw new UtilException('Argument $vars must be a map array');
+            }
+
+            foreach ($vars as $name => $value) {
+                if (property_exists($target, $name)) {
+                    $ref = new \ReflectionProperty($target, $name);
+                    $ref->setValue($target, $value);
+                } elseif ($target instanceof \stdClass) {
+                    $target->$name = $value;
+                } elseif ($target instanceof \ArrayAccess) {
+                    // Both ArrayAccess & ArrayObject.
+                    $target[$name] = $value;
+                }
+            }
+        }
+
+        return $target;
     }
 
     /**
@@ -717,6 +744,36 @@ final class Objects extends \StaticClass
         } catch (\Throwable) {
             return null;
         }
+    }
+
+    /**
+     * Init a class with constructor, set args if given.
+     *
+     * @param  string    $class
+     * @param  mixed  ...$args
+     * @return object
+     * @causes UtilException
+     */
+    public static function init(string $class, mixed ...$args): object
+    {
+        $object = self::reflect($class, true)->init(...$args);
+
+        return $object;
+    }
+
+    /**
+     * Sample a class without constructor, set vars if given.
+     *
+     * @param  string    $class
+     * @param  mixed  ...$vars
+     * @return object
+     * @causes UtilException
+     */
+    public static function sample(string $class, mixed ...$vars): object
+    {
+        $object = self::reflect($class, true)->init();
+
+        return self::setVars($object, $vars);
     }
 
     /**
