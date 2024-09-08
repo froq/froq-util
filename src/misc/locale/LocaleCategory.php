@@ -89,7 +89,10 @@ class LocaleCategory implements Arrayable, \Stringable
      */
     public function toArray(): array
     {
-        return ['name' => $this->name, 'value' => $this->value];
+        return [
+            'name' => $this->name,
+            'value' => $this->value
+        ];
     }
 
     /**
@@ -102,7 +105,7 @@ class LocaleCategory implements Arrayable, \Stringable
     {
         // When LC_* constant given.
         if (is_string($category) && strpfx($category, 'LC_', true)) {
-            $category = substr($category, 3);
+            $category = strcut($category, 3);
         }
 
         return new LocaleCategory($category);
@@ -111,14 +114,15 @@ class LocaleCategory implements Arrayable, \Stringable
     /**
      * List all locale categories.
      *
-     * @return LocaleCategoryList
+     * @return LocaleCategoryList<LocaleCategory>
      */
     public static function list(): LocaleCategoryList
     {
         $items = [];
+        $class = new \XClass(self::class);
 
-        foreach (self::map(true) as $name) {
-            $items[] = new self($name);
+        foreach (self::map() as $name => $value) {
+            $items[] = $class->sample(name: $name, value: $value);
         }
 
         return new LocaleCategoryList($items);
