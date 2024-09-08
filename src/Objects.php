@@ -22,7 +22,7 @@ final class Objects extends \StaticClass
      * @param  object|string $target
      * @param  bool          $throw
      * @return XReflectionObject|XReflectionClass|null
-     * @throws UtilException
+     * @throws ReflectionException
      */
     public static function reflect(object|string $target, bool $throw = false)
         : \XReflectionObject|\XReflectionClass|null
@@ -31,11 +31,8 @@ final class Objects extends \StaticClass
             return is_object($target)
                  ? new \XReflectionObject($target)
                  : new \XReflectionClass($target);
-        } catch (\Throwable $e) {
-            if ($throw) {
-                throw new UtilException($e);
-            }
-            return null;
+        } catch (\ReflectionException $e) {
+            return $throw ? throw $e : null;
         }
     }
 
@@ -752,7 +749,7 @@ final class Objects extends \StaticClass
      * @param  string    $class
      * @param  mixed  ...$args
      * @return object
-     * @causes UtilException
+     * @causes ReflectionException
      */
     public static function init(string $class, mixed ...$args): object
     {
@@ -767,7 +764,7 @@ final class Objects extends \StaticClass
      * @param  string    $class
      * @param  mixed  ...$vars
      * @return object
-     * @causes UtilException
+     * @causes ReflectionException
      */
     public static function sample(string $class, mixed ...$vars): object
     {
