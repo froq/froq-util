@@ -735,7 +735,20 @@ final class Objects extends \StaticClass
     public static function getVars(object|string $target, bool $namesOnly = false): array|null
     {
         try {
-            $vars = is_object($target) ? get_object_vars($target) : get_class_vars($target);
+            // @cancel: Not the same behavior: while get_class_vars() gives NULL for initialized,
+            // vars, get_object_vars() gives nothing for these initialized vars, all invisible.
+            // $vars = is_object($target) ? get_object_vars($target) : get_class_vars($target);
+
+            $ref = ($isObject = is_object($target))
+                ? new \ReflectionObject($target) : new \ReflectionClass($target);
+
+            foreach ($ref->getProperties(\ReflectionProperty::IS_PUBLIC) as $property) {
+                if ($isObject && $property->isInitialized($target)) {
+                    $vars[$property->name] = $property->getValue($target);
+                } else {
+                    $vars[$property->name] = $property->getDefaultValue();
+                }
+            }
 
             return $namesOnly ? array_keys($vars) : $vars;
         } catch (\Throwable) {
