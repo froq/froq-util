@@ -121,7 +121,15 @@ class XObject extends XClass
      */
     public function getVarNames(): array
     {
-        return Objects::getVars($this->object, true);
+        return array_keys($this->getVars());
+    }
+
+    /**
+     * @override
+     */
+    public function getVarValues(): array
+    {
+        return array_values($this->getVars());
     }
 
     /**

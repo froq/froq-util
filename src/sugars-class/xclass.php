@@ -189,7 +189,17 @@ class XClass implements Stringable
      */
     public function getVarNames(): array|null
     {
-        return $this->exists ? Objects::getVars($this->name, true) : null;
+        return !is_null($vars = $this->getVars()) ? array_keys($vars) : null;
+    }
+
+    /**
+     * Get var names.
+     *
+     * @return array|null
+     */
+    public function getVarValues(): array|null
+    {
+        return !is_null($vars = $this->getVars()) ? array_values($vars) : null;
     }
 
     /**
