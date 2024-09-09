@@ -53,11 +53,34 @@ class ObjectStorage extends \SplObjectStorage implements Arrayable
         $this->detach($object);
     }
 
+    /**
+     * Empty storage.
+     *
+     * @return void
+     */
     public function empty(): void
     {
-        foreach ($this as $object) {
-            $this->detach($object);
+        $this->removeAll($this);
+
+        // @cancel
+        // foreach ($this->toArray() as $object) {
+        //     $this->detach($object);
+        // }
+    }
+
+    /**
+     * Get an item by given index if stored.
+     *
+     * @note   O(n)
+     * @param  int $index
+     * @return object|null
+     */
+    public function get(int $index): object|null
+    {
+        foreach ($this->toArray() as $i => $object) {
+            if ($i === $index) return $object;
         }
+        return null;
     }
 
     /**
