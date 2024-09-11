@@ -64,9 +64,7 @@ function random_range(int $length, int|float $min = null, int|float $max = null,
     }
 
     $ret = [];
-
-    // Unique stack.
-    $uni = [];
+    $uni = []; // Unique stack.
 
     while ($length--) {
         $item = Numbers::random($min, $max, $precision);
@@ -85,17 +83,18 @@ function random_range(int $length, int|float $min = null, int|float $max = null,
 /**
  * Generate a random hash string by given length.
  *
- * @param  int    $length
- * @param  string $algo
- * @param  bool   $upper
+ * @param  int        $length Random bytes length.
+ * @param  string|int $algo   Algo or base.
+ * @param  bool       $upper
  * @return string
+ * @throws Panic
  */
-function random_hash(int $length, string $algo = 'md5', bool $upper = false): string
+function random_hash(int $length, string|int $algo = 'md5', bool $upper = false): string
 {
     try {
         $ret = huid($length, $algo);
     } catch (Throwable $e) {
-        throw new ArgumentError($e);
+        throw new Panic($e);
     }
 
     if ($upper) {
@@ -112,13 +111,14 @@ function random_hash(int $length, string $algo = 'md5', bool $upper = false): st
  * @param  int  $base
  * @param  bool $upper
  * @return string
+ * @throws Panic
  */
 function random_chars(int $length, int $base = 62, bool $upper = false): string
 {
     try {
         $ret = suid($length, $base);
     } catch (Throwable $e) {
-        throw new ArgumentError($e);
+        throw new Panic($e);
     }
 
     if ($upper && $base > 10) {
@@ -135,13 +135,14 @@ function random_chars(int $length, int $base = 62, bool $upper = false): string
  * @param  bool $hex
  * @param  bool $upper
  * @return string
+ * @throws Panic
  */
 function random_digits(int $length, bool $hex = false, bool $upper = false): string
 {
     try {
         $ret = suid($length, $hex ? 16 : 10);
     } catch (Throwable $e) {
-        throw new ArgumentError($e);
+        throw new Panic($e);
     }
 
     if ($upper && $hex) {

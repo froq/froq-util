@@ -4,6 +4,9 @@
  * Apache License 2.0 · http://github.com/froq/froq-util
  */
 
+// Error alternative.
+class Panic extends froq\common\Error {}
+
 /**
  * @author Kerem Güneş
  * @since  5.25
