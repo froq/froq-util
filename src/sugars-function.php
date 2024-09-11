@@ -10,6 +10,7 @@ require __DIR__ . '/sugars-function/_string.php';
 
 // Load other function files.
 require __DIR__ . '/sugars-function/base.php';
+require __DIR__ . '/sugars-function/calc.php';
 require __DIR__ . '/sugars-function/cast.php';
 require __DIR__ . '/sugars-function/conv.php';
 require __DIR__ . '/sugars-function/date.php';

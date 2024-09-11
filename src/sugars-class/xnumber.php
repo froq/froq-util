@@ -179,6 +179,19 @@ class XNumber implements Stringable
         return $this;
     }
 
+    /**
+     * Int modulo.
+     *
+     * @param  int|float|string|self $data
+     * @return self
+     * @causes DivisionByZeroError
+     */
+    public function intMod(int|float|string|self $data): self
+    {
+        $this->data = imod($this->data, $this->prepare($data));
+
+        return $this;
+    }
 
     /**
      * Float modulo.

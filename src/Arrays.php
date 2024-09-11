@@ -1530,22 +1530,6 @@ final class Arrays extends \StaticClass
     }
 
     /**
-     * Average.
-     *
-     * @param  array $array
-     * @param  bool  $zeros
-     * @return float
-     */
-    public static function average(array $array, bool $zeros = true): float
-    {
-        $array = array_filter($array, fn($v): bool => (
-            $zeros ? is_numeric($v) : is_numeric($v) && ($v > 0)
-        ));
-
-        return $array ? fdiv(array_sum($array), count($array)) : 0.0;
-    }
-
-    /**
      * Check if all given keys were set in given array.
      *
      * @param  array         $array

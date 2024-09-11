@@ -5,7 +5,7 @@
  */
 use froq\common\interface\{Arrayable, Jsonable};
 use froq\collection\trait\{CountTrait, EmptyTrait, EachTrait, KeysValuesTrait, FirstLastTrait,
-    ToArrayTrait, ToJsonTrait};
+    MinMaxTrait, CalcAvgTrait, CalcSumTrait, ToArrayTrait, ToJsonTrait};
 
 /**
  * A simple item class with a key/value data container & access stuff.
@@ -17,7 +17,8 @@ use froq\collection\trait\{CountTrait, EmptyTrait, EachTrait, KeysValuesTrait, F
  */
 class Item implements Arrayable, Jsonable, Countable, IteratorAggregate, ArrayAccess
 {
-    use CountTrait, EmptyTrait, EachTrait, KeysValuesTrait, FirstLastTrait, ToArrayTrait, ToJsonTrait;
+    use CountTrait, EmptyTrait, EachTrait, KeysValuesTrait, FirstLastTrait,
+        ToArrayTrait, ToJsonTrait;
 
     /** Data map. */
     private array $data = [];
@@ -361,7 +362,9 @@ class Item implements Arrayable, Jsonable, Countable, IteratorAggregate, ArrayAc
  */
 class ItemList implements Arrayable, Jsonable, Countable, IteratorAggregate, ArrayAccess
 {
-    use CountTrait, EmptyTrait, EachTrait, KeysValuesTrait, FirstLastTrait, ToArrayTrait, ToJsonTrait;
+    use CountTrait, EmptyTrait, EachTrait, KeysValuesTrait, FirstLastTrait,
+        MinMaxTrait, CalcAvgTrait, CalcSumTrait,
+        ToArrayTrait, ToJsonTrait;
 
     /** Items list. */
     private array $data = [];
@@ -379,7 +382,11 @@ class ItemList implements Arrayable, Jsonable, Countable, IteratorAggregate, Arr
     {
         $this->type = is_array($type) ? join('|', $type) : $type;
 
-        $data && $this->add(...$data);
+        if (!is_list($data)) {
+            $data = array_values(iterator_to_array($data));
+        }
+
+        $this->add(...$data);
     }
 
     /**
@@ -393,31 +400,31 @@ class ItemList implements Arrayable, Jsonable, Countable, IteratorAggregate, Arr
     /**
      * Get an item.
      *
-     * @param  int|callable $offset
+     * @param  int|callable $index
      * @return mixed
      */
-    public function item(int|callable $offset): mixed
+    public function item(int|callable $index): mixed
     {
-        if (is_callable($offset)) {
-            return array_find($this->data, $offset);
+        if (is_callable($index)) {
+            return array_find($this->data, $index);
         }
 
-        return $this->data[$offset] ?? null;
+        return $this->data[$index] ?? null;
     }
 
     /**
      * Get all items.
      *
-     * @param  array|callable|null $offsets
+     * @param  array|callable|null $indexes
      * @return array
      */
-    public function items(array|callable $offsets = null): array
+    public function items(array|callable $indexes = null): array
     {
-        if (is_array($offsets)) {
-            return array_select($this->data, $offsets);
+        if (is_array($indexes)) {
+            return array_select($this->data, $indexes);
         }
-        if (is_callable($offsets)) {
-            return array_find_all($this->data, $offsets);
+        if (is_callable($indexes)) {
+            return array_find_all($this->data, $indexes);
         }
 
         return $this->data;
@@ -445,7 +452,7 @@ class ItemList implements Arrayable, Jsonable, Countable, IteratorAggregate, Arr
     public function add(mixed ...$items): self
     {
         foreach ($items as $item) {
-            $this->offsetSet(null, $item);
+            $this->data[] = $item;
         }
 
         return $this;

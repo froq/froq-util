@@ -596,15 +596,6 @@ function array_aggregate(array $array, callable $func, array $carry = null): arr
 }
 
 /**
- * @alias Arrays.average()
- * @since 4.5, 4.20, 6.0
- */
-function array_average(array $array, bool $zeros = true): float
-{
-    return Arrays::average($array, $zeros);
-}
-
-/**
  * @alias Arrays.isset()
  * @since 4.0, 6.0
  */
