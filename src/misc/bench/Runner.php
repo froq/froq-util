@@ -73,13 +73,14 @@ class Runner
         }
 
         $limit ??= $this->limit;
+        $return = null;
         $count = 1;
 
         while ($limit--) {
-            // Temp is for memory peek or to break this loop.
-            $simple || $temp = $func($count++);
+            // Return is for memory peek or to break this loop.
+            $simple || $return = $func($count++);
 
-            if ($temp === false) {
+            if ($return === false) {
                 break;
             }
         }
