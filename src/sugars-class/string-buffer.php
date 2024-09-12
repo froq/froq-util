@@ -695,14 +695,6 @@ class StringBuffer implements \Stringable, Stringable, Arrayable, Lengthable, It
     }
 
     /**
-     * @alias toString()
-     */
-    public function string()
-    {
-        return $this->toString();
-    }
-
-    /**
      * @inheritDoc
      */
     public function toArray(): array

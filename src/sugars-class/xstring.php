@@ -1935,14 +1935,6 @@ class XString implements \Stringable, Stringable, Arrayable, Lengthable, Iterato
     }
 
     /**
-     * @alias toString()
-     */
-    public function string()
-    {
-        return $this->toString();
-    }
-
-    /**
      * @inheritDoc
      */
     public function toArray(): array
