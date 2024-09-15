@@ -32,7 +32,6 @@ function datetime(string|int|float $when = null, string $where = null): DateTime
 /**
  * Get current Unix timestamp with milliseconds.
  *
- * @param  bool $string
  * @return int
  * @since  7.0
  */
@@ -110,7 +109,7 @@ function strtoitime(string $format, string|int $time = null): int|null
 }
 
 /**
- * Verify a date by given format.
+ * Verify a given date by given format.
  *
  * @param  string $date
  * @param  string $format
