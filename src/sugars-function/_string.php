@@ -260,7 +260,7 @@ function str_test(string $string, string $pattern, string $modifiers = null): bo
  */
 function str_match(string $string, string $pattern, string $modifiers = null): array
 {
-    return ($string === '' || $pattern === '') ? null : (
+    return ($string === '' || $pattern === '') ? [] : (
         preg_match(sprintf('~%s~%s', addcslashes($pattern, '~'), $modifiers), $string, $match)
             ? $match : []
     );
@@ -448,12 +448,12 @@ function str_scan(string $string, string $format, mixed &...$vars): int|array
  * @param  string $string
  * @param  string $search
  * @param  int    $offset
- * @return int|null
+ * @return int
  */
-function str_count(string $string, string $search, int $offset = 0): int|null
+function str_count(string $string, string $search, int $offset = 0): int
 {
     if ($string === '' || $search === '') {
-        return null;
+        return 0;
     }
 
     return substr_count($string, $search, $offset);
@@ -474,11 +474,11 @@ function str_wordcount(string $string, int $type = 0): int|array
         default => $tmp,
         0 => count($tmp),
         // Map of words' count.
-        1 => reduce($tmp, function(?array $ret, string $word): ?array {
+        1 => reduce($tmp, [], function(array $ret, string $word): array {
             $ret[$word] ??= 0;
             $ret[$word] += 1;
             return $ret;
-        }) ?: [],
+        }),
     };
 }
 
