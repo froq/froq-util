@@ -680,6 +680,27 @@ function stream_write_all($stream, string $contents): int|false
 }
 
 /**
+ * Check a mime for given type(s).
+ *
+ * @param  string $mime
+ * @param  array  $type
+ * @return bool
+ * @since  7.0
+ */
+function mime_check_type(string $mime, string|array $type): bool
+{
+    if (is_string($type)) {
+        // RegExp pattern.
+        return ($type[0] === '~')
+             ? preg_test($type, $mime)
+             : str_contains($mime, $type);
+    }
+
+    // Multi type check.
+    return str_has($mime, $type);
+}
+
+/**
  * Handy file system functions (port of froq\file).
  */
 function xdir(string $path, bool $tmp = false, mixed ...$options): Directory {
