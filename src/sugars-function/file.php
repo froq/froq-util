@@ -3,7 +3,10 @@
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-util
  */
-use froq\file\{Directory, File, TempFile, Path, Stat};
+use froq\file\{
+    Directory, File, TempFile,
+    Path, Stat, mime\Mime
+};
 
 /**
  * Get system temporary directory.
@@ -409,34 +412,8 @@ function file_mime(string $file): string|null
         return null;
     }
 
-    if (is_dir($file)) {
-        return 'directory';
-    }
-
     // Utilize file module.
-    if (class_exists('froq\file\mime\Mime')) {
-        return froq\file\mime\Mime::getType($file);
-    }
-
-    $ret = mime_content_type($file);
-
-    if ($ret === false) {
-        // Try with extension.
-        $extension = file_extension($file);
-        if ($extension !== null) {
-            static $cache; // For some speed..
-            if (empty($cache[$extension])) {
-                foreach (require __DIR__ . '/../etc/mimes.php' as $type => $extensions) {
-                    if (in_array($extension, $extensions, true)) {
-                        $cache[$extension] = $ret = $type;
-                        break;
-                    }
-                }
-            }
-        }
-    }
-
-    return $ret ?: null;
+    return Mime::getType($file);
 }
 
 /**
