@@ -1017,7 +1017,7 @@ function get_request_id(): string
  *
  * @param  string           $path
  * @param  string|true|null $check Valids: true, "dir", "file".
- * @param  bool             $real @internal
+ * @param  bool             $real
  * @return string|false|null
  * @throws ArgumentError
  * @since  4.0
@@ -1059,7 +1059,7 @@ function get_real_path(string $path, string|true $check = null, bool $real = tru
 
     // Alter path "foo" => "./foo" to prevent invalid returns.
     if (!str_contains($path, $sep) || ($win && substr($path, 1, 2) !== ':\\')) {
-        $path = '.' . $sep . $path;
+        $path = ($path !== '~') ? '.' . $sep . $path : $path;
     }
 
     // Fix "/." => "/" + cwd() returns.
@@ -1156,8 +1156,10 @@ function get_path_info(string $path, string|int $component = null): string|array
     if (!$path = get_real_path($path, real: false)) {
         return null;
     }
-    if (!$info = pathinfo($path)) {
-        return null;
+
+    // NULL-bytes issue.
+    if (str_contains($path, "\0")) {
+        $path = str_replace("\0", "\\0", $path);
     }
 
     // Really really, real path.
@@ -1167,9 +1169,11 @@ function get_path_info(string $path, string|int $component = null): string|array
         $realpath = $filetype = null;
     }
 
-    // Drop "" fields, put in order.
-    $info = array_filter($info, 'strlen');
-    $info = array_select($info, ['dirname', 'basename', 'filename', 'extension'], combine: true);
+    $info = [
+        // @tome NULL-bytes issue with pathinfo(), so use related functions here.
+        'dirname' => dirname($path), 'basename' => basename($path),
+        'filename' => null, 'extension' => null,
+    ];
 
     // Null if not real parent.
     if ($info['dirname'] === $path && $filetype === 'dir') {
@@ -1179,7 +1183,7 @@ function get_path_info(string $path, string|int $component = null): string|array
     $ret = ['path' => $path, 'realpath' => $realpath, 'type' => $filetype] + $info;
 
     // No filename & extension for dirs.
-    if ($filetype === 'dir' || strsfx($opath, DIRECTORY_SEPARATOR) || strsfx($path, DIRECTORY_SEPARATOR)) {
+    if ($filetype === 'dir' || strsfx($opath, DIRECTORY_SEPARATOR)) {
         $ret['filename'] = $ret['extension'] = null;
     } elseif ($filetype === 'link' && is_dir($path)) {
         $ret['filename'] = $ret['extension'] = null;
