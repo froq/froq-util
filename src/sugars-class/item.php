@@ -370,7 +370,7 @@ class ItemList implements Arrayable, Jsonable, Countable, IteratorAggregate, Arr
     private array $data = [];
 
     /** Items type to check. */
-    private string|null $type;
+    private ?string $type = null;
 
     /**
      * Constructor.
@@ -380,13 +380,11 @@ class ItemList implements Arrayable, Jsonable, Countable, IteratorAggregate, Arr
      */
     public function __construct(iterable $data = [], string|array $type = null)
     {
-        $this->type = is_array($type) ? join('|', $type) : $type;
-
-        if (!is_list($data)) {
-            $data = array_values(iterator_to_array($data));
+        if ($type !== null) {
+            $this->type = join('|', (array) $type);
         }
 
-        $this->add(...$data);
+        $this->add(...iterator_to_array($data, false));
     }
 
     /**
@@ -395,6 +393,16 @@ class ItemList implements Arrayable, Jsonable, Countable, IteratorAggregate, Arr
     public function __debugInfo(): array
     {
         return $this->data;
+    }
+
+    /**
+     * Get type.
+     *
+     * @return string|null
+     */
+    public function type(): string|null
+    {
+        return $this->type;
     }
 
     /**
@@ -451,6 +459,10 @@ class ItemList implements Arrayable, Jsonable, Countable, IteratorAggregate, Arr
      */
     public function add(mixed ...$items): self
     {
+        if ($this->type !== null) {
+            array_map([$this, 'typeCheck'], $items);
+        }
+
         foreach ($items as $item) {
             $this->data[] = $item;
         }
@@ -485,7 +497,12 @@ class ItemList implements Arrayable, Jsonable, Countable, IteratorAggregate, Arr
      */
     public function push(mixed $item, mixed ...$items): self
     {
+        if ($this->type !== null) {
+            array_map([$this, 'typeCheck'], [$item, ...$items]);
+        }
+
         array_push($this->data, $item, ...$items);
+
         return $this;
     }
 
@@ -498,7 +515,12 @@ class ItemList implements Arrayable, Jsonable, Countable, IteratorAggregate, Arr
      */
     public function pushLeft(mixed $item, mixed ...$items): self
     {
+        if ($this->type !== null) {
+            array_map([$this, 'typeCheck'], [$item, ...$items]);
+        }
+
         array_unshift($this->data, $item, ...$items);
+
         return $this;
     }
 
@@ -790,16 +812,16 @@ class ItemList implements Arrayable, Jsonable, Countable, IteratorAggregate, Arr
     private function indexCheck(mixed $index): void
     {
         if ($index !== null && (!is_int($index) || $index < 0)) {
-            $indexRepr = match ($type = get_type($index)) {
+            $indexRepr = match ($indexType = get_type($index)) {
                 'int'    => "int($index)",
                 'float'  => "float($index)",
                 'string' => "string('$index')",
-                default  => $type,
+                default  => $indexType,
             };
 
-            throw new KeyError(sprintf(
-                'Invalid index %s for %s',
-                $indexRepr, get_class_name($this, escape: true)
+            throw new KeyError(format(
+                'Invalid index %s for %S',
+                $indexRepr, $this::class
             ));
         }
     }
@@ -812,9 +834,9 @@ class ItemList implements Arrayable, Jsonable, Countable, IteratorAggregate, Arr
     private function typeCheck(mixed $item): void
     {
         if ($this->type !== null && !is_type_of($item, $this->type)) {
-            throw new TypeError(sprintf(
-                'Invalid type %s for %s accepting only type of %s',
-                get_type($item), get_class_name($this, escape: true), $this->type
+            throw new TypeError(format(
+                'Invalid type %t for %S accepting only type of %s',
+                $item, $this::class, $this->type
             ));
         }
     }
