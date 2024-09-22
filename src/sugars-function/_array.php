@@ -185,7 +185,7 @@ function array_refine(array $array, array $values = null, bool $list = null): ar
  * @alias Arrays.group()
  * @since 5.31, 6.0
  */
-function array_group(array $array, int|string $field): array
+function array_group(array $array, int|string|callable $field): array
 {
     return Arrays::group($array, $field);
 }

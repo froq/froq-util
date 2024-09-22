@@ -404,10 +404,10 @@ class XArray implements Arrayable, Listable, Jsonable, Iteratable, IteratableRev
     /**
      * Group by given field.
      *
-     * @param  int|string $field
+     * @param  int|string|callable $field
      * @return self
      */
-    public function group(int|string $field): self
+    public function group(int|string|callable $field): self
     {
         $this->data = array_group($this->data, $field);
 

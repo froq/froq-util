@@ -443,22 +443,36 @@ final class Arrays extends \StaticClass
     }
 
     /**
-     * Create a groupped result from given array (@see https://wiki.php.net/rfc/array_column_results_grouping).
+     * Create a groupped result from given array (
+     *   @see https://wiki.php.net/rfc/array_column_results_grouping
+     *   @see https://wiki.php.net/rfc/array_group
+     *   @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/groupBy
+     * ).
      *
-     * @param  array      $array
-     * @param  int|string $field
+     * @param  array               $array
+     * @param  int|string|callable $field
      * @return array
      * @since  5.31, 6.0
      */
-    public static function group(array $array, int|string $field): array
+    public static function group(array $array, int|string|callable $field): array
     {
         $ret = [];
 
-        foreach ($array as $row) {
-            $row = (array) $row;
-            if (array_key_exists($field, $row)) {
-                $key = $row[$field];
+        if (is_callable($field)) {
+            foreach ($array as $i => $row) {
+                $key = $field($row, $i);
                 $ret[$key][] = $row;
+            }
+        } else {
+            foreach ($array as $row) {
+                $field = (string) $field;
+                if (is_array($row) && array_key_exists($field, $row)) {
+                    $key = $row[$field];
+                    $ret[$key][] = $row;
+                } elseif (is_object($row) && property_exists($row, $field)) {
+                    $key = $row->$field;
+                    $ret[$key][] = $row;
+                }
             }
         }
 
