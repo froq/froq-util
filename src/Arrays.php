@@ -480,6 +480,38 @@ final class Arrays extends \StaticClass
     }
 
     /**
+     * Collect mapped fields to array, optionally indexing by given key/key mapper.
+     *
+     * @param  array                    $array
+     * @param  int|string|callable      $mapper
+     * @param  int|string|callable|null $field
+     * @return array
+     * @since  7.0
+     */
+    public static function collect(array $array, int|string|callable $mapper, int|string|callable $field = null): array
+    {
+        $keys = null;
+
+        if (is_callable($field)) {
+            $keys = array_map($field, $array);
+        } elseif (is_scalar($field)) {
+            $keys = array_column($array, $field);
+        }
+
+        $ret = array_map($mapper, $array);
+
+        if ($keys && $ret) {
+            foreach ($keys as $i => $key) {
+                $tmp[$key] = $ret[$i];
+            }
+
+            $ret = $tmp;
+        }
+
+        return $ret;
+    }
+
+    /**
      * Test, like JavaScript Array.some().
      *
      * @param  array    $array

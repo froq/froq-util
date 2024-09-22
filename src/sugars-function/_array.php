@@ -191,6 +191,15 @@ function array_group(array $array, int|string|callable $field): array
 }
 
 /**
+ * @alias Arrays.collect()
+ * @since 7.0
+ */
+function array_collect(array $array, int|string|callable $mapper, int|string|callable $field = null): array
+{
+    return Arrays::collect($array, $mapper, $field);
+}
+
+/**
  * @alias Arrays.test()
  * @since 3.0, 6.0
  */

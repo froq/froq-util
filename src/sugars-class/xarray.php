@@ -415,6 +415,20 @@ class XArray implements Arrayable, Listable, Jsonable, Iteratable, IteratableRev
     }
 
     /**
+     * Collect by given mapper & field.
+     *
+     * @param  int|string|callable      $mapper
+     * @param  int|string|callable|null $field
+     * @return self
+     */
+    public function collect(int|string|callable $mapper, int|string|callable $field = null): self
+    {
+        $this->data = array_collect($this->data, $mapper, $field);
+
+        return $this;
+    }
+
+    /**
      * Test, like JavaScript Array.some().
      *
      * @param  callable $func
