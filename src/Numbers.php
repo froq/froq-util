@@ -92,7 +92,7 @@ final class Numbers extends \StaticClass
      */
     public static function isDigit(mixed $input): bool
     {
-        return (is_int($input) && $input >= 0)
+        return (is_int($input) && ($input >= 0))
             || (is_string($input) && ctype_digit($input));
     }
 

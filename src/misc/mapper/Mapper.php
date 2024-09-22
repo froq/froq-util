@@ -182,7 +182,7 @@ class Mapper
         $data = $data ?: ['' => ''];
 
         foreach ($data as $name => $value) {
-            $this->update($object, $name, $value);
+            $this->update($object, (string) $name, $value);
         }
 
         // After map, event-like method.
