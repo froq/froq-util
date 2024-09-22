@@ -691,7 +691,7 @@ class ItemList implements Arrayable, Jsonable, Countable, IteratorAggregate, Arr
      */
     public function split(int $length): self
     {
-        $this->data = array_split($this->data, $length, $keepKeys);
+        $this->data = array_split($this->data, $length);
 
         return $this;
     }
