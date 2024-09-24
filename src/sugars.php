@@ -370,23 +370,28 @@ function unsplit(string $separator, array $input): string
 }
 
 /**
- * Stripper for strings and arrays.
+ * Safe & extended trimmer for strings and string arrays.
  *
  * @param  mixed  $input
  * @param  string $characters
  * @return string|array
  * @since  3.0, 5.0
  */
-function strip(mixed $input, string $characters = ''): string|array
+function strip(mixed $input, string $characters = TRIM_CHARACTERS): string|array
 {
     if (is_array($input)) {
-        return map($input, fn($in) => strip($in, $characters));
-    }
-    if (is_scalar($input)) {
-        $input = format_scalar($input);
+        return array_map(fn($in) => strip($in, $characters), $input);
     }
 
-    return ($characters === '') ? trim((string) $input) : trim((string) $input, $characters);
+    // Same behavior with trim() function.
+    if (is_bool($input)) { return $input ? '1' : ''; }
+    if (is_null($input)) { return ''; }
+
+    if (is_number($input)) {
+        $input = format_number($input, true, '.', '');
+    }
+
+    return trim((string) $input, $characters);
 }
 
 /**

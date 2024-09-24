@@ -63,6 +63,11 @@ const PATHINFO_TYPE = 0;
 const NAMESPACE_SEPARATOR = '\\';
 
 /**
+ * Trim characters.
+ */
+const TRIM_CHARACTERS = " \n\r\t\v\0";
+
+/**
  * Base-62 alphabet.
  */
 const BASE62_ALPHABET = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';

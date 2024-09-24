@@ -98,7 +98,7 @@ class XString implements \Stringable, Stringable, Arrayable, Lengthable, Iterato
      * @param  string $characters
      * @return self
      */
-    public function trim(string $characters = " \n\r\t\v\0"): self
+    public function trim(string $characters = TRIM_CHARACTERS): self
     {
         $this->data = trim($this->data, $characters);
 
@@ -111,7 +111,7 @@ class XString implements \Stringable, Stringable, Arrayable, Lengthable, Iterato
      * @param  string $characters
      * @return self
      */
-    public function trimLeft(string $characters = " \n\r\t\v\0"): self
+    public function trimLeft(string $characters = TRIM_CHARACTERS): self
     {
         $this->data = ltrim($this->data, $characters);
 
@@ -124,7 +124,7 @@ class XString implements \Stringable, Stringable, Arrayable, Lengthable, Iterato
      * @param  string $characters
      * @return self
      */
-    public function trimRight(string $characters = " \n\r\t\v\0"): self
+    public function trimRight(string $characters = TRIM_CHARACTERS): self
     {
         $this->data = rtrim($this->data, $characters);
 

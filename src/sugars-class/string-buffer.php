@@ -577,7 +577,7 @@ class StringBuffer implements \Stringable, Stringable, Arrayable, Lengthable, It
      * @param  string $characters
      * @return self
      */
-    public function trim(string $characters = " \n\r\t\v\0"): self
+    public function trim(string $characters = TRIM_CHARACTERS): self
     {
         return $this->trimLeft($characters)->trimRight($characters);
     }
@@ -588,7 +588,7 @@ class StringBuffer implements \Stringable, Stringable, Arrayable, Lengthable, It
      * @param  string $characters
      * @return self
      */
-    public function trimLeft(string $characters = " \n\r\t\v\0"): self
+    public function trimLeft(string $characters = TRIM_CHARACTERS): self
     {
         // @cancel: Below is more performant.
         // $this->data = XString::from($this->toString())->trimLeft()->toArray();
@@ -615,7 +615,7 @@ class StringBuffer implements \Stringable, Stringable, Arrayable, Lengthable, It
      * @param  string $characters
      * @return self
      */
-    public function trimRight(string $characters = " \n\r\t\v\0"): self
+    public function trimRight(string $characters = TRIM_CHARACTERS): self
     {
         // @cancel: Below is more performant.
         // $this->data = XString::from($this->toString())->trimRight()->toArray();
