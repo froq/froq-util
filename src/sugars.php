@@ -384,8 +384,9 @@ function strip(mixed $input, string $characters = TRIM_CHARACTERS): string|array
     }
 
     // Same behavior with trim() function.
-    if (is_bool($input)) { return $input ? '1' : ''; }
-    if (is_null($input)) { return ''; }
+    if (is_null($input) || is_bool($input)) {
+        return '' . $input;
+    }
 
     if (is_number($input)) {
         $input = format_number($input, true, '.', '');
