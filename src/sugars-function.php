@@ -17,6 +17,7 @@ require __DIR__ . '/sugars-function/date.php';
 require __DIR__ . '/sugars-function/dump.php';
 require __DIR__ . '/sugars-function/file.php';
 require __DIR__ . '/sugars-function/http.php';
+require __DIR__ . '/sugars-function/iter.php';
 require __DIR__ . '/sugars-function/json.php';
 require __DIR__ . '/sugars-function/preg.php';
 require __DIR__ . '/sugars-function/rand.php';

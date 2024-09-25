@@ -8,7 +8,7 @@
  * Convert a string to Base-62 string.
  *
  * @param  string $input
- * @return string|null
+ * @return string
  */
 function base62_encode(string $input): string
 {
