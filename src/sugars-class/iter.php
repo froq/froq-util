@@ -201,6 +201,21 @@ class Iter implements Arrayable, Listable, Jsonable, Countable, IteratorAggregat
     }
 
     /**
+     * Reverse.
+     *
+     * @param  bool $keepKeys
+     * @return self
+     */
+    public function reverse(bool $keepKeys = false): self
+    {
+        $this->iter = new ArrayIterator(
+            reverse($this->toArray(), $keepKeys)
+        );
+
+        return $this;
+    }
+
+    /**
      * Get keys.
      *
      * @return array
