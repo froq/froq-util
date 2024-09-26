@@ -174,16 +174,18 @@ final /* fuckic static */ class Util extends \StaticClass
      */
     public static function formatBytes(int $bytes, int $precision = 2): string
     {
-        $base  = 1024;
         $units = ['B', 'KB', 'MB', 'GB'];
 
         $i = 0;
-        while ($bytes > $base) {
+        while ($bytes > 1024) {
+            $bytes /= 1024;
             $i++;
-            $bytes /= $base;
         }
 
-        return round($bytes, $precision) . $units[$i];
+        // No 0.00B needed.
+        $bytes || $precision = 0;
+
+        return sprintf('%.*F%s', $precision, $bytes, $units[$i]);
     }
 
     /**
@@ -194,14 +196,13 @@ final /* fuckic static */ class Util extends \StaticClass
      */
     public static function convertBytes(string $bytes): int
     {
-        $base  = 1024;
         $units = ['', 'K', 'M', 'G'];
 
         // Eg: 6.4M or 6.4MB => 6.4MB, 64M or 64MB => 64MB.
         if (sscanf($bytes, '%f%c', $byte, $unit) === 2) {
             $exp = array_search(strtoupper($unit), $units);
 
-            return (int) ($byte * pow($base, $exp));
+            return (int) ($byte * pow(1024, $exp));
         }
 
         return (int) $bytes;
