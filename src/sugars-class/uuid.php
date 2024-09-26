@@ -80,7 +80,7 @@ class Uuid implements Stringable, \Stringable
     public function toHashString(string $algo = null): string
     {
         return ($algo === null) ? str_remove($this->value, '-')
-             : hash($algo, str_remove($this->value, ''));
+             : hash($algo, str_remove($this->value, '-'));
     }
 
     /**
@@ -244,9 +244,10 @@ class Uuid implements Stringable, \Stringable
     public static function generate(bool $time = false, bool $guid = false, bool $hash = false, bool $upper = false): string
     {
         if (!$time) {
+            // With 16-random bytes.
             $bins = random_bytes(16);
         } else {
-            // Unix time prefix & 12-random bytes.
+            // With Unix time prefix & 12-random bytes.
             // @tome: What about "2038 Problem" issue? Seems pack() will keep giving 4-byte bins
             // (so 8-byte hexes) until then (2105-12-31), but probably I'll never see that date.
             $bins = strrev(pack('L', time())) . random_bytes(12);
