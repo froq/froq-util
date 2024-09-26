@@ -1499,7 +1499,8 @@ function preg_error_message(int &$code = null, string $func = null, bool $clear 
 /**
  * Format like `sprintf()` but with additional specifiers.
  *
- * Specifiers: %q single-quotes, %Q double-quotes, %i integer, %n number, %t type,
+ * Specifiers: %q single-quotes, %Q double-quotes, %i integer, %t type,
+ * %n number with ',' thousand seperator (default), %N without separator,
  * %k backticks, %b bool, %a join(','), %A join(', '), %U upper %L lower,
  * %S escape NULL-bytes, join arrays (','), fix floats (N.0).
  *
@@ -1544,8 +1545,13 @@ function format(string $format, mixed ...$arguments): string
 
                 // Numbers.
                 case '%n':
+                case '%N':
                     $format = substr_replace($format, '%s', $offset, 2);
-                    $arguments[$i] = format_number((float) $arguments[$i]);
+                    $separator = ($specifier === '%n') ? null : '';
+                    $arguments[$i] = format_number(
+                        is_number($arguments[$i]) ? $arguments[$i] : (float) $arguments[$i],
+                        tsep: $separator
+                    );
                     break;
 
                 // Types.
@@ -1638,11 +1644,6 @@ function format_number(int|float|string $input, int|true $decs = true, string $d
         $input += 0;
     }
 
-    // Some speed..
-    if (is_int($input) && !$tsep) {
-        return (string) $input;
-    }
-
     $export = var_export($input, true);
 
     // Auto-detect decimals.
@@ -1680,7 +1681,7 @@ function format_scalar(mixed $input, mixed ...$options): string|null
         case is_string($input):
             return $input;
         case is_number($input):
-            $defaults = is_list($options) ? [true] : ['decs' => true];
+            $defaults = is_list($options) ? [true, ''] : ['decs' => true, 'tsep' => ''];
             $arguments = array_options($options, $defaults, map: false);
             return format_number($input, ...$arguments);
         case is_bool($input):
