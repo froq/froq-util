@@ -68,7 +68,7 @@ class Runner
         $this->runs += 1;
 
         if ($profile) {
-            $startMemo = memory_get_usage();
+            $startMemo = memory_get_peak_usage();
             $startTime = microtime(true);
         }
 
@@ -86,7 +86,7 @@ class Runner
         }
 
         if ($profile) {
-            $endMemo = memory_get_usage();
+            $endMemo = memory_get_peak_usage();
             $endTime = microtime(true) - $startTime;
 
             // Free.
@@ -94,7 +94,7 @@ class Runner
 
             if ($print) {
                 $formatLimit = fn(int $v): string => number_format($v, 0, '', ',');
-                $formatBytes = fn(int $v): string => Util::formatBytes($v, 3);
+                $formatBytes = fn(int $v): string => Util::formatBytes($v, 2);
 
                 // Drop memory info.
                 if ($simple) {
