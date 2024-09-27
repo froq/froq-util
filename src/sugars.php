@@ -1176,7 +1176,7 @@ function get_path_info(string $path, string|int $component = null): string|array
     }
 
     $info = [
-        // @tome NULL-bytes issue with pathinfo(), so use related functions here.
+        // @tome: NULL-bytes issue with pathinfo(), so use related functions here.
         'dirname' => dirname($path), 'basename' => basename($path),
         'filename' => null, 'extension' => null,
     ];
