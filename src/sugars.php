@@ -1194,7 +1194,8 @@ function get_path_info(string $path, string|int $component = null): string|array
     } elseif ($filetype === 'link' && is_dir($path)) {
         $ret['filename'] = $ret['extension'] = null;
     } else {
-        [$ret['filename'], $ret['extension']] = [file_name($path), file_extension($path)];
+        $ret['filename'] = file_name($path, false);
+        $ret['extension'] = file_extension($path, false, false);
     }
 
     if ($component !== null) {
