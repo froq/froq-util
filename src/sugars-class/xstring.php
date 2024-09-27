@@ -1300,6 +1300,20 @@ class XString implements \Stringable, Stringable, Arrayable, Lengthable, Iterato
     }
 
     /**
+     * X-Slug.
+     *
+     * @param  string $preserve
+     * @param  string $replace
+     * @param  bool   $trim
+     * @param  bool   $lower
+     * @return string
+     */
+    public function xslug(string $preserve = '', string $replace = '-', bool $trim = true, bool $lower = true): XString
+    {
+        return new XString(slug($this->data, $preserve, $replace, $trim, $lower));
+    }
+
+    /**
      * Interface to sscanf().
      *
      * @param  string    $format
