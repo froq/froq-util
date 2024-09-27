@@ -200,6 +200,15 @@ function array_collect(array $array, int|string|callable $mapper, int|string|cal
 }
 
 /**
+ * @alias Arrays.take()
+ * @since 7.0
+ */
+function array_take(array $array, int $limit, callable $filter = null, callable $map = null): array
+{
+    return Arrays::take($array, $limit, $filter, $map);
+}
+
+/**
  * @alias Arrays.test()
  * @since 3.0, 6.0
  */

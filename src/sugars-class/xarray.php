@@ -429,6 +429,21 @@ class XArray implements Arrayable, Listable, Jsonable, Iteratable, IteratableRev
     }
 
     /**
+     * Take items by given limit, optionally with filter/map callbacks.
+     *
+     * @param  int           $limit
+     * @param  callable|null $filter
+     * @param  callable|null $map
+     * @return self
+     */
+    public function take(int $limit, callable $filter = null, callable $map = null): self
+    {
+        $this->data = array_take($this->data, $limit, $filter, $map);
+
+        return $this;
+    }
+
+    /**
      * Test, like JavaScript Array.some().
      *
      * @param  callable $func

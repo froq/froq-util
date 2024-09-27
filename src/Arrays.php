@@ -512,6 +512,29 @@ final class Arrays extends \StaticClass
     }
 
     /**
+     * Take items by given limit, optionally with filter/map callbacks.
+     *
+     * @param  array         $array
+     * @param  int           $limit
+     * @param  callable|null $filter
+     * @param  callable|null $map
+     * @return array
+     */
+    public static function take(array $array, int $limit, callable $filter = null, callable $map = null): array
+    {
+        if ($array) {
+            $filter && $array = array_filter($array, $filter);
+            $map && $array = array_map($map, $array);
+
+            $array = ($limit < 0)
+                ? array_slice($array, $limit)
+                : array_slice($array, 0, $limit);
+        }
+
+        return $array;
+    }
+
+    /**
      * Test, like JavaScript Array.some().
      *
      * @param  array    $array
