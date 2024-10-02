@@ -285,26 +285,6 @@ class Type implements Stringable
     }
 
     /**
-     * RegExp check.
-     *
-     * @return bool
-     */
-    public function isRegExp(): bool
-    {
-        if ($this->var instanceof RegExp) {
-            return true;
-        }
-
-        try {
-            return is_string($this->var)
-                && ($pattern = RegExp::fromPattern($this->var, true))
-                && ($pattern->match('') !== null);
-        } catch (RegExpError) {
-            return false;
-        }
-    }
-
-    /**
      * Type-of check.
      *
      * @param  string ...$types
