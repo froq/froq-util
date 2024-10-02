@@ -1500,10 +1500,10 @@ function preg_error_message(int &$code = null, string $func = null, bool $clear 
 /**
  * Format like `sprintf()` but with additional specifiers.
  *
- * Specifiers: %q single-quotes, %Q double-quotes, %i integer, %t type,
- * %n number with ',' thousand seperator (default), %N without separator,
- * %k backticks, %b bool, %a join(','), %A join(', '), %U upper %L lower,
- * %S escape NULL-bytes, join arrays (','), fix floats (N.0).
+ * Specifiers: %q single quotes, %Q double quotes, %i integer, %t type,
+ * %T type in single quotes, %n number with ',' thousand seperator (default),
+ * %N without separator, %k backticks, %b bool, %a join(','), %A join(', '),
+ * %U upper %L lower, %S escape NULL-bytes, join arrays (','), fix floats (N.0).
  *
  * Example: format('a: %S | b: %S | c: %S, d: %k', "x\0y\0z", [1,2,3,4.0], 1.0, 'foo')
  *   => 'a: x\0y\0z | b: 1,2,3,4.0 | c: 1.0, d: `foo`'
@@ -1557,7 +1557,9 @@ function format(string $format, mixed ...$arguments): string
 
                 // Types.
                 case '%t':
-                    $format = substr_replace($format, '%s', $offset, 2);
+                case '%T':
+                    $repl = ($specifier === '%t') ? '%s' : "'%s'";
+                    $format = substr_replace($format, $repl, $offset, 2);
                     $arguments[$i] = get_type($arguments[$i]);
                     break;
 

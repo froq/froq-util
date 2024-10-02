@@ -338,6 +338,17 @@ class Type implements Stringable
     }
 
     /**
+     * Instance-of check (faster).
+     *
+     * @param  string|object ...$classes
+     * @return bool
+     */
+    public function isInstanceOf(string|object ...$classes): bool
+    {
+        return array_test($classes, fn($class): bool => $this->var instanceof $class);
+    }
+
+    /**
      * Reflect & return reflection of self var type.
      *
      * @return XReflectionType

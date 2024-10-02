@@ -333,13 +333,12 @@ class XClass implements Stringable
     /**
      * Class-of checker.
      *
-     * @param  string    $class
      * @param  string ...$classes
      * @return bool
      */
-    public function isClassOf(string $class, string ...$classes): bool
+    public function isClassOf(string ...$classes): bool
     {
-        return is_class_of($this->name, $class, ...$classes);
+        return is_class_of($this->name, ...$classes);
     }
 
     /**
