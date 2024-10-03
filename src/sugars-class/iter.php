@@ -23,7 +23,7 @@ class Iter implements Arrayable, Listable, Jsonable, Countable, IteratorAggregat
      *
      * @param iterable $data
      */
-    public function __construct(iterable $data)
+    public function __construct(iterable $data = [])
     {
         // Since ArrayIterator methods are fast, such a getArrayCopy(), count() etc.,
         // we use it here to utilise (CachingIterator is slow, e.g. count()).
@@ -40,7 +40,7 @@ class Iter implements Arrayable, Listable, Jsonable, Countable, IteratorAggregat
      */
     public function reset(int $offset = null, bool $throw = true): void
     {
-        // No need for stuff below, indeed..
+        // No need for stuff below.
         if (!$this->iter->count()) {
             return;
         }
@@ -79,14 +79,18 @@ class Iter implements Arrayable, Listable, Jsonable, Countable, IteratorAggregat
      * Get next item, moving position as default.
      *
      * @param  bool $move
-     * @return mixed
+     * @return mixed|null
      */
     public function getNext(bool $move = true): mixed
     {
-        $value = $this->iter->current();
+        $value = null;
 
-        // Move to next item.
-        $move && $this->moveNext();
+        if ($this->iter->valid()) {
+            $value = $this->iter->current();
+
+            // Move to next item.
+            $move && $this->moveNext();
+        }
 
         return $value;
     }
@@ -95,16 +99,40 @@ class Iter implements Arrayable, Listable, Jsonable, Countable, IteratorAggregat
      * Get next item entry (key/value), moving position as default.
      *
      * @param  bool $move
-     * @return array
+     * @return array|null
      */
-    public function getNextEntry(bool $move = true): array
+    public function getNextEntry(bool $move = true): array|null
     {
-        $entry = [$this->iter->key(), $this->iter->current()];
+        $entry = null;
 
-        // Move to next item.
-        $move && $this->moveNext();
+        if ($this->iter->valid()) {
+            $entry = [$this->iter->key(), $this->iter->current()];
+
+            // Move to next item.
+            $move && $this->moveNext();
+        }
 
         return $entry;
+    }
+
+    /**
+     * Get next item pair as refs (key/value), moving position as default.
+     *
+     * @param  int|string|null $key
+     * @param  mixed|null      $value
+     * @return bool
+     */
+    public function getNextPair(int|string|null &$key, mixed &$value): bool
+    {
+        $key = $value = null;
+
+        if ($entry = $this->getNextEntry()) {
+            [$key, $value] = $entry;
+
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -118,6 +146,26 @@ class Iter implements Arrayable, Listable, Jsonable, Countable, IteratorAggregat
     public function moveNext(): void
     {
         $this->iter->next();
+    }
+
+    /**
+     * Get current key.
+     *
+     * @return int|string|null
+     */
+    public function key(): int|string|null
+    {
+        return $this->iter->key();
+    }
+
+    /**
+     * Get current value.
+     *
+     * @return mixed
+     */
+    public function value(): mixed
+    {
+        return $this->iter->current();
     }
 
     /**
