@@ -175,29 +175,13 @@ class RegExp implements Stringable
      */
     public function remove(string $input, int $limit = -1, int &$count = null): string|null
     {
-        if (is_string($input)) {
-            $ret = @preg_remove($this->pattern, $input, $limit, $count);
+        $ret = @preg_remove($this->pattern, $input, $limit, $count);
 
-            if ($ret === null) {
-                $this->processError('preg_remove');
-            }
-
-            return $ret;
+        if ($ret === null) {
+            $this->processError('preg_remove');
         }
 
-        $rets = null;
-
-        foreach ($input as $input) {
-            $ret = @preg_remove($this->pattern, $input, $limit, $count);
-
-            if ($ret === null) {
-                $this->processError('preg_remove');
-            } else {
-                $rets[] = $ret;
-            }
-        }
-
-        return $rets;
+        return $ret;
     }
 
     /**
