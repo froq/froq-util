@@ -130,16 +130,16 @@ class RegExp implements Stringable
     {
         $this->classCheck($class);
 
-        $callback = is_callable($replace);
-        $function = $callback ? 'preg_replace_callback' : 'preg_replace';
+        $callable = is_callable($replace);
+        $function = $callable ? 'preg_replace_callback' : 'preg_replace';
 
         // Send class instance as match argument when a class given.
-        if ($callback && $class) {
+        if ($callable && $class) {
             $replace = fn($match) => $replace(new $class($match));
         }
 
-        $ret = @$callback ? $function($this->pattern, $replace, $input, $limit, $count, $flags)
-                          : $function($this->pattern, $replace, $input, $limit, $count);
+        $ret = $callable ? @$function($this->pattern, $replace, $input, $limit, $count, $flags)
+                         : @$function($this->pattern, $replace, $input, $limit, $count);
 
         if ($ret === null) {
             $this->processError($function);
