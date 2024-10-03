@@ -31,41 +31,6 @@ class Iter implements Arrayable, Listable, Jsonable, Countable, IteratorAggregat
     }
 
     /**
-     * Reset iteration or move pointer to a position if given.
-     *
-     * @param  int|null $offset
-     * @param  bool     $throw
-     * @return void
-     * @throws RangeError If offset is invalid & throw is true.
-     */
-    public function reset(int $offset = null, bool $throw = true): void
-    {
-        // No need for stuff below.
-        if (!$this->iter->count()) {
-            return;
-        }
-
-        if ($offset === null) {
-            $this->iter->rewind();
-        } else {
-            try {
-                $this->iter->seek($offset);
-            } catch (OutOfBoundsException $e) {
-                // Just throw error, as default.
-                $throw && throw new RangeError($e->getMessage());
-
-                [$min, $max] = $this->getMinMaxKeys();
-
-                if ($offset <= $min) {
-                    $this->iter->seek($min);
-                } elseif ($offset >= $max) {
-                    $this->iter->seek($max);
-                }
-            }
-        }
-    }
-
-    /**
      * Check next item.
      *
      * @return bool
@@ -166,6 +131,41 @@ class Iter implements Arrayable, Listable, Jsonable, Countable, IteratorAggregat
     public function value(): mixed
     {
         return $this->iter->current();
+    }
+
+    /**
+     * Reset iteration or move pointer to a position if given.
+     *
+     * @param  int|null $offset
+     * @param  bool     $throw
+     * @return void
+     * @throws RangeError If offset is invalid & throw is true.
+     */
+    public function reset(int $offset = null, bool $throw = true): void
+    {
+        // No need for stuff below.
+        if (!$this->iter->count()) {
+            return;
+        }
+
+        if ($offset === null) {
+            $this->iter->rewind();
+        } else {
+            try {
+                $this->iter->seek($offset);
+            } catch (OutOfBoundsException $e) {
+                // Just throw error, as default.
+                $throw && throw new RangeError($e->getMessage());
+
+                [$min, $max] = $this->getMinMaxKeys();
+
+                if ($offset <= $min) {
+                    $this->iter->seek($min);
+                } elseif ($offset >= $max) {
+                    $this->iter->seek($max);
+                }
+            }
+        }
     }
 
     /**
@@ -410,31 +410,21 @@ class SplitIter extends Iter
      * @param string   $string
      * @param int|null $limit
      * @param int|null $flags
+     * @param bool  ...$options @see RegExp.split()
      */
-    public function __construct(string $pattern, string $string, int $limit = null, int $flags = null,
-        array $options = null)
+    public function __construct(string $pattern, string $string, int $limit = null, int $flags = null, bool ...$options)
     {
         $this->pattern = $pattern;
 
         try {
             parent::__construct(
-                RegExp::fromPattern($pattern, true)
+                (array) RegExp::fromPattern($pattern, throw: true)
                     ->split($string, $limit ?? -1, $flags ?? 0, null, $options)
             );
             $this->error = null;
         } catch (RegExpError $e) {
-            parent::__construct([]);
+            parent::__construct();
             $this->error = new Error($e->getMessage(), $e->getCode());
         }
-    }
-
-    /**
-     * Create a SplitIter instance with options.
-     *
-     * @return SplitIter
-     */
-    public static function withOptions($pattern, $string, $limit = null, $flags = null, ...$options): SplitIter
-    {
-        return new SplitIter($pattern, $string, $limit, $flags, $options);
     }
 }
